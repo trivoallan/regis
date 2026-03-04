@@ -3,7 +3,12 @@ spec:
     image_url:
       description: Image URL to analyze (e.g. ghcr.io/username/my-image:latest)
       default: ~
+    regis_cli_version:
+      description: Version of regis-cli to use (e.g. latest, 1.2.0)
+      default: "{{ cookiecutter.version }}"
 ---
+variables:
+  REGIS_CLI_IMAGE: "{{ cookiecutter.regis_cli_image_base }}:$[[ inputs.regis_cli_version ]]"
 stages:
   - request
   - analyze
@@ -62,7 +67,7 @@ request_analysis:
 analyze_image:
   stage: analyze
   image:
-    name: "{{ cookiecutter.regis_cli_image_url }}"
+    name: "$REGIS_CLI_IMAGE"
     entrypoint: [""]
   before_script:
     - mkdir -p reports
