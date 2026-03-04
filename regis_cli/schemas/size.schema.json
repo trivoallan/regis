@@ -18,9 +18,10 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["index", "size_bytes", "size_human"],
+        "required": ["index", "digest", "size_bytes", "size_human"],
         "properties": {
           "index": { "type": "integer", "minimum": 0 },
+          "digest": { "type": "string" },
           "size_bytes": { "type": "integer", "minimum": 0 },
           "size_human": { "type": "string" }
         },

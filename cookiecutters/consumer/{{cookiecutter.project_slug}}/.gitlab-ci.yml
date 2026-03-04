@@ -119,7 +119,7 @@ analyze_image:
               fi
 
               # Append mr_description_checklist to MR description
-              CHECKLIST=$(echo "aW1wb3J0IGpzb24sIHN5cwpkYXRhID0ganNvbi5sb2FkKG9wZW4oc3lzLmFyZ3ZbMV0pKQppdGVtcyA9IGRhdGEuZ2V0KCdtcl9kZXNjcmlwdGlvbl9jaGVja2xpc3QnLCBbXSkKaWYgaXRlbXM6CiAgICBwcmludCgnCgotLS0KCiMjIPCfk4sgUmV2aWV3IENoZWNrbGlzdAoKJyArICcKJy5qb2luKCctIFsgXSAnICsgaSBmb3IgaSBpbiBpdGVtcykpCg==" | base64 -d | python3 - "$REPORT_JSON")
+              CHECKLIST=$(echo "aW1wb3J0IGpzb24sIHN5cwpkYXRhID0ganNvbi5sb2FkKG9wZW4oc3lzLmFyZ3ZbMV0pKQppdGVtcyA9IGRhdGEuZ2V0KCdtcl9kZXNjcmlwdGlvbl9jaGVja2xpc3QnLCBbXSkKaWYgaXRlbXM6CiAgICBwcmludCgnXG5cbi0tLVxuXG4jIyDwn5OLIFJldmlldyBDaGVja2xpc3RcblxuJyArICdcbicuam9pbignLSBbIF0gJyArIGkgZm9yIGkgaW4gaXRlbXMpKQo=" | base64 -d | python3 - "$REPORT_JSON")
               if [ -n "$CHECKLIST" ]; then
                 echo "Appending checklist to MR description..."
                 CURRENT_DESC=$(curl --silent --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
