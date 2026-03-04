@@ -83,7 +83,6 @@ analyze_image:
 
       regis-cli analyze "$IMAGE_URL" \
         --site \
-        --output-dir public \
         --playbook "$PLAYBOOK_URL" \
         --meta "trigger.user=$GITLAB_USER_LOGIN" \
         --meta "trigger.url=$CI_JOB_URL" \
