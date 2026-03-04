@@ -3,15 +3,13 @@ spec:
     image_url:
       description: Image URL to analyze (e.g. ghcr.io/username/my-image:latest)
       default: ~
-    regis_cli_version:
-      description: Version of regis-cli to use (e.g. latest, 1.2.0)
-      default: "{{ cookiecutter.version }}"
     playbook_url:
       description: URL of the regis-cli playbook to use
       default: "{{ cookiecutter.regis_playbook_url }}"
 ---
 variables:
-  REGIS_CLI_IMAGE: "{{ cookiecutter.regis_cli_image_base }}:$[[ inputs.regis_cli_version ]]"
+  # Default image — override with a CI/CD project variable named REGIS_CLI_IMAGE
+  REGIS_CLI_IMAGE: "{{ cookiecutter.regis_cli_image_base }}:{{ cookiecutter.version }}"
 stages:
   - request
   - analyze
@@ -37,14 +35,14 @@ request_analysis:
       BRANCH_NAME="regis/analyze/${SAFE_URL:0:30}-$CI_PIPELINE_IID"
 
       echo "Creating analysis request for $IMAGE_URL (requested by $GITLAB_USER_LOGIN)"
-      echo "aW1wb3J0IGpzb24sIHN5cwpwcmludChqc29uLmR1bXBzKHsKICAnaW1hZ2VfdXJsJzogc3lzLmFyZ3ZbMV0sCiAgJ3BsYXlib29rX3VybCc6IHN5cy5hcmd2WzJdLAogICdyZWdpc19jbGlfdmVyc2lvbic6IHN5cy5hcmd2WzNdLAogICdyZXF1ZXN0ZXJfaWQnOiBpbnQoc3lzLmFyZ3ZbNF0pLAogICdyZXF1ZXN0ZXJfbG9naW4nOiBzeXMuYXJndls1XSwKfSkpCg==" | base64 -d | python3 - "$IMAGE_URL" "$[[ inputs.playbook_url ]]" "$[[ inputs.regis_cli_version ]]" "$GITLAB_USER_ID" "$GITLAB_USER_LOGIN" > analysis-request.json
+      echo "aW1wb3J0IGpzb24sIHN5cwpwcmludChqc29uLmR1bXBzKHsKICAnaW1hZ2VfdXJsJzogc3lzLmFyZ3ZbMV0sCiAgJ3BsYXlib29rX3VybCc6IHN5cy5hcmd2WzJdLAogICdyZXF1ZXN0ZXJfaWQnOiBpbnQoc3lzLmFyZ3ZbM10pLAogICdyZXF1ZXN0ZXJfbG9naW4nOiBzeXMuYXJndls0XSwKfSkpCg==" | base64 -d | python3 - "$IMAGE_URL" "$[[ inputs.playbook_url ]]" "$GITLAB_USER_ID" "$GITLAB_USER_LOGIN" > analysis-request.json
 
       git config --global user.name "GitLab CI"
       git config --global user.email "gitlab-ci@example.com"
 
       git checkout -b "$BRANCH_NAME"
       git add analysis-request.json
-      git commit -m "chore: request analysis for $IMAGE_URL [skip ci]"
+      git commit -m "chore: request analysis for $IMAGE_URL"
 
       # Push the branch
       git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "$BRANCH_NAME"
@@ -63,14 +61,6 @@ request_analysis:
           \"remove_source_branch\": true
         }" \
         "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests"
-
-      # Trigger the analysis pipeline explicitly with the correct image version
-      # (the push above uses [skip ci] so no automatic pipeline is created)
-      curl --fail --request POST \
-        --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
-        --header "Content-Type: application/json" \
-        --data "{\"ref\": \"$BRANCH_NAME\", \"variables\": [{\"key\": \"REGIS_CLI_IMAGE\", \"value\": \"$REGIS_CLI_IMAGE\"}]}" \
-        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipeline"
   rules:
     - if: $CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""
 
