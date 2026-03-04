@@ -57,6 +57,10 @@ jobs:
           rm dockle.tar.gz
           sudo chmod +x /usr/local/bin/dockle
 
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
+
       - name: Generate Schema Docs
         run: pipenv run python scripts/generate_schema_docs.py
 
