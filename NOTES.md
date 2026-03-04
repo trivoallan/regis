@@ -4,6 +4,7 @@
 - [x] Labels scopés, approval rules, etc.
 - [x] rendu mermaid dans les docs avec antora
 - [ ] Générer le dépôt hub2hub et l'intégrer à la merge request
+- [ ] Via le playbook, permettre de définir une liste de cases à cocher qui seront ajoutées à la description de la Merge Request
 - [ ] Interface d'administration (requirements manuels) ?
 - [x] Lien vers la MR dans le rapport d'analyse
 - [ ] Mécanisme configurable pour ajouter du contenu à la MR (via cookiecutter ?)

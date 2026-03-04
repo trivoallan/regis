@@ -37,7 +37,7 @@ jobs:
         run: pip install pipenv
 
       - name: Install Python dependencies
-        run: pipenv install --dev
+        run: pipenv sync --dev
 
       - name: Generate Schema Docs
         run: pipenv run python scripts/generate_schema_docs.py
