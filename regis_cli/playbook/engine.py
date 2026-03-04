@@ -102,11 +102,19 @@ def _resolve_path(
         if isinstance(val, dict):
             val = val.get(part)
         elif isinstance(val, list):
+            # First try integer index
             try:
                 idx = int(part)
                 val = val[idx] if 0 <= idx < len(val) else None
             except ValueError:
-                return None
+                # If it's a NamedList, let it try the string key
+                if isinstance(val, NamedList):
+                    try:
+                        val = val[part]
+                    except KeyError:
+                        return None
+                else:
+                    return None
         else:
             return None
     return val
@@ -128,6 +136,42 @@ def _flatten(data: dict[str, Any], prefix: str = "") -> dict[str, Any]:
         else:
             flat[full_key] = value
     return flat
+
+
+class NamedList(list):
+    """A list wrapper that allows item access by index, slug, or normalized name."""
+
+    def __init__(self, data: list[Any]):
+        super().__init__(data)
+        self._keys: dict[str, Any] = {}
+        for item in data:
+            if isinstance(item, dict):
+                if "slug" in item:
+                    self._keys[item["slug"]] = item
+                if "name" in item:
+                    # Create a normalized name: lowercase, replace spaces/dashes with underscores
+                    norm = item["name"].lower().replace(" ", "_").replace("-", "_")
+                    self._keys[norm] = item
+
+    def __getitem__(self, key: Any) -> Any:
+        # Standard integer index access
+        if isinstance(key, int):
+            return super().__getitem__(key)
+
+        # String-based access
+        if isinstance(key, str):
+            # Try interpreting as index first
+            try:
+                idx = int(key)
+                return super().__getitem__(idx)
+            except ValueError:
+                pass
+
+            # Lookup by slug or normalized name
+            if key in self._keys:
+                return self._keys[key]
+
+        return super().__getitem__(key)
 
 
 def load_playbook(path: str | Path) -> dict[str, Any]:
@@ -507,7 +551,7 @@ def evaluate(
                 ),
                 "total_scorecards": page_total_scorecards,
                 "passed_scorecards": page_passed_scorecards,
-                "sections": page_sections_results,
+                "sections": NamedList(page_sections_results),
             }
         )
         total_scorecards_all += page_total_scorecards
@@ -523,7 +567,7 @@ def evaluate(
         ),
         "total_scorecards": total_scorecards_all,
         "passed_scorecards": total_passed_all,
-        "pages": pages_results,
+        "pages": NamedList(pages_results),
         "slug": playbook.get("slug"),
     }
 

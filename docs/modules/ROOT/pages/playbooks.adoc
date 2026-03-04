@@ -27,6 +27,16 @@ Playbooks define how analysis results are presented in the HTML report through a
 *   **Sections**: Groups of related scorecards and widgets within a page.
 *   **Widgets**: UI components that display specific values or metrics. Widgets can be key-value summaries, KPI cards, or detailed tables rendered from templates.
 
+=== Named Addressing
+
+When referencing pages or sections in your logic or templates, `regis-cli` allows you to navigate the hierarchy using their **slug** or **name** instead of numeric indices (`playbooks.0.pages.0...`).
+
+When using a `name`, the engine automatically normalizes it:
+* Converts to lowercase
+* Replaces spaces and dashes with underscores (`_`)
+
+For example, a section named "Mandatory Requirements" becomes `mandatory_requirements`.
+
 == Evaluation Mechanism
 
 `regis-cli` uses two powerful technologies to evaluate and present data in playbooks.
@@ -40,6 +50,13 @@ You use JSON Logic to access analysis results and perform comparisons. For examp
 [source,json]
 ----
 { "==": [ { "var": "results.trivy.critical_count" }, 0 ] }
+----
+
+Or, to check the score of a specific section using its normalized name:
+
+[source,json]
+----
+{ ">=": [ { "var": "playbooks.0.pages.compliance.sections.security_checks.score" }, 90 ] }
 ----
 
 Commonly used operators include:
@@ -60,6 +77,8 @@ For example, to display the overall compliance score in a widget, you might use:
 ----
 - label: Overall Compliance
   value: "{{ playbooks.0.score }}%"
+- label: Mandatory Checks
+  value: "{{ playbooks.0.pages.compliance.sections.security_checks.score }}%"
 ----
 
 == Example Playbook
@@ -90,4 +109,3 @@ pages:
 ====
 To see the full set of rules and report organization enforced by the tool out-of-the-box, check the xref:default-playbook.adoc[Default Playbook Reference].
 ====
-----

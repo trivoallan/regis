@@ -13,14 +13,26 @@ pages:
               class: recommandation-go
               align: center
             condition:
-              ">=": [{ var: playbooks.0.pages.1.sections.1.score }, 90]
+              ">=":
+                [
+                  {
+                    var: playbooks.0.pages.compliance.sections.mandatory_requirements.score,
+                  },
+                  90,
+                ]
           - label: Recommandation
             value: "{{ 'NOGO' }}"
             options:
               class: recommandation-nogo
               align: center
             condition:
-              "<": [{ var: playbooks.0.pages.1.sections.1.score }, 90]
+              "<":
+                [
+                  {
+                    var: playbooks.0.pages.compliance.sections.mandatory_requirements.score,
+                  },
+                  90,
+                ]
       - name: ""
         widgets:
           - label: Overall Compliance
@@ -29,12 +41,12 @@ pages:
             options:
               align: center
           - label: Mandatory Requirements
-            value: "{{ playbooks.0.pages.1.sections.1.passed_scorecards }} / {{ playbooks.0.pages.1.sections.1.total_scorecards }}"
+            value: "{{ playbooks.0.pages.compliance.sections.mandatory_requirements.passed_scorecards }} / {{ playbooks.0.pages.compliance.sections.mandatory_requirements.total_scorecards }}"
             url: compliance.html
             options:
               align: center
           - label: Recommended Requirements
-            value: "{{ playbooks.0.pages.1.sections.2.passed_scorecards }} / {{ playbooks.0.pages.1.sections.2.total_scorecards }}"
+            value: "{{ playbooks.0.pages.compliance.sections.recommended_requirements.passed_scorecards }} / {{ playbooks.0.pages.compliance.sections.recommended_requirements.total_scorecards }}"
             url: compliance.html
             options:
               align: center
@@ -80,11 +92,11 @@ pages:
             options:
               align: center
           - label: Mandatory Requirements
-            value: "{{ playbooks.0.pages.1.sections.1.score }}%"
+            value: "{{ playbooks.0.pages.compliance.sections.mandatory_requirements.score }}%"
             options:
               align: center
           - label: Recommended Requirements
-            value: "{{ playbooks.0.pages.1.sections.2.score }}%"
+            value: "{{ playbooks.0.pages.compliance.sections.recommended_requirements.score }}%"
             options:
               align: center
       - name: Mandatory Requirements
