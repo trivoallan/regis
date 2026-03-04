@@ -157,7 +157,7 @@ set_labels:
   stage: report
   image: alpine:latest
   needs:
-    - analyze_image
+    - push_results
   before_script:
     - apk add --no-cache curl python3
   script:
@@ -192,7 +192,7 @@ set_checklist:
   stage: report
   image: alpine:latest
   needs:
-    - analyze_image
+    - push_results
   before_script:
     - apk add --no-cache curl python3
   script:
@@ -237,8 +237,6 @@ pages:
   image: alpine:latest
   script:
     - echo "Publishing to production pages"
-  dependencies:
-    - analyze_image
   pages:
     publish: reports
   artifacts:
