@@ -53,19 +53,19 @@ The analysis engine orchestrates the execution of pluggable analyzers. It manage
 === Analyzers
 Analyzers are modular components responsible for gathering data from registries or local files. Current built-in analyzers include:
 
-* **Skopeo**: Extracts multi-architecture metadata, labels, and layer information.
-* **Trivy**: Generates Software Bill of Materials (SBOM) and performs vulnerability scanning.
-* **Hadolint**: Lints Dockerfiles for best practices.
-* **Dockle**: Container image linter for security and best practices.
-* **Versioning**: Validates semantic versioning consistency.
-* **Freshness**: Calculates image age.
+* **Skopeo**: Extracts multi-architecture metadata, labels, and layer information. (xref:schemas/skopeo.adoc[Schema])
+* **Trivy**: Generates Software Bill of Materials (SBOM) and performs vulnerability scanning. (xref:schemas/trivy.adoc[Schema])
+* **Hadolint**: Lints Dockerfiles for best practices. (xref:schemas/hadolint.adoc[Schema])
+* **Dockle**: Container image linter for security and best practices. (xref:schemas/dockle.adoc[Schema])
+* **Versioning**: Validates semantic versioning consistency. (xref:schemas/versioning.adoc[Schema])
+* **Freshness**: Calculates image age. (xref:schemas/freshness.adoc[Schema])
 
 === Playbook Engine
 The playbook engine evaluates consolidated analyzer results against user-defined rules. These rules use `jsonLogic` to define complex conditional logic for security and compliance checks, such as "no critical vulnerabilities" or "maximum image age."
 
 === Reporting Layer
 The reporting layer transforms the analysis and playbook results into various formats.
-It uses `Jinja2` templates to produce rich, themeable HTML reports for human review and structured JSON for automated processing.
+It uses `Jinja2` templates to produce rich, themeable HTML reports for human review and structured JSON (see xref:schemas/report.adoc[Report Schema]) for automated processing.
 
 == Technology Stack
 

@@ -13,7 +13,7 @@ By using playbooks, you can decouple the raw data extraction (performed by analy
 
 == Core Concepts
 
-The following concepts are central to understanding and creating playbooks.
+The following concepts are central to understanding and creating playbooks. For a complete technical reference of all available attributes, refer to the xref:schemas/playbook.adoc[Playbook Schema Definition].
 
 === Scorecards
 

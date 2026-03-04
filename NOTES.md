@@ -10,8 +10,8 @@
 - [ ] Recommandation de configuration d'import (regex)
 - [ ] Démo intégration avec PowerBI (idées)
 - [x] Consolidation de la documentation (docs/)
-- [ ] Versioning de la documentation
-- [ ] meilleure contrôle des versions de regis-cli
+- [x] Versioning de la documentation
+- [x] meilleure contrôle des versions de regis-cli
 - [x] Tests unitaires pour cookiecutter
 - [x] Comment gérer les mises à jour du playbook ? Permettre de spécifier une version du playbook ? et un lien de téléchargement ?
 - [x] Récupération et affichage des tags adjacents à l'image analysée (skopeo)
