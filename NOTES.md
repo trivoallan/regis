@@ -21,5 +21,5 @@
 - [x] Merger les deux cookiecutters en un seul
 - [x] Cleanup du cli (--format, list (?))
 - [x] Versionner les artifacts dans le repo gitlab
-
-
+- [ ] ajouter sous-commande pour la ci gitlab
+- [ ] groupes pour les checklists

@@ -113,14 +113,15 @@
             },
             "checklist": {
               "type": "array",
-              "description": "Checklist items added as unchecked checkboxes (- [ ] label) to the Merge Request description.",
+              "description": "Checklist items added as checkboxes to the Merge Request description.",
               "items": {
                 "type": "object",
                 "required": ["label"],
                 "additionalProperties": false,
                 "properties": {
                   "label": { "type": "string", "description": "Text of the checkbox item." },
-                  "condition": { "type": "object", "description": "Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy." }
+                  "show_if": { "type": "object", "description": "Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy." },
+                  "check_if": { "type": "object", "description": "Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ])." }
                 }
               }
             }

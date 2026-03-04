@@ -345,7 +345,9 @@ class TestGitLabChecklist:
         """Items with no condition are always added to the checklist."""
         pb = self._make_playbook([{"label": "Manual review done"}])
         result = evaluate(pb, {})
-        assert result["mr_description_checklist"] == ["Manual review done"]
+        assert result["mr_description_checklist"] == [
+            {"label": "Manual review done", "checked": False}
+        ]
 
     def test_truthy_condition_includes_item(self):
         """Items whose condition evaluates to True are included."""
@@ -353,13 +355,15 @@ class TestGitLabChecklist:
             [
                 {
                     "label": "No critical CVEs",
-                    "condition": {"==": [{"var": "results.trivy.critical_count"}, 0]},
+                    "show_if": {"==": [{"var": "results.trivy.critical_count"}, 0]},
                 }
             ]
         )
         report = {"results": {"trivy": {"critical_count": 0}}}
         result = evaluate(pb, report)
-        assert result["mr_description_checklist"] == ["No critical CVEs"]
+        assert result["mr_description_checklist"] == [
+            {"label": "No critical CVEs", "checked": False}
+        ]
 
     def test_falsy_condition_excludes_item(self):
         """Items whose condition evaluates to False are excluded."""
@@ -367,7 +371,7 @@ class TestGitLabChecklist:
             [
                 {
                     "label": "No critical CVEs",
-                    "condition": {"==": [{"var": "results.trivy.critical_count"}, 0]},
+                    "show_if": {"==": [{"var": "results.trivy.critical_count"}, 0]},
                 }
             ]
         )
@@ -381,7 +385,7 @@ class TestGitLabChecklist:
             [
                 {
                     "label": "Item needs missing data",
-                    "condition": {"==": [{"var": "non_existent_key"}, 0]},
+                    "show_if": {"==": [{"var": "non_existent_key"}, 0]},
                 }
             ]
         )
@@ -395,17 +399,67 @@ class TestGitLabChecklist:
                 {"label": "Always here"},
                 {
                     "label": "Included: truthy",
-                    "condition": {"==": [{"var": "results.ok"}, True]},
+                    "show_if": {"==": [{"var": "results.ok"}, True]},
                 },
                 {
                     "label": "Excluded: falsy",
-                    "condition": {"==": [{"var": "results.ok"}, False]},
+                    "show_if": {"==": [{"var": "results.ok"}, False]},
                 },
             ]
         )
         report = {"results": {"ok": True}}
         result = evaluate(pb, report)
-        assert result["mr_description_checklist"] == ["Always here", "Included: truthy"]
+        assert result["mr_description_checklist"] == [
+            {"label": "Always here", "checked": False},
+            {"label": "Included: truthy", "checked": False},
+        ]
+
+    def test_check_if_pre_checks_item(self):
+        """An item with a truthy check_if renders as checked."""
+        pb = self._make_playbook(
+            [
+                {
+                    "label": "No critical CVEs",
+                    "check_if": {"==": [{"var": "results.trivy.critical_count"}, 0]},
+                }
+            ]
+        )
+        report = {"results": {"trivy": {"critical_count": 0}}}
+        result = evaluate(pb, report)
+        assert result["mr_description_checklist"] == [
+            {"label": "No critical CVEs", "checked": True}
+        ]
+
+    def test_check_if_falsy_stays_unchecked(self):
+        """An item with a falsy check_if renders as unchecked."""
+        pb = self._make_playbook(
+            [
+                {
+                    "label": "No critical CVEs",
+                    "check_if": {"==": [{"var": "results.trivy.critical_count"}, 0]},
+                }
+            ]
+        )
+        report = {"results": {"trivy": {"critical_count": 3}}}
+        result = evaluate(pb, report)
+        assert result["mr_description_checklist"] == [
+            {"label": "No critical CVEs", "checked": False}
+        ]
+
+    def test_missing_check_if_stays_unchecked(self):
+        """When check_if references missing data, item renders unchecked."""
+        pb = self._make_playbook(
+            [
+                {
+                    "label": "Some item",
+                    "check_if": {"==": [{"var": "non_existent"}, 0]},
+                }
+            ]
+        )
+        result = evaluate(pb, {})
+        assert result["mr_description_checklist"] == [
+            {"label": "Some item", "checked": False}
+        ]
 
     def test_no_checklist_key_absent(self):
         """When checklist is not defined, mr_description_checklist is absent."""

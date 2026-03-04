@@ -129,8 +129,12 @@ sequenceDiagram
     GL->>User: Merge Request opened
     GL->>CI: Job: analyze_image (MR context)
     CI->>Reg: Analyze image
-    CI->>GL: Commit Report to reports/
-    CI->>GL: Post MR Comment with Report Link (via API)
+    CI->>GL: Job: push_results — commit report & post MR comment with report link
+    par Parallel reporting jobs
+        CI->>GL: Job: set_labels — apply scoped labels via API
+    and
+        CI->>GL: Job: set_checklist — append review checklist to MR description
+    end
 ....
 
 === 1. Trigger the Request
@@ -141,9 +145,11 @@ The pipeline automatically creates a new branch and a Merge Request.
 The MR description contains instructions to find the **Analysis Report** within the committed \`reports/\` directory or the exposed artifacts.
 
 === 3. Report Inspection
-Once the analysis job completes, the report is:
-*   **Committed** back to the branch in the \`reports/<registry>/<repository>/<tag>/\` directory (if `GITLAB_TOKEN` is configured). You can directly review the HTML and JSON results.
-*   **Linked in a Comment**: The pipeline will automatically post a comment on the Merge Request containing a direct link to view the HTML report directly in your browser.
+Once the analysis job completes, the pipeline runs three parallel reporting jobs:
+
+*   **`push_results`**: Commits the `reports/` directory back to the branch, prepends a direct **[View Analysis Report]** link to the MR description, and posts an MR comment with the same link.
+*   **`set_labels`**: Applies scoped GitLab labels to the MR based on your playbook configuration (e.g., `regis::fail`, `security::critical`).
+*   **`set_checklist`**: Appends a Markdown review checklist to the MR description. Checklist items defined with `check_if` conditions may render pre-checked when those conditions pass.
 
 === 4. Governance
 Security teams can review the MR, check the compliance score via the direct HTML report link, and decide whether to merge the analysis request into the main registry branch.

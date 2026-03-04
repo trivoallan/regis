@@ -280,9 +280,18 @@ integrations:
     checklist:
       - label: Revue de sécurité réalisée
       - label: Aucune vulnérabilité CRITIQUE détectée
-        condition: { "==": [{ var: results.trivy.critical_count }, 0] }
+        show_if: { "==": [{ var: results.trivy.critical_count }, 0] }
+        check_if: { "==": [{ var: results.trivy.critical_count }, 0] }
       - label: Image issue d'un registre de confiance
-        condition:
+        show_if:
+          {
+            "in":
+              [
+                { var: request.registry },
+                [docker.io, registry-1.docker.io, quay.io, ghcr.io],
+              ],
+          }
+        check_if:
           {
             "in":
               [
