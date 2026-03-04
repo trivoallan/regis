@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0](https://github.com/trivoallan/regis-cli/compare/v0.8.0...v0.9.0) (2026-03-04)
+
+
+### Features
+
+* **playbook:** Implement GitLab MR description checklist feature for custom compliance checks. ([c22402e](https://github.com/trivoallan/regis-cli/commit/c22402ec2cab75ad19c2ba227d56eec2eb9d35a6))
+
+
+### Bug Fixes
+
+* **ci:** Fix broken Publish Documentation workflow ([300e313](https://github.com/trivoallan/regis-cli/commit/300e3133246ded1ff55b7aac01ee265ffada76e4))
+
 ## [0.8.0](https://github.com/trivoallan/regis-cli/compare/v0.7.0...v0.8.0) (2026-03-04)
 
 
