@@ -113,6 +113,12 @@ pages:
             tags: [security]
             condition:
               "==": [{ var: results.trivy.critical_count }, 0]
+          - name: no-fatal
+            title: No FATAL issues found by Dockle.
+            level: critical
+            tags: [security]
+            condition:
+              "==": [{ var: results.dockle.issues_by_level.FATAL }, 0]
           - name: trusted-domain
             title: Image must originate from a trusted domain.
             tags: [security]
@@ -180,12 +186,20 @@ pages:
   - title: Best Practices
     slug: best-practices
     sections:
-      - name: Dockerfile Linting
+      - name: Dockerfile Linting (Hadolint)
         widgets:
           - template: analyzers/hadolint/cards.html
           - template: analyzers/hadolint/table.html
             options:
               title: Linting Issues & Recommendations
+              collapsed: true
+
+      - name: Security & Best Practices (Dockle)
+        widgets:
+          - template: analyzers/dockle/cards.html
+          - template: analyzers/dockle/table.html
+            options:
+              title: Security Issues & Recommendations
               collapsed: true
 
   - title: Insights & Lifecycle

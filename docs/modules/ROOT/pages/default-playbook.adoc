@@ -22,6 +22,10 @@ These are non-negotiable security requirements. Failing any of these checks mark
 | No vulnerabilities with a `CRITICAL` severity level found by Trivy.
 | `{"==": [{"var": "results.trivy.critical_count"}, 0]}`
 
+| **No Fatal Policies**
+| No `FATAL` security issues found by Dockle.
+| `{"==": [{"var": "results.dockle.issues_by_level.FATAL"}, 0]}`
+
 | **Trusted Domain**
 | The image must originate from a trusted container registry (e.g., Docker Hub, Quay, GHCR).
 | `{"in": [{"var": "request.registry"}, ["docker.io", "quay.io", "ghcr.io"]]}`
@@ -61,7 +65,7 @@ The default playbook structures its findings into seven specialized pages to pro
 | **Supply Chain** (`supply-chain`)
 | Analysis of the Software Bill of Materials (SBOM) and OpenSSF Scorecard results.
 | **Best Practices** (`best-practices`)
-| Insights from Dockerfile linting (Hadolint) and configuration checks.
+| Insights from Dockerfile linting (Hadolint), configuration checks, and security linting (Dockle).
 | **Insights** (`insights`)
 | Trends in image freshness, registry popularity, and lifecycle (EndOfLife) status.
 | **Technical Details** (`metadata`)
