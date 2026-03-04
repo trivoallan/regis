@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.8.0](https://github.com/trivoallan/regis-cli/compare/v0.7.0...v0.8.0) (2026-03-04)
+
+
+### Features
+
+* **analyzer/dockle:** add Dockle analyzer for container image security and best practices linting with supporting schema, tests, and documentation. ([e32c1f2](https://github.com/trivoallan/regis-cli/commit/e32c1f2f375e284619b521d37a8f05b4f8e75fff))
+* **playbook:** Implement named addressing for playbook pages and sections ([cdbaefa](https://github.com/trivoallan/regis-cli/commit/cdbaefae55c5a25b828944dc8ec1f0f41e7fc0d6))
+* **playbook:** integrate Dockle security analysis with a new policy, dedicated UI, and updated documentation. ([7806a53](https://github.com/trivoallan/regis-cli/commit/7806a53d52c30027926a24bc5fa18da08c7506e3))
+
+
+### Documentation
+
+* Add script to generate example reports and update documentation with new report data and publishing workflow. ([3598a1e](https://github.com/trivoallan/regis-cli/commit/3598a1e79f47bc177e94e7a5ca10111beb08b50a))
+* Configure Antora to generate a documentation website for each release ([077497b](https://github.com/trivoallan/regis-cli/commit/077497bd962b5906bcf0e43715eb7a7588fe1e16))
+* Implemented automated generation of schema documentation and integrate it into the Antora build workflow. ([11b9399](https://github.com/trivoallan/regis-cli/commit/11b93999f0dd063df64a1fc22aac25ba7a2b4c61))
+
 ## [0.7.0](https://github.com/trivoallan/regis-cli/compare/v0.6.0...v0.7.0) (2026-02-23)
 
 
