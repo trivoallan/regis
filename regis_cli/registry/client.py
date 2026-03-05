@@ -95,6 +95,38 @@ class RegistryClient:
         """
         return self._get(f"/{self.repository}/blobs/{digest}")
 
+    def get_digest(self, tag: str) -> str | None:
+        """Fetch the Docker-Content-Digest for a given tag using a HEAD request.
+
+        Args:
+            tag: The image tag.
+
+        Returns:
+            The digest string (e.g. ``sha256:abc...``), or None if not returned by the registry.
+
+        Raises:
+            RegistryError: If the API call fails.
+        """
+        accept = (
+            "application/vnd.oci.image.index.v1+json, "
+            "application/vnd.docker.distribution.manifest.list.v2+json, "
+            "application/vnd.oci.image.manifest.v1+json, "
+            "application/vnd.docker.distribution.manifest.v2+json"
+        )
+        url = self._base_url + f"/{self.repository}/manifests/{tag}"
+        headers = {"Accept": accept}
+
+        # Try without auth first, then authenticate on 401.
+        resp = self._request(url, headers, method="HEAD")
+        if resp.status_code == 401:
+            self._authenticate(resp)
+            resp = self._request(url, headers, method="HEAD")
+
+        if resp.status_code != 200:
+            raise RegistryError(f"Registry returned {resp.status_code} for HEAD {url}")
+
+        return resp.headers.get("Docker-Content-Digest")
+
     # ------------------------------------------------------------------
     # Internal
     # ------------------------------------------------------------------
@@ -129,14 +161,17 @@ class RegistryClient:
         self,
         url: str,
         headers: dict[str, str],
+        method: str = "GET",
     ) -> requests.Response:
-        """Execute a single GET request, attaching the bearer token if available."""
+        """Execute a single HTTP request, attaching the bearer token if available."""
         req_headers = {**headers}
         if self._token:
             req_headers["Authorization"] = f"Bearer {self._token}"
 
-        logger.debug("GET %s", url)
-        return self._session.get(url, headers=req_headers, timeout=self.timeout)
+        logger.debug("%s %s", method, url)
+        return self._session.request(
+            method, url, headers=req_headers, timeout=self.timeout
+        )
 
     def _authenticate(self, response: requests.Response) -> None:
         """Parse a ``WWW-Authenticate`` header and obtain a bearer token."""

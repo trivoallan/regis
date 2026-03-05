@@ -55,7 +55,7 @@ regis-cli analyze nginx:latest -f html --cache
 ```
 
 ### Dynamic Output Paths
-By default, reports are written to `reports/{registry}/{repository}/{tag}/{format}`. You can override this using:
+By default, reports are written to `reports/{registry}/{repository}/{digest}/report.{format}`. You can override this using:
 ```bash
 regis-cli analyze nginx:latest -o "my-custom-report.{format}" -D "results/{repository}"
 ```

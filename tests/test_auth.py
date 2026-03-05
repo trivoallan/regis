@@ -71,7 +71,8 @@ class TestRegistryAuth:
         # 1. Initial request -> 401
         # 2. Token request -> 200
         # 3. Retried request -> 200
-        mock_session.get.side_effect = [resp_401, token_resp, resp_200]
+        mock_session.request.side_effect = [resp_401, resp_200]
+        mock_session.get.return_value = token_resp
 
         client = RegistryClient(
             "registry.example.com",
@@ -84,10 +85,11 @@ class TestRegistryAuth:
         client.list_tags()
 
         # Verify calls
-        assert mock_session.get.call_count == 3
+        assert mock_session.request.call_count == 2
+        assert mock_session.get.call_count == 1
 
-        # Check the token request (2nd call)
-        token_call = mock_session.get.call_args_list[1]
+        # Check the token request (only 1 call to get)
+        token_call = mock_session.get.call_args_list[0]
         args, kwargs = token_call
 
         assert args[0] == "https://auth.docker.io/token"
@@ -107,6 +109,7 @@ class TestRegistryAuth:
         mock_analyzer_instance = mock_analyzer_cls.return_value
         mock_analyzer_instance.analyze.return_value = {"some": "data"}
         mock_discover.return_value = {"test_analyzer": mock_analyzer_cls}
+        mock_client_cls.return_value.get_digest.return_value = None
 
         env = {
             "REGIS_USERNAME": "env_user",
@@ -197,6 +200,7 @@ class TestRegistryAuth:
         mock_analyzer_instance = mock_analyzer_cls.return_value
         mock_analyzer_instance.analyze.return_value = {"some": "data"}
         mock_discover.return_value = {"test_analyzer": mock_analyzer_cls}
+        mock_client_cls.return_value.get_digest.return_value = None
 
         result = runner.invoke(
             main,

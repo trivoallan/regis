@@ -1,5 +1,5 @@
 import json
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -256,3 +256,29 @@ class TestVersioningAnalyzer:
         assert v_map["micro"] == 1
         assert v_map["init"] == 1
         assert v_map["rhel"] == 1
+
+    @patch("regis_cli.analyzers.versioning.subprocess.run")
+    def test_release_line_detection_for_alias(self, mock_run):
+        """Test detection of release_line for alias tags."""
+        # mock_run will be called twice:
+        # 1. skopeo list-tags
+        # 2. skopeo inspect
+        mock_list_tags = MagicMock()
+        mock_list_tags.stdout = json.dumps({"Tags": ["1", "1.10", "1.10.4", "latest"]})
+
+        mock_inspect = MagicMock()
+        mock_inspect.stdout = json.dumps(
+            {"RepoTags": ["1", "1.10", "1.10.4", "latest"]}
+        )
+
+        mock_run.side_effect = [mock_list_tags, mock_inspect]
+
+        client = MockRegistryClient()
+        analyzer = VersioningAnalyzer()
+        report = analyzer.analyze(client, "library/test", "1")
+        analyzer.validate(report)
+
+        assert "release_lines" in report
+        assert report["release_lines"] == ["1", "1.10", "1.10.4"]
+        assert "release_line" not in report
+        assert mock_run.call_count == 2

@@ -310,7 +310,7 @@ header h2 {
             <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">HIGH</strong><br>
             <!-- prettier-ignore-start -->
             <span style="font-size: 2rem; font-weight: bold; line-height: 1; color: var(--pico-del-color);">
-                17
+                18
             </span>
             <!-- prettier-ignore-end -->
         </div>
@@ -681,6 +681,47 @@ header h2 {
         
     
         
+            
+
+            
+                
+                
+                <div style="margin-top: 1rem; margin-bottom: 1rem;">
+                    <h5 style="margin-bottom: 0.5rem; color: var(--pico-secondary);">usr/local/bin/trivy</h5>
+                    <div class="overflow-auto">
+                        <table class="striped">
+                            <thead>
+                                <tr>
+                                    <th>Severity</th>
+                                    <th>ID</th>
+                                    <th>Package</th>
+                                    <th>Fixed In</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>
+                                        
+                                        <span class="badge ">
+    HIGH
+</span>
+                                    </td>
+                                    <td><code>CVE-2025-15558</code></td>
+                                    <td>
+                                        <strong>github.com/docker/cli</strong><br>
+                                        <small>v29.1.1+incompatible</small>
+                                    </td>
+                                    <td>29.2.0</td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+            
+        
     
     
 
@@ -805,7 +846,7 @@ header h2 {
                 <td><code>org.opencontainers.image.revision</code></td>
                 <td>
                     
-                        fd24eb99c7ca6646c3fd7b72294cb49d006df298
+                        42459a3b2e7b9858704ae7c6759d76db8e209274
                     
                 </td>
             </tr>
@@ -815,7 +856,7 @@ header h2 {
                 <td><code>org.opencontainers.image.created</code></td>
                 <td>
                     
-                        2026-03-04T19:14:02.753Z
+                        2026-03-05T10:51:28.093Z
                     
                 </td>
             </tr>
@@ -878,7 +919,8 @@ header h2 {
     <header>
         <h3 style="color: #ef4444; margin: 0;">⚠️ dockle Analyzer Error</h3>
     </header>
-    <p><strong>validation:</strong> Dockle execution failed. Ensure dockle is installed and in PATH.</p>
+    <p><strong>validation:</strong> Failed to parse dockle output: 2026-03-05T15:34:06.942+0100	[31mFATAL[0m	unable to initialize a image struct: failed to initialize source: failed to initialize: choosing image instance: no image found in image index for architecture &#34;arm64&#34;, variant &#34;v8&#34;, OS &#34;linux&#34;
+</p>
 </article>
 
         

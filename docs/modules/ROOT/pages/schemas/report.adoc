@@ -12,6 +12,7 @@
 ** [[properties_request_properties_registry]]**`registry`** *(string, required)*: Resolved registry hostname (e.g. registry-1.docker.io).
 ** [[properties_request_properties_repository]]**`repository`** *(string, required)*: Full repository path (e.g. library/nginx).
 ** [[properties_request_properties_tag]]**`tag`** *(string, required)*: Image tag that was analyzed.
+** [[properties_request_properties_digest]]**`digest`** *(string)*: Resolved image manifest digest (e.g. sha256-xxx), if available.
 ** [[properties_request_properties_analyzers]]**`analyzers`** *(array, required)*: List of analyzer names that were executed.
 *** [[properties_request_properties_analyzers_items]]**Items** *(string)*
 ** [[properties_request_properties_timestamp]]**`timestamp`** *(string, format: date-time, required)*: ISO 8601 UTC timestamp of the analysis.

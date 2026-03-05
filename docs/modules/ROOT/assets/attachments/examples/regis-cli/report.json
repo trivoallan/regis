@@ -1,10 +1,11 @@
 {
-  "version": "0.8.0",
+  "version": "0.12.0",
   "request": {
     "url": "ghcr.io/trivoallan/regis-cli:latest",
     "registry": "ghcr.io",
     "repository": "trivoallan/regis-cli",
     "tag": "latest",
+    "digest": "sha256-a1b4f6ba7c5d08f23e089a2fdb4c9d465bdfa3808fc1d3b40d0ad43d8ca2c5cf",
     "analyzers": [
       "dockle",
       "endoflife",
@@ -19,14 +20,14 @@
       "trivy",
       "versioning"
     ],
-    "timestamp": "2026-03-04T19:22:52.619886+00:00"
+    "timestamp": "2026-03-05T14:35:29.071050+00:00"
   },
   "results": {
     "dockle": {
       "analyzer": "dockle",
       "error": {
         "type": "validation",
-        "message": "Dockle execution failed. Ensure dockle is installed and in PATH."
+        "message": "Failed to parse dockle output: 2026-03-05T15:34:06.942+0100\t\u001b[31mFATAL\u001b[0m\tunable to initialize a image struct: failed to initialize source: failed to initialize: choosing image instance: no image found in image index for architecture \"arm64\", variant \"v8\", OS \"linux\"\n"
       }
     },
     "endoflife": {
@@ -44,7 +45,7 @@
       "analyzer": "freshness",
       "repository": "trivoallan/regis-cli",
       "tag": "latest",
-      "tag_created": "2026-03-04T19:14:32.663169564Z",
+      "tag_created": "2026-03-05T10:51:49.930566144Z",
       "latest_created": null,
       "age_days": 0,
       "behind_latest_days": null,
@@ -250,12 +251,12 @@
         {
           "type": "oci-annotation",
           "key": "org.opencontainers.image.revision",
-          "value": "fd24eb99c7ca6646c3fd7b72294cb49d006df298"
+          "value": "42459a3b2e7b9858704ae7c6759d76db8e209274"
         },
         {
           "type": "oci-annotation",
           "key": "org.opencontainers.image.created",
-          "value": "2026-03-04T19:14:02.753Z"
+          "value": "2026-03-05T10:51:28.093Z"
         }
       ]
     },
@@ -269,8 +270,8 @@
       "total_components": 686,
       "component_types": {
         "library": 683,
-        "operating-system": 1,
-        "application": 2
+        "application": 2,
+        "operating-system": 1
       },
       "total_dependencies": 687,
       "licenses": [
@@ -453,10 +454,10 @@
       ],
       "components": [
         {
-          "name": "github.com/moby/docker-image-spec",
-          "version": "v1.3.1",
+          "name": "github.com/docker/distribution",
+          "version": "v2.8.3+incompatible",
           "type": "library",
-          "purl": "pkg:golang/github.com/moby/docker-image-spec@v1.3.1",
+          "purl": "pkg:golang/github.com/docker/distribution@v2.8.3%2Bincompatible",
           "licenses": []
         },
         {
@@ -467,24 +468,31 @@
           "licenses": []
         },
         {
+          "name": "github.com/go-logr/stdr",
+          "version": "v1.2.2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/go-logr/stdr@v1.2.2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/docker/go-units",
+          "version": "v0.5.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/docker/go-units@v0.5.0",
+          "licenses": []
+        },
+        {
+          "name": "github.com/felixge/httpsnoop",
+          "version": "v1.0.4",
+          "type": "library",
+          "purl": "pkg:golang/github.com/felixge/httpsnoop@v1.0.4",
+          "licenses": []
+        },
+        {
           "name": "github.com/hashicorp/errwrap",
           "version": "v1.1.0",
           "type": "library",
           "purl": "pkg:golang/github.com/hashicorp/errwrap@v1.1.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/toqueteos/webbrowser",
-          "version": "v1.2.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/toqueteos/webbrowser@v1.2.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/stretchr/objx",
-          "version": "v0.5.2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/stretchr/objx@v0.5.2",
           "licenses": []
         },
         {
@@ -495,6 +503,41 @@
           "licenses": []
         },
         {
+          "name": "github.com/pkg/errors",
+          "version": "v0.9.1",
+          "type": "library",
+          "purl": "pkg:golang/github.com/pkg/errors@v0.9.1",
+          "licenses": []
+        },
+        {
+          "name": "gopkg.in/yaml.v3",
+          "version": "v3.0.1",
+          "type": "library",
+          "purl": "pkg:golang/gopkg.in/yaml.v3@v3.0.1",
+          "licenses": []
+        },
+        {
+          "name": "github.com/gogo/protobuf",
+          "version": "v1.3.2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/gogo/protobuf@v1.3.2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/hashicorp/go-multierror",
+          "version": "v1.1.1",
+          "type": "library",
+          "purl": "pkg:golang/github.com/hashicorp/go-multierror@v1.1.1",
+          "licenses": []
+        },
+        {
+          "name": "github.com/davecgh/go-spew",
+          "version": "v1.1.2-0.20180830191138-d8f796af33cc",
+          "type": "library",
+          "purl": "pkg:golang/github.com/davecgh/go-spew@v1.1.2-0.20180830191138-d8f796af33cc",
+          "licenses": []
+        },
+        {
           "name": "github.com/opencontainers/go-digest",
           "version": "v1.0.0",
           "type": "library",
@@ -502,38 +545,10 @@
           "licenses": []
         },
         {
-          "name": "github.com/google/uuid",
-          "version": "v1.6.0",
+          "name": "github.com/modern-go/concurrent",
+          "version": "v0.0.0-20180306012644-bacd9c7ef1dd",
           "type": "library",
-          "purl": "pkg:golang/github.com/google/uuid@v1.6.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/pmezard/go-difflib",
-          "version": "v1.0.1-0.20181226105442-5d4384ee4fb2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/pmezard/go-difflib@v1.0.1-0.20181226105442-5d4384ee4fb2",
-          "licenses": []
-        },
-        {
-          "name": "github.com/russross/blackfriday/v2",
-          "version": "v2.1.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/russross/blackfriday/v2@v2.1.0",
-          "licenses": []
-        },
-        {
-          "name": "debian",
-          "version": "13.3",
-          "type": "operating-system",
-          "purl": null,
-          "licenses": []
-        },
-        {
-          "name": "github.com/stretchr/objx",
-          "version": "v0.5.2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/stretchr/objx@v0.5.2",
+          "purl": "pkg:golang/github.com/modern-go/concurrent@v0.0.0-20180306012644-bacd9c7ef1dd",
           "licenses": []
         },
         {
@@ -544,40 +559,47 @@
           "licenses": []
         },
         {
-          "name": "github.com/pkg/errors",
-          "version": "v0.9.1",
-          "type": "library",
-          "purl": "pkg:golang/github.com/pkg/errors@v0.9.1",
+          "name": "usr/local/bin/trivy",
+          "version": null,
+          "type": "application",
+          "purl": null,
           "licenses": []
         },
         {
-          "name": "github.com/knqyf263/nested",
-          "version": "v0.0.1",
+          "name": "github.com/moby/docker-image-spec",
+          "version": "v1.3.1",
           "type": "library",
-          "purl": "pkg:golang/github.com/knqyf263/nested@v0.0.1",
+          "purl": "pkg:golang/github.com/moby/docker-image-spec@v1.3.1",
           "licenses": []
         },
         {
-          "name": "github.com/go-logr/stdr",
-          "version": "v1.2.2",
+          "name": "github.com/json-iterator/go",
+          "version": "v1.1.12",
           "type": "library",
-          "purl": "pkg:golang/github.com/go-logr/stdr@v1.2.2",
+          "purl": "pkg:golang/github.com/json-iterator/go@v1.1.12",
           "licenses": []
         },
         {
           "name": "regis-cli",
-          "version": "0.8.0",
+          "version": "0.12.0",
           "type": "library",
-          "purl": "pkg:pypi/regis-cli@0.8.0",
+          "purl": "pkg:pypi/regis-cli@0.12.0",
           "licenses": [
             "MIT"
           ]
         },
         {
-          "name": "github.com/pkg/errors",
-          "version": "v0.9.1",
+          "name": "github.com/russross/blackfriday/v2",
+          "version": "v2.1.0",
           "type": "library",
-          "purl": "pkg:golang/github.com/pkg/errors@v0.9.1",
+          "purl": "pkg:golang/github.com/russross/blackfriday/v2@v2.1.0",
+          "licenses": []
+        },
+        {
+          "name": "github.com/russross/blackfriday/v2",
+          "version": "v2.1.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/russross/blackfriday/v2@v2.1.0",
           "licenses": []
         },
         {
@@ -585,41 +607,6 @@
           "version": "v0.0.1",
           "type": "library",
           "purl": "pkg:golang/github.com/knqyf263/nested@v0.0.1",
-          "licenses": []
-        },
-        {
-          "name": "github.com/gogo/protobuf",
-          "version": "v1.3.2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/gogo/protobuf@v1.3.2",
-          "licenses": []
-        },
-        {
-          "name": "github.com/docker/distribution",
-          "version": "v2.8.3+incompatible",
-          "type": "library",
-          "purl": "pkg:golang/github.com/docker/distribution@v2.8.3%2Bincompatible",
-          "licenses": []
-        },
-        {
-          "name": "github.com/distribution/reference",
-          "version": "v0.6.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/distribution/reference@v0.6.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/hashicorp/go-multierror",
-          "version": "v1.1.1",
-          "type": "library",
-          "purl": "pkg:golang/github.com/hashicorp/go-multierror@v1.1.1",
-          "licenses": []
-        },
-        {
-          "name": "github.com/gogo/protobuf",
-          "version": "v1.3.2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/gogo/protobuf@v1.3.2",
           "licenses": []
         },
         {
@@ -637,145 +624,10 @@
           "licenses": []
         },
         {
-          "name": "github.com/hashicorp/errwrap",
-          "version": "v1.1.0",
+          "name": "github.com/toqueteos/webbrowser",
+          "version": "v1.2.0",
           "type": "library",
-          "purl": "pkg:golang/github.com/hashicorp/errwrap@v1.1.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/moby/docker-image-spec",
-          "version": "v1.3.1",
-          "type": "library",
-          "purl": "pkg:golang/github.com/moby/docker-image-spec@v1.3.1",
-          "licenses": []
-        },
-        {
-          "name": "gopkg.in/yaml.v3",
-          "version": "v3.0.1",
-          "type": "library",
-          "purl": "pkg:golang/gopkg.in/yaml.v3@v3.0.1",
-          "licenses": []
-        },
-        {
-          "name": "github.com/docker/distribution",
-          "version": "v2.8.3+incompatible",
-          "type": "library",
-          "purl": "pkg:golang/github.com/docker/distribution@v2.8.3%2Bincompatible",
-          "licenses": []
-        },
-        {
-          "name": "github.com/docker/go-units",
-          "version": "v0.5.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/docker/go-units@v0.5.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/json-iterator/go",
-          "version": "v1.1.12",
-          "type": "library",
-          "purl": "pkg:golang/github.com/json-iterator/go@v1.1.12",
-          "licenses": []
-        },
-        {
-          "name": "github.com/modern-go/concurrent",
-          "version": "v0.0.0-20180306012644-bacd9c7ef1dd",
-          "type": "library",
-          "purl": "pkg:golang/github.com/modern-go/concurrent@v0.0.0-20180306012644-bacd9c7ef1dd",
-          "licenses": []
-        },
-        {
-          "name": "github.com/felixge/httpsnoop",
-          "version": "v1.0.4",
-          "type": "library",
-          "purl": "pkg:golang/github.com/felixge/httpsnoop@v1.0.4",
-          "licenses": []
-        },
-        {
-          "name": "github.com/json-iterator/go",
-          "version": "v1.1.12",
-          "type": "library",
-          "purl": "pkg:golang/github.com/json-iterator/go@v1.1.12",
-          "licenses": []
-        },
-        {
-          "name": "github.com/go-logr/stdr",
-          "version": "v1.2.2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/go-logr/stdr@v1.2.2",
-          "licenses": []
-        },
-        {
-          "name": "github.com/opencontainers/go-digest",
-          "version": "v1.0.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/opencontainers/go-digest@v1.0.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/pmezard/go-difflib",
-          "version": "v1.0.1-0.20181226105442-5d4384ee4fb2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/pmezard/go-difflib@v1.0.1-0.20181226105442-5d4384ee4fb2",
-          "licenses": []
-        },
-        {
-          "name": "github.com/felixge/httpsnoop",
-          "version": "v1.0.4",
-          "type": "library",
-          "purl": "pkg:golang/github.com/felixge/httpsnoop@v1.0.4",
-          "licenses": []
-        },
-        {
-          "name": "github.com/moby/sys/mountinfo",
-          "version": "v0.7.2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/moby/sys/mountinfo@v0.7.2",
-          "licenses": []
-        },
-        {
-          "name": "github.com/davecgh/go-spew",
-          "version": "v1.1.2-0.20180830191138-d8f796af33cc",
-          "type": "library",
-          "purl": "pkg:golang/github.com/davecgh/go-spew@v1.1.2-0.20180830191138-d8f796af33cc",
-          "licenses": []
-        },
-        {
-          "name": "regis-cli",
-          "version": "0.8.0",
-          "type": "library",
-          "purl": "pkg:pypi/regis-cli@0.8.0",
-          "licenses": [
-            "MIT"
-          ]
-        },
-        {
-          "name": "github.com/russross/blackfriday/v2",
-          "version": "v2.1.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/russross/blackfriday/v2@v2.1.0",
-          "licenses": []
-        },
-        {
-          "name": "usr/local/bin/trivy",
-          "version": null,
-          "type": "application",
-          "purl": null,
-          "licenses": []
-        },
-        {
-          "name": "github.com/modern-go/concurrent",
-          "version": "v0.0.0-20180306012644-bacd9c7ef1dd",
-          "type": "library",
-          "purl": "pkg:golang/github.com/modern-go/concurrent@v0.0.0-20180306012644-bacd9c7ef1dd",
-          "licenses": []
-        },
-        {
-          "name": "github.com/google/uuid",
-          "version": "v1.6.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/google/uuid@v1.6.0",
+          "purl": "pkg:golang/github.com/toqueteos/webbrowser@v1.2.0",
           "licenses": []
         },
         {
@@ -793,10 +645,159 @@
           "licenses": []
         },
         {
+          "name": "github.com/knqyf263/nested",
+          "version": "v0.0.1",
+          "type": "library",
+          "purl": "pkg:golang/github.com/knqyf263/nested@v0.0.1",
+          "licenses": []
+        },
+        {
+          "name": "github.com/google/uuid",
+          "version": "v1.6.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/google/uuid@v1.6.0",
+          "licenses": []
+        },
+        {
+          "name": "github.com/moby/sys/mountinfo",
+          "version": "v0.7.2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/moby/sys/mountinfo@v0.7.2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/moby/docker-image-spec",
+          "version": "v1.3.1",
+          "type": "library",
+          "purl": "pkg:golang/github.com/moby/docker-image-spec@v1.3.1",
+          "licenses": []
+        },
+        {
+          "name": "github.com/opencontainers/go-digest",
+          "version": "v1.0.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/opencontainers/go-digest@v1.0.0",
+          "licenses": []
+        },
+        {
+          "name": "debian",
+          "version": "13.3",
+          "type": "operating-system",
+          "purl": null,
+          "licenses": []
+        },
+        {
+          "name": "github.com/gogo/protobuf",
+          "version": "v1.3.2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/gogo/protobuf@v1.3.2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/felixge/httpsnoop",
+          "version": "v1.0.4",
+          "type": "library",
+          "purl": "pkg:golang/github.com/felixge/httpsnoop@v1.0.4",
+          "licenses": []
+        },
+        {
+          "name": "github.com/modern-go/concurrent",
+          "version": "v0.0.0-20180306012644-bacd9c7ef1dd",
+          "type": "library",
+          "purl": "pkg:golang/github.com/modern-go/concurrent@v0.0.0-20180306012644-bacd9c7ef1dd",
+          "licenses": []
+        },
+        {
           "name": "gopkg.in/yaml.v3",
           "version": "v3.0.1",
           "type": "library",
           "purl": "pkg:golang/gopkg.in/yaml.v3@v3.0.1",
+          "licenses": []
+        },
+        {
+          "name": "github.com/hashicorp/errwrap",
+          "version": "v1.1.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/hashicorp/errwrap@v1.1.0",
+          "licenses": []
+        },
+        {
+          "name": "github.com/docker/distribution",
+          "version": "v2.8.3+incompatible",
+          "type": "library",
+          "purl": "pkg:golang/github.com/docker/distribution@v2.8.3%2Bincompatible",
+          "licenses": []
+        },
+        {
+          "name": "github.com/google/uuid",
+          "version": "v1.6.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/google/uuid@v1.6.0",
+          "licenses": []
+        },
+        {
+          "name": "regis-cli",
+          "version": "0.12.0",
+          "type": "library",
+          "purl": "pkg:pypi/regis-cli@0.12.0",
+          "licenses": [
+            "MIT"
+          ]
+        },
+        {
+          "name": "github.com/go-logr/stdr",
+          "version": "v1.2.2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/go-logr/stdr@v1.2.2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/pmezard/go-difflib",
+          "version": "v1.0.1-0.20181226105442-5d4384ee4fb2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/pmezard/go-difflib@v1.0.1-0.20181226105442-5d4384ee4fb2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/stretchr/objx",
+          "version": "v0.5.2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/stretchr/objx@v0.5.2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/pkg/errors",
+          "version": "v0.9.1",
+          "type": "library",
+          "purl": "pkg:golang/github.com/pkg/errors@v0.9.1",
+          "licenses": []
+        },
+        {
+          "name": "github.com/stretchr/objx",
+          "version": "v0.5.2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/stretchr/objx@v0.5.2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/json-iterator/go",
+          "version": "v1.1.12",
+          "type": "library",
+          "purl": "pkg:golang/github.com/json-iterator/go@v1.1.12",
+          "licenses": []
+        },
+        {
+          "name": "github.com/distribution/reference",
+          "version": "v0.6.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/distribution/reference@v0.6.0",
+          "licenses": []
+        },
+        {
+          "name": "github.com/pmezard/go-difflib",
+          "version": "v1.0.1-0.20181226105442-5d4384ee4fb2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/pmezard/go-difflib@v1.0.1-0.20181226105442-5d4384ee4fb2",
           "licenses": []
         },
         {
@@ -6371,9 +6372,9 @@
         },
         {
           "name": "chardet",
-          "version": "7.0.0",
+          "version": "7.0.1",
           "type": "library",
-          "purl": "pkg:pypi/chardet@7.0.0",
+          "purl": "pkg:pypi/chardet@7.0.1",
           "licenses": [
             "MIT"
           ]
@@ -6523,9 +6524,9 @@
         },
         {
           "name": "referencing",
-          "version": "0.37.0",
+          "version": "0.36.2",
           "type": "library",
-          "purl": "pkg:pypi/referencing@0.37.0",
+          "purl": "pkg:pypi/referencing@0.36.2",
           "licenses": [
             "MIT"
           ]
@@ -6628,7 +6629,7 @@
       "repository": "trivoallan/regis-cli",
       "tag": "latest",
       "multi_arch": true,
-      "total_compressed_bytes": 214624391,
+      "total_compressed_bytes": 214681173,
       "total_compressed_human": "204.7 MB",
       "layer_count": 14,
       "config_size_bytes": 0,
@@ -6636,13 +6637,13 @@
       "platforms": [
         {
           "platform": "linux/amd64",
-          "compressed_bytes": 214624391,
+          "compressed_bytes": 214681173,
           "compressed_human": "204.7 MB",
           "layer_count": 14
         },
         {
           "platform": "unknown/unknown",
-          "compressed_bytes": 39342,
+          "compressed_bytes": 39276,
           "compressed_human": "38.4 KB",
           "layer_count": 1
         }
@@ -6657,17 +6658,17 @@
         {
           "architecture": "amd64",
           "os": "linux",
-          "digest": "sha256:7f24b3ff0ba02a6de28983ceaf319f2acff83764ab6683121121107c19eaa8d3",
-          "created": "2026-03-04T19:14:32.663169564Z",
+          "digest": "sha256:b2a530321971a3a41ab5ba17a4234e2d0876c7f61cc747feabb325f29f1528f8",
+          "created": "2026-03-05T10:51:49.930566144Z",
           "labels": {
-            "org.opencontainers.image.created": "2026-03-04T19:14:02.753Z",
-            "org.opencontainers.image.description": "",
+            "org.opencontainers.image.created": "2026-03-05T10:51:28.093Z",
+            "org.opencontainers.image.description": "regis-cli is a command-line tool designed to analyze container image registries, evaluate security playbooks, and generate comprehensive reports. It provides deep visibility into container image metadata and security posture, enabling automated policy enforcement in CI/CD environments.",
             "org.opencontainers.image.licenses": "",
-            "org.opencontainers.image.revision": "fd24eb99c7ca6646c3fd7b72294cb49d006df298",
+            "org.opencontainers.image.revision": "42459a3b2e7b9858704ae7c6759d76db8e209274",
             "org.opencontainers.image.source": "https://github.com/trivoallan/regis-cli",
             "org.opencontainers.image.title": "regis-cli",
             "org.opencontainers.image.url": "https://github.com/trivoallan/regis-cli",
-            "org.opencontainers.image.version": "0.8.0"
+            "org.opencontainers.image.version": "0.12.0"
           },
           "layers_count": 14,
           "variant": null,
@@ -6676,7 +6677,7 @@
         {
           "architecture": "unknown",
           "os": "unknown",
-          "digest": "sha256:885ad41ec3cfa40d322b7870bfafecd298a888a87774d7822ca5c05098404921",
+          "digest": "sha256:aac8055ee1819c6fe5e1e751c930cef414d5f139a08308ae593e729c5a233854",
           "created": null,
           "labels": {},
           "layers_count": 1,
@@ -6746,7 +6747,30 @@
         "sha-e5b0e77",
         "0.8.0",
         "0.8",
-        "sha-fd24eb9"
+        "sha-fd24eb9",
+        "0.9.0",
+        "0.9",
+        "sha-57f48a3",
+        "sha-08211a2",
+        "sha-9393b48",
+        "sha-a48b4b2",
+        "sha-abd95d2",
+        "0.10.0",
+        "0.10",
+        "sha-f04d633",
+        "sha-340f44d",
+        "sha-f18e91b",
+        "sha-ef81c05",
+        "sha-1664655",
+        "sha-9898bd8",
+        "0.11.0",
+        "0.11",
+        "sha-9aaef15",
+        "sha-f865cb0",
+        "sha-9a7914f",
+        "0.12.0",
+        "0.12",
+        "sha-42459a3"
       ]
     },
     "trivy": {
@@ -6754,12 +6778,12 @@
       "repository": "trivoallan/regis-cli",
       "tag": "latest",
       "trivy_version": "2",
-      "vulnerability_count": 202,
+      "vulnerability_count": 204,
       "critical_count": 1,
-      "high_count": 17,
+      "high_count": 18,
       "medium_count": 51,
       "low_count": 133,
-      "unknown_count": 0,
+      "unknown_count": 1,
       "targets": [
         {
           "Target": "ghcr.io/trivoallan/regis-cli:latest (debian 13.3)",
@@ -6916,6 +6940,15 @@
               "Severity": "LOW",
               "Title": "gnupg: denial of service issue (resource consumption) using compressed packets",
               "Description": "GnuPG can be made to spin on a relatively small input by (for example) crafting a public key with thousands of signatures attached, compressed down to just a few KB."
+            },
+            {
+              "VulnerabilityID": "CVE-2026-2219",
+              "PkgName": "dpkg",
+              "InstalledVersion": "1.22.21",
+              "FixedVersion": "",
+              "Severity": "UNKNOWN",
+              "Title": "[dpkg-deb: Persistent hang on malformed .deb archives (DoS)]",
+              "Description": ""
             },
             {
               "VulnerabilityID": "CVE-2018-1000021",
@@ -8596,62 +8629,84 @@
         },
         {
           "Target": "usr/local/bin/trivy",
-          "Vulnerabilities": null
+          "Vulnerabilities": [
+            {
+              "VulnerabilityID": "CVE-2025-15558",
+              "PkgName": "github.com/docker/cli",
+              "InstalledVersion": "v29.1.1+incompatible",
+              "FixedVersion": "29.2.0",
+              "Severity": "HIGH",
+              "Title": "Docker CLI Plugins: Uncontrolled Search Path Element Leads to Local Privilege Escalation on Windows",
+              "Description": "Docker CLI for Windows searches for plugin binaries in C:\\ProgramData\\Docker\\cli-plugins, a directory that does not exist by default. A low-privileged attacker can create this directory and place malicious CLI plugin binaries (docker-compose.exe, docker-buildx.exe, etc.) that are executed when a victim user opens Docker Desktop or invokes Docker CLI plugin features, and allow privilege-escalation if the docker CLI is executed as a privileged user.\n\nThis issue affects Docker CLI: through 29.1.5 and Windows binaries acting as a CLI-plugin manager using the  github.com/docker/cli/cli-plugins/manager https://pkg.go.dev/github.com/docker/cli@v29.1.5+incompatible/cli-plugins/manager  package, such as Docker Compose.\n\nThis issue does not impact non-Windows binaries, and projects not using the plugin-manager code."
+            }
+          ]
         }
       ]
     },
     "versioning": {
       "analyzer": "versioning",
       "repository": "trivoallan/regis-cli",
-      "total_tags": 62,
+      "total_tags": 85,
       "dominant_pattern": "named",
-      "semver_compliant_percentage": 9.7,
+      "semver_compliant_percentage": 11.8,
       "patterns": [
         {
           "pattern": "named",
-          "count": 50,
-          "percentage": 80.6,
+          "count": 65,
+          "percentage": 76.5,
           "examples": [
             "latest",
             "main",
+            "sha-08211a2",
+            "sha-1664655",
             "sha-194d574",
             "sha-21b7549",
             "sha-2823f64",
             "sha-295db88",
             "sha-2bffefd",
-            "sha-342d0b8",
-            "sha-376c16e",
-            "sha-391d74f"
+            "sha-340f44d"
           ]
         },
         {
           "pattern": "numeric",
-          "count": 6,
-          "percentage": 9.7,
+          "count": 10,
+          "percentage": 11.8,
           "examples": [
+            "0.10",
+            "0.11",
+            "0.12",
             "0.2",
             "0.3",
             "0.4",
             "0.5",
             "0.7",
-            "0.8"
+            "0.8",
+            "0.9"
           ]
         },
         {
           "pattern": "semver",
-          "count": 6,
-          "percentage": 9.7,
+          "count": 10,
+          "percentage": 11.8,
           "examples": [
+            "0.10.0",
+            "0.11.0",
+            "0.12.0",
             "0.2.2",
             "0.3.0",
             "0.4.0",
             "0.5.0",
             "0.7.0",
-            "0.8.0"
+            "0.8.0",
+            "0.9.0"
           ]
         }
       ],
-      "variants": []
+      "variants": [],
+      "release_lines": [
+        "0.12",
+        "0.12.0"
+      ]
     }
   },
   "playbooks": [
@@ -8758,8 +8813,8 @@
                   "options": {
                     "subvalue": "{{ request.timestamp | format_time }}"
                   },
-                  "resolved_value": "2026-03-04",
-                  "resolved_subvalue": "19:22:52"
+                  "resolved_value": "2026-03-05",
+                  "resolved_subvalue": "14:35:29"
                 },
                 {
                   "label": "Triggered by",
@@ -8966,7 +9021,7 @@
                   "passed": false,
                   "status": "failed",
                   "condition": "{\"==\": [{\"var\": \"results.trivy.high_count\"}, 0]}",
-                  "details": "results.trivy.high_count (17) == 0"
+                  "details": "results.trivy.high_count (18) == 0"
                 },
                 {
                   "name": "age",
@@ -9208,12 +9263,12 @@
                 {
                   "label": "Pulls",
                   "value": "{{ results.popularity.pull_count | format_number }}",
-                  "resolved_value": "{{ results.popularity.pull_count | format_number }}"
+                  "resolved_value": "None"
                 },
                 {
                   "label": "Stars",
                   "value": "{{ results.popularity.star_count | format_number }}",
-                  "resolved_value": "{{ results.popularity.star_count | format_number }}"
+                  "resolved_value": "None"
                 },
                 {
                   "template": "analyzers/popularity/table.html",
@@ -9336,13 +9391,34 @@
         }
       ],
       "slug": null,
+      "labels": [
+        "security::critical",
+        "regis::fail"
+      ],
+      "mr_description_checklists": [
+        {
+          "title": "📝 Review Checklist",
+          "items": [
+            {
+              "label": "Revue de sécurité réalisée",
+              "checked": false
+            },
+            {
+              "label": "Image issue d'un registre de confiance",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "mr_templates": [
+        {
+          "url": "https://github.com/trivoallan/regis-cli",
+          "directory": "cookiecutters/mr-evidence"
+        }
+      ],
       "_meta": {
         "source_name": "default"
-      },
-      "labels": [
-        "regis::fail",
-        "security::critical"
-      ]
+      }
     }
   ],
   "playbook": {
@@ -9448,8 +9524,8 @@
                 "options": {
                   "subvalue": "{{ request.timestamp | format_time }}"
                 },
-                "resolved_value": "2026-03-04",
-                "resolved_subvalue": "19:22:52"
+                "resolved_value": "2026-03-05",
+                "resolved_subvalue": "14:35:29"
               },
               {
                 "label": "Triggered by",
@@ -9656,7 +9732,7 @@
                 "passed": false,
                 "status": "failed",
                 "condition": "{\"==\": [{\"var\": \"results.trivy.high_count\"}, 0]}",
-                "details": "results.trivy.high_count (17) == 0"
+                "details": "results.trivy.high_count (18) == 0"
               },
               {
                 "name": "age",
@@ -9898,12 +9974,12 @@
               {
                 "label": "Pulls",
                 "value": "{{ results.popularity.pull_count | format_number }}",
-                "resolved_value": "{{ results.popularity.pull_count | format_number }}"
+                "resolved_value": "None"
               },
               {
                 "label": "Stars",
                 "value": "{{ results.popularity.star_count | format_number }}",
-                "resolved_value": "{{ results.popularity.star_count | format_number }}"
+                "resolved_value": "None"
               },
               {
                 "template": "analyzers/popularity/table.html",
@@ -10026,12 +10102,33 @@
       }
     ],
     "slug": null,
+    "labels": [
+      "security::critical",
+      "regis::fail"
+    ],
+    "mr_description_checklists": [
+      {
+        "title": "📝 Review Checklist",
+        "items": [
+          {
+            "label": "Revue de sécurité réalisée",
+            "checked": false
+          },
+          {
+            "label": "Image issue d'un registre de confiance",
+            "checked": true
+          }
+        ]
+      }
+    ],
+    "mr_templates": [
+      {
+        "url": "https://github.com/trivoallan/regis-cli",
+        "directory": "cookiecutters/mr-evidence"
+      }
+    ],
     "_meta": {
       "source_name": "default"
-    },
-    "labels": [
-      "regis::fail",
-      "security::critical"
-    ]
+    }
   }
 }

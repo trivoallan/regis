@@ -237,7 +237,92 @@ class VersioningAnalyzer(BaseAnalyzer):
         )
         semver_compliant = round(semver_count / len(tags) * 100, 1) if tags else 0
 
-        return {
+        # Determine release lines if the current tag is an alias
+        current_pattern = _classify_tag(tag)
+        release_lines = []
+        if current_pattern not in ("semver", "semver-prerelease", "semver-variant"):
+            inspect_target = f"docker://{registry}/{repository}:{tag}"
+
+            inspect_cmd = ["skopeo", "inspect", inspect_target]
+            if platform:
+                try:
+                    os_str, arch = platform.split("/", 1)
+                    inspect_cmd.extend(
+                        ["--override-os", os_str, "--override-arch", arch]
+                    )
+                except ValueError:
+                    logger.debug(
+                        "Invalid platform format %s, ignoring for inspect", platform
+                    )
+            else:
+                # Default to linux/amd64 to avoid host architecture mismatch for multi-arch images
+                inspect_cmd.extend(
+                    ["--override-os", "linux", "--override-arch", "amd64"]
+                )
+
+            if client.username and client.password:
+                inspect_cmd.extend(["--creds", f"{client.username}:{client.password}"])
+
+            try:
+                res_inspect = subprocess.run(
+                    inspect_cmd,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                )
+                inspect_data = json.loads(res_inspect.stdout)
+                repo_tags = inspect_data.get("RepoTags", [])
+
+                # Filter to numeric release tags (semver-like)
+                # We want 3, 3.14, 3.14.3 etc.
+                numeric_tags = []
+                for t in repo_tags:
+                    p = _classify_tag(t)
+                    if p in ("semver", "numeric"):
+                        # Ensure it's not a variant or prerelease (handled by _classify_tag)
+                        numeric_tags.append(t)
+
+                if numeric_tags:
+                    # Sort to find the most specific one
+                    # (3 < 3.14 < 3.14.3)
+                    numeric_tags.sort(
+                        key=lambda x: [
+                            int(c)
+                            for c in x.lstrip("v").split(".")
+                            if x.lstrip("v").replace(".", "").isdigit()
+                        ]
+                    )
+
+                    most_specific = numeric_tags[-1]
+                    # Identify hierarchy: if most specific is 3.14.3, we want [3, 3.14, 3.14.3]
+                    # But only if those tags actually exist in numeric_tags
+                    parts = most_specific.lstrip("v").split(".")
+                    hierarchy = []
+                    for i in range(1, len(parts) + 1):
+                        prefix = ".".join(parts[:i])
+                        # Handle "v" prefix if present
+                        if f"v{prefix}" in numeric_tags:
+                            hierarchy.append(f"v{prefix}")
+                        elif prefix in numeric_tags:
+                            hierarchy.append(prefix)
+
+                    release_lines = hierarchy
+
+                # Also fallback if no numeric hierarchy found
+                if not release_lines:
+                    semver_tags = [
+                        t
+                        for t in repo_tags
+                        if _classify_tag(t) in ("semver", "calver", "semver-variant")
+                    ]
+                    if semver_tags:
+                        semver_tags.sort(key=len, reverse=True)
+                        release_lines = [semver_tags[0]]
+
+            except Exception as e:
+                logger.debug("Failed to inspect %s to find release lines: %s", tag, e)
+
+        report = {
             "analyzer": self.name,
             "repository": repository,
             "total_tags": len(tags),
@@ -255,4 +340,7 @@ class VersioningAnalyzer(BaseAnalyzer):
                     variant_counts.items(), key=lambda x: x[1], reverse=True
                 )
             ],
+            "release_lines": release_lines,
         }
+
+        return report

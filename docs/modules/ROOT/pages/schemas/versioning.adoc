@@ -5,6 +5,8 @@
 * [[properties_repository]]**`repository`** *(string, required)*
 * [[properties_total_tags]]**`total_tags`** *(integer, required)*: Minimum: `0`.
 * [[properties_dominant_pattern]]**`dominant_pattern`** *(string, required)*: Must be one of: "semver", "semver-prerelease", "semver-variant", "calver", "numeric", "hash", "named", or "unknown".
+* [[properties_release_lines]]**`release_lines`** *(array)*
+** [[properties_release_lines_items]]**Items** *(string)*
 * [[properties_semver_compliant_percentage]]**`semver_compliant_percentage`** *(number, required)*: Minimum: `0`. Maximum: `100`.
 * [[properties_patterns]]**`patterns`** *(array, required)*
 ** [[properties_patterns_items]]**Items** *(object)*: Cannot contain additional properties.

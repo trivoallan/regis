@@ -434,7 +434,41 @@ RUN CMD [&#34;/bin/sh&#34;]</code></pre>
 
                                 
 
-    <p>⚠️ Dockle Error: {&#39;type&#39;: &#39;validation&#39;, &#39;message&#39;: &#39;Dockle execution failed. Ensure dockle is installed and in PATH.&#39;}</p>
+<div class="grid">
+    <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
+        <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">STATUS</strong><br>
+        
+            <span style="font-size: 2rem; font-weight: bold; line-height: 1; color: var(--pico-ins-color);">PASSED</span>
+        
+    </div>
+    
+        
+            
+        
+            
+            <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
+                <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">WARN</strong><br>
+                <span style="font-size: 2rem; font-weight: bold; line-height: 1; color: var(--pico-del-color);">
+                    2
+                </span>
+            </div>
+            
+        
+            
+            <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
+                <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">INFO</strong><br>
+                <span style="font-size: 2rem; font-weight: bold; line-height: 1; ">
+                    2
+                </span>
+            </div>
+            
+        
+            
+        
+            
+        
+    
+</div>
 
 
                                 
@@ -461,7 +495,100 @@ RUN CMD [&#34;/bin/sh&#34;]</code></pre>
 
 
 
-    <p>⚠️ Dockle Error: {&#39;type&#39;: &#39;validation&#39;, &#39;message&#39;: &#39;Dockle execution failed. Ensure dockle is installed and in PATH.&#39;}</p>
+    
+        <div class="overflow-auto">
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <th>Level</th>
+                        <th>Code</th>
+                        <th>Title / Description</th>
+                        <th>Alerts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>
+                            
+                                <span class="badge warning">Warning</span>
+                            
+                        </td>
+                        <td><code>CIS-DI-0001</code></td>
+                        <td>Create a user for the container</td>
+                        <td>
+                            
+                                <ul style="margin: 0; padding-left: 1rem; font-size: 0.9em;">
+                                
+                                    <li style="margin-bottom: 0;">Last user should not be root</li>
+                                
+                                </ul>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            
+                                <span class="badge warning">Warning</span>
+                            
+                        </td>
+                        <td><code>DKL-DI-0006</code></td>
+                        <td>Avoid latest tag</td>
+                        <td>
+                            
+                                <ul style="margin: 0; padding-left: 1rem; font-size: 0.9em;">
+                                
+                                    <li style="margin-bottom: 0;">Avoid &#39;latest&#39; tag</li>
+                                
+                                </ul>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            
+                                <span class="badge info">Info</span>
+                            
+                        </td>
+                        <td><code>CIS-DI-0005</code></td>
+                        <td>Enable Content trust for Docker</td>
+                        <td>
+                            
+                                <ul style="margin: 0; padding-left: 1rem; font-size: 0.9em;">
+                                
+                                    <li style="margin-bottom: 0;">export DOCKER_CONTENT_TRUST=1 before docker pull/build</li>
+                                
+                                </ul>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            
+                                <span class="badge info">Info</span>
+                            
+                        </td>
+                        <td><code>CIS-DI-0006</code></td>
+                        <td>Add HEALTHCHECK instruction to the container image</td>
+                        <td>
+                            
+                                <ul style="margin: 0; padding-left: 1rem; font-size: 0.9em;">
+                                
+                                    <li style="margin-bottom: 0;">not found HEALTHCHECK statement</li>
+                                
+                                </ul>
+                            
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+    
 
 
                                 
@@ -511,15 +638,6 @@ RUN CMD [&#34;/bin/sh&#34;]</code></pre>
 
     
     
-        
-            
-<article style="border-left: 5px solid #ef4444;">
-    <header>
-        <h3 style="color: #ef4444; margin: 0;">⚠️ dockle Analyzer Error</h3>
-    </header>
-    <p><strong>validation:</strong> Dockle execution failed. Ensure dockle is installed and in PATH.</p>
-</article>
-
         
     
         

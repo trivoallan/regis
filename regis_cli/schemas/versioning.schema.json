@@ -21,6 +21,10 @@
       "type": "string",
       "enum": ["semver", "semver-prerelease", "semver-variant", "calver", "numeric", "hash", "named", "unknown"]
     },
+    "release_lines": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
     "semver_compliant_percentage": {
       "type": "number",
       "minimum": 0,

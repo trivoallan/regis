@@ -56,6 +56,7 @@ def _format_output_path(template: str, report: dict[str, Any], fmt: str) -> Path
     context = {
         "repository": repo,
         "tag": req.get("tag", "latest"),
+        "digest": req.get("digest", req.get("tag", "latest")),
         "registry": req.get("registry", "unknown"),
         "timestamp": timestamp,
         "format": fmt,
@@ -185,7 +186,7 @@ main.add_command(gitlab_cmd, name="gitlab")
     "--output-dir",
     "output_dir_template",
     help="Base directory template for output files (e.g. 'reports/{repository}').",
-    default="reports/{registry}/{repository}/{tag}",
+    default="reports/{registry}/{repository}/{digest}",
 )
 @click.option(
     "--pretty/--no-pretty",
@@ -259,13 +260,32 @@ def analyze(
         err=True,
     )
 
+    from regis_cli.registry.auth import resolve_credentials
+
+    # Create the registry client early to fetch the digest.
+    username, password = resolve_credentials(ref.registry, list(auth) if auth else None)
+    client = RegistryClient(
+        registry=ref.registry,
+        repository=ref.repository,
+        username=username,
+        password=password,
+    )
+
+    try:
+        raw_digest = client.get_digest(ref.tag)
+        # Sanitize the digest for filesystem safety
+        digest = raw_digest.replace(":", "-") if raw_digest else ref.tag
+    except Exception as exc:
+        logger.debug("Failed to fetch digest: %s", exc)
+        digest = ref.tag
+
     # Select output formats.
     # JSON is always generated. HTML if --site is active.
     formats = ["json"]
     if site:
         formats.append("html")
 
-    dir_tmpl = output_dir_template or "reports/{registry}/{repository}/{tag}"
+    dir_tmpl = output_dir_template or "reports/{registry}/{repository}/{digest}"
     file_tmpl = output_template or "report.{format}"
 
     # 1. Check for cache if requested.
@@ -278,6 +298,7 @@ def analyze(
                 "registry": ref.registry,
                 "repository": ref.repository,
                 "tag": ref.tag,
+                "digest": digest,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }
         }
@@ -317,19 +338,6 @@ def analyze(
                 selected[name] = all_analyzers[name]
         else:
             selected = all_analyzers
-
-        from regis_cli.registry.auth import resolve_credentials
-
-        # Create the registry client.
-        username, password = resolve_credentials(
-            ref.registry, list(auth) if auth else None
-        )
-        client = RegistryClient(
-            registry=ref.registry,
-            repository=ref.repository,
-            username=username,
-            password=password,
-        )
 
         # Run each analyzer.
         reports: dict[str, Any] = {}
@@ -380,6 +388,7 @@ def analyze(
                 "registry": ref.registry,
                 "repository": ref.repository,
                 "tag": ref.tag,
+                "digest": digest,
                 "analyzers": sorted(reports.keys()),
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             },

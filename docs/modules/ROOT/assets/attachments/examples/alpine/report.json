@@ -1,10 +1,11 @@
 {
-  "version": "0.8.0",
+  "version": "0.12.0",
   "request": {
     "url": "alpine:latest",
     "registry": "registry-1.docker.io",
     "repository": "library/alpine",
     "tag": "latest",
+    "digest": "sha256-25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659",
     "analyzers": [
       "dockle",
       "endoflife",
@@ -19,15 +20,56 @@
       "trivy",
       "versioning"
     ],
-    "timestamp": "2026-03-04T19:17:27.303476+00:00"
+    "timestamp": "2026-03-05T14:33:50.790894+00:00"
   },
   "results": {
     "dockle": {
       "analyzer": "dockle",
-      "error": {
-        "type": "validation",
-        "message": "Dockle execution failed. Ensure dockle is installed and in PATH."
-      }
+      "repository": "library/alpine",
+      "tag": "latest",
+      "passed": true,
+      "issues_count": 4,
+      "issues_by_level": {
+        "FATAL": 0,
+        "WARN": 2,
+        "INFO": 2,
+        "SKIP": 0,
+        "PASS": 0
+      },
+      "issues": [
+        {
+          "code": "CIS-DI-0001",
+          "level": "WARN",
+          "title": "Create a user for the container",
+          "alerts": [
+            "Last user should not be root"
+          ]
+        },
+        {
+          "code": "DKL-DI-0006",
+          "level": "WARN",
+          "title": "Avoid latest tag",
+          "alerts": [
+            "Avoid 'latest' tag"
+          ]
+        },
+        {
+          "code": "CIS-DI-0005",
+          "level": "INFO",
+          "title": "Enable Content trust for Docker",
+          "alerts": [
+            "export DOCKER_CONTENT_TRUST=1 before docker pull/build"
+          ]
+        },
+        {
+          "code": "CIS-DI-0006",
+          "level": "INFO",
+          "title": "Add HEALTHCHECK instruction to the container image",
+          "alerts": [
+            "not found HEALTHCHECK statement"
+          ]
+        }
+      ]
     },
     "endoflife": {
       "analyzer": "endoflife",
@@ -46,7 +88,7 @@
       "tag": "latest",
       "tag_created": "2026-01-28T01:18:04.977843834Z",
       "latest_created": null,
-      "age_days": 35,
+      "age_days": 36,
       "behind_latest_days": null,
       "is_latest": true
     },
@@ -76,7 +118,7 @@
       "analyzer": "popularity",
       "repository": "library/alpine",
       "available": true,
-      "pull_count": 11696423002,
+      "pull_count": 11698239956,
       "star_count": 11471,
       "description": "A minimal Docker image based on Alpine Linux with a complete package index and only 5 MB in size!",
       "last_updated": "2026-01-28T04:26:42.651499Z",
@@ -847,15 +889,18 @@
           ]
         }
       ],
-      "variants": []
+      "variants": [],
+      "release_lines": [
+        "20260127"
+      ]
     }
   },
   "playbooks": [
     {
       "playbook_name": "RegiS Default Playbook",
-      "score": 67,
+      "score": 83,
       "total_scorecards": 6,
-      "passed_scorecards": 4,
+      "passed_scorecards": 5,
       "pages": [
         {
           "title": "Overview",
@@ -875,20 +920,20 @@
               "widgets": [
                 {
                   "label": "Recommandation",
-                  "value": "{{ 'NOGO' }}",
+                  "value": "{{ 'GO' }}",
                   "options": {
-                    "class": "recommandation-nogo",
+                    "class": "recommandation-go",
                     "align": "center"
                   },
                   "condition": {
-                    "<": [
+                    ">=": [
                       {
                         "var": "playbooks.0.pages.compliance.sections.mandatory_requirements.score"
                       },
                       90
                     ]
                   },
-                  "resolved_value": "NOGO"
+                  "resolved_value": "GO"
                 }
               ],
               "render_order": [
@@ -911,7 +956,7 @@
                   "options": {
                     "align": "center"
                   },
-                  "resolved_value": "67%",
+                  "resolved_value": "83%",
                   "resolved_url": "compliance.html"
                 },
                 {
@@ -921,7 +966,7 @@
                   "options": {
                     "align": "center"
                   },
-                  "resolved_value": "3 / 4",
+                  "resolved_value": "4 / 4",
                   "resolved_url": "compliance.html"
                 },
                 {
@@ -954,8 +999,8 @@
                   "options": {
                     "subvalue": "{{ request.timestamp | format_time }}"
                   },
-                  "resolved_value": "2026-03-04",
-                  "resolved_subvalue": "19:17:27"
+                  "resolved_value": "2026-03-05",
+                  "resolved_subvalue": "14:33:50"
                 },
                 {
                   "label": "Triggered by",
@@ -1009,9 +1054,9 @@
         {
           "title": "Compliance",
           "slug": "compliance",
-          "score": 67,
+          "score": 83,
           "total_scorecards": 6,
-          "passed_scorecards": 4,
+          "passed_scorecards": 5,
           "sections": [
             {
               "name": " ",
@@ -1028,7 +1073,7 @@
                   "options": {
                     "align": "center"
                   },
-                  "resolved_value": "67%"
+                  "resolved_value": "83%"
                 },
                 {
                   "label": "Mandatory Requirements",
@@ -1036,7 +1081,7 @@
                   "options": {
                     "align": "center"
                   },
-                  "resolved_value": "75%"
+                  "resolved_value": "100%"
                 },
                 {
                   "label": "Recommended Requirements",
@@ -1053,15 +1098,15 @@
             },
             {
               "name": "Mandatory Requirements",
-              "score": 75,
+              "score": 100,
               "total_scorecards": 4,
-              "passed_scorecards": 3,
+              "passed_scorecards": 4,
               "levels_summary": {},
               "tags_summary": {
                 "security": {
                   "total": 4,
-                  "passed": 3,
-                  "percentage": 75
+                  "passed": 4,
+                  "percentage": 100
                 }
               },
               "scorecards": [
@@ -1105,10 +1150,10 @@
                   "analyzers": [
                     "dockle"
                   ],
-                  "passed": false,
-                  "status": "incomplete",
+                  "passed": true,
+                  "status": "passed",
                   "condition": "{\"==\": [{\"var\": \"results.dockle.issues_by_level.FATAL\"}, 0]}",
-                  "details": "results.dockle.issues_by_level.FATAL (MISSING) == 0"
+                  "details": "results.dockle.issues_by_level.FATAL (0) == 0"
                 },
                 {
                   "name": "trusted-domain",
@@ -1177,7 +1222,7 @@
                   "passed": false,
                   "status": "failed",
                   "condition": "{\"<\": [{\"var\": \"results.freshness.age_days\"}, 30]}",
-                  "details": "results.freshness.age_days (35) < 30"
+                  "details": "results.freshness.age_days (36) < 30"
                 }
               ],
               "render_order": [
@@ -1404,12 +1449,12 @@
                 {
                   "label": "Pulls",
                   "value": "{{ results.popularity.pull_count | format_number }}",
-                  "resolved_value": "{{ results.popularity.pull_count | format_number }}"
+                  "resolved_value": "11,698,239,956"
                 },
                 {
                   "label": "Stars",
                   "value": "{{ results.popularity.star_count | format_number }}",
-                  "resolved_value": "{{ results.popularity.star_count | format_number }}"
+                  "resolved_value": "11,471"
                 },
                 {
                   "template": "analyzers/popularity/table.html",
@@ -1532,19 +1577,44 @@
         }
       ],
       "slug": null,
+      "labels": [
+        "regis::warn"
+      ],
+      "mr_description_checklists": [
+        {
+          "title": "📝 Review Checklist",
+          "items": [
+            {
+              "label": "Revue de sécurité réalisée",
+              "checked": false
+            },
+            {
+              "label": "Aucune vulnérabilité CRITIQUE détectée",
+              "checked": true
+            },
+            {
+              "label": "Image issue d'un registre de confiance",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "mr_templates": [
+        {
+          "url": "https://github.com/trivoallan/regis-cli",
+          "directory": "cookiecutters/mr-evidence"
+        }
+      ],
       "_meta": {
         "source_name": "default"
-      },
-      "labels": [
-        "regis::fail"
-      ]
+      }
     }
   ],
   "playbook": {
     "playbook_name": "RegiS Default Playbook",
-    "score": 67,
+    "score": 83,
     "total_scorecards": 6,
-    "passed_scorecards": 4,
+    "passed_scorecards": 5,
     "pages": [
       {
         "title": "Overview",
@@ -1564,20 +1634,20 @@
             "widgets": [
               {
                 "label": "Recommandation",
-                "value": "{{ 'NOGO' }}",
+                "value": "{{ 'GO' }}",
                 "options": {
-                  "class": "recommandation-nogo",
+                  "class": "recommandation-go",
                   "align": "center"
                 },
                 "condition": {
-                  "<": [
+                  ">=": [
                     {
                       "var": "playbooks.0.pages.compliance.sections.mandatory_requirements.score"
                     },
                     90
                   ]
                 },
-                "resolved_value": "NOGO"
+                "resolved_value": "GO"
               }
             ],
             "render_order": [
@@ -1600,7 +1670,7 @@
                 "options": {
                   "align": "center"
                 },
-                "resolved_value": "67%",
+                "resolved_value": "83%",
                 "resolved_url": "compliance.html"
               },
               {
@@ -1610,7 +1680,7 @@
                 "options": {
                   "align": "center"
                 },
-                "resolved_value": "3 / 4",
+                "resolved_value": "4 / 4",
                 "resolved_url": "compliance.html"
               },
               {
@@ -1643,8 +1713,8 @@
                 "options": {
                   "subvalue": "{{ request.timestamp | format_time }}"
                 },
-                "resolved_value": "2026-03-04",
-                "resolved_subvalue": "19:17:27"
+                "resolved_value": "2026-03-05",
+                "resolved_subvalue": "14:33:50"
               },
               {
                 "label": "Triggered by",
@@ -1698,9 +1768,9 @@
       {
         "title": "Compliance",
         "slug": "compliance",
-        "score": 67,
+        "score": 83,
         "total_scorecards": 6,
-        "passed_scorecards": 4,
+        "passed_scorecards": 5,
         "sections": [
           {
             "name": " ",
@@ -1717,7 +1787,7 @@
                 "options": {
                   "align": "center"
                 },
-                "resolved_value": "67%"
+                "resolved_value": "83%"
               },
               {
                 "label": "Mandatory Requirements",
@@ -1725,7 +1795,7 @@
                 "options": {
                   "align": "center"
                 },
-                "resolved_value": "75%"
+                "resolved_value": "100%"
               },
               {
                 "label": "Recommended Requirements",
@@ -1742,15 +1812,15 @@
           },
           {
             "name": "Mandatory Requirements",
-            "score": 75,
+            "score": 100,
             "total_scorecards": 4,
-            "passed_scorecards": 3,
+            "passed_scorecards": 4,
             "levels_summary": {},
             "tags_summary": {
               "security": {
                 "total": 4,
-                "passed": 3,
-                "percentage": 75
+                "passed": 4,
+                "percentage": 100
               }
             },
             "scorecards": [
@@ -1794,10 +1864,10 @@
                 "analyzers": [
                   "dockle"
                 ],
-                "passed": false,
-                "status": "incomplete",
+                "passed": true,
+                "status": "passed",
                 "condition": "{\"==\": [{\"var\": \"results.dockle.issues_by_level.FATAL\"}, 0]}",
-                "details": "results.dockle.issues_by_level.FATAL (MISSING) == 0"
+                "details": "results.dockle.issues_by_level.FATAL (0) == 0"
               },
               {
                 "name": "trusted-domain",
@@ -1866,7 +1936,7 @@
                 "passed": false,
                 "status": "failed",
                 "condition": "{\"<\": [{\"var\": \"results.freshness.age_days\"}, 30]}",
-                "details": "results.freshness.age_days (35) < 30"
+                "details": "results.freshness.age_days (36) < 30"
               }
             ],
             "render_order": [
@@ -2093,12 +2163,12 @@
               {
                 "label": "Pulls",
                 "value": "{{ results.popularity.pull_count | format_number }}",
-                "resolved_value": "{{ results.popularity.pull_count | format_number }}"
+                "resolved_value": "11,698,239,956"
               },
               {
                 "label": "Stars",
                 "value": "{{ results.popularity.star_count | format_number }}",
-                "resolved_value": "{{ results.popularity.star_count | format_number }}"
+                "resolved_value": "11,471"
               },
               {
                 "template": "analyzers/popularity/table.html",
@@ -2221,11 +2291,36 @@
       }
     ],
     "slug": null,
+    "labels": [
+      "regis::warn"
+    ],
+    "mr_description_checklists": [
+      {
+        "title": "📝 Review Checklist",
+        "items": [
+          {
+            "label": "Revue de sécurité réalisée",
+            "checked": false
+          },
+          {
+            "label": "Aucune vulnérabilité CRITIQUE détectée",
+            "checked": true
+          },
+          {
+            "label": "Image issue d'un registre de confiance",
+            "checked": true
+          }
+        ]
+      }
+    ],
+    "mr_templates": [
+      {
+        "url": "https://github.com/trivoallan/regis-cli",
+        "directory": "cookiecutters/mr-evidence"
+      }
+    ],
     "_meta": {
       "source_name": "default"
-    },
-    "labels": [
-      "regis::fail"
-    ]
+    }
   }
 }

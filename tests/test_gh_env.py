@@ -49,6 +49,7 @@ class TestGithubEnvironment:
                 pass
 
         mock_discover.return_value = {"dummy": DummyAnalyzer}
+        mock_client.return_value.get_digest.return_value = None
 
         runner = CliRunner()
         with runner.isolated_filesystem():

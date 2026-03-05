@@ -48,6 +48,10 @@
           "type": "string",
           "description": "Image tag that was analyzed."
         },
+        "digest": {
+          "type": "string",
+          "description": "Resolved image manifest digest (e.g. sha256-xxx), if available."
+        },
         "analyzers": {
           "type": "array",
           "items": { "type": "string" },
