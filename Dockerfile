@@ -1,6 +1,11 @@
 # Use an official Python slim image as base
 FROM python:3.12-slim
 
+# OCI Labels
+LABEL org.opencontainers.image.source="https://github.com/trivoallan/regis-cli" \
+      org.opencontainers.image.description="Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD." \
+      org.opencontainers.image.licenses="MIT"
+
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

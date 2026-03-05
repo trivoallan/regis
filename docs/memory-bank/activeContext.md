@@ -44,6 +44,7 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Corrected the Alpine example report URL in `README.md` to point to the versioned documentation path.
 - Added `README.md` to `release-please-config.json` `extra-files` to ensure consistent versioning and updates.
 - Redesign of `README.md` now properly redirects all technical documentation to the official Antora site.
+- Added OCI-compliant labels to `Dockerfile` for better GitHub Packages integration (`source`, `description`, `licenses`).
 
 ## Next Steps
 

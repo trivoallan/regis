@@ -21,3 +21,8 @@
 - **Decision**: Integrate GitHub Actions metadata into the template workflow using `regis-cli --meta`.
 - **Rationale**: Prevent `AttributeError` crashes when link URLs are null or missing in playbook definitions. Improved metadata integration ensures better traceability in CI/CD.
 - 2026-03-05: Migrated CI linting from Super-Linter to Trunk to unify local and CI linting experience and improve performance.
+
+## 2026-03-05: Adopt OCI Image Labels
+
+- **Decision**: Add standard OCI labels (`org.opencontainers.image.*`) to the project's `Dockerfile`.
+- **Rationale**: Improve discoverability and integration with GitHub Packages registry, ensuring the image description and source repository are automatically linked on the package page.
