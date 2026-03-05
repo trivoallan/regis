@@ -40,7 +40,7 @@ request_analysis:
       BRANCH_NAME="regis/analyze/${SAFE_URL:0:30}-$CI_PIPELINE_IID"
 
       echo "Creating analysis request for $IMAGE_URL (requested by $GITLAB_USER_LOGIN)"
-      echo "aW1wb3J0IGpzb24sIHN5cwpwcmludChqc29uLmR1bXBzKHsKICAnaW1hZ2VfdXJsJzogc3lzLmFyZ3ZbMV0sCiAgJ3BsYXlib29rX3VybCc6IHN5cy5hcmd2WzJdLAogICdyZXF1ZXN0ZXJfaWQnOiBpbnQoc3lzLmFyZ3ZbM10pLAogICdyZXF1ZXN0ZXJfbG9naW4nOiBzeXMuYXJndls0XSwKfSkpCg==" | base64 -d | python3 - "$IMAGE_URL" "$[[ inputs.playbook_url ]]" "$GITLAB_USER_ID" "$GITLAB_USER_LOGIN" > analysis-request.json
+      regis-cli gitlab create-request "$IMAGE_URL" "$[[ inputs.playbook_url ]]" "$GITLAB_USER_ID" "$GITLAB_USER_LOGIN" > analysis-request.json
 
       git config --global user.name "GitLab CI"
       git config --global user.email "gitlab-ci@example.com"
@@ -140,18 +140,12 @@ push_results:
         REPORT_INDEX="reports/${ANALYZE_JOB_ID}/index.html"
         if [ -f "$REPORT_INDEX" ]; then
           REPORT_URL="${CI_PROJECT_URL}/-/jobs/${ANALYZE_JOB_ID}/artifacts/external_file/${REPORT_INDEX}"
-          echo "Posting MR comment with link to report..."
-          curl --fail --request POST --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
-            --header "Content-Type: application/json" \
-            --data "{\"body\": \"🚀 **regis-cli Analysis Complete!**\n\nThe full HTML security report is ready: [View Analysis Report]($REPORT_URL)\"}" \
-            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}/notes"
-
-          echo "Updating MR description with report link..."
-          echo "aW1wb3J0IGpzb24sIHN5cywgdXJsbGliLnJlcXVlc3QKCnJlcG9ydF91cmwsIGFwaV91cmwsIHRva2VuID0gc3lzLmFyZ3ZbMV0sIHN5cy5hcmd2WzJdLCBzeXMuYXJndlszXQoKcmVxID0gdXJsbGliLnJlcXVlc3QuUmVxdWVzdChhcGlfdXJsLCBoZWFkZXJzPXsiUFJJVkFURS1UT0tFTiI6IHRva2VufSkKd2l0aCB1cmxsaWIucmVxdWVzdC51cmxvcGVuKHJlcSkgYXMgcjoKICAgIG1yID0ganNvbi5sb2FkcyhyLnJlYWQoKSkKCmN1cnJlbnRfZGVzYyA9IG1yLmdldCgiZGVzY3JpcHRpb24iKSBvciAiIgpyZXBvcnRfbGluayA9IGYi8J+TiiAqKltWaWV3IEFuYWx5c2lzIFJlcG9ydF0oe3JlcG9ydF91cmx9KSoqIgpuZXdfZGVzYyA9IGYie3JlcG9ydF9saW5rfVxuXG57Y3VycmVudF9kZXNjfSIgaWYgY3VycmVudF9kZXNjIGVsc2UgcmVwb3J0X2xpbmsKCnBheWxvYWQgPSBqc29uLmR1bXBzKHsiZGVzY3JpcHRpb24iOiBuZXdfZGVzY30pLmVuY29kZSgpCnB1dF9yZXEgPSB1cmxsaWIucmVxdWVzdC5SZXF1ZXN0KAogICAgYXBpX3VybCwKICAgIGRhdGE9cGF5bG9hZCwKICAgIGhlYWRlcnM9eyJQUklWQVRFLVRPS0VOIjogdG9rZW4sICJDb250ZW50LVR5cGUiOiAiYXBwbGljYXRpb24vanNvbiJ9LAogICAgbWV0aG9kPSJQVVQiLAopCndpdGggdXJsbGliLnJlcXVlc3QudXJsb3BlbihwdXRfcmVxKSBhcyByOgogICAgcHJpbnQoIk1SIGRlc2NyaXB0aW9uIHVwZGF0ZWQsIHN0YXR1czoiLCByLnN0YXR1cykK" | base64 -d > /tmp/update_desc.py
-          python3 /tmp/update_desc.py \
-            "$REPORT_URL" \
-            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}" \
-            "${GITLAB_TOKEN}"
+          echo "Updating MR with regis-cli gitlab update-mr..."
+          regis-cli gitlab update-mr \
+            --report reports/report.json \
+            --report-url "$REPORT_URL" \
+            --mr-url "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}" \
+            --token "${GITLAB_TOKEN}"
         fi
       fi
   rules:
@@ -159,85 +153,6 @@ push_results:
       when: never
     - if: $CI_MERGE_REQUEST_IID
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-# Phase 3: Apply labels from report.json to the MR
-set_labels:
-  stage: report
-  image: alpine:latest
-  needs:
-    - push_results
-  before_script:
-    - apk add --no-cache curl python3
-  script:
-    - |
-      if [ -z "$GITLAB_TOKEN" ] || [ -z "$CI_MERGE_REQUEST_IID" ]; then
-        echo "No token or no MR context, skipping labels."
-        exit 0
-      fi
-
-      REPORT_JSON=$(find reports -name report.json -print -quit)
-      if [ -z "$REPORT_JSON" ]; then
-        echo "No report.json found, skipping labels."
-        exit 0
-      fi
-
-      LABELS=$(python3 -c "import json; print(','.join(json.load(open('$REPORT_JSON')).get('playbook', {}).get('labels', [])))")
-      if [ -n "$LABELS" ]; then
-        echo "Applying labels to MR: $LABELS"
-        curl --fail --request PUT --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
-          --data "add_labels=${LABELS}" \
-          "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}"
-      else
-        echo "No labels to apply."
-      fi
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""
-      when: never
-    - if: $CI_MERGE_REQUEST_IID
-
-# Phase 3: Append review checklist to MR description
-set_checklist:
-  stage: report
-  image: alpine:latest
-  needs:
-    - push_results
-  before_script:
-    - apk add --no-cache curl python3
-  script:
-    - |
-      if [ -z "$GITLAB_TOKEN" ] || [ -z "$CI_MERGE_REQUEST_IID" ]; then
-        echo "No token or no MR context, skipping checklist."
-        exit 0
-      fi
-
-      REPORT_JSON=$(find reports -name report.json -print -quit)
-      if [ -z "$REPORT_JSON" ]; then
-        echo "No report.json found, skipping checklist."
-        exit 0
-      fi
-
-      echo "aW1wb3J0IGpzb24sIHN5cwpkYXRhID0ganNvbi5sb2FkKG9wZW4oc3lzLmFyZ3ZbMV0pKQpjaGVja2xpc3RzID0gZGF0YS5nZXQoInBsYXlib29rIiwge30pLmdldCgibXJfZGVzY3JpcHRpb25fY2hlY2tsaXN0cyIsIFtdKQppZiBjaGVja2xpc3RzOgogICAgbGluZXMgPSBbXQogICAgZm9yIGNsaXN0IGluIGNoZWNrbGlzdHM6CiAgICAgICAgbGluZXMuYXBwZW5kKGYiXG5cbi0tLVxuXG4jIyB7Y2xpc3QuZ2V0KCd0aXRsZScpfVxuIikKICAgICAgICBmb3IgaXRlbSBpbiBjbGlzdC5nZXQoIml0ZW1zIiwgW10pOgogICAgICAgICAgICBpZiBpc2luc3RhbmNlKGl0ZW0sIGRpY3QpOgogICAgICAgICAgICAgICAgY2hlY2sgPSAieCIgaWYgaXRlbS5nZXQoImNoZWNrZWQiKSBlbHNlICIgIgogICAgICAgICAgICAgICAgbGFiZWwgPSBpdGVtWyJsYWJlbCJdCiAgICAgICAgICAgICAgICBsaW5lcy5hcHBlbmQoZiItIFt7Y2hlY2t9XSB7bGFiZWx9IikKICAgICAgICAgICAgZWxzZToKICAgICAgICAgICAgICAgIGxpbmVzLmFwcGVuZChmIi0gWyBdIHtpdGVtfSIpCiAgICBwcmludCgiXG4iLmpvaW4obGluZXMpKQo=" | base64 -d > /tmp/checklist_script.py
-      CHECKLIST=$(python3 /tmp/checklist_script.py "$REPORT_JSON")
-      if [ -n "$CHECKLIST" ]; then
-        echo "Appending checklist to MR description..."
-        curl --silent --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
-          "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}" \
-          > /tmp/mr_current.json
-        CURRENT_DESC=$(python3 -c "import json; print(json.load(open('/tmp/mr_current.json')).get('description','') or '')")
-        printf '%s%s' "$CURRENT_DESC" "$CHECKLIST" > /tmp/mr_desc_combined.txt
-        python3 -c "import json; d=open('/tmp/mr_desc_combined.txt').read(); print(json.dumps({'description':d}))" > /tmp/mr_payload.json
-        curl --fail --request PUT \
-          --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
-          --header "Content-Type: application/json" \
-          --data "@/tmp/mr_payload.json" \
-          "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}"
-      else
-        echo "No checklist items to apply."
-      fi
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""
-      when: never
-    - if: $CI_MERGE_REQUEST_IID
 
 # Phase 3: Deploy to GitLab Pages (Default branch only)
 pages:

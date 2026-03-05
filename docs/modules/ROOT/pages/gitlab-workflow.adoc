@@ -129,12 +129,7 @@ sequenceDiagram
     GL->>User: Merge Request opened
     GL->>CI: Job: analyze_image (MR context)
     CI->>Reg: Analyze image
-    CI->>GL: Job: push_results — commit report & post MR comment with report link
-    par Parallel reporting jobs
-        CI->>GL: Job: set_labels — apply scoped labels via API
-    and
-        CI->>GL: Job: set_checklist — append review checklist to MR description
-    end
+    CI->>GL: Job: push_results — commit report, update MR description, apply labels & checklists
 ....
 
 === 1. Trigger the Request
@@ -145,11 +140,9 @@ The pipeline automatically creates a new branch and a Merge Request.
 The MR description contains instructions to find the **Analysis Report** within the committed \`reports/\` directory or the exposed artifacts.
 
 === 3. Report Inspection
-Once the analysis job completes, the pipeline runs three parallel reporting jobs:
+Once the analysis job completes, the pipeline runs the `push_results` reporting job:
 
-*   **`push_results`**: Commits the `reports/` directory back to the branch, prepends a direct **[View Analysis Report]** link to the MR description, and posts an MR comment with the same link.
-*   **`set_labels`**: Applies scoped GitLab labels to the MR based on your playbook configuration (e.g., `regis::fail`, `security::critical`).
-*   **`set_checklist`**: Appends Markdown review checklists to the MR description. Checklist items defined with `check_if` conditions may render pre-checked when those conditions pass, and items can be conditionally included via `show_if` conditions.
+*   **`push_results`**: Commits the `reports/` directory back to the branch, posts an MR comment with a direct report link, updates the MR description to include the link and any review checklists, and applies scoped GitLab labels based on your playbook configuration. Checklist items defined with `check_if` conditions may render pre-checked when those conditions pass, and items can be conditionally included via `show_if` conditions.
 
 === 4. Governance
 Security teams can review the MR, check the compliance score via the direct HTML report link, and decide whether to merge the analysis request into the main registry branch.

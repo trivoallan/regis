@@ -15,6 +15,7 @@ import click
 import jsonschema
 
 from regis_cli.analyzers.base import AnalyzerError, BaseAnalyzer
+from regis_cli.gitlab_cli import gitlab_cmd
 from regis_cli.registry.client import RegistryClient, RegistryError
 from regis_cli.registry.parser import parse_image_url
 
@@ -151,6 +152,10 @@ def main(verbose: bool) -> None:
         format="%(levelname)s %(name)s: %(message)s",
         stream=sys.stderr,
     )
+
+
+# Register subcommands
+main.add_command(gitlab_cmd, name="gitlab")
 
 
 @main.command()
@@ -394,7 +399,7 @@ def analyze(
             default_pb = (
                 importlib.resources.files("regis_cli") / "playbooks" / "default.yaml"
             )
-            if default_pb.exists():
+            if default_pb.is_file():
                 playbook_paths = (str(default_pb),)
 
         if playbook_paths:
