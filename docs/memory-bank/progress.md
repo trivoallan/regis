@@ -14,6 +14,7 @@
 ## In Progress
 
 - Improved documentation for CI/CD integration (moved Cookiecutter, added tips, added C4 diagrams).
+- Rewrote `README.md` to focus on features and documentation redirect, including a full report preview gallery.
 - Unified linting experience by migrating to Trunk.
 
 ## Future Roadmap

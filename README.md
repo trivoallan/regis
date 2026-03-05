@@ -1,104 +1,58 @@
 # regis-cli
 
-`regis-cli` is a powerful tool to analyze Docker image registries, evaluate security playbooks, and produce rich HTML/JSON reports.
+`regis-cli` is a powerful, production-ready tool to analyze Docker image registries, evaluate security playbooks, and produce rich HTML/JSON reports. It enables deep visibility into container image metadata and security posture, allowing for automated policy enforcement in CI/CD environments.
 
-## Features
+## Documentation
 
-- **Consolidated Analysis** — Uses `skopeo` for fast, multi-arch registry inspection.
-- **Playbook Engine** — Evaluate custom rules and policies against image metadata.
-- **Multi-Format Output** — Generate both JSON (for automation) and HTML (for humans) in a single run.
-- **Template-Based Paths** — Dynamic output directory and filename based on image metadata (registry, repository, tag).
-- **Report Caching** — Reuse existing analysis results to speed up report regeneration.
-- **Pluggable Architecture** — Easily add new analyzers and playbook rules.
+Comprehensive documentation, including installation and usage guides, is available at:
+**[https://trivoallan.github.io/regis-cli/](https://trivoallan.github.io/regis-cli/)**
+
+## Key Features
+
+- **Unified Registry Inspection** — Fast, multi-arch metadata extraction from any OCI-compliant registry using `skopeo`.
+- **Pluggable Analyzer Ecosystem** — Orchestrates industry-standard tools like `Trivy`, `Skopeo`, `Hadolint`, and `Dockle` to gather comprehensive security insights.
+- **Policy-as-Code Playbooks** — Define compliance and security rules (e.g., "no critical vulnerabilities", "maximum image age") using flexible `jsonLogic` evaluations.
+- **Hybrid Reporting** — Simultaneously generates machine-readable JSON for automation and rich, interactive HTML dashboards for human review.
+- **CI/CD Native** — Designed to integrate seamlessly into GitHub Actions or GitLab CI pipelines with first-class support for MR/PR reporting.
+- **Efficient Caching** — Reuse existing analysis results to speed up repeated evaluations and report regeneration.
 
 ## Built-in Analyzers
 
 | Analyzer       | Description                                                                 |
 |----------------|-----------------------------------------------------------------------------|
-| `skopeo`       | **Unified** inspection (multi-arch, OS, labels, layers, and root detection). |
-| `versioning`   | Checks for semantic versioning consistency and tag patterns.                |
-| `freshness`    | Calculates image age and identifies the creation date.                       |
-| `trivy`        | Integrates vulnerability scanning results.                                   |
-| `endoflife`    | Checks for EOL status of base images via `endoflife.date`.                  |
-| `hadolint`     | Lints Dockerfiles for best practices (if reconstructed).                    |
-| `dockle`       | Container image linter for security and best practices.                     |
-| `sbom`         | Generates/Retrieves Software Bill of Materials (SBOM).                      |
+| `skopeo`       | Extracts multi-arch metadata, OS/Architecture labels, layers, and root user detection. |
+| `trivy`        | Performs vulnerability scanning and generates Software Bill of Materials (SBOM). |
 | `provenance`   | Verifies image build provenance and SLSA metadata.                          |
-| `size`         | Analyzes image size and layer distribution.                                 |
-| `popularity`   | Fetches popularity metrics (stars, pulls) from Docker Hub.                  |
-| `playbookdev` | Integration with OpenSSF Playbook for registry-level security.             |
-
-## Installation
-
-```bash
-pipenv install
-```
-
-## Usage
-
-### Basic Analysis
-```bash
-# Analyze an image and output to stdout (JSON)
-regis-cli analyze nginx:latest
-```
-
-### Advanced Reporting
-```bash
-# Generate both JSON and HTML reports
-regis-cli analyze nginx:latest --site
-```
-
-### Report Caching
-```bash
-# Faster HTML generation by reusing previous analysis
-regis-cli analyze nginx:latest --site --cache
-```
-
-### Dynamic Output Paths
-By default, reports are written to `reports/{registry}/{repository}/{digest}/report.{format}`. You can override this using:
-```bash
-regis-cli analyze nginx:latest -o "my-custom-report.{format}" -D "results/{repository}"
-```
-
-## Playbooks
-
-Playbooks allow you to define rules using JSON logic. Use them to verify compliance:
-- **No critical vulnerabilities**
-- **No root user**
-- **Maximum image age**
-- **Semantic versioning enforced**
-
-See `examples/` for sample playbook definitions.
-
-## Development
-
-```bash
-# Run tests
-pipenv run pytest -v
-
-# Run with verbose logging
-regis-cli -v analyze nginx:latest
-```
-
-## Adding a New Analyzer
-
-1. Create a module in `regis_cli/analyzers/` inheriting from `BaseAnalyzer`
-2. Create a JSON Schema in `regis_cli/schemas/`
-3. Register the entry point in `pyproject.toml`
-4. Reinstall: `pipenv install`
-
-## Documentation
-
-Comprehensive documentation is available in the `docs/` directory (Antora).
-
-## Cookiecutter Template
-
-You can quickly bootstrap a new repository for image analysis using our Cookiecutter template:
-
-```bash
-pipenv run cookiecutter cookiecutter/
-```
+| `endoflife`    | Checks for End-Of-Life (EOL) status of base images using `endoflife.date`. |
+| `freshness`    | Calculates image age and identifies potential maintenance risks.            |
+| `hadolint`     | Lints Dockerfiles for security and best practice violations.               |
+| `size`         | Analyzes image size and layer distribution for optimization.              |
+| `versioning`   | Ensures semantic versioning consistency and tag validation.                 |
 
 ## License
 
 MIT
+
+---
+
+## Report Preview
+
+`regis-cli` generates high-quality, interactive HTML dashboards. Below is a preview of the different sections available in a standard report.
+
+**[Explore the interactive Alpine example report here](https://trivoallan.github.io/regis-cli/regis-cli/0.14.0/_attachments/examples/alpine/index.html)**
+
+````carousel
+![Dashboard Overview](.github/assets/report-overview.png)
+<!-- slide -->
+![Compliance Analysis](.github/assets/report-compliance.png)
+<!-- slide -->
+![Vulnerability Security](.github/assets/report-security.png)
+<!-- slide -->
+![Supply Chain & Quality](.github/assets/report-supply-chain.png)
+<!-- slide -->
+![Best Practices](.github/assets/report-best-practices.png)
+<!-- slide -->
+![Insights & Lifecycle](.github/assets/report-insights.png)
+<!-- slide -->
+![Technical Details](.github/assets/report-technical-details.png)
+````

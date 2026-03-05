@@ -39,7 +39,12 @@ Documentation update following the pipeline refactoring and checklist enhancemen
   - Enabled `mypy` and `hadolint` in Trunk.
   - Added necessary type stubs for `PyYAML`, `requests`, and `jsonschema`.
   - Replaced `github/super-linter` with `trunk-io/trunk-action` in GitHub Actions.
+- Rewrote `README.md` to focus on core features and added a comprehensive "Report Preview" section with 7 interactive carousels.
+- Captured and added 7 screenshots covering all major report pages to `.github/assets/`.
+- Corrected the Alpine example report URL in `README.md` to point to the versioned documentation path.
+- Added `README.md` to `release-please-config.json` `extra-files` to ensure consistent versioning and updates.
+- Redesign of `README.md` now properly redirects all technical documentation to the official Antora site.
 
 ## Next Steps
 
-- Push the `feat/trunk-linting` branch and open a PR.
+- Push the changes and open a PR.

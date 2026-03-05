@@ -5,7 +5,8 @@
       "extra-files": [
         "cookiecutters/consumer/cookiecutter.json",
         "docs/antora.yml",
-        "antora-playbook.yml"
+        "antora-playbook.yml",
+        "README.md"
       ]
     }
   }
