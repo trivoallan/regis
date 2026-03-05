@@ -89,6 +89,7 @@ analyze_image:
 
       regis-cli analyze "$IMAGE_URL" \
         --site \
+        --output-dir reports/$CI_JOB_ID \
         --playbook "$PLAYBOOK_URL" \
         --meta "trigger.user=$GITLAB_USER_LOGIN" \
         --meta "trigger.url=$CI_JOB_URL" \
@@ -96,7 +97,6 @@ analyze_image:
         --meta "gitlab.mr_id=$CI_MERGE_REQUEST_IID" \
         --meta "gitlab.mr=$CI_MERGE_REQUEST_IID"
       echo "$CI_JOB_ID" > reports/.analyze_job_id
-      find reports -name "*.html" -print -quit > reports/.report_html_path
   artifacts:
     expose_as: Analysis Report
     paths:
@@ -130,15 +130,15 @@ push_results:
       git config --global user.name "regis-cli bot"
       git config --global user.email "regis-cli@example.com"
       git add reports/
-      git rm --cached reports/.analyze_job_id reports/.report_html_path 2>/dev/null || true
+      git rm --cached reports/.analyze_job_id 2>/dev/null || true
       git rm analysis-request.json || echo "Analysis request already removed"
       git commit -m "chore: update analysis report for $IMAGE_URL [skip ci]" || echo "No changes to commit"
       git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_COMMIT_REF_NAME}"
 
       if [ -n "$CI_MERGE_REQUEST_IID" ]; then
-        REPORT_INDEX=$(cat reports/.report_html_path 2>/dev/null)
-        if [ -n "$REPORT_INDEX" ]; then
-          ANALYZE_JOB_ID=$(cat reports/.analyze_job_id 2>/dev/null || echo "$CI_JOB_ID")
+        ANALYZE_JOB_ID=$(cat reports/.analyze_job_id 2>/dev/null || echo "$CI_JOB_ID")
+        REPORT_INDEX="reports/${ANALYZE_JOB_ID}/index.html"
+        if [ -f "$REPORT_INDEX" ]; then
           REPORT_URL="${CI_PROJECT_URL}/-/jobs/${ANALYZE_JOB_ID}/artifacts/external_file/${REPORT_INDEX}"
           echo "Posting MR comment with link to report..."
           curl --fail --request POST --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
