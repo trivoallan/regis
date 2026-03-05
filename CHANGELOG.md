@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.13.0](https://github.com/trivoallan/regis-cli/compare/v0.12.0...v0.13.0) (2026-03-05)
+
+
+### Features
+
+* **analyzer/versioning:** implement digest-based reporting and release lines hierarchy ([#21](https://github.com/trivoallan/regis-cli/issues/21)) ([e54d04f](https://github.com/trivoallan/regis-cli/commit/e54d04f17077333fbc73d1b133a5b7b61228ed18))
+* **ci:** implement gitlab subcommand for CI workflow ([#18](https://github.com/trivoallan/regis-cli/issues/18)) ([515069c](https://github.com/trivoallan/regis-cli/commit/515069cb5263b7addaa47551681cbcb43d3da995))
+
+
+### Documentation
+
+* **architecture:** add C4 Context and Container diagrams to architecture overview ([#24](https://github.com/trivoallan/regis-cli/issues/24)) ([fa8504e](https://github.com/trivoallan/regis-cli/commit/fa8504e8e2ee2a5c045f652b5a1aa6ce453cb766))
+* **integrations:** group GitLab and GitHub documentation into Integrations section ([#22](https://github.com/trivoallan/regis-cli/issues/22)) ([c045323](https://github.com/trivoallan/regis-cli/commit/c04532366de32ec7f5eb07e1bbbde2cb6bc8f55f))
+* **integrations:** restructure integration sub-chapter and add cookiecutter tips ([#23](https://github.com/trivoallan/regis-cli/issues/23)) ([1a5616b](https://github.com/trivoallan/regis-cli/commit/1a5616b2cea3851fba2b6f3c5c3091b2e8afcf7f))
+
 ## [0.12.0](https://github.com/trivoallan/regis-cli/compare/v0.11.0...v0.12.0) (2026-03-05)
 
 
