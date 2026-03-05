@@ -18,16 +18,16 @@ Comprehensive documentation, including installation and usage guides, is availab
 
 ## Built-in Analyzers
 
-| Analyzer       | Description                                                                 |
-|----------------|-----------------------------------------------------------------------------|
-| `skopeo`       | Extracts multi-arch metadata, OS/Architecture labels, layers, and root user detection. |
-| `trivy`        | Performs vulnerability scanning and generates Software Bill of Materials (SBOM). |
-| `provenance`   | Verifies image build provenance and SLSA metadata.                          |
-| `endoflife`    | Checks for End-Of-Life (EOL) status of base images using `endoflife.date`. |
-| `freshness`    | Calculates image age and identifies potential maintenance risks.            |
-| `hadolint`     | Lints Dockerfiles for security and best practice violations.               |
-| `size`         | Analyzes image size and layer distribution for optimization.              |
-| `versioning`   | Ensures semantic versioning consistency and tag validation.                 |
+| Analyzer     | Description                                                                            |
+| ------------ | -------------------------------------------------------------------------------------- |
+| `skopeo`     | Extracts multi-arch metadata, OS/Architecture labels, layers, and root user detection. |
+| `trivy`      | Performs vulnerability scanning and generates Software Bill of Materials (SBOM).       |
+| `provenance` | Verifies image build provenance and SLSA metadata.                                     |
+| `endoflife`  | Checks for End-Of-Life (EOL) status of base images using `endoflife.date`.             |
+| `freshness`  | Calculates image age and identifies potential maintenance risks.                       |
+| `hadolint`   | Lints Dockerfiles for security and best practice violations.                           |
+| `size`       | Analyzes image size and layer distribution for optimization.                           |
+| `versioning` | Ensures semantic versioning consistency and tag validation.                            |
 
 ## License
 
@@ -41,7 +41,7 @@ MIT
 
 **[Explore the interactive Alpine example report here](https://trivoallan.github.io/regis-cli/regis-cli/0.14.0/_attachments/examples/alpine/index.html)**
 
-````carousel
+```carousel
 ![Dashboard Overview](.github/assets/report-overview.png)
 <!-- slide -->
 ![Compliance Analysis](.github/assets/report-compliance.png)
@@ -55,4 +55,4 @@ MIT
 ![Insights & Lifecycle](.github/assets/report-insights.png)
 <!-- slide -->
 ![Technical Details](.github/assets/report-technical-details.png)
-````
+```
