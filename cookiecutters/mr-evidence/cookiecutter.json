@@ -1,3 +1,4 @@
 {
-    "report_dir": ".regis-evidence"
+    "report_dir": ".regis-evidence",
+    "regis": {}
 }

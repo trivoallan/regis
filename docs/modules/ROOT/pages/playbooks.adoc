@@ -175,6 +175,14 @@ integrations:
         condition: { ">": [{ var: results.trivy.critical_count }, 0] }
 ----
 
+> [!WARNING]
+> Because Cookiecutter ignores extra context variables that aren't defined in the template, your template's `cookiecutter.json` **must** include a `"regis"` property (even if it's just an empty object) to receive the analysis context:
+> ```json
+> {
+>   "regis": {}
+> }
+> ```
+
 During evaluation, templates whose condition passes are aggregated. The CLI then executes these templates with access to the full analysis context (e.g., `cookiecutter.regis.score`), and writes the generated files back to the current working directory so they can be committed to the MR branch.
 
 == Example Playbook
