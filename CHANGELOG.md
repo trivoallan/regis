@@ -2,17 +2,15 @@
 
 ## [0.14.0](https://github.com/trivoallan/regis-cli/compare/v0.13.0...v0.14.0) (2026-03-05)
 
-
 ### Features
 
-* **ci:** migrate linting to trunk and add mypy/hadolint ([#29](https://github.com/trivoallan/regis-cli/issues/29)) ([4219843](https://github.com/trivoallan/regis-cli/commit/4219843ff5ecb512f708e6cc8acb3f824e841213))
-* **cli:** refactor generate to bootstrap command group ([#28](https://github.com/trivoallan/regis-cli/issues/28)) ([ee9710e](https://github.com/trivoallan/regis-cli/commit/ee9710eae6ea9b92c6e00971ad18fe0742f65904))
-
+- **ci:** migrate linting to trunk and add mypy/hadolint ([#29](https://github.com/trivoallan/regis-cli/issues/29)) ([4219843](https://github.com/trivoallan/regis-cli/commit/4219843ff5ecb512f708e6cc8acb3f824e841213))
+- **cli:** refactor generate to bootstrap command group ([#28](https://github.com/trivoallan/regis-cli/issues/28)) ([ee9710e](https://github.com/trivoallan/regis-cli/commit/ee9710eae6ea9b92c6e00971ad18fe0742f65904))
 
 ### Documentation
 
-* modernize getting started and project generation guides ([#26](https://github.com/trivoallan/regis-cli/issues/26)) ([2603c0c](https://github.com/trivoallan/regis-cli/commit/2603c0c1a1d02ff438953665174324c258229cbb))
-* **playbook:** explain how to use bootstrap playbook in documentation ([#30](https://github.com/trivoallan/regis-cli/issues/30)) ([e1d20df](https://github.com/trivoallan/regis-cli/commit/e1d20df294ab9e67013b0d207820d2069d59debe))
+- modernize getting started and project generation guides ([#26](https://github.com/trivoallan/regis-cli/issues/26)) ([2603c0c](https://github.com/trivoallan/regis-cli/commit/2603c0c1a1d02ff438953665174324c258229cbb))
+- **playbook:** explain how to use bootstrap playbook in documentation ([#30](https://github.com/trivoallan/regis-cli/issues/30)) ([e1d20df](https://github.com/trivoallan/regis-cli/commit/e1d20df294ab9e67013b0d207820d2069d59debe))
 
 ## [0.13.0](https://github.com/trivoallan/regis-cli/compare/v0.12.0...v0.13.0) (2026-03-05)
 
