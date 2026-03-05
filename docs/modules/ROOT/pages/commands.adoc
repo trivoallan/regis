@@ -1,0 +1,92 @@
+= Available Commands
+
+This page provides a reference for all commands available in the `regis-cli` tool.
+
+== Global Options
+
+[cols="1,3"]
+|===
+| Option | Description
+
+| `-v, --verbose`
+| Enable verbose (DEBUG) logging for troubleshooting.
+
+| `--help`
+| Show the help message and exit.
+|===
+
+== Core Commands
+
+=== `analyze`
+
+Analyze a Docker image and evaluate playbooks.
+
+[source,bash]
+----
+regis-cli analyze [OPTIONS] URL
+----
+
+*Options:*
+
+* `-p, --playbook PATH`: Path or URL to custom playbook YAML/JSON file(s).
+* `-s, --site`: Generate HTML report site.
+* `--auth REGISTRY=USER:PASS`: Provide registry credentials.
+* `--cache`: Use existing report.json as cache if available.
+* `-o, --output TEMPLATE`: Output filename template.
+* `-D, --output-dir TEMPLATE`: Base directory template for output files.
+
+=== `evaluate`
+
+Evaluate playbooks against an existing analysis report (dry-run).
+
+[source,bash]
+----
+regis-cli evaluate [OPTIONS] INPUT_PATH
+----
+
+=== `check`
+
+Check if an image manifest is accessible on the registry.
+
+[source,bash]
+----
+regis-cli check [OPTIONS] URL
+----
+
+[#bootstrap]
+== Project Bootstrapping
+
+=== `bootstrap repository`
+
+Bootstrap a new RegiS analysis repository with pre-configured CI/CD.
+
+[source,bash]
+----
+regis-cli bootstrap repository [OUTPUT_DIR] [--no-input]
+----
+
+=== `bootstrap playbook`
+
+Bootstrap a new custom RegiS playbook from a template.
+
+[source,bash]
+----
+regis-cli bootstrap playbook [OUTPUT_DIR] [--no-input]
+----
+
+== Utility Commands
+
+=== `gitlab`
+
+Commands for seamless integration with GitLab CI/CD.
+
+* `gitlab create-request`: Create a Merge Request comment with analysis status.
+* `gitlab update-mr`: Update Merge Request with final results and labels.
+
+=== `list`
+
+List all available analyzers (e.g., `skopeo`, `trivy`, `hadolint`).
+
+=== `version`
+
+Display the current version of `regis-cli`.

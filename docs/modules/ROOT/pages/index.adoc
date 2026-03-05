@@ -7,6 +7,6 @@ For a detailed look at how the tool works and its internal structure, see the xr
 == Getting Started
 
 * xref:get-started.adoc[Get Started]
-* xref:cookiecutter.adoc[Quickstart with Cookiecutter]
+* xref:commands.adoc#bootstrap[Quickstart with Project Bootstrapping]
 * xref:integrations/github.adoc[GitHub Workflow Guide]
 * xref:integrations/gitlab.adoc[GitLab CI Guide]

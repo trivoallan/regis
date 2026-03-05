@@ -63,7 +63,7 @@ Reports are written to the `reports/` directory by default (e.g., `reports/docke
 
 `regis-cli` includes specialized subcommands for advanced workflows:
 
-* `generate`: Infrastructure as Code (IaC) for your analysis. Bootstrap a new Git repository with pre-configured CI/CD.
+* `bootstrap`: Infrastructure as Code (IaC) for your analysis. Bootstrap a new Git repository or a new playbook.
 * `evaluate`: Test playbooks against existing analysis reports without re-fetching image data.
 * `gitlab`: Seamless integration with GitLab CI/CD for automated reporting and MR updates.
 
@@ -75,5 +75,5 @@ Our **xref:integrations/gitlab.adoc[GitLab integration]** is currently the most 
 == Next steps
 
 * **Custom Playbooks**: Define your own security rules in the xref:playbooks.adoc[Understand Playbooks] guide.
-* **Project Bootstrapping**: Learn how to use `regis-cli generate` in the xref:integrations/cookiecutter.adoc[Quickstart with Cookiecutter] guide.
+* **Project Bootstrapping**: Learn how to use `regis-cli bootstrap` in the xref:commands.adoc#bootstrap[Available Commands] guide.
 * **CI/CD Integration**: See our guides for xref:integrations/github.adoc[GitHub Workflows] and xref:integrations/gitlab.adoc[GitLab CI].

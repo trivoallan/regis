@@ -24,6 +24,19 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Updated navigation to place Quickstart with Cookiecutter under Integrations.
 - Added utility tips for Cookiecutter template in both `github.adoc` and `gitlab.adoc`.
 - Added C4 Context and Container diagrams to `docs/modules/ROOT/pages/overview.adoc`.
+- Refactored `generate` command into a `bootstrap` command group:
+  - `bootstrap repository` — recreates the project repository from renamed `cookiecutters/repository` template.
+  - `bootstrap playbook` — creates a new custom playbook from the newly added `cookiecutters/playbook` template.
+  - Removed the monolithic `generate` command.
+  - Updated `tests/test_bootstrap.py` (3 tests pass).
+  - Updated `get-started.adoc` and `cookiecutter.adoc` documentation.
+- Added `docs/modules/ROOT/pages/commands.adoc` listing all available CLI commands.
+- Updated `docs/modules/ROOT/nav.adoc` to include the new commands page.
+- Consolidated bootstrapping documentation:
+  - Removed obsolete `docs/modules/ROOT/pages/integrations/cookiecutter.adoc`.
+  - Added `#bootstrap` anchor to `commands.adoc`.
+  - Updated links in `index.adoc`, `get-started.adoc`, `github.adoc`, and `gitlab.adoc` to point to the new anchor.
+  - Removed `cookiecutter.adoc` from `nav.adoc`.
 
 
 ## Next Steps

@@ -1,12 +1,12 @@
 * xref:index.adoc[Home]
 * xref:get-started.adoc[Get Started]
+* xref:commands.adoc[Available Commands]
 * xref:playbooks.adoc[Understand Playbooks]
 ** xref:default-playbook.adoc[Default Playbook Reference]
 * xref:overview.adoc[Architectural Overview]
 * Integrations
 ** xref:integrations/github.adoc[GitHub]
 ** xref:integrations/gitlab.adoc[GitLab]
-** xref:integrations/cookiecutter.adoc[Quickstart with Cookiecutter]
 * Schemas
 ** xref:schemas/skopeo.adoc[Skopeo]
 ** xref:schemas/dockle.adoc[Dockle]

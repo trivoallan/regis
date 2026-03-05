@@ -12,7 +12,7 @@ This guide explains how to integrate `regis-cli` into your GitLab CI/CD pipeline
 
 [TIP]
 ====
-To quickly bootstrap a new GitLab repository pre-configured with `regis-cli` and GitLab CI, you can use our xref:cookiecutter.adoc[Cookiecutter template].
+To quickly bootstrap a new GitLab repository pre-configured with `regis-cli` and GitLab CI, you can use our xref:../commands.adoc#bootstrap[Project Bootstrapping] command.
 ====
 
 

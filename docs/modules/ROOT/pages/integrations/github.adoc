@@ -8,7 +8,7 @@ To follow this guide, you should have a GitHub repository with a `Dockerfile` an
 
 [TIP]
 ====
-To quickly bootstrap a new GitHub repository pre-configured with `regis-cli` and GitHub Actions, you can use our xref:cookiecutter.adoc[Cookiecutter template].
+To quickly bootstrap a new GitHub repository pre-configured with `regis-cli` and GitHub Actions, you can use our xref:../commands.adoc#bootstrap[Project Bootstrapping] command.
 ====
 
 
