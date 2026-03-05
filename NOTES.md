@@ -13,7 +13,7 @@
 - [ ] docs : search
 - [ ] Revoir l'organisation des rapports (stocker par digest)
 - [ ] image build : signature
-- [ ] image build : provenance
+- [ ] image build : provenance (https://github.com/actions/attest)
 - [ ] image build : sbom
 - [ ] gérer la notion de release line semver
 - [ ] <https://www.npmjs.com/package/@antora/lunr-extension>
