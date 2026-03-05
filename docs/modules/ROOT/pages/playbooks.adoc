@@ -102,11 +102,11 @@ integrations:
         condition: { ">": [{ var: results.trivy.critical_count }, 0] }
 ----
 
-=== MR Description Checklist
+=== MR Description Checklists
 
-The `checklist` list adds checkboxes to the body of the Merge Request description. This lets you define manual verification steps that reviewers must tick off before approving the MR.
+The `checklists` list adds configurable checklists to the body of the Merge Request description. This lets you define manual verification steps that reviewers must tick off before approving the MR.
 
-Each item has a mandatory `label` and two optional conditions:
+Each checklist can have a `title` and a list of `items`. Each item has a mandatory `label` and two optional conditions:
 
 [cols="1,3", options="header"]
 |===
@@ -123,16 +123,20 @@ Each item has a mandatory `label` and two optional conditions:
 ----
 integrations:
   gitlab:
-    checklist:
-      - label: Security review completed                         # <1>
-      - label: No critical vulnerabilities found
-        show_if: { "==": [{ var: results.trivy.critical_count }, 0] }  # <2>
-        check_if: { "==": [{ var: results.trivy.critical_count }, 0] }  # <3>
-      - label: Image from a trusted registry
-        show_if:
-          { "in": [{ var: request.registry }, [docker.io, quay.io, ghcr.io]] }
-        check_if:
-          { "in": [{ var: request.registry }, [docker.io, quay.io, ghcr.io]] }
+    checklists:
+      - title: 📝 Security Review
+        items:
+          - label: Security review completed                         # <1>
+          - label: No critical vulnerabilities found
+            show_if: { "==": [{ var: results.trivy.critical_count }, 0] }  # <2>
+            check_if: { "==": [{ var: results.trivy.critical_count }, 0] }  # <3>
+      - title: 🚀 Compliance checks
+        items:
+          - label: Image from a trusted registry
+            show_if:
+              { "in": [{ var: request.registry }, [docker.io, quay.io, ghcr.io]] }
+            check_if:
+              { "in": [{ var: request.registry }, [docker.io, quay.io, ghcr.io]] }
 ----
 <1> Unconditional item — always included, always unchecked.
 <2> `show_if` — only included when `critical_count` equals 0.
@@ -143,7 +147,7 @@ integrations:
 You can use `show_if` and `check_if` independently. For example, an item may always be shown (`no show_if`) but pre-checked only when a condition passes.
 ====
 
-The engine exposes the resolved checklist as `mr_description_checklist` (a list of `{label, checked}` objects) in the playbook evaluation result. The CI layer converts this list to Markdown checkboxes and appends it to the MR description.
+The engine exposes the resolved checklists as `mr_description_checklists` (a list of `{title, items: [{label, checked}]}` objects) in the playbook evaluation result. The CI layer converts this list to Markdown checklists with H2 titles and appends it to the MR description.
 
 === MR Templates
 

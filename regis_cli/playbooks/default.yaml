@@ -277,28 +277,30 @@ integrations:
         condition: { "<": [{ var: playbook.score }, 70] }
       - name: security::critical
         condition: { ">": [{ var: results.trivy.critical_count }, 0] }
-    checklist:
-      - label: Revue de sécurité réalisée
-      - label: Aucune vulnérabilité CRITIQUE détectée
-        show_if: { "==": [{ var: results.trivy.critical_count }, 0] }
-        check_if: { "==": [{ var: results.trivy.critical_count }, 0] }
-      - label: Image issue d'un registre de confiance
-        show_if:
-          {
-            "in":
-              [
-                { var: request.registry },
-                [docker.io, registry-1.docker.io, quay.io, ghcr.io],
-              ],
-          }
-        check_if:
-          {
-            "in":
-              [
-                { var: request.registry },
-                [docker.io, registry-1.docker.io, quay.io, ghcr.io],
-              ],
-          }
+    checklists:
+      - title: 📝 Review Checklist
+        items:
+          - label: Revue de sécurité réalisée
+          - label: Aucune vulnérabilité CRITIQUE détectée
+            show_if: { "==": [{ var: results.trivy.critical_count }, 0] }
+            check_if: { "==": [{ var: results.trivy.critical_count }, 0] }
+          - label: Image issue d'un registre de confiance
+            show_if:
+              {
+                "in":
+                  [
+                    { var: request.registry },
+                    [docker.io, registry-1.docker.io, quay.io, ghcr.io],
+                  ],
+              }
+            check_if:
+              {
+                "in":
+                  [
+                    { var: request.registry },
+                    [docker.io, registry-1.docker.io, quay.io, ghcr.io],
+                  ],
+              }
     templates:
       - url: https://github.com/trivoallan/regis-cli
         directory: cookiecutters/mr-evidence

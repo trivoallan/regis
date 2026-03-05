@@ -33,11 +33,13 @@
 **** [[properties_integrations_properties_gitlab_properties_labels_items]]**Items** *(object)*
 ***** [[properties_integrations_properties_gitlab_properties_labels_items_properties_name]]**`name`** *(string, required)*: Label name, e.g. 'regis::fail' or 'security::critical'.
 ***** [[properties_integrations_properties_gitlab_properties_labels_items_properties_condition]]**`condition`** *(object, required)*: JsonLogic expression evaluated against the analysis report.
-*** [[properties_integrations_properties_gitlab_properties_checklist]]**`checklist`** *(array)*: Checklist items added as checkboxes to the Merge Request description.
-**** [[properties_integrations_properties_gitlab_properties_checklist_items]]**Items** *(object)*: Cannot contain additional properties.
-***** [[properties_integrations_properties_gitlab_properties_checklist_items_properties_label]]**`label`** *(string, required)*: Text of the checkbox item.
-***** [[properties_integrations_properties_gitlab_properties_checklist_items_properties_show_if]]**`show_if`** *(object)*: Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy.
-***** [[properties_integrations_properties_gitlab_properties_checklist_items_properties_check_if]]**`check_if`** *(object)*: Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ]).
+*** [[properties_integrations_properties_gitlab_properties_checklist]]**`checklist`** *(array)*: (Deprecated) Single checklist items added as checkboxes to the Merge Request description.
+**** [[properties_integrations_properties_gitlab_properties_checklist_items]]**Items**: Refer to *<<%24defs_checklist_item,#/$defs/checklist_item>>*.
+*** [[properties_integrations_properties_gitlab_properties_checklists]]**`checklists`** *(array)*: Configurable checklists added as checkboxes to the Merge Request description.
+**** [[properties_integrations_properties_gitlab_properties_checklists_items]]**Items** *(object)*
+***** [[properties_integrations_properties_gitlab_properties_checklists_items_properties_title]]**`title`** *(string)*: Display title for the checklist.
+***** [[properties_integrations_properties_gitlab_properties_checklists_items_properties_items]]**`items`** *(array, required)*: Items in this checklist.
+****** [[properties_integrations_properties_gitlab_properties_checklists_items_properties_items_items]]**Items**: Refer to *<<%24defs_checklist_item,#/$defs/checklist_item>>*.
 *** [[properties_integrations_properties_gitlab_properties_templates]]**`templates`** *(array)*: URLs to Cookiecutter templates that will be rendered and added to the Merge Request branch.
 **** [[properties_integrations_properties_gitlab_properties_templates_items]]**Items** *(object)*: Cannot contain additional properties.
 ***** [[properties_integrations_properties_gitlab_properties_templates_items_properties_url]]**`url`** *(string, required)*: Cookiecutter template URL or path.
@@ -89,3 +91,7 @@
 ** [[%24defs_scorecard_properties_tags]]**`tags`** *(array)*: Arbitrary tags for filtering or grouping.
 *** [[%24defs_scorecard_properties_tags_items]]**Items** *(string)*
 ** [[%24defs_scorecard_properties_condition]]**`condition`**: JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {"var": "results.trivy.critical_count"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or.
+* [[%24defs_checklist_item]]**`checklist_item`** *(object)*: Cannot contain additional properties.
+** [[%24defs_checklist_item_properties_label]]**`label`** *(string, required)*: Text of the checkbox item.
+** [[%24defs_checklist_item_properties_show_if]]**`show_if`** *(object)*: Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy.
+** [[%24defs_checklist_item_properties_check_if]]**`check_if`** *(object)*: Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ]).

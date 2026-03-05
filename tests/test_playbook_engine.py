@@ -345,8 +345,11 @@ class TestGitLabChecklist:
         """Items with no condition are always added to the checklist."""
         pb = self._make_playbook([{"label": "Manual review done"}])
         result = evaluate(pb, {})
-        assert result["mr_description_checklist"] == [
-            {"label": "Manual review done", "checked": False}
+        assert result["mr_description_checklists"] == [
+            {
+                "title": "📝 Review Checklist",
+                "items": [{"label": "Manual review done", "checked": False}],
+            }
         ]
 
     def test_truthy_condition_includes_item(self):
@@ -361,8 +364,11 @@ class TestGitLabChecklist:
         )
         report = {"results": {"trivy": {"critical_count": 0}}}
         result = evaluate(pb, report)
-        assert result["mr_description_checklist"] == [
-            {"label": "No critical CVEs", "checked": False}
+        assert result["mr_description_checklists"] == [
+            {
+                "title": "📝 Review Checklist",
+                "items": [{"label": "No critical CVEs", "checked": False}],
+            }
         ]
 
     def test_falsy_condition_excludes_item(self):
@@ -377,7 +383,7 @@ class TestGitLabChecklist:
         )
         report = {"results": {"trivy": {"critical_count": 5}}}
         result = evaluate(pb, report)
-        assert result["mr_description_checklist"] == []
+        assert "mr_description_checklists" not in result
 
     def test_missing_data_excludes_item(self):
         """Items whose condition references missing data are excluded."""
@@ -390,7 +396,7 @@ class TestGitLabChecklist:
             ]
         )
         result = evaluate(pb, {})
-        assert result["mr_description_checklist"] == []
+        assert "mr_description_checklists" not in result
 
     def test_mixed_items(self):
         """Mixed conditional and unconditional items produce correct subset."""
@@ -409,9 +415,14 @@ class TestGitLabChecklist:
         )
         report = {"results": {"ok": True}}
         result = evaluate(pb, report)
-        assert result["mr_description_checklist"] == [
-            {"label": "Always here", "checked": False},
-            {"label": "Included: truthy", "checked": False},
+        assert result["mr_description_checklists"] == [
+            {
+                "title": "📝 Review Checklist",
+                "items": [
+                    {"label": "Always here", "checked": False},
+                    {"label": "Included: truthy", "checked": False},
+                ],
+            }
         ]
 
     def test_check_if_pre_checks_item(self):
@@ -426,8 +437,11 @@ class TestGitLabChecklist:
         )
         report = {"results": {"trivy": {"critical_count": 0}}}
         result = evaluate(pb, report)
-        assert result["mr_description_checklist"] == [
-            {"label": "No critical CVEs", "checked": True}
+        assert result["mr_description_checklists"] == [
+            {
+                "title": "📝 Review Checklist",
+                "items": [{"label": "No critical CVEs", "checked": True}],
+            }
         ]
 
     def test_check_if_falsy_stays_unchecked(self):
@@ -442,8 +456,11 @@ class TestGitLabChecklist:
         )
         report = {"results": {"trivy": {"critical_count": 3}}}
         result = evaluate(pb, report)
-        assert result["mr_description_checklist"] == [
-            {"label": "No critical CVEs", "checked": False}
+        assert result["mr_description_checklists"] == [
+            {
+                "title": "📝 Review Checklist",
+                "items": [{"label": "No critical CVEs", "checked": False}],
+            }
         ]
 
     def test_missing_check_if_stays_unchecked(self):
@@ -457,20 +474,61 @@ class TestGitLabChecklist:
             ]
         )
         result = evaluate(pb, {})
-        assert result["mr_description_checklist"] == [
-            {"label": "Some item", "checked": False}
+        assert result["mr_description_checklists"] == [
+            {
+                "title": "📝 Review Checklist",
+                "items": [{"label": "Some item", "checked": False}],
+            }
         ]
 
     def test_no_checklist_key_absent(self):
-        """When checklist is not defined, mr_description_checklist is absent."""
+        """When checklist is not defined, mr_description_checklists is absent."""
         result = evaluate(self.BASE_PLAYBOOK, {})
-        assert "mr_description_checklist" not in result
+        assert "mr_description_checklists" not in result
 
     def test_empty_checklist_key_absent(self):
-        """When checklist is an empty list, mr_description_checklist is absent."""
+        """When checklist is an empty list, mr_description_checklists is absent."""
         pb = self._make_playbook([])
         result = evaluate(pb, {})
-        assert "mr_description_checklist" not in result
+        assert "mr_description_checklists" not in result
+
+    def test_multiple_checklists(self):
+        import copy
+
+        pb = copy.deepcopy(self.BASE_PLAYBOOK)
+        pb["integrations"] = {
+            "gitlab": {
+                "checklists": [
+                    {
+                        "title": "Security Checklist",
+                        "items": [
+                            {
+                                "label": "No critical CVEs",
+                                "check_if": {
+                                    "==": [{"var": "results.trivy.critical_count"}, 0]
+                                },
+                            }
+                        ],
+                    },
+                    {
+                        "title": "Compliance Checklist",
+                        "items": [{"label": "Manual compliance check"}],
+                    },
+                ]
+            }
+        }
+        report = {"results": {"trivy": {"critical_count": 0}}}
+        result = evaluate(pb, report)
+        assert result["mr_description_checklists"] == [
+            {
+                "title": "Security Checklist",
+                "items": [{"label": "No critical CVEs", "checked": True}],
+            },
+            {
+                "title": "Compliance Checklist",
+                "items": [{"label": "Manual compliance check", "checked": False}],
+            },
+        ]
 
 
 class TestGitLabTemplates:

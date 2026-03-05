@@ -113,16 +113,25 @@
             },
             "checklist": {
               "type": "array",
-              "description": "Checklist items added as checkboxes to the Merge Request description.",
+              "description": "(Deprecated) Single checklist items added as checkboxes to the Merge Request description.",
+              "items": {
+                "$ref": "#/$defs/checklist_item"
+              }
+            },
+            "checklists": {
+              "type": "array",
+              "description": "Configurable checklists added as checkboxes to the Merge Request description.",
               "items": {
                 "type": "object",
-                "required": ["label"],
-                "additionalProperties": false,
                 "properties": {
-                  "label": { "type": "string", "description": "Text of the checkbox item." },
-                  "show_if": { "type": "object", "description": "Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy." },
-                  "check_if": { "type": "object", "description": "Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ])." }
-                }
+                  "title": { "type": "string", "description": "Display title for the checklist." },
+                  "items": {
+                    "type": "array",
+                    "description": "Items in this checklist.",
+                    "items": { "$ref": "#/$defs/checklist_item" }
+                  }
+                },
+                "required": ["items"]
               }
             },
             "templates": {
@@ -353,6 +362,16 @@
         }
       },
       "additionalProperties": false
+    },
+    "checklist_item": {
+      "type": "object",
+      "required": ["label"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string", "description": "Text of the checkbox item." },
+        "show_if": { "type": "object", "description": "Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy." },
+        "check_if": { "type": "object", "description": "Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ])." }
+      }
     }
   }
 }

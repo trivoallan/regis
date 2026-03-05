@@ -722,50 +722,68 @@ def evaluate(
                     )
         result["labels"] = list(set(resolved_labels))
 
-    # Evaluate GitLab MR description checklist items
-    checklist_defs = gitlab_integration.get("checklist", [])
-    if checklist_defs:
-        resolved_checklist: list[dict[str, Any]] = []
-        for item_def in checklist_defs:
-            label = item_def.get("label", "")
-            if not label:
+    # Evaluate GitLab MR description checklists
+    checklist_defs = gitlab_integration.get("checklist")
+    checklists_defs = gitlab_integration.get("checklists", [])
+
+    # Backwards compatibility: wrap old `checklist` into the new `checklists` format
+    if checklist_defs is not None and not checklists_defs:
+        checklists_defs = [{"items": checklist_defs}]
+
+    if checklists_defs:
+        resolved_checklists: list[dict[str, Any]] = []
+        for checklist_def in checklists_defs:
+            title = checklist_def.get("title", "📝 Review Checklist")
+            items = checklist_def.get("items", [])
+            if not items:
                 continue
 
-            # --- display condition ---
-            condition = item_def.get("show_if")
-            if condition:
-                try:
-                    tracker = MissingDataTracker(full_context)
-                    is_active = jsonLogic(condition, tracker)
-                    if not is_active or tracker.missing_accessed:
-                        continue
-                except Exception as exc:
-                    logger.warning(
-                        "Failed to evaluate checklist condition for '%s': %s",
-                        label,
-                        exc,
-                    )
+            resolved_items: list[dict[str, Any]] = []
+            for item_def in items:
+                label = item_def.get("label", "")
+                if not label:
                     continue
 
-            # --- checked condition ---
-            checked = False
-            checked_condition = item_def.get("check_if")
-            if checked_condition:
-                try:
-                    tracker = MissingDataTracker(full_context)
-                    checked = (
-                        bool(jsonLogic(checked_condition, tracker))
-                        and not tracker.missing_accessed
-                    )
-                except Exception as exc:
-                    logger.warning(
-                        "Failed to evaluate checklist checked_condition for '%s': %s",
-                        label,
-                        exc,
-                    )
+                # --- display condition ---
+                condition = item_def.get("show_if")
+                if condition:
+                    try:
+                        tracker = MissingDataTracker(full_context)
+                        is_active = jsonLogic(condition, tracker)
+                        if not is_active or tracker.missing_accessed:
+                            continue
+                    except Exception as exc:
+                        logger.warning(
+                            "Failed to evaluate checklist condition for '%s': %s",
+                            label,
+                            exc,
+                        )
+                        continue
 
-            resolved_checklist.append({"label": label, "checked": checked})
-        result["mr_description_checklist"] = resolved_checklist
+                # --- checked condition ---
+                checked = False
+                checked_condition = item_def.get("check_if")
+                if checked_condition:
+                    try:
+                        tracker = MissingDataTracker(full_context)
+                        checked = (
+                            bool(jsonLogic(checked_condition, tracker))
+                            and not tracker.missing_accessed
+                        )
+                    except Exception as exc:
+                        logger.warning(
+                            "Failed to evaluate checklist checked_condition for '%s': %s",
+                            label,
+                            exc,
+                        )
+
+                resolved_items.append({"label": label, "checked": checked})
+
+            if resolved_items:
+                resolved_checklists.append({"title": title, "items": resolved_items})
+
+        if resolved_checklists:
+            result["mr_description_checklists"] = resolved_checklists
 
     # Evaluate GitLab MR templates
     template_defs = gitlab_integration.get("templates", [])
