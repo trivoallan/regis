@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/trivoallan/regis-cli/main/regis_cli/schemas/playbook.schema.json
+name: "{{ cookiecutter.project_name }}"
+description: "{{ cookiecutter.description }}"
+
+pages:
+  - title: Overview
+    slug: index
+    sections:
+      - name: Summary
+        widgets:
+          - label: Compliance Score
+            value: "{{ '{{' }} playbooks.0.score {{ '}}' }}%"
+          - label: Passed Scorecards
+            value: "{{ '{{' }} playbooks.0.passed_scorecards {{ '}}' }} / {{ '{{' }} playbooks.0.total_scorecards {{ '}}' }}"
+
+      - name: Image Details
+        widgets:
+          - label: Registry
+            value: "{{ '{{' }} request.registry {{ '}}' }}"
+          - label: Repository
+            value: "{{ '{{' }} request.repository {{ '}}' }}"
+          - label: Tag
+            value: "{{ '{{' }} request.tag {{ '}}' }}"
+
+  - title: Security Checks
+    slug: security
+    sections:
+      - name: Vulnerabilities
+        widgets:
+          - template: analyzers/trivy/cards.html
+          - template: analyzers/trivy/table.html
+            options:
+              title: Critical & High Vulnerabilities
+              limit: 20

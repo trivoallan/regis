@@ -770,10 +770,13 @@ def list_analyzers() -> None:
         click.echo(f"  {name:12s}  {analyzer.__class__.__doc__ or ''}")
 
 
-@main.command(name="generate")
-@click.argument(
-    "template_path", type=click.Path(exists=True, file_okay=False, dir_okay=True)
-)
+@main.group(name="bootstrap")
+def bootstrap():
+    """Bootstrap a new project or playbook."""
+    pass
+
+
+@bootstrap.command(name="repository")
 @click.argument(
     "output_dir", type=click.Path(file_okay=False, dir_okay=True), default="."
 )
@@ -782,28 +785,67 @@ def list_analyzers() -> None:
     is_flag=True,
     help="Do not prompt for parameters and only use cookiecutter.json defaults.",
 )
-def generate(template_path: str, output_dir: str, no_input: bool) -> None:
-    """Generate a new project from a Cookiecutter template."""
+def bootstrap_repository(output_dir: str, no_input: bool) -> None:
+    """Bootstrap a new RegiS analysis repository."""
     try:
+        from importlib import resources
+
         from cookiecutter.main import cookiecutter
     except ImportError:
         raise click.ClickException(
             "cookiecutter not found. Please install it with 'pip install cookiecutter'."
         ) from None
 
-    click.echo(
-        f"Generating project from {template_path} into {output_dir}...", err=True
-    )
+    template_path = resources.files("regis_cli") / ".." / "cookiecutters" / "repository"
+    if not template_path.exists():
+        # Fallback for installed package if cookiecutters are in a different location
+        # For now, we assume they are available relative to the source.
+        pass
+
+    click.echo(f"Bootstrapping repository into {output_dir}...", err=True)
     try:
         cookiecutter(
-            template_path,
+            str(template_path),
             no_input=no_input,
             output_dir=output_dir,
-            overwrite_if_exists=True,
         )
-        click.echo("Success!", err=True)
+        click.echo("  ✓ Repository bootstrapped successfully.", err=True)
     except Exception as exc:
-        raise click.ClickException(str(exc)) from exc
+        raise click.ClickException(f"Failed to bootstrap repository: {exc}") from exc
+
+
+@bootstrap.command(name="playbook")
+@click.argument(
+    "output_dir", type=click.Path(file_okay=False, dir_okay=True), default="."
+)
+@click.option(
+    "--no-input",
+    is_flag=True,
+    help="Do not prompt for parameters and only use cookiecutter.json defaults.",
+)
+def bootstrap_playbook(output_dir: str, no_input: bool) -> None:
+    """Bootstrap a new RegiS playbook."""
+    try:
+        from importlib import resources
+
+        from cookiecutter.main import cookiecutter
+    except ImportError:
+        raise click.ClickException(
+            "cookiecutter not found. Please install it with 'pip install cookiecutter'."
+        ) from None
+
+    template_path = resources.files("regis_cli") / ".." / "cookiecutters" / "playbook"
+
+    click.echo(f"Bootstrapping playbook into {output_dir}...", err=True)
+    try:
+        cookiecutter(
+            str(template_path),
+            no_input=no_input,
+            output_dir=output_dir,
+        )
+        click.echo("  ✓ Playbook bootstrapped successfully.", err=True)
+    except Exception as exc:
+        raise click.ClickException(f"Failed to bootstrap playbook: {exc}") from exc
 
 
 @main.command(name="check")
