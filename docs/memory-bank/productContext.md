@@ -1,9 +1,11 @@
 # Product Context
 
 ## Purpose
-`regis-cli` is a command-line tool designed for CI/CD environments to analyze container images, evaluate security playbooks, and generate comprehensive reports (JSON and HTML).
+
+`regis-cli` is a **Container Security & Policy-as-Code Orchestration**. It provides unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.
 
 ## Key Goals
+
 - Provide deep visibility into container image metadata and security posture.
 - Support automated policy enforcement via playbooks.
 - Facilitate human review through rich, themeable HTML reports.
