@@ -2,10 +2,9 @@
 
 ## [0.14.2](https://github.com/trivoallan/regis-cli/compare/v0.14.1...v0.14.2) (2026-03-05)
 
-
 ### Documentation
 
-* refine project description and branding ([#37](https://github.com/trivoallan/regis-cli/issues/37)) ([bbe8fc7](https://github.com/trivoallan/regis-cli/commit/bbe8fc7e796df8974a256cdbf83a67978f1f9228))
+- refine project description and branding ([#37](https://github.com/trivoallan/regis-cli/issues/37)) ([bbe8fc7](https://github.com/trivoallan/regis-cli/commit/bbe8fc7e796df8974a256cdbf83a67978f1f9228))
 
 ## [0.14.1](https://github.com/trivoallan/regis-cli/compare/v0.14.0...v0.14.1) (2026-03-05)
 
