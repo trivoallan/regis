@@ -20,10 +20,8 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Updated `playbook.schema.json`, `engine.py`, `default.yaml`, and `test_playbook_engine.py` (27 tests pass).
 - Updated `docs/modules/ROOT/pages/playbooks.adoc` — checklist section documents `show_if`/`check_if`.
 - Updated `docs/modules/ROOT/pages/integrations/gitlab.adoc` — pipeline diagram and job descriptions reflect refactored pipeline.
-- Moved `cookiecutter.adoc` to `docs/modules/ROOT/pages/integrations/cookiecutter.adoc`.
-- Updated navigation to place Quickstart with Cookiecutter under Integrations.
-- Added utility tips for Cookiecutter template in both `github.adoc` and `gitlab.adoc`.
-- Added C4 Context and Container diagrams to `docs/modules/ROOT/pages/overview.adoc`.
+- Improved documentation for CI/CD integration (moved Cookiecutter, added tips, added C4 diagrams).
+- Unified linting experience by migrating to Trunk.
 - Refactored `generate` command into a `bootstrap` command group:
   - `bootstrap repository` — recreates the project repository from renamed `cookiecutters/repository` template.
   - `bootstrap playbook` — creates a new custom playbook from the newly added `cookiecutters/playbook` template.
@@ -35,10 +33,13 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Consolidated bootstrapping documentation:
   - Removed obsolete `docs/modules/ROOT/pages/integrations/cookiecutter.adoc`.
   - Added `#bootstrap` anchor to `commands.adoc`.
-  - Updated links in `index.adoc`, `get-started.adoc`, `github.adoc`, and `gitlab.adoc` to point to the new anchor.
-  - Removed `cookiecutter.adoc` from `nav.adoc`.
-
+- Updated links in `index.adoc`, `get-started.adoc`, `github.adoc`, and `gitlab.adoc` to point to the new anchor.
+- Removed `cookiecutter.adoc` from `nav.adoc`.
+- Migrated CI linting from Super-Linter to Trunk:
+  - Enabled `mypy` and `hadolint` in Trunk.
+  - Added necessary type stubs for `PyYAML`, `requests`, and `jsonschema`.
+  - Replaced `github/super-linter` with `trunk-io/trunk-action` in GitHub Actions.
 
 ## Next Steps
 
-- Commit and open a PR with conventional commit message covering these changes.
+- Push the `feat/trunk-linting` branch and open a PR.

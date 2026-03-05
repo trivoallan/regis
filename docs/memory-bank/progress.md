@@ -1,6 +1,7 @@
 # Progress
 
 ## Completed
+
 - Core CLI functionality.
 - Key analyzers (Skopeo, Trivy, Hadolint, etc.).
 - Playbook evaluation with JSON logic.
@@ -11,9 +12,12 @@
 - Automated Antora documentation publishing to GitHub Pages.
 
 ## In Progress
-- Improving documentation for CI/CD integration (moved Cookiecutter, added tips, added C4 diagrams).
+
+- Improved documentation for CI/CD integration (moved Cookiecutter, added tips, added C4 diagrams).
+- Unified linting experience by migrating to Trunk.
 
 ## Future Roadmap
+
 - Additional analyzers (e.g., custom compliance checks).
 - More HTML themes.
 - Enhanced reporting features.
