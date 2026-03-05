@@ -2,10 +2,9 @@
 
 ## [0.14.1](https://github.com/trivoallan/regis-cli/compare/v0.14.0...v0.14.1) (2026-03-05)
 
-
 ### Documentation
 
-* **README:** redesign README.md and update report preview ([#32](https://github.com/trivoallan/regis-cli/issues/32)) ([31d27fb](https://github.com/trivoallan/regis-cli/commit/31d27fb132276e4eaea7dd2c447da6cc011a5870))
+- **README:** redesign README.md and update report preview ([#32](https://github.com/trivoallan/regis-cli/issues/32)) ([31d27fb](https://github.com/trivoallan/regis-cli/commit/31d27fb132276e4eaea7dd2c447da6cc011a5870))
 
 ## [0.14.0](https://github.com/trivoallan/regis-cli/compare/v0.13.0...v0.14.0) (2026-03-05)
 
