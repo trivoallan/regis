@@ -1,6 +1,6 @@
 # regis-cli
 
-`regis-cli` is a powerful, production-ready tool to analyze Docker image registries, evaluate security playbooks, and produce rich HTML/JSON reports. It enables deep visibility into container image metadata and security posture, allowing for automated policy enforcement in CI/CD environments.
+`regis-cli` is a **Container Security & Policy-as-Code Orchestration**. It provides unified analysis, custom playbooks, and stunning interactive reports for production-ready CI/CD.
 
 ## Documentation
 
@@ -34,7 +34,7 @@ Comprehensive documentation, including installation and usage guides, is availab
 ## Report Preview
 
 `regis-cli` generates high-quality, interactive HTML dashboards.
- Below is a preview of the different sections available in a standard report.
+Below is a preview of the different sections available in a standard report.
 
 **[Explore the interactive Alpine example report here](https://trivoallan.github.io/regis-cli/regis-cli/0.14.0/_attachments/examples/alpine/index.html)**
 
