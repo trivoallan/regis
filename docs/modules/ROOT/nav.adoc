@@ -3,8 +3,9 @@
 * xref:playbooks.adoc[Understand Playbooks]
 ** xref:default-playbook.adoc[Default Playbook Reference]
 * xref:overview.adoc[Architectural Overview]
-* xref:github-workflow.adoc[Integrate with GitHub Actions]
-* xref:gitlab-workflow.adoc[Using in GitLab CI]
+* Integrations
+** xref:integrations/github.adoc[Integrate with GitHub Actions]
+** xref:integrations/gitlab.adoc[Using in GitLab CI]
 * xref:cookiecutter.adoc[Quickstart with Cookiecutter]
 * Schemas
 ** xref:schemas/skopeo.adoc[Skopeo]

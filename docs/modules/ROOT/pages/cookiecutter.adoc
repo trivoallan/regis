@@ -78,7 +78,7 @@ The generated workflow is designed to publish reports to GitHub Pages.
 
 === 2. Configure Secrets (Optional)
 
-If you are analyzing private images, ensure your GitHub Actions environment has the necessary credentials (e.g., `GH_TOKEN` or registry logins) as described in the xref:github-workflow.adoc[GitHub Workflow guide].
+If you are analyzing private images, ensure your GitHub Actions environment has the necessary credentials (e.g., `GH_TOKEN` or registry logins) as described in the xref:integrations/github.adoc[GitHub Workflow guide].
 
 == Running Your First Analysis
 

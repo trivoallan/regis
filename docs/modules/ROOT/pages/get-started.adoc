@@ -62,4 +62,4 @@ pipenv run regis-cli analyze nginx:latest --site \
 
 * **Registry Authentication**: Learn how to analyze private images by providing credentials.
 * **Custom Playbooks**: Define your own security and compliance rules in the xref:playbooks.adoc[Understand Playbooks] guide.
-* **CI/CD Integration**: See our guides for xref:github-workflow.adoc[GitHub Workflows] and xref:gitlab-workflow.adoc[GitLab CI].
+* **CI/CD Integration**: See our guides for xref:integrations/github.adoc[GitHub Workflows] and xref:integrations/gitlab.adoc[GitLab CI].

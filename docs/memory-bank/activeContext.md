@@ -19,7 +19,7 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - `mr_description_checklist` output changed from `list[str]` to `list[{label, checked}]`.
 - Updated `playbook.schema.json`, `engine.py`, `default.yaml`, and `test_playbook_engine.py` (27 tests pass).
 - Updated `docs/modules/ROOT/pages/playbooks.adoc` — checklist section documents `show_if`/`check_if`.
-- Updated `docs/modules/ROOT/pages/gitlab-workflow.adoc` — pipeline diagram and job descriptions reflect refactored pipeline.
+- Updated `docs/modules/ROOT/pages/integrations/gitlab.adoc` — pipeline diagram and job descriptions reflect refactored pipeline.
 
 ## Next Steps
 

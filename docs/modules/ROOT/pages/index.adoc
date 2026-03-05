@@ -8,5 +8,5 @@ For a detailed look at how the tool works and its internal structure, see the xr
 
 * xref:get-started.adoc[Get Started]
 * xref:cookiecutter.adoc[Quickstart with Cookiecutter]
-* xref:github-workflow.adoc[GitHub Workflow Guide]
-* xref:gitlab-workflow.adoc[GitLab CI Guide]
+* xref:integrations/github.adoc[GitHub Workflow Guide]
+* xref:integrations/gitlab.adoc[GitLab CI Guide]
