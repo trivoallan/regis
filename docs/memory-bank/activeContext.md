@@ -40,7 +40,6 @@ Documentation update following the pipeline refactoring and checklist enhancemen
   - Added necessary type stubs for `PyYAML`, `requests`, and `jsonschema`.
   - Replaced `github/super-linter` with `trunk-io/trunk-action` in GitHub Actions.
 
-
 ## Next Steps
 
 - Push the `feat/trunk-linting` branch and open a PR.
