@@ -6,6 +6,7 @@ content:
   sources:
     - url: .
       branches: [main]
+      tags: [v0.13.0]
       start_path: docs
 ui:
   bundle:

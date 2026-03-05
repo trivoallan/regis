@@ -8,7 +8,7 @@
 - [ ] Recommandation de configuration d'import (regex)
 - [ ] Démo intégration avec PowerBI (idées)
 - [x] Refactor engine.py
-- [ ] ajouter sous-commande pour la ci gitlab
+- [x] ajouter sous-commande pour la ci gitlab
 - [x] groupes pour les checklists
 - [ ] docs : search
 - [ ] Revoir l'organisation des rapports (stocker par digest)
