@@ -35,7 +35,10 @@ MIT
 
 ---
 
-`regis-cli` generates high-quality, interactive HTML dashboards. Below is a preview of the different sections available in a standard report.
+## Report Preview
+
+`regis-cli` generates high-quality, interactive HTML dashboards.
+ Below is a preview of the different sections available in a standard report.
 
 **[Explore the interactive Alpine example report here](https://trivoallan.github.io/regis-cli/regis-cli/0.14.0/_attachments/examples/alpine/index.html)**
 
