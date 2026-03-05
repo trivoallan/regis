@@ -140,14 +140,18 @@ def _resolve_links(
 
         try:
             if "{{" in url_tmpl or "{%" in url_tmpl:
-                url = _resolve_template(url_tmpl, full_context, nested_context=full_context)
+                url = _resolve_template(
+                    url_tmpl, full_context, nested_context=full_context
+                )
             else:
                 url = url_tmpl.format(**report)
 
             if url:
                 resolved_links.append({"label": link_def.get("label", ""), "url": url})
         except Exception as exc:  # noqa: BLE001
-            logger.warning("Could not resolve link '%s': %s", link_def.get("label"), exc)
+            logger.warning(
+                "Could not resolve link '%s': %s", link_def.get("label"), exc
+            )
 
     if resolved_links:
         result["links"] = resolved_links

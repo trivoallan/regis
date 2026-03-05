@@ -7,10 +7,11 @@
 - [x] Mécanisme configurable pour ajouter du contenu à la MR (via cookiecutter ?)
 - [ ] Recommandation de configuration d'import (regex)
 - [ ] Démo intégration avec PowerBI (idées)
-- [ ] Refactor engine.py
+- [x] Refactor engine.py
 - [ ] ajouter sous-commande pour la ci gitlab
 - [x] groupes pour les checklists
 - [ ] docs : search
 - [ ] Revoir l'organisation des rapports (stocker par digest)
 - [ ] image build : signature
 - [ ] image build : provenance
+- [ ] image build : sbom

@@ -399,7 +399,7 @@ def analyze(
             default_pb = (
                 importlib.resources.files("regis_cli") / "playbooks" / "default.yaml"
             )
-            if default_pb.exists():
+            if default_pb.is_file():
                 playbook_paths = (str(default_pb),)
 
         if playbook_paths:

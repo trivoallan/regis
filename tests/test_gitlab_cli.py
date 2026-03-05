@@ -78,7 +78,7 @@ def test_update_mr_success(runner, tmp_path):
         mock_instance = mock_gl.return_value
         mock_project = mock_instance.projects.get.return_value
         mock_mr = mock_project.mergerequests.get.return_value
-        
+
         # Setup existing MR properties
         mock_mr.description = "Original Description"
         mock_mr.labels = []
@@ -118,7 +118,7 @@ def test_update_mr_success(runner, tmp_path):
 
         # Verify Label Changes
         assert mock_mr.labels == ["security"]
-        
+
         # Save must be called to update MR on gitlab
         mock_mr.save.assert_called_once()
 
@@ -127,7 +127,7 @@ def test_update_mr_invalid_url(runner, tmp_path):
     """Test update-mr with invalid mr-url format."""
     report_file = tmp_path / "report.json"
     report_file.write_text("{}")
-    
+
     result = runner.invoke(
         main,
         [

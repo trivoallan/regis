@@ -162,7 +162,9 @@ def update_mr(report_path: str, report_url: str, mr_url: str, token: str) -> Non
         if checklist_md not in new_desc:
             new_desc = f"{new_desc}{checklist_md}"
 
-    update_kwargs = {}
+    from typing import Any
+
+    update_kwargs: dict[str, Any] = {}
     if new_desc != current_desc:
         update_kwargs["description"] = new_desc
 
