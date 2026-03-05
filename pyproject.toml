@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "regis-cli"
-version = "0.11.0"
+version = "0.12.0"
 description = "CLI tool to analyze Docker image registries and produce JSON reports"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.12.0](https://github.com/trivoallan/regis-cli/compare/v0.11.0...v0.12.0) (2026-03-05)
+
+
+### Features
+
+* **playbook:** add support for multiple titled GitLab MR description checklists with backward compatibility. ([f865cb0](https://github.com/trivoallan/regis-cli/commit/f865cb00735d90a8185bb98f87373d05431b5caf))
+
+
+### Bug Fixes
+
+* **gitlab:** Improve GitLab CI report path handling ([9a7914f](https://github.com/trivoallan/regis-cli/commit/9a7914f8a5828eb2b8493d517dcc92af4f8df1a4))
+* **template:** add missing `format_number` Jinja2 filter ([f76b30b](https://github.com/trivoallan/regis-cli/commit/f76b30b803125177543e2d47098c345f012b3b4d))
+
 ## [0.11.0](https://github.com/trivoallan/regis-cli/compare/v0.10.0...v0.11.0) (2026-03-05)
 
 

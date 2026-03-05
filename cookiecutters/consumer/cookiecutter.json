@@ -8,7 +8,7 @@
   "registry_domain": "ghcr.io",
   "repository_owner": "username",
   "description": "Container image security analysis and reporting.",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "regis_cli_image_url": "ghcr.io/trivoallan/regis-cli:{{ cookiecutter.version }}",
   "regis_cli_image_base": "ghcr.io/trivoallan/regis-cli",
   "regis_playbook_url": "https://raw.githubusercontent.com/trivoallan/regis-cli/v{{ cookiecutter.version }}/regis_cli/playbooks/default.yaml"
