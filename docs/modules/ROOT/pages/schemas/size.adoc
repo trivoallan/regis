@@ -12,6 +12,7 @@
 * [[properties_layers]]**`layers`** *(array, required)*
 ** [[properties_layers_items]]**Items** *(object)*: Cannot contain additional properties.
 *** [[properties_layers_items_properties_index]]**`index`** *(integer, required)*: Minimum: `0`.
+*** [[properties_layers_items_properties_digest]]**`digest`** *(string, required)*
 *** [[properties_layers_items_properties_size_bytes]]**`size_bytes`** *(integer, required)*: Minimum: `0`.
 *** [[properties_layers_items_properties_size_human]]**`size_human`** *(string, required)*
 * [[properties_platforms]]**`platforms`** *(array or null, required)*

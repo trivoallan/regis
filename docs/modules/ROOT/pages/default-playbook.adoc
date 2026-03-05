@@ -201,6 +201,18 @@ The following items are appended as checkboxes to the Merge Request description.
 | `request.registry` ∈ {docker.io, registry-1.docker.io, quay.io, ghcr.io}
 |===
 
+=== MR Templates
+
+The default playbook automatically generates a security evidence document for Merge Requests.
+
+[cols="1,3"]
+|===
+| Template | Condition
+
+| `cookiecutters/mr-evidence`
+| Always generated (no condition). Outputs a `SECURITY_EVIDENCE.md` file in the `.regis-evidence/` directory.
+|===
+
 [TIP]
 ====
 For more information on how to define your own compliance rules, see the xref:playbooks.adoc[Understand Playbooks] guide.

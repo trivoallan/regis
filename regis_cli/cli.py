@@ -555,6 +555,39 @@ def analyze(
                 rendered=rendered,
             )
 
+    # Execute Cookiecutter templates for Merge Requests
+    playbooks = final_report.get("playbooks", [])
+    valid_mr_templates = []
+    for pb in playbooks:
+        for tmpl in pb.get("mr_templates", []):
+            if tmpl not in valid_mr_templates:
+                valid_mr_templates.append(tmpl)
+
+    if valid_mr_templates:
+        try:
+            from cookiecutter.main import cookiecutter
+        except ImportError:
+            click.echo(
+                "  Warning: cookiecutter not found. Cannot evaluate mr_templates.",
+                err=True,
+            )
+        else:
+            for tmpl_url in valid_mr_templates:
+                click.echo(f"  Rendering MR template: {tmpl_url}...", err=True)
+                try:
+                    cookiecutter(
+                        tmpl_url,
+                        no_input=True,
+                        extra_context={"regis": final_report},
+                        output_dir=".",
+                        overwrite_if_exists=True,
+                    )
+                except Exception as exc:
+                    click.echo(
+                        f"  Warning: Failed to render template '{tmpl_url}': {exc}",
+                        err=True,
+                    )
+
 
 @main.command(name="list")
 def list_analyzers() -> None:

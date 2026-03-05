@@ -767,4 +767,33 @@ def evaluate(
             resolved_checklist.append({"label": label, "checked": checked})
         result["mr_description_checklist"] = resolved_checklist
 
+    # Evaluate GitLab MR templates
+    template_defs = gitlab_integration.get("templates", [])
+    if template_defs:
+        resolved_templates: list[str] = []
+        for tmpl_def in template_defs:
+            url = tmpl_def.get("url")
+            if not url:
+                continue
+
+            # Evaluate condition if present
+            condition = tmpl_def.get("condition")
+            if condition:
+                try:
+                    tracker = MissingDataTracker(full_context)
+                    is_active = jsonLogic(condition, tracker)
+                    if not is_active or tracker.missing_accessed:
+                        continue
+                except Exception as exc:
+                    logger.warning(
+                        "Failed to evaluate template condition for '%s': %s",
+                        url,
+                        exc,
+                    )
+                    continue
+
+            resolved_templates.append(url)
+        if resolved_templates:
+            result["mr_templates"] = resolved_templates
+
     return result

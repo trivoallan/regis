@@ -54,3 +54,5 @@
 ******** [[properties_pages_items_properties_sections_items_properties_display_properties_widgets_items_properties_label]]**`label`** *(string)*
 ******** [[properties_pages_items_properties_sections_items_properties_display_properties_widgets_items_properties_value]]**`value`** *(string)*
 ******** [[properties_pages_items_properties_sections_items_properties_display_properties_widgets_items_properties_icon]]**`icon`** *(string)*
+* [[properties_mr_templates]]**`mr_templates`** *(array)*: URLs of Cookiecutter templates to be run for MR descriptions.
+** [[properties_mr_templates_items]]**Items** *(string)*

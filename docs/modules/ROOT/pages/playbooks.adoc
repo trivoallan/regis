@@ -145,6 +145,34 @@ You can use `show_if` and `check_if` independently. For example, an item may alw
 
 The engine exposes the resolved checklist as `mr_description_checklist` (a list of `{label, checked}` objects) in the playbook evaluation result. The CI layer converts this list to Markdown checkboxes and appends it to the MR description.
 
+=== MR Templates
+
+The `templates` list lets you define Cookiecutter templates that will be rendered directly into the Merge Request branch by the pipeline. This is useful for automatically generating boilerplate code, security compliance files, or evidence reports based on the analysis results.
+
+Each item must have a `url` and an optional `condition`:
+
+[cols="1,3", options="header"]
+|===
+| Field | Description
+
+| `url`
+| The HTTP URL or local path to a Cookiecutter template folder.
+
+| `condition`
+| A JSON Logic expression. If provided, the template is only evaluated and generated when the condition evaluates to truthy.
+|===
+
+[source,yaml]
+----
+integrations:
+  gitlab:
+    templates:
+      - url: "https://github.com/my-org/security-evidence-template"
+        condition: { ">": [{ var: results.trivy.critical_count }, 0] }
+----
+
+During evaluation, templates whose condition passes are aggregated. The CLI then executes these templates with access to the full analysis context (e.g., `cookiecutter.regis.score`), and writes the generated files back to the current working directory so they can be committed to the MR branch.
+
 == Example Playbook
 
 The following example shows a simplified playbook definition:

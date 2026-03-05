@@ -2,12 +2,20 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Playbook Result",
   "type": "object",
-  "required": ["playbook_name", "score", "total_scorecards", "passed_scorecards", "pages"],
+  "required": [
+    "playbook_name",
+    "score",
+    "total_scorecards",
+    "passed_scorecards",
+    "pages"
+  ],
   "properties": {
     "playbook_name": {
       "type": "string"
     },
-    "sidebar": { "type": "object" },
+    "sidebar": {
+      "type": "object"
+    },
     "score": {
       "type": "integer",
       "minimum": 0,
@@ -25,10 +33,17 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["label", "url"],
+        "required": [
+          "label",
+          "url"
+        ],
         "properties": {
-          "label": { "type": "string" },
-          "url": { "type": "string" }
+          "label": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
         }
       }
     },
@@ -37,10 +52,23 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["title", "score", "total_scorecards", "passed_scorecards", "sections"],
+        "required": [
+          "title",
+          "score",
+          "total_scorecards",
+          "passed_scorecards",
+          "sections"
+        ],
         "properties": {
-          "title": { "type": "string" },
-          "slug": { "type": ["string", "null"] },
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "score": {
             "type": "integer",
             "minimum": 0,
@@ -58,91 +86,167 @@
             "type": "array",
             "minItems": 1,
             "items": {
-        "type": "object",
-        "required": ["name", "score", "total_scorecards", "passed_scorecards", "scorecards"],
-        "properties": {
-          "name": { "type": "string" },
-          "hint": { "type": "string" },
-          "score": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 100
-          },
-          "total_scorecards": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "passed_scorecards": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "levels_summary": {
-            "type": "object",
-            "additionalProperties": {
               "type": "object",
-              "required": ["total", "passed", "percentage"],
+              "required": [
+                "name",
+                "score",
+                "total_scorecards",
+                "passed_scorecards",
+                "scorecards"
+              ],
               "properties": {
-                "total": { "type": "integer", "minimum": 0 },
-                "passed": { "type": "integer", "minimum": 0 },
-                "percentage": { "type": "integer", "minimum": 0, "maximum": 100 }
-              }
-            }
-          },
-          "tags_summary": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "required": ["total", "passed", "percentage"],
-              "properties": {
-                "total": { "type": "integer", "minimum": 0 },
-                "passed": { "type": "integer", "minimum": 0 },
-                "percentage": { "type": "integer", "minimum": 0, "maximum": 100 }
-              }
-            }
-          },
-          "scorecards": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": ["name", "title", "passed"],
-              "properties": {
-                "name": { "type": "string" },
-                "title": { "type": "string" },
-                "level": { "type": ["string", "null"] },
-                "tags": {
+                "name": {
+                  "type": "string"
+                },
+                "hint": {
+                  "type": "string"
+                },
+                "score": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "total_scorecards": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed_scorecards": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "levels_summary": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "required": [
+                      "total",
+                      "passed",
+                      "percentage"
+                    ],
+                    "properties": {
+                      "total": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "passed": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "percentage": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100
+                      }
+                    }
+                  }
+                },
+                "tags_summary": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "required": [
+                      "total",
+                      "passed",
+                      "percentage"
+                    ],
+                    "properties": {
+                      "total": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "passed": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "percentage": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100
+                      }
+                    }
+                  }
+                },
+                "scorecards": {
                   "type": "array",
-                  "items": { "type": "string" }
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "title",
+                      "passed"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "level": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "tags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "analyzers": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "passed": {
+                        "type": "boolean"
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "passed",
+                          "failed",
+                          "incomplete"
+                        ]
+                      },
+                      "condition": {
+                        "type": "string"
+                      },
+                      "details": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
-                "analyzers": {
-                  "type": "array",
-                  "items": { "type": "string" }
-                },
-                "passed": { "type": "boolean" },
-                "status": {
-                  "type": "string",
-                  "enum": ["passed", "failed", "incomplete"]
-                },
-                "condition": { "type": "string" },
-                "details": { "type": "string" }
-              }
-            }
-          },
-          "display": {
-            "type": "object",
-            "properties": {
-              "analyzers": {
-                "type": "array",
-                "items": { "type": "string" }
-              },
-              "widgets": {
-                "type": "array",
-                "items": {
+                "display": {
                   "type": "object",
                   "properties": {
-                    "label": { "type": "string" },
-                    "value": { "type": "string" },
-                    "icon": { "type": "string" },
-                    "resolved_value": {}
+                    "analyzers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "widgets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          },
+                          "icon": {
+                            "type": "string"
+                          },
+                          "resolved_value": {}
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -150,9 +254,13 @@
           }
         }
       }
+    },
+    "mr_templates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs of Cookiecutter templates to be run for MR descriptions."
     }
   }
-}
-}
-}
 }

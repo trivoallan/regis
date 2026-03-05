@@ -33,6 +33,15 @@
 **** [[properties_integrations_properties_gitlab_properties_labels_items]]**Items** *(object)*
 ***** [[properties_integrations_properties_gitlab_properties_labels_items_properties_name]]**`name`** *(string, required)*: Label name, e.g. 'regis::fail' or 'security::critical'.
 ***** [[properties_integrations_properties_gitlab_properties_labels_items_properties_condition]]**`condition`** *(object, required)*: JsonLogic expression evaluated against the analysis report.
+*** [[properties_integrations_properties_gitlab_properties_checklist]]**`checklist`** *(array)*: Checklist items added as checkboxes to the Merge Request description.
+**** [[properties_integrations_properties_gitlab_properties_checklist_items]]**Items** *(object)*: Cannot contain additional properties.
+***** [[properties_integrations_properties_gitlab_properties_checklist_items_properties_label]]**`label`** *(string, required)*: Text of the checkbox item.
+***** [[properties_integrations_properties_gitlab_properties_checklist_items_properties_show_if]]**`show_if`** *(object)*: Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy.
+***** [[properties_integrations_properties_gitlab_properties_checklist_items_properties_check_if]]**`check_if`** *(object)*: Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ]).
+*** [[properties_integrations_properties_gitlab_properties_templates]]**`templates`** *(array)*: URLs to Cookiecutter templates that will be rendered and added to the Merge Request branch.
+**** [[properties_integrations_properties_gitlab_properties_templates_items]]**Items** *(object)*: Cannot contain additional properties.
+***** [[properties_integrations_properties_gitlab_properties_templates_items_properties_url]]**`url`** *(string, required)*: URL or path to the Cookiecutter template.
+***** [[properties_integrations_properties_gitlab_properties_templates_items_properties_condition]]**`condition`** *(object)*: Optional JsonLogic expression. If provided, the template is only rendered when the expression evaluates to truthy.
 == Definitions
 * [[%24defs_page]]**`page`** *(object)*: A playbook page containing sections. Cannot contain additional properties.
 ** [[%24defs_page_properties_title]]**`title`** *(string, required)*: Display name of the page.

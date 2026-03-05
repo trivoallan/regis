@@ -471,3 +471,77 @@ class TestGitLabChecklist:
         pb = self._make_playbook([])
         result = evaluate(pb, {})
         assert "mr_description_checklist" not in result
+
+
+class TestGitLabTemplates:
+    """Test GitLab MR templates evaluation."""
+
+    BASE_PLAYBOOK = {
+        "name": "Templates Test",
+        "sections": [
+            {
+                "name": "Main",
+                "scorecards": [{"name": "always-pass", "condition": {"==": [1, 1]}}],
+            }
+        ],
+    }
+
+    def _make_playbook(self, templates: list) -> dict:
+        import copy
+
+        pb = copy.deepcopy(self.BASE_PLAYBOOK)
+        pb["integrations"] = {"gitlab": {"templates": templates}}
+        return pb
+
+    def test_unconditional_template_included(self):
+        """Templates with no condition are always added."""
+        pb = self._make_playbook([{"url": "https://example.com/template"}])
+        result = evaluate(pb, {})
+        assert result["mr_templates"] == ["https://example.com/template"]
+
+    def test_truthy_condition_includes_template(self):
+        """Templates whose condition evaluates to True are included."""
+        pb = self._make_playbook(
+            [
+                {
+                    "url": "local/path/to/template",
+                    "condition": {"==": [{"var": "results.ok"}, True]},
+                }
+            ]
+        )
+        report = {"results": {"ok": True}}
+        result = evaluate(pb, report)
+        assert result["mr_templates"] == ["local/path/to/template"]
+
+    def test_falsy_condition_excludes_template(self):
+        """Templates whose condition evaluates to False are excluded."""
+        pb = self._make_playbook(
+            [
+                {
+                    "url": "local/path/to/template",
+                    "condition": {"==": [{"var": "results.ok"}, False]},
+                }
+            ]
+        )
+        report = {"results": {"ok": True}}
+        result = evaluate(pb, report)
+        assert "mr_templates" not in result
+
+    def test_missing_data_excludes_template(self):
+        """Templates whose condition references missing data are excluded."""
+        pb = self._make_playbook(
+            [
+                {
+                    "url": "local/path/to/template",
+                    "condition": {"==": [{"var": "non_existent_key"}, True]},
+                }
+            ]
+        )
+        result = evaluate(pb, {})
+        assert "mr_templates" not in result
+
+    def test_empty_templates_absent(self):
+        """When templates is an empty list, mr_templates is absent."""
+        pb = self._make_playbook([])
+        result = evaluate(pb, {})
+        assert "mr_templates" not in result

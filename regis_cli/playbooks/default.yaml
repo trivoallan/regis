@@ -299,6 +299,8 @@ integrations:
                 [docker.io, registry-1.docker.io, quay.io, ghcr.io],
               ],
           }
+    templates:
+      - url: cookiecutters/mr-evidence
 
 links:
   - label: Return to Merge Request
