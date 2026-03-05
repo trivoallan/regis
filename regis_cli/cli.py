@@ -241,6 +241,9 @@ def analyze(
     if site:
         formats.append("html")
 
+    dir_tmpl = output_dir_template or "reports/{registry}/{repository}/{tag}"
+    file_tmpl = output_template or "report.{format}"
+
     # 1. Check for cache if requested.
     final_report = None
     if cache:
@@ -254,8 +257,6 @@ def analyze(
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }
         }
-        dir_tmpl = output_dir_template or "reports/{registry}/{repository}/{tag}"
-        file_tmpl = output_template or "report.{format}"
 
         try:
             cache_dir = _format_output_path(dir_tmpl, dummy_report, "json")

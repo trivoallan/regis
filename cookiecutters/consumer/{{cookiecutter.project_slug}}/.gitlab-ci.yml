@@ -44,6 +44,8 @@ request_analysis:
 
       git config --global user.name "GitLab CI"
       git config --global user.email "gitlab-ci@example.com"
+      git config --global --add safe.directory "$CI_PROJECT_DIR"
+
 
       git checkout -b "$BRANCH_NAME"
       git add analysis-request.json
