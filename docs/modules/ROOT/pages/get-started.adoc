@@ -65,7 +65,7 @@ Reports are written to the `reports/` directory by default (e.g., `reports/docke
 
 * `generate`: Infrastructure as Code (IaC) for your analysis. Bootstrap a new Git repository with pre-configured CI/CD.
 * `evaluate`: Test playbooks against existing analysis reports without re-fetching image data.
-* `gitlab` / `github`: Seamless integration with CI/CD platforms.
+* `gitlab`: Seamless integration with GitLab CI/CD for automated reporting and MR updates.
 
 [IMPORTANT]
 ====
