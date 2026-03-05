@@ -217,3 +217,20 @@ pages:
 ====
 To see the full set of rules and report organization enforced by the tool out-of-the-box, check the xref:default-playbook.adoc[Default Playbook Reference].
 ====
+
+== Local Evaluation (Dry-run)
+
+When developing custom playbooks, you can evaluate them against existing analysis results without re-running the full image analysis. This is faster and doesn't require registry access once you have a base `report.json`.
+
+Use the `evaluate` subcommand:
+
+[source,bash]
+----
+# 1. Run a full analysis once to get the raw data
+regis-cli analyze nginx:latest -o report.json
+
+# 2. Iterate on your playbook locally
+regis-cli evaluate report.json -p my-playbook.yaml --site
+----
+
+The `evaluate` command supports most of the reporting options found in `analyze`, including `--site`, `--theme`, and `--output-dir`.

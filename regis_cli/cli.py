@@ -159,6 +159,252 @@ def main(verbose: bool) -> None:
 main.add_command(gitlab_cmd, name="gitlab")
 
 
+def _run_playbooks(
+    playbook_paths: tuple[str, ...], analysis_report: dict[str, Any], formats: list[str]
+) -> dict[str, Any]:
+    """Load and evaluate playbooks against an analysis report."""
+    from regis_cli.playbook.engine import evaluate, load_playbook
+
+    playbook_results = []
+    if not playbook_paths:
+        import importlib.resources
+
+        default_pb = (
+            importlib.resources.files("regis_cli") / "playbooks" / "default.yaml"
+        )
+        if default_pb.is_file():
+            playbook_paths = (str(default_pb),)
+
+    if playbook_paths:
+        for pb_path in playbook_paths:
+            is_remote = isinstance(pb_path, str) and (
+                pb_path.startswith("http://") or pb_path.startswith("https://")
+            )
+            action = "Downloading" if is_remote else "Evaluating"
+            click.echo(f"  {action} playbook: {pb_path}...", err=True)
+            pb_def = load_playbook(pb_path)
+            pb_result = evaluate(
+                pb_def, analysis_report, source_name=Path(pb_path).stem
+            )
+            playbook_results.append(pb_result)
+
+            # Print summary for EACH playbook if in CLI mode
+            if "html" not in formats or len(formats) > 1:
+                summary_parts = []
+                for section in pb_result.get("sections", []):
+                    for lv_name, stats in section.get("levels_summary", {}).items():
+                        summary_parts.append(
+                            f"{lv_name}: {stats['passed']}/{stats['total']}"
+                        )
+
+                summary_str = " · ".join(summary_parts)
+                click.echo(
+                    f"    {summary_str}  "
+                    f"({pb_result['passed_scorecards']}/{pb_result['total_scorecards']} scorecards passed, "
+                    f"{pb_result['score']}%)\n",
+                    err=True,
+                )
+
+    # Build the final report.
+    final_report = {
+        **analysis_report,
+    }
+    if playbook_results:
+        final_report["playbooks"] = playbook_results
+        # For backward compatibility (or simplicity), keep 'playbook' pointing to the first result.
+        final_report["playbook"] = playbook_results[0]
+
+    # Extract evaluated links from playbooks
+    all_links = []
+    for pb_res in playbook_results:
+        for link_def in pb_res.get("links", []):
+            if link_def not in all_links:
+                all_links.append(link_def)
+
+    if all_links:
+        final_report["links"] = all_links
+
+    return final_report
+
+
+def _validate_report(report: dict[str, Any]) -> None:
+    """Validate a final report against its schema."""
+    from referencing import Registry, Resource
+
+    schemas_dir = resources.files("regis_cli.schemas")
+    registry = Registry()
+    report_schema = None
+    base_uri = "https://regis-cli/schemas/"
+
+    for schema_file in schemas_dir.iterdir():
+        if not schema_file.name.endswith(".json"):
+            continue
+        schema_data = json.loads(schema_file.read_text(encoding="utf-8"))
+        resource = Resource.from_contents(schema_data)
+
+        # Register both by filename (relative) and by $id if available.
+        registry = registry.with_resource(uri=schema_file.name, resource=resource)
+        registry = registry.with_resource(
+            uri=base_uri + schema_file.name, resource=resource
+        )
+        if "$id" in schema_data:
+            registry = registry.with_resource(uri=schema_data["$id"], resource=resource)
+
+        if schema_file.name == "report.schema.json":
+            report_schema = schema_data
+
+    if report_schema:
+        from jsonschema.validators import validator_for
+
+        try:
+            validator_cls = validator_for(report_schema)
+            validator = validator_cls(report_schema, registry=registry)
+            validator.validate(instance=report)
+        except jsonschema.ValidationError as exc:
+            raise click.ClickException(
+                f"Report schema validation failed: {exc.message}"
+            ) from exc
+
+
+def _render_and_save_reports(
+    report: dict[str, Any],
+    formats: list[str],
+    output_template: str | None,
+    output_dir_template: str | None,
+    theme: str,
+    pretty: bool,
+) -> None:
+    """Render and save reports in requested formats."""
+    from regis_cli.report.html import render_html
+
+    for fmt in formats:
+        if fmt == "html":
+            # For HTML, generate one file per playbook if playbooks exist.
+            playbook_results = report.get("playbooks", [])
+            if playbook_results:
+                for pb in playbook_results:
+                    # Pre-calculate filenames for all pages in this playbook to build navigation
+                    page_navigation = []
+                    for page in pb.get("pages", []):
+                        pb_slug = pb.get("slug")
+                        pg_slug = page.get("slug")
+                        source_name = pb.get("_meta", {}).get("source_name")
+
+                        if output_template:
+                            filename = output_template
+                        elif pg_slug:
+                            filename = f"{pg_slug}.{fmt}"
+                        elif pb_slug:
+                            filename = (
+                                f"{pb_slug}-{page.get('title', 'page').lower()}.{fmt}"
+                            )
+                        elif source_name:
+                            filename = f"{source_name}-{page.get('title', 'page').lower()}.{fmt}"
+                        else:
+                            filename = f"report_{pb.get('playbook_name', 'unnamed')}_{page.get('title', 'page').lower()}.{fmt}"
+
+                        page_navigation.append(
+                            {
+                                "title": page.get("title"),
+                                "url": filename,
+                                "active": False,
+                            }
+                        )
+
+                    for i, page in enumerate(pb.get("pages", [])):
+                        # Mark current page as active in navigation
+                        current_nav = [dict(n) for n in page_navigation]
+                        current_nav[i]["active"] = True
+
+                        # Render HTML focusing on this single page of the playbook.
+                        single_page_report = {
+                            **report,
+                            "playbooks": [{**pb, "pages": [page]}],
+                            "playbook": pb,
+                            "page": page,
+                            "navigation": current_nav,
+                        }
+                        rendered = render_html(single_page_report, theme=theme)
+
+                        _write_report(
+                            dir_tmpl=output_dir_template or ".",
+                            file_tmpl=page_navigation[i]["url"],
+                            report=single_page_report,
+                            fmt=fmt,
+                            rendered=rendered,
+                        )
+            else:
+                # No playbooks, just render the base report
+                rendered = render_html(report, theme=theme)
+                file_tmpl = output_template or f"report.{fmt}"
+                _write_report(
+                    dir_tmpl=output_dir_template or ".",
+                    file_tmpl=file_tmpl,
+                    report=report,
+                    fmt=fmt,
+                    rendered=rendered,
+                )
+        else:
+            # JSON (and other formats): Single unified report file
+            indent = 2 if pretty else None
+            rendered = json.dumps(report, indent=indent, ensure_ascii=False)
+            file_tmpl = output_template or f"report.{fmt}"
+            _write_report(
+                dir_tmpl=output_dir_template or ".",
+                file_tmpl=file_tmpl,
+                report=report,
+                fmt=fmt,
+                rendered=rendered,
+            )
+
+
+def _render_mr_templates(
+    report: dict[str, Any], output_dir_template: str | None
+) -> None:
+    """Execute Cookiecutter templates for Merge Requests."""
+    playbooks = report.get("playbooks", [])
+    valid_mr_templates = []
+    for pb in playbooks:
+        for tmpl in pb.get("mr_templates", []):
+            if tmpl not in valid_mr_templates:
+                valid_mr_templates.append(tmpl)
+
+    if valid_mr_templates:
+        try:
+            from cookiecutter.main import cookiecutter
+        except ImportError:
+            click.echo(
+                "  Warning: cookiecutter not found. Cannot evaluate mr_templates.",
+                err=True,
+            )
+        else:
+            for tmpl_def in valid_mr_templates:
+                tmpl_url = tmpl_def.get("url")
+                tmpl_dir = tmpl_def.get("directory")
+                click.echo(f"  Rendering MR template: {tmpl_url}...", err=True)
+                try:
+                    out_dir = _format_output_path(
+                        output_dir_template or ".", report, "json"
+                    )
+                    out_dir.mkdir(parents=True, exist_ok=True)
+
+                    kwargs = {
+                        "no_input": True,
+                        "extra_context": {"regis": _escape_jinja(report)},
+                        "output_dir": str(out_dir),
+                        "overwrite_if_exists": True,
+                    }
+                    if tmpl_dir:
+                        kwargs["directory"] = tmpl_dir
+
+                    cookiecutter(tmpl_url, **kwargs)
+                except Exception as exc:
+                    click.echo(
+                        f"  Warning: Failed to render template '{tmpl_url}': {exc}",
+                        err=True,
+                    )
+
+
 @main.command()
 @click.argument("url")
 @click.option(
@@ -398,237 +644,117 @@ def analyze(
             analysis_report["metadata"] = metadata_dict
             analysis_report["request"]["metadata"] = metadata_dict
 
-        # Load and evaluate playbooks.
-        from regis_cli.playbook.engine import evaluate, load_playbook
+        # 2. Run playbooks
+        final_report = _run_playbooks(playbook_paths, analysis_report, formats)
 
-        playbook_results = []
-        if not playbook_paths:
-            import importlib.resources
+    # 3. Validate final report
+    _validate_report(final_report)
 
-            default_pb = (
-                importlib.resources.files("regis_cli") / "playbooks" / "default.yaml"
-            )
-            if default_pb.is_file():
-                playbook_paths = (str(default_pb),)
+    # 4. Format and write outputs
+    _render_and_save_reports(
+        final_report,
+        formats,
+        output_template,
+        output_dir_template,
+        theme,
+        pretty,
+    )
 
-        if playbook_paths:
-            for pb_path in playbook_paths:
-                is_remote = isinstance(pb_path, str) and (
-                    pb_path.startswith("http://") or pb_path.startswith("https://")
-                )
-                action = "Downloading" if is_remote else "Evaluating"
-                click.echo(f"  {action} playbook: {pb_path}...", err=True)
-                pb_def = load_playbook(pb_path)
-                pb_result = evaluate(
-                    pb_def, analysis_report, source_name=Path(pb_path).stem
-                )
-                playbook_results.append(pb_result)
+    # 5. Execute MR templates
+    _render_mr_templates(final_report, output_dir_template)
 
-                # Print summary for EACH playbook if in CLI mode
-                if "html" not in formats or len(formats) > 1:
-                    summary_parts = []
-                    for section in pb_result.get("sections", []):
-                        for lv_name, stats in section.get("levels_summary", {}).items():
-                            summary_parts.append(
-                                f"{lv_name}: {stats['passed']}/{stats['total']}"
-                            )
 
-                    summary_str = " · ".join(summary_parts)
-                    click.echo(
-                        f"    {summary_str}  "
-                        f"({pb_result['passed_scorecards']}/{pb_result['total_scorecards']} scorecards passed, "
-                        f"{pb_result['score']}%)\n",
-                        err=True,
-                    )
+@main.command(name="evaluate")
+@click.argument("input_path", type=click.Path(exists=True, dir_okay=False))
+@click.option(
+    "-p",
+    "--playbook",
+    "playbook_paths",
+    multiple=True,
+    help="Path or URL to custom playbook YAML/JSON file(s).",
+)
+@click.option(
+    "-o",
+    "--output",
+    "output_template",
+    help="Output filename template (e.g. 'report.{format}').",
+)
+@click.option(
+    "-D",
+    "--output-dir",
+    "output_dir_template",
+    help="Base directory template for output files.",
+    default="reports/dry-run/{timestamp}",
+)
+@click.option(
+    "--pretty/--no-pretty",
+    default=True,
+    help="Pretty-print the JSON output (default: on).",
+)
+@click.option(
+    "-s",
+    "--site",
+    is_flag=True,
+    default=False,
+    help="Generate HTML report site.",
+)
+@click.option(
+    "--theme",
+    default="default",
+    type=click.Choice(["default"], case_sensitive=False),
+    help="Theme to use for HTML report (default: default).",
+)
+def evaluate(
+    input_path: str,
+    playbook_paths: tuple[str, ...],
+    output_template: str | None,
+    output_dir_template: str | None,
+    pretty: bool,
+    site: bool,
+    theme: str,
+) -> None:
+    """Evaluate playbooks against an existing analysis report (dry-run).
 
-        # Build the final report.
-        final_report = {
-            **analysis_report,
-        }
-        if playbook_results:
-            final_report["playbooks"] = playbook_results
-            # For backward compatibility (or simplicity), keep 'playbook' pointing to the first result.
-            final_report["playbook"] = playbook_results[0]
+    This command loads an existing JSON report produced by 'analyze' and
+    re-runs the playbook evaluation engine against it.
+    """
+    try:
+        data = json.loads(Path(input_path).read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise click.ClickException(f"Failed to load input file: {exc}") from exc
 
-        # Extract evaluated links from playbooks
-        all_links = []
-        for pb_res in playbook_results:
-            for link_def in pb_res.get("links", []):
-                if link_def not in all_links:
-                    all_links.append(link_def)
-
-        if all_links:
-            final_report["links"] = all_links
-
-    # Validate final report against its schema.
-    from jsonschema.validators import validator_for
-    from referencing import Registry, Resource
-
-    schemas_dir = resources.files("regis_cli.schemas")
-    registry = Registry()
-    report_schema = None
-    base_uri = "https://regis-cli/schemas/"
-
-    for schema_file in schemas_dir.iterdir():
-        if not schema_file.name.endswith(".json"):
-            continue
-        schema_data = json.loads(schema_file.read_text(encoding="utf-8"))
-        resource = Resource.from_contents(schema_data)
-
-        # Register both by filename (relative) and by $id if available.
-        registry = registry.with_resource(uri=schema_file.name, resource=resource)
-        registry = registry.with_resource(
-            uri=base_uri + schema_file.name, resource=resource
+    # Reconstruct analysis report if it was a final report (contains results)
+    # or just use it if it's already an analysis report.
+    if "results" in data:
+        analysis_report = data
+    else:
+        raise click.ClickException(
+            "Input file does not appear to be a regis-cli report (missing 'results' key)."
         )
-        if "$id" in schema_data:
-            registry = registry.with_resource(uri=schema_data["$id"], resource=resource)
 
-        if schema_file.name == "report.schema.json":
-            report_schema = schema_data
+    # Select output formats.
+    formats = ["json"]
+    if site:
+        formats.append("html")
 
-    if report_schema:
-        try:
-            validator_cls = validator_for(report_schema)
-            validator = validator_cls(report_schema, registry=registry)
-            validator.validate(instance=final_report)
-        except jsonschema.ValidationError as exc:
-            raise click.ClickException(
-                f"Report schema validation failed: {exc.message}"
-            ) from exc
+    # Run playbooks
+    final_report = _run_playbooks(playbook_paths, analysis_report, formats)
 
-    # Format and write outputs.
-    from regis_cli.report.html import render_html
+    # Validate final report
+    _validate_report(final_report)
 
-    for fmt in formats:
-        if fmt == "html":
-            # For HTML, generate one file per playbook if playbooks exist.
-            # If no playbooks, generate a single report using fallback logic.
-            playbook_results = final_report.get("playbooks", [])
-            if playbook_results:
-                for pb in playbook_results:
-                    # Pre-calculate filenames for all pages in this playbook to build navigation
-                    page_navigation = []
-                    for page in pb.get("pages", []):
-                        pb_slug = pb.get("slug")
-                        pg_slug = page.get("slug")
-                        source_name = pb.get("_meta", {}).get("source_name")
+    # Format and write outputs
+    _render_and_save_reports(
+        final_report,
+        formats,
+        output_template,
+        output_dir_template,
+        theme,
+        pretty,
+    )
 
-                        if output_template:
-                            # If a template is provided, we can't easily pre-calculate
-                            # unique filenames for multiple pages unless the template
-                            # includes page-specific vars. For now, assume default logic
-                            # if multiple pages exist.
-                            filename = output_template
-                        elif pg_slug:
-                            filename = f"{pg_slug}.{fmt}"
-                        elif pb_slug:
-                            filename = (
-                                f"{pb_slug}-{page.get('title', 'page').lower()}.{fmt}"
-                            )
-                        elif source_name:
-                            filename = f"{source_name}-{page.get('title', 'page').lower()}.{fmt}"
-                        else:
-                            filename = f"report_{pb.get('playbook_name', 'unnamed')}_{page.get('title', 'page').lower()}.{fmt}"
-
-                        page_navigation.append(
-                            {
-                                "title": page.get("title"),
-                                "url": filename,
-                                "active": False,
-                            }
-                        )
-
-                    for i, page in enumerate(pb.get("pages", [])):
-                        # Mark current page as active in navigation
-                        current_nav = [dict(n) for n in page_navigation]
-                        current_nav[i]["active"] = True
-
-                        # Render HTML focusing on this single page of the playbook.
-                        single_page_report = {
-                            **final_report,
-                            "playbooks": [
-                                {
-                                    **pb,
-                                    "pages": [page],
-                                }
-                            ],
-                            "playbook": pb,
-                            "page": page,
-                            "navigation": current_nav,
-                        }
-                        rendered = render_html(single_page_report, theme=theme)
-
-                        _write_report(
-                            dir_tmpl=output_dir_template or ".",
-                            file_tmpl=page_navigation[i]["url"],
-                            report=single_page_report,
-                            fmt=fmt,
-                            rendered=rendered,
-                        )
-            else:
-                # No playbooks, just render the base report
-                rendered = render_html(final_report, theme=theme)
-                file_tmpl = output_template or f"report.{fmt}"
-                _write_report(
-                    dir_tmpl=output_dir_template or ".",
-                    file_tmpl=file_tmpl,
-                    report=final_report,
-                    fmt=fmt,
-                    rendered=rendered,
-                )
-        else:
-            # JSON (and other formats): Single unified report file
-            indent = 2 if pretty else None
-            rendered = json.dumps(final_report, indent=indent, ensure_ascii=False)
-            file_tmpl = output_template or f"report.{fmt}"
-            _write_report(
-                dir_tmpl=output_dir_template or ".",
-                file_tmpl=file_tmpl,
-                report=final_report,
-                fmt=fmt,
-                rendered=rendered,
-            )
-
-    # Execute Cookiecutter templates for Merge Requests
-    playbooks = final_report.get("playbooks", [])
-    valid_mr_templates = []
-    for pb in playbooks:
-        for tmpl in pb.get("mr_templates", []):
-            if tmpl not in valid_mr_templates:
-                valid_mr_templates.append(tmpl)
-
-    if valid_mr_templates:
-        try:
-            from cookiecutter.main import cookiecutter
-        except ImportError:
-            click.echo(
-                "  Warning: cookiecutter not found. Cannot evaluate mr_templates.",
-                err=True,
-            )
-        else:
-            for tmpl_def in valid_mr_templates:
-                tmpl_url = tmpl_def.get("url")
-                tmpl_dir = tmpl_def.get("directory")
-                click.echo(f"  Rendering MR template: {tmpl_url}...", err=True)
-                try:
-                    out_dir = _format_output_path(dir_tmpl, final_report, "json")
-                    out_dir.mkdir(parents=True, exist_ok=True)
-
-                    kwargs = {
-                        "no_input": True,
-                        "extra_context": {"regis": _escape_jinja(final_report)},
-                        "output_dir": str(out_dir),
-                        "overwrite_if_exists": True,
-                    }
-                    if tmpl_dir:
-                        kwargs["directory"] = tmpl_dir
-
-                    cookiecutter(tmpl_url, **kwargs)
-                except Exception as exc:
-                    click.echo(
-                        f"  Warning: Failed to render template '{tmpl_url}': {exc}",
-                        err=True,
-                    )
+    # Execute MR templates
+    _render_mr_templates(final_report, output_dir_template)
 
 
 @main.command(name="list")

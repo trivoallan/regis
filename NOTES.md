@@ -17,3 +17,29 @@
 - [ ] image build : sbom
 - [ ] gérer la notion de release line semver
 - [ ] <https://www.npmjs.com/package/@antora/lunr-extension>
+
+
+[mermaid]
+....
+graph TD
+    User["User / CI Pipeline"] --> CLI["CLI Layer (Click)"]
+    CLI --> Engine["Analysis Engine"]
+    
+    subgraph "Data Extraction"
+        Engine --> A1["Skopeo Analyzer"]
+        Engine --> A2["Trivy Analyzer"]
+        Engine --> A3["Hadolint Analyzer"]
+        Engine --> A4["Dockle Analyzer"]
+        Engine --> AN["... Other Analyzers"]
+    end
+    
+    A1 & A2 & A3 & A4 & AN --> Registry["Container Registry"]
+    
+    Engine --> Playbook["Playbook Engine (JSON Logic)"]
+    Playbook --> Results["Consolidated Results"]
+    
+    Results --> HTML["HTML Report (Jinja2)"]
+    Results --> JSON["JSON Report"]
+    
+    HTML & JSON --> Output["Output Directory"]
+....
