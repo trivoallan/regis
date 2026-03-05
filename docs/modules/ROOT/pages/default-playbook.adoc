@@ -182,19 +182,22 @@ The default playbook includes pre-configured GitLab integrations to automate MR 
 
 === MR Description Checklist
 
-The following items are appended as unchecked checkboxes to the Merge Request description:
+The following items are appended as checkboxes to the Merge Request description. They can be dynamically shown and pre-checked based on the analysis results:
 
-[cols="2,2"]
+[cols="2,2,2"]
 |===
-| Item | Condition
+| Item | Show Condition (`show_if`) | Check Condition (`check_if`)
 
 | Revue de sécurité réalisée
 | Always included
+| Never pre-checked
 
 | Aucune vulnérabilité CRITIQUE détectée
 | `results.trivy.critical_count == 0`
+| `results.trivy.critical_count == 0`
 
 | Image issue d'un registre de confiance
+| `request.registry` ∈ {docker.io, registry-1.docker.io, quay.io, ghcr.io}
 | `request.registry` ∈ {docker.io, registry-1.docker.io, quay.io, ghcr.io}
 |===
 

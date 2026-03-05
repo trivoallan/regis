@@ -149,7 +149,7 @@ Once the analysis job completes, the pipeline runs three parallel reporting jobs
 
 *   **`push_results`**: Commits the `reports/` directory back to the branch, prepends a direct **[View Analysis Report]** link to the MR description, and posts an MR comment with the same link.
 *   **`set_labels`**: Applies scoped GitLab labels to the MR based on your playbook configuration (e.g., `regis::fail`, `security::critical`).
-*   **`set_checklist`**: Appends a Markdown review checklist to the MR description. Checklist items defined with `check_if` conditions may render pre-checked when those conditions pass.
+*   **`set_checklist`**: Appends a Markdown review checklist to the MR description. Checklist items defined with `check_if` conditions may render pre-checked when those conditions pass, and items can be conditionally included via `show_if` conditions.
 
 === 4. Governance
 Security teams can review the MR, check the compliance score via the direct HTML report link, and decide whether to merge the analysis request into the main registry branch.
@@ -185,6 +185,14 @@ These labels can be used to drive **GitLab Approval Rules** (Premium/Ultimate). 
     2.  `regis-cli` finds a critical vulnerability.
     3.  Pipeline applies `security::critical` label via the GitLab API.
     4.  GitLab Approval Rule detects the label and blocks the Merge Request until a security officer approves it.
+
+=== MR Description Checklist
+
+The `regis-cli` integration can also append a review checklist to the Merge Request description based on your playbook configuration. This allows you to define manual or automated verification steps directly in the Merge Request.
+
+This is driven by the `integrations.gitlab.checklist` section in your playbook. You can dynamically include items using `show_if` conditions, and automatically pre-check them using `check_if` conditions.
+
+For more details on configuring checklist items, see the xref:playbooks.adoc#_mr_description_checklist[Playbooks Reference].
 
 == Review Apps (Premium/Ultimate Only)
 
