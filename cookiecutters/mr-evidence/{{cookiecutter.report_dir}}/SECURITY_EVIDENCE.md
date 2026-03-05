@@ -13,15 +13,16 @@ Analysis performed on **{{ cookiecutter.regis.request.timestamp }}**.
 - **Score**: `{{ cookiecutter.regis.playbook.score }}%`
 - **Passed Scorecards**: `{{ cookiecutter.regis.playbook.passed_scorecards }}/{{ cookiecutter.regis.playbook.total_scorecards }}`
 
-{% if cookiecutter.regis.results.trivy is defined %}
+{% set trivy = cookiecutter.regis.results.trivy | default({}) %}
+{% if trivy %}
 ## 🐛 Vulnerability Summary (Trivy)
-- **Critical**: `{{ cookiecutter.regis.results.trivy.critical_count }}`
-- **High**: `{{ cookiecutter.regis.results.trivy.high_count }}`
-- **Total**: `{{ cookiecutter.regis.results.trivy.vulnerability_count }}`
+- **Critical**: `{{ trivy.critical_count | default(0) }}`
+- **High**: `{{ trivy.high_count | default(0) }}`
+- **Total**: `{{ trivy.vulnerability_count | default(0) }}`
 {% endif %}
 
-{% if cookiecutter.regis.results.freshness is defined %}
+{% set freshness = cookiecutter.regis.results.freshness | default({}) %}
+{% if freshness %}
 ## 📅 Image Freshness
-- **Age in Days**: `{{ cookiecutter.regis.results.freshness.age_days }}`
-- **Freshness Score**: `{{ cookiecutter.regis.results.freshness.score }}`
+- **Age in Days**: `{{ freshness.age_days | default('N/A') }}`
 {% endif %}
