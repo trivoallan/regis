@@ -1,5 +1,5 @@
 name: regis-cli
 title: Regis CLI Documentation
-version: 0.14.1
+version: 0.14.2
 nav:
   - modules/ROOT/nav.adoc
