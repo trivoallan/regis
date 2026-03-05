@@ -29,30 +29,59 @@ Comprehensive documentation, including installation and usage guides, is availab
 | `size`       | Analyzes image size and layer distribution for optimization.                           |
 | `versioning` | Ensures semantic versioning consistency and tag validation.                            |
 
-## License
-
-MIT
-
 ---
 
 ## Report Preview
 
-`regis-cli` generates high-quality, interactive HTML dashboards. Below is a preview of the different sections available in a standard report.
+`regis-cli` generates high-quality, interactive HTML dashboards.
+ Below is a preview of the different sections available in a standard report.
 
 **[Explore the interactive Alpine example report here](https://trivoallan.github.io/regis-cli/regis-cli/0.14.0/_attachments/examples/alpine/index.html)**
 
-```carousel
-![Dashboard Overview](.github/assets/report-overview.png)
-<!-- slide -->
-![Compliance Analysis](.github/assets/report-compliance.png)
-<!-- slide -->
-![Vulnerability Security](.github/assets/report-security.png)
-<!-- slide -->
-![Supply Chain & Quality](.github/assets/report-supply-chain.png)
-<!-- slide -->
-![Best Practices](.github/assets/report-best-practices.png)
-<!-- slide -->
-![Insights & Lifecycle](.github/assets/report-insights.png)
-<!-- slide -->
-![Technical Details](.github/assets/report-technical-details.png)
-```
+<details>
+<summary>📈 Dashboard Overview</summary>
+<br>
+<img src=".github/assets/report-overview.png" alt="Dashboard Overview" width="100%">
+</details>
+
+<details>
+<summary>✅ Compliance Analysis</summary>
+<br>
+<img src=".github/assets/report-compliance.png" alt="Compliance Analysis" width="100%">
+</details>
+
+<details>
+<summary>🛡️ Vulnerability & Security</summary>
+<br>
+<img src=".github/assets/report-security.png" alt="Vulnerability Security" width="100%">
+</details>
+
+<details>
+<summary>🔗 Supply Chain & Quality</summary>
+<br>
+<img src=".github/assets/report-supply-chain.png" alt="Supply Chain & Quality" width="100%">
+</details>
+
+<details>
+<summary>✨ Best Practices</summary>
+<br>
+<img src=".github/assets/report-best-practices.png" alt="Best Practices" width="100%">
+</details>
+
+<details>
+<summary>💡 Insights & Lifecycle</summary>
+<br>
+<img src=".github/assets/report-insights.png" alt="Insights & Lifecycle" width="100%">
+</details>
+
+<details>
+<summary>⚙️ Technical Details</summary>
+<br>
+<img src=".github/assets/report-technical-details.png" alt="Technical Details" width="100%">
+</details>
+
+---
+
+## License
+
+MIT
