@@ -50,11 +50,11 @@ regis-cli analyze nginx:latest
 
 === Generating a Web Report
 
-To generate a rich HTML dashboard alongside the JSON report, use the `-f` (format) and `-s` (site) options:
+To generate a rich HTML report alongside the JSON report, use the `--site` (or `-s`) flag:
 
 [source,bash]
 ----
-regis-cli analyze nginx:latest -f json -f html --site
+regis-cli analyze nginx:latest --site
 ----
 
 Reports are written to the `reports/` directory by default (e.g., `reports/docker.io/library/nginx/latest/index.html`).

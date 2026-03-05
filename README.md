@@ -44,14 +44,14 @@ regis-cli analyze nginx:latest
 
 ### Advanced Reporting
 ```bash
-# Generate both JSON and HTML reports in a dedicated directory
-regis-cli analyze nginx:latest -f json -f html -s examples/all-reports.yaml
+# Generate both JSON and HTML reports
+regis-cli analyze nginx:latest --site
 ```
 
 ### Report Caching
 ```bash
 # Faster HTML generation by reusing previous analysis
-regis-cli analyze nginx:latest -f html --cache
+regis-cli analyze nginx:latest --site --cache
 ```
 
 ### Dynamic Output Paths

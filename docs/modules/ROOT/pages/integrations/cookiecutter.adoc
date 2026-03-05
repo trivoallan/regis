@@ -94,5 +94,5 @@ You can also run the analysis locally using the `--site` flag to generate the HT
 
 [source,bash]
 ----
-regis-cli analyze my-image:latest -f html --site
+regis-cli analyze my-image:latest --site
 ----
