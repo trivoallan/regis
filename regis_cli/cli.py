@@ -116,6 +116,25 @@ def _set_nested_value(d: dict[str, Any], dot_key: str, value: Any) -> None:
     d[keys[-1]] = value
 
 
+def _escape_jinja(obj: Any) -> Any:
+    """Recursively escape Jinja brackets in dictionary values.
+
+    Cookiecutter recursively evaluates extra_context using Jinja2 before
+    template processing. If the context contains strings like '{{ variable }}',
+    it will throw UndefinedErrors unless those variables are in the global scope.
+    We wrap such strings in {% raw %}...{% endraw %} so they are passed verbatim.
+    """
+    if isinstance(obj, dict):
+        return {k: _escape_jinja(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_escape_jinja(v) for v in obj]
+    elif isinstance(obj, str):
+        if "{{" in obj or "{%" in obj:
+            return f"{{% raw %}}{obj}{{% endraw %}}"
+        return obj
+    return obj
+
+
 @click.group()
 @click.option(
     "-v",
@@ -583,7 +602,7 @@ def analyze(
 
                     kwargs = {
                         "no_input": True,
-                        "extra_context": {"regis": final_report},
+                        "extra_context": {"regis": _escape_jinja(final_report)},
                         "output_dir": str(out_dir),
                         "overwrite_if_exists": True,
                     }
