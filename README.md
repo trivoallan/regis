@@ -79,3 +79,9 @@ Comprehensive documentation, including installation and usage guides, is availab
 <br>
 <img src=".github/assets/report-technical-details.png" alt="Technical Details" width="100%">
 </details>
+
+---
+
+## License
+
+MIT
