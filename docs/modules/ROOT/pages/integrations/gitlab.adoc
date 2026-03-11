@@ -206,5 +206,36 @@ pages:
         PAGES_PREFIX: ""
 ----
 
-This configuration generates a unique URL for each Merge Request (e.g., `\https://<namespace>.gitlab.io/<project>/review-123/`).
+This configuration generates a unique URL for each Merge Request (e.g., `https://<namespace>.gitlab.io/<project>/review-123/`).
 
+== Registry Authentication
+
+To avoid rate limits on public registries (like Docker Hub) or to analyze images from private registries, you can configure authentication using several methods.
+
+The following environment variables can be set in **Settings > CI/CD > Variables**:
+
+=== 1. Docker Config (Recommended)
+Set `DOCKER_AUTH_CONFIG` to a JSON string matching the content of a standard `~/.docker/config.json`. This is the standard GitLab method for runner authentication.
+
+[source,json]
+----
+{
+  "auths": {
+    "https://index.docker.io/v1/": {
+      "auth": "base64(username:password)"
+    }
+  }
+}
+----
+
+=== 2. regis-cli Specific Variables
+You can set domain-specific or global variables:
+
+* `REGIS_AUTH_<DOMAIN>_USERNAME` & `REGIS_AUTH_<DOMAIN>_PASSWORD`: (e.g., `REGIS_AUTH_DOCKER_IO_USERNAME`).
+* `REGIS_USERNAME` & `REGIS_PASSWORD`: Global fallback for all registries.
+
+=== 3. Standard Environment Variables
+`regis-cli` also supports standard Docker Cloud/Hub environment variables for `docker.io` registry:
+
+* `DOCKER_HUB_USERNAME` & `DOCKER_HUB_PASSWORD`
+* `DOCKER_USERNAME` & `DOCKER_PASSWORD`
