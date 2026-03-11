@@ -17,12 +17,14 @@ docker run --rm \
 ```
 
 {% if cookiecutter.platform == "github" -%}
+
 ## GitHub Actions
 
 The analysis is automatically performed on `workflow_dispatch`. Reports are published to GitHub Pages.
 {%- endif %}
 
 {% if cookiecutter.platform == "gitlab" -%}
+
 ## GitLab CI
 
 The analysis is automatically performed on web triggers. Reports are published to GitLab Pages.

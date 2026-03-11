@@ -1,0 +1,64 @@
+name: Image Analysis
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_url:
+        description: Image URL to analyze (e.g. ghcr.io/username/my-image:latest)
+        required: true
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    container:
+      image: "ghcr.io/trivoallan/regis-cli:0.13.0"
+      volumes:
+        - ${{ github.workspace }}/playbooks:/app/playbooks
+        - {% raw %}${{ github.workspace }}/reports:/app/reports
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Analyze Image
+        run: |
+          regis-cli analyze "{% raw %}${{ github.event.inputs.image_url }}" \
+            --site \
+            --playbook "https://raw.githubusercontent.com/trivoallan/regis-cli/v0.13.0/regis_cli/playbooks/default.yaml" \
+            --meta "trigger.user=${{ github.triggering_actor }}" \
+            --meta "trigger.url=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --meta "github.requester=${{ github.triggering_actor }}" \
+            --meta "github.workflow=${{ github.workflow }}" \
+            --meta "github.run_id=${{ github.run_id }}" \
+            --meta "github.repository=${{ github.repository }}"
+
+      - name: Commit and Push Reports
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/
+          git commit -m "chore: update analysis reports [skip ci]" || echo "No changes to commit"
+          git push
+
+      - name: Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: reports/
+
+  deploy:
+    needs: analyze
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -209,7 +209,7 @@ The default playbook automatically generates a security evidence document for Me
 |===
 | Template | Condition
 
-| `https://github.com/trivoallan/regis-cli` (dir: `cookiecutters/mr-evidence`)
+| `https://github.com/trivoallan/regis-cli` (dir: `regis_cli/cookiecutters/mr-evidence`)
 | Always generated (no condition). Outputs a `SECURITY_EVIDENCE.md` file in the `.regis-evidence/` directory.
 |===
 

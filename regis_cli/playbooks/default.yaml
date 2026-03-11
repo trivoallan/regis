@@ -303,7 +303,7 @@ integrations:
               }
     templates:
       - url: https://github.com/trivoallan/regis-cli
-        directory: cookiecutters/mr-evidence
+        directory: regis_cli/cookiecutters/mr-evidence
 
 links:
   - label: Return to Merge Request
