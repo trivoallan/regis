@@ -1,3 +1,4 @@
+# trunk-ignore-all(bandit/B101)
 from unittest.mock import MagicMock
 
 import pytest

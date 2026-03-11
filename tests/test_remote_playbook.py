@@ -1,3 +1,4 @@
+# trunk-ignore-all(bandit/B101)
 """Tests for remote playbook loading."""
 
 from __future__ import annotations

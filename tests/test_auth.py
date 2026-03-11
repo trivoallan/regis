@@ -1,3 +1,5 @@
+# trunk-ignore-all(bandit/B101)
+import json
 import os
 from unittest.mock import MagicMock, patch
 
@@ -222,3 +224,50 @@ class TestRegistryAuth:
 
         assert kwargs["username"] == "override_user"
         assert kwargs["password"] == "override_pass"
+
+    def test_resolve_credentials_from_docker_auth_config_env(self):
+        """Test resolve_credentials from DOCKER_AUTH_CONFIG env var."""
+        from regis_cli.registry.auth import resolve_credentials
+
+        auth_config = {
+            "auths": {
+                "registry.example.com": {
+                    "auth": "ZW52X2NvbmZpZ191c2VyOmVudl9jb25maWdfcGFzcw=="  # env_config_user:env_config_pass
+                }
+            }
+        }
+        env = {"DOCKER_AUTH_CONFIG": json.dumps(auth_config)}
+        with patch.dict(os.environ, env, clear=True):
+            user, pwd = resolve_credentials("registry.example.com")
+            assert user == "env_config_user"
+            assert pwd == "env_config_pass"  # trunk-ignore(bandit/B105)
+
+    def test_resolve_credentials_from_docker_hub_env(self):
+        """Test resolve_credentials from DOCKER_HUB_* and DOCKER_* env vars."""
+        from regis_cli.registry.auth import resolve_credentials
+
+        # Test DOCKER_HUB_*
+        env = {
+            "DOCKER_HUB_USERNAME": "hub_user",
+            "DOCKER_HUB_PASSWORD": "hub_password",  # trunk-ignore(bandit/B105)
+        }
+        with patch.dict(os.environ, env, clear=True):
+            user, pwd = resolve_credentials("docker.io")
+            assert user == "hub_user"
+            assert pwd == "hub_password"  # trunk-ignore(bandit/B105)
+
+        # Test DOCKER_*
+        env = {
+            "DOCKER_USERNAME": "docker_user",
+            "DOCKER_PASSWORD": "docker_password",  # trunk-ignore(bandit/B105)
+        }
+        with patch.dict(os.environ, env, clear=True):
+            user, pwd = resolve_credentials("registry-1.docker.io")
+            assert user == "docker_user"
+            assert pwd == "docker_password"  # trunk-ignore(bandit/B105)
+
+        # Verify not used for other registries
+        with patch.dict(os.environ, env, clear=True):
+            user, pwd = resolve_credentials("ghcr.io")
+            assert user is None
+            assert pwd is None

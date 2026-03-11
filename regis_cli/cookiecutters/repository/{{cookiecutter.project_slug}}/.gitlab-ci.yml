@@ -10,6 +10,9 @@ spec:
 variables:
   # Default image — override with a CI/CD project variable named REGIS_CLI_IMAGE
   REGIS_CLI_IMAGE: "{{ cookiecutter.regis_cli_image_base }}:{{ cookiecutter.version }}"
+  # To avoid Docker Hub rate limits, you can set DOCKER_AUTH_CONFIG,
+  # REGIS_AUTH_DOCKER_IO_USERNAME/PASSWORD, or DOCKER_HUB_USERNAME/PASSWORD
+  # as CI/CD variables in your project settings.
 stages:
   - request
   - analyze

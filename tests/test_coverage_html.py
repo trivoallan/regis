@@ -1,3 +1,4 @@
+# trunk-ignore-all(bandit/B101)
 from regis_cli.report.html import render_html
 
 

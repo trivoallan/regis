@@ -1,3 +1,4 @@
+# trunk-ignore-all(bandit/B101)
 """Tests for the playbook evaluation engine."""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# trunk-ignore-all(bandit/B101)
 """Tests for the provenance analyzer."""
 
 from regis_cli.analyzers.provenance import ProvenanceAnalyzer

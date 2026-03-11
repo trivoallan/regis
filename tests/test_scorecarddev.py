@@ -1,10 +1,10 @@
+# trunk-ignore-all(bandit/B101)
 """Tests for the scorecard analyzer."""
 
 from regis_cli.analyzers.scorecarddev import (
     ScorecardDevAnalyzer,
     _parse_git_url,
 )
-
 
 # ---------------------------------------------------------------------------
 # Git URL parsing tests

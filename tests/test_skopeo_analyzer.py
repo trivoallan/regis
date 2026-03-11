@@ -1,3 +1,4 @@
+# trunk-ignore-all(bandit/B101)
 """Tests for the skopeo analyzer."""
 
 import json

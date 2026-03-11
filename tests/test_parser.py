@@ -1,3 +1,4 @@
+# trunk-ignore-all(bandit/B101)
 """Tests for the URL parser."""
 
 import pytest
