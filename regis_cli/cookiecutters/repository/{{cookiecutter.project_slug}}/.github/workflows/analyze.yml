@@ -13,6 +13,9 @@ on:
         description: Image URL to analyze (e.g. ghcr.io/username/my-image:latest)
         required: true
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 concurrency:
   group: pages
   cancel-in-progress: false
