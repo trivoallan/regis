@@ -35,7 +35,7 @@ jobs:
         uses: trunk-io/trunk-action/setup@v1
 
       - name: Trunk Format
-        run: trunk fmt --all
+        run: ${{ env.TRUNK_PATH }} fmt --all
 
       - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
