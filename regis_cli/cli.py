@@ -796,7 +796,7 @@ def bootstrap_repository(output_dir: str, no_input: bool) -> None:
             "cookiecutter not found. Please install it with 'pip install cookiecutter'."
         ) from None
 
-    template_path = resources.files("regis_cli") / ".." / "cookiecutters" / "repository"
+    template_path = resources.files("regis_cli") / "cookiecutters" / "repository"
 
     click.echo(f"Bootstrapping repository into {output_dir}...", err=True)
     try:
@@ -830,7 +830,7 @@ def bootstrap_playbook(output_dir: str, no_input: bool) -> None:
             "cookiecutter not found. Please install it with 'pip install cookiecutter'."
         ) from None
 
-    template_path = resources.files("regis_cli") / ".." / "cookiecutters" / "playbook"
+    template_path = resources.files("regis_cli") / "cookiecutters" / "playbook"
 
     click.echo(f"Bootstrapping playbook into {output_dir}...", err=True)
     try:

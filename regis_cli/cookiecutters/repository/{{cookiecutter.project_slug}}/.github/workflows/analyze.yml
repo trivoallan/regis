@@ -7,10 +7,14 @@ permissions:
 
 on:
   workflow_dispatch:
+    # checkov:skip=CKV_GHA_7:Parameterless build requirement is not applicable for this analysis tool
     inputs:
       image_url:
         description: Image URL to analyze (e.g. ghcr.io/username/my-image:latest)
         required: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 concurrency:
   group: pages
@@ -22,8 +26,8 @@ jobs:
     container:
       image: "{{ cookiecutter.regis_cli_image_url }}"
       volumes:
-        - {% raw %}${{ github.workspace }}/playbooks:/app/playbooks
-        - {% raw %}${{ github.workspace }}/reports:/app/reports
+        - "{% raw %}${{ github.workspace }}/playbooks:/app/playbooks{% endraw %}"
+        - "{% raw %}${{ github.workspace }}/reports:/app/reports{% endraw %}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -57,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: {% raw %}${{ steps.deployment.outputs.page_url }}{% endraw %}
+      url: "{% raw %}${{ steps.deployment.outputs.page_url }}{% endraw %}"
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

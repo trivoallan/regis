@@ -44,8 +44,13 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Corrected the Alpine example report URL in `README.md` to point to the versioned documentation path.
 - Added `README.md` to `release-please-config.json` `extra-files` to ensure consistent versioning and updates.
 - Redesign of `README.md` now properly redirects all technical documentation to the official Antora site.
-- Added standard OCI annotations to `Dockerfile` for better GitHub Packages and container registry integration (`title`, `description`, `url`, `source`, `documentation`, `vendor`, `authors`, `licenses`).
+- Fixed `bootstrap` command failure in Docker image:
+  - Moved `cookiecutters/` directory into the `regis_cli` package.
+  - Updated `cli.py` to use `importlib.resources.files` for finding templates, ensuring compatibility with installed packages.
+  - Updated `pyproject.toml` to include `cookiecutters/**/*` in package data.
+  - Updated `default.yaml` and documentation to reflect the new directory structure.
 
 ## Next Steps
 
-- Push the changes and open a PR.
+- Create a PR for the `bootstrap` command fix.
+- Monitor CI/CD results for the new branch.

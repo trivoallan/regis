@@ -47,7 +47,12 @@ dev = ["pytest>=7.4", "pytest-cov>=4.1", "responses>=0.24"]
 include = ["regis_cli*"]
 
 [tool.setuptools.package-data]
-regis_cli = ["schemas/*.json", "scorecard/*.yaml", "templates/**/*"]
+regis_cli = [
+  "schemas/*.json",
+  "scorecard/*.yaml",
+  "templates/**/*",
+  "cookiecutters/**/*",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
