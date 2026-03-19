@@ -45,3 +45,20 @@ def test_bootstrap_playbook_success():
         pb_dir = Path("test-pb/custom-regis-playbook")
         assert pb_dir.exists()
         assert (pb_dir / "playbook.yaml").exists()
+
+
+def test_bootstrap_repository_post_install_notes():
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        result = runner.invoke(
+            main, ["bootstrap", "repository", "test-notes", "--no-input"]
+        )
+
+        assert result.exit_code == 0
+        assert "POST-INSTALL NOTES:" in result.output
+        assert "GitHub Setup" in result.output or "GitLab Setup" in result.output
+
+        # Verify the file is deleted
+        project_dir = Path("test-notes/regis-image-security")
+        notes_file = project_dir / ".regis-post-install.md"
+        assert not notes_file.exists()

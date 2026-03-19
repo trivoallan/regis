@@ -12,6 +12,10 @@
 - Automated Antora documentation publishing to GitHub Pages.
 - Automated `trunk fmt` in CI with auto-commit of style changes.
 - Fixed Trunk Check `HEAD^2` error by optimizing git checkout and auto-commit configuration.
+- Refactored `generate` command into a `bootstrap` command group (`bootstrap repository` and `bootstrap playbook`).
+- Display post-install notes after bootstrap.
+- Fixed Trunk Check `HEAD^2` error by optimizing git checkout and auto-commit configuration.
+- Added post-install notes feature to `bootstrap` commands and updated documentation.
 
 ## In Progress
 
