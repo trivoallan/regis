@@ -20,6 +20,45 @@ class DockleAnalyzer(BaseAnalyzer):
     name = "dockle"
     schema_file = "dockle.schema.json"
 
+    @classmethod
+    def default_rules(cls) -> list[dict[str, Any]]:
+        return [
+            {
+                "slug": "dockle-no-fatal",
+                "title": "No FATAL issues found by Dockle.",
+                "level": "critical",
+                "tags": ["security"],
+                "params": {"max_count": 0},
+                "condition": {
+                    "<=": [
+                        {"var": "results.dockle.issues_by_level.FATAL"},
+                        {"var": "rule.params.max_count"},
+                    ]
+                },
+                "messages": {
+                    "pass": "No fatal issues detected.",
+                    "fail": "Dockle found ${results.dockle.issues_by_level.FATAL} fatal issues (max allowed: ${rule.params.max_count}).",
+                },
+            },
+            {
+                "slug": "dockle-max-warnings",
+                "title": "Too many Dockle warnings found.",
+                "level": "warning",
+                "tags": ["security"],
+                "params": {"max_count": 5},
+                "condition": {
+                    "<=": [
+                        {"var": "results.dockle.issues_by_level.WARN"},
+                        {"var": "rule.params.max_count"},
+                    ]
+                },
+                "messages": {
+                    "pass": "Dockle warnings are within acceptable limits (${results.dockle.issues_by_level.WARN}).",
+                    "fail": "Dockle found ${results.dockle.issues_by_level.WARN} warnings (max allowed: ${rule.params.max_count}).",
+                },
+            },
+        ]
+
     def analyze(
         self,
         client: RegistryClient,

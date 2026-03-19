@@ -32,6 +32,13 @@ class BaseAnalyzer(ABC):
     #: Filename of the JSON Schema inside ``regis_cli/schemas/``.
     schema_file: str = ""
 
+    @classmethod
+    def default_rules(cls) -> list[dict[str, Any]]:
+        """Return a list of default rules provided by this analyzer.
+        Override in subclasses to provide default evaluation rules.
+        """
+        return []
+
     @abstractmethod
     def analyze(
         self,

@@ -29,6 +29,149 @@ class SkopeoAnalyzer(BaseAnalyzer):
     name = "skopeo"
     schema_file = "skopeo.schema.json"
 
+    @classmethod
+    def default_rules(cls) -> list[dict[str, Any]]:
+        return [
+            {
+                "slug": "skopeo-no-root",
+                "title": "Image must not run as root.",
+                "level": "critical",
+                "tags": ["security"],
+                "params": {"forbidden_user": "root"},
+                "condition": {
+                    "!=": [
+                        {"var": "results.skopeo.platforms.0.user"},
+                        {"var": "rule.params.forbidden_user"},
+                    ]
+                },
+                "messages": {
+                    "pass": "Image does not run as '${rule.params.forbidden_user}'.",
+                    "fail": "Image configured to run as '${rule.params.forbidden_user}'.",
+                },
+            },
+            {
+                "slug": "skopeo-max-size",
+                "title": "Image size is within limits.",
+                "level": "warning",
+                "tags": ["hygiene"],
+                "params": {"max_mb": 1000},
+                "condition": {
+                    "<=": [
+                        {"var": "results.skopeo.platforms.0.size"},
+                        {"*": [{"var": "rule.params.max_mb"}, 1048576]},
+                    ]
+                },
+                "messages": {
+                    "pass": "Image size is within limits (${results.skopeo.platforms.0.size} bytes).",
+                    "fail": "Image size exceeds ${rule.params.max_mb} MB (${results.skopeo.platforms.0.size} bytes).",
+                },
+            },
+            {
+                "slug": "skopeo-max-layers",
+                "title": "Image has an acceptable number of layers.",
+                "level": "warning",
+                "tags": ["performance"],
+                "params": {"max_layers": 30},
+                "condition": {
+                    "<=": [
+                        {"var": "results.skopeo.platforms.0.layers_count"},
+                        {"var": "rule.params.max_layers"},
+                    ]
+                },
+                "messages": {
+                    "pass": "Image has ${results.skopeo.platforms.0.layers_count} layers.",
+                    "fail": "Image has too many layers (${results.skopeo.platforms.0.layers_count}). Max allowed: ${rule.params.max_layers}.",
+                },
+            },
+            {
+                "slug": "skopeo-tag-not-latest",
+                "title": "Image tag should not be 'latest'.",
+                "level": "warning",
+                "tags": ["lifecycle"],
+                "condition": {"!=": [{"var": "request.tag"}, "latest"]},
+                "messages": {
+                    "pass": "Image tag is not 'latest'.",
+                    "fail": "Image is using the 'latest' tag. Use immutable version tags instead.",
+                },
+            },
+            {
+                "slug": "skopeo-multi-arch",
+                "title": "Image should support multiple platforms.",
+                "level": "info",
+                "tags": ["compatibility"],
+                "params": {"min_platforms": 2},
+                "condition": {
+                    ">=": [
+                        {
+                            "reduce": [
+                                {"var": "results.skopeo.platforms"},
+                                {"+": [1, {"var": "accumulator"}]},
+                                0,
+                            ]
+                        },
+                        {"var": "rule.params.min_platforms"},
+                    ]
+                },
+                "messages": {
+                    "pass": "Image supports ${results.skopeo.platforms.length} platforms.",
+                    "fail": "Image only supports ${results.skopeo.platforms.length} platforms (min required: ${rule.params.min_platforms}).",
+                },
+            },
+            {
+                "slug": "skopeo-exposed-ports",
+                "title": "Image exposes permitted ports.",
+                "level": "warning",
+                "tags": ["security"],
+                "params": {"allowed_ports": ["80", "443"]},
+                "condition": {
+                    "subset": [
+                        {"var": "results.skopeo.platforms.0.exposed_ports"},
+                        {"var": "rule.params.allowed_ports"},
+                    ]
+                },
+                "messages": {
+                    "pass": "All exposed ports are allowed.",
+                    "fail": "Image exposes unauthorized ports: ${results.skopeo.platforms.0.exposed_ports}.",
+                },
+            },
+            {
+                "slug": "skopeo-required-labels",
+                "title": "Image must have required OCI labels.",
+                "level": "warning",
+                "tags": ["metadata"],
+                "params": {"labels": ["org.opencontainers.image.source"]},
+                "condition": {
+                    "contains_all": [
+                        {"keys": [{"var": "results.skopeo.platforms.0.labels"}]},
+                        {"var": "rule.params.labels"},
+                    ]
+                },
+                "messages": {
+                    "pass": "All required labels are present.",
+                    "fail": "Image is missing one or more required labels: ${rule.params.labels}.",
+                },
+            },
+            {
+                "slug": "skopeo-forbidden-env",
+                "title": "Image must not contain forbidden environment variables.",
+                "level": "critical",
+                "tags": ["security"],
+                "params": {"keys": ["DEBUG", "SECRET_KEY"]},
+                "condition": {
+                    "!": {
+                        "env_contains": [
+                            {"var": "results.skopeo.platforms.0.env"},
+                            {"var": "rule.params.keys"},
+                        ]
+                    }
+                },
+                "messages": {
+                    "pass": "No forbidden environment variables found.",
+                    "fail": "Image contains one or more forbidden environment variables.",
+                },
+            },
+        ]
+
     def analyze(
         self,
         client: RegistryClient,
@@ -74,8 +217,6 @@ class SkopeoAnalyzer(BaseAnalyzer):
                 client, registry, repository, tag, {"os": os_name, "architecture": arch}
             )
             platforms.append(detail)
-            inspect_data = {}  # Will be fetched inside _inspect_platform if needed,
-            # but we'll stick to platforms list for consistency.
         elif media_type in _INDEX_TYPES:
             # Multi-arch image — iterate over each platform manifest in parallel.
             entries = manifest.get("manifests", [])
@@ -110,11 +251,11 @@ class SkopeoAnalyzer(BaseAnalyzer):
             platforms.append(detail)
 
         # 4. Fetch primary inspect data (raw metadata) if NOT an index and NO platform override.
-        inspect_data: dict[str, Any] = {}
+        primary_metadata: dict[str, Any] = {}
         if not platform and media_type not in _INDEX_TYPES:
             try:
                 primary_inspect_stdout = self._run_skopeo(client, ["inspect", target])
-                inspect_data = json.loads(primary_inspect_stdout)
+                primary_metadata = json.loads(primary_inspect_stdout)
             except Exception as e:
                 logger.warning(
                     "Could not fetch primary inspect data for %s: %s", target, e
@@ -126,19 +267,16 @@ class SkopeoAnalyzer(BaseAnalyzer):
             # skopeo list-tags docker://registry/repository
             list_tags_target = f"docker://{registry}/{repository}"
             list_tags_stdout = self._run_skopeo(client, ["list-tags", list_tags_target])
-            tags_data = json.loads(list_tags_stdout)
-            tags = tags_data.get("Tags", [])
-            # Natural sort or just take the ones from skopeo (usually unsorted or alphabetical)
-            # We'll return the raw list and let the renderer handle it, but we can also store a subset.
+            tags = json.loads(list_tags_stdout).get("Tags", [])
         except Exception as e:
-            logger.warning("Could not list tags for %s: %s", repository, e)
+            logger.warning("Could not fetch tag list for %s: %s", repository, e)
 
         return {
             "analyzer": self.name,
             "repository": repository,
             "tag": tag,
-            "inspect": inspect_data,
             "platforms": platforms,
+            "inspect": primary_metadata,
             "tags": tags,
         }
 
@@ -209,6 +347,14 @@ class SkopeoAnalyzer(BaseAnalyzer):
             result["created"] = data.get("Created")
             result["labels"] = data.get("Labels") or {}
             result["layers_count"] = len(data.get("Layers", []))
+            result["size"] = data.get("Size", 0)
+
+            # Extract exposed ports if available
+            # Skopeo inspect sometimes has these in different places depending on version/source
+            # Usually in a Config object if present.
+            config = data.get("Config", {}) or {}
+            result["exposed_ports"] = list((config.get("ExposedPorts") or {}).keys())
+            result["env"] = config.get("Env", [])
 
             if result["architecture"] == "unknown":
                 result["architecture"] = data.get("Architecture", "unknown")

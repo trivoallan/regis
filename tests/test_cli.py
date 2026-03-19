@@ -169,16 +169,15 @@ class TestCliBasics:
             )
             assert result.exit_code == 0
 
-            # Default HTML report filename is index.html (from first page of default playbook)
+            # Report data is written to report.json alongside the static SPA
             report_file = Path(
-                "reports/registry-1.docker.io/library-nginx/latest/index.html"
+                "reports/registry-1.docker.io/library-nginx/latest/report.json"
             )
-            html_content = report_file.read_text(encoding="utf-8")
+            report_data = json.loads(report_file.read_text(encoding="utf-8"))
 
-            assert "build" in html_content
-            assert "123" in html_content
-            assert "env" in html_content
-            assert "prod" in html_content
+            assert "metadata" in report_data
+            assert report_data["metadata"]["build"] == "123"
+            assert report_data["metadata"]["env"] == "prod"
 
 
 class TestCliCheck:
