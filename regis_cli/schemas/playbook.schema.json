@@ -101,23 +101,10 @@
         "gitlab": {
           "type": "object",
           "properties": {
-            "labels": {
+            "badges": {
               "type": "array",
-              "description": "Custom scoped labels applied to GitLab Merge Requests based on conditions.",
-              "items": {
-                "type": "object",
-                "required": ["name", "condition"],
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Label name, e.g. 'regis::fail' or 'security::critical'."
-                  },
-                  "condition": {
-                    "type": "object",
-                    "description": "JsonLogic expression evaluated against the analysis report."
-                  }
-                }
-              }
+              "description": "List of badge slugs to be imported as GitLab Merge Request labels.",
+              "items": { "type": "string" }
             },
             "checklist": {
               "type": "array",

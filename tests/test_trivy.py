@@ -1,4 +1,3 @@
-# trunk-ignore-all(bandit/B101)
 """Tests for Trivy analyzer."""
 
 import subprocess

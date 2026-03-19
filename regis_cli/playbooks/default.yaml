@@ -1,6 +1,41 @@
 # yaml-language-server: $schema=../schemas/playbook.schema.json
 name: RegiS Default Playbook
 
+tiers:
+  - name: Gold
+    condition:
+      ">": [{ var: rules_summary.score }, 90]
+  - name: Silver
+    condition:
+      ">": [{ var: rules_summary.score }, 70]
+  - name: Bronze
+    condition:
+      ">": [{ var: rules_summary.score }, 50]
+
+badges:
+  - slug: score
+    scope: Score
+    value: ${rules_summary.score}
+    class: information
+  - slug: cve-critical
+    scope: CVE
+    value: Critical
+    condition:
+      "!!": [{ var: rules.trivy-no-critical.passed }]
+    class: error
+  - slug: cve-high
+    scope: CVE
+    value: High
+    condition:
+      "!!": [{ var: rules.trivy-no-high.passed }]
+    class: warning
+  - slug: freshness
+    scope: Freshness
+    value: Fresh !
+    condition:
+      "==": [{ var: rules.freshness-age.passed }, true]
+    class: success
+
 pages:
   - title: Overview
     slug: index
@@ -100,49 +135,22 @@ pages:
             options:
               align: center
       - name: Mandatory Requirements
-        scorecards:
-          - name: no-root
-            title: Image must not run as root.
-            level: critical
-            tags: [security]
-            condition:
-              "!=": [{ var: results.skopeo.platforms.0.user }, root]
-          - name: no-critical
-            title: No CRITICAL vulnerabilities found by Trivy.
-            level: critical
-            tags: [security]
-            condition:
-              "==": [{ var: results.trivy.critical_count }, 0]
-          - name: no-fatal
-            title: No FATAL issues found by Dockle.
-            level: critical
-            tags: [security]
-            condition:
-              "==": [{ var: results.dockle.issues_by_level.FATAL }, 0]
-          - name: trusted-domain
-            title: Image must originate from a trusted domain.
-            tags: [security]
-            condition:
-              "in":
-                [
-                  { var: request.registry },
-                  [docker.io, registry-1.docker.io, quay.io, ghcr.io],
-                ]
+        rules:
+          - trusted-domain
+          - skopeo-no-root
+          - trivy-no-critical
+          - dockle-no-fatal
+          - trivy-fix-available
+          - trivy-secret-scan
 
       - name: Recommended Requirements
-        scorecards:
-          - name: no-high
-            title: No HIGH vulnerabilities found by Trivy.
-            level: warning
-            tags: [security]
-            condition:
-              "==": [{ var: results.trivy.high_count }, 0]
-          - name: age
-            title: Image should be less than 30 days old.
-            level: warning
-            tags: [freshness]
-            condition:
-              "<": [{ var: results.freshness.age_days }, 30]
+        rules:
+          - trivy-no-high
+          - freshness-age
+          - skopeo-max-size
+          - skopeo-max-layers
+          - skopeo-tag-not-latest
+          - skopeo-required-labels
 
   - title: Security
     slug: security
@@ -261,46 +269,21 @@ pages:
 
 integrations:
   gitlab:
-    labels:
-      - name: regis::pass
-        condition: { ">=": [{ var: playbook.score }, 90] }
-      - name: regis::warn
-        condition:
-          {
-            and:
-              [
-                { ">=": [{ var: playbook.score }, 70] },
-                { "<": [{ var: playbook.score }, 90] },
-              ],
-          }
-      - name: regis::fail
-        condition: { "<": [{ var: playbook.score }, 70] }
-      - name: security::critical
-        condition: { ">": [{ var: results.trivy.critical_count }, 0] }
+    badges:
+      - score
+      - freshness
+      - cve-critical
+      - cve-high
     checklists:
       - title: 📝 Review Checklist
         items:
           - label: Revue de sécurité réalisée
           - label: Aucune vulnérabilité CRITIQUE détectée
-            show_if: { "==": [{ var: results.trivy.critical_count }, 0] }
-            check_if: { "==": [{ var: results.trivy.critical_count }, 0] }
+            show_if: { var: rules.trivy-no-critical.passed }
+            check_if: { var: rules.trivy-no-critical.passed }
           - label: Image issue d'un registre de confiance
-            show_if:
-              {
-                "in":
-                  [
-                    { var: request.registry },
-                    [docker.io, registry-1.docker.io, quay.io, ghcr.io],
-                  ],
-              }
-            check_if:
-              {
-                "in":
-                  [
-                    { var: request.registry },
-                    [docker.io, registry-1.docker.io, quay.io, ghcr.io],
-                  ],
-              }
+            show_if: { var: rules.trusted-domain.passed }
+            check_if: { var: rules.trusted-domain.passed }
     templates:
       - url: https://github.com/trivoallan/regis-cli
         directory: regis_cli/cookiecutters/mr-evidence

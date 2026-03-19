@@ -1,4 +1,3 @@
-# trunk-ignore-all(bandit/B101)
 """Tests for the size analyzer."""
 
 import json

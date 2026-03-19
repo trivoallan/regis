@@ -1,4 +1,3 @@
-# trunk-ignore-all(bandit/B101)
 """Tests for the scorecard analyzer."""
 
 from regis_cli.analyzers.scorecarddev import (

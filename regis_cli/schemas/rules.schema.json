@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://regis-cli.dev/schemas/rules.schema.json",
+  "title": "Rules definition",
+  "description": "Schema for regis-cli evaluating rules (rules.yaml).",
+  "type": "object",
+  "required": ["rules"],
+  "properties": {
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slug", "title", "condition", "messages"],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "Identifier for the rule."
+          },
+          "title": {
+            "type": "string",
+            "description": "Human-readable title."
+          },
+          "level": {
+            "type": "string",
+            "enum": ["critical", "warning", "info", "none"],
+            "description": "Severity level of the rule."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Arbitrary tags to group rules."
+          },
+          "enable": {
+            "type": "boolean",
+            "description": "Whether the rule is enabled. Defaults to true.",
+            "default": true
+          },
+          "params": {
+            "type": "object",
+            "description": "Configurable parameters for the rule condition.",
+            "additionalProperties": true
+          },
+          "messages": {
+            "type": "object",
+            "required": ["pass", "fail"],
+            "properties": {
+              "pass": {
+                "type": "string",
+                "description": "Message rendered when rule passes."
+              },
+              "fail": {
+                "type": "string",
+                "description": "Message rendered when rule fails."
+              }
+            }
+          },
+          "condition": {
+            "type": "object",
+            "description": "JsonLogic condition evaluated against the flattened analysis report."
+          }
+        }
+      }
+    }
+  }
+}

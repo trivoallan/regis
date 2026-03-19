@@ -28,6 +28,23 @@ def _evaluate_scorecards(
     """Evaluate each scorecard definition against the raw (flat) context."""
     scorecard_results: list[dict[str, Any]] = []
     for scorecard in scorecards_defs:
+        if scorecard.get("_pre_evaluated"):
+            # Use pre-evaluated result
+            res = scorecard["_rule_result"]
+            scorecard_results.append(
+                {
+                    "name": res["slug"],
+                    "title": res["title"],
+                    "level": res["level"],
+                    "tags": res["tags"],
+                    "analyzers": res["analyzers"],
+                    "passed": res["passed"],
+                    "status": res["status"],
+                    "message": res["message"],
+                }
+            )
+            continue
+
         condition = scorecard.get("condition", {})
         tracker = MissingDataTracker(raw_context)
         try:
@@ -209,7 +226,30 @@ def _evaluate_section(
 
     Returns a result dict for the section with scorecards, levels_summary, display, etc.
     """
-    scorecard_results = _evaluate_scorecards(section.get("scorecards", []), raw_context)
+    scorecards_defs = list(section.get("scorecards", []))
+
+    # Support 'rules' list (slugs) in section
+    # These rules were evaluated at the start of evaluate() and are in raw_context['rules']
+    rules_refs = section.get("rules", [])
+    if rules_refs:
+        rules_registry = raw_context.get("rules", {})
+        for ref in rules_refs:
+            if isinstance(ref, str) and ref in rules_registry:
+                # Map evaluated rule back to scorecard format for report compatibility
+                rule = rules_registry[ref]
+                scorecards_defs.append(
+                    {
+                        "name": rule["slug"],
+                        "title": rule["title"],
+                        "level": rule["level"],
+                        "tags": rule["tags"],
+                        "condition": "Already evaluated",
+                        "_pre_evaluated": True,
+                        "_rule_result": rule,
+                    }
+                )
+
+    scorecard_results = _evaluate_scorecards(scorecards_defs, raw_context)
     levels_summary = _compute_levels_summary(
         scorecard_results, section.get("levels", [])
     )

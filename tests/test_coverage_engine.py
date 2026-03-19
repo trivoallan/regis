@@ -1,4 +1,3 @@
-# trunk-ignore-all(bandit/B101)
 from regis_cli.playbook.engine import (
     MissingDataTracker,
     _format_date,
@@ -96,11 +95,7 @@ def test_evaluate_errors_and_edge_cases(caplog):
             {"label": "Link3", "url": "{{ 1/0 }}"},  # Template error
         ],
         "sidebar": {"title": "Sidebar"},
-        "integrations": {
-            "gitlab": {
-                "labels": [{"name": "L1", "condition": {"/": [1, 0]}}]  # Label error
-            }
-        },
+        "integrations": {"gitlab": {"badges": ["non-existent"]}},
     }
     report = {"results": {}}
 
@@ -113,9 +108,7 @@ def test_evaluate_errors_and_edge_cases(caplog):
     # Line 643 calls _resolve_template. _resolve_template catches Exception and returns template_str.
     # So the URL is "{{ 1/0 }}".
     assert "links" in result
-    assert (
-        result.get("labels") == []
-    )  # Labels is empty list if defined in playbook but none matched
+    assert result.get("badge_labels") is None  # No badges matched
 
 
 def test_render_order_tags_append():

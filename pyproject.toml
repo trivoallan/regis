@@ -56,3 +56,12 @@ regis_cli = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["yaml.*", "requests.*", "json_logic.*", "referencing.*"]
+ignore_missing_imports = true

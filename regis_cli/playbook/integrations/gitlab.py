@@ -14,28 +14,34 @@ from regis_cli.playbook.conditions import evaluate_condition
 logger = logging.getLogger(__name__)
 
 
-def _resolve_labels(
+def _resolve_badge_labels(
     integration: dict[str, Any],
     full_context: dict[str, Any],
 ) -> dict[str, Any]:
-    """Evaluate GitLab label conditions and return resolved label names."""
-    label_defs = integration.get("labels", [])
-    if not label_defs:
+    """Resolve explicit badge slugs to be imported as GitLab labels."""
+    badge_slugs = integration.get("badges", [])
+    if not badge_slugs:
         return {}
 
-    resolved_labels: list[str] = []
-    for label_def in label_defs:
-        condition = label_def.get("condition")
-        if condition:
-            result = evaluate_condition(
-                condition, full_context, label=label_def.get("name", "")
-            )
-            if result and result.passed:
-                resolved_labels.append(label_def["name"])
-        else:
-            resolved_labels.append(label_def["name"])
+    # Get available badges for lookup
+    available_badges = {
+        b["slug"]: b for b in full_context.get("badges", []) if "slug" in b
+    }
 
-    return {"labels": list(set(resolved_labels))}
+    resolved_badge_labels: list[dict[str, Any]] = []
+    for slug in badge_slugs:
+        if slug in available_badges:
+            badge = available_badges[slug]
+            resolved_badge_labels.append(
+                {
+                    "name": badge["label"],
+                    "class": badge["class"],
+                }
+            )
+
+    if resolved_badge_labels:
+        return {"badge_labels": resolved_badge_labels}
+    return {}
 
 
 def _resolve_checklists(
@@ -130,13 +136,14 @@ def resolve_gitlab_integration(
     playbook: dict[str, Any],
     full_context: dict[str, Any],
 ) -> dict[str, Any]:
-    """Resolve all GitLab integration directives (labels, checklists, templates).
+    """Resolve all GitLab integration directives (badges, checklists, templates).
 
     Returns a dict merged into the evaluation result by the orchestrator.
     """
     integration = playbook.get("integrations", {}).get("gitlab", {})
     result: dict[str, Any] = {}
-    result.update(_resolve_labels(integration, full_context))
+    result.update(_resolve_badge_labels(integration, full_context))
     result.update(_resolve_checklists(integration, full_context))
     result.update(_resolve_templates(integration, full_context))
+
     return result

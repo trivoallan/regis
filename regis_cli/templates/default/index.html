@@ -1,7 +1,11 @@
 {% extends theme ~ "/base.html" %} {% import theme ~ "/macros.html" as m with
 context %} {% block body %} {# Track which analyzers are claimed by scorecards
 #} {% set ns = namespace(claimed_analyzers=[]) %} {% for pb in
-report.playbooks|default([]) %}
+report.playbooks|default([]) %} {% if report.navigation and
+report.navigation[0].active %}
+<section id="rules">{% include theme ~ "/rules.html" with context %}</section>
+{% endif %}
+
 <section id="playbook-{{ loop.index0 }}">
   {% include theme ~ "/playbooks/default.html" with context %}
 </section>

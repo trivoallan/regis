@@ -16,6 +16,77 @@
     "sidebar": {
       "type": "object"
     },
+    "version": {
+      "type": ["string", "null"]
+    },
+    "tier": {
+      "type": ["string", "null"],
+      "description": "The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions."
+    },
+    "badges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["scope", "class"],
+        "properties": {
+          "slug": { "type": "string" },
+          "scope": { "type": "string" },
+          "value": { "type": ["string", "null"] },
+          "class": {
+            "type": "string",
+            "enum": ["success", "warning", "error", "information"]
+          },
+          "label": {
+            "type": "string",
+            "description": "The full label string (scope or scope: value)."
+          }
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slug", "title", "passed", "status", "message"],
+        "properties": {
+          "slug": { "type": "string" },
+          "title": { "type": "string" },
+          "level": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "passed": { "type": "boolean" },
+          "status": {
+            "type": "string",
+            "enum": ["passed", "failed", "incomplete"]
+          },
+          "message": { "type": "string" },
+          "analyzers": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "rules_summary": {
+      "type": "object",
+      "required": ["score", "total", "passed"],
+      "properties": {
+        "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "total": { "type": "array", "items": { "type": "string" } },
+        "passed": { "type": "array", "items": { "type": "string" } },
+        "by_tag": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["rules", "passed_rules", "score"],
+            "properties": {
+              "rules": { "type": "array", "items": { "type": "string" } },
+              "passed_rules": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "score": { "type": "integer", "minimum": 0, "maximum": 100 }
+            }
+          }
+        }
+      }
+    },
     "score": {
       "type": "integer",
       "minimum": 0,

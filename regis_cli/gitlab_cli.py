@@ -86,15 +86,15 @@ def update_mr(report_path: str, report_url: str, mr_url: str, token: str) -> Non
             proj_idx = path_parts.index("projects")
             project_id = int(path_parts[proj_idx + 1])
             mr_iid = int(path_parts[proj_idx + 3])
-        except (ValueError, IndexError):
+        except (ValueError, IndexError) as exc:
             raise click.ClickException(
                 f"Invalid MR URL format: {mr_url}. Expected format containing /projects/<id>/merge_requests/<iid>"
-            )
+            ) from exc
 
     except Exception as exc:
         if isinstance(exc, click.ClickException):
             raise
-        raise click.ClickException(f"Failed to parse MR URL: {exc}")
+        raise click.ClickException(f"Failed to parse MR URL: {exc}") from exc
 
     # Read the JSON report
     try:
@@ -128,9 +128,41 @@ def update_mr(report_path: str, report_url: str, mr_url: str, token: str) -> Non
     # 2. Extract labels and checklists from the playbook in the report
     playbook_data = report_data.get("playbook", {})
     labels = playbook_data.get("labels", [])
+    badge_labels = playbook_data.get("badge_labels", [])
     checklists = playbook_data.get("mr_description_checklists", [])
 
-    # 3. Build new MR description
+    # 3. Handle badge labels with colors
+    final_labels = list(labels)
+    class_colors = {
+        "success": "388e3c",
+        "warning": "fbc02d",
+        "error": "d32f2f",
+        "information": "1976d2",
+    }
+
+    for badge in badge_labels:
+        name = badge["name"]
+        cls = badge["class"]
+        color = class_colors.get(cls, "607d8b")  # default grey
+
+        try:
+            # Check if label exists, otherwise create it
+            try:
+                project.labels.get(name)
+            except gitlab.GitlabGetError:
+                project.labels.create({"name": name, "color": f"#{color}"})
+                click.echo(
+                    f"Created GitLab label '{name}' with color {color}", err=True
+                )
+
+            if name not in final_labels:
+                final_labels.append(name)
+        except Exception as exc:
+            click.echo(
+                f"Warning: Failed to manage GitLab label '{name}': {exc}", err=True
+            )
+
+    # 4. Build new MR description
     current_desc = mr.description or ""
     report_link_md = f"📝 **[View Analysis Report]({report_url})**"
 
@@ -168,10 +200,10 @@ def update_mr(report_path: str, report_url: str, mr_url: str, token: str) -> Non
     if new_desc != current_desc:
         update_kwargs["description"] = new_desc
 
-    if labels:
+    if final_labels:
         # Get existing labels to append new ones
         ext_labels = list(mr.labels)
-        for label in labels:
+        for label in final_labels:
             if label not in ext_labels:
                 ext_labels.append(label)
         update_kwargs["labels"] = ext_labels

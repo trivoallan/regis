@@ -80,7 +80,19 @@
             {{ report.request.registry|e }}/{{ report.request.repository|e }}:{{
             report.request.tag|e }}
           </h1>
-          {% if report.links %}
+          {% if report.tier %}
+          <div style="margin-top: 0.5rem">
+            <span class="tier-badge tier-{{ report.tier|lower }}">
+              {{ report.tier }} Tier
+            </span>
+          </div>
+          {% endif %} {% if report.badges %}
+          <div style="margin-top: 0.5rem">
+            {% for badge in report.badges %}
+            <span class="badge bg-{{ badge.class }}"> {{ badge.label }} </span>
+            {% endfor %}
+          </div>
+          {% endif %} {% if report.links %}
           <hr />
           <section>
             <div class="custom-links" style="margin-top: 1rem">

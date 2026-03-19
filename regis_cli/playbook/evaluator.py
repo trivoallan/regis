@@ -17,6 +17,7 @@ from regis_cli.playbook.context import NamedList, _build_context
 from regis_cli.playbook.integrations.gitlab import resolve_gitlab_integration
 from regis_cli.playbook.sections import _evaluate_section, resolve_widgets_final
 from regis_cli.playbook.templates import _resolve_template
+from regis_cli.rules.evaluator import evaluate_rules
 
 logger = logging.getLogger(__name__)
 
@@ -169,6 +170,19 @@ def evaluate(
     - ``sections``       — per-section breakdown (scorecards, levels, display, widgets)
     - ``score``          — overall percentage of scorecards passed (0–100)
     """
+    # 0. Evaluate rules (merges analyzer defaults with playbook 'rules' section)
+    rules_results = evaluate_rules(report, playbook)
+
+    # Inject rule results into the report so they are available in context (via dots)
+    # NamedList allows lookup by slug (e.g. rules.trivy-no-critical.passed)
+    report["rules"] = NamedList(rules_results["rules"])
+    report["rules_summary"] = {
+        "score": rules_results["score"],
+        "total": rules_results["all_rules"],
+        "passed": rules_results["passed_rules"],
+        "by_tag": rules_results["by_tag"],
+    }
+
     raw_context, nested_context = _build_context(report)
     pages_defs = _normalize_pages(playbook)
     pages_results, total_scorecards_all, total_passed_all = _evaluate_pages(
@@ -185,6 +199,8 @@ def evaluate(
         "total_scorecards": total_scorecards_all,
         "passed_scorecards": total_passed_all,
         "pages": NamedList(pages_results),
+        "rules": report["rules"],
+        "rules_summary": report["rules_summary"],
         "slug": playbook.get("slug"),
     }
 
@@ -200,6 +216,72 @@ def evaluate(
 
     # Final widget resolution pass (filters conditions, re-resolves playbook-aware paths)
     resolve_widgets_final(result["pages"], full_context)
+
+    # Resolve tiers
+    tiers = playbook.get("tiers", [])
+    if tiers:
+        from json_logic import jsonLogic
+
+        for tier in tiers:
+            condition = tier.get("condition")
+            if condition:
+                try:
+                    if jsonLogic(condition, full_context):
+                        result["tier"] = tier.get("name")
+                        break
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning("Tier condition evaluation failed: %s", exc)
+
+    # Resolve badges
+    badges = playbook.get("badges", [])
+    if badges:
+        resolved_badges = []
+        import re
+
+        from json_logic import jsonLogic
+
+        from regis_cli.playbook.templates import _resolve_path
+
+        # Regex for ${var.path} interpolation
+        interp_re = re.compile(r"\$\{([^}]+)\}")
+
+        def interpolate(tmpl: str, ctx: dict[str, Any]) -> str:
+            def _repl(m: re.Match[str]) -> str:
+                path = m.group(1).strip()
+                val = _resolve_path(path, ctx)
+                return str(val) if val is not None else m.group(0)
+
+            return interp_re.sub(_repl, tmpl)
+
+        for badge_def in badges:
+            condition = badge_def.get("condition")
+            if condition:
+                try:
+                    if not jsonLogic(condition, full_context):
+                        continue
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning("Badge condition evaluation failed: %s", exc)
+                    continue
+
+            scope = badge_def.get("scope", "")
+            value_tmpl = badge_def.get("value")
+            resolved_value = (
+                interpolate(value_tmpl, full_context) if value_tmpl else None
+            )
+
+            badge_res = {
+                "slug": badge_def.get("slug"),
+                "scope": scope,
+                "value": resolved_value,
+                "class": badge_def.get("class", "information"),
+            }
+            if badge_res["value"]:
+                badge_res["label"] = f"{scope}: {badge_res['value']}"
+            else:
+                badge_res["label"] = scope
+
+            resolved_badges.append(badge_res)
+        result["badges"] = resolved_badges
 
     # Resolve sidebar, links, and GitLab integration
     sidebar = playbook.get("sidebar")

@@ -1,4 +1,3 @@
-# trunk-ignore-all(bandit/B101)
 import pytest
 from json_logic import jsonLogic
 

@@ -160,7 +160,10 @@ main.add_command(gitlab_cmd, name="gitlab")
 
 
 def _run_playbooks(
-    playbook_paths: tuple[str, ...], analysis_report: dict[str, Any], formats: list[str]
+    playbook_paths: tuple[str, ...],
+    analysis_report: dict[str, Any],
+    formats: list[str],
+    show_rules: bool = False,
 ) -> dict[str, Any]:
     """Load and evaluate playbooks against an analysis report."""
     from regis_cli.playbook.engine import evaluate, load_playbook
@@ -199,11 +202,20 @@ def _run_playbooks(
 
                 summary_str = " · ".join(summary_parts)
                 click.echo(
-                    f"    {summary_str}  "
+                    f"    {summary_str} "
                     f"({pb_result['passed_scorecards']}/{pb_result['total_scorecards']} scorecards passed, "
                     f"{pb_result['score']}%)\n",
                     err=True,
                 )
+
+                if show_rules and pb_result.get("rules"):
+                    click.echo("    Rules Evaluation Summary:", err=True)
+                    for r in pb_result["rules"]:
+                        icon = "✅" if r["passed"] else "❌"
+                        if r["status"] == "incomplete":
+                            icon = "⚠️"
+                        click.echo(f"      {icon} [{r['slug']}] {r['message']}")
+                    click.echo("", err=True)
 
     # Build the final report.
     final_report = {
@@ -275,12 +287,36 @@ def _render_and_save_reports(
     pretty: bool,
 ) -> None:
     """Render and save reports in requested formats."""
-    from regis_cli.report.html import render_html
+    import shutil
 
     for fmt in formats:
         if fmt == "html":
+            from regis_cli.report.html import render_html
+
             # For HTML, generate one file per playbook if playbooks exist.
             playbook_results = report.get("playbooks", [])
+
+            # Copy theme assets (if any)
+            from importlib import resources as importlib_resources
+
+            try:
+                theme_assets = (
+                    importlib_resources.files("regis_cli.templates") / theme / "assets"
+                )
+                if theme_assets.is_dir():
+                    out_dir = _format_output_path(
+                        output_dir_template or ".", report, "json"
+                    )
+                    out_dir.mkdir(parents=True, exist_ok=True)
+                    for item in theme_assets.iterdir():
+                        dest = out_dir / item.name
+                        if item.is_dir():
+                            shutil.copytree(str(item), str(dest), dirs_exist_ok=True)
+                        else:
+                            shutil.copy2(str(item), str(dest))
+            except (FileNotFoundError, ModuleNotFoundError):
+                pass
+
             if playbook_results:
                 for pb in playbook_results:
                     # Pre-calculate filenames for all pages in this playbook to build navigation
@@ -301,7 +337,10 @@ def _render_and_save_reports(
                         elif source_name:
                             filename = f"{source_name}-{page.get('title', 'page').lower()}.{fmt}"
                         else:
-                            filename = f"report_{pb.get('playbook_name', 'unnamed')}_{page.get('title', 'page').lower()}.{fmt}"
+                            filename = (
+                                f"report_{pb.get('playbook_name', 'unnamed')}_"
+                                f"{page.get('title', 'page').lower()}.{fmt}"
+                            )
 
                         page_navigation.append(
                             {
@@ -333,6 +372,18 @@ def _render_and_save_reports(
                             fmt=fmt,
                             rendered=rendered,
                         )
+
+                # Generate a main report.json in the output directory
+                out_dir = _format_output_path(
+                    output_dir_template or ".", report, "json"
+                )
+                out_dir.mkdir(parents=True, exist_ok=True)
+                report_json_path = out_dir / "report.json"
+                indent = 2 if pretty else None
+                report_json_path.write_text(
+                    json.dumps(report, indent=indent, ensure_ascii=False),
+                    encoding="utf-8",
+                )
             else:
                 # No playbooks, just render the base report
                 rendered = render_html(report, theme=theme)
@@ -344,6 +395,12 @@ def _render_and_save_reports(
                     fmt=fmt,
                     rendered=rendered,
                 )
+
+            click.echo(
+                f"  Report site generated at "
+                f"{_format_output_path(output_dir_template or '.', report, fmt)}",
+                err=True,
+            )
         else:
             # JSON (and other formats): Single unified report file
             indent = 2 if pretty else None
@@ -466,13 +523,31 @@ def _render_mr_templates(
     help="Credentials in registry.domain=user:pass format. Can be repeated.",
 )
 @click.option(
+    "--platform",
+    help="Target platform for multi-arch images (e.g. linux/amd64).",
+)
+@click.option(
     "--cache",
     is_flag=True,
     help="Use existing report.json as cache if available.",
 )
 @click.option(
-    "--platform",
-    help="Target platform for multi-arch images (e.g. linux/amd64).",
+    "--evaluate",
+    is_flag=True,
+    default=False,
+    help="Run rules evaluation after analysis and add results to report.",
+)
+@click.option(
+    "--fail",
+    is_flag=True,
+    default=False,
+    help="Fail command execution if any rule is breached.",
+)
+@click.option(
+    "--fail-level",
+    default="critical",
+    type=click.Choice(["info", "warning", "critical"], case_sensitive=False),
+    help="Minimum rule level that triggers a command failure (default: critical).",
 )
 def analyze(
     url: str,
@@ -487,6 +562,9 @@ def analyze(
     auth: tuple[str, ...],
     cache: bool,
     platform: str | None = None,
+    evaluate: bool = False,
+    fail: bool = False,
+    fail_level: str = "critical",
 ) -> None:
     """Analyze a Docker image and evaluate playbooks.
 
@@ -560,11 +638,9 @@ def analyze(
         except Exception as exc:
             logger.debug("Cache lookup failed: %s", exc)
 
-    if final_report:
-        # If we have a cached report, we skip analysis and playbook evaluation.
-        # We might want to re-run playbooks eventually, but for now we follow the "cache report" intent.
-        pass
-    else:
+    analysis_report = final_report
+
+    if not analysis_report:
         # Discover analyzers.
         all_analyzers = _discover_analyzers()
         if not all_analyzers:
@@ -627,7 +703,7 @@ def analyze(
             else:
                 _set_nested_value(metadata_dict, item, "true")
 
-        analysis_report: dict[str, Any] = {
+        analysis_report = {
             "version": version("regis-cli"),
             "request": {
                 "url": url,
@@ -644,8 +720,19 @@ def analyze(
             analysis_report["metadata"] = metadata_dict
             analysis_report["request"]["metadata"] = metadata_dict
 
-        # 2. Run playbooks
-        final_report = _run_playbooks(playbook_paths, analysis_report, formats)
+    # 2. Run playbooks (always re-run if --evaluate or custom playbooks requested, or if not yet run)
+    if not final_report or evaluate or playbook_paths:
+        final_report = _run_playbooks(
+            playbook_paths, analysis_report, formats, show_rules=evaluate
+        )
+
+    if evaluate and "playbooks" in final_report and final_report["playbooks"]:
+        # Promote rules from the first playbook to the top level for visibility
+        pb0 = final_report["playbooks"][0]
+        final_report["rules"] = pb0.get("rules", [])
+        final_report["rules_summary"] = pb0.get("rules_summary", {})
+        final_report["tier"] = pb0.get("tier")
+        final_report["badges"] = pb0.get("badges", [])
 
     # 3. Validate final report
     _validate_report(final_report)
@@ -662,6 +749,28 @@ def analyze(
 
     # 5. Execute MR templates
     _render_mr_templates(final_report, output_dir_template)
+
+    # 6. Check for failures if requested
+    if evaluate and fail:
+        level_order = {"critical": 1, "warning": 2, "info": 3, "none": 4}
+        threshold = level_order.get(fail_level.lower(), 1)
+        breached_rules = []
+        # Rules from the final_report (either promoted or from previous analysis)
+        rules = final_report.get("rules", [])
+        for r in rules:
+            if not r.get("passed", False):
+                lvl = r.get("level", "info").lower()
+                if level_order.get(lvl, 3) <= threshold:
+                    breached_rules.append(r.get("slug", "unknown"))
+
+        if breached_rules:
+            click.echo(
+                f"\nError: Analysis failed due to {len(breached_rules)} rule breaches at level '{fail_level}' or above.",
+                err=True,
+            )
+            import sys
+
+            sys.exit(1)
 
 
 @main.command(name="evaluate")
@@ -912,8 +1021,187 @@ def check(url: str, auth: tuple[str, ...]) -> None:
 
 @main.command(name="version")
 def version_cmd() -> None:
-    """Display regis-cli version."""
+    """Show regis-cli version and exit."""
     click.echo(f"regis-cli version {version('regis-cli')}")
+
+
+@main.group(name="rules")
+def rules_group():
+    """Manage and evaluate rules."""
+    pass
+
+
+@rules_group.command(name="list")
+@click.option(
+    "-r",
+    "--rules",
+    "rules_path",
+    help="Path to an optional rules.yaml file to merge overrides.",
+)
+def list_rules(rules_path: str | None) -> None:
+    """List all available default rules and any overrides."""
+    import yaml
+
+    from regis_cli.cli import _discover_analyzers
+    from regis_cli.rules.evaluator import get_default_rules, merge_rules
+
+    analyzers = _discover_analyzers()
+    defaults = get_default_rules(list(analyzers.keys()))
+
+    custom = []
+    if rules_path:
+        path = Path(rules_path)
+        if path.exists():
+            data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            custom = data.get("rules", [])
+
+    final_rules = merge_rules(defaults, custom)
+    final_rules.sort(key=lambda r: r.get("slug", ""))
+
+    if not final_rules:
+        click.echo("No rules found.")
+        return
+
+    for rule in final_rules:
+        enabled = rule.get("enable", True)
+        enabled_mark = "[x]" if enabled else "[ ]"
+        params = rule.get("params", {})
+        params_str = ""
+        if params:
+            params_str = f" ({', '.join(f'{k}={v}' for k, v in params.items())})"
+
+        click.echo(
+            f"  {enabled_mark} {rule.get('slug', 'unnamed'):25s} {rule.get('level', 'info'):8s} {rule.get('title', '')}{params_str}"
+        )
+
+
+@rules_group.command(name="show")
+@click.argument("slug")
+@click.option(
+    "-r",
+    "--rules",
+    "rules_path",
+    help="Path to an optional rules.yaml file to merge overrides.",
+)
+def show_rule(slug: str, rules_path: str | None) -> None:
+    """Display the full definition of a specific rule."""
+    import json
+
+    import yaml
+
+    from regis_cli.cli import _discover_analyzers
+    from regis_cli.rules.evaluator import get_default_rules, merge_rules
+
+    analyzers = _discover_analyzers()
+    defaults = get_default_rules(list(analyzers.keys()))
+
+    custom = []
+    if rules_path:
+        path = Path(rules_path)
+        if path.exists():
+            data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            custom = data.get("rules", [])
+
+    final_rules = merge_rules(defaults, custom)
+    matching_rule = next((r for r in final_rules if r.get("slug") == slug), None)
+
+    if not matching_rule:
+        raise click.ClickException(f"Rule '{slug}' not found.")
+
+    click.echo(json.dumps(matching_rule, indent=2))
+
+
+@rules_group.command(name="evaluate")
+@click.argument("input_path", type=click.Path(exists=True, dir_okay=False))
+@click.option(
+    "-r",
+    "--rules",
+    "rules_path",
+    help="Path to custom rules.yaml file.",
+)
+@click.option(
+    "-o",
+    "--output",
+    "output_file",
+    help="Output filename for the evaluation result (JSON format).",
+)
+@click.option(
+    "--fail",
+    is_flag=True,
+    default=False,
+    help="Fail command execution if any rule is breached.",
+)
+@click.option(
+    "--fail-level",
+    default="critical",
+    type=click.Choice(["info", "warning", "critical"], case_sensitive=False),
+    help="Minimum rule level that triggers a command failure (default: critical).",
+)
+def eval_rules(
+    input_path: str,
+    rules_path: str | None,
+    output_file: str | None,
+    fail: bool,
+    fail_level: str,
+) -> None:
+    """Evaluate a regis-cli JSON report against rules."""
+    import json
+
+    import yaml
+
+    from regis_cli.rules.evaluator import evaluate_rules
+
+    try:
+        report_data = json.loads(Path(input_path).read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise click.ClickException(f"Failed to load report file: {exc}") from exc
+
+    rules_def = None
+    if rules_path:
+        try:
+            rules_def = yaml.safe_load(Path(rules_path).read_text(encoding="utf-8"))
+        except Exception as exc:
+            raise click.ClickException(f"Failed to load rules file: {exc}") from exc
+
+    result = evaluate_rules(report_data, rules_def)
+
+    if output_file:
+        Path(output_file).write_text(
+            json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+        click.echo(f"Evaluation report written to {output_file}", err=True)
+    else:
+        # Default text output if no JSON output is requested
+        score = result["score"]
+        click.echo(
+            f"\nRules Evaluation Score: {score}% ({result['passed_rules']}/{result['total_rules']})"
+        )
+        click.echo("-" * 40)
+        for r in result["rules"]:
+            icon = "✅" if r["passed"] else "❌"
+            if r["status"] == "incomplete":
+                icon = "⚠️"
+            click.echo(f"{icon} [{r['slug']}] {r['message']}")
+
+    if fail:
+        # Same level order as in evaluator.py
+        level_order = {"critical": 1, "warning": 2, "info": 3, "none": 4}
+        threshold = level_order.get(fail_level.lower(), 1)
+
+        breaches = []
+        for r in result["rules"]:
+            if not r["passed"]:
+                rule_level = r.get("level", "info").lower()
+                if level_order.get(rule_level, 3) <= threshold:
+                    breaches.append(r["slug"])
+
+        if breaches:
+            click.echo(
+                f"\nError: Evaluation failed due to {len(breaches)} rule breaches at level '{fail_level}' or above.",
+                err=True,
+            )
+            # Use sys.exit(1) for shell scripts/CI
+            sys.exit(1)
 
 
 if __name__ == "__main__":

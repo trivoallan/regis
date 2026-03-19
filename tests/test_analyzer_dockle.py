@@ -1,4 +1,3 @@
-# trunk-ignore-all(bandit/B101)
 import json
 from unittest.mock import MagicMock, patch
 

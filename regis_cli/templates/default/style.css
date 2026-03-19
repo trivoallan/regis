@@ -169,3 +169,76 @@ header h2 {
   margin-bottom: 0.5rem;
   text-align: center;
 }
+.tag-card {
+  margin-bottom: var(--pico-spacing);
+  border: 1px solid var(--pico-muted-border-color);
+}
+
+.tag-card:hover {
+  border-color: var(--pico-primary);
+  background: var(--pico-primary-background);
+}
+
+.rule-row td {
+  vertical-align: top;
+}
+
+/* Tier Badges */
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tier-gold {
+  background: linear-gradient(135deg, #ffd700, #ffae00);
+  color: #5c4b00;
+  border: 1px solid #d4af37;
+}
+
+.tier-silver {
+  background: linear-gradient(135deg, #c0c0c0, #a9a9a9);
+  color: #333;
+  border: 1px solid #999;
+}
+
+.tier-bronze {
+  background: linear-gradient(135deg, #cd7f32, #a0522d);
+  color: #fff;
+  border: 1px solid #8b4513;
+}
+
+/* Badge Classes */
+.bg-success {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+.bg-warning {
+  background-color: #ffc107 !important;
+  color: black !important;
+}
+.bg-error {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+.bg-information {
+  background-color: #17a2b8 !important;
+  color: white !important;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-right: 0.25rem;
+}

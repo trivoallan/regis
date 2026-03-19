@@ -1,4 +1,3 @@
-# trunk-ignore-all(bandit/B101)
 import pytest
 
 from regis_cli.analyzers.base import AnalyzerError

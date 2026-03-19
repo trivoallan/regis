@@ -1,4 +1,3 @@
-# trunk-ignore-all(bandit/B101)
 """Tests for the end-of-life analyzer."""
 
 from regis_cli.analyzers.endoflife import (

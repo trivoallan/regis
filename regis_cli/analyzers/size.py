@@ -136,10 +136,15 @@ class SizeAnalyzer(BaseAnalyzer):
                 logger.warning(f"Platform {platform} not found in manifest index")
 
         for entry in entries:
-            platform = entry.get("platform", {})
-            arch = platform.get("architecture", "unknown")
-            os_name = platform.get("os", "unknown")
-            variant = platform.get("variant", "")
+            if not isinstance(entry, dict):
+                continue
+            plat_info = entry.get("platform")
+            if not isinstance(plat_info, dict):
+                plat_info = {}
+
+            arch = plat_info.get("architecture", "unknown")
+            os_name = plat_info.get("os", "unknown")
+            variant = plat_info.get("variant", "")
             platform_label = f"{os_name}/{arch}"
             if variant:
                 platform_label += f"/{variant}"
