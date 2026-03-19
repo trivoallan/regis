@@ -34,6 +34,9 @@ regis-cli analyze [OPTIONS] URL
 * `--cache`: Use existing report.json as cache if available.
 * `-o, --output TEMPLATE`: Output filename template.
 * `-D, --output-dir TEMPLATE`: Base directory template for output files.
+* `--evaluate`: Run rules evaluation after analysis and add results to report.
+* `--fail`: Fail command execution if any rule is breached.
+* `--fail-level [info|warning|critical]`: Minimum rule level that triggers a command failure (default: critical).
 
 === `evaluate`
 
@@ -51,6 +54,37 @@ Check if an image manifest is accessible on the registry.
 [source,bash]
 ----
 regis-cli check [OPTIONS] URL
+----
+
+== Rules Commands
+
+Manage and evaluate rules against reports.
+
+=== `rules list`
+
+List all available default rules provided by analyzers, and optionally merge with overrides.
+
+[source,bash]
+----
+regis-cli rules list [--rules playbook.yaml]
+----
+
+=== `rules show`
+
+Show the full JSON definition of a specific rule.
+
+[source,bash]
+----
+regis-cli rules show <slug> [--rules rules.yaml]
+----
+
+=== `rules evaluate`
+
+Evaluate a regis-cli JSON report against rules.
+
+[source,bash]
+----
+regis-cli rules evaluate <report.json> [--rules playbook.yaml] [--fail] [--fail-level critical] [-o output.json]
 ----
 
 [#bootstrap]

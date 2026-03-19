@@ -3,6 +3,7 @@
 * xref:commands.adoc[Available Commands]
 * xref:playbooks.adoc[Understand Playbooks]
 ** xref:default-playbook.adoc[Default Playbook Reference]
+* xref:rules.adoc[Understanding Rules]
 * xref:overview.adoc[Architectural Overview]
 * Integrations
 ** xref:integrations/github.adoc[GitHub]

@@ -13,6 +13,17 @@
 ** [[properties_pages_items]]**Items**: Refer to *<<%24defs_page,#/$defs/page>>*.
 * [[properties_sections]]**`sections`** *(array)*: List of playbook sections. Each section groups scorecards, levels, and display preferences. Length must be at least 1.
 ** [[properties_sections_items]]**Items**: Refer to *<<%24defs_section,#/$defs/section>>*.
+* [[properties_tiers]]**`tiers`** *(array)*: Optional Tier categorization rules.
+** [[properties_tiers_items]]**Items** *(object)*
+*** [[properties_tiers_items_properties_name]]**`name`** *(string, required)*: Tier name (e.g. Gold).
+*** [[properties_tiers_items_properties_condition]]**`condition`** *(object, required)*: JsonLogic expression evaluated against the report.
+* [[properties_badges]]**`badges`** *(array)*: Optional status badges for the report header.
+** [[properties_badges_items]]**Items** *(object)*
+*** [[properties_badges_items_properties_slug]]**`slug`** *(string)*: Unique identifier for the badge.
+*** [[properties_badges_items_properties_scope]]**`scope`** *(string, required)*: Badge category label.
+*** [[properties_badges_items_properties_value]]**`value`** *(string)*: Dynamic value (supports ${var.path} interpolation).
+*** [[properties_badges_items_properties_class]]**`class`** *(string)*: CSS style (success, warning, error, information).
+*** [[properties_badges_items_properties_condition]]**`condition`** *(object)*: Optional display condition.
 * [[properties_sidebar]]**`sidebar`** *(object)*: Optional sidebar navigation configuration.
 ** [[properties_sidebar_properties_sections]]**`sections`** *(array)*
 *** [[properties_sidebar_properties_sections_items]]**Items** *(object)*
@@ -29,10 +40,8 @@
 **** [[properties_sidebar_properties_links_items_properties_icon]]**`icon`** *(string)*
 * [[properties_integrations]]**`integrations`** *(object)*: Optional third-party platform integrations (e.g. GitLab, GitHub).
 ** [[properties_integrations_properties_gitlab]]**`gitlab`** *(object)*
-*** [[properties_integrations_properties_gitlab_properties_labels]]**`labels`** *(array)*: Custom scoped labels applied to GitLab Merge Requests based on conditions.
-**** [[properties_integrations_properties_gitlab_properties_labels_items]]**Items** *(object)*
-***** [[properties_integrations_properties_gitlab_properties_labels_items_properties_name]]**`name`** *(string, required)*: Label name, e.g. 'regis::fail' or 'security::critical'.
-***** [[properties_integrations_properties_gitlab_properties_labels_items_properties_condition]]**`condition`** *(object, required)*: JsonLogic expression evaluated against the analysis report.
+*** [[properties_integrations_properties_gitlab_properties_badges]]**`badges`** *(array)*: List of badge slugs to be imported as GitLab Merge Request labels.
+**** [[properties_integrations_properties_gitlab_properties_badges_items]]**Items** *(string)*: Badge slug.
 *** [[properties_integrations_properties_gitlab_properties_checklist]]**`checklist`** *(array)*: (Deprecated) Single checklist items added as checkboxes to the Merge Request description.
 **** [[properties_integrations_properties_gitlab_properties_checklist_items]]**Items**: Refer to *<<%24defs_checklist_item,#/$defs/checklist_item>>*.
 *** [[properties_integrations_properties_gitlab_properties_checklists]]**`checklists`** *(array)*: Configurable checklists added as checkboxes to the Merge Request description.

@@ -2,6 +2,45 @@
 
 The RegiS Default Playbook is the standard security and governance profile used by `regis-cli`. It provides a comprehensive set of checks to ensure container images meet baseline security requirements and follow best practices.
 
+== Default Tiers
+
+The default playbook categorizes reports into one of three tiers based on the overall compliance score:
+
+[cols="1,3"]
+|===
+| Tier | Condition
+
+| **Gold**
+| Compliance Score > 90%
+
+| **Silver**
+| Compliance Score > 70%
+
+| **Bronze**
+| Compliance Score > 50%
+|===
+
+== Default Badges
+
+The report header displays the following dynamic status badges:
+
+[cols="1,3"]
+|===
+| Badge | Logic
+
+| **Score**
+| Displays the overall `rules_summary.score`.
+
+| **CVE: Critical**
+| Displayed (Error) if any critical vulnerabilities are detected.
+
+| **CVE: High**
+| Displayed (Warning) if any high-severity vulnerabilities are detected.
+
+| **Freshness**
+| Displayed (Success) if the image is less than 30 days old.
+|===
+
 == Compliance Levels
 
 The playbook categorizes its security checks into two main levels: **Mandatory** and **Recommended**.
@@ -161,23 +200,25 @@ regis-cli analyze ghcr.io/trivoallan/regis-cli:latest -s -D docs/modules/ROOT/as
 
 The default playbook includes pre-configured GitLab integrations to automate MR management.
 
-=== Labels
+=== Badge Synchronization
 
-[cols="1,3"]
+The default playbook synchronizes the following status badges as GitLab labels:
+
+[cols="1,2"]
 |===
-| Label | Applied when
+| Badge Slug | Label Result
 
-| `regis::pass`
-| Overall compliance score ≥ 90 %
+| `score`
+| `Score: [value]` (Information)
 
-| `regis::warn`
-| 70 % ≤ score < 90 %
+| `freshness`
+| `Freshness: Fresh !` (Success) if passed.
 
-| `regis::fail`
-| Score < 70 %
+| `cve-critical`
+| `CVE: Critical` (Error) if failed.
 
-| `security::critical`
-| At least one CRITICAL vulnerability detected by Trivy
+| `cve-high`
+| `CVE: High` (Warning) if failed.
 |===
 
 === MR Description Checklist

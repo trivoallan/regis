@@ -27,15 +27,61 @@ Playbooks define how analysis results are presented in the HTML report through a
 *   **Sections**: Groups of related scorecards and widgets within a page.
 *   **Widgets**: UI components that display specific values or metrics. Widgets can be key-value summaries, KPI cards, or detailed tables rendered from templates.
 
-=== Named Addressing
-
-When referencing pages or sections in your logic or templates, `regis-cli` allows you to navigate the hierarchy using their **slug** or **name** instead of numeric indices (`playbooks.0.pages.0...`).
-
-When using a `name`, the engine automatically normalizes it:
-* Converts to lowercase
-* Replaces spaces and dashes with underscores (`_`)
-
 For example, a section named "Mandatory Requirements" becomes `mandatory_requirements`.
+
+=== Tiers
+
+Playbooks can define **Tiers** to categorize the overall quality of an image based on the compliance score. Each tier is defined by a name and a condition.
+
+[source,yaml]
+----
+tiers:
+  - name: Gold
+    condition: { ">": [{ var: rules_summary.score }, 90] }
+  - name: Silver
+    condition: { ">": [{ var: rules_summary.score }, 70] }
+  - name: Bronze
+    condition: { ">": [{ var: rules_summary.score }, 50] }
+----
+
+The evaluator checks tiers in the order they are defined. The first tier whose condition evaluates to truthy is assigned to the report.
+
+=== Badges
+
+**Badges** provide high-level visual status indicators in the report header. They are dynamic and support variable interpolation using the `${var.path}` syntax.
+
+[source,yaml]
+----
+badges:
+  - slug: score
+    scope: Score
+    value: "${rules_summary.score}"
+    class: information
+  - slug: freshness
+    scope: Freshness
+    condition: { "==": [{ var: rules.freshness-age.passed }, true] }
+    class: success
+----
+
+[cols="1,3", options="header"]
+|===
+| Field | Description
+
+| `slug`
+| A unique machine-readable identifier for the badge (used for lookups and integrations).
+
+| `scope`
+| The primary label for the badge (e.g., "Score", "CVE").
+
+| `value`
+| The value to display. Can use `${}` interpolation to reference report data.
+
+| `condition`
+| A JSON Logic expression. If provided, the badge is only displayed when the condition is truthy.
+
+| `class`
+| The visual style/color of the badge. Supported: `success` (green), `warning` (yellow), `error` (red), `information` (blue).
+|===
 
 == Evaluation Mechanism
 
@@ -85,22 +131,21 @@ For example, to display the overall compliance score in a widget, you might use:
 
 Playbooks can automate Merge Request (MR) management in GitLab through the `integrations.gitlab` key.
 
-=== Scoped Labels
+=== Badge Synchronization
 
-The `labels` list applies scoped labels to the MR based on JSON Logic conditions evaluated against the final analysis result. Each label is applied only when its condition is truthy.
+The `badges` list automatically synchronizes authorized status badges as GitLab labels. Each badge in the list is identified by its **slug**.
 
 [source,yaml]
 ----
 integrations:
   gitlab:
-    labels:
-      - name: regis::pass
-        condition: { ">=": [{ var: playbook.score }, 90] }
-      - name: regis::fail
-        condition: { "<": [{ var: playbook.score }, 70] }
-      - name: security::critical
-        condition: { ">": [{ var: results.trivy.critical_count }, 0] }
+    badges:
+      - score
+      - freshness
+      - cve-critical
 ----
+
+This ensures that the MR UI (labels) always reflects the visual status shown in the HTML report. Regular condition-based labels are deprecated in favor of this badge-driven approach.
 
 === MR Description Checklists
 

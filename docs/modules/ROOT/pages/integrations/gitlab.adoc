@@ -144,20 +144,26 @@ Security teams can review the MR, check the compliance score via the direct HTML
 
 The `regis-cli` integration automatically applies **scoped labels** to the Merge Request based on the analysis results and your playbook configuration.
 
-=== Scoped Labels Configuration
+=== Badge Synchronization
 
-In your `playbook.yaml`, you can define label rules under the `integrations.gitlab.labels` section:
+Instead of defining complex conditions for labels, `regis-cli` can automatically synchronize its **Badges** as GitLab labels.
+
+In your `playbook.yaml`, you simply list the badge slugs you want to import under the `integrations.gitlab.badges` section:
 
 [source,yaml]
 ----
 integrations:
   gitlab:
-    labels:
-      - name: regis::pass
-        condition: {">=": [{var: score}, 90]}
-      - name: security::critical
-        condition: {">": [{var: results.trivy.critical_count}, 0]}
+    badges:
+      - score
+      - freshness
+      - cve-critical
+      - cve-high
 ----
+
+This ensures that:
+1. Only the relevant status indicators are applied as labels.
+2. The color and text of the GitLab label match the badge's visual state (Success=Green, Warning=Yellow, Error=Red, Info=Blue).
 
 GitLab scoped labels (using the `::` separator) ensure that only one label of a given scope (e.g., `regis::*`) is applied at a time.
 
