@@ -1,4 +1,3 @@
-# trunk-ignore-all(bandit/B101)
 """Tests for rules evaluator."""
 
 from regis_cli.rules.evaluator import evaluate_rules, get_default_rules, merge_rules
@@ -36,9 +35,7 @@ def test_evaluate_rules():
             {
                 "slug": "freshness-age",
                 "condition": {"<": [{"var": "results.freshness.age_days"}, 30]},
-                "messages": {
-                    "pass": "Age is ${results.freshness.age_days}"
-                },  # nosec B105
+                "messages": {"pass": "Age is ${results.freshness.age_days}"},
             }
         ]
     }
@@ -50,7 +47,7 @@ def test_evaluate_rules():
     # Check interpolation
     rule_res = next(r for r in res["rules"] if r["slug"] == "freshness-age")
     assert rule_res["passed"] is True
-    assert rule_res["message"] == "Age is 10"  # nosec B105
+    assert rule_res["message"] == "Age is 10"
 
     # Check incomplete evaluations when data is missing
     rules_def_broken = {
@@ -91,6 +88,4 @@ def test_evaluate_rule_params():
     res2 = evaluate_rules(report, rules_def)
     freshness2 = next(r for r in res2["rules"] if r["slug"] == "freshness-age")
     assert freshness2["passed"] is False
-    assert (
-        freshness2["message"] == "Image is older than 7 days (15 days)."
-    )  # nosec B105
+    assert freshness2["message"] == "Image is older than 7 days (15 days)."

@@ -1,5 +1,3 @@
-# trunk-ignore-all(bandit/B101)
-# trunk-ignore-all(bandit/B101)
 """Tests for the gitlab CLI subcommands in regis-cli."""
 
 import json
