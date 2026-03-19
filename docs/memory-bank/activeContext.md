@@ -49,8 +49,11 @@ Documentation update following the pipeline refactoring and checklist enhancemen
   - Updated `cli.py` to use `importlib.resources.files` for finding templates, ensuring compatibility with installed packages.
   - Updated `pyproject.toml` to include `cookiecutters/**/*` in package data.
   - Updated `default.yaml` and documentation to reflect the new directory structure.
+- Added post-install notes display after bootstrap:
+  - `bootstrap` command now reads and displays `.regis-post-install.md` if present in the generated project.
+  - Added `.regis-post-install.md` templates to repository and playbook cookiecutters.
+  - Updated `tests/test_bootstrap.py` with 4 tests passing.
 
 ## Next Steps
 
-- Create a PR for the `bootstrap` command fix.
-- Monitor CI/CD results for the new branch.
+- Create a PR for the post-install notes feature.

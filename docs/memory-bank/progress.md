@@ -11,6 +11,8 @@
 - Fixed Skopeo architecture mismatch handling for multi-arch image indexes.
 - Automated Antora documentation publishing to GitHub Pages.
 - Automated `trunk fmt` in CI with auto-commit of style changes.
+- Refactored `generate` command into a `bootstrap` command group (`bootstrap repository` and `bootstrap playbook`).
+- Display post-install notes after bootstrap.
 
 ## In Progress
 
