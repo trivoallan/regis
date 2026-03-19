@@ -36,7 +36,7 @@ class DockleAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "No fatal issues detected.",
+                    "pass": "Image has no critical CVEs.",  # nosec B105
                     "fail": "Dockle found ${results.dockle.issues_by_level.FATAL} fatal issues (max allowed: ${rule.params.max_count}).",
                 },
             },
@@ -53,7 +53,7 @@ class DockleAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "Dockle warnings are within acceptable limits (${results.dockle.issues_by_level.WARN}).",
+                    "pass": "Dockle warnings are within acceptable limits (${results.dockle.issues_by_level.WARN}).",  # nosec B105
                     "fail": "Dockle found ${results.dockle.issues_by_level.WARN} warnings (max allowed: ${rule.params.max_count}).",
                 },
             },

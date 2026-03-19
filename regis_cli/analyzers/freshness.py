@@ -69,7 +69,7 @@ class FreshnessAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "Image is less than ${rule.params.max_days} days old (${results.freshness.age_days} days).",
+                    "pass": "Image is less than ${rule.params.max_days} days old (${results.freshness.age_days} days).",  # nosec B105
                     "fail": "Image is older than ${rule.params.max_days} days (${results.freshness.age_days} days).",
                 },
             }

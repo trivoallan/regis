@@ -72,7 +72,7 @@ def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
                 ]
             },
             "messages": {
-                "pass": "Image originates from a trusted domain.",
+                "pass": "Image originates from a trusted domain.",  # nosec B105
                 "fail": "Image registry '${request.registry}' is not in the trusted list.",
             },
         }

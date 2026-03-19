@@ -45,7 +45,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "Image does not run as '${rule.params.forbidden_user}'.",
+                    "pass": "Image does not run as '${rule.params.forbidden_user}'.",  # nosec B105
                     "fail": "Image configured to run as '${rule.params.forbidden_user}'.",
                 },
             },
@@ -62,7 +62,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "Image size is within limits (${results.skopeo.platforms.0.size} bytes).",
+                    "pass": "Image size is within limits (${results.skopeo.platforms.0.size} bytes).",  # nosec B105
                     "fail": "Image size exceeds ${rule.params.max_mb} MB (${results.skopeo.platforms.0.size} bytes).",
                 },
             },
@@ -79,7 +79,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "Image has ${results.skopeo.platforms.0.layers_count} layers.",
+                    "pass": "Image has ${results.skopeo.platforms.0.layers_count} layers.",  # nosec B105
                     "fail": "Image has too many layers (${results.skopeo.platforms.0.layers_count}). Max allowed: ${rule.params.max_layers}.",
                 },
             },
@@ -113,7 +113,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "Image supports ${results.skopeo.platforms.length} platforms.",
+                    "pass": "Image supports ${results.skopeo.platforms.length} platforms.",  # nosec B105
                     "fail": "Image only supports ${results.skopeo.platforms.length} platforms (min required: ${rule.params.min_platforms}).",
                 },
             },
