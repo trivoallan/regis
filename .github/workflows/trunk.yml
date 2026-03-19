@@ -1,4 +1,4 @@
-name: Trunk Check
+name: Trunk
 
 on:
   push:
@@ -29,18 +29,19 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
 
-      - name: Trunk install
+      - name: Trunk Install
         uses: trunk-io/trunk-action/setup@v1
 
       - name: Trunk Format
         run: ${{ env.TRUNK_PATH }} fmt --all
 
       - name: Commit and Push Changes
-        if: github.ref_name != 'main'
+        if: github.event_name == 'pull_request'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
+          branch: ${{ github.head_ref }}
           commit_message: "style(cli): apply automated trunk fmt"
           commit_user_name: github-actions[bot]
           commit_user_email: github-actions[bot]@users.noreply.github.com
