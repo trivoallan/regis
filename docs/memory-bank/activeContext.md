@@ -26,7 +26,7 @@ Documentation update following the pipeline refactoring and checklist enhancemen
   - `bootstrap repository` — recreates the project repository from renamed `cookiecutters/repository` template.
   - `bootstrap playbook` — creates a new custom playbook from the newly added `cookiecutters/playbook` template.
   - Removed the monolithic `generate` command.
-  - Updated `tests/test_bootstrap.py` (3 tests pass).
+  - Updated `tests/test_bootstrap.py` (4 tests pass).
   - Updated `get-started.adoc` and `cookiecutter.adoc` documentation.
 - Added `docs/modules/ROOT/pages/commands.adoc` listing all available CLI commands.
 - Updated `docs/modules/ROOT/nav.adoc` to include the new commands page.
@@ -48,11 +48,14 @@ Documentation update following the pipeline refactoring and checklist enhancemen
   - Moved `cookiecutters/` directory into the `regis_cli` package.
   - Updated `cli.py` to use `importlib.resources.files` for finding templates, ensuring compatibility with installed packages.
   - Updated `pyproject.toml` to include `cookiecutters/**/*` in package data.
-  - Updated `default.yaml` and documentation to reflect the new directory structure.
-- Added post-install notes display after bootstrap:
-  - `bootstrap` command now reads and displays `.regis-post-install.md` if present in the generated project.
-  - Added `.regis-post-install.md` templates to repository and playbook cookiecutters.
-  - Updated `tests/test_bootstrap.py` with 4 tests passing.
+- Fixed `fatal: ambiguous argument 'HEAD^2'` in Trunk Check workflow:
+  - Enabled `fetch-depth: 0` for full history checkout.
+  - Removed explicit `ref` override to allow Trunk's default merge-base detection on PRs.
+  - Updated auto-commit step to explicitly push to the PR branch.
+- Added **Post-install notes** feature to `bootstrap` commands:
+  - CLI now reads and displays `.regis-post-install.md` from the generated project.
+  - Templates for repository and playbook include personalized setup instructions (GitHub/GitLab setup, next steps).
+  - Updated `commands.adoc` to document this behavior.
 
 ## Next Steps
 
@@ -66,3 +69,5 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 
 - Create a PR for the `bootstrap` command fix and the Trunk Check fix.
 - Monitor CI/CD results for the new branch.
+- Monitor CI/CD results for the new branch.
+- Merge PR #52.

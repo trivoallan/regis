@@ -74,6 +74,8 @@ Bootstrap a new custom RegiS playbook from a template.
 regis-cli bootstrap playbook [OUTPUT_DIR] [--no-input]
 ----
 
+NOTE: After a successful bootstrap, both `repository` and `playbook` commands will display **Post-install notes** provided by the template (and then remove the temporary `.regis-post-install.md` file). These notes typically contain setup instructions for GitHub/GitLab or next steps for customizing your playbook.
+
 == Utility Commands
 
 === `gitlab`
