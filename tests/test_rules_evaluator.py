@@ -41,8 +41,8 @@ def test_evaluate_rules():
     }
 
     res = evaluate_rules(report, rules_def)
-    assert res["total_rules"] > 0
-    assert res["passed_rules"] > 0
+    assert len(res["all_rules"]) > 0
+    assert len(res["passed_rules"]) > 0
 
     # Check interpolation
     rule_res = next(r for r in res["rules"] if r["slug"] == "freshness-age")
