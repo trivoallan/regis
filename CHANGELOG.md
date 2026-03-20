@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.17.2](https://github.com/trivoallan/regis-cli/compare/v0.17.1...v0.17.2) (2026-03-20)
+
+### Bug Fixes
+
+- Correct malformed `versions.json` and add a workflow step to validate and reset it if corrupted. ([8fd6186](https://github.com/trivoallan/regis-cli/commit/8fd6186906c0809936955bfc0d31608f7f4c268d))
+
 ## [0.17.1](https://github.com/trivoallan/regis-cli/compare/v0.17.0...v0.17.1) (2026-03-20)
 
 ### Bug Fixes
