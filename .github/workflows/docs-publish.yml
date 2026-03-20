@@ -109,7 +109,12 @@ jobs:
         working-directory: docs/website
 
       - name: Build Docusaurus Site
-        run: pnpm run build
+        run: |
+          # If we are on a tag, we should update the 'stable' version before building
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            pnpm docusaurus docs:version stable --force
+          fi
+          pnpm run build
         working-directory: docs/website
 
       - name: Upload artifact
