@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import sys
+import webbrowser
 from datetime import datetime, timezone
 from importlib import resources
 from importlib.metadata import entry_points, version
@@ -297,6 +298,7 @@ def _render_and_save_reports(
     theme: str,
     pretty: bool,
     base_url: str = "/",
+    open_browser: bool = False,
 ) -> None:
     """Render and save reports in requested formats."""
     for fmt in formats:
@@ -319,6 +321,17 @@ def _render_and_save_reports(
                 f"  Report site generated at {out_dir}",
                 err=True,
             )
+
+            if open_browser:
+                index_file = out_dir / "index.html"
+                if index_file.exists():
+                    click.echo(f"  Opening {index_file} in browser...", err=True)
+                    webbrowser.open(f"file://{index_file.resolve()}")
+                else:
+                    click.echo(
+                        f"  Warning: Could not find index.html at {out_dir}. Browser not opened.",
+                        err=True,
+                    )
         else:
             # JSON (and other formats): Single unified report file
             indent = 2 if pretty else None
@@ -472,6 +485,13 @@ def _render_mr_templates(
     default="/",
     help="Base URL for the HTML report site (useful for GitHub/GitLab Pages or artifacts).",
 )
+@click.option(
+    "--open",
+    "open_browser",
+    is_flag=True,
+    default=False,
+    help="Open the HTML report in the default browser.",
+)
 def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
@@ -489,6 +509,7 @@ def analyze(
     fail: bool = False,
     fail_level: str = "critical",
     base_url: str = "/",
+    open_browser: bool = False,
 ) -> None:
     """Analyze a Docker image and evaluate playbooks.
 
@@ -670,6 +691,7 @@ def analyze(
         theme,
         pretty,
         base_url=base_url,
+        open_browser=open_browser,
     )
 
     # 5. Execute MR templates
@@ -743,6 +765,13 @@ def analyze(
     default="/",
     help="Base URL for the HTML report site.",
 )
+@click.option(
+    "--open",
+    "open_browser",
+    is_flag=True,
+    default=False,
+    help="Open the HTML report in the default browser.",
+)
 def evaluate(
     input_path: str,
     playbook_paths: tuple[str, ...],
@@ -752,6 +781,7 @@ def evaluate(
     site: bool,
     theme: str,
     base_url: str = "/",
+    open_browser: bool = False,
 ) -> None:
     """Evaluate playbooks against an existing analysis report (dry-run).
 
@@ -792,6 +822,7 @@ def evaluate(
         theme,
         pretty,
         base_url=base_url,
+        open_browser=open_browser,
     )
 
     # Execute MR templates

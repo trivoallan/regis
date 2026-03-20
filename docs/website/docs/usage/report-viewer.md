@@ -75,8 +75,10 @@ The report viewer is designed for high-performance interaction:
 To generate the HTML report site, use the `--site` (or `-s`) flag:
 
 ```bash
-regis analyze <image-url> --site
+regis analyze <image-url> --site --open
 ```
+
+The `--open` flag will automatically launch your default browser once the report is generated.
 
 ### Static Hosting
 

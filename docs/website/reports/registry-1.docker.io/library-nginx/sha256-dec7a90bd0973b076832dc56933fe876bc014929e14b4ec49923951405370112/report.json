@@ -6,7 +6,9 @@
     "repository": "library/nginx",
     "tag": "latest",
     "digest": "sha256-dec7a90bd0973b076832dc56933fe876bc014929e14b4ec49923951405370112",
-    "analyzers": ["freshness"],
+    "analyzers": [
+      "freshness"
+    ],
     "timestamp": "2026-03-20T15:11:36.645919+00:00"
   },
   "results": {
@@ -26,7 +28,9 @@
       "slug": "registry-domain-whitelist",
       "description": "Checks if requested image registry domain is in the domains list.",
       "level": "critical",
-      "tags": ["security"],
+      "tags": [
+        "security"
+      ],
       "passed": true,
       "status": "passed",
       "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
@@ -36,26 +40,44 @@
       "slug": "age",
       "description": "Image should be less than expected days old.",
       "level": "warning",
-      "tags": ["freshness"],
+      "tags": [
+        "freshness"
+      ],
       "passed": true,
       "status": "passed",
       "message": "Image is less than 30 days old (3 days).",
-      "analyzers": ["freshness"]
+      "analyzers": [
+        "freshness"
+      ]
     }
   ],
   "rules_summary": {
     "score": 100,
-    "total": ["registry-domain-whitelist", "age"],
-    "passed": ["registry-domain-whitelist", "age"],
+    "total": [
+      "registry-domain-whitelist",
+      "age"
+    ],
+    "passed": [
+      "registry-domain-whitelist",
+      "age"
+    ],
     "by_tag": {
       "security": {
-        "rules": ["registry-domain-whitelist"],
-        "passed_rules": ["registry-domain-whitelist"],
+        "rules": [
+          "registry-domain-whitelist"
+        ],
+        "passed_rules": [
+          "registry-domain-whitelist"
+        ],
         "score": 100
       },
       "freshness": {
-        "rules": ["age"],
-        "passed_rules": ["age"],
+        "rules": [
+          "age"
+        ],
+        "passed_rules": [
+          "age"
+        ],
         "score": 100
       }
     }
@@ -101,7 +123,9 @@
                   "resolved_value": "NOGO"
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             },
             {
               "name": "",
@@ -143,7 +167,9 @@
                   "resolved_url": "compliance.html"
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             },
             {
               "name": "Request",
@@ -177,7 +203,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             },
             {
               "name": "Requested Image",
@@ -204,7 +232,9 @@
                   "resolved_value": "latest"
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             }
           ]
         },
@@ -249,7 +279,9 @@
                   "resolved_value": "0%"
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             },
             {
               "name": "Mandatory Requirements",
@@ -303,7 +335,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             },
             {
               "name": "Provenance",
@@ -325,7 +359,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             }
           ]
         },
@@ -357,7 +393,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             },
             {
               "name": "OpenSSF Scorecard",
@@ -379,7 +417,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             }
           ]
         },
@@ -410,7 +450,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             },
             {
               "name": "Security & Best Practices (Dockle)",
@@ -432,7 +474,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             }
           ]
         },
@@ -463,7 +507,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             },
             {
               "name": "Popularity & Community",
@@ -492,7 +538,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             },
             {
               "name": "Lifecycle (EndOfLife)",
@@ -514,7 +562,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             }
           ]
         },
@@ -545,7 +595,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             },
             {
               "name": "Skopeo Inspection",
@@ -567,7 +619,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             },
             {
               "name": "Versioning Analysis",
@@ -589,7 +643,9 @@
                   }
                 }
               ],
-              "render_order": ["widgets"]
+              "render_order": [
+                "widgets"
+              ]
             }
           ]
         }
@@ -599,7 +655,9 @@
           "slug": "registry-domain-whitelist",
           "description": "Checks if requested image registry domain is in the domains list.",
           "level": "critical",
-          "tags": ["security"],
+          "tags": [
+            "security"
+          ],
           "passed": true,
           "status": "passed",
           "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
@@ -609,26 +667,44 @@
           "slug": "age",
           "description": "Image should be less than expected days old.",
           "level": "warning",
-          "tags": ["freshness"],
+          "tags": [
+            "freshness"
+          ],
           "passed": true,
           "status": "passed",
           "message": "Image is less than 30 days old (3 days).",
-          "analyzers": ["freshness"]
+          "analyzers": [
+            "freshness"
+          ]
         }
       ],
       "rules_summary": {
         "score": 100,
-        "total": ["registry-domain-whitelist", "age"],
-        "passed": ["registry-domain-whitelist", "age"],
+        "total": [
+          "registry-domain-whitelist",
+          "age"
+        ],
+        "passed": [
+          "registry-domain-whitelist",
+          "age"
+        ],
         "by_tag": {
           "security": {
-            "rules": ["registry-domain-whitelist"],
-            "passed_rules": ["registry-domain-whitelist"],
+            "rules": [
+              "registry-domain-whitelist"
+            ],
+            "passed_rules": [
+              "registry-domain-whitelist"
+            ],
             "score": 100
           },
           "freshness": {
-            "rules": ["age"],
-            "passed_rules": ["age"],
+            "rules": [
+              "age"
+            ],
+            "passed_rules": [
+              "age"
+            ],
             "score": 100
           }
         }
@@ -706,7 +782,9 @@
                 "resolved_value": "NOGO"
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           },
           {
             "name": "",
@@ -748,7 +826,9 @@
                 "resolved_url": "compliance.html"
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           },
           {
             "name": "Request",
@@ -782,7 +862,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           },
           {
             "name": "Requested Image",
@@ -809,7 +891,9 @@
                 "resolved_value": "latest"
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           }
         ]
       },
@@ -854,7 +938,9 @@
                 "resolved_value": "0%"
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           },
           {
             "name": "Mandatory Requirements",
@@ -908,7 +994,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           },
           {
             "name": "Provenance",
@@ -930,7 +1018,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           }
         ]
       },
@@ -962,7 +1052,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           },
           {
             "name": "OpenSSF Scorecard",
@@ -984,7 +1076,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           }
         ]
       },
@@ -1015,7 +1109,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           },
           {
             "name": "Security & Best Practices (Dockle)",
@@ -1037,7 +1133,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           }
         ]
       },
@@ -1068,7 +1166,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           },
           {
             "name": "Popularity & Community",
@@ -1097,7 +1197,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           },
           {
             "name": "Lifecycle (EndOfLife)",
@@ -1119,7 +1221,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           }
         ]
       },
@@ -1150,7 +1254,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           },
           {
             "name": "Skopeo Inspection",
@@ -1172,7 +1278,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           },
           {
             "name": "Versioning Analysis",
@@ -1194,7 +1302,9 @@
                 }
               }
             ],
-            "render_order": ["widgets"]
+            "render_order": [
+              "widgets"
+            ]
           }
         ]
       }
@@ -1204,7 +1314,9 @@
         "slug": "registry-domain-whitelist",
         "description": "Checks if requested image registry domain is in the domains list.",
         "level": "critical",
-        "tags": ["security"],
+        "tags": [
+          "security"
+        ],
         "passed": true,
         "status": "passed",
         "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
@@ -1214,26 +1326,44 @@
         "slug": "age",
         "description": "Image should be less than expected days old.",
         "level": "warning",
-        "tags": ["freshness"],
+        "tags": [
+          "freshness"
+        ],
         "passed": true,
         "status": "passed",
         "message": "Image is less than 30 days old (3 days).",
-        "analyzers": ["freshness"]
+        "analyzers": [
+          "freshness"
+        ]
       }
     ],
     "rules_summary": {
       "score": 100,
-      "total": ["registry-domain-whitelist", "age"],
-      "passed": ["registry-domain-whitelist", "age"],
+      "total": [
+        "registry-domain-whitelist",
+        "age"
+      ],
+      "passed": [
+        "registry-domain-whitelist",
+        "age"
+      ],
       "by_tag": {
         "security": {
-          "rules": ["registry-domain-whitelist"],
-          "passed_rules": ["registry-domain-whitelist"],
+          "rules": [
+            "registry-domain-whitelist"
+          ],
+          "passed_rules": [
+            "registry-domain-whitelist"
+          ],
           "score": 100
         },
         "freshness": {
-          "rules": ["age"],
-          "passed_rules": ["age"],
+          "rules": [
+            "age"
+          ],
+          "passed_rules": [
+            "age"
+          ],
           "score": 100
         }
       }
