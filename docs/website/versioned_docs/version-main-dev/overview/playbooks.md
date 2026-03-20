@@ -251,7 +251,7 @@ pages:
 ```
 
 :::tip
-To see the full set of rules and report organization enforced by the tool out-of-the-box, check the [Default Playbook Reference](../reference/playbooks/default/overview.md).
+To see the full set of rules and report organization enforced by the tool out-of-the-box, check the [Default Playbook Reference](../reference/playbooks/default/index.md).
 :::
 
 ## Local Evaluation (Dry-run)

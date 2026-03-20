@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# Overview
+# default
 
 The RegiS Default Playbook is the standard security and governance profile used by `regis-cli`. It provides a comprehensive set of checks to ensure container images meet baseline security requirements and follow best practices.
 
@@ -178,5 +178,5 @@ The default playbook automatically generates a security evidence document for Me
 | `https://github.com/trivoallan/regis-cli` (dir: `regis_cli/cookiecutters/mr-evidence`) | Always generated (no condition). Outputs a `SECURITY_EVIDENCE.md` file in the `.regis-evidence/` directory. |
 
 :::tip
-For more information on how to define your own compliance rules, see the [Understand Playbooks](../../../overview/playbooks.md) guide.
+For more information on how to define your own compliance rules, see the [Playbooks](../../../concepts/playbooks.md) guide.
 :::

@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Creating a custom playbook
 
-Playbooks allow you to define your own security policies and customize the structure of your reports. While the [Default Playbook](../reference/playbooks/default/overview.md) covers many best practices, you may want to create a custom one tailored to your organization's specific needs.
+Playbooks allow you to define your own security policies and customize the structure of your reports. While the [Default Playbook](../reference/playbooks/default/index.md) covers many best practices, you may want to create a custom one tailored to your organization's specific needs.
 
 ## 1. Bootstrapping a Playbook
 
