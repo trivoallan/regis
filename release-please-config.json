@@ -1,13 +1,14 @@
 {
   "packages": {
     ".": {
-      "release-type": "python",
       "extra-files": [
-        "cookiecutters/consumer/cookiecutter.json",
-        "docs/antora.yml",
-        "antora-playbook.yml",
-        "README.md"
-      ]
+        "regis_cli/cookiecutters/repository/cookiecutter.json",
+        "regis_cli/cookiecutters/playbook/cookiecutter.json",
+        "README.md",
+        ".github/workflows/docs-publish.yml",
+        "docs/website/docs/examples/regis-cli.md"
+      ],
+      "release-type": "python"
     }
   }
 }

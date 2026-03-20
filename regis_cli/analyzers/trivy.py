@@ -70,7 +70,7 @@ class TrivyAnalyzer(BaseAnalyzer):
     """Scan image for vulnerabilities using Trivy."""
 
     name = "trivy"
-    schema_file = "trivy.schema.json"
+    schema_file = "analyzer/trivy.schema.json"
 
     @classmethod
     def default_rules(cls) -> list[dict[str, Any]]:

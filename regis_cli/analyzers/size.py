@@ -26,7 +26,7 @@ class SizeAnalyzer(BaseAnalyzer):
     """Analyze compressed image size from manifest layers."""
 
     name = "size"
-    schema_file = "size.schema.json"
+    schema_file = "analyzer/size.schema.json"
 
     @staticmethod
     def _run_skopeo(client: RegistryClient, args: list[str]) -> str:

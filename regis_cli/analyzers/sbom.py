@@ -82,7 +82,7 @@ class SbomAnalyzer(BaseAnalyzer):
     """Generate a Software Bill of Materials using Trivy (CycloneDX)."""
 
     name = "sbom"
-    schema_file = "sbom.schema.json"
+    schema_file = "analyzer/sbom.schema.json"
 
     def analyze(
         self,

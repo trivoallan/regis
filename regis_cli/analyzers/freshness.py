@@ -51,7 +51,7 @@ class FreshnessAnalyzer(BaseAnalyzer):
     """Compare the analyzed tag's creation date against the latest tag."""
 
     name = "freshness"
-    schema_file = "freshness.schema.json"
+    schema_file = "analyzer/freshness.schema.json"
 
     @classmethod
     def default_rules(cls) -> list[dict[str, Any]]:

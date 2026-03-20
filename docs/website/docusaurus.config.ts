@@ -11,6 +11,7 @@ const config: Config = {
     format: "detect",
     mermaid: true,
   },
+  staticDirectories: ["static"],
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -63,28 +64,7 @@ const config: Config = {
       title: "Regis CLI",
       items: [],
     },
-    footer: {
-      links: [
-        {
-          title: "Docs",
-          items: [
-            {
-              label: "Introduction",
-              to: "/",
-            },
-          ],
-        },
-        {
-          title: "Community",
-          items: [
-            {
-              label: "GitHub",
-              href: "https://github.com/trivoallan/regis-cli",
-            },
-          ],
-        },
-      ],
-    },
+    footer: false,
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,

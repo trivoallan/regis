@@ -246,19 +246,30 @@ def _validate_report(report: dict[str, Any]) -> None:
     schemas_dir = resources.files("regis_cli.schemas")
     registry = Registry()
     report_schema = None
-    base_uri = "https://regis-cli/reference/schemas/"
+    base_uri = "https://trivoallan.github.io/regis-cli/schemas/"
 
-    for schema_file in schemas_dir.iterdir():
-        if not schema_file.name.endswith(".json"):
-            continue
+    def _get_all_schemas(node: Any, prefix: str = "") -> list[tuple[str, Any]]:
+        found = []
+        for item in node.iterdir():
+            rel_path = f"{prefix}/{item.name}" if prefix else item.name
+            if item.is_dir():
+                found.extend(_get_all_schemas(item, rel_path))
+            elif item.name.endswith(".json"):
+                found.append((rel_path, item))
+        return found
+
+    for rel_path, schema_file in _get_all_schemas(schemas_dir):
         schema_data = json.loads(schema_file.read_text(encoding="utf-8"))
         resource = Resource.from_contents(schema_data)
 
-        # Register both by filename (relative) and by $id if available.
+        # Register both by relative path and by $id if available.
+        registry = registry.with_resource(uri=rel_path, resource=resource)
         registry = registry.with_resource(uri=schema_file.name, resource=resource)
+        registry = registry.with_resource(uri=base_uri + rel_path, resource=resource)
         registry = registry.with_resource(
             uri=base_uri + schema_file.name, resource=resource
         )
+
         if "$id" in schema_data:
             registry = registry.with_resource(uri=schema_data["$id"], resource=resource)
 

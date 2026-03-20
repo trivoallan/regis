@@ -160,7 +160,7 @@ class VersioningAnalyzer(BaseAnalyzer):
     """Detect tag naming conventions and identify semver adoption."""
 
     name = "versioning"
-    schema_file = "versioning.schema.json"
+    schema_file = "analyzer/versioning.schema.json"
 
     def analyze(
         self,

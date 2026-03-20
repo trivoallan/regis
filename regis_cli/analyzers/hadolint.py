@@ -17,7 +17,7 @@ class HadolintAnalyzer(BaseAnalyzer):
     """Lints a reverse-engineered Dockerfile using Hadolint."""
 
     name = "hadolint"
-    schema_file = "hadolint.schema.json"
+    schema_file = "analyzer/hadolint.schema.json"
 
     def analyze(
         self,

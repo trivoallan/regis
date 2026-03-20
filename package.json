@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "@antora/cli": "3.1",
-    "@antora/site-generator": "3.1",
-    "@docusaurus/theme-mermaid": "3.9.2",
-    "@sntke/antora-mermaid-extension": "^0.0.9"
-  }
-}

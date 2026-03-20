@@ -65,16 +65,20 @@ jobs:
 
       - name: Generate Schema Docs
         run: |
-          mkdir -p docs/website/docs/reference/schemas
-          for f in regis_cli/schemas/*.schema.json; do
-            pipenv run jsonschema2md --show-examples all "$f" "docs/website/docs/reference/schemas/$(basename "$f" .schema.json).md"
+          for cat in $(ls -d regis_cli/schemas/*); do
+            cat=$(basename $cat);
+            mkdir -p docs/website/static/schemas/$cat
+            rm -fv ./docs/website/static/schemas/$cat/*.schema.json
+            cp -v ./regis_cli/schemas/$cat/*.schema.json ./docs/website/static/schemas/$cat/
+            mkdir -p docs/website/docs/reference/schemas/$cat
+            pipenv run generate-schema-doc --config-file docs/website/json-schema-for-humans.config.json docs/website/static/schemas/$cat docs/website/docs/reference/schemas/$cat
           done
 
       - name: Generate Example Reports
         run: |
-          mkdir -p docs/website/static/examples
-          pipenv run regis-cli analyze alpine:latest -s -D docs/website/static/examples/alpine
-          pipenv run regis-cli analyze ghcr.io/trivoallan/regis-cli:latest -s -D docs/website/static/examples/regis-cli
+          mkdir -p docs/website/examples/playbooks/default
+          pipenv run regis-cli analyze --evaluate alpine:latest -s -D docs/website/examples/playbooks/default/alpine
+          pipenv run regis-cli analyze --evaluate ghcr.io/trivoallan/regis-cli:v0.15.0 -s -D docs/website/examples/playbooks/default/regis-cli
 
       - name: Setup Node
         uses: actions/setup-node@v4

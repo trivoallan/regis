@@ -1,0 +1,8 @@
+{
+  "show_breadcrumbs": false,
+  "show_toc": false,
+  "template_name": "md",
+  "template_md_options": {
+    "badge_as_image": true
+  }
+}

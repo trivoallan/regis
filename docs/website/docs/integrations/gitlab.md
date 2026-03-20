@@ -11,7 +11,7 @@ This guide explains how to integrate `regis-cli` into your GitLab CI/CD pipeline
 - (Optional) `glab` CLI installed locally.
 
 :::tip
-To quickly bootstrap a new GitLab repository pre-configured with `regis-cli` and GitLab CI, you can use our [Project Bootstrapping](../commands.md#bootstrap) command.
+To quickly bootstrap a new GitLab repository pre-configured with `regis-cli` and GitLab CI, you can use our [Project Bootstrapping](../reference/commands.md#bootstrap) command.
 :::
 
 ## GitLab CI Configuration
@@ -185,7 +185,7 @@ The `regis-cli` integration can also append review checklists to the Merge Reque
 
 This is driven by the `integrations.gitlab.checklists` section in your playbook. You can dynamically include items using `show_if` conditions, and automatically pre-check them using `check_if` conditions.
 :::tip
-For more details on configuring checklist items, see the [Playbooks Reference](playbooks.md#_mr_description_checklists).
+For more details on configuring checklist items, see the [Playbooks Reference](../usage/playbooks.md#mr-description-checklists).
 :::
 
 ## Review Apps (Premium/Ultimate Only)
