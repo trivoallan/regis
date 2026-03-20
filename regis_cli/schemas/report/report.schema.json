@@ -124,11 +124,11 @@
     "playbooks": {
       "type": "array",
       "description": "List of evaluated playbook results.",
-      "items": { "$ref": "playbook/result.schema.json" }
+      "items": { "$ref": "../playbook/result.schema.json" }
     },
     "playbook": {
       "description": "Primary playbook result (shorthand for playbooks[0]).",
-      "$ref": "playbook/result.schema.json"
+      "$ref": "../playbook/result.schema.json"
     },
     "rules": {
       "type": "array",
