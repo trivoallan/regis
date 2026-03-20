@@ -50,12 +50,12 @@ A key feature of the Report Viewer is that its **entire structure is dynamic**. 
 This means that `regis-cli` doesn't just display a hard-coded list of results; it renders a custom dashboard tailored to your specific compliance requirements.
 
 :::tip
-To learn more about how to customize this structure, see the [Playbook Concepts](../concepts/playbooks.md) page.
+To learn more about how to customize this structure, see the [Playbook Customization](../concepts/playbooks.md) guide.
 :::
 
 ## Default Organization
 
-When you use `regis-cli` without specifying a custom playbook, it uses the **Default Regis Playbook**, which provides the following professional organization:
+When you use `regis-cli` without specifying a custom playbook, it uses the **[Default Regis Playbook](../reference/playbooks/default/index.md)**, which provides the following professional organization:
 
 ### 📈 Dashboard Overview
 
