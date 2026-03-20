@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.3](https://github.com/trivoallan/regis-cli/compare/v0.17.2...v0.17.3) (2026-03-20)
+
+### Bug Fixes
+
+- **docs:** corrupted versions.json ([f568663](https://github.com/trivoallan/regis-cli/commit/f568663dd8fdd6fee805fffe3fd34766126699d3))
+- trunk pipeline ([5fa5639](https://github.com/trivoallan/regis-cli/commit/5fa56393fe1c2dc5d1fe806623655911b716c223))
+
 ## [0.17.2](https://github.com/trivoallan/regis-cli/compare/v0.17.1...v0.17.2) (2026-03-20)
 
 ### Bug Fixes
