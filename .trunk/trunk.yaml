@@ -44,6 +44,7 @@ lint:
       paths:
         - docs/website/docs/reference/schemas/**
         - docs/website/versioned_docs/**
+        - "**/*.mdx"
     - linters: [prettier]
       paths:
         - docs/website/versions.json

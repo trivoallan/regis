@@ -1,6 +1,7 @@
 {
   "label": "Rules",
   "link": {
-    "type": "generated-index"
+    "type": "doc",
+    "id": "reference/rules/index"
   }
 }

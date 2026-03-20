@@ -5,56 +5,118 @@ tags:
 
 # Rules
 
-RegiS evaluates the security and compliance of Docker images through a robust rules engine. Rules define specific conditions that the analysis results must meet.
+Rules are the evaluation heart of RegiS. Each rule defines a specific condition that the analysis results must satisfy, together with a severity level, interpolated messages, and optional parameters.
 
-## Default Analyzer Rules
+## How Rules Work
 
-To provide immediate value out of the box, each analyzer (like Trivy, Dockle, or Skopeo) provides its own built-in default rules. When you run an analysis, `regis-cli` automatically collects the default rules for all analyzers that were executed.
+```mermaid
+flowchart TD
+    A(["`**Analyzers**
+    trivy · skopeo · dockle …`"]) -->|produce| B[(Analysis Report)]
+    B --> C{Rules Engine}
+    D(["`**Default Rules**
+    built-in per analyzer`"]) --> C
+    E(["`**Playbook Rules**
+    your overrides & templates`"]) --> C
+    C --> F{For each rule}
+    F -->|evaluate JSON Logic| G{Passed?}
+    G -->|yes| H[✅ Pass — interpolate message]
+    G -->|no| I[❌ Fail — interpolate message]
+    H & I --> J[(Rules Report\nscore · by_tag · results)]
+```
 
-Below are some common rules:
+When `regis-cli` runs an analysis, the rules engine:
 
-- `trivy.no-critical`: Fails if Trivy finds any critical vulnerabilities.
-- `dockle.no-fatal`: Fails if Dockle finds fatal issues.
-- `skopeo.no-root`: Fails if the image is configured to run as root.
-- `core.registry-domain-whitelist`: Fails if the image does not originate from a trusted registry registry.
+1. **Collects default rules** from every analyzer that participated in the run.
+2. **Merges playbook rules** on top — overriding defaults or instantiating new rule instances from templates.
+3. **Evaluates** each active rule against the analysis report using [JSON Logic](https://jsonlogic.com/).
+4. **Interpolates** pass/fail messages with live report values.
+5. **Produces** a scored rules report.
+
+## Built-in Default Rules
+
+Each analyzer ships its own built-in rules that are automatically activated when that analyzer runs. You do not need to declare them in your playbook to benefit from them.
 
 :::tip
-For the full, up-to-date list of all rules and their parameters, see the [Standard Rules](../reference/rules/).
+For the full list of standard rules, their parameters, and condition details, see the
+[Rules Reference](../reference/rules/).
 :::
 
-You can view all available default rules by running:
+You can inspect them at any time from the CLI:
 
 ```bash
+# List all default rules (table)
 regis-cli rules list
+
+# Show the full definition of a specific rule
+regis-cli rules show trivy cve-count
 ```
 
-To see the exact definition and JSON Logic of a specific rule:
+## Customizing Rules in a Playbook
 
-```bash
-regis-cli rules show trivy.no-critical
-```
+Add a top-level `rules` list to your `playbook.yaml` to override defaults, instantiate templates, or define brand-new rules.
 
-## Customizing Rules
+### Overriding a Default Rule
 
-You can customize or completely replace default rules by defining a `rules` section at the top level of your `playbook.yaml`. The rules engine matches these overrides based on their `slug`.
-
-If you define a rule with the same `slug` as a default rule, your definition will be merged over the default one. You can use this to change the severity level, customize messages, or tweak parameters.
-
-### Example Playbook with Rules
+Match a default rule by its `provider` and `rule` (slug) to change its level, parameters, or messages:
 
 ```yaml
-name: Custom Security Playbook
 rules:
-  # Overriding a default rule
-  - slug: trivy.no-critical
-    title: Custom rules for critical CVEs
-    level: warning # Demoting from critical to warning
+  # Demote critical CVE rule to a warning
+  - provider: trivy
+    rule: fix-available
+    level: warning
     messages:
-      fail: We found ${results.trivy.critical_count} critical CVEs, please fix them soon!
+      fail: "${results.trivy.fixed_count} patchable vulnerabilities found — please fix soon."
 
-  # Adding a completely new custom rule
-  - slug: company-specific-label
-    title: Image must have company label
+  # Disable a rule entirely
+  - provider: skopeo
+    rule: platforms-count
+    enable: false
+
+  # Restrict to your private registry only
+  - provider: core
+    rule: registry-domain-whitelist
+    options:
+      domains: ["my-private-registry.example.com"]
+```
+
+### Instantiating Rule Templates
+
+Some rules are **templates**: they are designed to be instantiated multiple times with different parameters. Use `provider` + `rule` + `options` to create a named instance:
+
+```yaml
+rules:
+  # Block any critical CVEs
+  - provider: trivy
+    rule: cve-count
+    options:
+      level: critical
+      max_count: 0
+
+  # Allow up to 10 high-severity CVEs
+  - provider: trivy
+    rule: cve-count
+    slug: trivy-high-tolerance # optional: give your instance a custom slug
+    options:
+      level: high
+      max_count: 10
+```
+
+When no `slug` is provided, the engine generates one automatically from the template name and the `level` option (e.g. `cve-count.critical`).
+
+:::note
+Template rules — such as `trivy/cve-count`, `hadolint/severity-count`, or `dockle/severity-count` — are multi-purpose. Rather than shipping one hard-coded rule per severity, a single template can be instantiated as many times as you need.
+:::
+
+### Adding a Fully Custom Rule
+
+You can define completely new rules with arbitrary JSON Logic conditions:
+
+```yaml
+rules:
+  - slug: company-label-required
+    description: Image must carry the company owner label.
     level: critical
     tags: [compliance]
     condition:
@@ -66,112 +128,62 @@ rules:
     messages:
       pass: "Company label is present."
       fail: "Missing 'my-company.owner' label."
-
-  # Disabling a default rule entirely
-  - slug: dockle.no-fatal
-    enable: false
 ```
 
-### Overriding Rule Parameters
+## Rule Evaluation Mechanics
 
-Many default rules expose configurable `params` that you can override without rewriting the entire `condition`. The rule engine automatically merges your parameters with the defaults.
+### JSON Logic Conditions
 
-#### Common Parameter Examples
+Rule conditions are expressed as [JSON Logic](https://jsonlogic.com/) objects. The evaluation context exposes the full, flattened analysis report.
 
-```yaml
-rules:
-  # Change freshness threshold
-  - slug: freshness.age
-    params:
-      max_days: 7
+RegiS adds several custom operators on top of the standard set:
 
-  # Allow some critical CVEs if necessary
-  - slug: trivy.no-critical
-    params:
-      max_count: 5
+| Operator       | Description                                                      |
+| :------------- | :--------------------------------------------------------------- |
+| `intersects`   | `true` if any element of list _a_ is present in list _b_.        |
+| `contains_all` | `true` if all elements of list _b_ are present in list _a_.      |
+| `subset`       | `true` if all elements of list _a_ are also in list _b_.         |
+| `keys`         | Returns the keys of a dictionary.                                |
+| `get`          | Gets a value from a dictionary by a computed key.                |
+| `env_contains` | `true` if any string in _b_ is a substring of any string in _a_. |
 
-  # Change the forbidden user
-  - slug: skopeo.no-root
-    params:
-      forbidden_user: "admin"
-
-  # Restrict to specific trusted domains
-  - slug: core.registry-domain-whitelist
-    params:
-      domains: ["my-private-registry.com"]
-```
-
-The rule engine applying them to the rule's built-in evaluation condition and output messages using the `${rule.params.key}` interpolation syntax.
-
-## Standard Rule Library
-
-RegiS includes a set of standard rules out-of-the-box. Below are the most common rules. For the full, up-to-date list of all rules and their parameters, see the [Rules Reference](../reference/rules/).
-
-### Security Rules (Trivy & Dockle)
-
-| Slug                  | Description                                    | Default Parameters |
-| :-------------------- | :--------------------------------------------- | :----------------- |
-| `trivy.no-critical`   | Fails if critical vulnerabilities are found.   | `max_count: 0`     |
-| `trivy.no-high`       | Fails if high vulnerabilities are found.       | `max_count: 0`     |
-| `trivy.fix-available` | Fails if vulnerabilities have a fixed version. | `max_count: 0`     |
-| `trivy.secret-scan`   | Fails if embedded secrets are detected.        | `max_count: 0`     |
-| `dockle.no-fatal`     | Fails if Dockle finds fatal issues.            | `max_count: 0`     |
-| `dockle.max-warnings` | Limit the number of Dockle warnings.           | `max_count: 5`     |
-
-### Image Hygiene & Config (Skopeo)
-
-| Slug                     | Description                               | Default Parameters                            |
-| :----------------------- | :---------------------------------------- | :-------------------------------------------- |
-| `skopeo.no-root`         | Fails if image runs as a forbidden user.  | `forbidden_user: "root"`                      |
-| `skopeo.max-size`        | Limit uncompressed image size.            | `max_mb: 1000`                                |
-| `skopeo.max-layers`      | Limit number of filesystem layers.        | `max_layers: 30`                              |
-| `skopeo.tag-not-latest`  | Enforce specific tags (blocks `latest`).  | None                                          |
-| `skopeo.multi-arch`      | Ensure multi-platform support.            | `min_platforms: 2`                            |
-| `skopeo.exposed-ports`   | Restrict permitted exposed ports.         | `allowed_ports: ["80", "443"]`                |
-| `skopeo.required-labels` | Ensure mandatory OCI/custom labels exist. | `labels: ["org.opencontainers.image.source"]` |
-| `skopeo.forbidden-env`   | Guard against forbidden environment keys. | `keys: ["DEBUG", "SECRET_KEY"]`               |
-
-### Lifecycle Rules
-
-- `freshness.age`: Fails if the image is older than `max_days` (default: 30).
-- `core.registry-domain-whitelist`: Restricts image origin to a list of `domains`.
-
-## Rule Evaluation Mechanism
-
-Rules are evaluated using **JSON Logic**. The evaluation context provides access to the flattened report data.
+The current rule definition is always accessible under `rule.*` (e.g. `{\"var\": \"rule.params.max_count\"}`).
 
 ### String Interpolation
 
-Rule messages (`pass` and `fail`) support string interpolation using the `${path.to.var}` syntax. These paths correspond to the flattened keys in the analysis report.
+Pass and fail messages support `${path.to.var}` interpolation against the same evaluation context:
 
 ```yaml
 messages:
-  pass: Image is less than 30 days old (${results.freshness.age_days} days).
-  fail: Image is older than 30 days (${results.freshness.age_days} days).
+  pass: "Image is ${results.freshness.age_days} days old — within the ${rule.params.max_days}-day limit."
+  fail: "Image is ${results.freshness.age_days} days old (limit: ${rule.params.max_days})."
 ```
 
-### Evaluating Rules
+### Incomplete Rules
 
-To evaluate an analysis report against your rules:
+If the evaluation context is missing data that a condition accesses (e.g. an analyzer did not run), the rule is marked **`incomplete`** rather than `failed`. This prevents false negatives when an analyzer is simply not part of the current run.
+
+## Evaluating Rules from the CLI
 
 ```bash
-regis-cli rules evaluate path/to/report.json --rules playbook.yaml
+# Evaluate a report against the default rules
+regis-cli rules evaluate report.json
+
+# Use a custom playbook
+regis-cli rules evaluate report.json --rules playbook.yaml
+
+# Export results as JSON
+regis-cli rules evaluate report.json -o rules_report.json
 ```
 
-:::note
-The `--rules` (or `-r`) flag accepts both standalone `rules.yaml` files and full `playbook.yaml` files.
-:::
+### Blocking CI/CD Pipelines
 
-The output will display a score percentage and the pass/fail status of each rule. You can also export the results to JSON using `-o rules_report.json`.
-
-### CI/CD Integration
-
-Use the `--fail` flag to automatically exit with a non-zero code if critical rules fail, which is useful for blocking CI/CD pipelines:
+Use `--fail` to exit with a non-zero code when rules breach a given severity threshold:
 
 ```bash
-# Fail if any CRITICAL rule is breached
-regis-cli rules evaluate <report.json> [--rules playbook.yaml] [--fail] [--fail-level critical]
+# Fail the pipeline if any CRITICAL rule is breached
+regis-cli rules evaluate report.json --fail
 
-# Fail if any WARNING or CRITICAL rule is breached
-regis-cli rules evaluate report.json --rules playbook.yaml --fail --fail-level warning
+# Fail on WARNING or above
+regis-cli rules evaluate report.json --fail --fail-level warning
 ```
