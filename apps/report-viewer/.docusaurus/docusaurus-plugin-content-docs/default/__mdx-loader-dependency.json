@@ -44,8 +44,8 @@
       "badge": false,
       "noIndex": false,
       "className": "docs-version-current",
-      "path": "/",
-      "tagsPath": "/tags",
+      "path": "/testing-base-url/",
+      "tagsPath": "/testing-base-url/tags",
       "isLast": true,
       "routePriority": -1,
       "contentPath": "/Users/tristan/Documents/Workspaces/ttc/regis-cli/apps/report-viewer/docs"

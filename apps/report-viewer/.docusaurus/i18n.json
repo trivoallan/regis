@@ -12,7 +12,7 @@
       "path": "en",
       "translate": false,
       "url": "http://localhost",
-      "baseUrl": "/"
+      "baseUrl": "/testing-base-url/"
     }
   }
 }

@@ -1,32 +1,531 @@
 {
   "version": "0.15.0",
   "request": {
-    "url": "nginx:latest",
-    "registry": "registry-1.docker.io",
-    "repository": "library/nginx",
+    "url": "ghcr.io/trivoallan/regis-cli:latest",
+    "registry": "ghcr.io",
+    "repository": "trivoallan/regis-cli",
     "tag": "latest",
-    "digest": "latest",
-    "analyzers": ["dummy"],
-    "timestamp": "2026-03-20T14:26:30.245880+00:00",
-    "metadata": {
-      "build": "123",
-      "env": "prod"
-    }
+    "digest": "sha256-708f9cd64a203fd838c9897902267be9b7e48c02d4cff93a2ade5a4af33db78a",
+    "analyzers": [
+      "dockle",
+      "endoflife",
+      "freshness",
+      "hadolint",
+      "popularity",
+      "provenance",
+      "sbom",
+      "scorecarddev",
+      "size",
+      "skopeo",
+      "trivy",
+      "versioning"
+    ],
+    "timestamp": "2026-03-19T21:21:33.396733+00:00"
   },
   "results": {
-    "dummy": {
-      "analyzer": "dummy",
+    "dockle": {
+      "analyzer": "dockle",
       "error": {
-        "type": "unexpected",
-        "message": "TestCliBasics.test_analyze_html_with_metadata.<locals>.DummyAnalyzer.analyze() got an unexpected keyword argument 'platform'"
+        "type": "validation",
+        "message": "Failed to parse dockle output: 2026-03-19T22:11:18.375+0100\t\u001b[31mFATAL\u001b[0m\tPull it with \"docker pull ghcr.io/trivoallan/regis-cli:latest\" or \"dockle --timeout 600s\" to increase the timeout\nunable to initialize a image struct: failed to initialize source: pinging container registry ghcr.io: Get \"https://ghcr.io/v2/\": context deadline exceeded\n"
       }
+    },
+    "endoflife": {
+      "analyzer": "endoflife",
+      "repository": "trivoallan/regis-cli",
+      "product": "regis-cli",
+      "product_found": false,
+      "tag": "latest",
+      "matched_cycle": null,
+      "is_eol": null,
+      "active_cycles_count": null,
+      "eol_cycles_count": null
+    },
+    "freshness": {
+      "analyzer": "freshness",
+      "repository": "trivoallan/regis-cli",
+      "tag": "latest",
+      "tag_created": "2026-03-12T10:37:32.016946896Z",
+      "latest_created": null,
+      "age_days": 7,
+      "behind_latest_days": null,
+      "is_latest": true
+    },
+    "hadolint": {
+      "analyzer": "hadolint",
+      "repository": "trivoallan/regis-cli",
+      "tag": "latest",
+      "passed": false,
+      "issues_count": 25,
+      "issues_by_level": {
+        "error": 1,
+        "warning": 11,
+        "info": 13,
+        "style": 0
+      },
+      "issues": [
+        {
+          "code": "DL3059",
+          "level": "info",
+          "message": "Multiple consecutive `RUN` instructions. Consider consolidation.",
+          "line": 3
+        },
+        {
+          "code": "DL3059",
+          "level": "info",
+          "message": "Multiple consecutive `RUN` instructions. Consider consolidation.",
+          "line": 4
+        },
+        {
+          "code": "DL3008",
+          "level": "warning",
+          "message": "Pin versions in apt get install. Instead of `apt-get install <package>` use `apt-get install <package>=<version>`",
+          "line": 5
+        },
+        {
+          "code": "DL3009",
+          "level": "info",
+          "message": "Delete the apt lists (/var/lib/apt/lists) after installing something",
+          "line": 5
+        },
+        {
+          "code": "DL3059",
+          "level": "info",
+          "message": "Multiple consecutive `RUN` instructions. Consider consolidation.",
+          "line": 7
+        },
+        {
+          "code": "DL3059",
+          "level": "info",
+          "message": "Multiple consecutive `RUN` instructions. Consider consolidation.",
+          "line": 8
+        },
+        {
+          "code": "DL3003",
+          "level": "warning",
+          "message": "Use WORKDIR to switch to a directory",
+          "line": 9
+        },
+        {
+          "code": "DL3047",
+          "level": "info",
+          "message": "Avoid use of wget without progress bar. Use `wget --progress=dot:giga <url>`. Or consider using `-q` or `-nv` (shorthands for `--quiet` or `--no-verbose`).",
+          "line": 9
+        },
+        {
+          "code": "DL4006",
+          "level": "warning",
+          "message": "Set the SHELL option -o pipefail before RUN with a pipe in it. If you are using /bin/sh in an alpine image or if your shell is symlinked to busybox then consider explicitly setting your SHELL to /bin/ash, or disable this check",
+          "line": 9
+        },
+        {
+          "code": "DL3008",
+          "level": "warning",
+          "message": "Pin versions in apt get install. Instead of `apt-get install <package>` use `apt-get install <package>=<version>`",
+          "line": 9
+        },
+        {
+          "code": "SC2086",
+          "level": "info",
+          "message": "Double quote to prevent globbing and word splitting.",
+          "line": 9
+        },
+        {
+          "code": "DL4006",
+          "level": "warning",
+          "message": "Set the SHELL option -o pipefail before RUN with a pipe in it. If you are using /bin/sh in an alpine image or if your shell is symlinked to busybox then consider explicitly setting your SHELL to /bin/ash, or disable this check",
+          "line": 10
+        },
+        {
+          "code": "DL3008",
+          "level": "warning",
+          "message": "Pin versions in apt get install. Instead of `apt-get install <package>` use `apt-get install <package>=<version>`",
+          "line": 14
+        },
+        {
+          "code": "DL4006",
+          "level": "warning",
+          "message": "Set the SHELL option -o pipefail before RUN with a pipe in it. If you are using /bin/sh in an alpine image or if your shell is symlinked to busybox then consider explicitly setting your SHELL to /bin/ash, or disable this check",
+          "line": 17
+        },
+        {
+          "code": "DL4001",
+          "level": "warning",
+          "message": "Either use Wget or Curl but not both",
+          "line": 18
+        },
+        {
+          "code": "SC2154",
+          "level": "warning",
+          "message": "arch is referenced but not assigned.",
+          "line": 18
+        },
+        {
+          "code": "DL4001",
+          "level": "warning",
+          "message": "Either use Wget or Curl but not both",
+          "line": 20
+        },
+        {
+          "code": "SC2086",
+          "level": "info",
+          "message": "Double quote to prevent globbing and word splitting.",
+          "line": 20
+        },
+        {
+          "code": "DL3015",
+          "level": "info",
+          "message": "Avoid additional packages by specifying `--no-install-recommends`",
+          "line": 24
+        },
+        {
+          "code": "DL3008",
+          "level": "warning",
+          "message": "Pin versions in apt get install. Instead of `apt-get install <package>` use `apt-get install <package>=<version>`",
+          "line": 24
+        },
+        {
+          "code": "SC1072",
+          "level": "error",
+          "message": "Expected comparison operator (don't wrap commands in []/[[]]). Fix any mentioned problems and try again.",
+          "line": 26
+        },
+        {
+          "code": "DL3059",
+          "level": "info",
+          "message": "Multiple consecutive `RUN` instructions. Consider consolidation.",
+          "line": 26
+        },
+        {
+          "code": "DL3059",
+          "level": "info",
+          "message": "Multiple consecutive `RUN` instructions. Consider consolidation.",
+          "line": 27
+        },
+        {
+          "code": "DL3059",
+          "level": "info",
+          "message": "Multiple consecutive `RUN` instructions. Consider consolidation.",
+          "line": 28
+        },
+        {
+          "code": "DL3059",
+          "level": "info",
+          "message": "Multiple consecutive `RUN` instructions. Consider consolidation.",
+          "line": 29
+        }
+      ],
+      "dockerfile": "FROM scratch\nRUN # debian.sh --arch 'amd64' out/ 'trixie' '@1771804800'\nRUN ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\nRUN ENV LANG=C.UTF-8\nRUN RUN /bin/sh -c set -eux; \tapt-get update; \tapt-get install -y --no-install-recommends \t\tca-certificates \t\tnetbase \t\ttzdata \t; \tapt-get dist-clean # buildkit\nRUN ENV GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305\nRUN ENV PYTHON_VERSION=3.12.13\nRUN ENV PYTHON_SHA256=c08bc65a81971c1dd5783182826503369466c7e67374d1646519adf05207b684\nRUN RUN /bin/sh -c set -eux; \t\tsavedAptMark=\"$(apt-mark showmanual)\"; \tapt-get update; \tapt-get install -y --no-install-recommends \t\tdpkg-dev \t\tgcc \t\tgnupg \t\tlibbluetooth-dev \t\tlibbz2-dev \t\tlibc6-dev \t\tlibdb-dev \t\tlibffi-dev \t\tlibgdbm-dev \t\tliblzma-dev \t\tlibncursesw5-dev \t\tlibreadline-dev \t\tlibsqlite3-dev \t\tlibssl-dev \t\tmake \t\ttk-dev \t\tuuid-dev \t\twget \t\txz-utils \t\tzlib1g-dev \t; \t\twget -O python.tar.xz \"https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz\"; \techo \"$PYTHON_SHA256 *python.tar.xz\" | sha256sum -c -; \twget -O python.tar.xz.asc \"https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc\"; \tGNUPGHOME=\"$(mktemp -d)\"; export GNUPGHOME; \tgpg --batch --keyserver hkps://keys.openpgp.org --recv-keys \"$GPG_KEY\"; \tgpg --batch --verify python.tar.xz.asc python.tar.xz; \tgpgconf --kill all; \trm -rf \"$GNUPGHOME\" python.tar.xz.asc; \tmkdir -p /usr/src/python; \ttar --extract --directory /usr/src/python --strip-components=1 --file python.tar.xz; \trm python.tar.xz; \t\tcd /usr/src/python; \tgnuArch=\"$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)\"; \t./configure \t\t--build=\"$gnuArch\" \t\t--enable-loadable-sqlite-extensions \t\t--enable-optimizations \t\t--enable-option-checking=fatal \t\t--enable-shared \t\t$(test \"${gnuArch%%-*}\" != 'riscv64' && echo '--with-lto') \t\t--with-ensurepip \t; \tnproc=\"$(nproc)\"; \tEXTRA_CFLAGS=\"$(dpkg-buildflags --get CFLAGS)\"; \tLDFLAGS=\"$(dpkg-buildflags --get LDFLAGS)\"; \tLDFLAGS=\"${LDFLAGS:-} -Wl,--strip-all\"; \tarch=\"$(dpkg --print-architecture)\"; arch=\"${arch##*-}\"; \tcase \"$arch\" in \t\tamd64|arm64) \t\t\tEXTRA_CFLAGS=\"${EXTRA_CFLAGS:-} -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer\"; \t\t\t;; \t\ti386) \t\t\t;; \t\t*) \t\t\tEXTRA_CFLAGS=\"${EXTRA_CFLAGS:-} -fno-omit-frame-pointer\"; \t\t\t;; \tesac; \tmake -j \"$nproc\" \t\t\"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}\" \t\t\"LDFLAGS=${LDFLAGS:-}\" \t; \trm python; \tmake -j \"$nproc\" \t\t\"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}\" \t\t\"LDFLAGS=${LDFLAGS:-} -Wl,-rpath='\\$\\$ORIGIN/../lib'\" \t\tpython \t; \tmake install; \t\tcd /; \trm -rf /usr/src/python; \t\tfind /usr/local -depth \t\t\\( \t\t\t\\( -type d -a \\( -name test -o -name tests -o -name idle_test \\) \\) \t\t\t-o \\( -type f -a \\( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \\) \\) \t\t\\) -exec rm -rf '{}' + \t; \t\tldconfig; \t\tapt-mark auto '.*' > /dev/null; \tapt-mark manual $savedAptMark; \tfind /usr/local -type f -executable -not \\( -name '*tkinter*' \\) -exec ldd '{}' ';' \t\t| awk '/=>/ { so = $(NF-1); if (index(so, \"/usr/local/\") == 1) { next }; gsub(\"^/(usr/)?\", \"\", so); printf \"*%s\\n\", so }' \t\t| sort -u \t\t| xargs -rt dpkg-query --search \t\t| awk 'sub(\":$\", \"\", $1) { print $1 }' \t\t| sort -u \t\t| xargs -r apt-mark manual \t; \tapt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \tapt-get dist-clean; \t\texport PYTHONDONTWRITEBYTECODE=1; \tpython3 --version; \tpip3 --version # buildkit\nRUN RUN /bin/sh -c set -eux; \tfor src in idle3 pip3 pydoc3 python3 python3-config; do \t\tdst=\"$(echo \"$src\" | tr -d 3)\"; \t\t[ -s \"/usr/local/bin/$src\" ]; \t\t[ ! -e \"/usr/local/bin/$dst\" ]; \t\tln -svT \"$src\" \"/usr/local/bin/$dst\"; \tdone # buildkit\nRUN CMD [\"python3\"]\nRUN LABEL org.opencontainers.image.title=regis-cli org.opencontainers.image.description=Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD. org.opencontainers.image.url=https://github.com/trivoallan/regis-cli org.opencontainers.image.source=https://github.com/trivoallan/regis-cli org.opencontainers.image.documentation=https://trivoallan.github.io/regis-cli/ org.opencontainers.image.vendor=trivoallan org.opencontainers.image.authors=trivoallan org.opencontainers.image.licenses=MIT\nRUN ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 DEBIAN_FRONTEND=noninteractive\nRUN RUN /bin/sh -c apt-get update && apt-get install -y --no-install-recommends     curl     ca-certificates     gnupg     skopeo     && rm -rf /var/lib/apt/lists/* # buildkit\nRUN RUN /bin/sh -c groupadd -g 1001 regis &&     useradd -u 1001 -g regis -m -d /home/regis regis &&     chmod 755 /home/regis # buildkit\nRUN ENV HOME=/home/regis\nRUN RUN /bin/sh -c curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin # buildkit\nRUN RUN /bin/sh -c arch=$(uname -m) &&     if [ \"$arch\" = \"x86_64\" ]; then hadolint_arch=\"x86_64\"; else hadolint_arch=\"arm64\"; fi &&     curl -sSfL \"https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-${hadolint_arch}\" -o /usr/local/bin/hadolint &&     chmod +x /usr/local/bin/hadolint # buildkit\nRUN ENV DOCKLE_VERSION=0.4.15\nRUN RUN /bin/sh -c arch=$(uname -m) &&     if [ \"$arch\" = \"x86_64\" ]; then dockle_arch=\"64bit\"; else dockle_arch=\"ARM64\"; fi &&     curl -L -o dockle.tar.gz https://github.com/goodwithtech/dockle/releases/download/v${DOCKLE_VERSION}/dockle_${DOCKLE_VERSION}_Linux-${dockle_arch}.tar.gz &&     tar zxvf dockle.tar.gz dockle &&     mv dockle /usr/local/bin/dockle &&     rm dockle.tar.gz &&     chmod +x /usr/local/bin/dockle # buildkit\nRUN WORKDIR /app\nRUN RUN /bin/sh -c chown regis:regis /app && chmod 777 /app # buildkit\nRUN COPY --chown=regis:regis . . # buildkit\nRUN RUN /bin/sh -c apt-get update && apt-get install -y git # buildkit\nRUN RUN /bin/sh -c pip install --no-cache-dir . # buildkit\nRUN HEALTHCHECK &{[\"CMD-SHELL\" \"regis-cli list || exit 1\"] \"30s\" \"5s\" \"5s\" \"0s\" '\\x03'}\nRUN USER regis\nRUN ENTRYPOINT [\"regis-cli\"]\nRUN CMD [\"--help\"]"
+    },
+    "popularity": {
+      "analyzer": "popularity",
+      "repository": "trivoallan/regis-cli",
+      "available": false,
+      "pull_count": null,
+      "star_count": null,
+      "description": null,
+      "last_updated": null,
+      "date_registered": null,
+      "is_official": false
+    },
+    "provenance": {
+      "analyzer": "provenance",
+      "repository": "trivoallan/regis-cli",
+      "tag": "latest",
+      "has_provenance": true,
+      "has_cosign_signature": false,
+      "source_tracked": true,
+      "indicators_count": 4,
+      "indicators": [
+        {
+          "type": "oci-annotation",
+          "key": "org.opencontainers.image.source",
+          "value": "https://github.com/trivoallan/regis-cli"
+        },
+        {
+          "type": "oci-annotation",
+          "key": "org.opencontainers.image.revision",
+          "value": "1ee30bb7b95a2c05ace1e46907b770bcec0949e6"
+        },
+        {
+          "type": "oci-annotation",
+          "key": "org.opencontainers.image.created",
+          "value": "2026-03-12T10:37:02.428Z"
+        },
+        {
+          "type": "oci-annotation",
+          "key": "org.opencontainers.image.vendor",
+          "value": "trivoallan"
+        }
+      ]
+    },
+    "sbom": {
+      "analyzer": "sbom",
+      "error": {
+        "type": "validation",
+        "message": "trivy sbom failed: 2026-03-19T22:16:23+01:00\tFATAL\tFatal error\trun error: image scan error: scan error: scan failed: failed analysis: analyze error: pipeline error: context deadline exceeded\n"
+      }
+    },
+    "scorecarddev": {
+      "analyzer": "scorecarddev",
+      "repository": "trivoallan/regis-cli",
+      "source_repo": "https://github.com/trivoallan/regis-cli",
+      "scorecard_available": false,
+      "score": null,
+      "checks": []
+    },
+    "size": {
+      "analyzer": "size",
+      "repository": "trivoallan/regis-cli",
+      "tag": "latest",
+      "multi_arch": true,
+      "total_compressed_bytes": 217098867,
+      "total_compressed_human": "207.0 MB",
+      "layer_count": 14,
+      "config_size_bytes": 0,
+      "layers": [],
+      "platforms": [
+        {
+          "platform": "linux/amd64",
+          "compressed_bytes": 217098867,
+          "compressed_human": "207.0 MB",
+          "layer_count": 14
+        },
+        {
+          "platform": "unknown/unknown",
+          "compressed_bytes": 40108,
+          "compressed_human": "39.2 KB",
+          "layer_count": 1
+        }
+      ]
+    },
+    "skopeo": {
+      "analyzer": "skopeo",
+      "repository": "trivoallan/regis-cli",
+      "tag": "latest",
+      "platforms": [
+        {
+          "architecture": "amd64",
+          "os": "linux",
+          "digest": "sha256:56f3a150276098635a7478bfb48e85fc0b7f597f2012829d767bc05a04b4fb9d",
+          "created": "2026-03-12T10:37:32.016946896Z",
+          "labels": {
+            "org.opencontainers.image.authors": "trivoallan",
+            "org.opencontainers.image.created": "2026-03-12T10:37:02.428Z",
+            "org.opencontainers.image.description": "Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.",
+            "org.opencontainers.image.documentation": "https://trivoallan.github.io/regis-cli/",
+            "org.opencontainers.image.licenses": "",
+            "org.opencontainers.image.revision": "1ee30bb7b95a2c05ace1e46907b770bcec0949e6",
+            "org.opencontainers.image.source": "https://github.com/trivoallan/regis-cli",
+            "org.opencontainers.image.title": "regis-cli",
+            "org.opencontainers.image.url": "https://github.com/trivoallan/regis-cli",
+            "org.opencontainers.image.vendor": "trivoallan",
+            "org.opencontainers.image.version": "0.15.0"
+          },
+          "layers_count": 14,
+          "size": 0,
+          "exposed_ports": [],
+          "env": [],
+          "variant": null,
+          "user": "regis"
+        },
+        {
+          "architecture": "unknown",
+          "os": "unknown",
+          "digest": "sha256:0792e3c27a0614661f69c6546d86600fcaf299ec74c6b3e3cce9ca70c6ea0048",
+          "created": null,
+          "labels": {},
+          "layers_count": 1,
+          "size": 0,
+          "exposed_ports": [],
+          "env": [],
+          "variant": null,
+          "user": ""
+        }
+      ],
+      "inspect": {},
+      "tags": [
+        "main",
+        "sha-dfc66c6",
+        "sha-376c16e",
+        "sha-2823f64",
+        "sha-a5d06a6",
+        "sha-391d74f",
+        "sha-9ef6351",
+        "sha-9cf4087",
+        "sha-ddaba2c",
+        "sha-460871b",
+        "sha-5f11d2d",
+        "sha-4113efb",
+        "sha-a02caa3",
+        "sha-4751370",
+        "sha-83c0066",
+        "sha-895c46b",
+        "sha-f3abf1f",
+        "sha-e1faaf9",
+        "sha-6737a68",
+        "sha-6f1d111",
+        "sha-7a6104d",
+        "sha-21b7549",
+        "sha-97a58fd",
+        "sha-ed8a1f2",
+        "0.2.2",
+        "0.2",
+        "sha-6b3a3ee",
+        "latest",
+        "sha-dfffabd",
+        "sha-88ccaae",
+        "0.3.0",
+        "0.3",
+        "sha-f86862e",
+        "sha-295db88",
+        "sha-44b8b76",
+        "sha-706e2a7",
+        "sha-e7e71c8",
+        "0.4.0",
+        "0.4",
+        "sha-8368b48",
+        "sha-69ef82f",
+        "sha-c985942",
+        "sha-b03914d",
+        "sha-7de98ad",
+        "sha-e178f38",
+        "sha-44bfdf6",
+        "sha-f2dc6eb",
+        "sha-d508b53",
+        "sha-2bffefd",
+        "sha-e0945f2",
+        "sha-676bb4d",
+        "0.5.0",
+        "0.5",
+        "sha-342d0b8",
+        "sha-d6c065a",
+        "sha-194d574",
+        "0.7.0",
+        "0.7",
+        "sha-e5b0e77",
+        "0.8.0",
+        "0.8",
+        "sha-fd24eb9",
+        "0.9.0",
+        "0.9",
+        "sha-57f48a3",
+        "sha-08211a2",
+        "sha-9393b48",
+        "sha-a48b4b2",
+        "sha-abd95d2",
+        "0.10.0",
+        "0.10",
+        "sha-f04d633",
+        "sha-340f44d",
+        "sha-f18e91b",
+        "sha-ef81c05",
+        "sha-1664655",
+        "sha-9898bd8",
+        "0.11.0",
+        "0.11",
+        "sha-9aaef15",
+        "sha-f865cb0",
+        "sha-9a7914f",
+        "0.12.0",
+        "0.12",
+        "sha-42459a3",
+        "0.13.0",
+        "0.13",
+        "sha-8eef298",
+        "0.14.0",
+        "0.14",
+        "sha-bc504b0",
+        "0.14.1",
+        "sha-15794ab",
+        "0.14.2",
+        "sha-a5bd4e5",
+        "0.15.0",
+        "0.15",
+        "sha-1ee30bb"
+      ]
+    },
+    "trivy": {
+      "analyzer": "trivy",
+      "error": {
+        "type": "validation",
+        "message": "trivy failed: 2026-03-19T22:21:31+01:00\tFATAL\tFatal error\trun error: image scan error: scan error: scan failed: failed analysis: analyze error: pipeline error: context deadline exceeded\n"
+      }
+    },
+    "versioning": {
+      "analyzer": "versioning",
+      "repository": "trivoallan/regis-cli",
+      "total_tags": 98,
+      "dominant_pattern": "named",
+      "semver_compliant_percentage": 15.3,
+      "patterns": [
+        {
+          "pattern": "named",
+          "count": 70,
+          "percentage": 71.4,
+          "examples": [
+            "latest",
+            "main",
+            "sha-08211a2",
+            "sha-15794ab",
+            "sha-1664655",
+            "sha-194d574",
+            "sha-1ee30bb",
+            "sha-21b7549",
+            "sha-2823f64",
+            "sha-295db88"
+          ]
+        },
+        {
+          "pattern": "numeric",
+          "count": 13,
+          "percentage": 13.3,
+          "examples": [
+            "0.10",
+            "0.11",
+            "0.12",
+            "0.13",
+            "0.14",
+            "0.15",
+            "0.2",
+            "0.3",
+            "0.4",
+            "0.5"
+          ]
+        },
+        {
+          "pattern": "semver",
+          "count": 15,
+          "percentage": 15.3,
+          "examples": [
+            "0.10.0",
+            "0.11.0",
+            "0.12.0",
+            "0.13.0",
+            "0.14.0",
+            "0.14.1",
+            "0.14.2",
+            "0.15.0",
+            "0.2.2",
+            "0.3.0"
+          ]
+        }
+      ],
+      "variants": [],
+      "release_lines": ["0.15", "0.15.0"]
     }
   },
-  "metadata": {
-    "build": "123",
-    "env": "prod"
-  },
   "rules": [
+    {
+      "slug": "env-blacklist",
+      "description": "Image must not contain forbidden environment variables.",
+      "level": "critical",
+      "tags": ["security"],
+      "passed": true,
+      "status": "passed",
+      "message": "No forbidden environment variables found.",
+      "analyzers": ["skopeo"]
+    },
     {
       "slug": "registry-domain-whitelist",
       "description": "Checks if requested image registry domain is in the domains list.",
@@ -34,19 +533,252 @@
       "tags": ["security"],
       "passed": true,
       "status": "passed",
-      "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
+      "message": "Image registry domain 'ghcr.io' is in the domains list.",
+      "analyzers": []
+    },
+    {
+      "slug": "user-blacklist",
+      "description": "Image must not run as root.",
+      "level": "critical",
+      "tags": ["security"],
+      "passed": true,
+      "status": "passed",
+      "message": "Image does not run as 'root'.",
+      "analyzers": ["skopeo"]
+    },
+    {
+      "slug": "age",
+      "description": "Image should be less than expected days old.",
+      "level": "warning",
+      "tags": ["freshness"],
+      "passed": true,
+      "status": "passed",
+      "message": "Image is less than 30 days old (7 days).",
+      "analyzers": ["freshness"]
+    },
+    {
+      "slug": "exposed-ports-whitelist",
+      "description": "Image exposes permitted ports.",
+      "level": "warning",
+      "tags": ["security"],
+      "passed": true,
+      "status": "passed",
+      "message": "All exposed ports are allowed.",
+      "analyzers": ["skopeo"]
+    },
+    {
+      "slug": "layers-count",
+      "description": "Image has an acceptable number of layers.",
+      "level": "warning",
+      "tags": ["performance"],
+      "passed": true,
+      "status": "passed",
+      "message": "Image has 14 layers.",
+      "analyzers": ["skopeo"]
+    },
+    {
+      "slug": "max-size",
+      "description": "Image size is within limits.",
+      "level": "warning",
+      "tags": ["hygiene"],
+      "passed": true,
+      "status": "passed",
+      "message": "Image size is within limits (0 bytes).",
+      "analyzers": ["skopeo"]
+    },
+    {
+      "slug": "required-labels",
+      "description": "Image must have required OCI labels.",
+      "level": "warning",
+      "tags": ["metadata"],
+      "passed": true,
+      "status": "passed",
+      "message": "All required labels are present.",
+      "analyzers": ["skopeo"]
+    },
+    {
+      "slug": "platforms-count",
+      "description": "Image should support multiple platforms.",
+      "level": "info",
+      "tags": ["compatibility"],
+      "passed": true,
+      "status": "passed",
+      "message": "Image supports 2 platforms.",
+      "analyzers": ["skopeo"]
+    },
+    {
+      "slug": "secret-scan",
+      "description": "No secrets or credentials should be embedded in the image.",
+      "level": "critical",
+      "tags": ["security"],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Trivy detected ${results.trivy.secrets_count} secrets or credentials in the image.",
+      "analyzers": ["trivy"]
+    },
+    {
+      "slug": "cve-count",
+      "description": "Max allowed violations for a given severity level.",
+      "level": "warning",
+      "tags": ["security"],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Image has ${results.trivy.${rule.params.level}_count} critical CVEs (max allowed: 0).",
+      "analyzers": ["trivy"]
+    },
+    {
+      "slug": "fix-available",
+      "description": "All vulnerabilities should be fixed if a patch exists.",
+      "level": "warning",
+      "tags": ["security"],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Image has ${results.trivy.fixed_count} vulnerabilities with available fixes.",
+      "analyzers": ["trivy"]
+    },
+    {
+      "slug": "has-sbom",
+      "description": "Image must provide a Software Bill of Materials.",
+      "level": "warning",
+      "tags": ["compliance"],
+      "passed": false,
+      "status": "incomplete",
+      "message": "No SBOM could be generated or found for this image.",
+      "analyzers": ["sbom"]
+    },
+    {
+      "slug": "min-score",
+      "description": "OpenSSF Scorecard score is above the threshold.",
+      "level": "warning",
+      "tags": ["security"],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Scorecard score is too low: None (min required: 5.0).",
+      "analyzers": ["scorecarddev"]
+    },
+    {
+      "slug": "severity-count",
+      "description": "Max allowed issues for a given severity level.",
+      "level": "warning",
+      "tags": ["security"],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Dockle found ${results.dockle.issues_by_level.${rule.params.level}} FATAL issues (max allowed: 0).",
+      "analyzers": ["dockle"]
+    },
+    {
+      "slug": "severity-count",
+      "description": "Max allowed violations for a given severity level.",
+      "level": "warning",
+      "tags": ["best-practices"],
+      "passed": false,
+      "status": "failed",
+      "message": "Hadolint found ${results.hadolint.issues_by_level.${rule.params.level}} error issues (max allowed: 0).",
+      "analyzers": ["hadolint"]
+    },
+    {
+      "slug": "tag-blacklist",
+      "description": "Image tag should not be 'latest'.",
+      "level": "warning",
+      "tags": ["lifecycle"],
+      "passed": false,
+      "status": "failed",
+      "message": "Image is using the 'latest' tag. Use immutable version tags instead.",
       "analyzers": []
     }
   ],
   "rules_summary": {
-    "score": 100,
-    "total": ["registry-domain-whitelist"],
-    "passed": ["registry-domain-whitelist"],
+    "score": 53,
+    "total": [
+      "env-blacklist",
+      "registry-domain-whitelist",
+      "user-blacklist",
+      "age",
+      "exposed-ports-whitelist",
+      "layers-count",
+      "max-size",
+      "required-labels",
+      "platforms-count",
+      "secret-scan",
+      "cve-count",
+      "fix-available",
+      "has-sbom",
+      "min-score",
+      "severity-count",
+      "severity-count",
+      "tag-blacklist"
+    ],
+    "passed": [
+      "env-blacklist",
+      "registry-domain-whitelist",
+      "user-blacklist",
+      "age",
+      "exposed-ports-whitelist",
+      "layers-count",
+      "max-size",
+      "required-labels",
+      "platforms-count"
+    ],
     "by_tag": {
       "security": {
-        "rules": ["registry-domain-whitelist"],
-        "passed_rules": ["registry-domain-whitelist"],
+        "rules": [
+          "env-blacklist",
+          "registry-domain-whitelist",
+          "user-blacklist",
+          "exposed-ports-whitelist",
+          "secret-scan",
+          "cve-count",
+          "fix-available",
+          "min-score",
+          "severity-count"
+        ],
+        "passed_rules": [
+          "env-blacklist",
+          "registry-domain-whitelist",
+          "user-blacklist",
+          "exposed-ports-whitelist"
+        ],
+        "score": 44
+      },
+      "freshness": {
+        "rules": ["age"],
+        "passed_rules": ["age"],
         "score": 100
+      },
+      "performance": {
+        "rules": ["layers-count"],
+        "passed_rules": ["layers-count"],
+        "score": 100
+      },
+      "hygiene": {
+        "rules": ["max-size"],
+        "passed_rules": ["max-size"],
+        "score": 100
+      },
+      "metadata": {
+        "rules": ["required-labels"],
+        "passed_rules": ["required-labels"],
+        "score": 100
+      },
+      "compatibility": {
+        "rules": ["platforms-count"],
+        "passed_rules": ["platforms-count"],
+        "score": 100
+      },
+      "compliance": {
+        "rules": ["has-sbom"],
+        "passed_rules": [],
+        "score": 0
+      },
+      "best-practices": {
+        "rules": ["severity-count"],
+        "passed_rules": [],
+        "score": 0
+      },
+      "lifecycle": {
+        "rules": ["tag-blacklist"],
+        "passed_rules": [],
+        "score": 0
       }
     }
   },
@@ -72,25 +804,7 @@
               "levels_summary": {},
               "tags_summary": {},
               "scorecards": [],
-              "widgets": [
-                {
-                  "label": "Recommandation",
-                  "value": "{{ 'NOGO' }}",
-                  "options": {
-                    "class": "recommandation-nogo",
-                    "align": "center"
-                  },
-                  "condition": {
-                    "<": [
-                      {
-                        "var": "playbooks.0.pages.compliance.sections.mandatory_requirements.score"
-                      },
-                      90
-                    ]
-                  },
-                  "resolved_value": "NOGO"
-                }
-              ],
+              "widgets": [],
               "render_order": ["widgets"]
             },
             {
@@ -150,8 +864,8 @@
                   "options": {
                     "subvalue": "{{ request.timestamp | format_time }}"
                   },
-                  "resolved_value": "2026-03-20",
-                  "resolved_subvalue": "14:26:30"
+                  "resolved_value": "2026-03-19",
+                  "resolved_subvalue": "21:21:33"
                 },
                 {
                   "label": "Triggered by",
@@ -164,19 +878,6 @@
                   "template": "request/table.html",
                   "options": {
                     "title": "Request Parameters"
-                  }
-                },
-                {
-                  "template": "metadata/table.html",
-                  "options": {
-                    "title": "Additional Metadata"
-                  },
-                  "condition": {
-                    "!!": [
-                      {
-                        "var": "request.metadata"
-                      }
-                    ]
                   }
                 }
               ],
@@ -194,12 +895,12 @@
                 {
                   "label": "Registry",
                   "value": "{{ request.registry }}",
-                  "resolved_value": "registry-1.docker.io"
+                  "resolved_value": "ghcr.io"
                 },
                 {
                   "label": "Repository",
                   "value": "{{ request.repository }}",
-                  "resolved_value": "library/nginx"
+                  "resolved_value": "trivoallan/regis-cli"
                 },
                 {
                   "label": "Tag",
@@ -480,12 +1181,12 @@
                 {
                   "label": "Pulls",
                   "value": "{{ results.popularity.pull_count | format_number }}",
-                  "resolved_value": "{{ results.popularity.pull_count | format_number }}"
+                  "resolved_value": "None"
                 },
                 {
                   "label": "Stars",
                   "value": "{{ results.popularity.star_count | format_number }}",
-                  "resolved_value": "{{ results.popularity.star_count | format_number }}"
+                  "resolved_value": "None"
                 },
                 {
                   "template": "analyzers/popularity/table.html",
@@ -599,37 +1300,290 @@
       ],
       "rules": [
         {
+          "slug": "env-blacklist",
+          "description": "Image must not contain forbidden environment variables.",
+          "level": "critical",
+          "tags": ["security"],
+          "passed": true,
+          "status": "passed",
+          "message": "No forbidden environment variables found.",
+          "analyzers": ["skopeo"]
+        },
+        {
           "slug": "registry-domain-whitelist",
           "description": "Checks if requested image registry domain is in the domains list.",
           "level": "critical",
           "tags": ["security"],
           "passed": true,
           "status": "passed",
-          "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
+          "message": "Image registry domain 'ghcr.io' is in the domains list.",
+          "analyzers": []
+        },
+        {
+          "slug": "user-blacklist",
+          "description": "Image must not run as root.",
+          "level": "critical",
+          "tags": ["security"],
+          "passed": true,
+          "status": "passed",
+          "message": "Image does not run as 'root'.",
+          "analyzers": ["skopeo"]
+        },
+        {
+          "slug": "age",
+          "description": "Image should be less than expected days old.",
+          "level": "warning",
+          "tags": ["freshness"],
+          "passed": true,
+          "status": "passed",
+          "message": "Image is less than 30 days old (7 days).",
+          "analyzers": ["freshness"]
+        },
+        {
+          "slug": "exposed-ports-whitelist",
+          "description": "Image exposes permitted ports.",
+          "level": "warning",
+          "tags": ["security"],
+          "passed": true,
+          "status": "passed",
+          "message": "All exposed ports are allowed.",
+          "analyzers": ["skopeo"]
+        },
+        {
+          "slug": "layers-count",
+          "description": "Image has an acceptable number of layers.",
+          "level": "warning",
+          "tags": ["performance"],
+          "passed": true,
+          "status": "passed",
+          "message": "Image has 14 layers.",
+          "analyzers": ["skopeo"]
+        },
+        {
+          "slug": "max-size",
+          "description": "Image size is within limits.",
+          "level": "warning",
+          "tags": ["hygiene"],
+          "passed": true,
+          "status": "passed",
+          "message": "Image size is within limits (0 bytes).",
+          "analyzers": ["skopeo"]
+        },
+        {
+          "slug": "required-labels",
+          "description": "Image must have required OCI labels.",
+          "level": "warning",
+          "tags": ["metadata"],
+          "passed": true,
+          "status": "passed",
+          "message": "All required labels are present.",
+          "analyzers": ["skopeo"]
+        },
+        {
+          "slug": "platforms-count",
+          "description": "Image should support multiple platforms.",
+          "level": "info",
+          "tags": ["compatibility"],
+          "passed": true,
+          "status": "passed",
+          "message": "Image supports 2 platforms.",
+          "analyzers": ["skopeo"]
+        },
+        {
+          "slug": "secret-scan",
+          "description": "No secrets or credentials should be embedded in the image.",
+          "level": "critical",
+          "tags": ["security"],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Trivy detected ${results.trivy.secrets_count} secrets or credentials in the image.",
+          "analyzers": ["trivy"]
+        },
+        {
+          "slug": "cve-count",
+          "description": "Max allowed violations for a given severity level.",
+          "level": "warning",
+          "tags": ["security"],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Image has ${results.trivy.${rule.params.level}_count} critical CVEs (max allowed: 0).",
+          "analyzers": ["trivy"]
+        },
+        {
+          "slug": "fix-available",
+          "description": "All vulnerabilities should be fixed if a patch exists.",
+          "level": "warning",
+          "tags": ["security"],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Image has ${results.trivy.fixed_count} vulnerabilities with available fixes.",
+          "analyzers": ["trivy"]
+        },
+        {
+          "slug": "has-sbom",
+          "description": "Image must provide a Software Bill of Materials.",
+          "level": "warning",
+          "tags": ["compliance"],
+          "passed": false,
+          "status": "incomplete",
+          "message": "No SBOM could be generated or found for this image.",
+          "analyzers": ["sbom"]
+        },
+        {
+          "slug": "min-score",
+          "description": "OpenSSF Scorecard score is above the threshold.",
+          "level": "warning",
+          "tags": ["security"],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Scorecard score is too low: None (min required: 5.0).",
+          "analyzers": ["scorecarddev"]
+        },
+        {
+          "slug": "severity-count",
+          "description": "Max allowed issues for a given severity level.",
+          "level": "warning",
+          "tags": ["security"],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Dockle found ${results.dockle.issues_by_level.${rule.params.level}} FATAL issues (max allowed: 0).",
+          "analyzers": ["dockle"]
+        },
+        {
+          "slug": "severity-count",
+          "description": "Max allowed violations for a given severity level.",
+          "level": "warning",
+          "tags": ["best-practices"],
+          "passed": false,
+          "status": "failed",
+          "message": "Hadolint found ${results.hadolint.issues_by_level.${rule.params.level}} error issues (max allowed: 0).",
+          "analyzers": ["hadolint"]
+        },
+        {
+          "slug": "tag-blacklist",
+          "description": "Image tag should not be 'latest'.",
+          "level": "warning",
+          "tags": ["lifecycle"],
+          "passed": false,
+          "status": "failed",
+          "message": "Image is using the 'latest' tag. Use immutable version tags instead.",
           "analyzers": []
         }
       ],
       "rules_summary": {
-        "score": 100,
-        "total": ["registry-domain-whitelist"],
-        "passed": ["registry-domain-whitelist"],
+        "score": 53,
+        "total": [
+          "env-blacklist",
+          "registry-domain-whitelist",
+          "user-blacklist",
+          "age",
+          "exposed-ports-whitelist",
+          "layers-count",
+          "max-size",
+          "required-labels",
+          "platforms-count",
+          "secret-scan",
+          "cve-count",
+          "fix-available",
+          "has-sbom",
+          "min-score",
+          "severity-count",
+          "severity-count",
+          "tag-blacklist"
+        ],
+        "passed": [
+          "env-blacklist",
+          "registry-domain-whitelist",
+          "user-blacklist",
+          "age",
+          "exposed-ports-whitelist",
+          "layers-count",
+          "max-size",
+          "required-labels",
+          "platforms-count"
+        ],
         "by_tag": {
           "security": {
-            "rules": ["registry-domain-whitelist"],
-            "passed_rules": ["registry-domain-whitelist"],
+            "rules": [
+              "env-blacklist",
+              "registry-domain-whitelist",
+              "user-blacklist",
+              "exposed-ports-whitelist",
+              "secret-scan",
+              "cve-count",
+              "fix-available",
+              "min-score",
+              "severity-count"
+            ],
+            "passed_rules": [
+              "env-blacklist",
+              "registry-domain-whitelist",
+              "user-blacklist",
+              "exposed-ports-whitelist"
+            ],
+            "score": 44
+          },
+          "freshness": {
+            "rules": ["age"],
+            "passed_rules": ["age"],
             "score": 100
+          },
+          "performance": {
+            "rules": ["layers-count"],
+            "passed_rules": ["layers-count"],
+            "score": 100
+          },
+          "hygiene": {
+            "rules": ["max-size"],
+            "passed_rules": ["max-size"],
+            "score": 100
+          },
+          "metadata": {
+            "rules": ["required-labels"],
+            "passed_rules": ["required-labels"],
+            "score": 100
+          },
+          "compatibility": {
+            "rules": ["platforms-count"],
+            "passed_rules": ["platforms-count"],
+            "score": 100
+          },
+          "compliance": {
+            "rules": ["has-sbom"],
+            "passed_rules": [],
+            "score": 0
+          },
+          "best-practices": {
+            "rules": ["severity-count"],
+            "passed_rules": [],
+            "score": 0
+          },
+          "lifecycle": {
+            "rules": ["tag-blacklist"],
+            "passed_rules": [],
+            "score": 0
           }
         }
       },
       "slug": null,
-      "tier": "Gold",
+      "tier": "Bronze",
       "badges": [
         {
           "slug": "score",
           "scope": "Score",
-          "value": "100",
+          "value": "53",
           "class": "information",
-          "label": "Score: 100"
+          "label": "Score: 53"
+        }
+      ],
+      "badge_labels": [
+        {
+          "name": "Score: 56",
+          "class": "information"
+        },
+        {
+          "name": "Freshness: Fresh !",
+          "class": "success"
         }
       ],
       "mr_description_checklists": [
@@ -675,25 +1629,7 @@
             "levels_summary": {},
             "tags_summary": {},
             "scorecards": [],
-            "widgets": [
-              {
-                "label": "Recommandation",
-                "value": "{{ 'NOGO' }}",
-                "options": {
-                  "class": "recommandation-nogo",
-                  "align": "center"
-                },
-                "condition": {
-                  "<": [
-                    {
-                      "var": "playbooks.0.pages.compliance.sections.mandatory_requirements.score"
-                    },
-                    90
-                  ]
-                },
-                "resolved_value": "NOGO"
-              }
-            ],
+            "widgets": [],
             "render_order": ["widgets"]
           },
           {
@@ -753,8 +1689,8 @@
                 "options": {
                   "subvalue": "{{ request.timestamp | format_time }}"
                 },
-                "resolved_value": "2026-03-20",
-                "resolved_subvalue": "14:26:30"
+                "resolved_value": "2026-03-19",
+                "resolved_subvalue": "21:21:33"
               },
               {
                 "label": "Triggered by",
@@ -767,19 +1703,6 @@
                 "template": "request/table.html",
                 "options": {
                   "title": "Request Parameters"
-                }
-              },
-              {
-                "template": "metadata/table.html",
-                "options": {
-                  "title": "Additional Metadata"
-                },
-                "condition": {
-                  "!!": [
-                    {
-                      "var": "request.metadata"
-                    }
-                  ]
                 }
               }
             ],
@@ -797,12 +1720,12 @@
               {
                 "label": "Registry",
                 "value": "{{ request.registry }}",
-                "resolved_value": "registry-1.docker.io"
+                "resolved_value": "ghcr.io"
               },
               {
                 "label": "Repository",
                 "value": "{{ request.repository }}",
-                "resolved_value": "library/nginx"
+                "resolved_value": "trivoallan/regis-cli"
               },
               {
                 "label": "Tag",
@@ -1083,12 +2006,12 @@
               {
                 "label": "Pulls",
                 "value": "{{ results.popularity.pull_count | format_number }}",
-                "resolved_value": "{{ results.popularity.pull_count | format_number }}"
+                "resolved_value": "None"
               },
               {
                 "label": "Stars",
                 "value": "{{ results.popularity.star_count | format_number }}",
-                "resolved_value": "{{ results.popularity.star_count | format_number }}"
+                "resolved_value": "None"
               },
               {
                 "template": "analyzers/popularity/table.html",
@@ -1202,37 +2125,290 @@
     ],
     "rules": [
       {
+        "slug": "env-blacklist",
+        "description": "Image must not contain forbidden environment variables.",
+        "level": "critical",
+        "tags": ["security"],
+        "passed": true,
+        "status": "passed",
+        "message": "No forbidden environment variables found.",
+        "analyzers": ["skopeo"]
+      },
+      {
         "slug": "registry-domain-whitelist",
         "description": "Checks if requested image registry domain is in the domains list.",
         "level": "critical",
         "tags": ["security"],
         "passed": true,
         "status": "passed",
-        "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
+        "message": "Image registry domain 'ghcr.io' is in the domains list.",
+        "analyzers": []
+      },
+      {
+        "slug": "user-blacklist",
+        "description": "Image must not run as root.",
+        "level": "critical",
+        "tags": ["security"],
+        "passed": true,
+        "status": "passed",
+        "message": "Image does not run as 'root'.",
+        "analyzers": ["skopeo"]
+      },
+      {
+        "slug": "age",
+        "description": "Image should be less than expected days old.",
+        "level": "warning",
+        "tags": ["freshness"],
+        "passed": true,
+        "status": "passed",
+        "message": "Image is less than 30 days old (7 days).",
+        "analyzers": ["freshness"]
+      },
+      {
+        "slug": "exposed-ports-whitelist",
+        "description": "Image exposes permitted ports.",
+        "level": "warning",
+        "tags": ["security"],
+        "passed": true,
+        "status": "passed",
+        "message": "All exposed ports are allowed.",
+        "analyzers": ["skopeo"]
+      },
+      {
+        "slug": "layers-count",
+        "description": "Image has an acceptable number of layers.",
+        "level": "warning",
+        "tags": ["performance"],
+        "passed": true,
+        "status": "passed",
+        "message": "Image has 14 layers.",
+        "analyzers": ["skopeo"]
+      },
+      {
+        "slug": "max-size",
+        "description": "Image size is within limits.",
+        "level": "warning",
+        "tags": ["hygiene"],
+        "passed": true,
+        "status": "passed",
+        "message": "Image size is within limits (0 bytes).",
+        "analyzers": ["skopeo"]
+      },
+      {
+        "slug": "required-labels",
+        "description": "Image must have required OCI labels.",
+        "level": "warning",
+        "tags": ["metadata"],
+        "passed": true,
+        "status": "passed",
+        "message": "All required labels are present.",
+        "analyzers": ["skopeo"]
+      },
+      {
+        "slug": "platforms-count",
+        "description": "Image should support multiple platforms.",
+        "level": "info",
+        "tags": ["compatibility"],
+        "passed": true,
+        "status": "passed",
+        "message": "Image supports 2 platforms.",
+        "analyzers": ["skopeo"]
+      },
+      {
+        "slug": "secret-scan",
+        "description": "No secrets or credentials should be embedded in the image.",
+        "level": "critical",
+        "tags": ["security"],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Trivy detected ${results.trivy.secrets_count} secrets or credentials in the image.",
+        "analyzers": ["trivy"]
+      },
+      {
+        "slug": "cve-count",
+        "description": "Max allowed violations for a given severity level.",
+        "level": "warning",
+        "tags": ["security"],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Image has ${results.trivy.${rule.params.level}_count} critical CVEs (max allowed: 0).",
+        "analyzers": ["trivy"]
+      },
+      {
+        "slug": "fix-available",
+        "description": "All vulnerabilities should be fixed if a patch exists.",
+        "level": "warning",
+        "tags": ["security"],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Image has ${results.trivy.fixed_count} vulnerabilities with available fixes.",
+        "analyzers": ["trivy"]
+      },
+      {
+        "slug": "has-sbom",
+        "description": "Image must provide a Software Bill of Materials.",
+        "level": "warning",
+        "tags": ["compliance"],
+        "passed": false,
+        "status": "incomplete",
+        "message": "No SBOM could be generated or found for this image.",
+        "analyzers": ["sbom"]
+      },
+      {
+        "slug": "min-score",
+        "description": "OpenSSF Scorecard score is above the threshold.",
+        "level": "warning",
+        "tags": ["security"],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Scorecard score is too low: None (min required: 5.0).",
+        "analyzers": ["scorecarddev"]
+      },
+      {
+        "slug": "severity-count",
+        "description": "Max allowed issues for a given severity level.",
+        "level": "warning",
+        "tags": ["security"],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Dockle found ${results.dockle.issues_by_level.${rule.params.level}} FATAL issues (max allowed: 0).",
+        "analyzers": ["dockle"]
+      },
+      {
+        "slug": "severity-count",
+        "description": "Max allowed violations for a given severity level.",
+        "level": "warning",
+        "tags": ["best-practices"],
+        "passed": false,
+        "status": "failed",
+        "message": "Hadolint found ${results.hadolint.issues_by_level.${rule.params.level}} error issues (max allowed: 0).",
+        "analyzers": ["hadolint"]
+      },
+      {
+        "slug": "tag-blacklist",
+        "description": "Image tag should not be 'latest'.",
+        "level": "warning",
+        "tags": ["lifecycle"],
+        "passed": false,
+        "status": "failed",
+        "message": "Image is using the 'latest' tag. Use immutable version tags instead.",
         "analyzers": []
       }
     ],
     "rules_summary": {
-      "score": 100,
-      "total": ["registry-domain-whitelist"],
-      "passed": ["registry-domain-whitelist"],
+      "score": 53,
+      "total": [
+        "env-blacklist",
+        "registry-domain-whitelist",
+        "user-blacklist",
+        "age",
+        "exposed-ports-whitelist",
+        "layers-count",
+        "max-size",
+        "required-labels",
+        "platforms-count",
+        "secret-scan",
+        "cve-count",
+        "fix-available",
+        "has-sbom",
+        "min-score",
+        "severity-count",
+        "severity-count",
+        "tag-blacklist"
+      ],
+      "passed": [
+        "env-blacklist",
+        "registry-domain-whitelist",
+        "user-blacklist",
+        "age",
+        "exposed-ports-whitelist",
+        "layers-count",
+        "max-size",
+        "required-labels",
+        "platforms-count"
+      ],
       "by_tag": {
         "security": {
-          "rules": ["registry-domain-whitelist"],
-          "passed_rules": ["registry-domain-whitelist"],
+          "rules": [
+            "env-blacklist",
+            "registry-domain-whitelist",
+            "user-blacklist",
+            "exposed-ports-whitelist",
+            "secret-scan",
+            "cve-count",
+            "fix-available",
+            "min-score",
+            "severity-count"
+          ],
+          "passed_rules": [
+            "env-blacklist",
+            "registry-domain-whitelist",
+            "user-blacklist",
+            "exposed-ports-whitelist"
+          ],
+          "score": 44
+        },
+        "freshness": {
+          "rules": ["age"],
+          "passed_rules": ["age"],
           "score": 100
+        },
+        "performance": {
+          "rules": ["layers-count"],
+          "passed_rules": ["layers-count"],
+          "score": 100
+        },
+        "hygiene": {
+          "rules": ["max-size"],
+          "passed_rules": ["max-size"],
+          "score": 100
+        },
+        "metadata": {
+          "rules": ["required-labels"],
+          "passed_rules": ["required-labels"],
+          "score": 100
+        },
+        "compatibility": {
+          "rules": ["platforms-count"],
+          "passed_rules": ["platforms-count"],
+          "score": 100
+        },
+        "compliance": {
+          "rules": ["has-sbom"],
+          "passed_rules": [],
+          "score": 0
+        },
+        "best-practices": {
+          "rules": ["severity-count"],
+          "passed_rules": [],
+          "score": 0
+        },
+        "lifecycle": {
+          "rules": ["tag-blacklist"],
+          "passed_rules": [],
+          "score": 0
         }
       }
     },
     "slug": null,
-    "tier": "Gold",
+    "tier": "Bronze",
     "badges": [
       {
         "slug": "score",
         "scope": "Score",
-        "value": "100",
+        "value": "53",
         "class": "information",
-        "label": "Score: 100"
+        "label": "Score: 53"
+      }
+    ],
+    "badge_labels": [
+      {
+        "name": "Score: 56",
+        "class": "information"
+      },
+      {
+        "name": "Freshness: Fresh !",
+        "class": "success"
       }
     ],
     "mr_description_checklists": [
@@ -1255,5 +2431,22 @@
     "_meta": {
       "source_name": "default"
     }
-  }
+  },
+  "tier": "Bronze",
+  "badges": [
+    {
+      "slug": "score",
+      "scope": "Score",
+      "value": "56",
+      "class": "information",
+      "label": "Score: 56"
+    },
+    {
+      "slug": "freshness",
+      "scope": "Freshness",
+      "value": "Fresh !",
+      "class": "success",
+      "label": "Freshness: Fresh !"
+    }
+  ]
 }

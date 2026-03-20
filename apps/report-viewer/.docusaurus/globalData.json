@@ -1,28 +1,28 @@
 {
   "docusaurus-plugin-content-docs": {
     "default": {
-      "path": "/",
+      "path": "/testing-base-url/",
       "versions": [
         {
           "name": "current",
           "label": "Next",
           "isLast": true,
-          "path": "/",
+          "path": "/testing-base-url/",
           "mainDocId": "index",
           "docs": [
             {
               "id": "index",
-              "path": "/",
+              "path": "/testing-base-url/",
               "sidebar": "defaultSidebar"
             },
             {
               "id": "playbook",
-              "path": "/playbook",
+              "path": "/testing-base-url/playbook",
               "sidebar": "defaultSidebar"
             },
             {
               "id": "rules",
-              "path": "/rules",
+              "path": "/testing-base-url/rules",
               "sidebar": "defaultSidebar"
             }
           ],
@@ -30,7 +30,7 @@
           "sidebars": {
             "defaultSidebar": {
               "link": {
-                "path": "/",
+                "path": "/testing-base-url/",
                 "label": "Overview"
               }
             }

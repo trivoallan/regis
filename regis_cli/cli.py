@@ -296,6 +296,7 @@ def _render_and_save_reports(
     output_dir_template: str | None,
     theme: str,
     pretty: bool,
+    base_url: str = "/",
 ) -> None:
     """Render and save reports in requested formats."""
     for fmt in formats:
@@ -308,6 +309,7 @@ def _render_and_save_reports(
                 build_report_site(
                     report=report,
                     output_dir=out_dir,
+                    base_url=base_url,
                     pretty=pretty,
                 )
             except RuntimeError as exc:
@@ -465,6 +467,11 @@ def _render_mr_templates(
     type=click.Choice(["info", "warning", "critical"], case_sensitive=False),
     help="Minimum rule level that triggers a command failure (default: critical).",
 )
+@click.option(
+    "--base-url",
+    default="/",
+    help="Base URL for the HTML report site (useful for GitHub/GitLab Pages or artifacts).",
+)
 def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
@@ -481,6 +488,7 @@ def analyze(
     evaluate: bool = False,
     fail: bool = False,
     fail_level: str = "critical",
+    base_url: str = "/",
 ) -> None:
     """Analyze a Docker image and evaluate playbooks.
 
@@ -661,6 +669,7 @@ def analyze(
         output_dir_template,
         theme,
         pretty,
+        base_url=base_url,
     )
 
     # 5. Execute MR templates
@@ -729,6 +738,11 @@ def analyze(
     type=click.Choice(["default"], case_sensitive=False),
     help="Theme to use for HTML report (default: default).",
 )
+@click.option(
+    "--base-url",
+    default="/",
+    help="Base URL for the HTML report site.",
+)
 def evaluate(
     input_path: str,
     playbook_paths: tuple[str, ...],
@@ -737,6 +751,7 @@ def evaluate(
     pretty: bool,
     site: bool,
     theme: str,
+    base_url: str = "/",
 ) -> None:
     """Evaluate playbooks against an existing analysis report (dry-run).
 
@@ -776,6 +791,7 @@ def evaluate(
         output_dir_template,
         theme,
         pretty,
+        base_url=base_url,
     )
 
     # Execute MR templates

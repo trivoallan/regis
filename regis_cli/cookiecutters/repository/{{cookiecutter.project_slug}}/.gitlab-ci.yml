@@ -88,10 +88,13 @@ analyze_image:
       IMAGE_URL=$(python3 -c "import json; print(json.load(open('analysis-request.json'))['image_url'])")
       PLAYBOOK_URL=$(python3 -c "import json; print(json.load(open('analysis-request.json'))['playbook_url'])")
       REQUESTER_LOGIN=$(python3 -c "import json; print(json.load(open('analysis-request.json')).get('requester_login', '$GITLAB_USER_LOGIN'))")
-      echo "Analyzing $IMAGE_URL requested by $REQUESTER_LOGIN..."
+      # Calculate the base URL for GitLab artifacts viewing
+      # This ensures Docusaurus assets (JS/CSS) load correctly from the artifact viewer
+      REPORT_BASE_URL="/${CI_PROJECT_PATH}/-/jobs/${CI_JOB_ID}/artifacts/file/reports/${CI_JOB_ID}/"
 
       regis-cli analyze "$IMAGE_URL" \
         --site \
+        --base-url "$REPORT_BASE_URL" \
         --output-dir reports/$CI_JOB_ID \
         --playbook "$PLAYBOOK_URL" \
         --meta "trigger.user=$GITLAB_USER_LOGIN" \

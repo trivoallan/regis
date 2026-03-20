@@ -1,0 +1,57 @@
+{
+  "version": {
+    "pluginId": "default",
+    "version": "current",
+    "label": "Next",
+    "banner": null,
+    "badge": false,
+    "noIndex": false,
+    "className": "docs-version-current",
+    "isLast": true,
+    "docsSidebars": {
+      "defaultSidebar": [
+        {
+          "type": "link",
+          "href": "/testing-base-url/",
+          "label": "Overview",
+          "docId": "index",
+          "unlisted": false
+        },
+        {
+          "type": "link",
+          "href": "/testing-base-url/rules",
+          "label": "Rules",
+          "docId": "rules",
+          "unlisted": false
+        },
+        {
+          "type": "link",
+          "href": "/testing-base-url/playbook",
+          "label": "Playbook",
+          "docId": "playbook",
+          "unlisted": false
+        }
+      ]
+    },
+    "docs": {
+      "index": {
+        "id": "index",
+        "title": "index",
+        "description": "",
+        "sidebar": "defaultSidebar"
+      },
+      "playbook": {
+        "id": "playbook",
+        "title": "Playbook",
+        "description": "",
+        "sidebar": "defaultSidebar"
+      },
+      "rules": {
+        "id": "rules",
+        "title": "Rules",
+        "description": "",
+        "sidebar": "defaultSidebar"
+      }
+    }
+  }
+}

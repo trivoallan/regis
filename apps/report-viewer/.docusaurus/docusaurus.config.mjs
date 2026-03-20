@@ -8,7 +8,7 @@ export default {
   tagline: "Container Security Analysis Report",
   favicon: "img/favicon.ico",
   url: "http://localhost",
-  baseUrl: "/",
+  baseUrl: "/testing-base-url/",
   onBrokenLinks: "warn",
   markdown: {
     format: "detect",

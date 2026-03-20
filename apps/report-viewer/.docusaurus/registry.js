@@ -4,16 +4,6 @@ export default {
     "@theme/DocItem",
     require.resolveWeak("@theme/DocItem"),
   ],
-  "22dd74f7": [
-    () =>
-      import(
-        /* webpackChunkName: "22dd74f7" */ "@generated/docusaurus-plugin-content-docs/default/p/index-466.json"
-      ),
-    "@generated/docusaurus-plugin-content-docs/default/p/index-466.json",
-    require.resolveWeak(
-      "@generated/docusaurus-plugin-content-docs/default/p/index-466.json",
-    ),
-  ],
   "4edc808e": [
     () => import(/* webpackChunkName: "4edc808e" */ "@site/docs/index.mdx"),
     "@site/docs/index.mdx",
@@ -38,6 +28,16 @@ export default {
     () => import(/* webpackChunkName: "a94703ab" */ "@theme/DocRoot"),
     "@theme/DocRoot",
     require.resolveWeak("@theme/DocRoot"),
+  ],
+  aa5d1d8e: [
+    () =>
+      import(
+        /* webpackChunkName: "aa5d1d8e" */ "@generated/docusaurus-plugin-content-docs/default/p/testing-base-url-73c.json"
+      ),
+    "@generated/docusaurus-plugin-content-docs/default/p/testing-base-url-73c.json",
+    require.resolveWeak(
+      "@generated/docusaurus-plugin-content-docs/default/p/testing-base-url-73c.json",
+    ),
   ],
   aba21aa0: [
     () =>

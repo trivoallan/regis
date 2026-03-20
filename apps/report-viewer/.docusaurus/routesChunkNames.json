@@ -1,26 +1,26 @@
 {
-  "/-a3d": {
+  "/testing-base-url/-fb7": {
     "__comp": "5e95c892",
     "__context": {
       "plugin": "aba21aa0"
     }
   },
-  "/-1d3": {
+  "/testing-base-url/-2da": {
     "__comp": "a7bd4aaa",
-    "__props": "22dd74f7"
+    "__props": "aa5d1d8e"
   },
-  "/-1f0": {
+  "/testing-base-url/-ea2": {
     "__comp": "a94703ab"
   },
-  "/playbook-8ae": {
+  "/testing-base-url/playbook-4f1": {
     "__comp": "17896441",
     "content": "cb9b92fd"
   },
-  "/rules-f47": {
+  "/testing-base-url/rules-e3c": {
     "__comp": "17896441",
     "content": "53be0612"
   },
-  "/-87e": {
+  "/testing-base-url/-954": {
     "__comp": "17896441",
     "content": "4edc808e"
   }

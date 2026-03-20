@@ -3,32 +3,35 @@ import ComponentCreator from "@docusaurus/ComponentCreator";
 
 export default [
   {
-    path: "/",
-    component: ComponentCreator("/", "a3d"),
+    path: "/testing-base-url/",
+    component: ComponentCreator("/testing-base-url/", "fb7"),
     routes: [
       {
-        path: "/",
-        component: ComponentCreator("/", "1d3"),
+        path: "/testing-base-url/",
+        component: ComponentCreator("/testing-base-url/", "2da"),
         routes: [
           {
-            path: "/",
-            component: ComponentCreator("/", "1f0"),
+            path: "/testing-base-url/",
+            component: ComponentCreator("/testing-base-url/", "ea2"),
             routes: [
               {
-                path: "/playbook",
-                component: ComponentCreator("/playbook", "8ae"),
+                path: "/testing-base-url/playbook",
+                component: ComponentCreator(
+                  "/testing-base-url/playbook",
+                  "4f1",
+                ),
                 exact: true,
                 sidebar: "defaultSidebar",
               },
               {
-                path: "/rules",
-                component: ComponentCreator("/rules", "f47"),
+                path: "/testing-base-url/rules",
+                component: ComponentCreator("/testing-base-url/rules", "e3c"),
                 exact: true,
                 sidebar: "defaultSidebar",
               },
               {
-                path: "/",
-                component: ComponentCreator("/", "87e"),
+                path: "/testing-base-url/",
+                component: ComponentCreator("/testing-base-url/", "954"),
                 exact: true,
                 sidebar: "defaultSidebar",
               },
