@@ -13,13 +13,30 @@ regis-cli analyze nginx:latest
 
 ## Generating a Web Report
 
-To generate a rich HTML report alongside the JSON report, use the `--site` (or `-s`) flag:
+To generate a rich, interactive HTML report alongside the JSON report, use the `--site` (or `-s`) flag:
 
 ```bash
-regis-cli analyze nginx:latest --site
+regis-cli analyze nginx:latest --site --open
 ```
 
+The `--open` flag will automatically launch your default browser to view the generated dashboard.
+
+`regis-cli` now uses a modern **Single Page Application (SPA)** based on Docusaurus to provide an exceptional viewing experience.
+
 Reports are written to the `reports/` directory by default (e.g., `reports/docker.io/library/nginx/sha256-.../index.html`).
+
+### Serving from Subpaths
+
+Because the report is an SPA, it needs to know its base URL if it's not served from the root of a domain. Use the `--base-url` flag for this:
+
+```bash
+# Example for GitLab artifacts
+regis-cli analyze nginx:latest --site --base-url "/group/project/-/jobs/123/artifacts/file/reports/123/"
+```
+
+:::tip
+When using the [GitLab integration](./integrations/gitlab.md), this base URL is calculated automatically by our standard CI template.
+:::
 
 ## Advanced Tools
 

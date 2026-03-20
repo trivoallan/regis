@@ -48,7 +48,7 @@ C4Container
         Container(cli, "CLI Application", "Python, Click", "Handles user input.")
         Container(engine, "Analysis Engine", "Python", "Manages analyzer lifecycle.")
         Container(playbook, "Playbook Engine", "Python, JSON Logic", "Evaluates security rules.")
-        Container(reporting, "Reporting Engine", "Python, Jinja2", "Generates reports.")
+        Container(reporting, "Reporting Engine", "React, Docusaurus", "Generates interactive SPA reports.")
         Container(connectors, "Registry Connectors", "Python", "Interacts with external tools.")
     }
 
@@ -94,8 +94,8 @@ The playbook engine evaluates consolidated analyzer results against user-defined
 
 ### Reporting Layer
 
-The reporting layer transforms the analysis and playbook results into various formats.
-It uses `Jinja2` templates to produce rich, themeable HTML reports for human review and structured JSON (see [Report Schema](../reference/schemas/report/report.schema.md)) for automated processing.
+The reporting layer transforms the analysis and playbook results into high-quality, actionable formats.
+It leverages a modern **Single Page Application (SPA)** architecture built with **Docusaurus and React** to produce rich, interactive dashboards for human review. It also generates structured JSON (see [Report Schema](../reference/schemas/report/report.schema.md)) for automated processing.
 
 ## Technology Stack
 
@@ -104,7 +104,7 @@ The project uses the following technologies:
 - **Language**: Python 3.13+
 - **Dependency Management**: Pipenv
 - **CLI Framework**: Click
-- **Templating**: Jinja2
+- **Templating**: Jinja2 (Data) & Docusaurus/React (UI)
 - **Linting/Formatting**: Ruff
 - **External Tools**: Skopeo, Trivy, Hadolint, Dockle
 - **Testing**: Pytest

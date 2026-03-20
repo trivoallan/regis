@@ -7,5 +7,10 @@
     "build": "pnpm run build:ui && pnpm run build:viewer",
     "dev": "pnpm --filter @regis-cli/report-viewer dev",
     "typecheck": "pnpm -r typecheck"
+  },
+  "pnpm": {
+    "overrides": {
+      "serialize-javascript": "^7.0.4"
+    }
   }
 }

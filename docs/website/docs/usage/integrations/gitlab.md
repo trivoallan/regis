@@ -137,7 +137,22 @@ Once the analysis job completes, the pipeline runs the `push_results` reporting 
 
 - **`push_results`**: Commits the `reports/` directory back to the branch, posts an MR comment with a direct report link, updates the MR description to include the link and any review checklists, and applies scoped GitLab labels based on your playbook configuration. Checklist items defined with `check_if` conditions may render pre-checked when those conditions pass, and items can be conditionally included via `show_if` conditions.
 
-### 4. Governance
+### 4. Viewing Reports as Artifacts
+
+While GitLab Pages is great for the latest report, you often want to view the specific report for a given job. Our standard template exposes the `reports/` directory as an artifact.
+
+When viewing a Docusaurus report as an artifact, the `baseUrl` must be set correctly. The `regis-cli` command in our template handles this automatically:
+
+```bash
+# Calculate the base URL dynamically for GitLab artifact viewer
+REPORT_BASE_URL="/${CI_PROJECT_PATH}/-/jobs/${CI_JOB_ID}/artifacts/file/reports/${CI_JOB_ID}/"
+
+regis-cli analyze "$IMAGE_URL" --site --base-url "$REPORT_BASE_URL" ...
+```
+
+This ensures that all interactive elements and stylesheets load correctly directly from the GitLab UI.
+
+### 5. Governance
 
 Security teams can review the MR, check the compliance score via the direct HTML report link, and decide whether to merge the analysis request into the main registry branch.
 

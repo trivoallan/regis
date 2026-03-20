@@ -96,7 +96,7 @@
           "description": "Image tag that was analyzed."
         },
         "digest": {
-          "type": "string",
+          "type": ["string", "null"],
           "description": "Resolved image manifest digest (e.g. sha256-xxx), if available."
         },
         "analyzers": {

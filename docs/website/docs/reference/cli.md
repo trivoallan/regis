@@ -30,6 +30,8 @@ _Options:_
 - `--evaluate`: Run rules evaluation after analysis and add results to report.
 - `--fail`: Fail command execution if any rule is breached.
 - `--fail-level [info|warning|critical]`: Minimum rule level that triggers a command failure (default: critical).
+- `--base-url PATH`: Base URL for the HTML report site (useful for GitHub/GitLab Pages or artifacts).
+- `--open`: Open the HTML report in the default browser automatically.
 
 ### `evaluate`
 
@@ -38,6 +40,13 @@ Evaluate playbooks against an existing analysis report (dry-run).
 ```bash
 regis-cli evaluate [OPTIONS] INPUT_PATH
 ```
+
+_Options:_
+
+- `-p, --playbook PATH`: Path or URL to custom playbook YAML/JSON file(s).
+- `-s, --site`: Generate HTML report site.
+- `--base-url PATH`: Base URL for the HTML report site.
+- `--open`: Open the HTML report in the default browser automatically.
 
 ### `check`
 

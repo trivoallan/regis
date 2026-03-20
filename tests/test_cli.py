@@ -139,7 +139,19 @@ class TestCliBasics:
 
     @patch("regis_cli.cli.RegistryClient")
     @patch("regis_cli.cli._discover_analyzers")
-    def test_analyze_html_with_metadata(self, mock_discover, mock_client):
+    @patch("regis_cli.report.docusaurus.build_report_site")
+    def test_analyze_html_with_metadata(
+        self, mock_build_site, mock_discover, mock_client
+    ):
+        # Mock build_report_site to only write the report.json file,
+        # avoiding the heavy Docusaurus/npm build process during unit tests.
+        def side_effect(report, output_dir, **kwargs):
+            output_dir.mkdir(parents=True, exist_ok=True)
+            (output_dir / "report.json").write_text(
+                json.dumps(report), encoding="utf-8"
+            )
+
+        mock_build_site.side_effect = side_effect
         from regis_cli.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):

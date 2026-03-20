@@ -1,0 +1,1259 @@
+{
+  "version": "0.15.0",
+  "request": {
+    "url": "nginx:latest",
+    "registry": "registry-1.docker.io",
+    "repository": "library/nginx",
+    "tag": "latest",
+    "digest": "latest",
+    "analyzers": ["dummy"],
+    "timestamp": "2026-03-20T15:38:59.987496+00:00",
+    "metadata": {
+      "build": "123",
+      "env": "prod"
+    }
+  },
+  "results": {
+    "dummy": {
+      "analyzer": "dummy",
+      "error": {
+        "type": "unexpected",
+        "message": "TestCliBasics.test_analyze_html_with_metadata.<locals>.DummyAnalyzer.analyze() got an unexpected keyword argument 'platform'"
+      }
+    }
+  },
+  "metadata": {
+    "build": "123",
+    "env": "prod"
+  },
+  "rules": [
+    {
+      "slug": "registry-domain-whitelist",
+      "description": "Checks if requested image registry domain is in the domains list.",
+      "level": "critical",
+      "tags": ["security"],
+      "passed": true,
+      "status": "passed",
+      "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
+      "analyzers": []
+    }
+  ],
+  "rules_summary": {
+    "score": 100,
+    "total": ["registry-domain-whitelist"],
+    "passed": ["registry-domain-whitelist"],
+    "by_tag": {
+      "security": {
+        "rules": ["registry-domain-whitelist"],
+        "passed_rules": ["registry-domain-whitelist"],
+        "score": 100
+      }
+    }
+  },
+  "playbooks": [
+    {
+      "playbook_name": "RegiS Default Playbook",
+      "score": 0,
+      "total_scorecards": 0,
+      "passed_scorecards": 0,
+      "pages": [
+        {
+          "title": "Overview",
+          "slug": "index",
+          "score": 0,
+          "total_scorecards": 0,
+          "passed_scorecards": 0,
+          "sections": [
+            {
+              "name": "",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "label": "Recommandation",
+                  "value": "{{ 'NOGO' }}",
+                  "options": {
+                    "class": "recommandation-nogo",
+                    "align": "center"
+                  },
+                  "condition": {
+                    "<": [
+                      {
+                        "var": "playbooks.0.pages.compliance.sections.mandatory_requirements.score"
+                      },
+                      90
+                    ]
+                  },
+                  "resolved_value": "NOGO"
+                }
+              ],
+              "render_order": ["widgets"]
+            },
+            {
+              "name": "",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "label": "Overall Compliance",
+                  "value": "{{ playbooks.0.score }}%",
+                  "url": "compliance.html",
+                  "options": {
+                    "align": "center"
+                  },
+                  "resolved_value": "0%",
+                  "resolved_url": "compliance.html"
+                },
+                {
+                  "label": "Mandatory Requirements",
+                  "value": "{{ playbooks.0.pages.compliance.sections.mandatory_requirements.passed_scorecards }} / {{ playbooks.0.pages.compliance.sections.mandatory_requirements.total_scorecards }}",
+                  "url": "compliance.html",
+                  "options": {
+                    "align": "center"
+                  },
+                  "resolved_value": "0 / 0",
+                  "resolved_url": "compliance.html"
+                },
+                {
+                  "label": "Recommended Requirements",
+                  "value": "{{ playbooks.0.pages.compliance.sections.recommended_requirements.passed_scorecards }} / {{ playbooks.0.pages.compliance.sections.recommended_requirements.total_scorecards }}",
+                  "url": "compliance.html",
+                  "options": {
+                    "align": "center"
+                  },
+                  "resolved_value": "0 / 0",
+                  "resolved_url": "compliance.html"
+                }
+              ],
+              "render_order": ["widgets"]
+            },
+            {
+              "name": "Request",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "label": "Creation Time",
+                  "value": "{{ request.timestamp | format_date }}",
+                  "options": {
+                    "subvalue": "{{ request.timestamp | format_time }}"
+                  },
+                  "resolved_value": "2026-03-20",
+                  "resolved_subvalue": "15:38:59"
+                },
+                {
+                  "label": "Triggered by",
+                  "value": "{{ request.metadata.trigger.user | default('Unknown Emiter') }}",
+                  "url": "{{ request.metadata.trigger.url | default('') }}",
+                  "resolved_value": "Unknown Emiter",
+                  "resolved_url": ""
+                },
+                {
+                  "template": "request/table.html",
+                  "options": {
+                    "title": "Request Parameters"
+                  }
+                },
+                {
+                  "template": "metadata/table.html",
+                  "options": {
+                    "title": "Additional Metadata"
+                  },
+                  "condition": {
+                    "!!": [
+                      {
+                        "var": "request.metadata"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            },
+            {
+              "name": "Requested Image",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "label": "Registry",
+                  "value": "{{ request.registry }}",
+                  "resolved_value": "registry-1.docker.io"
+                },
+                {
+                  "label": "Repository",
+                  "value": "{{ request.repository }}",
+                  "resolved_value": "library/nginx"
+                },
+                {
+                  "label": "Tag",
+                  "value": "{{ request.tag }}",
+                  "resolved_value": "latest"
+                }
+              ],
+              "render_order": ["widgets"]
+            }
+          ]
+        },
+        {
+          "title": "Compliance",
+          "slug": "compliance",
+          "score": 0,
+          "total_scorecards": 0,
+          "passed_scorecards": 0,
+          "sections": [
+            {
+              "name": " ",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "label": "Overall Compliance",
+                  "value": "{{ playbooks.0.score }}%",
+                  "options": {
+                    "align": "center"
+                  },
+                  "resolved_value": "0%"
+                },
+                {
+                  "label": "Mandatory Requirements",
+                  "value": "{{ playbooks.0.pages.compliance.sections.mandatory_requirements.score }}%",
+                  "options": {
+                    "align": "center"
+                  },
+                  "resolved_value": "0%"
+                },
+                {
+                  "label": "Recommended Requirements",
+                  "value": "{{ playbooks.0.pages.compliance.sections.recommended_requirements.score }}%",
+                  "options": {
+                    "align": "center"
+                  },
+                  "resolved_value": "0%"
+                }
+              ],
+              "render_order": ["widgets"]
+            },
+            {
+              "name": "Mandatory Requirements",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "render_order": [],
+              "widgets": []
+            },
+            {
+              "name": "Recommended Requirements",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "render_order": [],
+              "widgets": []
+            }
+          ]
+        },
+        {
+          "title": "Security",
+          "slug": "security",
+          "score": 0,
+          "total_scorecards": 0,
+          "passed_scorecards": 0,
+          "sections": [
+            {
+              "name": "Vulnerabilities",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "template": "analyzers/trivy/cards.html"
+                },
+                {
+                  "template": "analyzers/trivy/table.html",
+                  "options": {
+                    "title": "Top HIGH and CRITICAL vulnerabilities",
+                    "collapsed": true,
+                    "limit": 25
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            },
+            {
+              "name": "Provenance",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "template": "analyzers/provenance/cards.html"
+                },
+                {
+                  "template": "analyzers/provenance/table.html",
+                  "options": {
+                    "title": "Provenance Details",
+                    "collapsed": true
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            }
+          ]
+        },
+        {
+          "title": "Supply Chain & Quality",
+          "slug": "supply-chain",
+          "score": 0,
+          "total_scorecards": 0,
+          "passed_scorecards": 0,
+          "sections": [
+            {
+              "name": "Software Bill of Materials (SBOM)",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "template": "analyzers/sbom/cards.html"
+                },
+                {
+                  "template": "analyzers/sbom/table.html",
+                  "options": {
+                    "title": "Component Inventory Preview",
+                    "collapsed": true,
+                    "limit": 50
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            },
+            {
+              "name": "OpenSSF Scorecard",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "template": "analyzers/scorecarddev/cards.html"
+                },
+                {
+                  "template": "analyzers/scorecarddev/table.html",
+                  "options": {
+                    "title": "Detailed Check Results",
+                    "collapsed": true
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            }
+          ]
+        },
+        {
+          "title": "Best Practices",
+          "slug": "best-practices",
+          "score": 0,
+          "total_scorecards": 0,
+          "passed_scorecards": 0,
+          "sections": [
+            {
+              "name": "Dockerfile Linting (Hadolint)",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "template": "analyzers/hadolint/cards.html"
+                },
+                {
+                  "template": "analyzers/hadolint/table.html",
+                  "options": {
+                    "title": "Linting Issues & Recommendations",
+                    "collapsed": true
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            },
+            {
+              "name": "Security & Best Practices (Dockle)",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "template": "analyzers/dockle/cards.html"
+                },
+                {
+                  "template": "analyzers/dockle/table.html",
+                  "options": {
+                    "title": "Security Issues & Recommendations",
+                    "collapsed": true
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            }
+          ]
+        },
+        {
+          "title": "Insights & Lifecycle",
+          "slug": "insights",
+          "score": 0,
+          "total_scorecards": 0,
+          "passed_scorecards": 0,
+          "sections": [
+            {
+              "name": "Image Freshness",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "template": "analyzers/freshness/cards.html"
+                },
+                {
+                  "template": "analyzers/freshness/table.html",
+                  "options": {
+                    "title": "Release Details",
+                    "collapsed": true
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            },
+            {
+              "name": "Popularity & Community",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "label": "Pulls",
+                  "value": "{{ results.popularity.pull_count | format_number }}",
+                  "resolved_value": "{{ results.popularity.pull_count | format_number }}"
+                },
+                {
+                  "label": "Stars",
+                  "value": "{{ results.popularity.star_count | format_number }}",
+                  "resolved_value": "{{ results.popularity.star_count | format_number }}"
+                },
+                {
+                  "template": "analyzers/popularity/table.html",
+                  "options": {
+                    "title": "Registry Stats",
+                    "collapsed": true
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            },
+            {
+              "name": "Lifecycle (EndOfLife)",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "template": "analyzers/endoflife/cards.html"
+                },
+                {
+                  "template": "analyzers/endoflife/table.html",
+                  "options": {
+                    "title": "Version Support Status",
+                    "collapsed": true
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            }
+          ]
+        },
+        {
+          "title": "Technical Details",
+          "slug": "metadata",
+          "score": 0,
+          "total_scorecards": 0,
+          "passed_scorecards": 0,
+          "sections": [
+            {
+              "name": "Size & Layers",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "template": "analyzers/size/cards.html"
+                },
+                {
+                  "template": "analyzers/size/table.html",
+                  "options": {
+                    "title": "Layer Distribution",
+                    "collapsed": true
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            },
+            {
+              "name": "Skopeo Inspection",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "template": "analyzers/skopeo/cards.html"
+                },
+                {
+                  "template": "analyzers/skopeo/table.html",
+                  "options": {
+                    "title": "Platforms & Tags",
+                    "collapsed": true
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            },
+            {
+              "name": "Versioning Analysis",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "template": "analyzers/versioning/cards.html"
+                },
+                {
+                  "template": "analyzers/versioning/table.html",
+                  "options": {
+                    "title": "Tag Logic & Patterns",
+                    "collapsed": true
+                  }
+                }
+              ],
+              "render_order": ["widgets"]
+            }
+          ]
+        }
+      ],
+      "rules": [
+        {
+          "slug": "registry-domain-whitelist",
+          "description": "Checks if requested image registry domain is in the domains list.",
+          "level": "critical",
+          "tags": ["security"],
+          "passed": true,
+          "status": "passed",
+          "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
+          "analyzers": []
+        }
+      ],
+      "rules_summary": {
+        "score": 100,
+        "total": ["registry-domain-whitelist"],
+        "passed": ["registry-domain-whitelist"],
+        "by_tag": {
+          "security": {
+            "rules": ["registry-domain-whitelist"],
+            "passed_rules": ["registry-domain-whitelist"],
+            "score": 100
+          }
+        }
+      },
+      "slug": null,
+      "tier": "Gold",
+      "badges": [
+        {
+          "slug": "score",
+          "scope": "Score",
+          "value": "100",
+          "class": "information",
+          "label": "Score: 100"
+        }
+      ],
+      "mr_description_checklists": [
+        {
+          "title": "📝 Review Checklist",
+          "items": [
+            {
+              "label": "Revue de sécurité réalisée",
+              "checked": false
+            }
+          ]
+        }
+      ],
+      "mr_templates": [
+        {
+          "url": "https://github.com/trivoallan/regis-cli",
+          "directory": "regis_cli/cookiecutters/mr-evidence"
+        }
+      ],
+      "_meta": {
+        "source_name": "default"
+      }
+    }
+  ],
+  "playbook": {
+    "playbook_name": "RegiS Default Playbook",
+    "score": 0,
+    "total_scorecards": 0,
+    "passed_scorecards": 0,
+    "pages": [
+      {
+        "title": "Overview",
+        "slug": "index",
+        "score": 0,
+        "total_scorecards": 0,
+        "passed_scorecards": 0,
+        "sections": [
+          {
+            "name": "",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "label": "Recommandation",
+                "value": "{{ 'NOGO' }}",
+                "options": {
+                  "class": "recommandation-nogo",
+                  "align": "center"
+                },
+                "condition": {
+                  "<": [
+                    {
+                      "var": "playbooks.0.pages.compliance.sections.mandatory_requirements.score"
+                    },
+                    90
+                  ]
+                },
+                "resolved_value": "NOGO"
+              }
+            ],
+            "render_order": ["widgets"]
+          },
+          {
+            "name": "",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "label": "Overall Compliance",
+                "value": "{{ playbooks.0.score }}%",
+                "url": "compliance.html",
+                "options": {
+                  "align": "center"
+                },
+                "resolved_value": "0%",
+                "resolved_url": "compliance.html"
+              },
+              {
+                "label": "Mandatory Requirements",
+                "value": "{{ playbooks.0.pages.compliance.sections.mandatory_requirements.passed_scorecards }} / {{ playbooks.0.pages.compliance.sections.mandatory_requirements.total_scorecards }}",
+                "url": "compliance.html",
+                "options": {
+                  "align": "center"
+                },
+                "resolved_value": "0 / 0",
+                "resolved_url": "compliance.html"
+              },
+              {
+                "label": "Recommended Requirements",
+                "value": "{{ playbooks.0.pages.compliance.sections.recommended_requirements.passed_scorecards }} / {{ playbooks.0.pages.compliance.sections.recommended_requirements.total_scorecards }}",
+                "url": "compliance.html",
+                "options": {
+                  "align": "center"
+                },
+                "resolved_value": "0 / 0",
+                "resolved_url": "compliance.html"
+              }
+            ],
+            "render_order": ["widgets"]
+          },
+          {
+            "name": "Request",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "label": "Creation Time",
+                "value": "{{ request.timestamp | format_date }}",
+                "options": {
+                  "subvalue": "{{ request.timestamp | format_time }}"
+                },
+                "resolved_value": "2026-03-20",
+                "resolved_subvalue": "15:38:59"
+              },
+              {
+                "label": "Triggered by",
+                "value": "{{ request.metadata.trigger.user | default('Unknown Emiter') }}",
+                "url": "{{ request.metadata.trigger.url | default('') }}",
+                "resolved_value": "Unknown Emiter",
+                "resolved_url": ""
+              },
+              {
+                "template": "request/table.html",
+                "options": {
+                  "title": "Request Parameters"
+                }
+              },
+              {
+                "template": "metadata/table.html",
+                "options": {
+                  "title": "Additional Metadata"
+                },
+                "condition": {
+                  "!!": [
+                    {
+                      "var": "request.metadata"
+                    }
+                  ]
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          },
+          {
+            "name": "Requested Image",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "label": "Registry",
+                "value": "{{ request.registry }}",
+                "resolved_value": "registry-1.docker.io"
+              },
+              {
+                "label": "Repository",
+                "value": "{{ request.repository }}",
+                "resolved_value": "library/nginx"
+              },
+              {
+                "label": "Tag",
+                "value": "{{ request.tag }}",
+                "resolved_value": "latest"
+              }
+            ],
+            "render_order": ["widgets"]
+          }
+        ]
+      },
+      {
+        "title": "Compliance",
+        "slug": "compliance",
+        "score": 0,
+        "total_scorecards": 0,
+        "passed_scorecards": 0,
+        "sections": [
+          {
+            "name": " ",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "label": "Overall Compliance",
+                "value": "{{ playbooks.0.score }}%",
+                "options": {
+                  "align": "center"
+                },
+                "resolved_value": "0%"
+              },
+              {
+                "label": "Mandatory Requirements",
+                "value": "{{ playbooks.0.pages.compliance.sections.mandatory_requirements.score }}%",
+                "options": {
+                  "align": "center"
+                },
+                "resolved_value": "0%"
+              },
+              {
+                "label": "Recommended Requirements",
+                "value": "{{ playbooks.0.pages.compliance.sections.recommended_requirements.score }}%",
+                "options": {
+                  "align": "center"
+                },
+                "resolved_value": "0%"
+              }
+            ],
+            "render_order": ["widgets"]
+          },
+          {
+            "name": "Mandatory Requirements",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "render_order": [],
+            "widgets": []
+          },
+          {
+            "name": "Recommended Requirements",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "render_order": [],
+            "widgets": []
+          }
+        ]
+      },
+      {
+        "title": "Security",
+        "slug": "security",
+        "score": 0,
+        "total_scorecards": 0,
+        "passed_scorecards": 0,
+        "sections": [
+          {
+            "name": "Vulnerabilities",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "template": "analyzers/trivy/cards.html"
+              },
+              {
+                "template": "analyzers/trivy/table.html",
+                "options": {
+                  "title": "Top HIGH and CRITICAL vulnerabilities",
+                  "collapsed": true,
+                  "limit": 25
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          },
+          {
+            "name": "Provenance",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "template": "analyzers/provenance/cards.html"
+              },
+              {
+                "template": "analyzers/provenance/table.html",
+                "options": {
+                  "title": "Provenance Details",
+                  "collapsed": true
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          }
+        ]
+      },
+      {
+        "title": "Supply Chain & Quality",
+        "slug": "supply-chain",
+        "score": 0,
+        "total_scorecards": 0,
+        "passed_scorecards": 0,
+        "sections": [
+          {
+            "name": "Software Bill of Materials (SBOM)",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "template": "analyzers/sbom/cards.html"
+              },
+              {
+                "template": "analyzers/sbom/table.html",
+                "options": {
+                  "title": "Component Inventory Preview",
+                  "collapsed": true,
+                  "limit": 50
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          },
+          {
+            "name": "OpenSSF Scorecard",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "template": "analyzers/scorecarddev/cards.html"
+              },
+              {
+                "template": "analyzers/scorecarddev/table.html",
+                "options": {
+                  "title": "Detailed Check Results",
+                  "collapsed": true
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          }
+        ]
+      },
+      {
+        "title": "Best Practices",
+        "slug": "best-practices",
+        "score": 0,
+        "total_scorecards": 0,
+        "passed_scorecards": 0,
+        "sections": [
+          {
+            "name": "Dockerfile Linting (Hadolint)",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "template": "analyzers/hadolint/cards.html"
+              },
+              {
+                "template": "analyzers/hadolint/table.html",
+                "options": {
+                  "title": "Linting Issues & Recommendations",
+                  "collapsed": true
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          },
+          {
+            "name": "Security & Best Practices (Dockle)",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "template": "analyzers/dockle/cards.html"
+              },
+              {
+                "template": "analyzers/dockle/table.html",
+                "options": {
+                  "title": "Security Issues & Recommendations",
+                  "collapsed": true
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          }
+        ]
+      },
+      {
+        "title": "Insights & Lifecycle",
+        "slug": "insights",
+        "score": 0,
+        "total_scorecards": 0,
+        "passed_scorecards": 0,
+        "sections": [
+          {
+            "name": "Image Freshness",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "template": "analyzers/freshness/cards.html"
+              },
+              {
+                "template": "analyzers/freshness/table.html",
+                "options": {
+                  "title": "Release Details",
+                  "collapsed": true
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          },
+          {
+            "name": "Popularity & Community",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "label": "Pulls",
+                "value": "{{ results.popularity.pull_count | format_number }}",
+                "resolved_value": "{{ results.popularity.pull_count | format_number }}"
+              },
+              {
+                "label": "Stars",
+                "value": "{{ results.popularity.star_count | format_number }}",
+                "resolved_value": "{{ results.popularity.star_count | format_number }}"
+              },
+              {
+                "template": "analyzers/popularity/table.html",
+                "options": {
+                  "title": "Registry Stats",
+                  "collapsed": true
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          },
+          {
+            "name": "Lifecycle (EndOfLife)",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "template": "analyzers/endoflife/cards.html"
+              },
+              {
+                "template": "analyzers/endoflife/table.html",
+                "options": {
+                  "title": "Version Support Status",
+                  "collapsed": true
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          }
+        ]
+      },
+      {
+        "title": "Technical Details",
+        "slug": "metadata",
+        "score": 0,
+        "total_scorecards": 0,
+        "passed_scorecards": 0,
+        "sections": [
+          {
+            "name": "Size & Layers",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "template": "analyzers/size/cards.html"
+              },
+              {
+                "template": "analyzers/size/table.html",
+                "options": {
+                  "title": "Layer Distribution",
+                  "collapsed": true
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          },
+          {
+            "name": "Skopeo Inspection",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "template": "analyzers/skopeo/cards.html"
+              },
+              {
+                "template": "analyzers/skopeo/table.html",
+                "options": {
+                  "title": "Platforms & Tags",
+                  "collapsed": true
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          },
+          {
+            "name": "Versioning Analysis",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "template": "analyzers/versioning/cards.html"
+              },
+              {
+                "template": "analyzers/versioning/table.html",
+                "options": {
+                  "title": "Tag Logic & Patterns",
+                  "collapsed": true
+                }
+              }
+            ],
+            "render_order": ["widgets"]
+          }
+        ]
+      }
+    ],
+    "rules": [
+      {
+        "slug": "registry-domain-whitelist",
+        "description": "Checks if requested image registry domain is in the domains list.",
+        "level": "critical",
+        "tags": ["security"],
+        "passed": true,
+        "status": "passed",
+        "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
+        "analyzers": []
+      }
+    ],
+    "rules_summary": {
+      "score": 100,
+      "total": ["registry-domain-whitelist"],
+      "passed": ["registry-domain-whitelist"],
+      "by_tag": {
+        "security": {
+          "rules": ["registry-domain-whitelist"],
+          "passed_rules": ["registry-domain-whitelist"],
+          "score": 100
+        }
+      }
+    },
+    "slug": null,
+    "tier": "Gold",
+    "badges": [
+      {
+        "slug": "score",
+        "scope": "Score",
+        "value": "100",
+        "class": "information",
+        "label": "Score: 100"
+      }
+    ],
+    "mr_description_checklists": [
+      {
+        "title": "📝 Review Checklist",
+        "items": [
+          {
+            "label": "Revue de sécurité réalisée",
+            "checked": false
+          }
+        ]
+      }
+    ],
+    "mr_templates": [
+      {
+        "url": "https://github.com/trivoallan/regis-cli",
+        "directory": "regis_cli/cookiecutters/mr-evidence"
+      }
+    ],
+    "_meta": {
+      "source_name": "default"
+    }
+  }
+}

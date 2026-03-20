@@ -7,7 +7,6 @@
         "README.md",
         ".github/workflows/docs-publish.yml",
         "docs/website/docs/examples/regis-cli.md",
-        "docs/website/versions.json",
         "docs/website/docusaurus.config.ts",
         "docs/website/package.json"
       ],

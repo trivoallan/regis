@@ -124,3 +124,8 @@ compatibility:
 metadata:
   label: metadata
   description: OCI labels and image metadata.
+
+dashboard:
+  label: dashboard
+  description: Related to the interactive report viewer and security dashboards.
+  permalink: /usage/report-viewer

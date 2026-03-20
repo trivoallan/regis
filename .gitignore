@@ -19,10 +19,13 @@ htmlcov/
 # IDE
 .idea/
 .vscode/
-*.swp
+*.swp 
 
 # OS
 .DS_Store
 
 # Reports
 /reports
+
+# Docusaurus
+.docusaurus

@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import sys
+import webbrowser
 from datetime import datetime, timezone
 from importlib import resources
 from importlib.metadata import entry_points, version
@@ -296,122 +297,66 @@ def _render_and_save_reports(
     output_dir_template: str | None,
     theme: str,
     pretty: bool,
+    base_url: str = "/",
+    open_browser: bool = False,
 ) -> None:
     """Render and save reports in requested formats."""
-    import shutil
-
     for fmt in formats:
         if fmt == "html":
-            from regis_cli.report.html import render_html
+            from regis_cli.report.docusaurus import build_report_site
 
-            # For HTML, generate one file per playbook if playbooks exist.
-            playbook_results = report.get("playbooks", [])
-
-            # Copy theme assets (if any)
-            from importlib import resources as importlib_resources
+            out_dir = _format_output_path(output_dir_template or ".", report, "json")
 
             try:
-                theme_assets = (
-                    importlib_resources.files("regis_cli.templates") / theme / "assets"
-                )
-                if theme_assets.is_dir():
-                    out_dir = _format_output_path(
-                        output_dir_template or ".", report, "json"
-                    )
-                    out_dir.mkdir(parents=True, exist_ok=True)
-                    for item in theme_assets.iterdir():
-                        dest = out_dir / item.name
-                        if item.is_dir():
-                            shutil.copytree(str(item), str(dest), dirs_exist_ok=True)
-                        else:
-                            shutil.copy2(str(item), str(dest))
-            except (FileNotFoundError, ModuleNotFoundError):
-                pass
-
-            if playbook_results:
-                for pb in playbook_results:
-                    # Pre-calculate filenames for all pages in this playbook to build navigation
-                    page_navigation = []
-                    for page in pb.get("pages", []):
-                        pb_slug = pb.get("slug")
-                        pg_slug = page.get("slug")
-                        source_name = pb.get("_meta", {}).get("source_name")
-
-                        if output_template:
-                            filename = output_template
-                        elif pg_slug:
-                            filename = f"{pg_slug}.{fmt}"
-                        elif pb_slug:
-                            filename = (
-                                f"{pb_slug}-{page.get('title', 'page').lower()}.{fmt}"
-                            )
-                        elif source_name:
-                            filename = f"{source_name}-{page.get('title', 'page').lower()}.{fmt}"
-                        else:
-                            filename = (
-                                f"report_{pb.get('playbook_name', 'unnamed')}_"
-                                f"{page.get('title', 'page').lower()}.{fmt}"
-                            )
-
-                        page_navigation.append(
-                            {
-                                "title": page.get("title"),
-                                "url": filename,
-                                "active": False,
-                            }
-                        )
-
-                    for i, page in enumerate(pb.get("pages", [])):
-                        # Mark current page as active in navigation
-                        current_nav = [dict(n) for n in page_navigation]
-                        current_nav[i]["active"] = True
-
-                        # Render HTML focusing on this single page of the playbook.
-                        single_page_report = {
-                            **report,
-                            "playbooks": [{**pb, "pages": [page]}],
-                            "playbook": pb,
-                            "page": page,
-                            "navigation": current_nav,
-                        }
-                        rendered = render_html(single_page_report, theme=theme)
-
-                        _write_report(
-                            dir_tmpl=output_dir_template or ".",
-                            file_tmpl=page_navigation[i]["url"],
-                            report=single_page_report,
-                            fmt=fmt,
-                            rendered=rendered,
-                        )
-
-                # Generate a main report.json in the output directory
-                out_dir = _format_output_path(
-                    output_dir_template or ".", report, "json"
-                )
-                out_dir.mkdir(parents=True, exist_ok=True)
-                report_json_path = out_dir / "report.json"
-                indent = 2 if pretty else None
-                report_json_path.write_text(
-                    json.dumps(report, indent=indent, ensure_ascii=False),
-                    encoding="utf-8",
-                )
-            else:
-                # No playbooks, just render the base report
-                rendered = render_html(report, theme=theme)
-                file_tmpl = output_template or f"report.{fmt}"
-                _write_report(
-                    dir_tmpl=output_dir_template or ".",
-                    file_tmpl=file_tmpl,
+                build_report_site(
                     report=report,
-                    fmt=fmt,
-                    rendered=rendered,
+                    output_dir=out_dir,
+                    base_url=base_url,
+                    pretty=pretty,
                 )
+            except RuntimeError as exc:
+                raise click.ClickException(str(exc)) from exc
 
             click.echo(
-                f"  Report site generated at "
-                f"{_format_output_path(output_dir_template or '.', report, fmt)}",
+                f"  Report site generated at {out_dir}",
                 err=True,
             )
+
+            if open_browser:
+                import http.server
+                import socket
+                import socketserver
+
+                index_file = out_dir / "index.html"
+                if not index_file.exists():
+                    click.echo(
+                        f"  Warning: Could not find index.html at {out_dir}. Browser not opened.",
+                        err=True,
+                    )
+                    return
+
+                # Find a free port
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.bind(("", 0))
+                    port = s.getsockname()[1]
+
+                url = f"http://localhost:{port}"
+                click.echo(f"  Starting local server at {url}", err=True)
+                click.echo("  Press Ctrl+C to stop serving.", err=True)
+
+                class ReportHandler(http.server.SimpleHTTPRequestHandler):
+                    def __init__(self, *args, directory=str(out_dir), **kwargs):
+                        super().__init__(*args, directory=directory, **kwargs)
+
+                # Use a small timeout to allow for periodic checks if needed,
+                # though serve_forever is typical for this use case.
+                with socketserver.TCPServer(("", port), ReportHandler) as httpd:
+                    webbrowser.open(url)
+                    try:
+                        httpd.serve_forever()
+                    except KeyboardInterrupt:
+                        click.echo("\n  Stopping server...", err=True)
+                        httpd.shutdown()
         else:
             # JSON (and other formats): Single unified report file
             indent = 2 if pretty else None
@@ -560,6 +505,18 @@ def _render_mr_templates(
     type=click.Choice(["info", "warning", "critical"], case_sensitive=False),
     help="Minimum rule level that triggers a command failure (default: critical).",
 )
+@click.option(
+    "--base-url",
+    default="/",
+    help="Base URL for the HTML report site (useful for GitHub/GitLab Pages or artifacts).",
+)
+@click.option(
+    "--open",
+    "open_browser",
+    is_flag=True,
+    default=False,
+    help="Open the HTML report in the default browser.",
+)
 def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
@@ -576,6 +533,8 @@ def analyze(
     evaluate: bool = False,
     fail: bool = False,
     fail_level: str = "critical",
+    base_url: str = "/",
+    open_browser: bool = False,
 ) -> None:
     """Analyze a Docker image and evaluate playbooks.
 
@@ -756,6 +715,8 @@ def analyze(
         output_dir_template,
         theme,
         pretty,
+        base_url=base_url,
+        open_browser=open_browser,
     )
 
     # 5. Execute MR templates
@@ -824,6 +785,18 @@ def analyze(
     type=click.Choice(["default"], case_sensitive=False),
     help="Theme to use for HTML report (default: default).",
 )
+@click.option(
+    "--base-url",
+    default="/",
+    help="Base URL for the HTML report site.",
+)
+@click.option(
+    "--open",
+    "open_browser",
+    is_flag=True,
+    default=False,
+    help="Open the HTML report in the default browser.",
+)
 def evaluate(
     input_path: str,
     playbook_paths: tuple[str, ...],
@@ -832,6 +805,8 @@ def evaluate(
     pretty: bool,
     site: bool,
     theme: str,
+    base_url: str = "/",
+    open_browser: bool = False,
 ) -> None:
     """Evaluate playbooks against an existing analysis report (dry-run).
 
@@ -871,6 +846,8 @@ def evaluate(
         output_dir_template,
         theme,
         pretty,
+        base_url=base_url,
+        open_browser=open_browser,
     )
 
     # Execute MR templates
