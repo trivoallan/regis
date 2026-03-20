@@ -35,7 +35,7 @@ jobs:
         uses: trunk-io/trunk-action/setup@v1
 
       - name: Trunk Format
-        run: ${{ env.TRUNK_PATH }} fmt --all
+        run: ${{ env.TRUNK_PATH }} fmt
 
       - name: Commit and Push Changes
         if: github.event_name == 'pull_request'
