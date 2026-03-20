@@ -65,7 +65,7 @@ jobs:
 
       - name: Generate Schema Docs
         run: |
-          for cat in $(ls -d regis_cli/schemas/*); do
+          for cat in $(find regis_cli/schemas -maxdepth 1 -type d); do
             cat=$(basename $cat);
             mkdir -p docs/website/static/schemas/$cat
             rm -fv ./docs/website/static/schemas/$cat/*.schema.json
