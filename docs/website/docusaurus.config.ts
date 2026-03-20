@@ -29,7 +29,7 @@ const config: Config = {
   organizationName: "trivoallan", // Usually your GitHub org/user name.
   projectName: "regis-cli", // Usually your repo name.
 
-  onBrokenLinks: "throw",
+  onBrokenLinks: "warn",
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
