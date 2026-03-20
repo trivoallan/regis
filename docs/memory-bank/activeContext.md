@@ -22,6 +22,8 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Updated `docs/modules/ROOT/pages/integrations/gitlab.adoc` — pipeline diagram and job descriptions reflect refactored pipeline.
 - Improved documentation for CI/CD integration (moved Cookiecutter, added tips, added C4 diagrams).
 - Unified linting experience by migrating to Trunk.
+- Migrated documentation to Docusaurus, established dynamic versioning strategy with tag names, and cleaned up redundant folders.
+- Added support for Markdown output in `regis-cli rules list` and generated rules reference documentation.
 - Refactored `generate` command into a `bootstrap` command group:
   - `bootstrap repository` — recreates the project repository from renamed `cookiecutters/repository` template.
   - `bootstrap playbook` — creates a new custom playbook from the newly added `cookiecutters/playbook` template.
@@ -75,6 +77,8 @@ Documentation update following the pipeline refactoring and checklist enhancemen
   - Updated `docs-publish.yml` to copy all schemas to a shared static directory, fixing cross-category references.
   - Resolved `fatal: ambiguous argument 'HEAD^2'` in Trunk Check CI by refining checkout and specifying `check-mode`.
   - Suppressed `RequestsDependencyWarning` by pinning `urllib3`, `chardet`, and `charset-normalizer` in `Pipfile`.
+- Added `--format` and `--output` options to `regis-cli rules list` to support Markdown documentation generation.
+- Generated `docs/website/docs/reference/rules.md` rules reference documentation using the new CLI capabilities.
 
 ## Next Steps
 

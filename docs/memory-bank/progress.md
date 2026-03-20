@@ -20,6 +20,7 @@
 
 - Unified linting experience by migrating to Trunk.
 - Migrated documentation to Docusaurus, established dynamic versioning strategy with tag names, and cleaned up redundant folders.
+- Added support for Markdown output in `regis-cli rules list` and generated rules reference documentation.
 
 ## Future Roadmap
 

@@ -109,13 +109,13 @@ jobs:
         run: pnpm install
         working-directory: docs/website
 
-      - name: Build Docusaurus Site
-        run: |
-          # If we are on a tag, we should update the version before building
-          if [[ $GITHUB_REF == refs/tags/v* ]]; then
-            pnpm docusaurus docs:version ${{ github.ref_name }} --force
-          fi
-          pnpm run build
+      - name: Docusaurus docs:version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: pnpm docusaurus docs:version ${{ github.ref_name }} --force
+        working-directory: docs/website
+
+      - name: Docusaurus build
+        run: pnpm run build
         working-directory: docs/website
 
       - name: Upload artifact
