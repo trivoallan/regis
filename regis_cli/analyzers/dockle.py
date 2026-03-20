@@ -24,7 +24,7 @@ class DockleAnalyzer(BaseAnalyzer):
     def default_rules(cls) -> list[dict[str, Any]]:
         return [
             {
-                "slug": "dockle-no-fatal",
+                "slug": "dockle.no-fatal",
                 "description": "No FATAL issues found by Dockle.",
                 "level": "critical",
                 "tags": ["security"],
@@ -41,7 +41,7 @@ class DockleAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "dockle-max-warnings",
+                "slug": "dockle.max-warnings",
                 "description": "Too many Dockle warnings found.",
                 "level": "warning",
                 "tags": ["security"],

@@ -4,13 +4,13 @@ tags:
   - rules
 ---
 
-# skopeo-multi-arch
+# skopeo.multi-arch
 
-Image should support multiple platforms.
+Checks if the image supports multiple architectures.
 
-| Provider | Level | Tags          |
-| :------- | :---- | :------------ |
-| skopeo   | info  | compatibility |
+| Provider                              | Level | Tags          |
+| :------------------------------------ | :---- | :------------ |
+| [skopeo](/reference/analyzers/skopeo) | Info  | Compatibility |
 
 ## Parameters
 
@@ -29,9 +29,9 @@ Image should support multiple platforms.
 
 ```yaml
 rules:
-  skopeo-multi-arch:
+  skopeo.multi-arch:
     params:
-      min_platforms: 1
+      min_platforms: 3
 ```
 
 ## Condition

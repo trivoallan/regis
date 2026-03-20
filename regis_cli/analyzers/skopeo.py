@@ -33,7 +33,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
     def default_rules(cls) -> list[dict[str, Any]]:
         return [
             {
-                "slug": "skopeo-no-root",
+                "slug": "skopeo.no-root",
                 "description": "Image must not run as root.",
                 "level": "critical",
                 "tags": ["security"],
@@ -50,7 +50,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "skopeo-max-size",
+                "slug": "skopeo.max-size",
                 "description": "Image size is within limits.",
                 "level": "warning",
                 "tags": ["hygiene"],
@@ -67,7 +67,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "skopeo-max-layers",
+                "slug": "skopeo.max-layers",
                 "description": "Image has an acceptable number of layers.",
                 "level": "warning",
                 "tags": ["performance"],
@@ -84,7 +84,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "skopeo-tag-not-latest",
+                "slug": "skopeo.tag-not-latest",
                 "description": "Image tag should not be 'latest'.",
                 "level": "warning",
                 "tags": ["lifecycle"],
@@ -95,7 +95,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "skopeo-multi-arch",
+                "slug": "skopeo.multi-arch",
                 "description": "Image should support multiple platforms.",
                 "level": "info",
                 "tags": ["compatibility"],
@@ -118,7 +118,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "skopeo-exposed-ports",
+                "slug": "skopeo.exposed-ports",
                 "description": "Image exposes permitted ports.",
                 "level": "warning",
                 "tags": ["security"],
@@ -135,7 +135,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "skopeo-required-labels",
+                "slug": "skopeo.required-labels",
                 "description": "Image must have required OCI labels.",
                 "level": "warning",
                 "tags": ["metadata"],
@@ -152,7 +152,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "skopeo-forbidden-env",
+                "slug": "skopeo.forbidden-env",
                 "description": "Image must not contain forbidden environment variables.",
                 "level": "critical",
                 "tags": ["security"],

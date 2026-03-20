@@ -84,6 +84,22 @@ class SbomAnalyzer(BaseAnalyzer):
     name = "sbom"
     schema_file = "analyzer/sbom.schema.json"
 
+    @classmethod
+    def default_rules(cls) -> list[dict[str, Any]]:
+        return [
+            {
+                "slug": "sbom.has-sbom",
+                "description": "Image must provide a Software Bill of Materials.",
+                "level": "warning",
+                "tags": ["compliance"],
+                "condition": {"==": [{"var": "results.sbom.has_sbom"}, True]},
+                "messages": {
+                    "pass": "SBOM is available for this image.",  # nosec B105
+                    "fail": "No SBOM could be generated or found for this image.",
+                },
+            },
+        ]
+
     def analyze(
         self,
         client: RegistryClient,

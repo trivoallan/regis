@@ -133,6 +133,28 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
     name = "scorecarddev"
     schema_file = "analyzer/scorecarddev.schema.json"
 
+    @classmethod
+    def default_rules(cls) -> list[dict[str, Any]]:
+        return [
+            {
+                "slug": "scorecard.min-score",
+                "description": "OpenSSF Scorecard score is above the threshold.",
+                "level": "warning",
+                "tags": ["security"],
+                "params": {"min_score": 5.0},
+                "condition": {
+                    ">=": [
+                        {"var": "results.scorecarddev.score"},
+                        {"var": "rule.params.min_score"},
+                    ]
+                },
+                "messages": {
+                    "pass": "Scorecard score is ${results.scorecarddev.score} (min required: ${rule.params.min_score}).",  # nosec B105
+                    "fail": "Scorecard score is too low: ${results.scorecarddev.score} (min required: ${rule.params.min_score}).",
+                },
+            },
+        ]
+
     def analyze(
         self,
         client: RegistryClient,

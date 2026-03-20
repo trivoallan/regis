@@ -4,13 +4,13 @@ tags:
   - rules
 ---
 
-# trivy-secret-scan
+# trivy.secret-scan
 
-No secrets or credentials should be embedded in the image.
+Fails if secrets or credentials are found in the image.
 
-| Provider | Level    | Tags     |
-| :------- | :------- | :------- |
-| trivy    | critical | security |
+| Provider                            | Level    | Tags     |
+| :---------------------------------- | :------- | :------- |
+| [trivy](/reference/analyzers/trivy) | Critical | Security |
 
 ## Parameters
 
@@ -29,9 +29,8 @@ No secrets or credentials should be embedded in the image.
 
 ```yaml
 rules:
-  trivy-secret-scan:
-    params:
-      max_count: 0
+  trivy.secret-scan:
+    enable: true
 ```
 
 ## Condition

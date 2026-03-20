@@ -58,9 +58,9 @@ def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
     # Add core rules manually
     default_rules.append(
         {
-            "slug": "core-trusted-domain",
+            "slug": "core.registry-domain-whitelist",
             "provider": "core",
-            "description": "Image must originate from a trusted domain.",
+            "description": "Checks if requested image registry domain is in the domains list.",
             "level": "critical",
             "tags": ["security"],
             "params": {
@@ -73,8 +73,8 @@ def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
                 ]
             },
             "messages": {
-                "pass": "Image originates from a trusted domain.",  # nosec B105
-                "fail": "Image registry '${request.registry}' is not in the trusted list.",
+                "pass": "Image registry domain '${request.registry}' is in the domains list.",  # nosec B105
+                "fail": "Image registry domain '${request.registry}' is not in the domains list.",
             },
         }
     )

@@ -1,6 +1,5 @@
 """Tests for 'regis-cli rules list' command."""
 
-import json
 from pathlib import Path
 
 from click.testing import CliRunner
@@ -16,9 +15,12 @@ class TestCliRulesList:
         runner = CliRunner()
         result = runner.invoke(main, ["rules", "list"])
         assert result.exit_code == 0
-        assert "core-trusted-domain" in result.output
+        assert "core.registry-domain-whitelist" in result.output
         assert "critical" in result.output
-        assert "Image must originate from a trusted domain." in result.output
+        assert (
+            "Checks if requested image registry domain is in the domains list."
+            in result.output
+        )
 
     def test_rules_list_markdown(self):
         """Test markdown output."""
@@ -30,7 +32,7 @@ class TestCliRulesList:
             in result.output
         )
         assert (
-            "| core | `core-trusted-domain` | Image must originate from a trusted domain. | critical | security | `domains=['docker.io', 'registry-1.docker.io', 'quay.io', 'ghcr.io']` |"
+            "| core | `core.registry-domain-whitelist` | Checks if requested image registry domain is in the domains list. | critical | security | `domains=['docker.io', 'registry-1.docker.io', 'quay.io', 'ghcr.io']` |"
             in result.output
         )
 
@@ -47,7 +49,7 @@ class TestCliRulesList:
 
             content = Path(output_file).read_text(encoding="utf-8")
             assert "| Provider |" in content
-            assert "| `core-trusted-domain` |" in content
+            assert "| `core.registry-domain-whitelist` |" in content
 
     def test_rules_list_markdown_output_dir(self):
         """Test multi-file markdown output."""
@@ -72,18 +74,21 @@ class TestCliRulesList:
 
             out_path = Path(output_dir)
             assert (out_path / "index.md").exists()
-            assert (out_path / "core-trusted-domain.md").exists()
+            assert (out_path / "core.registry-domain-whitelist.md").exists()
 
             index_content = (out_path / "index.md").read_text(encoding="utf-8")
             assert "| Provider |" in index_content
-            assert "[`core-trusted-domain`](./core-trusted-domain.md)" in index_content
+            assert (
+                "[`core.registry-domain-whitelist`](./core.registry-domain-whitelist.md)"
+                in index_content
+            )
 
-            rule_content = (out_path / "core-trusted-domain.md").read_text(
+            rule_content = (out_path / "core.registry-domain-whitelist.md").read_text(
                 encoding="utf-8"
             )
-            assert "# core-trusted-domain" in rule_content
+            assert "# core.registry-domain-whitelist" in rule_content
             assert (
-                "**Description**: Image must originate from a trusted domain."
+                "**Description**: Checks if requested image registry domain is in the domains list."
                 in rule_content
             )
             assert "**Provider**: core" in rule_content

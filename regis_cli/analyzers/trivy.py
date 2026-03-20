@@ -76,7 +76,7 @@ class TrivyAnalyzer(BaseAnalyzer):
     def default_rules(cls) -> list[dict[str, Any]]:
         return [
             {
-                "slug": "trivy-no-critical",
+                "slug": "trivy.no-critical",
                 "description": "No CRITICAL vulnerabilities found by Trivy.",
                 "level": "critical",
                 "tags": ["security"],
@@ -93,7 +93,7 @@ class TrivyAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "trivy-no-high",
+                "slug": "trivy.no-high",
                 "description": "No HIGH vulnerabilities found by Trivy.",
                 "level": "warning",
                 "tags": ["security"],
@@ -110,7 +110,7 @@ class TrivyAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "trivy-fix-available",
+                "slug": "trivy.fix-available",
                 "description": "All vulnerabilities should be fixed if a patch exists.",
                 "level": "warning",
                 "tags": ["security"],
@@ -127,7 +127,7 @@ class TrivyAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "trivy-secret-scan",
+                "slug": "trivy.secret-scan",
                 "description": "No secrets or credentials should be embedded in the image.",
                 "level": "critical",
                 "tags": ["security"],

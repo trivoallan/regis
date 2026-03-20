@@ -4,13 +4,13 @@ tags:
   - rules
 ---
 
-# trivy-no-high
+# trivy.no-high
 
-No HIGH vulnerabilities found by Trivy.
+Fails if high vulnerabilities are found by Trivy.
 
-| Provider | Level   | Tags     |
-| :------- | :------ | :------- |
-| trivy    | warning | security |
+| Provider                            | Level   | Tags     |
+| :---------------------------------- | :------ | :------- |
+| [trivy](/reference/analyzers/trivy) | Warning | Security |
 
 ## Parameters
 
@@ -29,9 +29,9 @@ No HIGH vulnerabilities found by Trivy.
 
 ```yaml
 rules:
-  trivy-no-high:
+  trivy.no-high:
     params:
-      max_count: 3
+      max_count: 10
 ```
 
 ## Condition

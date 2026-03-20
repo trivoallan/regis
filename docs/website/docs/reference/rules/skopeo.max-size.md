@@ -4,13 +4,13 @@ tags:
   - rules
 ---
 
-# skopeo-max-size
+# skopeo.max-size
 
-Image size is within limits.
+Checks if the image size is within the allowed limit.
 
-| Provider | Level   | Tags    |
-| :------- | :------ | :------ |
-| skopeo   | warning | hygiene |
+| Provider                              | Level   | Tags    |
+| :------------------------------------ | :------ | :------ |
+| [skopeo](/reference/analyzers/skopeo) | Warning | Hygiene |
 
 ## Parameters
 
@@ -29,7 +29,7 @@ Image size is within limits.
 
 ```yaml
 rules:
-  skopeo-max-size:
+  skopeo.max-size:
     params:
       max_mb: 500
 ```

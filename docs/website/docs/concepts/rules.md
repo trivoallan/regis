@@ -13,10 +13,10 @@ To provide immediate value out of the box, each analyzer (like Trivy, Dockle, or
 
 Below are some common rules:
 
-- `trivy-no-critical`: Fails if Trivy finds any critical vulnerabilities.
-- `dockle-no-fatal`: Fails if Dockle finds fatal issues.
-- `skopeo-no-root`: Fails if the image is configured to run as root.
-- `core-trusted-domain`: Fails if the image does not originate from a trusted registry registry.
+- `trivy.no-critical`: Fails if Trivy finds any critical vulnerabilities.
+- `dockle.no-fatal`: Fails if Dockle finds fatal issues.
+- `skopeo.no-root`: Fails if the image is configured to run as root.
+- `core.registry-domain-whitelist`: Fails if the image does not originate from a trusted registry registry.
 
 :::tip
 For the full, up-to-date list of all rules and their parameters, see the [Standard Rules](../reference/rules/).
@@ -31,7 +31,7 @@ regis-cli rules list
 To see the exact definition and JSON Logic of a specific rule:
 
 ```bash
-regis-cli rules show trivy-no-critical
+regis-cli rules show trivy.no-critical
 ```
 
 ## Customizing Rules
@@ -46,7 +46,7 @@ If you define a rule with the same `slug` as a default rule, your definition wil
 name: Custom Security Playbook
 rules:
   # Overriding a default rule
-  - slug: trivy-no-critical
+  - slug: trivy.no-critical
     title: Custom rules for critical CVEs
     level: warning # Demoting from critical to warning
     messages:
@@ -68,7 +68,7 @@ rules:
       fail: "Missing 'my-company.owner' label."
 
   # Disabling a default rule entirely
-  - slug: dockle-no-fatal
+  - slug: dockle.no-fatal
     enable: false
 ```
 
@@ -81,22 +81,22 @@ Many default rules expose configurable `params` that you can override without re
 ```yaml
 rules:
   # Change freshness threshold
-  - slug: freshness-age
+  - slug: freshness.age
     params:
       max_days: 7
 
   # Allow some critical CVEs if necessary
-  - slug: trivy-no-critical
+  - slug: trivy.no-critical
     params:
       max_count: 5
 
   # Change the forbidden user
-  - slug: skopeo-no-root
+  - slug: skopeo.no-root
     params:
       forbidden_user: "admin"
 
   # Restrict to specific trusted domains
-  - slug: core-trusted-domain
+  - slug: core.registry-domain-whitelist
     params:
       domains: ["my-private-registry.com"]
 ```
@@ -109,32 +109,32 @@ RegiS includes a set of standard rules out-of-the-box. Below are the most common
 
 ### Security Rules (Trivy & Dockle)
 
-| Slug                  | Description                                    | Default Parameters       |
-| :-------------------- | :--------------------------------------------- | :----------------------- |
-| `trivy-no-critical`   | Fails if critical vulnerabilities are found.   | `max_count: 0`           |
-| `trivy-no-high`       | Fails if high vulnerabilities are found.       | `max_count: 0`           |
-| `trivy-fix-available` | Fails if vulnerabilities have a fixed version. | `min_severity: "MEDIUM"` |
-| `trivy-secret-scan`   | Fails if embedded secrets are detected.        | None                     |
-| `dockle-no-fatal`     | Fails if Dockle finds fatal issues.            | `max_count: 0`           |
-| `dockle-max-warnings` | Limit the number of Dockle warnings.           | `max_count: 5`           |
+| Slug                  | Description                                    | Default Parameters |
+| :-------------------- | :--------------------------------------------- | :----------------- |
+| `trivy.no-critical`   | Fails if critical vulnerabilities are found.   | `max_count: 0`     |
+| `trivy.no-high`       | Fails if high vulnerabilities are found.       | `max_count: 0`     |
+| `trivy.fix-available` | Fails if vulnerabilities have a fixed version. | `max_count: 0`     |
+| `trivy.secret-scan`   | Fails if embedded secrets are detected.        | `max_count: 0`     |
+| `dockle.no-fatal`     | Fails if Dockle finds fatal issues.            | `max_count: 0`     |
+| `dockle.max-warnings` | Limit the number of Dockle warnings.           | `max_count: 5`     |
 
 ### Image Hygiene & Config (Skopeo)
 
 | Slug                     | Description                               | Default Parameters                            |
 | :----------------------- | :---------------------------------------- | :-------------------------------------------- |
-| `skopeo-no-root`         | Fails if image runs as a forbidden user.  | `forbidden_user: "root"`                      |
-| `skopeo-max-size`        | Limit uncompressed image size.            | `max_mb: 1000`                                |
-| `skopeo-max-layers`      | Limit number of filesystem layers.        | `max_layers: 30`                              |
-| `skopeo-tag-not-latest`  | Enforce specific tags (blocks `latest`).  | None                                          |
-| `skopeo-multi-arch`      | Ensure multi-platform support.            | `min_platforms: 2`                            |
-| `skopeo-exposed-ports`   | Restrict permitted exposed ports.         | `allowed_ports: [80, 443]`                    |
-| `skopeo-required-labels` | Ensure mandatory OCI/custom labels exist. | `labels: ["org.opencontainers.image.source"]` |
-| `skopeo-forbidden-env`   | Guard against forbidden environment keys. | `keys: ["DEBUG", "SECRET_KEY"]`               |
+| `skopeo.no-root`         | Fails if image runs as a forbidden user.  | `forbidden_user: "root"`                      |
+| `skopeo.max-size`        | Limit uncompressed image size.            | `max_mb: 1000`                                |
+| `skopeo.max-layers`      | Limit number of filesystem layers.        | `max_layers: 30`                              |
+| `skopeo.tag-not-latest`  | Enforce specific tags (blocks `latest`).  | None                                          |
+| `skopeo.multi-arch`      | Ensure multi-platform support.            | `min_platforms: 2`                            |
+| `skopeo.exposed-ports`   | Restrict permitted exposed ports.         | `allowed_ports: ["80", "443"]`                |
+| `skopeo.required-labels` | Ensure mandatory OCI/custom labels exist. | `labels: ["org.opencontainers.image.source"]` |
+| `skopeo.forbidden-env`   | Guard against forbidden environment keys. | `keys: ["DEBUG", "SECRET_KEY"]`               |
 
 ### Lifecycle Rules
 
-- `freshness-age`: Fails if the image is older than `max_days` (default: 30).
-- `core-trusted-domain`: Restricts image origin to a list of `domains`.
+- `freshness.age`: Fails if the image is older than `max_days` (default: 30).
+- `core.registry-domain-whitelist`: Restricts image origin to a list of `domains`.
 
 ## Rule Evaluation Mechanism
 

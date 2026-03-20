@@ -4,13 +4,13 @@ tags:
   - rules
 ---
 
-# dockle-no-fatal
+# dockle.no-fatal
 
-No FATAL issues found by Dockle.
+Fails if [dockle](/reference/analyzers/dockle) finds fatal issues.
 
-| Provider | Level    | Tags     |
-| :------- | :------- | :------- |
-| dockle   | critical | security |
+| Provider                              | Level    | Tags     |
+| :------------------------------------ | :------- | :------- |
+| [dockle](/reference/analyzers/dockle) | Critical | Security |
 
 ## Parameters
 
@@ -29,9 +29,8 @@ No FATAL issues found by Dockle.
 
 ```yaml
 rules:
-  dockle-no-fatal:
-    params:
-      max_count: 0
+  dockle.no-fatal:
+    enable: true
 ```
 
 ## Condition

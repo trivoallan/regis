@@ -4,9 +4,9 @@ tags:
   - rules
 ---
 
-# core-trusted-domain
+# core.registry-domain-whitelist
 
-Image must originate from a trusted domain.
+Checks if requested image registry domain is in the domains list.
 
 | Provider | Level    | Tags     |
 | :------- | :------- | :------- |
@@ -20,16 +20,16 @@ Image must originate from a trusted domain.
 
 ## Messages
 
-| Type     | Message                                                          |
-| :------- | :--------------------------------------------------------------- |
-| **Pass** | Image originates from a trusted domain.                          |
-| **Fail** | Image registry '${request.registry}' is not in the trusted list. |
+| Type     | Message                                                                 |
+| :------- | :---------------------------------------------------------------------- |
+| **Pass** | Image registry domain '${request.registry}' is in the domains list.     |
+| **Fail** | Image registry domain '${request.registry}' is not in the domains list. |
 
 ## Playbook Example
 
 ```yaml
 rules:
-  core-trusted-domain:
+  core.registry-domain-whitelist:
     params:
       domains: ["my-registry.com"]
 ```

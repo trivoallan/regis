@@ -4,13 +4,13 @@ tags:
   - rules
 ---
 
-# trivy-fix-available
+# trivy.fix-available
 
-All vulnerabilities should be fixed if a patch exists.
+Fails if vulnerabilities with available fixes are found.
 
-| Provider | Level   | Tags     |
-| :------- | :------ | :------- |
-| trivy    | warning | security |
+| Provider                            | Level   | Tags     |
+| :---------------------------------- | :------ | :------- |
+| [trivy](/reference/analyzers/trivy) | Warning | Security |
 
 ## Parameters
 
@@ -29,7 +29,7 @@ All vulnerabilities should be fixed if a patch exists.
 
 ```yaml
 rules:
-  trivy-fix-available:
+  trivy.fix-available:
     params:
       max_count: 5
 ```

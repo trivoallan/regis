@@ -4,19 +4,19 @@ tags:
   - rules
 ---
 
-# skopeo-forbidden-env
+# skopeo.forbidden-env
 
-Image must not contain forbidden environment variables.
+Checks if forbidden environment variables are present in the image config.
 
-| Provider | Level    | Tags     |
-| :------- | :------- | :------- |
-| skopeo   | critical | security |
+| Provider                              | Level    | Tags     |
+| :------------------------------------ | :------- | :------- |
+| [skopeo](/reference/analyzers/skopeo) | Critical | Security |
 
 ## Parameters
 
 | Name   | Default Value             |
 | :----- | :------------------------ |
-| `keys` | `['DEBUG', 'SECRET_KEY']` |
+| `keys` | `["DEBUG", "SECRET_KEY"]` |
 
 ## Messages
 
@@ -29,9 +29,9 @@ Image must not contain forbidden environment variables.
 
 ```yaml
 rules:
-  skopeo-forbidden-env:
+  skopeo.forbidden-env:
     params:
-      keys: ["DEBUG", "SECRET_KEY", "DATABASE_URL"]
+      keys: ["PASSWORD", "TOKEN"]
 ```
 
 ## Condition

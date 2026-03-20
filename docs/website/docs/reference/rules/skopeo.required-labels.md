@@ -4,19 +4,19 @@ tags:
   - rules
 ---
 
-# skopeo-required-labels
+# skopeo.required-labels
 
-Image must have required OCI labels.
+Checks if required OCI labels are present on the image.
 
-| Provider | Level   | Tags     |
-| :------- | :------ | :------- |
-| skopeo   | warning | metadata |
+| Provider                              | Level   | Tags     |
+| :------------------------------------ | :------ | :------- |
+| [skopeo](/reference/analyzers/skopeo) | Warning | Metadata |
 
 ## Parameters
 
 | Name     | Default Value                         |
 | :------- | :------------------------------------ |
-| `labels` | `['org.opencontainers.image.source']` |
+| `labels` | `["org.opencontainers.image.source"]` |
 
 ## Messages
 
@@ -29,10 +29,11 @@ Image must have required OCI labels.
 
 ```yaml
 rules:
-  skopeo-required-labels:
+  skopeo.required-labels:
     params:
       labels:
-        ["org.opencontainers.image.source", "org.opencontainers.image.vendor"]
+        - org.opencontainers.image.source
+        - org.opencontainers.image.revision
 ```
 
 ## Condition

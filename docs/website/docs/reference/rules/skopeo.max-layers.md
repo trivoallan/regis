@@ -4,13 +4,13 @@ tags:
   - rules
 ---
 
-# skopeo-max-layers
+# skopeo.max-layers
 
-Image has an acceptable number of layers.
+Checks if the number of image layers is below the limit.
 
-| Provider | Level   | Tags        |
-| :------- | :------ | :---------- |
-| skopeo   | warning | performance |
+| Provider                              | Level   | Tags        |
+| :------------------------------------ | :------ | :---------- |
+| [skopeo](/reference/analyzers/skopeo) | Warning | Performance |
 
 ## Parameters
 
@@ -29,9 +29,9 @@ Image has an acceptable number of layers.
 
 ```yaml
 rules:
-  skopeo-max-layers:
+  skopeo.max-layers:
     params:
-      max_layers: 50
+      max_layers: 20
 ```
 
 ## Condition

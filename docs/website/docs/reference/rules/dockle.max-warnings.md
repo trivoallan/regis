@@ -4,7 +4,7 @@ tags:
   - rules
 ---
 
-# dockle-max-warnings
+# dockle.max-warnings
 
 Too many [dockle](/reference/analyzers/dockle) warnings found.
 
@@ -29,7 +29,7 @@ Too many [dockle](/reference/analyzers/dockle) warnings found.
 
 ```yaml
 rules:
-  dockle-max-warnings:
+  dockle.max-warnings:
     params:
       max_count: 10
 ```

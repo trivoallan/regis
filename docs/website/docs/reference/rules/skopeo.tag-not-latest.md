@@ -4,13 +4,17 @@ tags:
   - rules
 ---
 
-# skopeo-tag-not-latest
+# skopeo.tag-not-latest
 
-Image tag should not be 'latest'.
+Ensures the image tag is not `latest`.
 
-| Provider | Level   | Tags      |
-| :------- | :------ | :-------- |
-| skopeo   | warning | lifecycle |
+| Provider                              | Level   | Tags      |
+| :------------------------------------ | :------ | :-------- |
+| [skopeo](/reference/analyzers/skopeo) | Warning | Lifecycle |
+
+## Parameters
+
+This rule has no parameters.
 
 ## Messages
 
@@ -23,7 +27,8 @@ Image tag should not be 'latest'.
 
 ```yaml
 rules:
-  skopeo-tag-not-latest: {}
+  skopeo.tag-not-latest:
+    enable: true
 ```
 
 ## Condition

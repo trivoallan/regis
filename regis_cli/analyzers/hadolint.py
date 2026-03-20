@@ -19,6 +19,45 @@ class HadolintAnalyzer(BaseAnalyzer):
     name = "hadolint"
     schema_file = "analyzer/hadolint.schema.json"
 
+    @classmethod
+    def default_rules(cls) -> list[dict[str, Any]]:
+        return [
+            {
+                "slug": "hadolint.no-error",
+                "description": "No 'error' level violations found by Hadolint.",
+                "level": "critical",
+                "tags": ["best-practices"],
+                "params": {"max_count": 0},
+                "condition": {
+                    "<=": [
+                        {"var": "results.hadolint.issues_by_level.error"},
+                        {"var": "rule.params.max_count"},
+                    ]
+                },
+                "messages": {
+                    "pass": "No hadolint errors detected.",  # nosec B105
+                    "fail": "Hadolint found ${results.hadolint.issues_by_level.error} errors.",
+                },
+            },
+            {
+                "slug": "hadolint.max-warnings",
+                "description": "Limit the number of warnings from Hadolint.",
+                "level": "warning",
+                "tags": ["best-practices"],
+                "params": {"max_count": 5},
+                "condition": {
+                    "<=": [
+                        {"var": "results.hadolint.issues_by_level.warning"},
+                        {"var": "rule.params.max_count"},
+                    ]
+                },
+                "messages": {
+                    "pass": "Hadolint warnings are within limits.",  # nosec B105
+                    "fail": "Too many hadolint warnings: ${results.hadolint.issues_by_level.warning} (max ${rule.params.max_count}).",
+                },
+            },
+        ]
+
     def analyze(
         self,
         client: RegistryClient,

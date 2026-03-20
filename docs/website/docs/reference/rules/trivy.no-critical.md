@@ -4,13 +4,13 @@ tags:
   - rules
 ---
 
-# trivy-no-critical
+# trivy.no-critical
 
-No CRITICAL vulnerabilities found by Trivy.
+Fails if critical vulnerabilities are found by Trivy.
 
-| Provider | Level    | Tags     |
-| :------- | :------- | :------- |
-| trivy    | critical | security |
+| Provider                            | Level    | Tags     |
+| :---------------------------------- | :------- | :------- |
+| [trivy](/reference/analyzers/trivy) | Critical | Security |
 
 ## Parameters
 
@@ -29,9 +29,8 @@ No CRITICAL vulnerabilities found by Trivy.
 
 ```yaml
 rules:
-  trivy-no-critical:
-    params:
-      max_count: 0
+  trivy.no-critical:
+    enable: true
 ```
 
 ## Condition

@@ -57,7 +57,7 @@ class FreshnessAnalyzer(BaseAnalyzer):
     def default_rules(cls) -> list[dict[str, Any]]:
         return [
             {
-                "slug": "freshness-age",
+                "slug": "freshness.age",
                 "description": "Image should be less than expected days old.",
                 "level": "warning",
                 "tags": ["freshness"],
