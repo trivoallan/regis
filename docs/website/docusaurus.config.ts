@@ -51,17 +51,15 @@ const config: Config = {
             "https://github.com/trivoallan/regis-cli/edit/main/docs/website/",
           includeCurrentVersion: true,
           lastVersion: "current",
+
           versions: {
             current: {
               label: "v0.15.0",
               path: "",
-              badge: false,
             },
             "main-dev": {
               label: "main-dev",
               path: "main-dev",
-              banner: "unreleased",
-              badge: false,
             },
           },
         },

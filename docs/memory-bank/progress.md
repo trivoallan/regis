@@ -19,7 +19,7 @@
 - Added post-install notes feature to `bootstrap` commands and updated documentation.
 
 - Unified linting experience by migrating to Trunk.
-- Migrated documentation to Docusaurus and established versioning strategy.
+- Migrated documentation to Docusaurus, established dynamic versioning strategy with tag names, and cleaned up redundant folders.
 
 ## Future Roadmap
 

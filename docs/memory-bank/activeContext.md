@@ -67,6 +67,9 @@ Documentation update following the pipeline refactoring and checklist enhancemen
   - CLI now reads and displays `.regis-post-install.md` from the generated project.
   - Templates for repository and playbook include personalized setup instructions (GitHub/GitLab setup, next steps).
   - Updated `commands.adoc` to document this behavior.
+- Improved Docusaurus versioning:
+  - Updated `.github/workflows/docs-publish.yml` to use `${{ github.ref_name }}` for dynamic versioning on tags.
+  - Cleaned up redundant `version-current` files and `versions.json` entries.
 
 ## Next Steps
 
