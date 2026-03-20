@@ -47,5 +47,12 @@ jobs:
           commit_user_email: github-actions[bot]@users.noreply.github.com
           commit_author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
 
+      - name: Re-checkout merge ref
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+
       - name: Trunk Check
         uses: trunk-io/trunk-action@v1
