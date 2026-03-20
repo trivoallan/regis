@@ -42,6 +42,7 @@ lint:
       paths: [tests/**]
     - linters: [markdownlint]
       paths:
+        - CHANGELOG.md
         - docs/website/docs/reference/schemas/**
         - docs/website/versioned_docs/**
         - "**/*.mdx"
