@@ -75,6 +75,9 @@ jobs:
             pipenv run generate-schema-doc --config-file docs/website/json-schema-for-humans.config.json docs/website/static/schemas/$cat docs/website/docs/reference/schemas/$cat
           done
 
+      - name: Generate Rules Reference
+        run: pipenv run regis-cli rules list -f markdown -D docs/website/docs/reference/rules
+
       - name: Generate Example Reports
         run: |
           mkdir -p docs/website/examples/playbooks/default
