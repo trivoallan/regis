@@ -130,7 +130,7 @@ class EndOfLifeAnalyzer(BaseAnalyzer):
     """Check end-of-life status for the image product via endoflife.date."""
 
     name = "endoflife"
-    schema_file = "endoflife.schema.json"
+    schema_file = "analyzer/endoflife.schema.json"
 
     def analyze(
         self,

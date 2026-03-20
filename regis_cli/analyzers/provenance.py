@@ -22,7 +22,7 @@ class ProvenanceAnalyzer(BaseAnalyzer):
     """Check for build provenance and supply-chain attestations."""
 
     name = "provenance"
-    schema_file = "provenance.schema.json"
+    schema_file = "analyzer/provenance.schema.json"
 
     def analyze(
         self,

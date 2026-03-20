@@ -48,7 +48,7 @@ include = ["regis_cli*"]
 
 [tool.setuptools.package-data]
 regis_cli = [
-  "schemas/*.json",
+  "schemas/**/*",
   "scorecard/*.yaml",
   "templates/**/*",
   "cookiecutters/**/*",

@@ -19,7 +19,7 @@ class PopularityAnalyzer(BaseAnalyzer):
     """Fetch download count, star count, and metadata from Docker Hub."""
 
     name = "popularity"
-    schema_file = "popularity.schema.json"
+    schema_file = "analyzer/popularity.schema.json"
 
     def analyze(
         self,

@@ -18,7 +18,7 @@ class DockleAnalyzer(BaseAnalyzer):
     """Lints a remote image using Dockle."""
 
     name = "dockle"
-    schema_file = "dockle.schema.json"
+    schema_file = "analyzer/dockle.schema.json"
 
     @classmethod
     def default_rules(cls) -> list[dict[str, Any]]:

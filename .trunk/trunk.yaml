@@ -40,6 +40,9 @@ lint:
   ignore:
     - linters: [bandit]
       paths: [tests/**]
+    - linters: [markdownlint]
+      paths: [docs/website/docs/reference/schemas/**]
+
 actions:
   disabled:
     - trunk-announce

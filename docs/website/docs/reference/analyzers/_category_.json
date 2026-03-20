@@ -1,0 +1,8 @@
+{
+  "label": "Analyzers",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Information about the various analyzers used by RegiS CLI to inspect container images."
+  }
+}

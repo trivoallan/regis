@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>regis-cli Report — library/alpine:latest</title>
+    <style>
+      @import url("https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css");
+
+      :root {
+        --pico-font-size: 16px;
+      }
+
+      body {
+        padding: 0;
+        margin: 0;
+      }
+
+      #layout-wrapper {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      #sidebar {
+        width: 280px;
+        background: var(--pico-card-background-color);
+        border-right: 1px solid var(--pico-muted-border-color);
+        padding: 1.5rem;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        overflow-y: auto;
+      }
+
+      #sidebar nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      #sidebar nav details {
+        border-bottom: none;
+        margin-bottom: 1rem;
+      }
+
+      #sidebar nav summary {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.6;
+        margin-bottom: 0.5rem;
+      }
+
+      #sidebar nav a {
+        display: block;
+        padding: 0.4rem 0.8rem;
+        border-radius: var(--pico-border-radius);
+        text-decoration: none;
+        color: var(--pico-color);
+        font-size: 0.95rem;
+        transition: background 0.2s;
+      }
+
+      #sidebar nav a:hover {
+        background: var(--pico-primary-background);
+        color: var(--pico-primary-inverse);
+        font-weight: bold;
+      }
+
+      #sidebar nav a.active {
+        background: var(--pico-primary-background);
+        color: var(--pico-primary-inverse);
+        font-weight: bold;
+      }
+
+      main.container {
+        flex: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 3rem;
+      }
+
+      header {
+        margin-bottom: 3rem;
+      }
+
+      header h1 {
+        margin-bottom: 0.5rem;
+      }
+
+      .meta {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      article {
+        margin-bottom: 2rem;
+      }
+
+      .playbook-section {
+        margin-bottom: 1.5rem;
+        padding-left: 1rem;
+        border-left: 3px solid var(--pico-muted-border-color);
+      }
+
+      .section-hint {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-top: -1rem;
+        margin-bottom: 1rem;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        background: var(--pico-secondary-background);
+        color: var(--pico-secondary-inverse);
+        margin-right: 0.3rem;
+        white-space: nowrap;
+      }
+
+      .badge.success {
+        background: #22c55e;
+        color: white;
+      }
+
+      .badge.error {
+        background: #ef4444;
+        color: white;
+      }
+
+      .badge.outline {
+        background: transparent;
+        border: 1px solid var(--pico-muted-border-color);
+        color: inherit;
+      }
+
+      .status-passed {
+        color: #22c55e;
+      }
+
+      .status-failed {
+        color: #ef4444;
+      }
+
+      summary {
+        font-weight: bold;
+      }
+
+      footer {
+        text-align: center;
+        border-top: 1px solid var(--pico-muted-border-color);
+        padding-top: 2rem;
+        margin-top: 4rem;
+      }
+
+      .playbook-section .recommandation-nogo {
+        color: #ef4444;
+      }
+
+      .playbook-section .recommandation-go {
+        color: #22c55e;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
+
+      header h2 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
+      .tag-card {
+        margin-bottom: var(--pico-spacing);
+        border: 1px solid var(--pico-muted-border-color);
+      }
+
+      .tag-card:hover {
+        border-color: var(--pico-primary);
+        background: var(--pico-primary-background);
+      }
+
+      .rule-row td {
+        vertical-align: top;
+      }
+
+      /* Tier Badges */
+      .tier-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 0.85rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .tier-gold {
+        background: linear-gradient(135deg, #ffd700, #ffae00);
+        color: #5c4b00;
+        border: 1px solid #d4af37;
+      }
+
+      .tier-silver {
+        background: linear-gradient(135deg, #c0c0c0, #a9a9a9);
+        color: #333;
+        border: 1px solid #999;
+      }
+
+      .tier-bronze {
+        background: linear-gradient(135deg, #cd7f32, #a0522d);
+        color: #fff;
+        border: 1px solid #8b4513;
+      }
+
+      /* Badge Classes */
+      .bg-success {
+        background-color: #28a745 !important;
+        color: white !important;
+      }
+      .bg-warning {
+        background-color: #ffc107 !important;
+        color: black !important;
+      }
+      .bg-error {
+        background-color: #dc3545 !important;
+        color: white !important;
+      }
+      .bg-information {
+        background-color: #17a2b8 !important;
+        color: white !important;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-right: 0.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="layout-wrapper">
+      <!-- Sidebar -->
+      <aside id="sidebar">
+        <nav>
+          <details open inner>
+            <summary>Navigation</summary>
+            <ul>
+              <li>
+                <a href="index.html"> Overview </a>
+              </li>
+
+              <li>
+                <a href="compliance.html" aria-current="page" class="active">
+                  Compliance
+                </a>
+              </li>
+
+              <li>
+                <a href="security.html"> Security </a>
+              </li>
+
+              <li>
+                <a href="supply-chain.html"> Supply Chain &amp; Quality </a>
+              </li>
+
+              <li>
+                <a href="best-practices.html"> Best Practices </a>
+              </li>
+
+              <li>
+                <a href="insights.html"> Insights &amp; Lifecycle </a>
+              </li>
+
+              <li>
+                <a href="metadata.html"> Technical Details </a>
+              </li>
+            </ul>
+          </details>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="container">
+        <header>
+          <h1>registry-1.docker.io/library/alpine:latest</h1>
+        </header>
+
+        <section id="playbook-0">
+          <article>
+            <style>
+              .widgets-container {
+                display: grid;
+                grid-template-columns: repeat(
+                  auto-fit,
+                  minmax(min(100%, 300px), 1fr)
+                );
+                gap: var(--pico-spacing);
+                margin-bottom: calc(2 * var(--pico-spacing));
+              }
+              .widget-wrapper {
+                margin-bottom: var(--pico-spacing);
+              }
+              .widget-wrapper.is-standalone {
+                grid-column: 1 / -1;
+              }
+              .widget-card {
+                height: 100%;
+                padding: var(--pico-spacing);
+                background: var(--pico-card-background-color);
+                border-radius: var(--pico-border-radius);
+                box-shadow: var(--pico-card-box-shadow);
+              }
+              .widget-content.has-url {
+                cursor: pointer;
+              }
+            </style>
+
+            <div class="playbook-section">
+              <h4></h4>
+
+              <!-- prettier-ignore-start -->
+
+              <div class="widgets-container">
+                <div class="widget-wrapper">
+                  <div class="widget-card" style="text-align: center">
+                    <div class="widget-content">
+                      <strong
+                        style="
+                          font-size: 0.9rem;
+                          text-transform: uppercase;
+                          letter-spacing: 0.05em;
+                          opacity: 0.8;
+                        "
+                        >Overall Compliance</strong
+                      ><br />
+                      <span
+                        style="
+                          font-size: 2rem;
+                          font-weight: bold;
+                          line-height: 1;
+                        "
+                        >0%</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div class="widget-wrapper">
+                  <div class="widget-card" style="text-align: center">
+                    <div class="widget-content">
+                      <strong
+                        style="
+                          font-size: 0.9rem;
+                          text-transform: uppercase;
+                          letter-spacing: 0.05em;
+                          opacity: 0.8;
+                        "
+                        >Mandatory Requirements</strong
+                      ><br />
+                      <span
+                        style="
+                          font-size: 2rem;
+                          font-weight: bold;
+                          line-height: 1;
+                        "
+                        >0%</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div class="widget-wrapper">
+                  <div class="widget-card" style="text-align: center">
+                    <div class="widget-content">
+                      <strong
+                        style="
+                          font-size: 0.9rem;
+                          text-transform: uppercase;
+                          letter-spacing: 0.05em;
+                          opacity: 0.8;
+                        "
+                        >Recommended Requirements</strong
+                      ><br />
+                      <span
+                        style="
+                          font-size: 2rem;
+                          font-weight: bold;
+                          line-height: 1;
+                        "
+                        >0%</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr />
+            </div>
+
+            <hr />
+
+            <div class="playbook-section">
+              <h4>Mandatory Requirements</h4>
+            </div>
+
+            <hr />
+
+            <div class="playbook-section">
+              <h4>Recommended Requirements</h4>
+            </div>
+          </article>
+        </section>
+
+        <article style="border-left: 5px solid #ef4444">
+          <header>
+            <h3 style="color: #ef4444; margin: 0">⚠️ dockle Analyzer Error</h3>
+          </header>
+          <p>
+            <strong>validation:</strong> Failed to parse dockle output:
+            2026-03-20T02:16:30.606+0100 [31mFATAL[0m Pull it with &#34;docker
+            pull docker.io/library/alpine:latest&#34; or &#34;dockle --timeout
+            600s&#34; to increase the timeout unable to initialize a image
+            struct: failed to initialize source: pinging container registry
+            registry-1.docker.io: Get
+            &#34;https://registry-1.docker.io/v2/&#34;: context deadline
+            exceeded
+          </p>
+        </article>
+
+        <article style="border-left: 5px solid #ef4444">
+          <header>
+            <h3 style="color: #ef4444; margin: 0">⚠️ trivy Analyzer Error</h3>
+          </header>
+          <p>
+            <strong>validation:</strong> Report from analyzer &#39;trivy&#39;
+            failed schema validation: Additional properties are not allowed
+            (&#39;fixed_count&#39;, &#39;secrets_count&#39; were unexpected)
+          </p>
+        </article>
+
+        <footer>
+          <small>
+            Generated by <strong>regis-cli</strong> ·
+            <a href="report.json" target="_blank">JSON Report</a>
+          </small>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

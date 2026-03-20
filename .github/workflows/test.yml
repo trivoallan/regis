@@ -17,6 +17,7 @@ env:
 
 jobs:
   test:
+    name: pytest
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -25,13 +26,18 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.14
+          python-version: "3.13"
           cache: pipenv
 
       - name: Install dependencies
         run: |
           pip install pipenv
           pipenv sync --dev
+
+      - name: Diagnostic - check environment
+        run: |
+          pipenv run pip list
+          pipenv run python -c "import cookiecutter; print('cookiecutter import ok')"
 
       - name: Run pytest
         run: pipenv run pytest

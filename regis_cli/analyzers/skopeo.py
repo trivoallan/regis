@@ -27,7 +27,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
     """Fetch metadata for a Docker image using skopeo. Provides raw inspect data and structured platform details."""
 
     name = "skopeo"
-    schema_file = "skopeo.schema.json"
+    schema_file = "analyzer/skopeo.schema.json"
 
     @classmethod
     def default_rules(cls) -> list[dict[str, Any]]:

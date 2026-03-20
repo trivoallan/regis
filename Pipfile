@@ -12,9 +12,12 @@ json-logic-qubit = "*"
 pyyaml = "*"
 jinja2 = "*"
 regis-cli = {file = ".", editable = true}
-cookiecutter = "*"
+cookiecutter = ">=2.7.1"
 referencing = "<0.37.0"
 python-gitlab = ">=4.4.0"
+json-schema-for-humans = "*"
+chardet = "*"
+charset-normalizer = "*"
 
 [dev-packages]
 pytest = ">=7.4"
@@ -27,4 +30,4 @@ types-requests = "*"
 types-jsonschema = "*"
 
 [requires]
-python_version = "3.14"
+python_version = "3.13"

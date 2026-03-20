@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/trivoallan/regis-cli/main/regis_cli/schemas/playbook.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/trivoallan/regis-cli/main/regis_cli/(reference/schemas/playbook.schema.json
 name: "{{ cookiecutter.project_name }}"
 description: "{{ cookiecutter.description }}"
 

@@ -131,7 +131,7 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
     """Fetch OpenSSF Scorecard security assessment for the image source repository."""
 
     name = "scorecarddev"
-    schema_file = "scorecarddev.schema.json"
+    schema_file = "analyzer/scorecarddev.schema.json"
 
     def analyze(
         self,

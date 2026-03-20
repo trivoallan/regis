@@ -29,7 +29,7 @@ class BaseAnalyzer(ABC):
     #: Human-readable name of the analyzer.
     name: str = ""
 
-    #: Filename of the JSON Schema inside ``regis_cli/schemas/``.
+    #: Filename of the JSON Schema inside ``regis_cli/reference/schemas/``.
     schema_file: str = ""
 
     @classmethod

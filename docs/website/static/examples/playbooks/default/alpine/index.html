@@ -1,0 +1,1642 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>regis-cli Report — library/alpine:latest</title>
+    <style>
+      @import url("https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css");
+
+      :root {
+        --pico-font-size: 16px;
+      }
+
+      body {
+        padding: 0;
+        margin: 0;
+      }
+
+      #layout-wrapper {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      #sidebar {
+        width: 280px;
+        background: var(--pico-card-background-color);
+        border-right: 1px solid var(--pico-muted-border-color);
+        padding: 1.5rem;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        overflow-y: auto;
+      }
+
+      #sidebar nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      #sidebar nav details {
+        border-bottom: none;
+        margin-bottom: 1rem;
+      }
+
+      #sidebar nav summary {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.6;
+        margin-bottom: 0.5rem;
+      }
+
+      #sidebar nav a {
+        display: block;
+        padding: 0.4rem 0.8rem;
+        border-radius: var(--pico-border-radius);
+        text-decoration: none;
+        color: var(--pico-color);
+        font-size: 0.95rem;
+        transition: background 0.2s;
+      }
+
+      #sidebar nav a:hover {
+        background: var(--pico-primary-background);
+        color: var(--pico-primary-inverse);
+        font-weight: bold;
+      }
+
+      #sidebar nav a.active {
+        background: var(--pico-primary-background);
+        color: var(--pico-primary-inverse);
+        font-weight: bold;
+      }
+
+      main.container {
+        flex: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 3rem;
+      }
+
+      header {
+        margin-bottom: 3rem;
+      }
+
+      header h1 {
+        margin-bottom: 0.5rem;
+      }
+
+      .meta {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      article {
+        margin-bottom: 2rem;
+      }
+
+      .playbook-section {
+        margin-bottom: 1.5rem;
+        padding-left: 1rem;
+        border-left: 3px solid var(--pico-muted-border-color);
+      }
+
+      .section-hint {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-top: -1rem;
+        margin-bottom: 1rem;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        background: var(--pico-secondary-background);
+        color: var(--pico-secondary-inverse);
+        margin-right: 0.3rem;
+        white-space: nowrap;
+      }
+
+      .badge.success {
+        background: #22c55e;
+        color: white;
+      }
+
+      .badge.error {
+        background: #ef4444;
+        color: white;
+      }
+
+      .badge.outline {
+        background: transparent;
+        border: 1px solid var(--pico-muted-border-color);
+        color: inherit;
+      }
+
+      .status-passed {
+        color: #22c55e;
+      }
+
+      .status-failed {
+        color: #ef4444;
+      }
+
+      summary {
+        font-weight: bold;
+      }
+
+      footer {
+        text-align: center;
+        border-top: 1px solid var(--pico-muted-border-color);
+        padding-top: 2rem;
+        margin-top: 4rem;
+      }
+
+      .playbook-section .recommandation-nogo {
+        color: #ef4444;
+      }
+
+      .playbook-section .recommandation-go {
+        color: #22c55e;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
+
+      header h2 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
+      .tag-card {
+        margin-bottom: var(--pico-spacing);
+        border: 1px solid var(--pico-muted-border-color);
+      }
+
+      .tag-card:hover {
+        border-color: var(--pico-primary);
+        background: var(--pico-primary-background);
+      }
+
+      .rule-row td {
+        vertical-align: top;
+      }
+
+      /* Tier Badges */
+      .tier-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 0.85rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .tier-gold {
+        background: linear-gradient(135deg, #ffd700, #ffae00);
+        color: #5c4b00;
+        border: 1px solid #d4af37;
+      }
+
+      .tier-silver {
+        background: linear-gradient(135deg, #c0c0c0, #a9a9a9);
+        color: #333;
+        border: 1px solid #999;
+      }
+
+      .tier-bronze {
+        background: linear-gradient(135deg, #cd7f32, #a0522d);
+        color: #fff;
+        border: 1px solid #8b4513;
+      }
+
+      /* Badge Classes */
+      .bg-success {
+        background-color: #28a745 !important;
+        color: white !important;
+      }
+      .bg-warning {
+        background-color: #ffc107 !important;
+        color: black !important;
+      }
+      .bg-error {
+        background-color: #dc3545 !important;
+        color: white !important;
+      }
+      .bg-information {
+        background-color: #17a2b8 !important;
+        color: white !important;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-right: 0.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="layout-wrapper">
+      <!-- Sidebar -->
+      <aside id="sidebar">
+        <nav>
+          <details open inner>
+            <summary>Navigation</summary>
+            <ul>
+              <li>
+                <a href="index.html" aria-current="page" class="active">
+                  Overview
+                </a>
+              </li>
+
+              <li>
+                <a href="compliance.html"> Compliance </a>
+              </li>
+
+              <li>
+                <a href="security.html"> Security </a>
+              </li>
+
+              <li>
+                <a href="supply-chain.html"> Supply Chain &amp; Quality </a>
+              </li>
+
+              <li>
+                <a href="best-practices.html"> Best Practices </a>
+              </li>
+
+              <li>
+                <a href="insights.html"> Insights &amp; Lifecycle </a>
+              </li>
+
+              <li>
+                <a href="metadata.html"> Technical Details </a>
+              </li>
+            </ul>
+          </details>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="container">
+        <header>
+          <h1>registry-1.docker.io/library/alpine:latest</h1>
+        </header>
+
+        <section id="rules">
+          <section id="rules-summary" style="margin-bottom: 3rem">
+            <h3>Rules Evaluation</h3>
+
+            <div class="grid">
+              <article
+                class="tag-card"
+                onclick="filterByTag('compatibility')"
+                style="cursor: pointer; transition: transform 0.2s"
+              >
+                <header
+                  style="
+                    padding: 0.5rem 1rem;
+                    margin-bottom: 0.5rem;
+                    background: var(--pico-secondary-background);
+                    border-radius: var(--pico-border-radius)
+                      var(--pico-border-radius) 0 0;
+                  "
+                >
+                  <small
+                    style="
+                      text-transform: uppercase;
+                      font-weight: bold;
+                      letter-spacing: 0.05em;
+                    "
+                    >compatibility</small
+                  >
+                </header>
+                <div style="text-align: center">
+                  <span
+                    style="font-size: 2rem; font-weight: bold; line-height: 1"
+                    >100%</span
+                  >
+                  <br />
+                  <small style="opacity: 0.7">1 / 1 passed</small>
+                </div>
+              </article>
+
+              <article
+                class="tag-card"
+                onclick="filterByTag('freshness')"
+                style="cursor: pointer; transition: transform 0.2s"
+              >
+                <header
+                  style="
+                    padding: 0.5rem 1rem;
+                    margin-bottom: 0.5rem;
+                    background: var(--pico-secondary-background);
+                    border-radius: var(--pico-border-radius)
+                      var(--pico-border-radius) 0 0;
+                  "
+                >
+                  <small
+                    style="
+                      text-transform: uppercase;
+                      font-weight: bold;
+                      letter-spacing: 0.05em;
+                    "
+                    >freshness</small
+                  >
+                </header>
+                <div style="text-align: center">
+                  <span
+                    style="font-size: 2rem; font-weight: bold; line-height: 1"
+                    >0%</span
+                  >
+                  <br />
+                  <small style="opacity: 0.7">0 / 1 passed</small>
+                </div>
+              </article>
+
+              <article
+                class="tag-card"
+                onclick="filterByTag('hygiene')"
+                style="cursor: pointer; transition: transform 0.2s"
+              >
+                <header
+                  style="
+                    padding: 0.5rem 1rem;
+                    margin-bottom: 0.5rem;
+                    background: var(--pico-secondary-background);
+                    border-radius: var(--pico-border-radius)
+                      var(--pico-border-radius) 0 0;
+                  "
+                >
+                  <small
+                    style="
+                      text-transform: uppercase;
+                      font-weight: bold;
+                      letter-spacing: 0.05em;
+                    "
+                    >hygiene</small
+                  >
+                </header>
+                <div style="text-align: center">
+                  <span
+                    style="font-size: 2rem; font-weight: bold; line-height: 1"
+                    >100%</span
+                  >
+                  <br />
+                  <small style="opacity: 0.7">1 / 1 passed</small>
+                </div>
+              </article>
+
+              <article
+                class="tag-card"
+                onclick="filterByTag('lifecycle')"
+                style="cursor: pointer; transition: transform 0.2s"
+              >
+                <header
+                  style="
+                    padding: 0.5rem 1rem;
+                    margin-bottom: 0.5rem;
+                    background: var(--pico-secondary-background);
+                    border-radius: var(--pico-border-radius)
+                      var(--pico-border-radius) 0 0;
+                  "
+                >
+                  <small
+                    style="
+                      text-transform: uppercase;
+                      font-weight: bold;
+                      letter-spacing: 0.05em;
+                    "
+                    >lifecycle</small
+                  >
+                </header>
+                <div style="text-align: center">
+                  <span
+                    style="font-size: 2rem; font-weight: bold; line-height: 1"
+                    >0%</span
+                  >
+                  <br />
+                  <small style="opacity: 0.7">0 / 1 passed</small>
+                </div>
+              </article>
+
+              <article
+                class="tag-card"
+                onclick="filterByTag('metadata')"
+                style="cursor: pointer; transition: transform 0.2s"
+              >
+                <header
+                  style="
+                    padding: 0.5rem 1rem;
+                    margin-bottom: 0.5rem;
+                    background: var(--pico-secondary-background);
+                    border-radius: var(--pico-border-radius)
+                      var(--pico-border-radius) 0 0;
+                  "
+                >
+                  <small
+                    style="
+                      text-transform: uppercase;
+                      font-weight: bold;
+                      letter-spacing: 0.05em;
+                    "
+                    >metadata</small
+                  >
+                </header>
+                <div style="text-align: center">
+                  <span
+                    style="font-size: 2rem; font-weight: bold; line-height: 1"
+                    >0%</span
+                  >
+                  <br />
+                  <small style="opacity: 0.7">0 / 1 passed</small>
+                </div>
+              </article>
+
+              <article
+                class="tag-card"
+                onclick="filterByTag('performance')"
+                style="cursor: pointer; transition: transform 0.2s"
+              >
+                <header
+                  style="
+                    padding: 0.5rem 1rem;
+                    margin-bottom: 0.5rem;
+                    background: var(--pico-secondary-background);
+                    border-radius: var(--pico-border-radius)
+                      var(--pico-border-radius) 0 0;
+                  "
+                >
+                  <small
+                    style="
+                      text-transform: uppercase;
+                      font-weight: bold;
+                      letter-spacing: 0.05em;
+                    "
+                    >performance</small
+                  >
+                </header>
+                <div style="text-align: center">
+                  <span
+                    style="font-size: 2rem; font-weight: bold; line-height: 1"
+                    >100%</span
+                  >
+                  <br />
+                  <small style="opacity: 0.7">1 / 1 passed</small>
+                </div>
+              </article>
+
+              <article
+                class="tag-card"
+                onclick="filterByTag('security')"
+                style="cursor: pointer; transition: transform 0.2s"
+              >
+                <header
+                  style="
+                    padding: 0.5rem 1rem;
+                    margin-bottom: 0.5rem;
+                    background: var(--pico-secondary-background);
+                    border-radius: var(--pico-border-radius)
+                      var(--pico-border-radius) 0 0;
+                  "
+                >
+                  <small
+                    style="
+                      text-transform: uppercase;
+                      font-weight: bold;
+                      letter-spacing: 0.05em;
+                    "
+                    >security</small
+                  >
+                </header>
+                <div style="text-align: center">
+                  <span
+                    style="font-size: 2rem; font-weight: bold; line-height: 1"
+                    >40%</span
+                  >
+                  <br />
+                  <small style="opacity: 0.7">4 / 10 passed</small>
+                </div>
+              </article>
+            </div>
+
+            <div
+              style="
+                margin-top: 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <h4 style="margin: 0">Detailed Results</h4>
+              <div style="display: flex; gap: 0.5rem; align-items: center">
+                <small>Filter by tag:</small>
+                <select
+                  id="tag-filter"
+                  onchange="filterByTag(this.value)"
+                  style="
+                    margin-bottom: 0;
+                    padding: 0.2rem 2rem 0.2rem 0.5rem;
+                    width: auto;
+                  "
+                >
+                  <option value="all">All Tags</option>
+
+                  <option value="compatibility">Compatibility</option>
+
+                  <option value="freshness">Freshness</option>
+
+                  <option value="hygiene">Hygiene</option>
+
+                  <option value="lifecycle">Lifecycle</option>
+
+                  <option value="metadata">Metadata</option>
+
+                  <option value="performance">Performance</option>
+
+                  <option value="security">Security</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="overflow-auto" style="margin-top: 1rem">
+              <table class="striped" id="rules-table">
+                <thead>
+                  <tr>
+                    <th>Status</th>
+                    <th>Level</th>
+                    <th>Rule</th>
+                    <th>Tags</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="rule-row" data-tags="security">
+                    <td style="text-align: center">
+                      <span class="status-passed">✅</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> critical </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong
+                        >Image must not contain forbidden environment
+                        variables.</strong
+                      >
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        No forbidden environment variables found.
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >skopeo</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> security </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="security">
+                    <td style="text-align: center">
+                      <span class="status-passed">✅</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> critical </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong>Image must not run as root.</strong>
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Image does not run as &#39;root&#39;.
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >skopeo</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> security </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="security">
+                    <td style="text-align: center">
+                      <span class="status-passed">✅</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> critical </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong
+                        >Image must originate from a trusted domain.</strong
+                      >
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Image originates from a trusted domain.
+                      </div>
+                    </td>
+                    <td><span class="badge"> security </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="security">
+                    <td style="text-align: center">
+                      <span class="status-passed">✅</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> warning </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong>Image exposes permitted ports.</strong>
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        All exposed ports are allowed.
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >skopeo</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> security </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="performance">
+                    <td style="text-align: center">
+                      <span class="status-passed">✅</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> warning </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong>Image has an acceptable number of layers.</strong>
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Image has 1 layers.
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >skopeo</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> performance </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="hygiene">
+                    <td style="text-align: center">
+                      <span class="status-passed">✅</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> warning </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong>Image size is within limits.</strong>
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Image size is within limits (0 bytes).
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >skopeo</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> hygiene </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="compatibility">
+                    <td style="text-align: center">
+                      <span class="status-passed">✅</span>
+                    </td>
+                    <td>
+                      <small><span class="badge outline"> info </span></small>
+                    </td>
+                    <td>
+                      <strong>Image should support multiple platforms.</strong>
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Image supports 16 platforms.
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >skopeo</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> compatibility </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="security">
+                    <td style="text-align: center">
+                      <span class="status-failed">❌</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> critical </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong>No FATAL issues found by Dockle.</strong>
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Dockle found ${results.dockle.issues_by_level.FATAL}
+                        fatal issues (max allowed: 0).
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >dockle</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> security </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="security">
+                    <td style="text-align: center">
+                      <span class="status-failed">❌</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> critical </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong
+                        >No CRITICAL vulnerabilities found by Trivy.</strong
+                      >
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Image has ${results.trivy.critical_count} critical CVEs
+                        (max allowed: 0).
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >trivy</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> security </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="security">
+                    <td style="text-align: center">
+                      <span class="status-failed">❌</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> critical </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong
+                        >No secrets or credentials should be embedded in the
+                        image.</strong
+                      >
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Trivy detected ${results.trivy.secrets_count} secrets or
+                        credentials in the image.
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >trivy</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> security </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="security">
+                    <td style="text-align: center">
+                      <span class="status-failed">❌</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> warning </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong>Too many Dockle warnings found.</strong>
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Dockle found ${results.dockle.issues_by_level.WARN}
+                        warnings (max allowed: 5).
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >dockle</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> security </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="freshness">
+                    <td style="text-align: center">
+                      <span class="status-failed">❌</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> warning </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong
+                        >Image should be less than expected days old.</strong
+                      >
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Image is older than 30 days (50 days).
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >freshness</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> freshness </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="metadata">
+                    <td style="text-align: center">
+                      <span class="status-failed">❌</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> warning </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong>Image must have required OCI labels.</strong>
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Image is missing one or more required labels:
+                        [&#39;org.opencontainers.image.source&#39;].
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >skopeo</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> metadata </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="lifecycle">
+                    <td style="text-align: center">
+                      <span class="status-failed">❌</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> warning </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong>Image tag should not be &#39;latest&#39;.</strong>
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Image is using the &#39;latest&#39; tag. Use immutable
+                        version tags instead.
+                      </div>
+                    </td>
+                    <td><span class="badge"> lifecycle </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="security">
+                    <td style="text-align: center">
+                      <span class="status-failed">❌</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> warning </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong
+                        >All vulnerabilities should be fixed if a patch
+                        exists.</strong
+                      >
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Image has ${results.trivy.fixed_count} vulnerabilities
+                        with available fixes.
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >trivy</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> security </span></td>
+                  </tr>
+
+                  <tr class="rule-row" data-tags="security">
+                    <td style="text-align: center">
+                      <span class="status-failed">❌</span>
+                    </td>
+                    <td>
+                      <small
+                        ><span class="badge outline"> warning </span></small
+                      >
+                    </td>
+                    <td>
+                      <strong>No HIGH vulnerabilities found by Trivy.</strong>
+                      <div
+                        style="
+                          font-size: 0.85rem;
+                          opacity: 0.8;
+                          margin-top: 0.2rem;
+                        "
+                      >
+                        Image has ${results.trivy.high_count} high CVEs (max
+                        allowed: 0).
+                      </div>
+
+                      <div style="margin-top: 0.4rem">
+                        <small
+                          style="
+                            background: var(--pico-muted-background);
+                            padding: 0.1rem 0.4rem;
+                            border-radius: 4px;
+                            font-size: 0.7rem;
+                            opacity: 0.7;
+                          "
+                          >trivy</small
+                        >
+                      </div>
+                    </td>
+                    <td><span class="badge"> security </span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <script>
+            function filterByTag(tag) {
+              const table = document.getElementById("rules-table");
+              const select = document.getElementById("tag-filter");
+              const rows = table.getElementsByClassName("rule-row");
+              const cards = document.getElementsByClassName("tag-card");
+
+              // Update select value if called from card
+              select.value = tag;
+
+              for (let i = 0; i < rows.size || i < rows.length; i++) {
+                const row = rows[i];
+                const rowTags = row.getAttribute("data-tags").split(" ");
+                if (tag === "all" || rowTags.includes(tag)) {
+                  row.style.display = "";
+                } else {
+                  row.style.display = "none";
+                }
+              }
+
+              // Highlight active card
+              for (let i = 0; i < cards.length; i++) {
+                const card = cards[i];
+                if (card.getAttribute("onclick").includes("'" + tag + "'")) {
+                  card.style.border = "2px solid var(--pico-primary)";
+                  card.style.transform = "scale(1.05)";
+                } else {
+                  card.style.border =
+                    "1px solid var(--pico-muted-border-color)";
+                  card.style.transform = "scale(1)";
+                }
+              }
+            }
+          </script>
+        </section>
+
+        <section id="playbook-0">
+          <article>
+            <style>
+              .widgets-container {
+                display: grid;
+                grid-template-columns: repeat(
+                  auto-fit,
+                  minmax(min(100%, 300px), 1fr)
+                );
+                gap: var(--pico-spacing);
+                margin-bottom: calc(2 * var(--pico-spacing));
+              }
+              .widget-wrapper {
+                margin-bottom: var(--pico-spacing);
+              }
+              .widget-wrapper.is-standalone {
+                grid-column: 1 / -1;
+              }
+              .widget-card {
+                height: 100%;
+                padding: var(--pico-spacing);
+                background: var(--pico-card-background-color);
+                border-radius: var(--pico-border-radius);
+                box-shadow: var(--pico-card-box-shadow);
+              }
+              .widget-content.has-url {
+                cursor: pointer;
+              }
+            </style>
+
+            <div class="playbook-section">
+              <h4></h4>
+
+              <!-- prettier-ignore-start -->
+
+              <div class="widgets-container">
+                <div class="widget-wrapper recommandation-nogo">
+                  <div class="widget-card" style="text-align: center">
+                    <div class="widget-content">
+                      <strong
+                        style="
+                          font-size: 0.9rem;
+                          text-transform: uppercase;
+                          letter-spacing: 0.05em;
+                          opacity: 0.8;
+                        "
+                        >Recommandation</strong
+                      ><br />
+                      <span
+                        style="
+                          font-size: 2rem;
+                          font-weight: bold;
+                          line-height: 1;
+                        "
+                        >NOGO</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr />
+            </div>
+
+            <hr />
+
+            <div class="playbook-section">
+              <h4></h4>
+
+              <!-- prettier-ignore-start -->
+
+              <div class="widgets-container">
+                <div class="widget-wrapper">
+                  <div class="widget-card" style="text-align: center">
+                    <div class="widget-content has-url">
+                      <a
+                        href="compliance.html"
+                        style="
+                          text-decoration: none;
+                          color: inherit;
+                          display: block;
+                        "
+                      >
+                        <strong
+                          style="
+                            font-size: 0.9rem;
+                            text-transform: uppercase;
+                            letter-spacing: 0.05em;
+                            opacity: 0.8;
+                          "
+                          >Overall Compliance</strong
+                        ><br />
+                        <span
+                          style="
+                            font-size: 2rem;
+                            font-weight: bold;
+                            line-height: 1;
+                          "
+                          >0%</span
+                        >
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="widget-wrapper">
+                  <div class="widget-card" style="text-align: center">
+                    <div class="widget-content has-url">
+                      <a
+                        href="compliance.html"
+                        style="
+                          text-decoration: none;
+                          color: inherit;
+                          display: block;
+                        "
+                      >
+                        <strong
+                          style="
+                            font-size: 0.9rem;
+                            text-transform: uppercase;
+                            letter-spacing: 0.05em;
+                            opacity: 0.8;
+                          "
+                          >Mandatory Requirements</strong
+                        ><br />
+                        <span
+                          style="
+                            font-size: 2rem;
+                            font-weight: bold;
+                            line-height: 1;
+                          "
+                          >0 / 0</span
+                        >
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="widget-wrapper">
+                  <div class="widget-card" style="text-align: center">
+                    <div class="widget-content has-url">
+                      <a
+                        href="compliance.html"
+                        style="
+                          text-decoration: none;
+                          color: inherit;
+                          display: block;
+                        "
+                      >
+                        <strong
+                          style="
+                            font-size: 0.9rem;
+                            text-transform: uppercase;
+                            letter-spacing: 0.05em;
+                            opacity: 0.8;
+                          "
+                          >Recommended Requirements</strong
+                        ><br />
+                        <span
+                          style="
+                            font-size: 2rem;
+                            font-weight: bold;
+                            line-height: 1;
+                          "
+                          >0 / 0</span
+                        >
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr />
+            </div>
+
+            <hr />
+
+            <div class="playbook-section">
+              <h4>Request</h4>
+
+              <!-- prettier-ignore-start -->
+
+              <div class="widgets-container">
+                <div class="widget-wrapper">
+                  <div class="widget-card" style="text-align: left">
+                    <div class="widget-content">
+                      <strong
+                        style="
+                          font-size: 0.9rem;
+                          text-transform: uppercase;
+                          letter-spacing: 0.05em;
+                          opacity: 0.8;
+                        "
+                        >Creation Time</strong
+                      ><br />
+                      <span
+                        style="
+                          font-size: 2rem;
+                          font-weight: bold;
+                          line-height: 1;
+                        "
+                        >2026-03-20</span
+                      >
+
+                      <br /><small style="opacity: 0.8; font-size: 0.9rem"
+                        >01:27:14</small
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div class="widget-wrapper">
+                  <div class="widget-card" style="text-align: left">
+                    <div class="widget-content">
+                      <strong
+                        style="
+                          font-size: 0.9rem;
+                          text-transform: uppercase;
+                          letter-spacing: 0.05em;
+                          opacity: 0.8;
+                        "
+                        >Triggered by</strong
+                      ><br />
+                      <span
+                        style="
+                          font-size: 2rem;
+                          font-weight: bold;
+                          line-height: 1;
+                        "
+                        >Unknown Emiter</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div class="widget-wrapper is-standalone">
+                  <div class="widget-card" style="text-align: left">
+                    <h5
+                      style="
+                        margin-bottom: 0.5rem;
+                        color: var(--pico-secondary);
+                      "
+                    >
+                      Request Parameters
+                    </h5>
+
+                    <div class="overflow-auto">
+                      <table class="striped">
+                        <thead>
+                          <tr>
+                            <th>Parameter</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td><strong>url</strong></td>
+                            <td>alpine:latest</td>
+                          </tr>
+
+                          <tr>
+                            <td><strong>registry</strong></td>
+                            <td>registry-1.docker.io</td>
+                          </tr>
+
+                          <tr>
+                            <td><strong>repository</strong></td>
+                            <td>library/alpine</td>
+                          </tr>
+
+                          <tr>
+                            <td><strong>tag</strong></td>
+                            <td>latest</td>
+                          </tr>
+
+                          <tr>
+                            <td><strong>digest</strong></td>
+                            <td>
+                              sha256-25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td><strong>analyzers</strong></td>
+                            <td>
+                              [&#39;dockle&#39;, &#39;endoflife&#39;,
+                              &#39;freshness&#39;, &#39;hadolint&#39;,
+                              &#39;popularity&#39;, &#39;provenance&#39;,
+                              &#39;sbom&#39;, &#39;scorecarddev&#39;,
+                              &#39;size&#39;, &#39;skopeo&#39;, &#39;trivy&#39;,
+                              &#39;versioning&#39;]
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td><strong>timestamp</strong></td>
+                            <td>2026-03-20 01:27:14</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr />
+            </div>
+
+            <hr />
+
+            <div class="playbook-section">
+              <h4>Requested Image</h4>
+
+              <!-- prettier-ignore-start -->
+
+              <div class="widgets-container">
+                <div class="widget-wrapper">
+                  <div class="widget-card" style="text-align: left">
+                    <div class="widget-content">
+                      <strong
+                        style="
+                          font-size: 0.9rem;
+                          text-transform: uppercase;
+                          letter-spacing: 0.05em;
+                          opacity: 0.8;
+                        "
+                        >Registry</strong
+                      ><br />
+                      <span
+                        style="
+                          font-size: 2rem;
+                          font-weight: bold;
+                          line-height: 1;
+                        "
+                        >registry-1.docker.io</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div class="widget-wrapper">
+                  <div class="widget-card" style="text-align: left">
+                    <div class="widget-content">
+                      <strong
+                        style="
+                          font-size: 0.9rem;
+                          text-transform: uppercase;
+                          letter-spacing: 0.05em;
+                          opacity: 0.8;
+                        "
+                        >Repository</strong
+                      ><br />
+                      <span
+                        style="
+                          font-size: 2rem;
+                          font-weight: bold;
+                          line-height: 1;
+                        "
+                        >library/alpine</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div class="widget-wrapper">
+                  <div class="widget-card" style="text-align: left">
+                    <div class="widget-content">
+                      <strong
+                        style="
+                          font-size: 0.9rem;
+                          text-transform: uppercase;
+                          letter-spacing: 0.05em;
+                          opacity: 0.8;
+                        "
+                        >Tag</strong
+                      ><br />
+                      <span
+                        style="
+                          font-size: 2rem;
+                          font-weight: bold;
+                          line-height: 1;
+                        "
+                        >latest</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr />
+            </div>
+          </article>
+        </section>
+
+        <article style="border-left: 5px solid #ef4444">
+          <header>
+            <h3 style="color: #ef4444; margin: 0">⚠️ dockle Analyzer Error</h3>
+          </header>
+          <p>
+            <strong>validation:</strong> Failed to parse dockle output:
+            2026-03-20T02:16:30.606+0100 [31mFATAL[0m Pull it with &#34;docker
+            pull docker.io/library/alpine:latest&#34; or &#34;dockle --timeout
+            600s&#34; to increase the timeout unable to initialize a image
+            struct: failed to initialize source: pinging container registry
+            registry-1.docker.io: Get
+            &#34;https://registry-1.docker.io/v2/&#34;: context deadline
+            exceeded
+          </p>
+        </article>
+
+        <article style="border-left: 5px solid #ef4444">
+          <header>
+            <h3 style="color: #ef4444; margin: 0">⚠️ trivy Analyzer Error</h3>
+          </header>
+          <p>
+            <strong>validation:</strong> Report from analyzer &#39;trivy&#39;
+            failed schema validation: Additional properties are not allowed
+            (&#39;fixed_count&#39;, &#39;secrets_count&#39; were unexpected)
+          </p>
+        </article>
+
+        <footer>
+          <small>
+            Generated by <strong>regis-cli</strong> ·
+            <a href="report.json" target="_blank">JSON Report</a>
+          </small>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

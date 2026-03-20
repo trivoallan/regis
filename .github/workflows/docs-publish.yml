@@ -8,7 +8,6 @@ on:
       - v*
     paths:
       - docs/**
-      - antora-playbook.yml
   workflow_dispatch:
 
 env:
@@ -65,21 +64,58 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
 
       - name: Generate Schema Docs
-        run: pipenv run python scripts/generate_schema_docs.py
+        run: |
+          for cat in $(ls -d regis_cli/schemas/*); do
+            cat=$(basename $cat);
+            mkdir -p docs/website/static/schemas/$cat
+            rm -fv ./docs/website/static/schemas/$cat/*.schema.json
+            cp -v ./regis_cli/schemas/$cat/*.schema.json ./docs/website/static/schemas/$cat/
+            mkdir -p docs/website/docs/reference/schemas/$cat
+            pipenv run generate-schema-doc --config-file docs/website/json-schema-for-humans.config.json docs/website/static/schemas/$cat docs/website/docs/reference/schemas/$cat
+          done
 
       - name: Generate Example Reports
-        run: pipenv run python scripts/generate_example_reports.py
+        run: |
+          mkdir -p docs/website/examples/playbooks/default
+          pipenv run regis-cli analyze --evaluate alpine:latest -s -D docs/website/examples/playbooks/default/alpine
+          pipenv run regis-cli analyze --evaluate ghcr.io/trivoallan/regis-cli:v0.15.0 -s -D docs/website/examples/playbooks/default/regis-cli
 
-      - name: Install Antora
-        run: npm install @antora/cli@3.1 @antora/site-generator@3.1 @sntke/antora-mermaid-extension
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
 
-      - name: Build Antora Site
-        run: npx antora antora-playbook.yml
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: docs/website
+
+      - name: Build Docusaurus Site
+        run: pnpm run build
+        working-directory: docs/website
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build/site
+          path: docs/website/build
 
   deploy:
     environment:

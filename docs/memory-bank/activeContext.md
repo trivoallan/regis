@@ -52,6 +52,11 @@ Documentation update following the pipeline refactoring and checklist enhancemen
   - Enabled `fetch-depth: 0` for full history checkout.
   - Removed explicit `ref` override to allow Trunk's default merge-base detection on PRs.
   - Updated auto-commit step to explicitly push to the PR branch.
+- Migrated Documentation from Antora to Docusaurus (located in `docs/website`).
+- Relocated JSON schemas from `reference/schemas/` to `regis_cli/schemas/` to ensure they are properly packaged.
+- Added `__init__.py` files to `regis_cli/schemas/` and subdirectories to support `importlib.resources`.
+- Updated `pyproject.toml` to include the new schemas directory in package data.
+- Exported JSON schemas to `docs/website/static/schemas/` for Docusaurus referencing.
 - Added **Post-install notes** feature to `bootstrap` commands:
   - CLI now reads and displays `.regis-post-install.md` from the generated project.
   - Templates for repository and playbook include personalized setup instructions (GitHub/GitLab setup, next steps).
