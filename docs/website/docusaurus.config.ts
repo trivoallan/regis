@@ -64,7 +64,7 @@ const config: Config = {
       title: "Regis CLI",
       items: [],
     },
-    footer: false,
+    footer: {},
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,

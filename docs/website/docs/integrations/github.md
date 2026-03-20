@@ -154,7 +154,7 @@ regis-cli analyze <image-url> --playbook https://raw.githubusercontent.com/trivo
 ```
 
 :::tip
-You can also define local playbooks in your repository to enforce custom organization-wide policies. Check the [Understand Playbooks](../usage/playbooks.md) guide for more details.
+You can also define local playbooks in your repository to enforce custom organization-wide policies. Check the [Understand Playbooks](../overview/playbooks.md) guide for more details.
 :::
 
 ### Adding CI Metadata

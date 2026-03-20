@@ -29,5 +29,5 @@ Reports are written to the `reports/` directory by default (e.g., `reports/docke
 - `gitlab`: Seamless integration with GitLab CI/CD for automated reporting and MR updates.
 
 :::info
-Our **[GitLab integration](./integrations/gitlab.md)** is currently the most feature-rich, offering automated Merge Request comments, status updates, and deep CI/CD pipeline integration.
+Our **[GitLab integration](../integrations/gitlab)** is currently the most feature-rich, offering automated Merge Request comments, status updates, and deep CI/CD pipeline integration.
 :::

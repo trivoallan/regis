@@ -185,7 +185,7 @@ The `regis-cli` integration can also append review checklists to the Merge Reque
 
 This is driven by the `integrations.gitlab.checklists` section in your playbook. You can dynamically include items using `show_if` conditions, and automatically pre-check them using `check_if` conditions.
 :::tip
-For more details on configuring checklist items, see the [Playbooks Reference](../usage/playbooks.md#mr-description-checklists).
+For more details on configuring checklist items, see the [Playbooks Reference](../overview/playbooks.md#mr-description-checklists).
 :::
 
 ## Review Apps (Premium/Ultimate Only)
