@@ -1049,7 +1049,23 @@ def rules_group():
     "rules_path",
     help="Path to an optional rules.yaml file to merge overrides.",
 )
-def list_rules(rules_path: str | None) -> None:
+@click.option(
+    "-f",
+    "--format",
+    "output_format",
+    type=click.Choice(["text", "markdown"], case_sensitive=False),
+    default="text",
+    help="Output format (default: text).",
+)
+@click.option(
+    "-o",
+    "--output",
+    "output_file",
+    help="Output filename for the rules list.",
+)
+def list_rules(
+    rules_path: str | None, output_format: str, output_file: str | None
+) -> None:
     """List all available default rules and any overrides."""
     import yaml
 
@@ -1073,17 +1089,45 @@ def list_rules(rules_path: str | None) -> None:
         click.echo("No rules found.")
         return
 
-    for rule in final_rules:
-        enabled = rule.get("enable", True)
-        enabled_mark = "[x]" if enabled else "[ ]"
-        params = rule.get("params", {})
-        params_str = ""
-        if params:
-            params_str = f" ({', '.join(f'{k}={v}' for k, v in params.items())})"
+    if output_format.lower() == "markdown":
+        lines = []
+        lines.append("| Provider | Slug | Title | Level | Tags | Parameters |")
+        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
 
-        click.echo(
-            f"  {enabled_mark} {rule.get('slug', 'unnamed'):25s} {rule.get('level', 'info'):8s} {rule.get('title', '')}{params_str}"
-        )
+        for rule in final_rules:
+            provider = rule.get("provider", "custom")
+            slug = rule.get("slug", "n/a")
+            title = rule.get("title", "n/a")
+            level = rule.get("level", "info")
+            tags = ", ".join(rule.get("tags", []))
+            params = rule.get("params", {})
+            params_str = ""
+            if params:
+                params_str = ", ".join(f"`{k}={v}`" for k, v in params.items())
+            lines.append(
+                f"| {provider} | `{slug}` | {title} | {level} | {tags} | {params_str} |"
+            )
+        content = "\n".join(lines) + "\n"
+    else:
+        # Default text format
+        lines = []
+        for rule in final_rules:
+            enabled = rule.get("enable", True)
+            enabled_mark = "[x]" if enabled else "[ ]"
+            params = rule.get("params", {})
+            params_str = ""
+            if params:
+                params_str = f" ({', '.join(f'{k}={v}' for k, v in params.items())})"
+            lines.append(
+                f"  {enabled_mark} {rule.get('slug', 'unnamed'):25s} {rule.get('level', 'info'):8s} {rule.get('title', '')}{params_str}"
+            )
+        content = "\n".join(lines) + "\n"
+
+    if output_file:
+        Path(output_file).write_text(content, encoding="utf-8")
+        click.echo(f"  Rules list written to {output_file}", err=True)
+    else:
+        click.echo(content)
 
 
 @rules_group.command(name="show")

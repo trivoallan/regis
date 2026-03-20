@@ -59,6 +59,7 @@ def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
     default_rules.append(
         {
             "slug": "trusted-domain",
+            "provider": "core",
             "title": "Image must originate from a trusted domain.",
             "level": "critical",
             "tags": ["security"],
@@ -81,7 +82,10 @@ def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
     for name in analyzers_present:
         if name in analyzers:
             cls = analyzers[name]
-            default_rules.extend(cls.default_rules())
+            rules = cls.default_rules()
+            for rule in rules:
+                rule["provider"] = name
+            default_rules.extend(rules)
 
     return default_rules
 
