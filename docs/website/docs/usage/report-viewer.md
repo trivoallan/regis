@@ -8,6 +8,10 @@ tags:
 
 The `regis-cli` Report Viewer is a modern, interactive Single Page Application (SPA) designed to transform complex security data into clear, actionable insights.
 
+:::info
+For a deep dive into the architecture and core philosophy of our reporting engine, including how the CLI interacts with the SPA, see the **[Reporting Concepts](../concepts/reports.md)** page.
+:::
+
 ## Features
 
 - **Dashboard Overview**: Get a high-level summary of your image's security posture and compliance status at a glance.
