@@ -2,11 +2,10 @@
 
 ## [0.17.1](https://github.com/trivoallan/regis-cli/compare/v0.17.0...v0.17.1) (2026-03-20)
 
-
 ### Bug Fixes
 
-* Add step to re-checkout merge ref for pull requests in the Trunk workflow. ([3678043](https://github.com/trivoallan/regis-cli/commit/36780437ade9f5ad69a39cc5596e6f820b34535b))
-* Remove `--force` from Docusaurus versioning in CI and correct `versions.json` format. ([4fee11d](https://github.com/trivoallan/regis-cli/commit/4fee11d7d3697570751eb32351febc3bafa4e56d))
+- Add step to re-checkout merge ref for pull requests in the Trunk workflow. ([3678043](https://github.com/trivoallan/regis-cli/commit/36780437ade9f5ad69a39cc5596e6f820b34535b))
+- Remove `--force` from Docusaurus versioning in CI and correct `versions.json` format. ([4fee11d](https://github.com/trivoallan/regis-cli/commit/4fee11d7d3697570751eb32351febc3bafa4e56d))
 
 ## [0.17.0](https://github.com/trivoallan/regis-cli/compare/v0.16.0...v0.17.0) (2026-03-20)
 
