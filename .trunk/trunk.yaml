@@ -41,7 +41,9 @@ lint:
     - linters: [bandit]
       paths: [tests/**]
     - linters: [markdownlint]
-      paths: [docs/website/docs/reference/schemas/**]
+      paths:
+        - docs/website/docs/reference/schemas/**
+        - docs/website/versioned_docs/**
 
 actions:
   disabled:

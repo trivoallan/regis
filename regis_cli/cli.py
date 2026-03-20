@@ -440,7 +440,7 @@ def _render_mr_templates(
     if valid_mr_templates:
         try:
             from cookiecutter.main import cookiecutter
-        except ImportError as exc:
+        except ImportError:
             click.echo(
                 "  Warning: cookiecutter not found. Cannot evaluate mr_templates.",
                 err=True,

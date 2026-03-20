@@ -57,22 +57,22 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Added `__init__.py` files to `regis_cli/schemas/` and subdirectories to support `importlib.resources`.
 - Updated `pyproject.toml` to include the new schemas directory in package data.
 - Exported JSON schemas to `docs/website/static/schemas/` for Docusaurus referencing.
+- Configured Docusaurus versioning:
+  - Added `stable` version for the latest tag.
+  - Configured `docusaurus.config.ts` to support multiple versions.
+  - Updated `release-please-config.json` to include `docs/website/versions.json`.
+- Updated `docs-publish.yml` workflow to only trigger versioning for tags starting with `v`.
+- Fixed lint error in `cli.py` (unused variable `exc`).
 - Added **Post-install notes** feature to `bootstrap` commands:
   - CLI now reads and displays `.regis-post-install.md` from the generated project.
   - Templates for repository and playbook include personalized setup instructions (GitHub/GitLab setup, next steps).
   - Updated `commands.adoc` to document this behavior.
+- Improved Docusaurus versioning:
+  - Updated `.github/workflows/docs-publish.yml` to use `${{ github.ref_name }}` for dynamic versioning on tags.
+  - Cleaned up redundant `version-current` files and `versions.json` entries.
 
 ## Next Steps
 
-- Create a PR for the post-install notes feature.
-  - Fixed `fatal: ambiguous argument 'HEAD^2'` in Trunk Check workflow:
-  - Enabled `fetch-depth: 0` for full history checkout.
-  - Removed explicit `ref` override to allow Trunk's default merge-base detection on PRs.
-  - Updated auto-commit step to explicitly push to the PR branch.
-
-## Next Steps
-
-- Create a PR for the `bootstrap` command fix and the Trunk Check fix.
-- Monitor CI/CD results for the new branch.
+- Create a PR for the documentation versioning setup and Docusaurus migration.
 - Monitor CI/CD results for the new branch.
 - Merge PR #52.

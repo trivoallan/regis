@@ -6,7 +6,9 @@
         "regis_cli/cookiecutters/playbook/cookiecutter.json",
         "README.md",
         ".github/workflows/docs-publish.yml",
-        "docs/website/docs/examples/regis-cli.md"
+        "docs/website/docs/examples/regis-cli.md",
+        "docs/website/versions.json",
+        "docs/website/docusaurus.config.ts"
       ],
       "release-type": "python"
     }

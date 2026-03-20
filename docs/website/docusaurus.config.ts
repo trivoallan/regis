@@ -48,9 +48,26 @@ const config: Config = {
         docs: {
           routeBasePath: "/",
           editUrl:
-            "https://github.com/trivoallan/regis-cli/tree/main/docs/website/",
+            "https://github.com/trivoallan/regis-cli/edit/main/docs/website/",
+          includeCurrentVersion: true,
+          lastVersion: "current",
+
+          versions: {
+            current: {
+              label: "v0.15.0",
+              path: "",
+              badge: false,
+            },
+            "main-dev": {
+              label: "main-dev",
+              path: "main-dev",
+              banner: "unreleased",
+              badge: false,
+            },
+          },
         },
         blog: false,
+        pages: false,
       } satisfies Preset.Options,
     ],
   ],
@@ -62,7 +79,18 @@ const config: Config = {
     },
     navbar: {
       title: "Regis CLI",
-      items: [],
+      items: [
+        {
+          type: "docsVersionDropdown",
+          position: "right",
+          dropdownActiveClassDisabled: true,
+        },
+        {
+          href: "https://github.com/trivoallan/regis-cli",
+          label: "GitHub",
+          position: "right",
+        },
+      ],
     },
     footer: {},
     prism: {
