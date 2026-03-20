@@ -1,5 +1,3 @@
-import pytest
-
 from regis_cli.rules.evaluator import evaluate_rules
 
 
