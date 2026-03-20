@@ -440,7 +440,7 @@ def _render_mr_templates(
     if valid_mr_templates:
         try:
             from cookiecutter.main import cookiecutter
-        except ImportError:
+        except ImportError as exc:
             click.echo(
                 "  Warning: cookiecutter not found. Cannot evaluate mr_templates.",
                 err=True,
@@ -911,9 +911,9 @@ def bootstrap_repository(output_dir: str, no_input: bool) -> None:
         from importlib import resources
 
         from cookiecutter.main import cookiecutter
-    except ImportError:
+    except ImportError as exc:
         raise click.ClickException(
-            "cookiecutter not found. Please install it with 'pip install cookiecutter'."
+            f"cookiecutter not found or failed to import: {exc}. Please install it with 'pip install cookiecutter'."
         ) from None
 
     template_path = resources.files("regis_cli") / "cookiecutters" / "repository"
@@ -956,9 +956,9 @@ def bootstrap_playbook(output_dir: str, no_input: bool) -> None:
         from importlib import resources
 
         from cookiecutter.main import cookiecutter
-    except ImportError:
+    except ImportError as exc:
         raise click.ClickException(
-            "cookiecutter not found. Please install it with 'pip install cookiecutter'."
+            f"cookiecutter not found or failed to import: {exc}. Please install it with 'pip install cookiecutter'."
         ) from None
 
     template_path = resources.files("regis_cli") / "cookiecutters" / "playbook"
