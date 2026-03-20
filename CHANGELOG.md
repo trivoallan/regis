@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.17.4](https://github.com/trivoallan/regis-cli/compare/v0.17.3...v0.17.4) (2026-03-20)
+
+### Bug Fixes
+
+- versions... ([e247847](https://github.com/trivoallan/regis-cli/commit/e2478470f3713df0cce720265d7dbe7af333fcc3))
+
 ## [0.17.3](https://github.com/trivoallan/regis-cli/compare/v0.17.2...v0.17.3) (2026-03-20)
 
 ### Bug Fixes
