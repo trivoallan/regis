@@ -65,11 +65,12 @@ jobs:
 
       - name: Generate Schema Docs
         run: |
+          # Copy all schemas first to allow cross-category resolution
+          mkdir -p docs/website/static/schemas
+          cp -rv regis_cli/schemas/* docs/website/static/schemas/
+
           for cat in $(find regis_cli/schemas/* -maxdepth 0 -type d); do
             cat=$(basename $cat);
-            mkdir -p docs/website/static/schemas/$cat
-            rm -fv ./docs/website/static/schemas/$cat/*.schema.json
-            cp -v ./regis_cli/schemas/$cat/*.schema.json ./docs/website/static/schemas/$cat/
             mkdir -p docs/website/docs/reference/schemas/$cat
             pipenv run generate-schema-doc --config-file docs/website/json-schema-for-humans.config.json docs/website/static/schemas/$cat docs/website/docs/reference/schemas/$cat
           done

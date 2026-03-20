@@ -16,8 +16,9 @@ cookiecutter = ">=2.7.1"
 referencing = "<0.37.0"
 python-gitlab = ">=4.4.0"
 json-schema-for-humans = "*"
-chardet = "*"
-charset-normalizer = "*"
+chardet = ">=5.0.0"
+charset-normalizer = ">=2.0.0"
+urllib3 = ">=1.26.0,<3"
 
 [dev-packages]
 pytest = ">=7.4"

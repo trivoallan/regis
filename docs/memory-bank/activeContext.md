@@ -70,6 +70,11 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Improved Docusaurus versioning:
   - Updated `.github/workflows/docs-publish.yml` to use `${{ github.ref_name }}` for dynamic versioning on tags.
   - Cleaned up redundant `version-current` files and `versions.json` entries.
+- Fixed CI Warnings and Errors:
+  - Added `regis_cli/schemas/playbook/jsonlogic.schema.json` to resolve schema generation warnings.
+  - Updated `docs-publish.yml` to copy all schemas to a shared static directory, fixing cross-category references.
+  - Resolved `fatal: ambiguous argument 'HEAD^2'` in Trunk Check CI by refining checkout and specifying `check-mode`.
+  - Suppressed `RequestsDependencyWarning` by pinning `urllib3`, `chardet`, and `charset-normalizer` in `Pipfile`.
 
 ## Next Steps
 
