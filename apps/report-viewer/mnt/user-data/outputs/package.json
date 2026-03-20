@@ -1,0 +1,14 @@
+{
+  "name": "regis-cli",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build:ui": "npm run build --workspace=packages/ui",
+    "build:viewer": "npm run build --workspace=apps/report-viewer",
+    "build": "npm run build:ui && npm run build:viewer",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  }
+}

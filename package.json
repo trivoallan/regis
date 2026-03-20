@@ -1,0 +1,11 @@
+{
+  "name": "regis-cli",
+  "private": true,
+  "scripts": {
+    "build:ui": "pnpm --filter @regis-cli/ui build",
+    "build:viewer": "pnpm --filter @regis-cli/report-viewer build",
+    "build": "pnpm run build:ui && pnpm run build:viewer",
+    "dev": "pnpm --filter @regis-cli/report-viewer dev",
+    "typecheck": "pnpm -r typecheck"
+  }
+}

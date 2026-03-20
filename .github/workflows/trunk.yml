@@ -39,6 +39,7 @@ jobs:
 
       - name: Commit and Push Changes
         if: github.event_name == 'pull_request'
+        id: commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           branch: ${{ github.head_ref }}
@@ -51,7 +52,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ steps.commit.outputs.commit_sha }}
           fetch-depth: 0
 
       - name: Trunk Check
