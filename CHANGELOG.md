@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.16.0](https://github.com/trivoallan/regis-cli/compare/v0.15.0...v0.16.0) (2026-03-20)
+
+
+### Features
+
+* **ci:** automate trunk fmt and auto-commit in CI ([#48](https://github.com/trivoallan/regis-cli/issues/48)) ([76070ad](https://github.com/trivoallan/regis-cli/commit/76070ad58a2fce9f87113860e1863cebf04191a3))
+* **cli/bootstrap:** display post-install notes after bootstrap ([#52](https://github.com/trivoallan/regis-cli/issues/52)) ([89419bf](https://github.com/trivoallan/regis-cli/commit/89419bf821fc40f9548598dca95ab00f926fb18b))
+* implement Playbook Tiers, Dynamic Badges and restore multi-page reporting ([#56](https://github.com/trivoallan/regis-cli/issues/56)) ([ce91c37](https://github.com/trivoallan/regis-cli/commit/ce91c376766f99a0fca7f42ec9f262a1f6ecae07))
+
+
+### Bug Fixes
+
+* **ci:** fix trunk fmt conflict and resolve HTML syntax errors ([6aa52c1](https://github.com/trivoallan/regis-cli/commit/6aa52c16eb749ba6095bb814d6622c8ec39198c4))
+* **ci:** robust auto-formatting and protected branch handling ([#51](https://github.com/trivoallan/regis-cli/issues/51)) ([ae9ae51](https://github.com/trivoallan/regis-cli/commit/ae9ae5144612dfb845371db50cab813888bd089c))
+* **ci:** Update Python version to 3.14 in test workflow. ([e260b53](https://github.com/trivoallan/regis-cli/commit/e260b5351e6484357ffa712d8b5e5b16cde4529b))
+* **cli:** resolve bootstrap command failure in Docker image ([#46](https://github.com/trivoallan/regis-cli/issues/46)) ([5c6ed6b](https://github.com/trivoallan/regis-cli/commit/5c6ed6b384527dd3c31f4a865872802c4d72acf4))
+* resolve Trunk Check `HEAD^2` error by adjusting git checkout depth and auto-commit logic in the lint workflow. ([44100f1](https://github.com/trivoallan/regis-cli/commit/44100f13ec550990e468493105a2a2431912c520))
+
+
+### Documentation
+
+* implement dynamic documentation versioning and cleanup ([#58](https://github.com/trivoallan/regis-cli/issues/58)) ([98f4d47](https://github.com/trivoallan/regis-cli/commit/98f4d47db682ead6ef394a58597f4b7c88500dce))
+* migrate documentation from Antora to Docusaurus ([#57](https://github.com/trivoallan/regis-cli/issues/57)) ([7620e6d](https://github.com/trivoallan/regis-cli/commit/7620e6db51357f053c50458452c8edcd2c6cc0ff))
+
 ## [0.15.0](https://github.com/trivoallan/regis-cli/compare/v0.14.2...v0.15.0) (2026-03-11)
 
 ### Features
