@@ -28,9 +28,10 @@ A scorecard is a single evaluation rule. It defines a condition that must evalua
 
 Playbooks define how analysis results are presented in the HTML report through a hierarchical structure:
 
-- **Pages**: The top-level containers in the report. Each page generates a separate HTML file.
+- **Pages**: The top-level containers in the report. Each page is a distinct view in the SPA.
 - **Sections**: Groups of related scorecards and widgets within a page.
-- **Widgets**: UI components that display specific values or metrics. Widgets can be key-value summaries, KPI cards, or detailed tables rendered from templates.
+- **Widgets**: Interactive UI components that display specific values or metrics. Widgets can be key-value summaries, KPI cards, or detailed tables.
+  rendered from templates.
 
 For example, a section named "Mandatory Requirements" becomes `mandatory_requirements`.
 
@@ -107,9 +108,9 @@ Commonly used operators include:
 - `!`, `!!`: Logical NOT and non-null checks.
 - `and`, `or`: Logical combinations.
 
-### Jinja2 Templates
+### Template Interpolation (Jinja2)
 
-While JSON Logic handles the evaluation "truth," **Jinja2** handles the "display." You use Jinja2 templates within widgets to format values, calculate percentages, or render complex HTML components.
+While JSON Logic handles the evaluation "truth," `regis-cli` uses **Jinja2** for dynamic data interpolation within the report. You can use Jinja2 expressions within widgets to format values or calculate percentages directly from the analysis context.
 
 For example, to display the overall compliance score in a widget, you might use:
 

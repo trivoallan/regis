@@ -10,11 +10,11 @@
 - **Engine**: Orchestrates analysis and playbook evaluation.
 - **Analyzers**: Pluggable modules that extract specific data (e.g., Skopeo, Trivy, Hadolint).
 - **Playbook Engine**: Evaluates JSON logic rules against analyzer results.
-- **Report Generators**: Produces output in various formats using Jinja2 templates.
+- **Report Generators**: Produces interactive SPA dashboards and machine-readable JSON.
 
 ## Rules and Standards
 
 - **Python**: Use `pipenv` for dependency management.
 - **CI/CD**: GitHub Actions with Release Please and Trunk.
-- **Documentation**: Antora for documentation as code.
+- **Documentation**: Docusaurus for documentation as code.
 - **Aesthetics**: High priority on visual excellence for HTML reports.
