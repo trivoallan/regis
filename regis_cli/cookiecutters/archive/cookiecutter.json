@@ -5,5 +5,6 @@
   "description": "Archive viewer for regis-cli security analysis reports.",
   "version": "0.18.1",
   "regis_cli_image_url": "ghcr.io/trivoallan/regis-cli:{{ cookiecutter.version }}",
-  "regis_cli_image_base": "ghcr.io/trivoallan/regis-cli"
+  "regis_cli_image_base": "ghcr.io/trivoallan/regis-cli",
+  "_copy_without_render": ["*.tsx"]
 }

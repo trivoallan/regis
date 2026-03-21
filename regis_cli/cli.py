@@ -900,51 +900,6 @@ def bootstrap():
     pass
 
 
-@bootstrap.command(name="repository")
-@click.argument(
-    "output_dir", type=click.Path(file_okay=False, dir_okay=True), default="."
-)
-@click.option(
-    "--no-input",
-    is_flag=True,
-    help="Do not prompt for parameters and only use cookiecutter.json defaults.",
-)
-def bootstrap_repository(output_dir: str, no_input: bool) -> None:
-    """Bootstrap a new RegiS analysis repository."""
-    try:
-        from importlib import resources
-
-        from cookiecutter.main import cookiecutter
-    except ImportError as exc:
-        raise click.ClickException(
-            f"cookiecutter not found or failed to import: {exc}. Please install it with 'pip install cookiecutter'."
-        ) from None
-
-    template_path = resources.files("regis_cli") / "cookiecutters" / "repository"
-
-    click.echo(f"Bootstrapping repository into {output_dir}...", err=True)
-    try:
-        project_dir = cookiecutter(
-            str(template_path),
-            no_input=no_input,
-            output_dir=output_dir,
-        )
-        click.echo("  ✓ Repository bootstrapped successfully.", err=True)
-
-        # Handle post-install notes
-        notes_file = Path(project_dir) / ".regis-post-install.md"
-        if notes_file.exists():
-            click.echo("\n" + "=" * 40, err=True)
-            click.echo("POST-INSTALL NOTES:", err=True)
-            click.echo("=" * 40, err=True)
-            click.echo(notes_file.read_text(encoding="utf-8"), err=True)
-            click.echo("=" * 40 + "\n", err=True)
-            notes_file.unlink()
-
-    except Exception as exc:
-        raise click.ClickException(f"Failed to bootstrap repository: {exc}") from exc
-
-
 @bootstrap.command(name="playbook")
 @click.argument(
     "output_dir", type=click.Path(file_okay=False, dir_okay=True), default="."

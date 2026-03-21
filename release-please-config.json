@@ -2,8 +2,8 @@
   "packages": {
     ".": {
       "extra-files": [
-        "regis_cli/cookiecutters/repository/cookiecutter.json",
         "regis_cli/cookiecutters/playbook/cookiecutter.json",
+        "regis_cli/cookiecutters/archive/cookiecutter.json",
         "README.md",
         ".github/workflows/docs-publish.yml",
         "docs/website/docs/examples/regis-cli.md",

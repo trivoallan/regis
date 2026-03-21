@@ -25,11 +25,11 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Migrated documentation to Docusaurus, established dynamic versioning strategy with tag names, and cleaned up redundant folders.
 - Added support for Markdown output in `regis-cli rules list` and generated rules reference documentation.
 - Refactored `generate` command into a `bootstrap` command group:
-  - `bootstrap repository` — recreates the project repository from renamed `cookiecutters/repository` template.
-  - `bootstrap playbook` — creates a new custom playbook from the newly added `cookiecutters/playbook` template.
-  - Removed the monolithic `generate` command.
-  - Updated `tests/test_bootstrap.py` (4 tests pass).
-  - Updated `get-started.adoc` and `cookiecutter.adoc` documentation.
+  - `bootstrap playbook` — creates a new custom playbook from the `cookiecutters/playbook` template.
+  - `bootstrap archive` — bootstraps a standalone Docusaurus + Tremor archive viewer site.
+  - Removed the monolithic `generate` command and the deprecated `repository` cookiecutter.
+  - Updated `tests/test_bootstrap.py`.
+  - Updated `docs/website/docs/reference/cli.md`.
 - Added `docs/modules/ROOT/pages/commands.adoc` listing all available CLI commands.
 - Updated `docs/modules/ROOT/nav.adoc` to include the new commands page.
 - Consolidated bootstrapping documentation:

@@ -11,25 +11,8 @@ def test_bootstrap_help():
     runner = CliRunner()
     result = runner.invoke(main, ["bootstrap", "--help"])
     assert result.exit_code == 0
-    assert "repository" in result.output
     assert "playbook" in result.output
-
-
-def test_bootstrap_repository_success():
-    runner = CliRunner()
-    with runner.isolated_filesystem():
-        # We need to mock the template path or ensure it's accessible during tests
-        # For simplicity in this test, we'll assume the command can find the template
-        result = runner.invoke(
-            main, ["bootstrap", "repository", "test-output", "--no-input"]
-        )
-
-        assert result.exit_code == 0
-        # Cookiecutter creates the directory based on project_slug in cookiecutter.json
-        # Default project_name is "RegiS Image Security" -> project_slug "regis-image-security"
-        project_dir = Path("test-output/regis-image-security")
-        assert project_dir.exists()
-        assert (project_dir / "README.md").exists()
+    assert "archive" in result.output
 
 
 def test_bootstrap_playbook_success():
@@ -46,18 +29,21 @@ def test_bootstrap_playbook_success():
         assert (pb_dir / "playbook.yaml").exists()
 
 
-def test_bootstrap_repository_post_install_notes():
+def test_bootstrap_archive_success():
     runner = CliRunner()
     with runner.isolated_filesystem():
         result = runner.invoke(
-            main, ["bootstrap", "repository", "test-notes", "--no-input"]
+            main, ["bootstrap", "archive", "test-archive", "--no-input"]
         )
 
         assert result.exit_code == 0
-        assert "POST-INSTALL NOTES:" in result.output
-        assert "GitHub Setup" in result.output or "GitLab Setup" in result.output
+        # Default project_name is "RegiS Archive" -> project_slug "regis-archive"
+        project_dir = Path("test-archive/regis-archive")
+        assert project_dir.exists()
+        assert (project_dir / "package.json").exists()
+        assert (project_dir / "static" / "archive" / ".gitkeep").exists()
 
-        # Verify the file is deleted
-        project_dir = Path("test-notes/regis-image-security")
+        # Verify post-install notes were shown and deleted
+        assert "POST-INSTALL NOTES:" in result.output
         notes_file = project_dir / ".regis-post-install.md"
         assert not notes_file.exists()
