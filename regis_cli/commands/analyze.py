@@ -12,8 +12,6 @@ from typing import Any
 
 import click
 
-logger = logging.getLogger(__name__)
-
 from regis_cli.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis_cli.analyzers.discovery import discover_analyzers
 from regis_cli.registry.client import RegistryClient, RegistryError
@@ -26,6 +24,8 @@ from regis_cli.utils.report import (
     set_nested_value,
     validate_report,
 )
+
+logger = logging.getLogger(__name__)
 
 # Alias kept for patch compatibility in tests
 _discover_analyzers = discover_analyzers

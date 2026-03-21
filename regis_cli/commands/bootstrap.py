@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import shutil
 import subprocess  # nosec B404
 from pathlib import Path
 
