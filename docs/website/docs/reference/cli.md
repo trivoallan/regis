@@ -32,6 +32,15 @@ _Options:_
 - `--fail-level [info|warning|critical]`: Minimum rule level that triggers a command failure (default: critical).
 - `--base-url PATH`: Base URL for the HTML report site (useful for GitHub/GitLab Pages or artifacts).
 - `--open`: Open the HTML report in the default browser automatically.
+- `-A, --archive DIR`: Append the report to an archive directory (writes `manifest.json` and `data.json`).
+
+### `archive add`
+
+Add an existing `report.json` to an archive directory.
+
+```bash
+regis-cli archive add REPORT_PATH --archive-dir DIR
+```
 
 ### `evaluate`
 
@@ -86,14 +95,6 @@ regis-cli rules evaluate <report.json> [--rules playbook.yaml] [--fail] [--fail-
 
 ## Project Bootstrapping {#bootstrap}
 
-### `bootstrap repository`
-
-Bootstrap a new RegiS analysis repository with pre-configured CI/CD.
-
-```bash
-regis-cli bootstrap repository [OUTPUT_DIR] [--no-input]
-```
-
 ### `bootstrap playbook`
 
 Bootstrap a new custom RegiS playbook from a template.
@@ -102,8 +103,16 @@ Bootstrap a new custom RegiS playbook from a template.
 regis-cli bootstrap playbook [OUTPUT_DIR] [--no-input]
 ```
 
+### `bootstrap archive`
+
+Bootstrap a standalone archive viewer site for browsing and filtering historical regis-cli reports. The generated site is built with Docusaurus and Tremor, deploys to GitHub Pages or GitLab Pages, and exposes a PowerBI-compatible JSON endpoint.
+
+```bash
+regis-cli bootstrap archive [OUTPUT_DIR] [--no-input]
+```
+
 :::note
-After a successful bootstrap, both `repository` and `playbook` commands will display **Post-install notes** provided by the template (and then remove the temporary `.regis-post-install.md` file). These notes typically contain setup instructions for GitHub/GitLab or next steps for customizing your playbook.
+After a successful bootstrap, all `bootstrap` commands display **Post-install notes** from the template (and then remove the temporary `.regis-post-install.md` file). These notes contain setup instructions for GitHub/GitLab and next steps.
 :::
 
 ## Utility Commands

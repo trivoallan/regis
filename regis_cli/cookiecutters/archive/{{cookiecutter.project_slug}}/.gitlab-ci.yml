@@ -1,0 +1,44 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  PNPM_VERSION: latest
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+build:
+  stage: build
+  image: node:20-alpine
+  before_script:
+    - npm install -g pnpm@$PNPM_VERSION
+    - pnpm install --frozen-lockfile
+  script:
+    - ARCHIVE_BASE_URL="/${CI_PROJECT_NAME}/" pnpm build
+    - mv build public
+  artifacts:
+    paths:
+      - public/
+  rules:
+    - changes:
+        - static/archive/**/*
+        - src/**/*
+        - docs/**/*
+        - docusaurus.config.ts
+        - package.json
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+pages:
+  stage: deploy
+  script:
+    - echo "Deploying to GitLab Pages"
+  pages:
+    publish: public
+  artifacts:
+    paths:
+      - public/
+  needs:
+    - build

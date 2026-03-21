@@ -529,6 +529,14 @@ def _render_mr_templates(
     default=False,
     help="Open the HTML report in the default browser.",
 )
+@click.option(
+    "--archive",
+    "-A",
+    "archive_dir",
+    type=click.Path(file_okay=False, writable=True, path_type=Path),
+    default=None,
+    help="Archive directory: persist the report and update manifest.json / data.json.",
+)
 def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
@@ -547,6 +555,7 @@ def analyze(
     fail_level: str = "critical",
     base_url: str = "/",
     open_browser: bool = False,
+    archive_dir: Path | None = None,
 ) -> None:
     """Analyze a Docker image and evaluate playbooks.
 
@@ -719,6 +728,12 @@ def analyze(
     # 3. Validate final report
     _validate_report(final_report)
 
+    # 3b. Archive report if requested
+    if archive_dir:
+        from regis_cli.archive.store import add_to_archive
+
+        add_to_archive(final_report, archive_dir)
+
     # 4. Format and write outputs
     _render_and_save_reports(
         final_report,
@@ -885,51 +900,6 @@ def bootstrap():
     pass
 
 
-@bootstrap.command(name="repository")
-@click.argument(
-    "output_dir", type=click.Path(file_okay=False, dir_okay=True), default="."
-)
-@click.option(
-    "--no-input",
-    is_flag=True,
-    help="Do not prompt for parameters and only use cookiecutter.json defaults.",
-)
-def bootstrap_repository(output_dir: str, no_input: bool) -> None:
-    """Bootstrap a new RegiS analysis repository."""
-    try:
-        from importlib import resources
-
-        from cookiecutter.main import cookiecutter
-    except ImportError as exc:
-        raise click.ClickException(
-            f"cookiecutter not found or failed to import: {exc}. Please install it with 'pip install cookiecutter'."
-        ) from None
-
-    template_path = resources.files("regis_cli") / "cookiecutters" / "repository"
-
-    click.echo(f"Bootstrapping repository into {output_dir}...", err=True)
-    try:
-        project_dir = cookiecutter(
-            str(template_path),
-            no_input=no_input,
-            output_dir=output_dir,
-        )
-        click.echo("  ✓ Repository bootstrapped successfully.", err=True)
-
-        # Handle post-install notes
-        notes_file = Path(project_dir) / ".regis-post-install.md"
-        if notes_file.exists():
-            click.echo("\n" + "=" * 40, err=True)
-            click.echo("POST-INSTALL NOTES:", err=True)
-            click.echo("=" * 40, err=True)
-            click.echo(notes_file.read_text(encoding="utf-8"), err=True)
-            click.echo("=" * 40 + "\n", err=True)
-            notes_file.unlink()
-
-    except Exception as exc:
-        raise click.ClickException(f"Failed to bootstrap repository: {exc}") from exc
-
-
 @bootstrap.command(name="playbook")
 @click.argument(
     "output_dir", type=click.Path(file_okay=False, dir_okay=True), default="."
@@ -973,6 +943,51 @@ def bootstrap_playbook(output_dir: str, no_input: bool) -> None:
 
     except Exception as exc:
         raise click.ClickException(f"Failed to bootstrap playbook: {exc}") from exc
+
+
+@bootstrap.command(name="archive")
+@click.argument(
+    "output_dir", type=click.Path(file_okay=False, dir_okay=True), default="."
+)
+@click.option(
+    "--no-input",
+    is_flag=True,
+    help="Do not prompt for parameters and only use cookiecutter.json defaults.",
+)
+def bootstrap_archive(output_dir: str, no_input: bool) -> None:
+    """Bootstrap a standalone archive viewer site for regis-cli reports."""
+    try:
+        from importlib import resources
+
+        from cookiecutter.main import cookiecutter
+    except ImportError as exc:
+        raise click.ClickException(
+            f"cookiecutter not found or failed to import: {exc}. Please install it with 'pip install cookiecutter'."
+        ) from None
+
+    template_path = resources.files("regis_cli") / "cookiecutters" / "archive"
+
+    click.echo(f"Bootstrapping archive site into {output_dir}...", err=True)
+    try:
+        project_dir = cookiecutter(
+            str(template_path),
+            no_input=no_input,
+            output_dir=output_dir,
+        )
+        click.echo("  ✓ Archive site bootstrapped successfully.", err=True)
+
+        # Handle post-install notes
+        notes_file = Path(project_dir) / ".regis-post-install.md"
+        if notes_file.exists():
+            click.echo("\n" + "=" * 40, err=True)
+            click.echo("POST-INSTALL NOTES:", err=True)
+            click.echo("=" * 40, err=True)
+            click.echo(notes_file.read_text(encoding="utf-8"), err=True)
+            click.echo("=" * 40 + "\n", err=True)
+            notes_file.unlink()
+
+    except Exception as exc:
+        raise click.ClickException(f"Failed to bootstrap archive site: {exc}") from exc
 
 
 @main.command(name="check")
@@ -1400,6 +1415,36 @@ def eval_rules(
             )
             # Use sys.exit(1) for shell scripts/CI
             sys.exit(1)
+
+
+@main.group()
+def archive():
+    """Manage the report archive."""
+
+
+@archive.command("add")
+@click.argument(
+    "report_file", type=click.Path(exists=True, dir_okay=False, path_type=Path)
+)
+@click.option(
+    "--archive-dir",
+    "-A",
+    type=click.Path(file_okay=False, writable=True, path_type=Path),
+    required=True,
+    help="Archive directory to add the report to.",
+)
+def archive_add(report_file: Path, archive_dir: Path):
+    """Add an existing report JSON file to the archive."""
+    from regis_cli.archive.store import add_to_archive
+
+    try:
+        report = json.loads(report_file.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as exc:
+        raise click.ClickException(f"Could not read {report_file}: {exc}") from exc
+
+    dest = add_to_archive(report, archive_dir)
+    click.echo(f"Archived to {dest}")
+    click.echo(f"Manifest updated: {archive_dir / 'manifest.json'}")
 
 
 if __name__ == "__main__":

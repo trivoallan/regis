@@ -1,0 +1,63 @@
+name: Build & Deploy Archive
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - static/archive/**
+      - src/**
+      - docs/**
+      - docusaurus.config.ts
+      - package.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build archive site
+        env:
+          ARCHIVE_URL: "{% raw %}${{ vars.ARCHIVE_URL || format('https://{0}.github.io', github.repository_owner) }}{% endraw %}"
+          ARCHIVE_BASE_URL: "{% raw %}/${{ github.event.repository.name }}/{% endraw %}"
+        run: pnpm build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: "{% raw %}${{ steps.deployment.outputs.page_url }}{% endraw %}"
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
