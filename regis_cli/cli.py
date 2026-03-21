@@ -743,9 +743,9 @@ def analyze(
             for future in as_completed(futures):
                 name = futures[future]
                 try:
-                    analyzer_name, report = future.result()
-                    reports[analyzer_name] = report
-                    click.echo(f"  ✓ {analyzer_name}", err=True)
+                    _, report = future.result()
+                    reports[name] = report
+                    click.echo(f"  ✓ {name}", err=True)
                 except RegistryError as exc:
                     click.echo(f"  ✗ {name}: registry error — {exc}", err=True)
                     reports[name] = {
