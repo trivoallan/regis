@@ -16,61 +16,50 @@ The default playbook categorizes reports into one of three tiers based on the ov
 | **Silver** | Compliance Score > 70% |
 | **Bronze** | Compliance Score > 50% |
 
+## Default Rules
+
+Rules are evaluated automatically based on which analyzers are present in the report. Custom rule instances can override defaults or add new checks.
+
+### Critical
+
+Failing any critical rule blocks the image from reaching a Gold or Silver tier.
+
+| Slug                        | Provider | Description                                                                          |
+| :-------------------------- | :------- | :----------------------------------------------------------------------------------- |
+| `registry-domain-whitelist` | `core`   | Image must originate from a trusted registry (docker.io, quay.io, ghcr.io, ghcr.io). |
+| `no-root`                   | `skopeo` | Image must not be configured to run as the `root` user.                              |
+| `cve-critical`              | `trivy`  | No `CRITICAL` CVEs allowed (max: 0).                                                 |
+
+### Warning
+
+Warning-level failures reduce the compliance score but do not block promotion on their own.
+
+| Slug            | Provider       | Description                                      |
+| :-------------- | :------------- | :----------------------------------------------- |
+| `cve-high`      | `trivy`        | No more than 10 `HIGH` CVEs.                     |
+| `cve-fixable`   | `trivy`        | No unpatched CVEs with an available fix.         |
+| `has-sbom`      | `sbom`         | Image must provide a Software Bill of Materials. |
+| `scorecard-min` | `scorecarddev` | OpenSSF Scorecard score must be ≥ 5.0.           |
+
+### Info
+
+Informational checks that surface hygiene issues without impacting the tier.
+
+| Slug        | Provider    | Description                            |
+| :---------- | :---------- | :------------------------------------- |
+| `age`       | `freshness` | Image should be less than 90 days old. |
+| `no-latest` | `skopeo`    | Image tag must not be `latest`.        |
+
 ## Default Badges
 
 The report header displays the following dynamic status badges:
 
-| Badge             | Logic                                                                  |
-| :---------------- | :--------------------------------------------------------------------- |
-| **Score**         | Displays the overall `rules_summary.score`.                            |
-| **CVE: Critical** | Displayed (Error) if any critical vulnerabilities are detected.        |
-| **CVE: High**     | Displayed (Warning) if any high-severity vulnerabilities are detected. |
-| **Freshness**     | Displayed (Success) if the image is less than 30 days old.             |
-
-## Compliance Levels
-
-The playbook categorizes its security checks into two main levels: **Mandatory** and **Recommended**.
-
-### Mandatory Requirements (Critical)
-
-These are non-negotiable security requirements. Failing any of these checks marks the image as non-compliant.
-
-| Rule                  | Description                                                                                | Logic (JSON Logic)                                                           |
-| :-------------------- | :----------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| **No Root**           | The image must not be configured to run as the `root` user.                                | `{"!=": [{"var": "results.skopeo.platforms.0.user"}, "root"]}`               |
-| **No Critical**       | No vulnerabilities with a `CRITICAL` severity level found by Trivy.                        | `{"==": [{"var": "results.trivy.critical_count"}, 0]}`                       |
-| **No Fatal Policies** | No `FATAL` security issues found by Dockle.                                                | `{"==": [{"var": "results.dockle.issues_by_level.FATAL"}, 0]}`               |
-| **Trusted Domain**    | The image must originate from a trusted container registry (e.g., Docker Hub, Quay, GHCR). | `{"in": [{"var": "request.registry"}, ["docker.io", "quay.io", "ghcr.io"]]}` |
-
-### Recommended Requirements (Warning)
-
-These rules represent security best practices. Failing these checks provides a warning but may not block promotion depending on your policy.
-
-| Rule          | Description                                                          | Logic (JSON Logic)                                   |
-| :------------ | :------------------------------------------------------------------- | :--------------------------------------------------- |
-| **No High**   | No vulnerabilities with a `HIGH` severity level found by Trivy.      | `{"==": [{"var": "results.trivy.high_count"}, 0]}`   |
-| **Freshness** | The image should have been built or updated within the last 30 days. | `{"<": [{"var": "results.freshness.age_days"}, 30]}` |
-
-## Report Organization
-
-The default playbook structures its findings into seven specialized pages to provide a clear and actionable overview.
-
-| Page                                  | Purpose                                                                                           |
-| :------------------------------------ | :------------------------------------------------------------------------------------------------ |
-| **Overview** (`index`)                | High-level summary of analysis results, creation time, and "GO/NOGO" recommendation.              |
-| **Compliance** (`compliance`)         | Detailed breakdown of mandatory and recommended scorecard results.                                |
-| **Security** (`security`)             | Deep dive into vulnerabilities (Trivy) and image provenance.                                      |
-| **Supply Chain** (`supply-chain`)     | Analysis of the Software Bill of Materials (SBOM) and OpenSSF Scorecard results.                  |
-| **Best Practices** (`best-practices`) | Insights from Dockerfile linting (Hadolint), configuration checks, and security linting (Dockle). |
-| **Insights** (`insights`)             | Trends in image freshness, registry popularity, and lifecycle (EndOfLife) status.                 |
-| **Technical Details** (`metadata`)    | Low-level data including image layers, Skopeo inspection results, and versioning patterns.        |
-
-## Standard Metadata
-
-The default playbook automatically consumes "well-known" metadata fields if provided via the `--meta` flag:
-
-- **`trigger.user`**: Displayed as the initiator of the analysis.
-- **`trigger.url`**: Used to provide a direct link to the CI job or environment that triggered the analysis.
+| Badge                | Logic                                       |
+| :------------------- | :------------------------------------------ |
+| **CVE: Critical**    | Shown (Error) if `cve-critical` rule fails. |
+| **CVE: High**        | Shown (Warning) if `cve-high` rule fails.   |
+| **Freshness: Fresh** | Shown (Success) if `age` rule passes.       |
+| **Freshness: Stale** | Shown (Warning) if `age` rule fails.        |
 
 ## Analysis Case Studies
 
@@ -80,12 +69,12 @@ These examples demonstrate how `regis-cli` adapts its recommendations based on t
 
 **Target:** `alpine:latest` (or a specialized minimal base image)
 
-| Aspect         | Status                                                                                                                                                                                           |
-| :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Verdict**    | **GO**                                                                                                                                                                                           |
-| **Compliance** | 100%                                                                                                                                                                                             |
-| **Security**   | 0 Critical, 0 High vulnerabilities.                                                                                                                                                              |
-| **Findings**   | Image is lightweight, runs as a non-root user (if configured), and uses a trusted registry. View the [Live Security Report](pathname:///regis-cli/examples/playbooks/default/alpine/index.html). |
+| Aspect         | Status                                                                                      |
+| :------------- | :------------------------------------------------------------------------------------------ |
+| **Verdict**    | **GO**                                                                                      |
+| **Compliance** | 100%                                                                                        |
+| **Security**   | 0 Critical, 0 High vulnerabilities.                                                         |
+| **Findings**   | Image is lightweight, runs as a non-root user (if configured), and uses a trusted registry. |
 
 ```bash
 regis-cli analyze alpine:latest -s -D docs/website/static/examples/alpine
@@ -107,7 +96,7 @@ regis-cli analyze alpine:latest -s -D docs/website/static/examples/alpine
 | **Findings**   | Heavy base image (e.g., full Ubuntu/Debian), running as `root`, and containing multiple unpatched security flaws. |
 
 :::danger
-This image fails the **Mandatory Requirements** and should be blocked from reaching production environments until the base image is updated and security patches are applied.
+This image fails the **Critical** rules and should be blocked from reaching production environments until the base image is updated and security patches are applied.
 :::
 
 ### Case 3: The "Legacy" Image (Outdated)
@@ -139,10 +128,10 @@ regis-cli analyze ghcr.io/trivoallan/regis-cli:latest -s -D docs/website/static/
 
 :::
 
-- **100% Mandatory Compliance**: Passes all critical checks (No Root, No Critical, Trusted Registry).
+- **100% Mandatory Compliance**: Passes all critical checks (`no-root`, `cve-critical`, `registry-domain-whitelist`).
 - **Minimal Attack Surface**: Built on a slim Python/Alpine base.
 - **Full Supply Chain Evidence**: Provides both SBOM (CycloneDX) and Provenance indicators.
-- **Active Maintenance**: Regularly rebuilt to maintain a "Fresh" status (< 30 days).
+- **Active Maintenance**: Regularly rebuilt to maintain a "Fresh" status (< 90 days).
 
 ## GitLab Integrations
 
@@ -152,22 +141,23 @@ The default playbook includes pre-configured GitLab integrations to automate MR 
 
 The default playbook synchronizes the following status badges as GitLab labels:
 
-| Badge Slug     | Label Result                              |
-| :------------- | :---------------------------------------- |
-| `score`        | `Score: [value]` (Information)            |
-| `freshness`    | `Freshness: Fresh !` (Success) if passed. |
-| `cve-critical` | `CVE: Critical` (Error) if failed.        |
-| `cve-high`     | `CVE: High` (Warning) if failed.          |
+| Badge Slug     | Label Result                            |
+| :------------- | :-------------------------------------- |
+| `score`        | `Score: [value]` (Information)          |
+| `freshness`    | `Freshness: Fresh` (Success) if passed. |
+| `cve-critical` | `CVE: Critical` (Error) if failed.      |
+| `cve-high`     | `CVE: High` (Warning) if failed.        |
 
 ### MR Description Checklist
 
 The following items are appended as checkboxes to the Merge Request description. They can be dynamically shown and pre-checked based on the analysis results:
 
-| Item                                   | Show Condition (`show_if`)                                                 | Check Condition (`check_if`)                                               |
-| :------------------------------------- | :------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
-| Revue de sécurité réalisée             | Always included                                                            | Never pre-checked                                                          |
-| Aucune vulnérabilité CRITIQUE détectée | `results.trivy.critical_count == 0`                                        | `results.trivy.critical_count == 0`                                        |
-| Image issue d'un registre de confiance | `request.registry` ∈ \{docker.io, registry-1.docker.io, quay.io, ghcr.io\} | `request.registry` ∈ \{docker.io, registry-1.docker.io, quay.io, ghcr.io\} |
+| Item                                   | Show Condition (`show_if`)               | Check Condition (`check_if`)                     |
+| :------------------------------------- | :--------------------------------------- | :----------------------------------------------- |
+| Revue de sécurité réalisée             | Always included                          | Never pre-checked                                |
+| Aucune vulnérabilité CRITIQUE détectée | `rules.cve-critical` exists              | `rules.cve-critical.passed == true`              |
+| Image issue d'un registre de confiance | `rules.registry-domain-whitelist` exists | `rules.registry-domain-whitelist.passed == true` |
+| Image ne tourne pas en root            | `rules.no-root` exists                   | `rules.no-root.passed == true`                   |
 
 ### MR Templates
 

@@ -5,14 +5,6 @@
   "description": "Schema for regis-cli playbook definition files (YAML or JSON).",
   "type": "object",
   "required": ["name"],
-  "anyOf": [
-    {
-      "required": ["sections"]
-    },
-    {
-      "required": ["pages"]
-    }
-  ],
   "additionalProperties": false,
   "properties": {
     "name": {
@@ -51,7 +43,8 @@
     },
     "pages": {
       "type": "array",
-      "description": "List of playbook pages. Each page groups sections.",
+      "deprecated": true,
+      "description": "Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus report viewer. Use `rules` instead.",
       "minItems": 1,
       "items": {
         "$ref": "#/$defs/page"
@@ -59,7 +52,8 @@
     },
     "sections": {
       "type": "array",
-      "description": "List of playbook sections. Each section groups scorecards, levels, and display preferences.",
+      "deprecated": true,
+      "description": "Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus report viewer. Use `rules` instead.",
       "minItems": 1,
       "items": {
         "$ref": "#/$defs/section"
@@ -67,7 +61,8 @@
     },
     "sidebar": {
       "type": "object",
-      "description": "Optional sidebar navigation configuration.",
+      "deprecated": true,
+      "description": "Deprecated: Sidebar navigation for the legacy Jinja2 renderer.",
       "properties": {
         "sections": {
           "type": "array",
@@ -243,6 +238,57 @@
           }
         },
         "additionalProperties": false
+      }
+    },
+    "tiers": {
+      "type": "array",
+      "description": "Compliance tier thresholds. Each tier is awarded when its JsonLogic condition evaluates to true, evaluated in order.",
+      "items": {
+        "type": "object",
+        "required": ["name", "condition"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Tier name (e.g. Gold, Silver, Bronze)."
+          },
+          "condition": {
+            "description": "JsonLogic expression evaluated against the report context.",
+            "$ref": "jsonlogic.schema.json"
+          }
+        }
+      }
+    },
+    "badges": {
+      "type": "array",
+      "description": "Dynamic status badges displayed in the report header. Each badge is conditionally rendered based on a JsonLogic expression.",
+      "items": {
+        "type": "object",
+        "required": ["slug", "scope", "value", "condition", "class"],
+        "additionalProperties": false,
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "Unique identifier for the badge."
+          },
+          "scope": {
+            "type": "string",
+            "description": "Category label displayed on the left part of the badge (e.g. CVE, Freshness)."
+          },
+          "value": {
+            "type": "string",
+            "description": "Value displayed on the right part of the badge."
+          },
+          "condition": {
+            "description": "JsonLogic expression. The badge is shown when this evaluates to truthy.",
+            "$ref": "jsonlogic.schema.json"
+          },
+          "class": {
+            "type": "string",
+            "enum": ["success", "warning", "error", "information"],
+            "description": "Visual style class for the badge."
+          }
+        }
       }
     }
   },

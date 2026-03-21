@@ -13,6 +13,17 @@ tiers:
       ">": [{ var: rules_summary.score }, 50]
 
 rules:
+  # --- Security (Critical) ---
+  - provider: core
+    rule: registry-domain-whitelist
+    slug: registry-domain-whitelist
+    level: critical
+
+  - provider: skopeo
+    rule: user-blacklist
+    slug: no-root
+    level: critical
+
   - provider: trivy
     rule: cve-count
     slug: cve-critical
@@ -20,13 +31,45 @@ rules:
     options:
       level: critical
       max_count: 0
+
+  # --- Security (Warning) ---
   - provider: trivy
     rule: cve-count
     slug: cve-high
     level: warning
     options:
       level: high
-      max_count: 100
+      max_count: 10
+
+  - provider: trivy
+    rule: fix-available
+    slug: cve-fixable
+    level: warning
+
+  - provider: sbom
+    rule: has-sbom
+    slug: has-sbom
+    level: warning
+
+  - provider: scorecarddev
+    rule: min-score
+    slug: scorecard-min
+    level: warning
+    options:
+      min_score: 5.0
+
+  # --- Hygiene (Info) ---
+  - provider: freshness
+    rule: age
+    slug: age
+    level: info
+    options:
+      max_days: 90
+
+  - provider: skopeo
+    rule: tag-blacklist
+    slug: no-latest
+    level: info
 
 badges:
   - slug: cve-critical
@@ -43,230 +86,16 @@ badges:
     class: warning
   - slug: freshness-fresh
     scope: Freshness
-    value: Fresh !
+    value: Fresh
     condition:
       "==": [{ var: rules.age.passed }, true]
     class: success
   - slug: freshness-stale
     scope: Freshness
-    value: Stale !
+    value: Stale
     condition:
       "!": [{ var: rules.age.passed }]
     class: warning
-
-pages:
-  - title: Overview
-    slug: index
-    sections:
-      - name: ""
-        widgets:
-          - label: Recommandation
-            value: "{{ 'GO' }}"
-            options:
-              class: recommandation-go
-              align: center
-            condition:
-              ">=":
-                [
-                  {
-                    var: playbooks.0.pages.compliance.sections.mandatory_requirements.score,
-                  },
-                  90,
-                ]
-          - label: Recommandation
-            value: "{{ 'NOGO' }}"
-            options:
-              class: recommandation-nogo
-              align: center
-            condition:
-              "<":
-                [
-                  {
-                    var: playbooks.0.pages.compliance.sections.mandatory_requirements.score,
-                  },
-                  90,
-                ]
-      - name: ""
-        widgets:
-          - label: Overall Compliance
-            value: "{{ playbooks.0.score }}%"
-            url: compliance.html
-            options:
-              align: center
-          - label: Mandatory Requirements
-            value: "{{ playbooks.0.pages.compliance.sections.mandatory_requirements.passed_scorecards }} / {{ playbooks.0.pages.compliance.sections.mandatory_requirements.total_scorecards }}"
-            url: compliance.html
-            options:
-              align: center
-          - label: Recommended Requirements
-            value: "{{ playbooks.0.pages.compliance.sections.recommended_requirements.passed_scorecards }} / {{ playbooks.0.pages.compliance.sections.recommended_requirements.total_scorecards }}"
-            url: compliance.html
-            options:
-              align: center
-
-      - name: Request
-        widgets:
-          - label: Creation Time
-            value: "{{ request.timestamp | format_date }}"
-            options:
-              subvalue: "{{ request.timestamp | format_time }}"
-          - label: Triggered by
-            value: "{{ request.metadata.trigger.user | default('Unknown Emiter') }}"
-            url: "{{ request.metadata.trigger.url | default('') }}"
-          - label: Merge Request
-            value: "!{{ request.metadata['gitlab.mr_id'] | default('N/A') }}"
-            url: "{{ request.metadata['gitlab.mr_url'] }}"
-            condition: { "!!": [{ var: request.metadata.gitlab.mr_url }] }
-          - template: request/table.html
-            options:
-              title: Request Parameters
-          - template: metadata/table.html
-            options:
-              title: Additional Metadata
-            condition:
-              "!!": [{ var: request.metadata }]
-
-      - name: Requested Image
-        widgets:
-          - label: Registry
-            value: "{{ request.registry }}"
-          - label: Repository
-            value: "{{ request.repository }}"
-          - label: Tag
-            value: "{{ request.tag }}"
-
-  - title: Compliance
-    slug: compliance
-    sections:
-      - name: " "
-        widgets:
-          - label: Overall Compliance
-            value: "{{ playbooks.0.score }}%"
-            options:
-              align: center
-          - label: Mandatory Requirements
-            value: "{{ playbooks.0.pages.compliance.sections.mandatory_requirements.score }}%"
-            options:
-              align: center
-          - label: Recommended Requirements
-            value: "{{ playbooks.0.pages.compliance.sections.recommended_requirements.score }}%"
-            options:
-              align: center
-
-  - title: Security
-    slug: security
-    sections:
-      - name: Vulnerabilities
-        widgets:
-          - template: analyzers/trivy/cards.html
-          - template: analyzers/trivy/table.html
-            options:
-              title: Top HIGH and CRITICAL vulnerabilities
-              collapsed: true
-              limit: 25
-      - name: Provenance
-        widgets:
-          - template: analyzers/provenance/cards.html
-          - template: analyzers/provenance/table.html
-            options:
-              title: Provenance Details
-              collapsed: true
-
-  - title: Supply Chain & Quality
-    slug: supply-chain
-    sections:
-      - name: Software Bill of Materials (SBOM)
-        widgets:
-          - template: analyzers/sbom/cards.html
-          - template: analyzers/sbom/table.html
-            options:
-              title: Component Inventory Preview
-              collapsed: true
-              limit: 50
-
-      - name: OpenSSF Scorecard
-        widgets:
-          - template: analyzers/scorecarddev/cards.html
-          - template: analyzers/scorecarddev/table.html
-            options:
-              title: Detailed Check Results
-              collapsed: true
-
-  - title: Best Practices
-    slug: best-practices
-    sections:
-      - name: Dockerfile Linting (Hadolint)
-        widgets:
-          - template: analyzers/hadolint/cards.html
-          - template: analyzers/hadolint/table.html
-            options:
-              title: Linting Issues & Recommendations
-              collapsed: true
-
-      - name: Security & Best Practices (Dockle)
-        widgets:
-          - template: analyzers/dockle/cards.html
-          - template: analyzers/dockle/table.html
-            options:
-              title: Security Issues & Recommendations
-              collapsed: true
-
-  - title: Insights & Lifecycle
-    slug: insights
-    sections:
-      - name: Image Freshness
-        widgets:
-          - template: analyzers/freshness/cards.html
-          - template: analyzers/freshness/table.html
-            options:
-              title: Release Details
-              collapsed: true
-
-      - name: Popularity & Community
-        widgets:
-          - label: Pulls
-            value: "{{ results.popularity.pull_count | format_number }}"
-          - label: Stars
-            value: "{{ results.popularity.star_count | format_number }}"
-          - template: analyzers/popularity/table.html
-            options:
-              title: Registry Stats
-              collapsed: true
-
-      - name: Lifecycle (EndOfLife)
-        widgets:
-          - template: analyzers/endoflife/cards.html
-          - template: analyzers/endoflife/table.html
-            options:
-              title: Version Support Status
-              collapsed: true
-
-  - title: Technical Details
-    slug: metadata
-    sections:
-      - name: Size & Layers
-        widgets:
-          - template: analyzers/size/cards.html
-          - template: analyzers/size/table.html
-            options:
-              title: Layer Distribution
-              collapsed: true
-
-      - name: Skopeo Inspection
-        widgets:
-          - template: analyzers/skopeo/cards.html
-          - template: analyzers/skopeo/table.html
-            options:
-              title: Platforms & Tags
-              collapsed: true
-
-      - name: Versioning Analysis
-        widgets:
-          - template: analyzers/versioning/cards.html
-          - template: analyzers/versioning/table.html
-            options:
-              title: Tag Logic & Patterns
-              collapsed: true
 
 integrations:
   gitlab:
@@ -280,11 +109,14 @@ integrations:
         items:
           - label: Revue de sécurité réalisée
           - label: Aucune vulnérabilité CRITIQUE détectée
-            show_if: { var: rules.trivy.no-critical.passed }
-            check_if: { var: rules.trivy.no-critical.passed }
+            show_if: { "!!": [{ var: rules.cve-critical }] }
+            check_if: { var: rules.cve-critical.passed }
           - label: Image issue d'un registre de confiance
-            show_if: { var: rules.core.registry-domain-whitelist.passed }
-            check_if: { var: rules.core.registry-domain-whitelist.passed }
+            show_if: { "!!": [{ var: rules.registry-domain-whitelist }] }
+            check_if: { var: rules.registry-domain-whitelist.passed }
+          - label: Image ne tourne pas en root
+            show_if: { "!!": [{ var: rules.no-root }] }
+            check_if: { var: rules.no-root.passed }
     templates:
       - url: https://github.com/trivoallan/regis-cli
         directory: regis_cli/cookiecutters/mr-evidence
