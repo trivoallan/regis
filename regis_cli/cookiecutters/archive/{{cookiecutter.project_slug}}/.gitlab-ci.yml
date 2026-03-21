@@ -17,7 +17,10 @@ build:
     - npm install -g pnpm@$PNPM_VERSION
     - pnpm install --frozen-lockfile
   script:
-    - ARCHIVE_BASE_URL="/${CI_PROJECT_NAME}/" pnpm build
+    # Derive baseUrl from CI_PAGES_URL so subgroups and custom domains are handled correctly.
+    # Override by setting ARCHIVE_BASE_URL as a CI/CD variable in project settings.
+    - DERIVED_BASE_URL=$(node -e "const p=new URL(process.env.CI_PAGES_URL).pathname.replace(/\\/?$/,'/'); console.log(p)")
+    - ARCHIVE_URL="${ARCHIVE_URL:-$CI_PAGES_URL}" ARCHIVE_BASE_URL="${ARCHIVE_BASE_URL:-$DERIVED_BASE_URL}" pnpm build
     - mv build public
   artifacts:
     paths:

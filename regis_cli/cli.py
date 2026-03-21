@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import logging
+import shutil
+import subprocess  # nosec B404
 import sys
 import webbrowser
 from datetime import datetime, timezone
@@ -21,6 +23,40 @@ from regis_cli.registry.client import RegistryClient, RegistryError
 from regis_cli.registry.parser import parse_image_url
 
 logger = logging.getLogger(__name__)
+
+
+def _run_cmd(
+    args: list[str],
+    cwd: str | Path | None = None,
+    check: bool = True,
+    step_label: str | None = None,
+) -> subprocess.CompletedProcess[str]:
+    """Run a subprocess command and raise ClickException on failure."""
+    label = step_label or args[0]
+    try:
+        result = subprocess.run(  # nosec B603
+            args,
+            cwd=str(cwd) if cwd else None,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:
+        raise click.ClickException(f"'{args[0]}' not found in PATH. Is it installed?")
+    if check and result.returncode != 0:
+        detail = (result.stderr or result.stdout).strip()
+        raise click.ClickException(
+            f"Step '{label}' failed (exit {result.returncode}):\n{detail}"
+        )
+    return result
+
+
+def _require_tool(name: str) -> str:
+    """Ensure a CLI tool is available in PATH or raise ClickException."""
+    path = shutil.which(name)
+    if not path:
+        raise click.ClickException(f"'{name}' not found in PATH. Please install it.")
+    return path
 
 
 def _discover_analyzers() -> dict[str, type[BaseAnalyzer]]:
@@ -988,6 +1024,220 @@ def bootstrap_archive(output_dir: str, no_input: bool) -> None:
 
     except Exception as exc:
         raise click.ClickException(f"Failed to bootstrap archive site: {exc}") from exc
+
+
+@bootstrap.command(name="archive-repo")
+@click.argument(
+    "output_dir", type=click.Path(file_okay=False, dir_okay=True), default="."
+)
+@click.option(
+    "--no-input",
+    is_flag=True,
+    help="Do not prompt for parameters and only use cookiecutter.json defaults.",
+)
+@click.option("--repo-name", default=None, help="Name of the remote repository.")
+@click.option(
+    "--public/--private",
+    default=None,
+    help="Repository visibility (default: public for GitHub, private for GitLab).",
+)
+@click.option(
+    "--org", default=None, help="Organisation or group to create the repo in."
+)
+@click.option(
+    "--platform",
+    type=click.Choice(["github", "gitlab"], case_sensitive=False),
+    default=None,
+    help="Target platform. Skips the cookiecutter platform prompt.",
+)
+def bootstrap_archive_repo(
+    output_dir: str,
+    no_input: bool,
+    repo_name: str | None,
+    public: bool | None,
+    org: str | None,
+    platform: str | None,
+) -> None:
+    """Bootstrap an archive site and push it to a new remote repository."""
+    try:
+        from importlib import resources
+
+        from cookiecutter.main import cookiecutter
+    except ImportError as exc:
+        raise click.ClickException(
+            f"cookiecutter not found or failed to import: {exc}. Please install it with 'pip install cookiecutter'."
+        ) from None
+
+    # Step 0 — Pre-flight
+    click.echo("Checking required tools...", err=True)
+    _require_tool("pnpm")
+    _require_tool("git")
+    click.echo("  ✓ pnpm and git found.", err=True)
+
+    # Step 1 — Scaffold
+    template_path = resources.files("regis_cli") / "cookiecutters" / "archive"
+    click.echo(f"\nScaffolding archive site into {output_dir}...", err=True)
+    extra_context = {"platform": platform} if platform else None
+    try:
+        project_dir = cookiecutter(
+            str(template_path),
+            no_input=no_input,
+            output_dir=output_dir,
+            extra_context=extra_context,
+        )
+    except Exception as exc:
+        raise click.ClickException(f"Failed to bootstrap archive site: {exc}") from exc
+
+    project_path = Path(project_dir)
+    click.echo(f"  ✓ Site scaffolded at {project_path}.", err=True)
+
+    notes_file = project_path / ".regis-post-install.md"
+    if notes_file.exists():
+        click.echo("\n" + "=" * 40, err=True)
+        click.echo("POST-INSTALL NOTES:", err=True)
+        click.echo("=" * 40, err=True)
+        click.echo(notes_file.read_text(encoding="utf-8"), err=True)
+        click.echo("=" * 40 + "\n", err=True)
+        notes_file.unlink()
+
+    # Step 2 — Detect platform from scaffolded files
+    if (project_path / ".github").is_dir():
+        platform, tool = "github", "gh"
+    elif (project_path / ".gitlab-ci.yml").is_file():
+        platform, tool = "gitlab", "glab"
+    else:
+        raise click.ClickException("Cannot detect platform from scaffolded files.")
+
+    click.echo(f"  ✓ Platform detected: {platform}.", err=True)
+    _require_tool(tool)
+    click.echo(f"\nChecking {tool} authentication...", err=True)
+    _run_cmd([tool, "auth", "status"], step_label=f"{tool} auth check")
+    click.echo(f"  ✓ {tool} authenticated.", err=True)
+
+    # Step 3 — pnpm install
+    click.echo("\nInstalling Node dependencies (pnpm install)...", err=True)
+    _run_cmd(["pnpm", "install"], cwd=project_path, step_label="pnpm install")
+    click.echo("  ✓ Dependencies installed.", err=True)
+
+    # Step 4 — git init + commit
+    click.echo("\nInitialising local git repository...", err=True)
+    _run_cmd(["git", "init", "-b", "main"], cwd=project_path)
+    _run_cmd(["git", "add", "."], cwd=project_path)
+    _run_cmd(
+        ["git", "commit", "-m", "chore(report): initial archive site scaffold"],
+        cwd=project_path,
+    )
+    click.echo("  ✓ Initial commit created.", err=True)
+
+    # Step 5 — Resolve effective repo name
+    effective_repo_name = repo_name or project_path.name
+
+    # Step 6 — Create remote repository
+    click.echo(f"\nCreating remote repository '{effective_repo_name}'...", err=True)
+    if platform == "github":
+        is_public = public if public is not None else True
+        visibility = "--public" if is_public else "--private"
+        target = f"{org}/{effective_repo_name}" if org else effective_repo_name
+        _run_cmd(
+            [
+                "gh",
+                "repo",
+                "create",
+                target,
+                visibility,
+                "--source",
+                str(project_path),
+                "--remote",
+                "origin",
+                "--push",
+            ],
+            step_label="gh repo create",
+        )
+        click.echo(
+            f"  ✓ Repository created and pushed to github.com/{target}.", err=True
+        )
+    else:
+        is_public = public if public is not None else False
+        glab_args = [
+            "glab",
+            "repo",
+            "create",
+            effective_repo_name,
+            "--public" if is_public else "--private",
+            "--defaultBranch=main",
+        ]
+        if org:
+            glab_args.append(f"--group={org}")
+        create_result = _run_cmd(glab_args, check=False, step_label="glab repo create")
+        if create_result.returncode != 0:
+            # Check if the failure is because the repo already exists (retry scenario)
+            view_result = _run_cmd(
+                ["glab", "repo", "view", effective_repo_name],
+                check=False,
+                step_label="glab repo view",
+            )
+            if view_result.returncode == 0:
+                click.echo(
+                    f"  ⚠ Repository '{effective_repo_name}' already exists, skipping creation.",
+                    err=True,
+                )
+            else:
+                detail = (create_result.stderr or create_result.stdout).strip()
+                raise click.ClickException(
+                    f"Step 'glab repo create' failed (exit {create_result.returncode}):\n{detail}"
+                )
+        else:
+            click.echo(f"  ✓ Repository '{effective_repo_name}' created.", err=True)
+
+        namespace = org
+        if not namespace:
+            click.echo("  Resolving GitLab username...", err=True)
+            user_json = _run_cmd(
+                ["glab", "api", "/user"], step_label="glab api user"
+            ).stdout
+            namespace = json.loads(user_json)["username"]
+
+        remote_url = f"https://gitlab.com/{namespace}/{effective_repo_name}.git"
+        click.echo(f"  Adding remote origin: {remote_url}", err=True)
+        _run_cmd(["git", "remote", "add", "origin", remote_url], cwd=project_path)
+        click.echo("  Pushing to origin/main...", err=True)
+        _run_cmd(["git", "push", "-u", "origin", "main"], cwd=project_path)
+        click.echo("  ✓ Code pushed.", err=True)
+
+    # Step 7 — Enable GitHub Pages (GitHub only)
+    if platform == "github":
+        click.echo("\nEnabling GitHub Pages...", err=True)
+        owner = org
+        if not owner:
+            owner = _run_cmd(
+                ["gh", "api", "user", "--jq", ".login"],
+                step_label="gh api user",
+            ).stdout.strip()
+        _run_cmd(
+            [
+                "gh",
+                "api",
+                "-X",
+                "POST",
+                f"repos/{owner}/{effective_repo_name}/pages",
+                "--field",
+                "build_type=workflow",
+            ],
+            step_label="enable GitHub Pages",
+        )
+        click.echo("  ✓ GitHub Pages enabled (workflow mode).", err=True)
+
+    # Step 8 — Display URL and next steps
+    if platform == "github":
+        pages_url = f"https://{owner}.github.io/{effective_repo_name}/"
+    else:
+        pages_url = f"https://{namespace}.gitlab.io/{effective_repo_name}/"
+
+    click.echo("\n✓ Done.", err=True)
+    click.echo(f"\n  Pages URL (after first pipeline): {pages_url}")
+    click.echo(
+        f"  Add reports: regis-cli analyze <IMAGE> --archive {project_path}/static/archive"
+    )
 
 
 @main.command(name="check")

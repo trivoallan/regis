@@ -44,7 +44,8 @@ jobs:
       - name: Build archive site
         env:
           ARCHIVE_URL: "{% raw %}${{ vars.ARCHIVE_URL || format('https://{0}.github.io', github.repository_owner) }}{% endraw %}"
-          ARCHIVE_BASE_URL: "{% raw %}/${{ github.event.repository.name }}/{% endraw %}"
+          # Override ARCHIVE_BASE_URL via a repository variable for custom domains or org pages.
+          ARCHIVE_BASE_URL: "{% raw %}${{ vars.ARCHIVE_BASE_URL || format('/{0}/', github.event.repository.name) }}{% endraw %}"
         run: pnpm build
 
       - uses: actions/upload-pages-artifact@v3
