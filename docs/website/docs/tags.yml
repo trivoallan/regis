@@ -101,6 +101,10 @@ compliance:
   label: compliance
   description: Compliance and regulatory checks.
 
+licensing:
+  label: licensing
+  description: Software licensing and open-source compliance.
+
 best-practices:
   label: best practices
   description: Recommended best practices for container images.
