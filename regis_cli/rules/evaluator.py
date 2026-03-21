@@ -58,9 +58,9 @@ def _interpolate_string(template: str, context: dict[str, Any]) -> str:
 
 def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
     """Gather default rules from analyzers present in the report."""
-    from regis_cli.cli import _discover_analyzers
+    from regis_cli.analyzers.discovery import discover_analyzers
 
-    analyzers = _discover_analyzers()
+    analyzers = discover_analyzers()
     default_rules = []
 
     # Add core rules manually
@@ -137,9 +137,9 @@ def merge_rules(
             # Last resort: load template directly from the analyzer class (handles the
             # case where the analyzer was not run but a custom rule references its template)
             if not template:
-                from regis_cli.cli import _discover_analyzers
+                from regis_cli.analyzers.discovery import discover_analyzers
 
-                all_analyzers = _discover_analyzers()
+                all_analyzers = discover_analyzers()
                 prov_cls = all_analyzers.get(provider)
                 if prov_cls:
                     for r in prov_cls.default_rules():

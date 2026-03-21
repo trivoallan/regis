@@ -96,9 +96,9 @@ class TestRegistryAuth:
         assert args[0] == "https://auth.docker.io/token"
         assert kwargs["auth"] == ("myuser", "mypassword")
 
-    @patch("regis_cli.cli.jsonschema.validate")
-    @patch("regis_cli.cli._discover_analyzers")
-    @patch("regis_cli.cli.RegistryClient")
+    @patch("regis_cli.utils.report.jsonschema")
+    @patch("regis_cli.commands.analyze._discover_analyzers")
+    @patch("regis_cli.commands.analyze.RegistryClient")
     def test_cli_passes_credentials(
         self, mock_client_cls, mock_discover, mock_validate
     ):
@@ -188,9 +188,9 @@ class TestRegistryAuth:
                     assert user == "docker_user"
                     assert pwd == "docker_pass"
 
-    @patch("regis_cli.cli.jsonschema.validate")
-    @patch("regis_cli.cli._discover_analyzers")
-    @patch("regis_cli.cli.RegistryClient")
+    @patch("regis_cli.utils.report.jsonschema")
+    @patch("regis_cli.commands.analyze._discover_analyzers")
+    @patch("regis_cli.commands.analyze.RegistryClient")
     def test_cli_passes_cli_auth_override(
         self, mock_client_cls, mock_discover, mock_validate
     ):
