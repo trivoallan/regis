@@ -122,12 +122,13 @@ class TestRegistryAuth:
 
         assert result.exit_code == 0
 
-        # Verify RegistryClient was initialized with env credentials
-        mock_client_cls.assert_called_once()
-        _, kwargs = mock_client_cls.call_args
-
-        assert kwargs["username"] == "env_user"
-        assert kwargs["password"] == "env_password"
+        # RegistryClient is called once for the digest fetch and once per
+        # analyzer thread — verify all calls use the env credentials.
+        assert mock_client_cls.call_count >= 1
+        for call in mock_client_cls.call_args_list:
+            _, kwargs = call
+            assert kwargs["username"] == "env_user"
+            assert kwargs["password"] == "env_password"
 
     @patch("regis_cli.registry.auth.Path.home")
     def test_resolve_credentials_precedence(self, mock_home):
@@ -217,12 +218,13 @@ class TestRegistryAuth:
 
         assert result.exit_code == 0
 
-        # Verify RegistryClient was initialized with override credentials
-        mock_client_cls.assert_called_once()
-        _, kwargs = mock_client_cls.call_args
-
-        assert kwargs["username"] == "override_user"
-        assert kwargs["password"] == "override_pass"
+        # RegistryClient is called once for the digest fetch and once per
+        # analyzer thread — verify all calls use the overridden credentials.
+        assert mock_client_cls.call_count >= 1
+        for call in mock_client_cls.call_args_list:
+            _, kwargs = call
+            assert kwargs["username"] == "override_user"
+            assert kwargs["password"] == "override_pass"
 
     def test_resolve_credentials_from_docker_auth_config_env(self):
         """Test resolve_credentials from DOCKER_AUTH_CONFIG env var."""

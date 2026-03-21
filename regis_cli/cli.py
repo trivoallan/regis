@@ -8,6 +8,7 @@ import shutil
 import subprocess  # nosec B404
 import sys
 import webbrowser
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from importlib import resources
 from importlib.metadata import entry_points, version
@@ -466,6 +467,28 @@ def _render_mr_templates(
                     )
 
 
+def _run_analyzer(
+    analyzer_cls: type[BaseAnalyzer],
+    registry: str,
+    repository: str,
+    tag: str,
+    username: str | None,
+    password: str | None,
+    platform: str | None,
+) -> tuple[str, dict[str, Any]]:
+    """Run a single analyzer with its own registry client."""
+    client = RegistryClient(
+        registry=registry,
+        repository=repository,
+        username=username,
+        password=password,
+    )
+    analyzer = analyzer_cls()
+    report = analyzer.analyze(client, repository, tag, platform=platform)
+    analyzer.validate(report)
+    return analyzer.name, report
+
+
 @main.command()
 @click.argument("url")
 @click.option(
@@ -573,6 +596,13 @@ def _render_mr_templates(
     default=None,
     help="Archive directory: persist the report and update manifest.json / data.json.",
 )
+@click.option(
+    "--max-workers",
+    default=4,
+    show_default=True,
+    type=click.IntRange(1, 20),
+    help="Maximum number of analyzers to run in parallel. Use 1 for serial execution.",
+)
 def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
@@ -592,6 +622,7 @@ def analyze(
     base_url: str = "/",
     open_browser: bool = False,
     archive_dir: Path | None = None,
+    max_workers: int = 4,
 ) -> None:
     """Analyze a Docker image and evaluate playbooks.
 
@@ -688,35 +719,51 @@ def analyze(
         else:
             selected = all_analyzers
 
-        # Run each analyzer.
+        # Run analyzers in parallel.
+        effective_workers = min(max_workers, len(selected))
+        click.echo(
+            f"  Running {len(selected)} analyzer(s) with {effective_workers} worker(s)...",
+            err=True,
+        )
         reports: dict[str, Any] = {}
-        for name, analyzer_cls in sorted(selected.items()):
-            click.echo(f"  Running analyzer: {name}...", err=True)
-            analyzer = analyzer_cls()
-            try:
-                report = analyzer.analyze(
-                    client, ref.repository, ref.tag, platform=platform
-                )
-                analyzer.validate(report)
-                reports[name] = report
-            except RegistryError as exc:
-                click.echo(f"  ✗ {name}: registry error — {exc}", err=True)
-                reports[name] = {
-                    "analyzer": name,
-                    "error": {"type": "registry", "message": str(exc)},
-                }
-            except AnalyzerError as exc:
-                click.echo(f"  ✗ {name}: validation error — {exc}", err=True)
-                reports[name] = {
-                    "analyzer": name,
-                    "error": {"type": "validation", "message": str(exc)},
-                }
-            except Exception as exc:
-                click.echo(f"  ✗ {name}: unexpected error — {exc}", err=True)
-                reports[name] = {
-                    "analyzer": name,
-                    "error": {"type": "unexpected", "message": str(exc)},
-                }
+        with ThreadPoolExecutor(max_workers=effective_workers) as executor:
+            futures = {
+                executor.submit(
+                    _run_analyzer,
+                    cls,
+                    ref.registry,
+                    ref.repository,
+                    ref.tag,
+                    username,
+                    password,
+                    platform,
+                ): name
+                for name, cls in selected.items()
+            }
+            for future in as_completed(futures):
+                name = futures[future]
+                try:
+                    _, report = future.result()
+                    reports[name] = report
+                    click.echo(f"  ✓ {name}", err=True)
+                except RegistryError as exc:
+                    click.echo(f"  ✗ {name}: registry error — {exc}", err=True)
+                    reports[name] = {
+                        "analyzer": name,
+                        "error": {"type": "registry", "message": str(exc)},
+                    }
+                except AnalyzerError as exc:
+                    click.echo(f"  ✗ {name}: analysis error — {exc}", err=True)
+                    reports[name] = {
+                        "analyzer": name,
+                        "error": {"type": "analysis", "message": str(exc)},
+                    }
+                except Exception as exc:
+                    click.echo(f"  ✗ {name}: unexpected error — {exc}", err=True)
+                    reports[name] = {
+                        "analyzer": name,
+                        "error": {"type": "unexpected", "message": str(exc)},
+                    }
 
         if not reports:
             raise click.ClickException("All analyzers failed.")

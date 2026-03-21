@@ -191,6 +191,105 @@ class TestCliBasics:
             assert report_data["metadata"]["env"] == "prod"
 
 
+class TestAnalyzeParallelism:
+    """Test parallel analyzer execution."""
+
+    def _make_dummy_analyzer(self, name: str, delay: float = 0.0):
+        """Return a DummyAnalyzer class with the given name."""
+        import time
+
+        from regis_cli.analyzers.base import BaseAnalyzer
+
+        class DummyAnalyzer(BaseAnalyzer):
+            analyzer_name = name
+
+            def analyze(self, client, repo, tag, platform=None):
+                if delay:
+                    time.sleep(delay)
+                return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
+
+            def validate(self, report):
+                pass
+
+        DummyAnalyzer.name = name
+        return DummyAnalyzer
+
+    @patch("regis_cli.cli.RegistryClient")
+    @patch("regis_cli.cli._discover_analyzers")
+    def test_parallel_analyzers_all_succeed(self, mock_discover, mock_client):
+        analyzers = {
+            f"dummy{i}": self._make_dummy_analyzer(f"dummy{i}") for i in range(3)
+        }
+        mock_discover.return_value = analyzers
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main, ["analyze", "nginx:latest", "--max-workers", "3"]
+            )
+        assert result.exit_code == 0
+        for i in range(3):
+            assert f"dummy{i}" in result.output
+
+    @patch("regis_cli.cli.RegistryClient")
+    @patch("regis_cli.cli._discover_analyzers")
+    def test_max_workers_capped_at_analyzer_count(self, mock_discover, mock_client):
+        """max_workers should not exceed the number of selected analyzers."""
+        mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main, ["analyze", "nginx:latest", "--max-workers", "10"]
+            )
+        assert result.exit_code == 0
+        assert "1 worker(s)" in result.output
+
+    @patch("regis_cli.cli.RegistryClient")
+    @patch("regis_cli.cli._discover_analyzers")
+    def test_serial_execution_with_max_workers_1(self, mock_discover, mock_client):
+        mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main, ["analyze", "nginx:latest", "--max-workers", "1"]
+            )
+        assert result.exit_code == 0
+        assert "1 worker(s)" in result.output
+
+    @patch("regis_cli.cli.RegistryClient")
+    @patch("regis_cli.cli._discover_analyzers")
+    def test_analyzer_failure_does_not_abort_others(self, mock_discover, mock_client):
+        """A failing analyzer should be recorded as an error, not abort the run."""
+        from regis_cli.analyzers.base import AnalyzerError, BaseAnalyzer
+
+        class FailingAnalyzer(BaseAnalyzer):
+            name = "failing"
+
+            def analyze(self, client, repo, tag, platform=None):
+                raise AnalyzerError("boom")
+
+            def validate(self, report):
+                pass
+
+        mock_discover.return_value = {
+            "dummy": self._make_dummy_analyzer("dummy"),
+            "failing": FailingAnalyzer,
+        }
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["analyze", "nginx:latest"])
+        assert result.exit_code == 0
+        assert "✗ failing" in result.output
+        assert "✓ dummy" in result.output
+
+
 class TestCliCheck:
     """Test the check command."""
 
