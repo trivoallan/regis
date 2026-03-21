@@ -14,6 +14,47 @@ from regis_cli.registry.client import RegistryClient
 
 logger = logging.getLogger(__name__)
 
+# Known copyleft SPDX license identifiers.
+# Strong copyleft: GPL, AGPL — require releasing all derivative source code.
+# Weak copyleft: LGPL, MPL, EPL, CDDL, EUPL — apply only to the licensed component.
+# SSPL: server-side variant of AGPL; covers services that use the software.
+COPYLEFT_LICENSES: frozenset[str] = frozenset(
+    {
+        # Strong copyleft — GPL
+        "GPL-2.0",
+        "GPL-2.0-only",
+        "GPL-2.0-or-later",
+        "GPL-3.0",
+        "GPL-3.0-only",
+        "GPL-3.0-or-later",
+        # Strong copyleft — Affero (network / SaaS)
+        "AGPL-1.0",
+        "AGPL-3.0",
+        "AGPL-3.0-only",
+        "AGPL-3.0-or-later",
+        # Weak copyleft — LGPL
+        "LGPL-2.0",
+        "LGPL-2.0-only",
+        "LGPL-2.0-or-later",
+        "LGPL-2.1",
+        "LGPL-2.1-only",
+        "LGPL-2.1-or-later",
+        "LGPL-3.0",
+        "LGPL-3.0-only",
+        "LGPL-3.0-or-later",
+        # Weak copyleft — Mozilla / Eclipse / CDDL / EUPL
+        "MPL-2.0",
+        "MPL-2.0-no-copyleft-exception",
+        "EPL-1.0",
+        "EPL-2.0",
+        "CDDL-1.0",
+        "EUPL-1.1",
+        "EUPL-1.2",
+        # Strong copyleft — Server Side Public License
+        "SSPL-1.0",
+    }
+)
+
 
 def _run_trivy_sbom(
     image: str,
@@ -98,6 +139,30 @@ class SbomAnalyzer(BaseAnalyzer):
                     "fail": "No SBOM could be generated or found for this image.",
                 },
             },
+            {
+                "slug": "license-blocklist",
+                "description": (
+                    "Image must not include components with licenses from the "
+                    "configured blocklist."
+                ),
+                "level": "critical",
+                "tags": ["compliance", "licensing"],
+                "params": {"blocklist": []},
+                "condition": {
+                    "!": [
+                        {
+                            "intersects": [
+                                {"var": "results.sbom.licenses"},
+                                {"var": "rule.params.blocklist"},
+                            ]
+                        }
+                    ]
+                },
+                "messages": {
+                    "pass": "No blocked licenses detected across ${results.sbom.total_components} components.",  # nosec B105
+                    "fail": "Blocked license(s) detected: ${results.sbom.copyleft_licenses}",
+                },
+            },
         ]
 
     def analyze(
@@ -156,5 +221,6 @@ class SbomAnalyzer(BaseAnalyzer):
             "component_types": component_types,
             "total_dependencies": len(data.get("dependencies", [])),
             "licenses": sorted(all_licenses),
+            "copyleft_licenses": sorted(all_licenses & COPYLEFT_LICENSES),
             "components": components,
         }
