@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.18.0](https://github.com/trivoallan/regis-cli/compare/v0.17.4...v0.18.0) (2026-03-21)
+
+### Features
+
+- **report:** implement docusaurus report viewer ([#68](https://github.com/trivoallan/regis-cli/issues/68)) ([880047c](https://github.com/trivoallan/regis-cli/commit/880047c6b53f7e8698bbf8e8b16c5f1746c2a5d0))
+- **report:** overhaul report viewer UI with Tremor components ([#70](https://github.com/trivoallan/regis-cli/issues/70)) ([75ffc3c](https://github.com/trivoallan/regis-cli/commit/75ffc3ccd773eba0a88fba05322630129708bd5a))
+
+### Bug Fixes
+
+- **ci:** Reorder documentation generation steps in the CI workflow and enhance the Docusaurus report builder with improved build commands and dependency checks. ([87527e4](https://github.com/trivoallan/regis-cli/commit/87527e4cb9bca51643a9b10b0fb467fdaa76f5c3))
+
 ## [0.17.4](https://github.com/trivoallan/regis-cli/compare/v0.17.3...v0.17.4) (2026-03-20)
 
 ### Bug Fixes
