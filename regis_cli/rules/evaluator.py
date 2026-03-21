@@ -113,6 +113,9 @@ def merge_rules(
 
     # 2. Process custom rules
     processed_custom: list[dict[str, Any]] = []
+    # Track template keys that are explicitly instantiated under a new slug so that
+    # the original template entry can be removed from the final set (prevents duplicates).
+    instantiated_template_keys: set[tuple[str, str]] = set()
     for rule_def in custom_rules:
         provider = rule_def.get("provider")
         template_name = rule_def.get("rule")
@@ -169,6 +172,9 @@ def merge_rules(
                 }
                 instance.update(overrides)
                 processed_custom.append(instance)
+                # Mark the source template as consumed so it is not included twice
+                # in the final rule set (the instance takes its place).
+                instantiated_template_keys.add((provider, template_name))
             else:
                 logger.warning(
                     "Rule template '%s' not found for provider '%s'",
@@ -204,9 +210,11 @@ def merge_rules(
     # 3. Merge processed custom rules into the final set
     # Final result is still a list of rules with their (provider, slug) identity
     final_dict: dict[tuple[str, str], dict[str, Any]] = {}
-    # Re-initialize with defaults
+    # Re-initialize with defaults, skipping templates that were explicitly
+    # instantiated under a new slug by a custom rule (avoids duplicates).
     for k, v in merged.items():
-        final_dict[k] = v
+        if k not in instantiated_template_keys:
+            final_dict[k] = v
 
     for rule in processed_custom:
         # Provider and slug are now properly formatted thanks to previous loop
