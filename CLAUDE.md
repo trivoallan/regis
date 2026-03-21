@@ -1,5 +1,36 @@
 # CLAUDE.md
 
+## Commands
+
+```bash
+pipenv install --dev        # Install all dependencies
+pipenv run pytest           # Run test suite
+pipenv run ruff check .     # Lint
+pipenv run ruff format .    # Format
+pipenv run regis-cli --help # Run CLI locally
+```
+
+## Architecture
+
+```
+regis_cli/
+  cli.py              # Main entry point — `regis-cli` console script
+  analyzers/          # Pluggable analyzers (registered via pyproject.toml entry points)
+  playbook/           # Playbook evaluation engine (context, sections, evaluator)
+  rules/              # JSON Logic rule evaluation and merging
+  registry/           # Registry client, auth, URL parser
+  report/             # Report generation (Docusaurus SPA builder)
+  schemas/            # JSON Schema files for analyzer outputs and playbook definitions
+  playbooks/          # Built-in default playbook (default.yaml)
+```
+
+## Key Patterns
+
+- **Analyzer plugins**: Discovered via `project.entry-points."regis_cli.analyzers"` in `pyproject.toml`. Each must subclass `BaseAnalyzer` and implement `analyze()`, `validate()`, and `default_rules()`.
+- **Rule templates**: `default_rules()` can return both concrete rules and reusable templates (identified by `slug`). Playbooks instantiate templates via `rule: <slug>` + `options:`.
+- **JSON Logic operators**: Custom operators (`intersects`, `contains_all`, `subset`, `keys`, `get`, `env_contains`) are registered in `rules/evaluator.py`.
+- **Parallel analysis**: Analyzers run concurrently via `ThreadPoolExecutor` (default 4 workers, `--max-workers` to override). Each thread gets its own `RegistryClient` instance.
+
 ## Craftsmanship
 
 - Prefer existing, established, state-of-the-art libraries over starting from scratch.
@@ -44,13 +75,13 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). A
 **Rendering & Reporting**
 
 - `report` — high-level report generation (folder creation, file writing)
-- `templates` / `theme` — visual aspects, HTML, CSS, Jinja2 macros
+- `templates` / `theme` — visual aspects, HTML, CSS, React/Docusaurus SPA
 
 **Tooling & CI**
 
 - `ci` — GitHub Actions workflows
 - `deps` / `build` — environment management (Pipenv, pyproject.toml, Dockerfiles)
-- `docs` — Antora documentation, READMEs, Memory Bank updates
+- `docs` — Docusaurus documentation, READMEs, Memory Bank updates
 
 ## CI/CD
 
@@ -60,7 +91,10 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). A
 - [Super Linter](https://github.com/marketplace/actions/super-linter) — always check results in PRs.
 - Do not manually edit Release Please PRs unless necessary.
 
-## Python
+## Python & External Tools
+
+**Required external binaries** (must be in `PATH` for the relevant analyzers to work):
+`trivy`, `skopeo`, `hadolint`, `dockle`
 
 - Styleguide: [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
 - Use [pipenv](https://pipenv.pypa.io/en/latest) for dependency management.
