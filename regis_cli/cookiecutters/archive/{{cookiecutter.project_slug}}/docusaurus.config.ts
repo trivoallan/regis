@@ -54,7 +54,7 @@ const config: Config = {
     },
     footer: {
       style: "dark",
-      copyright: `Powered by <a href="https://github.com/trivoallan/regis-cli">regis-cli</a>`,
+      copyright: `Powered by <a href="https://{{ cookiecutter.platform }}.com/trivoallan/regis-cli">regis-cli</a>`,
     },
   } satisfies Preset.ThemeConfig,
 };

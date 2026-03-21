@@ -1028,6 +1028,129 @@ def bootstrap_playbook(output_dir: str, no_input: bool) -> None:
         raise click.ClickException(f"Failed to bootstrap playbook: {exc}") from exc
 
 
+def _sync_archive_template(working_copy: str) -> None:
+    """Sync UI changes from a working copy back to the archive cookiecutter template.
+
+    For each file in the template:
+    - Files with no Jinja2 variable references → copied back verbatim.
+    - Files with ``{{ cookiecutter.X }}`` references → concrete values are
+      substituted back to their placeholder form.
+    - Files containing Jinja2 block tags (``{%``) → skipped with a warning;
+      auto-merging conditional blocks is not safe.
+    """
+    from importlib import resources
+
+    working_path = Path(working_copy).resolve()
+    if not working_path.is_dir():
+        raise click.ClickException(f"Path '{working_copy}' is not a directory.")
+
+    sync_file = working_path / ".regis-sync.json"
+    if not sync_file.exists():
+        raise click.ClickException(
+            f"No .regis-sync.json found in {working_path}.\n"
+            "Only working copies bootstrapped with 'regis-cli bootstrap archive' are supported."
+        )
+
+    sync_meta = json.loads(sync_file.read_text(encoding="utf-8"))
+    context: dict[str, str] = sync_meta.get("context", {})
+    if not context:
+        raise click.ClickException(".regis-sync.json is missing the 'context' key.")
+
+    template_path = Path(
+        str(
+            resources.files("regis_cli")
+            / "cookiecutters"
+            / "archive"
+            / "{{cookiecutter.project_slug}}"
+        )
+    )
+
+    _SKIP_NAMES = {
+        ".regis-sync.json",
+        ".regis-post-install.md",
+        "pnpm-lock.yaml",
+        "package-lock.json",
+    }
+    _SKIP_DIRS = {"node_modules", ".next", "build", ".git"}
+    _SKIP_DIR_PREFIXES = {"static/archive"}
+
+    # Sort values longest-first to prevent shorter values masking longer ones
+    # during reverse substitution (e.g. "regis-archive" before "archive").
+    sorted_context = sorted(
+        context.items(), key=lambda kv: len(str(kv[1])), reverse=True
+    )
+
+    updated: list[Path] = []
+    skipped_complex: list[Path] = []
+    missing: list[Path] = []
+
+    for tmpl_file in sorted(template_path.rglob("*")):
+        if not tmpl_file.is_file():
+            continue
+
+        rel = tmpl_file.relative_to(template_path)
+
+        # Skip by directory
+        if any(part in _SKIP_DIRS for part in rel.parts):
+            continue
+        if any(str(rel).startswith(prefix) for prefix in _SKIP_DIR_PREFIXES):
+            continue
+        if rel.name in _SKIP_NAMES:
+            continue
+
+        working_file = working_path / rel
+        if not working_file.exists():
+            missing.append(rel)
+            continue
+
+        try:
+            tmpl_content = tmpl_file.read_text(encoding="utf-8")
+            working_content = working_file.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue  # binary file — skip
+
+        # Files with Jinja2 block tags cannot be safely auto-merged
+        if "{%" in tmpl_content:
+            skipped_complex.append(rel)
+            continue
+
+        if "{{cookiecutter." in tmpl_content.replace(" ", ""):
+            # Reverse-substitute: replace concrete values with placeholders
+            new_content = working_content
+            for key, value in sorted_context:
+                if value and isinstance(value, str):
+                    new_content = new_content.replace(
+                        value, f"{{{{ cookiecutter.{key} }}}}"
+                    )
+        else:
+            # No variables in template — working copy content is the new template
+            new_content = working_content
+
+        if new_content != tmpl_content:
+            tmpl_file.write_text(new_content, encoding="utf-8")
+            updated.append(rel)
+
+    # Report
+    click.echo(f"\nSync: {working_path} → template", err=True)
+    if updated:
+        click.echo(f"\n  Updated ({len(updated)}):", err=True)
+        for f in sorted(updated):
+            click.echo(f"    ✓ {f}", err=True)
+    if skipped_complex:
+        click.echo(
+            f"\n  Skipped — Jinja2 block tags, manual sync required ({len(skipped_complex)}):",
+            err=True,
+        )
+        for f in sorted(skipped_complex):
+            click.echo(f"    ⚠ {f}", err=True)
+    if missing:
+        click.echo(f"\n  Not found in working copy ({len(missing)}):", err=True)
+        for f in sorted(missing):
+            click.echo(f"    - {f}", err=True)
+    if not updated:
+        click.echo("\n  No changes detected.", err=True)
+
+
 @bootstrap.command(name="archive")
 @click.argument(
     "output_dir", type=click.Path(file_okay=False, dir_okay=True), default="."
@@ -1074,6 +1197,13 @@ def bootstrap_playbook(output_dir: str, no_input: bool) -> None:
     default=None,
     help="Organisation or group to create the repo in (only with --repo).",
 )
+@click.option(
+    "--sync-from",
+    "sync_from",
+    default=None,
+    metavar="PATH",
+    help="Sync UI changes from a working copy back to the cookiecutter template.",
+)
 def bootstrap_archive(
     output_dir: str,
     no_input: bool,
@@ -1084,12 +1214,18 @@ def bootstrap_archive(
     repo_name: str | None,
     public: bool | None,
     org: str | None,
+    sync_from: str | None,
 ) -> None:
     """Bootstrap a standalone archive viewer site for regis-cli reports.
 
     Use --dev to start a local dev server after scaffolding.
     Use --repo to create a remote repository and enable Pages.
+    Use --sync-from PATH to sync UI changes back to the cookiecutter template.
     """
+    if sync_from:
+        _sync_archive_template(sync_from)
+        return
+
     if dev and repo:
         raise click.UsageError("--dev and --repo are mutually exclusive.")
 

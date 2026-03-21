@@ -1,0 +1,10 @@
+{
+  "template": "archive",
+  "context": {
+    "project_name": "{{ cookiecutter.project_name }}",
+    "project_slug": "{{ cookiecutter.project_slug }}",
+    "description": "{{ cookiecutter.description }}",
+    "version": "{{ cookiecutter.version }}",
+    "platform": "{{ cookiecutter.platform }}"
+  }
+}
