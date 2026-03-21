@@ -318,7 +318,6 @@ class TestBootstrapArchiveSyncFrom:
 
     def test_changed_file_is_synced_back(self, tmp_path):
         """Modifying a file in the working copy syncs the change back to the template."""
-        import json
         from importlib import resources
 
         runner = CliRunner()
@@ -361,7 +360,6 @@ class TestBootstrapArchiveSyncFrom:
 
     def test_variable_placeholders_restored(self, tmp_path):
         """Cookiecutter variables are re-inserted when syncing docusaurus.config.ts."""
-        import json
         from importlib import resources
 
         runner = CliRunner()
