@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.18.1](https://github.com/trivoallan/regis-cli/compare/v0.18.0...v0.18.1) (2026-03-21)
+
+### Documentation
+
+- Add and update generated static assets and reports for regis-cli and alpine playbook examples. ([11c467c](https://github.com/trivoallan/regis-cli/commit/11c467c04eb0a8ab419fe51117ae4975348d626a))
+
 ## [0.18.0](https://github.com/trivoallan/regis-cli/compare/v0.17.4...v0.18.0) (2026-03-21)
 
 ### Features
