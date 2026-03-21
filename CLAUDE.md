@@ -19,6 +19,10 @@ trunk check --fix --all       # Fix issues in all files
 regis_cli/
   cli.py              # Main entry point — `regis-cli` console script
   analyzers/          # Pluggable analyzers (registered via pyproject.toml entry points)
+  analyzers/discovery.py  # discover_analyzers() — entry point loader
+  commands/           # CLI commands (analyze, archive, bootstrap, check, rules)
+  utils/process.py    # run_cmd(), require_tool() — subprocess helpers
+  utils/report.py     # write_report, run_playbooks, validate_report, render_*
   playbook/           # Playbook evaluation engine (context, sections, evaluator)
   rules/              # JSON Logic rule evaluation and merging
   registry/           # Registry client, auth, URL parser
@@ -33,6 +37,8 @@ regis_cli/
 - **Rule templates**: `default_rules()` can return both concrete rules and reusable templates (identified by `slug`). Playbooks instantiate templates via `rule: <slug>` + `options:`.
 - **JSON Logic operators**: Custom operators (`intersects`, `contains_all`, `subset`, `keys`, `get`, `env_contains`) are registered in `rules/evaluator.py`.
 - **Parallel analysis**: Analyzers run concurrently via `ThreadPoolExecutor` (default 4 workers, `--max-workers` to override). Each thread gets its own `RegistryClient` instance.
+- **Test patch targets**: After the CLI split, patch at the new module locations — not `regis_cli.cli.*`. Key targets: `regis_cli.commands.analyze.{RegistryClient,_discover_analyzers}`, `regis_cli.commands.check.{RegistryClient,version}`, `regis_cli.utils.process.{shutil,subprocess}`, `regis_cli.utils.report.jsonschema`.
+- **Lazy imports in functions**: `from module import X` inside a function body — patch at the source (`module.X`), not at the importing module.
 
 ## Craftsmanship
 
@@ -92,6 +98,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). A
 - GitHub project configuration as code via the [GitHub Settings App](https://github.com/apps/settings).
 - [Semantic Versioning](https://semver.org/).
 - [Trunk](https://trunk.io) — linter/formatter orchestrator used in CI. Always check results in PRs.
+- Trunk runs `trunk check --fix` automatically on `git commit` (pre-commit hook `trunk-check-fix-pre-commit`). Commit the auto-fixed files it produces.
+- mypy is excluded for `tests/**` (crashes on Linux CI with stale cache on `http.server`).
 - Do not manually edit Release Please PRs unless necessary.
 
 ## Python & External Tools
