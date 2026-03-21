@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.20.0](https://github.com/trivoallan/regis-cli/compare/v0.19.0...v0.20.0) (2026-03-21)
+
+
+### Features
+
+* Add `trunk check` commands, introduce the `--sync-from` option for `bootstrap archive`, and document the archive UI customization workflow. ([e7ae0dc](https://github.com/trivoallan/regis-cli/commit/e7ae0dc5d3298419d7f6a00847d3a2771de84db1))
+* **analyzer/sbom:** Add license-blocklist rule for invasive open source license detection ([#83](https://github.com/trivoallan/regis-cli/issues/83)) ([a49713b](https://github.com/trivoallan/regis-cli/commit/a49713bcafac9926d802fb92d53e46206ca28336))
+* **cli:** Add `bootstrap archive --sync-from` to sync UI changes back to template ([#90](https://github.com/trivoallan/regis-cli/issues/90)) ([738a6da](https://github.com/trivoallan/regis-cli/commit/738a6daa7be9f86c3a2fe3121d9bfd294fdb2b22))
+* **cli:** Run analyzers in parallel with ThreadPoolExecutor ([#84](https://github.com/trivoallan/regis-cli/issues/84)) ([5cba9fc](https://github.com/trivoallan/regis-cli/commit/5cba9fc5449a4f603f9a3e66dadbcc420e754328))
+* **docs:** Add two-version documentation (main-dev + vX.Y.Z) ([#87](https://github.com/trivoallan/regis-cli/issues/87)) ([664a4f4](https://github.com/trivoallan/regis-cli/commit/664a4f49d72d2935a331235077a9d5f08b5b7868))
+
+
+### Bug Fixes
+
+* **ci:** Fix Trunk auto-format workflow to avoid stale SHA issue ([#86](https://github.com/trivoallan/regis-cli/issues/86)) ([5b55df6](https://github.com/trivoallan/regis-cli/commit/5b55df64f509cf11c74c0e424486162e5fc36beb))
+* **playbook:** Remove duplicate rules when templates are instantiated by playbook ([#89](https://github.com/trivoallan/regis-cli/issues/89)) ([99cfd75](https://github.com/trivoallan/regis-cli/commit/99cfd751064fd9c8b7b5c959744a4e0c04970cd9))
+* Update the `yaml-language-server` schema path in the default playbook. ([450a58d](https://github.com/trivoallan/regis-cli/commit/450a58db7dc6cee292d2ce10dec95f6d427f22eb))
+
+
+### Documentation
+
+* add licensing tag and correct relative path in archive-repo documentation. ([932278e](https://github.com/trivoallan/regis-cli/commit/932278e94f8ad9c8343d70face044a8ae6a64025))
+* **archive:** rename "Archive Repo Setup" to "Archive Repository" ([aa6a7ef](https://github.com/trivoallan/regis-cli/commit/aa6a7efcfe596ffddf0a5cd8f332f00008edf7bc))
+* delete versioned documentation and update the reports concept page. ([98d32db](https://github.com/trivoallan/regis-cli/commit/98d32dbacb50d2f5fb34e4fa168fee70d5e1262d))
+* **docs:** Redesign homepage with feature cards and report preview gallery ([#88](https://github.com/trivoallan/regis-cli/issues/88)) ([af23533](https://github.com/trivoallan/regis-cli/commit/af23533c55be423eb0309db0124219cdba10102b))
+* Improve CLAUDE.md with commands, architecture, and key patterns ([#85](https://github.com/trivoallan/regis-cli/issues/85)) ([8cc840c](https://github.com/trivoallan/regis-cli/commit/8cc840c3893b548f13f262b8b293f8082ba6798c))
+* update CLAUDE.md with CLI module split, test patch targets, and trunk hooks ([09500a4](https://github.com/trivoallan/regis-cli/commit/09500a4ddc67906c28a28452bff739818498c275))
+
 ## [0.19.0](https://github.com/trivoallan/regis-cli/compare/v0.18.1...v0.19.0) (2026-03-21)
 
 ### Features

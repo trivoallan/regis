@@ -2,5 +2,5 @@
   "project_name": "Custom RegiS Playbook",
   "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-') }}",
   "description": "A custom RegiS playbook for image analysis.",
-  "version": "0.19.0"
+  "version": "0.20.0"
 }
