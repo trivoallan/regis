@@ -1,1642 +1,483 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html
+  lang="en"
+  dir="ltr"
+  class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-index"
+  data-has-hydrated="false"
+>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>regis-cli Report — library/alpine:latest</title>
-    <style>
-      @import url("https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css");
-
-      :root {
-        --pico-font-size: 16px;
+    <meta charset="UTF-8" />
+    <meta name="generator" content="Docusaurus v3.9.2" />
+    <title data-rh="true">index | regis-cli</title>
+    <meta
+      data-rh="true"
+      name="viewport"
+      content="width=device-width,initial-scale=1"
+    />
+    <meta data-rh="true" name="twitter:card" content="summary_large_image" />
+    <meta data-rh="true" property="og:url" content="http://localhost/" />
+    <meta data-rh="true" property="og:locale" content="en" />
+    <meta data-rh="true" name="docusaurus_locale" content="en" />
+    <meta data-rh="true" name="docsearch:language" content="en" />
+    <meta data-rh="true" name="docusaurus_version" content="current" />
+    <meta data-rh="true" name="docusaurus_tag" content="docs-default-current" />
+    <meta data-rh="true" name="docsearch:version" content="current" />
+    <meta
+      data-rh="true"
+      name="docsearch:docusaurus_tag"
+      content="docs-default-current"
+    />
+    <meta data-rh="true" property="og:title" content="index | regis-cli" />
+    <link data-rh="true" rel="icon" href="/img/favicon.ico" />
+    <link data-rh="true" rel="canonical" href="http://localhost/" />
+    <link
+      data-rh="true"
+      rel="alternate"
+      href="http://localhost/"
+      hreflang="en"
+    />
+    <link
+      data-rh="true"
+      rel="alternate"
+      href="http://localhost/"
+      hreflang="x-default"
+    />
+    <script data-rh="true">
+      function insertBanner() {
+        var n = document.createElement("div");
+        n.id = "__docusaurus-base-url-issue-banner-container";
+        ((n.innerHTML =
+          '\n<div id="__docusaurus-base-url-issue-banner" style="border: thick solid red; background-color: rgb(255, 230, 179); margin: 20px; padding: 20px; font-size: 20px;">\n   <p style="font-weight: bold; font-size: 30px;">Your Docusaurus site did not load properly.</p>\n   <p>A very common reason is a wrong site <a href="https://docusaurus.io/docs/docusaurus.config.js/#baseUrl" style="font-weight: bold;">baseUrl configuration</a>.</p>\n   <p>Current configured baseUrl = <span style="font-weight: bold; color: red;">/</span>  (default value)</p>\n   <p>We suggest trying baseUrl = <span id="__docusaurus-base-url-issue-banner-suggestion-container" style="font-weight: bold; color: green;"></span></p>\n</div>\n'),
+          document.body.prepend(n));
+        var e = document.getElementById(
+            "__docusaurus-base-url-issue-banner-suggestion-container",
+          ),
+          s = window.location.pathname,
+          o = "/" === s.substr(-1) ? s : s + "/";
+        e.innerHTML = o;
       }
-
-      body {
-        padding: 0;
-        margin: 0;
+      document.addEventListener("DOMContentLoaded", function () {
+        void 0 === window.docusaurus && insertBanner();
+      });
+    </script>
+    <script data-rh="true" type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Summary",
+            "item": "http://localhost/"
+          }
+        ]
       }
-
-      #layout-wrapper {
-        display: flex;
-        min-height: 100vh;
-      }
-
-      #sidebar {
-        width: 280px;
-        background: var(--pico-card-background-color);
-        border-right: 1px solid var(--pico-muted-border-color);
-        padding: 1.5rem;
-        height: 100vh;
-        position: sticky;
-        top: 0;
-        overflow-y: auto;
-      }
-
-      #sidebar nav ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      #sidebar nav details {
-        border-bottom: none;
-        margin-bottom: 1rem;
-      }
-
-      #sidebar nav summary {
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        opacity: 0.6;
-        margin-bottom: 0.5rem;
-      }
-
-      #sidebar nav a {
-        display: block;
-        padding: 0.4rem 0.8rem;
-        border-radius: var(--pico-border-radius);
-        text-decoration: none;
-        color: var(--pico-color);
-        font-size: 0.95rem;
-        transition: background 0.2s;
-      }
-
-      #sidebar nav a:hover {
-        background: var(--pico-primary-background);
-        color: var(--pico-primary-inverse);
-        font-weight: bold;
-      }
-
-      #sidebar nav a.active {
-        background: var(--pico-primary-background);
-        color: var(--pico-primary-inverse);
-        font-weight: bold;
-      }
-
-      main.container {
-        flex: 1;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem 3rem;
-      }
-
-      header {
-        margin-bottom: 3rem;
-      }
-
-      header h1 {
-        margin-bottom: 0.5rem;
-      }
-
-      .meta {
-        font-size: 0.9rem;
-        opacity: 0.8;
-      }
-
-      article {
-        margin-bottom: 2rem;
-      }
-
-      .playbook-section {
-        margin-bottom: 1.5rem;
-        padding-left: 1rem;
-        border-left: 3px solid var(--pico-muted-border-color);
-      }
-
-      .section-hint {
-        font-size: 0.9rem;
-        opacity: 0.8;
-        margin-top: -1rem;
-        margin-bottom: 1rem;
-      }
-
-      .badge {
-        display: inline-block;
-        padding: 0.2rem 0.6rem;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        font-weight: bold;
-        background: var(--pico-secondary-background);
-        color: var(--pico-secondary-inverse);
-        margin-right: 0.3rem;
-        white-space: nowrap;
-      }
-
-      .badge.success {
-        background: #22c55e;
-        color: white;
-      }
-
-      .badge.error {
-        background: #ef4444;
-        color: white;
-      }
-
-      .badge.outline {
-        background: transparent;
-        border: 1px solid var(--pico-muted-border-color);
-        color: inherit;
-      }
-
-      .status-passed {
-        color: #22c55e;
-      }
-
-      .status-failed {
-        color: #ef4444;
-      }
-
-      summary {
-        font-weight: bold;
-      }
-
-      footer {
-        text-align: center;
-        border-top: 1px solid var(--pico-muted-border-color);
-        padding-top: 2rem;
-        margin-top: 4rem;
-      }
-
-      .playbook-section .recommandation-nogo {
-        color: #ef4444;
-      }
-
-      .playbook-section .recommandation-go {
-        color: #22c55e;
-      }
-
-      header h1 {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-        text-align: center;
-      }
-
-      header h2 {
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-        text-align: center;
-      }
-      .tag-card {
-        margin-bottom: var(--pico-spacing);
-        border: 1px solid var(--pico-muted-border-color);
-      }
-
-      .tag-card:hover {
-        border-color: var(--pico-primary);
-        background: var(--pico-primary-background);
-      }
-
-      .rule-row td {
-        vertical-align: top;
-      }
-
-      /* Tier Badges */
-      .tier-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 2rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        font-size: 0.85rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      .tier-gold {
-        background: linear-gradient(135deg, #ffd700, #ffae00);
-        color: #5c4b00;
-        border: 1px solid #d4af37;
-      }
-
-      .tier-silver {
-        background: linear-gradient(135deg, #c0c0c0, #a9a9a9);
-        color: #333;
-        border: 1px solid #999;
-      }
-
-      .tier-bronze {
-        background: linear-gradient(135deg, #cd7f32, #a0522d);
-        color: #fff;
-        border: 1px solid #8b4513;
-      }
-
-      /* Badge Classes */
-      .bg-success {
-        background-color: #28a745 !important;
-        color: white !important;
-      }
-      .bg-warning {
-        background-color: #ffc107 !important;
-        color: black !important;
-      }
-      .bg-error {
-        background-color: #dc3545 !important;
-        color: white !important;
-      }
-      .bg-information {
-        background-color: #17a2b8 !important;
-        color: white !important;
-      }
-
-      .badge {
-        display: inline-block;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        margin-right: 0.25rem;
-      }
-    </style>
+    </script>
+    <link rel="stylesheet" href="/assets/css/styles.936e4ef7.css" />
+    <script src="/assets/js/runtime~main.04a094aa.js" defer="defer"></script>
+    <script src="/assets/js/main.71c0ac29.js" defer="defer"></script>
   </head>
-  <body>
-    <div id="layout-wrapper">
-      <!-- Sidebar -->
-      <aside id="sidebar">
-        <nav>
-          <details open inner>
-            <summary>Navigation</summary>
-            <ul>
-              <li>
-                <a href="index.html" aria-current="page" class="active">
-                  Overview
-                </a>
-              </li>
-
-              <li>
-                <a href="compliance.html"> Compliance </a>
-              </li>
-
-              <li>
-                <a href="security.html"> Security </a>
-              </li>
-
-              <li>
-                <a href="supply-chain.html"> Supply Chain &amp; Quality </a>
-              </li>
-
-              <li>
-                <a href="best-practices.html"> Best Practices </a>
-              </li>
-
-              <li>
-                <a href="insights.html"> Insights &amp; Lifecycle </a>
-              </li>
-
-              <li>
-                <a href="metadata.html"> Technical Details </a>
-              </li>
-            </ul>
-          </details>
-        </nav>
-      </aside>
-
-      <!-- Main Content -->
-      <main class="container">
-        <header>
-          <h1>registry-1.docker.io/library/alpine:latest</h1>
-        </header>
-
-        <section id="rules">
-          <section id="rules-summary" style="margin-bottom: 3rem">
-            <h3>Rules Evaluation</h3>
-
-            <div class="grid">
-              <article
-                class="tag-card"
-                onclick="filterByTag('compatibility')"
-                style="cursor: pointer; transition: transform 0.2s"
-              >
-                <header
-                  style="
-                    padding: 0.5rem 1rem;
-                    margin-bottom: 0.5rem;
-                    background: var(--pico-secondary-background);
-                    border-radius: var(--pico-border-radius)
-                      var(--pico-border-radius) 0 0;
-                  "
-                >
-                  <small
-                    style="
-                      text-transform: uppercase;
-                      font-weight: bold;
-                      letter-spacing: 0.05em;
-                    "
-                    >compatibility</small
-                  >
-                </header>
-                <div style="text-align: center">
-                  <span
-                    style="font-size: 2rem; font-weight: bold; line-height: 1"
-                    >100%</span
-                  >
-                  <br />
-                  <small style="opacity: 0.7">1 / 1 passed</small>
-                </div>
-              </article>
-
-              <article
-                class="tag-card"
-                onclick="filterByTag('freshness')"
-                style="cursor: pointer; transition: transform 0.2s"
-              >
-                <header
-                  style="
-                    padding: 0.5rem 1rem;
-                    margin-bottom: 0.5rem;
-                    background: var(--pico-secondary-background);
-                    border-radius: var(--pico-border-radius)
-                      var(--pico-border-radius) 0 0;
-                  "
-                >
-                  <small
-                    style="
-                      text-transform: uppercase;
-                      font-weight: bold;
-                      letter-spacing: 0.05em;
-                    "
-                    >freshness</small
-                  >
-                </header>
-                <div style="text-align: center">
-                  <span
-                    style="font-size: 2rem; font-weight: bold; line-height: 1"
-                    >0%</span
-                  >
-                  <br />
-                  <small style="opacity: 0.7">0 / 1 passed</small>
-                </div>
-              </article>
-
-              <article
-                class="tag-card"
-                onclick="filterByTag('hygiene')"
-                style="cursor: pointer; transition: transform 0.2s"
-              >
-                <header
-                  style="
-                    padding: 0.5rem 1rem;
-                    margin-bottom: 0.5rem;
-                    background: var(--pico-secondary-background);
-                    border-radius: var(--pico-border-radius)
-                      var(--pico-border-radius) 0 0;
-                  "
-                >
-                  <small
-                    style="
-                      text-transform: uppercase;
-                      font-weight: bold;
-                      letter-spacing: 0.05em;
-                    "
-                    >hygiene</small
-                  >
-                </header>
-                <div style="text-align: center">
-                  <span
-                    style="font-size: 2rem; font-weight: bold; line-height: 1"
-                    >100%</span
-                  >
-                  <br />
-                  <small style="opacity: 0.7">1 / 1 passed</small>
-                </div>
-              </article>
-
-              <article
-                class="tag-card"
-                onclick="filterByTag('lifecycle')"
-                style="cursor: pointer; transition: transform 0.2s"
-              >
-                <header
-                  style="
-                    padding: 0.5rem 1rem;
-                    margin-bottom: 0.5rem;
-                    background: var(--pico-secondary-background);
-                    border-radius: var(--pico-border-radius)
-                      var(--pico-border-radius) 0 0;
-                  "
-                >
-                  <small
-                    style="
-                      text-transform: uppercase;
-                      font-weight: bold;
-                      letter-spacing: 0.05em;
-                    "
-                    >lifecycle</small
-                  >
-                </header>
-                <div style="text-align: center">
-                  <span
-                    style="font-size: 2rem; font-weight: bold; line-height: 1"
-                    >0%</span
-                  >
-                  <br />
-                  <small style="opacity: 0.7">0 / 1 passed</small>
-                </div>
-              </article>
-
-              <article
-                class="tag-card"
-                onclick="filterByTag('metadata')"
-                style="cursor: pointer; transition: transform 0.2s"
-              >
-                <header
-                  style="
-                    padding: 0.5rem 1rem;
-                    margin-bottom: 0.5rem;
-                    background: var(--pico-secondary-background);
-                    border-radius: var(--pico-border-radius)
-                      var(--pico-border-radius) 0 0;
-                  "
-                >
-                  <small
-                    style="
-                      text-transform: uppercase;
-                      font-weight: bold;
-                      letter-spacing: 0.05em;
-                    "
-                    >metadata</small
-                  >
-                </header>
-                <div style="text-align: center">
-                  <span
-                    style="font-size: 2rem; font-weight: bold; line-height: 1"
-                    >0%</span
-                  >
-                  <br />
-                  <small style="opacity: 0.7">0 / 1 passed</small>
-                </div>
-              </article>
-
-              <article
-                class="tag-card"
-                onclick="filterByTag('performance')"
-                style="cursor: pointer; transition: transform 0.2s"
-              >
-                <header
-                  style="
-                    padding: 0.5rem 1rem;
-                    margin-bottom: 0.5rem;
-                    background: var(--pico-secondary-background);
-                    border-radius: var(--pico-border-radius)
-                      var(--pico-border-radius) 0 0;
-                  "
-                >
-                  <small
-                    style="
-                      text-transform: uppercase;
-                      font-weight: bold;
-                      letter-spacing: 0.05em;
-                    "
-                    >performance</small
-                  >
-                </header>
-                <div style="text-align: center">
-                  <span
-                    style="font-size: 2rem; font-weight: bold; line-height: 1"
-                    >100%</span
-                  >
-                  <br />
-                  <small style="opacity: 0.7">1 / 1 passed</small>
-                </div>
-              </article>
-
-              <article
-                class="tag-card"
-                onclick="filterByTag('security')"
-                style="cursor: pointer; transition: transform 0.2s"
-              >
-                <header
-                  style="
-                    padding: 0.5rem 1rem;
-                    margin-bottom: 0.5rem;
-                    background: var(--pico-secondary-background);
-                    border-radius: var(--pico-border-radius)
-                      var(--pico-border-radius) 0 0;
-                  "
-                >
-                  <small
-                    style="
-                      text-transform: uppercase;
-                      font-weight: bold;
-                      letter-spacing: 0.05em;
-                    "
-                    >security</small
-                  >
-                </header>
-                <div style="text-align: center">
-                  <span
-                    style="font-size: 2rem; font-weight: bold; line-height: 1"
-                    >40%</span
-                  >
-                  <br />
-                  <small style="opacity: 0.7">4 / 10 passed</small>
-                </div>
-              </article>
-            </div>
-
-            <div
-              style="
-                margin-top: 2rem;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-              "
+  <body class="navigation-with-keyboard">
+    <svg style="display: none">
+      <defs>
+        <symbol id="theme-svg-external-link" viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"
+          />
+        </symbol>
+      </defs>
+    </svg>
+    <script>
+      (!(function () {
+        var t =
+          (function () {
+            try {
+              return new URLSearchParams(window.location.search).get(
+                "docusaurus-theme",
+              );
+            } catch (t) {}
+          })() ||
+          (function () {
+            try {
+              return window.localStorage.getItem("theme");
+            } catch (t) {}
+          })();
+        (document.documentElement.setAttribute(
+          "data-theme",
+          t ||
+            (window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"),
+        ),
+          document.documentElement.setAttribute(
+            "data-theme-choice",
+            t || "system",
+          ));
+      })(),
+        (function () {
+          try {
+            const c = new URLSearchParams(window.location.search).entries();
+            for (var [t, e] of c)
+              if (t.startsWith("docusaurus-data-")) {
+                var a = t.replace("docusaurus-data-", "data-");
+                document.documentElement.setAttribute(a, e);
+              }
+          } catch (t) {}
+        })());
+    </script>
+    <div id="__docusaurus">
+      <div role="region" aria-label="Skip to main content">
+        <a
+          class="skipToContent_hvFR"
+          href="#__docusaurus_skipToContent_fallback"
+          >Skip to main content</a
+        >
+      </div>
+      <nav
+        aria-label="Main"
+        class="theme-layout-navbar navbar navbar--fixed-top"
+      >
+        <div class="navbar__inner">
+          <div class="theme-layout-navbar-left navbar__items">
+            <a class="navbar__brand" href="/"
+              ><b class="navbar__title">regis-cli</b></a
+            ><a
+              href="/report.json"
+              class="navbar__item navbar__link"
+              style="margin-left: auto; margin-right: 0.5rem; flex-shrink: 0"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Raw JSON</a
             >
-              <h4 style="margin: 0">Detailed Results</h4>
-              <div style="display: flex; gap: 0.5rem; align-items: center">
-                <small>Filter by tag:</small>
-                <select
-                  id="tag-filter"
-                  onchange="filterByTag(this.value)"
-                  style="
-                    margin-bottom: 0;
-                    padding: 0.2rem 2rem 0.2rem 0.5rem;
-                    width: auto;
-                  "
+          </div>
+          <div
+            class="theme-layout-navbar-right navbar__items navbar__items--right"
+          >
+            <div class="toggle_GoQU colorModeToggle_Nbno">
+              <button
+                class="clean-btn toggleButton_cnj6 toggleButtonDisabled_uAdL"
+                type="button"
+                disabled=""
+                title="system mode"
+                aria-label="Switch between dark and light mode (currently system mode)"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  aria-hidden="true"
+                  class="toggleIcon_ipMv lightToggleIcon_nvAe"
                 >
-                  <option value="all">All Tags</option>
-
-                  <option value="compatibility">Compatibility</option>
-
-                  <option value="freshness">Freshness</option>
-
-                  <option value="hygiene">Hygiene</option>
-
-                  <option value="lifecycle">Lifecycle</option>
-
-                  <option value="metadata">Metadata</option>
-
-                  <option value="performance">Performance</option>
-
-                  <option value="security">Security</option>
-                </select>
+                  <path
+                    fill="currentColor"
+                    d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"
+                  ></path></svg
+                ><svg
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  aria-hidden="true"
+                  class="toggleIcon_ipMv darkToggleIcon_md2S"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"
+                  ></path></svg
+                ><svg
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  aria-hidden="true"
+                  class="toggleIcon_ipMv systemToggleIcon_zmaX"
+                >
+                  <path
+                    fill="currentColor"
+                    d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <div class="navbarSearchContainer_dLPx"></div>
+          </div>
+        </div>
+        <div role="presentation" class="navbar-sidebar__backdrop"></div>
+      </nav>
+      <div
+        id="__docusaurus_skipToContent_fallback"
+        class="theme-layout-main main-wrapper mainWrapper_TWfz"
+      >
+        <div class="docsWrapper_lRNs">
+          <button
+            aria-label="Scroll back to top"
+            class="clean-btn theme-back-to-top-button backToTopButton_CmOW"
+            type="button"
+          ></button>
+          <div class="docRoot_SYE0">
+            <aside class="theme-doc-sidebar-container docSidebarContainer_QbQ2">
+              <div class="sidebarViewport_BtBE">
+                <div class="sidebar_AhiP">
+                  <nav
+                    aria-label="Docs sidebar"
+                    class="menu thin-scrollbar menu_Sk5a"
+                  >
+                    <ul class="theme-doc-sidebar-menu menu__list">
+                      <li
+                        class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"
+                      >
+                        <a
+                          class="menu__link menu__link--active"
+                          aria-current="page"
+                          href="/"
+                          ><span title="Summary" class="linkLabel_Em1w"
+                            >Summary</span
+                          ></a
+                        >
+                      </li>
+                      <li
+                        class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"
+                      >
+                        <a class="menu__link" href="/rules"
+                          ><span title="Rules" class="linkLabel_Em1w"
+                            >Rules</span
+                          ></a
+                        >
+                      </li>
+                      <li
+                        class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"
+                      >
+                        <div class="menu__list-item-collapsible">
+                          <a
+                            class="categoryLink_P_sm menu__link menu__link--sublist menu__link--sublist-caret"
+                            role="button"
+                            aria-expanded="true"
+                            href="/analyzers/dockle"
+                            ><span
+                              title="Analyzers"
+                              class="categoryLinkLabel_fGYV"
+                              >Analyzers</span
+                            ></a
+                          >
+                        </div>
+                        <ul class="menu__list">
+                          <li
+                            class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a
+                              class="menu__link"
+                              tabindex="0"
+                              href="/analyzers/dockle"
+                              ><span title="Dockle" class="linkLabel_Em1w"
+                                >Dockle</span
+                              ></a
+                            >
+                          </li>
+                          <li
+                            class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a
+                              class="menu__link"
+                              tabindex="0"
+                              href="/analyzers/endoflife"
+                              ><span title="End of Life" class="linkLabel_Em1w"
+                                >End of Life</span
+                              ></a
+                            >
+                          </li>
+                          <li
+                            class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a
+                              class="menu__link"
+                              tabindex="0"
+                              href="/analyzers/freshness"
+                              ><span title="Freshness" class="linkLabel_Em1w"
+                                >Freshness</span
+                              ></a
+                            >
+                          </li>
+                          <li
+                            class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a
+                              class="menu__link"
+                              tabindex="0"
+                              href="/analyzers/hadolint"
+                              ><span title="Hadolint" class="linkLabel_Em1w"
+                                >Hadolint</span
+                              ></a
+                            >
+                          </li>
+                          <li
+                            class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a
+                              class="menu__link"
+                              tabindex="0"
+                              href="/analyzers/skopeo"
+                              ><span title="Metadata" class="linkLabel_Em1w"
+                                >Metadata</span
+                              ></a
+                            >
+                          </li>
+                          <li
+                            class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a
+                              class="menu__link"
+                              tabindex="0"
+                              href="/analyzers/popularity"
+                              ><span title="Popularity" class="linkLabel_Em1w"
+                                >Popularity</span
+                              ></a
+                            >
+                          </li>
+                          <li
+                            class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a
+                              class="menu__link"
+                              tabindex="0"
+                              href="/analyzers/provenance"
+                              ><span title="Provenance" class="linkLabel_Em1w"
+                                >Provenance</span
+                              ></a
+                            >
+                          </li>
+                          <li
+                            class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a
+                              class="menu__link"
+                              tabindex="0"
+                              href="/analyzers/sbom"
+                              ><span title="SBOM" class="linkLabel_Em1w"
+                                >SBOM</span
+                              ></a
+                            >
+                          </li>
+                          <li
+                            class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a
+                              class="menu__link"
+                              tabindex="0"
+                              href="/analyzers/scorecarddev"
+                              ><span title="Scorecard" class="linkLabel_Em1w"
+                                >Scorecard</span
+                              ></a
+                            >
+                          </li>
+                          <li
+                            class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a
+                              class="menu__link"
+                              tabindex="0"
+                              href="/analyzers/size"
+                              ><span title="Size" class="linkLabel_Em1w"
+                                >Size</span
+                              ></a
+                            >
+                          </li>
+                          <li
+                            class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a
+                              class="menu__link"
+                              tabindex="0"
+                              href="/analyzers/trivy"
+                              ><span title="Trivy" class="linkLabel_Em1w"
+                                >Trivy</span
+                              ></a
+                            >
+                          </li>
+                          <li
+                            class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a
+                              class="menu__link"
+                              tabindex="0"
+                              href="/analyzers/versioning"
+                              ><span title="Versioning" class="linkLabel_Em1w"
+                                >Versioning</span
+                              ></a
+                            >
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
               </div>
-            </div>
-
-            <div class="overflow-auto" style="margin-top: 1rem">
-              <table class="striped" id="rules-table">
-                <thead>
-                  <tr>
-                    <th>Status</th>
-                    <th>Level</th>
-                    <th>Rule</th>
-                    <th>Tags</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="rule-row" data-tags="security">
-                    <td style="text-align: center">
-                      <span class="status-passed">✅</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> critical </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong
-                        >Image must not contain forbidden environment
-                        variables.</strong
-                      >
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        No forbidden environment variables found.
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >skopeo</small
+            </aside>
+            <main class="docMainContainer_EIWg">
+              <div class="container padding-top--md padding-bottom--lg">
+                <div class="row">
+                  <div class="col docItemCol_IiPm">
+                    <div class="docItemContainer_w6bm">
+                      <article>
+                        <nav
+                          class="theme-doc-breadcrumbs breadcrumbsContainer_vTfy"
+                          aria-label="Breadcrumbs"
                         >
-                      </div>
-                    </td>
-                    <td><span class="badge"> security </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="security">
-                    <td style="text-align: center">
-                      <span class="status-passed">✅</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> critical </span></small
+                          <ul class="breadcrumbs">
+                            <li class="breadcrumbs__item">
+                              <a
+                                aria-label="Home page"
+                                class="breadcrumbs__link"
+                                href="/"
+                                ><svg
+                                  viewBox="0 0 24 24"
+                                  class="breadcrumbHomeIcon_ZVFl"
+                                >
+                                  <path
+                                    d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z"
+                                    fill="currentColor"
+                                  ></path></svg
+                              ></a>
+                            </li>
+                            <li
+                              class="breadcrumbs__item breadcrumbs__item--active"
+                            >
+                              <span class="breadcrumbs__link">Summary</span>
+                            </li>
+                          </ul>
+                        </nav>
+                        <div class="theme-doc-markdown markdown">
+                          <p>Loading report data…</p>
+                        </div>
+                      </article>
+                      <nav
+                        class="docusaurus-mt-lg pagination-nav"
+                        aria-label="Docs pages"
                       >
-                    </td>
-                    <td>
-                      <strong>Image must not run as root.</strong>
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Image does not run as &#39;root&#39;.
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >skopeo</small
+                        <a
+                          class="pagination-nav__link pagination-nav__link--next"
+                          href="/rules"
+                          ><div class="pagination-nav__sublabel">Next</div>
+                          <div class="pagination-nav__label">Rules</div></a
                         >
-                      </div>
-                    </td>
-                    <td><span class="badge"> security </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="security">
-                    <td style="text-align: center">
-                      <span class="status-passed">✅</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> critical </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong
-                        >Image must originate from a trusted domain.</strong
-                      >
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Image originates from a trusted domain.
-                      </div>
-                    </td>
-                    <td><span class="badge"> security </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="security">
-                    <td style="text-align: center">
-                      <span class="status-passed">✅</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> warning </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong>Image exposes permitted ports.</strong>
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        All exposed ports are allowed.
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >skopeo</small
-                        >
-                      </div>
-                    </td>
-                    <td><span class="badge"> security </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="performance">
-                    <td style="text-align: center">
-                      <span class="status-passed">✅</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> warning </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong>Image has an acceptable number of layers.</strong>
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Image has 1 layers.
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >skopeo</small
-                        >
-                      </div>
-                    </td>
-                    <td><span class="badge"> performance </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="hygiene">
-                    <td style="text-align: center">
-                      <span class="status-passed">✅</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> warning </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong>Image size is within limits.</strong>
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Image size is within limits (0 bytes).
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >skopeo</small
-                        >
-                      </div>
-                    </td>
-                    <td><span class="badge"> hygiene </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="compatibility">
-                    <td style="text-align: center">
-                      <span class="status-passed">✅</span>
-                    </td>
-                    <td>
-                      <small><span class="badge outline"> info </span></small>
-                    </td>
-                    <td>
-                      <strong>Image should support multiple platforms.</strong>
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Image supports 16 platforms.
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >skopeo</small
-                        >
-                      </div>
-                    </td>
-                    <td><span class="badge"> compatibility </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="security">
-                    <td style="text-align: center">
-                      <span class="status-failed">❌</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> critical </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong>No FATAL issues found by Dockle.</strong>
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Dockle found ${results.dockle.issues_by_level.FATAL}
-                        fatal issues (max allowed: 0).
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >dockle</small
-                        >
-                      </div>
-                    </td>
-                    <td><span class="badge"> security </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="security">
-                    <td style="text-align: center">
-                      <span class="status-failed">❌</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> critical </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong
-                        >No CRITICAL vulnerabilities found by Trivy.</strong
-                      >
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Image has ${results.trivy.critical_count} critical CVEs
-                        (max allowed: 0).
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >trivy</small
-                        >
-                      </div>
-                    </td>
-                    <td><span class="badge"> security </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="security">
-                    <td style="text-align: center">
-                      <span class="status-failed">❌</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> critical </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong
-                        >No secrets or credentials should be embedded in the
-                        image.</strong
-                      >
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Trivy detected ${results.trivy.secrets_count} secrets or
-                        credentials in the image.
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >trivy</small
-                        >
-                      </div>
-                    </td>
-                    <td><span class="badge"> security </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="security">
-                    <td style="text-align: center">
-                      <span class="status-failed">❌</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> warning </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong>Too many Dockle warnings found.</strong>
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Dockle found ${results.dockle.issues_by_level.WARN}
-                        warnings (max allowed: 5).
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >dockle</small
-                        >
-                      </div>
-                    </td>
-                    <td><span class="badge"> security </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="freshness">
-                    <td style="text-align: center">
-                      <span class="status-failed">❌</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> warning </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong
-                        >Image should be less than expected days old.</strong
-                      >
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Image is older than 30 days (50 days).
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >freshness</small
-                        >
-                      </div>
-                    </td>
-                    <td><span class="badge"> freshness </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="metadata">
-                    <td style="text-align: center">
-                      <span class="status-failed">❌</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> warning </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong>Image must have required OCI labels.</strong>
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Image is missing one or more required labels:
-                        [&#39;org.opencontainers.image.source&#39;].
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >skopeo</small
-                        >
-                      </div>
-                    </td>
-                    <td><span class="badge"> metadata </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="lifecycle">
-                    <td style="text-align: center">
-                      <span class="status-failed">❌</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> warning </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong>Image tag should not be &#39;latest&#39;.</strong>
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Image is using the &#39;latest&#39; tag. Use immutable
-                        version tags instead.
-                      </div>
-                    </td>
-                    <td><span class="badge"> lifecycle </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="security">
-                    <td style="text-align: center">
-                      <span class="status-failed">❌</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> warning </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong
-                        >All vulnerabilities should be fixed if a patch
-                        exists.</strong
-                      >
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Image has ${results.trivy.fixed_count} vulnerabilities
-                        with available fixes.
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >trivy</small
-                        >
-                      </div>
-                    </td>
-                    <td><span class="badge"> security </span></td>
-                  </tr>
-
-                  <tr class="rule-row" data-tags="security">
-                    <td style="text-align: center">
-                      <span class="status-failed">❌</span>
-                    </td>
-                    <td>
-                      <small
-                        ><span class="badge outline"> warning </span></small
-                      >
-                    </td>
-                    <td>
-                      <strong>No HIGH vulnerabilities found by Trivy.</strong>
-                      <div
-                        style="
-                          font-size: 0.85rem;
-                          opacity: 0.8;
-                          margin-top: 0.2rem;
-                        "
-                      >
-                        Image has ${results.trivy.high_count} high CVEs (max
-                        allowed: 0).
-                      </div>
-
-                      <div style="margin-top: 0.4rem">
-                        <small
-                          style="
-                            background: var(--pico-muted-background);
-                            padding: 0.1rem 0.4rem;
-                            border-radius: 4px;
-                            font-size: 0.7rem;
-                            opacity: 0.7;
-                          "
-                          >trivy</small
-                        >
-                      </div>
-                    </td>
-                    <td><span class="badge"> security </span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <script>
-            function filterByTag(tag) {
-              const table = document.getElementById("rules-table");
-              const select = document.getElementById("tag-filter");
-              const rows = table.getElementsByClassName("rule-row");
-              const cards = document.getElementsByClassName("tag-card");
-
-              // Update select value if called from card
-              select.value = tag;
-
-              for (let i = 0; i < rows.size || i < rows.length; i++) {
-                const row = rows[i];
-                const rowTags = row.getAttribute("data-tags").split(" ");
-                if (tag === "all" || rowTags.includes(tag)) {
-                  row.style.display = "";
-                } else {
-                  row.style.display = "none";
-                }
-              }
-
-              // Highlight active card
-              for (let i = 0; i < cards.length; i++) {
-                const card = cards[i];
-                if (card.getAttribute("onclick").includes("'" + tag + "'")) {
-                  card.style.border = "2px solid var(--pico-primary)";
-                  card.style.transform = "scale(1.05)";
-                } else {
-                  card.style.border =
-                    "1px solid var(--pico-muted-border-color)";
-                  card.style.transform = "scale(1)";
-                }
-              }
-            }
-          </script>
-        </section>
-
-        <section id="playbook-0">
-          <article>
-            <style>
-              .widgets-container {
-                display: grid;
-                grid-template-columns: repeat(
-                  auto-fit,
-                  minmax(min(100%, 300px), 1fr)
-                );
-                gap: var(--pico-spacing);
-                margin-bottom: calc(2 * var(--pico-spacing));
-              }
-              .widget-wrapper {
-                margin-bottom: var(--pico-spacing);
-              }
-              .widget-wrapper.is-standalone {
-                grid-column: 1 / -1;
-              }
-              .widget-card {
-                height: 100%;
-                padding: var(--pico-spacing);
-                background: var(--pico-card-background-color);
-                border-radius: var(--pico-border-radius);
-                box-shadow: var(--pico-card-box-shadow);
-              }
-              .widget-content.has-url {
-                cursor: pointer;
-              }
-            </style>
-
-            <div class="playbook-section">
-              <h4></h4>
-
-              <!-- prettier-ignore-start -->
-
-              <div class="widgets-container">
-                <div class="widget-wrapper recommandation-nogo">
-                  <div class="widget-card" style="text-align: center">
-                    <div class="widget-content">
-                      <strong
-                        style="
-                          font-size: 0.9rem;
-                          text-transform: uppercase;
-                          letter-spacing: 0.05em;
-                          opacity: 0.8;
-                        "
-                        >Recommandation</strong
-                      ><br />
-                      <span
-                        style="
-                          font-size: 2rem;
-                          font-weight: bold;
-                          line-height: 1;
-                        "
-                        >NOGO</span
-                      >
+                      </nav>
                     </div>
                   </div>
                 </div>
               </div>
-              <hr />
+            </main>
+          </div>
+        </div>
+      </div>
+      <footer class="theme-layout-footer footer footer--dark">
+        <div class="container container-fluid">
+          <div class="footer__bottom text--center">
+            <div class="footer__copyright">
+              Generated by
+              <a href="https://github.com/trivoallan/regis-cli">regis-cli</a>
             </div>
-
-            <hr />
-
-            <div class="playbook-section">
-              <h4></h4>
-
-              <!-- prettier-ignore-start -->
-
-              <div class="widgets-container">
-                <div class="widget-wrapper">
-                  <div class="widget-card" style="text-align: center">
-                    <div class="widget-content has-url">
-                      <a
-                        href="compliance.html"
-                        style="
-                          text-decoration: none;
-                          color: inherit;
-                          display: block;
-                        "
-                      >
-                        <strong
-                          style="
-                            font-size: 0.9rem;
-                            text-transform: uppercase;
-                            letter-spacing: 0.05em;
-                            opacity: 0.8;
-                          "
-                          >Overall Compliance</strong
-                        ><br />
-                        <span
-                          style="
-                            font-size: 2rem;
-                            font-weight: bold;
-                            line-height: 1;
-                          "
-                          >0%</span
-                        >
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="widget-wrapper">
-                  <div class="widget-card" style="text-align: center">
-                    <div class="widget-content has-url">
-                      <a
-                        href="compliance.html"
-                        style="
-                          text-decoration: none;
-                          color: inherit;
-                          display: block;
-                        "
-                      >
-                        <strong
-                          style="
-                            font-size: 0.9rem;
-                            text-transform: uppercase;
-                            letter-spacing: 0.05em;
-                            opacity: 0.8;
-                          "
-                          >Mandatory Requirements</strong
-                        ><br />
-                        <span
-                          style="
-                            font-size: 2rem;
-                            font-weight: bold;
-                            line-height: 1;
-                          "
-                          >0 / 0</span
-                        >
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="widget-wrapper">
-                  <div class="widget-card" style="text-align: center">
-                    <div class="widget-content has-url">
-                      <a
-                        href="compliance.html"
-                        style="
-                          text-decoration: none;
-                          color: inherit;
-                          display: block;
-                        "
-                      >
-                        <strong
-                          style="
-                            font-size: 0.9rem;
-                            text-transform: uppercase;
-                            letter-spacing: 0.05em;
-                            opacity: 0.8;
-                          "
-                          >Recommended Requirements</strong
-                        ><br />
-                        <span
-                          style="
-                            font-size: 2rem;
-                            font-weight: bold;
-                            line-height: 1;
-                          "
-                          >0 / 0</span
-                        >
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <hr />
-            </div>
-
-            <hr />
-
-            <div class="playbook-section">
-              <h4>Request</h4>
-
-              <!-- prettier-ignore-start -->
-
-              <div class="widgets-container">
-                <div class="widget-wrapper">
-                  <div class="widget-card" style="text-align: left">
-                    <div class="widget-content">
-                      <strong
-                        style="
-                          font-size: 0.9rem;
-                          text-transform: uppercase;
-                          letter-spacing: 0.05em;
-                          opacity: 0.8;
-                        "
-                        >Creation Time</strong
-                      ><br />
-                      <span
-                        style="
-                          font-size: 2rem;
-                          font-weight: bold;
-                          line-height: 1;
-                        "
-                        >2026-03-20</span
-                      >
-
-                      <br /><small style="opacity: 0.8; font-size: 0.9rem"
-                        >01:27:14</small
-                      >
-                    </div>
-                  </div>
-                </div>
-
-                <div class="widget-wrapper">
-                  <div class="widget-card" style="text-align: left">
-                    <div class="widget-content">
-                      <strong
-                        style="
-                          font-size: 0.9rem;
-                          text-transform: uppercase;
-                          letter-spacing: 0.05em;
-                          opacity: 0.8;
-                        "
-                        >Triggered by</strong
-                      ><br />
-                      <span
-                        style="
-                          font-size: 2rem;
-                          font-weight: bold;
-                          line-height: 1;
-                        "
-                        >Unknown Emiter</span
-                      >
-                    </div>
-                  </div>
-                </div>
-
-                <div class="widget-wrapper is-standalone">
-                  <div class="widget-card" style="text-align: left">
-                    <h5
-                      style="
-                        margin-bottom: 0.5rem;
-                        color: var(--pico-secondary);
-                      "
-                    >
-                      Request Parameters
-                    </h5>
-
-                    <div class="overflow-auto">
-                      <table class="striped">
-                        <thead>
-                          <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td><strong>url</strong></td>
-                            <td>alpine:latest</td>
-                          </tr>
-
-                          <tr>
-                            <td><strong>registry</strong></td>
-                            <td>registry-1.docker.io</td>
-                          </tr>
-
-                          <tr>
-                            <td><strong>repository</strong></td>
-                            <td>library/alpine</td>
-                          </tr>
-
-                          <tr>
-                            <td><strong>tag</strong></td>
-                            <td>latest</td>
-                          </tr>
-
-                          <tr>
-                            <td><strong>digest</strong></td>
-                            <td>
-                              sha256-25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <td><strong>analyzers</strong></td>
-                            <td>
-                              [&#39;dockle&#39;, &#39;endoflife&#39;,
-                              &#39;freshness&#39;, &#39;hadolint&#39;,
-                              &#39;popularity&#39;, &#39;provenance&#39;,
-                              &#39;sbom&#39;, &#39;scorecarddev&#39;,
-                              &#39;size&#39;, &#39;skopeo&#39;, &#39;trivy&#39;,
-                              &#39;versioning&#39;]
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <td><strong>timestamp</strong></td>
-                            <td>2026-03-20 01:27:14</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <hr />
-            </div>
-
-            <hr />
-
-            <div class="playbook-section">
-              <h4>Requested Image</h4>
-
-              <!-- prettier-ignore-start -->
-
-              <div class="widgets-container">
-                <div class="widget-wrapper">
-                  <div class="widget-card" style="text-align: left">
-                    <div class="widget-content">
-                      <strong
-                        style="
-                          font-size: 0.9rem;
-                          text-transform: uppercase;
-                          letter-spacing: 0.05em;
-                          opacity: 0.8;
-                        "
-                        >Registry</strong
-                      ><br />
-                      <span
-                        style="
-                          font-size: 2rem;
-                          font-weight: bold;
-                          line-height: 1;
-                        "
-                        >registry-1.docker.io</span
-                      >
-                    </div>
-                  </div>
-                </div>
-
-                <div class="widget-wrapper">
-                  <div class="widget-card" style="text-align: left">
-                    <div class="widget-content">
-                      <strong
-                        style="
-                          font-size: 0.9rem;
-                          text-transform: uppercase;
-                          letter-spacing: 0.05em;
-                          opacity: 0.8;
-                        "
-                        >Repository</strong
-                      ><br />
-                      <span
-                        style="
-                          font-size: 2rem;
-                          font-weight: bold;
-                          line-height: 1;
-                        "
-                        >library/alpine</span
-                      >
-                    </div>
-                  </div>
-                </div>
-
-                <div class="widget-wrapper">
-                  <div class="widget-card" style="text-align: left">
-                    <div class="widget-content">
-                      <strong
-                        style="
-                          font-size: 0.9rem;
-                          text-transform: uppercase;
-                          letter-spacing: 0.05em;
-                          opacity: 0.8;
-                        "
-                        >Tag</strong
-                      ><br />
-                      <span
-                        style="
-                          font-size: 2rem;
-                          font-weight: bold;
-                          line-height: 1;
-                        "
-                        >latest</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <hr />
-            </div>
-          </article>
-        </section>
-
-        <article style="border-left: 5px solid #ef4444">
-          <header>
-            <h3 style="color: #ef4444; margin: 0">⚠️ dockle Analyzer Error</h3>
-          </header>
-          <p>
-            <strong>validation:</strong> Failed to parse dockle output:
-            2026-03-20T02:16:30.606+0100 [31mFATAL[0m Pull it with &#34;docker
-            pull docker.io/library/alpine:latest&#34; or &#34;dockle --timeout
-            600s&#34; to increase the timeout unable to initialize a image
-            struct: failed to initialize source: pinging container registry
-            registry-1.docker.io: Get
-            &#34;https://registry-1.docker.io/v2/&#34;: context deadline
-            exceeded
-          </p>
-        </article>
-
-        <article style="border-left: 5px solid #ef4444">
-          <header>
-            <h3 style="color: #ef4444; margin: 0">⚠️ trivy Analyzer Error</h3>
-          </header>
-          <p>
-            <strong>validation:</strong> Report from analyzer &#39;trivy&#39;
-            failed schema validation: Additional properties are not allowed
-            (&#39;fixed_count&#39;, &#39;secrets_count&#39; were unexpected)
-          </p>
-        </article>
-
-        <footer>
-          <small>
-            Generated by <strong>regis-cli</strong> ·
-            <a href="report.json" target="_blank">JSON Report</a>
-          </small>
-        </footer>
-      </main>
+          </div>
+        </div>
+      </footer>
     </div>
   </body>
 </html>

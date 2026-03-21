@@ -2,7 +2,7 @@
 
 > Generated automatically by `regis-cli`
 
-Analysis performed on **2026-03-20T01:27:14.667270+00:00**.
+Analysis performed on **2026-03-21T01:41:20.377688+00:00**.
 
 ## 📦 Target Details
 
@@ -18,9 +18,9 @@ Analysis performed on **2026-03-20T01:27:14.667270+00:00**.
 ## 🐛 Vulnerability Summary (Trivy)
 
 - **Critical**: `0`
-- **High**: `0`
-- **Total**: `0`
+- **High**: `1`
+- **Total**: `2`
 
 ## 📅 Image Freshness
 
-- **Age in Days**: `50`
+- **Age in Days**: `52`
