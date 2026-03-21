@@ -1,10 +1,18 @@
-/**
- * TrivySection — Displays vulnerability scan results from Trivy.
- *
- * Shows a severity breakdown bar and a vulnerability table.
- */
-
-import React from "react";
+import React, { useState } from "react";
+import {
+  Grid,
+  Card,
+  Text,
+  Badge,
+  CategoryBar,
+  Table,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@tremor/react";
+import { StatCard } from "./StatCard";
 
 interface TrivyVulnerability {
   VulnerabilityID: string;
@@ -13,18 +21,14 @@ interface TrivyVulnerability {
   PkgName?: string;
   InstalledVersion?: string;
   FixedVersion?: string;
+  PublishedDate?: string;
+  LastModifiedDate?: string;
 }
-
 interface TrivyTarget {
   Target: string;
   Vulnerabilities?: TrivyVulnerability[];
 }
-
 interface TrivyData {
-  analyzer: string;
-  repository: string;
-  tag: string;
-  trivy_version?: string;
   vulnerability_count: number;
   critical_count: number;
   high_count: number;
@@ -36,189 +40,208 @@ interface TrivyData {
   targets?: TrivyTarget[];
 }
 
-interface TrivySectionProps {
-  data: TrivyData;
-}
-
-const SEVERITY_COLORS: Record<string, string> = {
-  CRITICAL: "#dc2626",
-  HIGH: "#ea580c",
-  MEDIUM: "#d97706",
-  LOW: "#2563eb",
-  UNKNOWN: "#6b7280",
+const SEVERITY_COLOR: Record<
+  string,
+  "rose" | "orange" | "amber" | "blue" | "gray"
+> = {
+  CRITICAL: "rose",
+  HIGH: "orange",
+  MEDIUM: "amber",
+  LOW: "blue",
+  UNKNOWN: "gray",
 };
 
-function SeverityBar({ data }: { data: TrivyData }) {
-  const total = data.vulnerability_count || 1;
-  const segments = [
-    {
-      label: "Critical",
-      count: data.critical_count,
-      color: SEVERITY_COLORS.CRITICAL,
-    },
-    { label: "High", count: data.high_count, color: SEVERITY_COLORS.HIGH },
-    {
-      label: "Medium",
-      count: data.medium_count,
-      color: SEVERITY_COLORS.MEDIUM,
-    },
-    { label: "Low", count: data.low_count, color: SEVERITY_COLORS.LOW },
-    {
-      label: "Unknown",
-      count: data.unknown_count,
-      color: SEVERITY_COLORS.UNKNOWN,
-    },
-  ].filter((s) => s.count > 0);
+const PAGE_SIZE = 50;
+
+function byDate(a: TrivyVulnerability, b: TrivyVulnerability): number {
+  const da = a.PublishedDate ?? a.LastModifiedDate ?? "";
+  const db = b.PublishedDate ?? b.LastModifiedDate ?? "";
+  return db.localeCompare(da);
+}
+
+function VulnTable({
+  vulns,
+  severity,
+}: {
+  vulns: (TrivyVulnerability & { target: string })[];
+  severity: "CRITICAL" | "HIGH";
+}): React.JSX.Element | null {
+  const [page, setPage] = useState(0);
+  if (vulns.length === 0) return null;
+
+  const color = SEVERITY_COLOR[severity];
+  const pageCount = Math.ceil(vulns.length / PAGE_SIZE);
+  const pageVulns = vulns.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+  const Pager = ({ className = "" }: { className?: string }) =>
+    pageCount > 1 ? (
+      <div className={`flex items-center gap-2 ${className}`}>
+        <button
+          onClick={() => setPage((p) => Math.max(0, p - 1))}
+          disabled={page === 0}
+          className="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          ←
+        </button>
+        <Text className="text-sm">
+          {page + 1} / {pageCount}
+        </Text>
+        <button
+          onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
+          disabled={page === pageCount - 1}
+          className="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          →
+        </button>
+      </div>
+    ) : null;
 
   return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          height: "12px",
-          borderRadius: "6px",
-          overflow: "hidden",
-          marginBottom: "0.5rem",
-          background: "var(--ifm-color-emphasis-200)",
-        }}
-      >
-        {segments.map((s) => (
-          <div
-            key={s.label}
-            style={{
-              width: `${(s.count / total) * 100}%`,
-              background: s.color,
-              minWidth: s.count > 0 ? "4px" : 0,
-            }}
-            title={`${s.label}: ${s.count}`}
-          />
-        ))}
+    <Card>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Badge color={color}>{severity}</Badge>
+          <Text className="font-medium">{vulns.length} vulnerabilities</Text>
+        </div>
+        <Pager />
       </div>
-      <div
-        style={{
-          display: "flex",
-          gap: "1rem",
-          flexWrap: "wrap",
-          fontSize: "0.8rem",
-        }}
-      >
-        {segments.map((s) => (
-          <span
-            key={s.label}
-            style={{ display: "flex", alignItems: "center", gap: "4px" }}
-          >
-            <span
-              style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "2px",
-                background: s.color,
-                display: "inline-block",
-              }}
-            />
-            {s.label}: <strong>{s.count}</strong>
-          </span>
-        ))}
-      </div>
-    </div>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableHeaderCell>ID</TableHeaderCell>
+            <TableHeaderCell>Package</TableHeaderCell>
+            <TableHeaderCell>Installed</TableHeaderCell>
+            <TableHeaderCell>Fixed</TableHeaderCell>
+            <TableHeaderCell>Published</TableHeaderCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {pageVulns.map((v, i) => (
+            <TableRow key={i}>
+              <TableCell>
+                <a
+                  href={`https://nvd.nist.gov/vuln/detail/${v.VulnerabilityID}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-sm"
+                >
+                  {v.VulnerabilityID}
+                </a>
+              </TableCell>
+              <TableCell className="font-mono text-sm">{v.PkgName}</TableCell>
+              <TableCell className="font-mono text-sm">
+                {v.InstalledVersion}
+              </TableCell>
+              <TableCell className="font-mono text-sm">
+                {v.FixedVersion ?? "—"}
+              </TableCell>
+              <TableCell className="text-sm">
+                {v.PublishedDate
+                  ? new Date(v.PublishedDate).toLocaleDateString()
+                  : "—"}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      {pageCount > 1 && (
+        <div className="flex items-center justify-between mt-4">
+          <Text className="text-sm opacity-60">
+            {page * PAGE_SIZE + 1}–
+            {Math.min((page + 1) * PAGE_SIZE, vulns.length)} / {vulns.length}
+          </Text>
+          <Pager />
+        </div>
+      )}
+    </Card>
   );
 }
 
-export function TrivySection({ data }: TrivySectionProps): React.JSX.Element {
-  const allVulns =
+export function TrivySection({ data }: { data: TrivyData }): React.JSX.Element {
+  const allVulns = (
     data.targets?.flatMap(
-      (t) =>
-        t.Vulnerabilities?.map((v) => ({
-          ...v,
-          target: t.Target,
-        })) ?? [],
-    ) ?? [];
+      (t) => t.Vulnerabilities?.map((v) => ({ ...v, target: t.Target })) ?? [],
+    ) ?? []
+  ).sort(byDate);
+
+  const criticalVulns = allVulns.filter((v) => v.Severity === "CRITICAL");
+  const highVulns = allVulns.filter((v) => v.Severity === "HIGH");
 
   return (
-    <div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-          gap: "0.75rem",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <div className="stat-card">
-          <div className="stat-card__label">Total</div>
-          <div className="stat-card__value">{data.vulnerability_count}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">Fixable</div>
-          <div className="stat-card__value">{data.fixed_count}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">Secrets</div>
-          <div className="stat-card__value">{data.secrets_count}</div>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <Grid numItemsSm={2} numItemsLg={5} className="gap-4">
+        <StatCard label="Total" value={data.vulnerability_count} />
+        <StatCard
+          label="Critical"
+          value={data.critical_count}
+          badge={
+            data.critical_count > 0 ? (
+              <Badge color="rose">Critical</Badge>
+            ) : undefined
+          }
+        />
+        <StatCard
+          label="High"
+          value={data.high_count}
+          badge={
+            data.high_count > 0 ? <Badge color="orange">High</Badge> : undefined
+          }
+        />
+        <StatCard label="Fixable" value={data.fixed_count} />
+        <StatCard
+          label="Secrets"
+          value={data.secrets_count}
+          badge={
+            data.secrets_count > 0 ? (
+              <Badge color="rose">Detected</Badge>
+            ) : undefined
+          }
+        />
+      </Grid>
 
-      <SeverityBar data={data} />
-
-      {allVulns.length > 0 && (
-        <table style={{ marginTop: "1rem" }}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Severity</th>
-              <th>Package</th>
-              <th>Installed</th>
-              <th>Fixed</th>
-              <th>Title</th>
-            </tr>
-          </thead>
-          <tbody>
-            {allVulns.map((v, i) => (
-              <tr key={i}>
-                <td>
-                  <a
-                    href={`https://nvd.nist.gov/vuln/detail/${v.VulnerabilityID}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ fontFamily: "monospace", fontSize: "0.85rem" }}
-                  >
-                    {v.VulnerabilityID}
-                  </a>
-                </td>
-                <td>
-                  <span
-                    style={{
-                      padding: "2px 8px",
-                      borderRadius: "4px",
-                      fontSize: "0.75rem",
-                      fontWeight: 700,
-                      color: "#fff",
-                      background: SEVERITY_COLORS[v.Severity] ?? "#6b7280",
-                    }}
-                  >
-                    {v.Severity}
-                  </span>
-                </td>
-                <td style={{ fontFamily: "monospace", fontSize: "0.85rem" }}>
-                  {v.PkgName}
-                </td>
-                <td style={{ fontFamily: "monospace", fontSize: "0.85rem" }}>
-                  {v.InstalledVersion}
-                </td>
-                <td style={{ fontFamily: "monospace", fontSize: "0.85rem" }}>
-                  {v.FixedVersion ?? "—"}
-                </td>
-                <td style={{ fontSize: "0.85rem" }}>{v.Title ?? ""}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {data.vulnerability_count > 0 && (
+        <Card>
+          <Text className="font-medium mb-3">Severity Distribution</Text>
+          <CategoryBar
+            values={[
+              data.critical_count,
+              data.high_count,
+              data.medium_count,
+              data.low_count,
+              data.unknown_count,
+            ]}
+            colors={["rose", "orange", "amber", "blue", "gray"]}
+            showLabels={false}
+          />
+          <div className="flex gap-2 mt-3 flex-wrap">
+            {[
+              { label: "Critical", count: data.critical_count, color: "rose" },
+              { label: "High", count: data.high_count, color: "orange" },
+              { label: "Medium", count: data.medium_count, color: "amber" },
+              { label: "Low", count: data.low_count, color: "blue" },
+              { label: "Unknown", count: data.unknown_count, color: "gray" },
+            ]
+              .filter((s) => s.count > 0)
+              .map((s) => (
+                <Badge key={s.label} color={s.color as never}>
+                  {s.label}: {s.count}
+                </Badge>
+              ))}
+          </div>
+        </Card>
       )}
 
-      {allVulns.length === 0 && data.vulnerability_count === 0 && (
-        <div className="alert alert--success" style={{ marginTop: "1rem" }}>
-          ✅ No vulnerabilities detected.
-        </div>
+      {criticalVulns.length === 0 && highVulns.length === 0 ? (
+        <Card>
+          <Badge color="emerald" size="lg">
+            No Critical or High vulnerabilities detected
+          </Badge>
+        </Card>
+      ) : (
+        <>
+          <VulnTable vulns={criticalVulns} severity="CRITICAL" />
+          <VulnTable vulns={highVulns} severity="HIGH" />
+        </>
       )}
     </div>
   );

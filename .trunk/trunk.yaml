@@ -21,7 +21,7 @@ runtimes:
 # (https://docs.trunk.io/check/configuration)
 lint:
   enabled:
-    - oxipng@9.1.5
+    - oxipng@10.1.0
     - actionlint@1.7.11
     - hadolint@2.14.0
     - mypy@1.19.1
@@ -35,7 +35,7 @@ lint:
     - prettier@3.8.1
     - ruff@0.15.7
     - taplo@0.10.0
-    - trufflehog@3.93.7
+    - trufflehog@3.94.0
     - yamllint@1.38.0
   ignore:
     - linters: [bandit]
@@ -44,6 +44,7 @@ lint:
       paths:
         - "**/*.mdx"
         - CHANGELOG.md
+        - CLAUDE.md
         - docs/website/docs/reference/schemas/**
         - docs/website/versioned_docs/**
         - report.json

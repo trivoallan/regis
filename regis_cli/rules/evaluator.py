@@ -14,7 +14,9 @@ from regis_cli.playbook.context import MissingDataTracker, _build_context
 logger = logging.getLogger(__name__)
 
 # Pattern for interpolating ${path.to.var}
-_INTERPOLATION_RE = re.compile(r"\$\{([^}]+)\}")
+# Uses [^${}]+ to match only innermost expressions (no nested braces/dollars),
+# enabling multi-pass resolution of nested patterns like ${outer.${inner}}.
+_INTERPOLATION_RE = re.compile(r"\$\{([^${}]+)\}")
 
 
 def _interpolate_string(template: str, context: dict[str, Any]) -> str:
@@ -42,10 +44,16 @@ def _interpolate_string(template: str, context: dict[str, Any]) -> str:
                     except (ValueError, IndexError):
                         return match.group(0)
             else:
-                return match.group(0)  # leave unresolved
+                return "MISSING"
         return str(curr)
 
-    return _INTERPOLATION_RE.sub(_repl, template)
+    # Multiple passes to handle nested interpolation like ${outer.${inner}}
+    for _ in range(5):
+        new_template = _INTERPOLATION_RE.sub(_repl, template)
+        if new_template == template:
+            break
+        template = new_template
+    return template
 
 
 def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
@@ -122,6 +130,21 @@ def merge_rules(
                     if (p_name, template_name) in merged:
                         template = merged[(p_name, template_name)]
                         break
+
+            # Last resort: load template directly from the analyzer class (handles the
+            # case where the analyzer was not run but a custom rule references its template)
+            if not template:
+                from regis_cli.cli import _discover_analyzers
+
+                all_analyzers = _discover_analyzers()
+                prov_cls = all_analyzers.get(provider)
+                if prov_cls:
+                    for r in prov_cls.default_rules():
+                        if r.get("slug") == template_name:
+                            r_copy = r.copy()
+                            r_copy["provider"] = provider
+                            template = r_copy
+                            break
 
             if template:
                 # Create a new instance

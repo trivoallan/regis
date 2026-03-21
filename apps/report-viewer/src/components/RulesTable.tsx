@@ -1,11 +1,25 @@
 /**
- * RulesTable — Filterable rules evaluation table with tag summary cards.
- *
- * Mirrors the Jinja2 rules.html template: tag cards at top, then a filterable
- * table with status, level, rule info, and tags.
+ * RulesTable — Rules grouped by level, filterable by tag.
+ * Uses Tremor Table components for consistent styling.
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "@docusaurus/Link";
+import {
+  Table,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+  CategoryBar,
+  TabGroup,
+  TabList,
+  Tab,
+  Card,
+  Flex,
+  Text,
+} from "@tremor/react";
 import { ScoreBadge, levelToVariant } from "./ScoreBadge";
 import type { RuleResult, RulesSummary } from "./ReportProvider";
 
@@ -14,12 +28,111 @@ interface RulesTableProps {
   summary?: RulesSummary;
 }
 
+/** Display order for known levels. Unknown levels appear last. */
+const LEVEL_ORDER = ["Gold", "Silver", "Bronze", "Critical", "Warning", "Info"];
+
+function levelSortIndex(level: string): number {
+  const idx = LEVEL_ORDER.findIndex(
+    (l) => l.toLowerCase() === level?.toLowerCase(),
+  );
+  return idx === -1 ? LEVEL_ORDER.length : idx;
+}
+
 function StatusIcon({ passed, status }: { passed: boolean; status?: string }) {
-  if (status === "incomplete") return <span title="Incomplete">⚠️</span>;
+  const style = { fontSize: "1.5rem" };
+  if (status === "incomplete")
+    return (
+      <span title="Incomplete" style={style}>
+        ⚠️
+      </span>
+    );
   return passed ? (
-    <span title="Passed">✅</span>
+    <span title="Passed" style={style}>
+      ✅
+    </span>
   ) : (
-    <span title="Failed">❌</span>
+    <span title="Failed" style={style}>
+      ❌
+    </span>
+  );
+}
+
+interface LevelGroupProps {
+  level: string;
+  rules: RuleResult[];
+}
+
+function LevelGroup({ level, rules }: LevelGroupProps): React.JSX.Element {
+  const passedCount = rules.filter((r) => r.passed).length;
+
+  return (
+    <div style={{ marginBottom: "2rem" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.75rem",
+          marginBottom: "0.75rem",
+        }}
+      >
+        <ScoreBadge label={level} variant={levelToVariant(level)} />
+        <small style={{ opacity: 0.6 }}>
+          {passedCount} / {rules.length} passed
+        </small>
+      </div>
+
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableHeaderCell style={{ width: "3rem" }}>Status</TableHeaderCell>
+            <TableHeaderCell>Rule</TableHeaderCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rules.map((r, i) => (
+            <TableRow key={r.slug ?? i}>
+              <TableCell style={{ textAlign: "center" }}>
+                <StatusIcon passed={r.passed} status={r.status} />
+              </TableCell>
+              <TableCell>
+                <strong>{r.description ?? r.title ?? r.slug}</strong>
+                {r.message && (
+                  <div
+                    style={{
+                      fontSize: "0.85rem",
+                      opacity: 0.8,
+                      marginTop: "0.2rem",
+                    }}
+                  >
+                    {r.message}
+                  </div>
+                )}
+                {r.analyzers && r.analyzers.length > 0 && (
+                  <div
+                    style={{
+                      marginTop: "0.3rem",
+                      display: "flex",
+                      gap: "0.25rem",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {r.analyzers.map((a) => (
+                      <Link
+                        key={a}
+                        to={`/analyzers/${a}`}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <ScoreBadge label={a} variant="outline" />
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
 
@@ -28,11 +141,30 @@ export function RulesTable({
   summary,
 }: RulesTableProps): React.JSX.Element {
   const [activeTag, setActiveTag] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState<number>(0);
 
-  const filteredRules =
+  const tagFilteredRules =
     activeTag === "all"
       ? rules
       : rules.filter((r) => r.tags?.includes(activeTag));
+
+  useEffect(() => {
+    const hasFailed = tagFilteredRules.some((r) => !r.passed);
+    setActiveTab(hasFailed ? 0 : 1);
+  }, [activeTag]);
+
+  const filteredRules =
+    activeTab === 0
+      ? tagFilteredRules.filter((r) => !r.passed)
+      : tagFilteredRules.filter((r) => r.passed);
+
+  const groups = Object.entries(
+    filteredRules.reduce<Record<string, RuleResult[]>>((acc, r) => {
+      const lvl = r.level ?? "Other";
+      (acc[lvl] ??= []).push(r);
+      return acc;
+    }, {}),
+  ).sort(([a], [b]) => levelSortIndex(a) - levelSortIndex(b));
 
   const tagStats = summary?.by_tag ?? {};
 
@@ -87,105 +219,35 @@ export function RulesTable({
                 <small style={{ opacity: 0.6 }}>
                   {stats.passed_rules.length} / {stats.rules.length} passed
                 </small>
+                <CategoryBar
+                  values={[
+                    stats.passed_rules.length,
+                    stats.rules.length - stats.passed_rules.length,
+                  ]}
+                  colors={["emerald", "rose"]}
+                  showLabels={false}
+                  className="mt-2"
+                />
               </button>
             ))}
         </div>
       )}
 
-      {/* Filter controls */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "0.75rem",
-        }}
-      >
-        <h4 style={{ margin: 0 }}>Detailed Results</h4>
-        <select
-          value={activeTag}
-          onChange={(e) => setActiveTag(e.target.value)}
-          style={{
-            padding: "0.3rem 0.5rem",
-            borderRadius: "4px",
-            border: "1px solid var(--ifm-color-emphasis-300)",
-            background: "var(--ifm-background-color)",
-            color: "var(--ifm-font-color-base)",
-          }}
-        >
-          <option value="all">All Tags</option>
-          {Object.keys(tagStats)
-            .sort()
-            .map((tag) => (
-              <option key={tag} value={tag}>
-                {tag}
-              </option>
-            ))}
-        </select>
-      </div>
+      {/* Tabs + rules grouped by level */}
+      <TabGroup index={activeTab} onIndexChange={setActiveTab} className="mb-6">
+        <TabList>
+          <Tab>Failed ({tagFilteredRules.filter((r) => !r.passed).length})</Tab>
+          <Tab>Passed ({tagFilteredRules.filter((r) => r.passed).length})</Tab>
+        </TabList>
+      </TabGroup>
 
-      {/* Rules table */}
-      <div style={{ overflowX: "auto" }}>
-        <table>
-          <thead>
-            <tr>
-              <th>Status</th>
-              <th>Level</th>
-              <th>Rule</th>
-              <th>Tags</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredRules.map((r, i) => (
-              <tr key={r.slug ?? i}>
-                <td style={{ textAlign: "center" }}>
-                  <StatusIcon passed={r.passed} status={r.status} />
-                </td>
-                <td>
-                  <ScoreBadge
-                    label={r.level}
-                    variant={levelToVariant(r.level)}
-                  />
-                </td>
-                <td>
-                  <strong>{r.description ?? r.title ?? r.slug}</strong>
-                  {r.message && (
-                    <div
-                      style={{
-                        fontSize: "0.85rem",
-                        opacity: 0.8,
-                        marginTop: "0.2rem",
-                      }}
-                    >
-                      {r.message}
-                    </div>
-                  )}
-                  {r.analyzers && r.analyzers.length > 0 && (
-                    <div style={{ marginTop: "0.3rem" }}>
-                      {r.analyzers.map((a) => (
-                        <ScoreBadge key={a} label={a} variant="outline" />
-                      ))}
-                    </div>
-                  )}
-                </td>
-                <td>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "0.25rem",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    {r.tags?.map((tag) => (
-                      <ScoreBadge key={tag} label={tag} />
-                    ))}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {groups.length === 0 ? (
+        <p style={{ opacity: 0.6 }}>No rules match the selected filter.</p>
+      ) : (
+        groups.map(([level, levelRules]) => (
+          <LevelGroup key={level} level={level} rules={levelRules} />
+        ))
+      )}
     </div>
   );
 }

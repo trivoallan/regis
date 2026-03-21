@@ -22,7 +22,17 @@
 - **Rationale**: Prevent `AttributeError` crashes when link URLs are null or missing in playbook definitions. Improved metadata integration ensures better traceability in CI/CD.
 - 2026-03-05: Migrated CI linting from Super-Linter to Trunk to unify local and CI linting experience and improve performance.
 
-## 2026-03-05: Adopt OCI Image Labels
+## 2026-03-21: Docusaurus Navbar Swizzle for Identity Badges
+
+- **Decision**: Swizzle `Navbar/Logo` instead of using a `ComponentTypes` custom navbar item.
+- **Rationale**: `ComponentTypes` approach with `@theme-original` imports fails at TypeScript level. `Navbar/Logo` swizzle using `@docusaurus/Link` and `useDocusaurusContext` is stable and avoids TS errors.
+
+## 2026-03-21: Per-Analyzer MDX Pages Instead of Tabs
+
+- **Decision**: Create 12 individual MDX pages in `docs/analyzers/` with a sidebar category, rather than a single page with tabs.
+- **Rationale**: Enables direct linking to analyzer pages (used by analyzer badges in rules tables), allows Docusaurus to handle navigation naturally, and avoids URL-state management complexity.
+
+## 2026-03-21: Adopt OCI Image Labels
 
 - **Decision**: Add standard OCI labels (`org.opencontainers.image.*`) to the project's `Dockerfile`.
 - **Rationale**: Improve discoverability and integration with GitHub Packages registry, ensuring the image description and source repository are automatically linked on the package page.

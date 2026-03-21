@@ -23,15 +23,17 @@ logger = logging.getLogger(__name__)
 
 
 def _normalize_pages(playbook: dict[str, Any]) -> list[dict[str, Any]]:
-    """Return the pages list, wrapping bare ``sections`` in a default page."""
+    """Return the pages list, wrapping bare ``sections`` in a default page.
+
+    Playbooks that rely solely on ``rules`` may omit both ``pages`` and
+    ``sections``; in that case an empty list is returned and page evaluation
+    is skipped.
+    """
     pages_defs = playbook.get("pages")
     sections_defs = playbook.get("sections")
 
     if not pages_defs and not sections_defs:
-        raise ValueError(
-            f"Playbook '{playbook.get('name', 'unnamed')}' is missing "
-            "both 'pages' and 'sections'. Every playbook must define at least one."
-        )
+        return []
 
     if not pages_defs:
         return [{"name": "Default", "sections": sections_defs}]

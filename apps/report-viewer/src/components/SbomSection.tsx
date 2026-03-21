@@ -1,21 +1,25 @@
-/**
- * SbomSection — Displays the Software Bill of Materials (SBOM) overview.
- */
-
 import React from "react";
+import {
+  Grid,
+  Card,
+  Text,
+  Badge,
+  Table,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@tremor/react";
+import { StatCard } from "./StatCard";
 
 interface Component {
   name: string;
   version?: string;
   type: string;
-  purl?: string;
   licenses: string[];
 }
-
 interface SbomData {
-  analyzer: string;
-  repository: string;
-  tag: string;
   has_sbom: boolean;
   sbom_format: string;
   sbom_version: string;
@@ -26,134 +30,106 @@ interface SbomData {
   components: Component[];
 }
 
-interface SbomSectionProps {
-  data: SbomData;
-}
-
-export function SbomSection({ data }: SbomSectionProps): React.JSX.Element {
+export function SbomSection({ data }: { data: SbomData }): React.JSX.Element {
   if (!data.has_sbom) {
     return (
-      <div className="alert alert--warning">
-        No SBOM could be generated for this image.
-      </div>
+      <Card>
+        <Badge color="amber" size="lg">
+          No SBOM could be generated for this image.
+        </Badge>
+      </Card>
     );
   }
 
   return (
-    <div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-          gap: "0.75rem",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <div className="stat-card">
-          <div className="stat-card__label">Total Components</div>
-          <div className="stat-card__value">{data.total_components}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">Unique Licenses</div>
-          <div className="stat-card__value">{data.licenses.length}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">Format</div>
-          <div
-            className="stat-card__value"
-            style={{ fontSize: "1.2rem", paddingTop: "0.5rem" }}
-          >
-            {data.sbom_format} {data.sbom_version}
-          </div>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <Grid numItemsSm={2} numItemsLg={4} className="gap-4">
+        <StatCard label="Total Components" value={data.total_components} />
+        <StatCard label="Dependencies" value={data.total_dependencies} />
+        <StatCard label="Unique Licenses" value={data.licenses.length} />
+        <StatCard
+          label="Format"
+          value={data.sbom_format}
+          size="lg"
+          badge={<Badge color="gray">v{data.sbom_version}</Badge>}
+        />
+      </Grid>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "2rem",
-          marginBottom: "1.5rem",
-        }}
-      >
-        {data.component_types && (
-          <div>
-            <h5>Component Types</h5>
-            <ul style={{ fontSize: "0.9rem" }}>
-              {Object.entries(data.component_types).map(([type, count]) => (
-                <li key={type}>
-                  <strong>{type}</strong>: {count}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {data.licenses && data.licenses.length > 0 && (
-          <div>
-            <h5>Top Licenses</h5>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
-              {data.licenses.slice(0, 15).map((l) => (
-                <span
-                  key={l}
-                  style={{
-                    padding: "2px 8px",
-                    background: "var(--ifm-color-emphasis-200)",
-                    borderRadius: "4px",
-                    fontSize: "0.8rem",
-                  }}
-                >
-                  {l}
-                </span>
-              ))}
-              {data.licenses.length > 15 && (
-                <span style={{ opacity: 0.5 }}>...</span>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+      {Object.keys(data.component_types).length > 0 && (
+        <Card>
+          <Text className="font-medium mb-4">Component Types</Text>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Type</TableHeaderCell>
+                <TableHeaderCell>Count</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {Object.entries(data.component_types)
+                .sort(([, a], [, b]) => b - a)
+                .map(([type, count]) => (
+                  <TableRow key={type}>
+                    <TableCell className="font-medium capitalize">
+                      {type}
+                    </TableCell>
+                    <TableCell>{count}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
 
-      <details>
-        <summary style={{ cursor: "pointer", fontWeight: 600 }}>
-          Component List (Top 100)
-        </summary>
-        <table style={{ marginTop: "1rem" }}>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Version</th>
-              <th>Type</th>
-              <th>Licenses</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.components.slice(0, 100).map((comp, i) => (
-              <tr key={i}>
-                <td style={{ fontWeight: 600, fontSize: "0.85rem" }}>
-                  {comp.name}
-                </td>
-                <td style={{ fontFamily: "monospace", fontSize: "0.85rem" }}>
-                  {comp.version}
-                </td>
-                <td>
-                  <span
-                    style={{
-                      fontSize: "0.75rem",
-                      opacity: 0.7,
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {comp.type}
-                  </span>
-                </td>
-                <td style={{ fontSize: "0.8rem" }}>
-                  {comp.licenses.join(", ")}
-                </td>
-              </tr>
+      {data.licenses.length > 0 && (
+        <Card>
+          <Text className="font-medium mb-3">Licenses</Text>
+          <div className="flex flex-wrap gap-2">
+            {data.licenses.map((l) => (
+              <Badge key={l} color="blue">
+                {l}
+              </Badge>
             ))}
-          </tbody>
-        </table>
-      </details>
+          </div>
+        </Card>
+      )}
+
+      {data.components.length > 0 && (
+        <Card>
+          <Text className="font-medium mb-4">
+            Components (top {Math.min(100, data.components.length)} of{" "}
+            {data.total_components})
+          </Text>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Name</TableHeaderCell>
+                <TableHeaderCell>Version</TableHeaderCell>
+                <TableHeaderCell>Type</TableHeaderCell>
+                <TableHeaderCell>Licenses</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.components.slice(0, 100).map((comp, i) => (
+                <TableRow key={i}>
+                  <TableCell className="font-semibold text-sm">
+                    {comp.name}
+                  </TableCell>
+                  <TableCell className="font-mono text-sm">
+                    {comp.version ?? "—"}
+                  </TableCell>
+                  <TableCell>
+                    <Badge color="gray">{comp.type}</Badge>
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {comp.licenses.join(", ")}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
     </div>
   );
 }

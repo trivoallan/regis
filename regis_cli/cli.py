@@ -202,10 +202,22 @@ def _run_playbooks(
                         )
 
                 summary_str = " · ".join(summary_parts)
+                rs = pb_result.get("rules_summary", {})
+                passed_rules = rs.get("passed", [])
+                total_rules = rs.get("total", [])
+                passed_count = (
+                    len(passed_rules)
+                    if isinstance(passed_rules, list)
+                    else passed_rules
+                )
+                total_count = (
+                    len(total_rules) if isinstance(total_rules, list) else total_rules
+                )
+                rules_score = rs.get("score", pb_result["score"])
                 click.echo(
                     f"    {summary_str} "
-                    f"({pb_result['passed_scorecards']}/{pb_result['total_scorecards']} scorecards passed, "
-                    f"{pb_result['score']}%)\n",
+                    f"({passed_count}/{total_count} rules passed, "
+                    f"{rules_score}%)\n",
                     err=True,
                 )
 

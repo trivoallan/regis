@@ -1,8 +1,17 @@
-/**
- * ScorecardSection — Displays OpenSSF Scorecard results.
- */
-
 import React from "react";
+import {
+  Grid,
+  Card,
+  Text,
+  Badge,
+  Table,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@tremor/react";
+import { StatCard } from "./StatCard";
 
 interface Check {
   name: string;
@@ -10,104 +19,109 @@ interface Check {
   reason: string;
   details?: string[];
 }
-
 interface ScorecardData {
-  analyzer: string;
-  repository: string;
-  source_repo?: string;
   scorecard_available: boolean;
+  source_repo?: string;
   score?: number;
   checks?: Check[];
 }
 
-interface ScorecardSectionProps {
-  data: ScorecardData;
-}
-
-function getScoreColor(score: number): string {
-  if (score >= 8) return "#22c55e";
-  if (score >= 5) return "#d97706";
-  return "#dc2626";
+function scoreColor(s: number): "emerald" | "amber" | "rose" {
+  return s >= 8 ? "emerald" : s >= 5 ? "amber" : "rose";
 }
 
 export function ScorecardSection({
   data,
-}: ScorecardSectionProps): React.JSX.Element {
+}: {
+  data: ScorecardData;
+}): React.JSX.Element {
   if (!data.scorecard_available) {
     return (
-      <div className="alert alert--info">
-        OpenSSF Scorecard results not available for this repository.
-      </div>
+      <Card>
+        <Text>OpenSSF Scorecard not available for this repository.</Text>
+      </Card>
     );
   }
 
+  const score = data.score ?? 0;
+
   return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "2rem",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <div
-          className="score-circle"
-          style={{
-            background: getScoreColor(data.score ?? 0),
-            width: "100px",
-            height: "100px",
-            fontSize: "2rem",
-          }}
-        >
-          {data.score?.toFixed(1) ?? "N/A"}
-        </div>
-        <div>
-          <h3 style={{ margin: 0 }}>OpenSSF Scorecard</h3>
-          <p style={{ opacity: 0.6, margin: 0 }}>
-            Source:{" "}
-            <a
-              href={data.source_repo}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {data.source_repo}
-            </a>
-          </p>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <Grid numItemsSm={1} numItemsLg={2} className="gap-4">
+        <StatCard
+          label="Overall Score"
+          value={
+            <>
+              {score.toFixed(1)}
+              <span
+                style={{ fontSize: "0.4em", fontWeight: 400, opacity: 0.6 }}
+              >
+                {" "}
+                / 10
+              </span>
+            </>
+          }
+          badge={
+            <Badge color={scoreColor(score)}>
+              {score >= 8 ? "Good" : score >= 5 ? "Moderate" : "Poor"}
+            </Badge>
+          }
+        />
+        <Card className="flex flex-col">
+          <Text className="font-medium">Source Repository</Text>
+          <div className="flex flex-1 items-center justify-center my-4 text-center">
+            {data.source_repo ? (
+              <a
+                href={data.source_repo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm break-all"
+              >
+                {data.source_repo}
+              </a>
+            ) : (
+              <Text>—</Text>
+            )}
+          </div>
+        </Card>
+      </Grid>
 
       {data.checks && data.checks.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>Check</th>
-              <th>Score</th>
-              <th>Reason</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[...data.checks]
-              .sort((a, b) => a.score - b.score)
-              .map((check, i) => (
-                <tr key={i}>
-                  <td style={{ fontWeight: 600 }}>{check.name}</td>
-                  <td>
-                    <span
-                      style={{
-                        color: getScoreColor(check.score),
-                        fontWeight: 700,
-                        fontSize: "1.1rem",
-                      }}
-                    >
-                      {check.score === -1 ? "N/A" : check.score}
-                    </span>
-                  </td>
-                  <td style={{ fontSize: "0.85rem" }}>{check.reason}</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+        <Card>
+          <Text className="font-medium mb-4">
+            Checks ({data.checks.length})
+          </Text>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Check</TableHeaderCell>
+                <TableHeaderCell>Score</TableHeaderCell>
+                <TableHeaderCell>Reason</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {[...data.checks]
+                .sort((a, b) => a.score - b.score)
+                .map((check, i) => (
+                  <TableRow key={i}>
+                    <TableCell className="font-semibold">
+                      {check.name}
+                    </TableCell>
+                    <TableCell>
+                      {check.score === -1 ? (
+                        <Badge color="gray">N/A</Badge>
+                      ) : (
+                        <Badge color={scoreColor(check.score)}>
+                          {check.score} / 10
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-sm">{check.reason}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </Card>
       )}
     </div>
   );

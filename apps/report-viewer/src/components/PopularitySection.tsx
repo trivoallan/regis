@@ -1,12 +1,18 @@
-/**
- * PopularitySection — Displays image popularity metrics (stars, pulls).
- */
-
 import React from "react";
+import {
+  Grid,
+  Card,
+  Text,
+  Table,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@tremor/react";
+import { StatCard } from "./StatCard";
 
 interface PopularityData {
-  analyzer: string;
-  repository: string;
   available: boolean;
   pull_count?: number;
   star_count?: number;
@@ -15,70 +21,68 @@ interface PopularityData {
   date_registered?: string;
 }
 
-interface PopularitySectionProps {
-  data: PopularityData;
-}
-
-function formatNumber(num?: number): string {
-  if (num === undefined) return "N/A";
-  if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-  if (num >= 1000) return (num / 1000).toFixed(1) + "K";
-  return num.toString();
+function fmt(n?: number): string {
+  if (n === undefined) return "N/A";
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+  if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
+  return n.toLocaleString();
 }
 
 export function PopularitySection({
   data,
-}: PopularitySectionProps): React.JSX.Element {
+}: {
+  data: PopularityData;
+}): React.JSX.Element {
   if (!data.available) {
     return (
-      <div className="alert alert--info">
-        Popularity metrics not available for this registry/repository.
-      </div>
+      <Card>
+        <Text>Popularity metrics not available for this registry.</Text>
+      </Card>
     );
   }
 
+  const details = [
+    { label: "Description", value: data.description ?? "—" },
+    {
+      label: "Last Updated",
+      value: data.last_updated
+        ? new Date(data.last_updated).toLocaleDateString()
+        : "—",
+    },
+    {
+      label: "Registered",
+      value: data.date_registered
+        ? new Date(data.date_registered).toLocaleDateString()
+        : "—",
+    },
+  ];
+
   return (
-    <div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-          gap: "0.75rem",
-          marginBottom: "1rem",
-        }}
-      >
-        <div className="stat-card">
-          <div className="stat-card__label">Pulls</div>
-          <div className="stat-card__value">
-            {formatNumber(data.pull_count)}
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">Stars</div>
-          <div className="stat-card__value">
-            {formatNumber(data.star_count)}
-          </div>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <Grid numItemsSm={2} numItemsLg={2} className="gap-4">
+        <StatCard label="Pulls" value={fmt(data.pull_count)} size="lg" />
+        <StatCard label="Stars" value={fmt(data.star_count)} size="lg" />
+      </Grid>
 
-      {data.description && (
-        <div
-          style={{
-            marginTop: "1rem",
-            fontSize: "0.9rem",
-            color: "var(--ifm-color-emphasis-700)",
-          }}
-        >
-          <strong>Description:</strong> {data.description}
-        </div>
-      )}
-
-      <div style={{ marginTop: "0.5rem", fontSize: "0.8rem", opacity: 0.6 }}>
-        {data.last_updated &&
-          `Last Updated: ${new Date(data.last_updated).toLocaleDateString()}`}
-        {data.date_registered &&
-          ` | Registered: ${new Date(data.date_registered).toLocaleDateString()}`}
-      </div>
+      <Card>
+        <Text className="font-medium mb-4">Details</Text>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell>Field</TableHeaderCell>
+              <TableHeaderCell>Value</TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {details.map((row) => (
+              <TableRow key={row.label}>
+                <TableCell className="font-medium">{row.label}</TableCell>
+                <TableCell>{row.value}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Card>
     </div>
   );
 }

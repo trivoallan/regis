@@ -34,7 +34,8 @@ def _evaluate_scorecards(
             scorecard_results.append(
                 {
                     "name": res["slug"],
-                    "title": res["title"],
+                    "description": res.get("description") or res["slug"],
+                    "title": res.get("description") or res["slug"],
                     "level": res["level"],
                     "tags": res["tags"],
                     "analyzers": res["analyzers"],
@@ -204,9 +205,10 @@ def _build_render_order(
                 if display_key in ("analyzers", "widgets"):
                     if display_key not in render_order:
                         render_order.append(display_key)
-        elif key in ("levels", "scorecards", "widgets"):
-            if key not in render_order:
-                render_order.append(key)
+        elif key in ("levels", "scorecards", "widgets", "rules"):
+            actual_key = "scorecards" if key == "rules" else key
+            if actual_key not in render_order:
+                render_order.append(actual_key)
 
     if tags_summary and "scorecards" in render_order:
         idx = render_order.index("scorecards")
@@ -234,19 +236,36 @@ def _evaluate_section(
     if rules_refs:
         rules_registry = raw_context.get("rules", {})
         for ref in rules_refs:
-            if isinstance(ref, str) and ref in rules_registry:
-                # Map evaluated rule back to scorecard format for report compatibility
-                rule = rules_registry[ref]
+            if not isinstance(ref, str):
+                continue
+            # Support both "slug" and "provider.slug" formats
+            slug = ref.split(".", 1)[-1] if "." in ref else ref
+            rule = None
+            for key in (ref, slug):
+                try:
+                    candidate = rules_registry[key]
+                    if isinstance(candidate, dict):
+                        rule = candidate
+                        break
+                except (KeyError, IndexError, TypeError):
+                    pass
+            if rule:
                 scorecards_defs.append(
                     {
                         "name": rule["slug"],
-                        "title": rule["title"],
+                        "title": rule.get("description", rule["slug"]),
                         "level": rule["level"],
                         "tags": rule["tags"],
                         "condition": "Already evaluated",
                         "_pre_evaluated": True,
                         "_rule_result": rule,
                     }
+                )
+            else:
+                logger.warning(
+                    "Rule '%s' not found in rules registry for section '%s'",
+                    ref,
+                    section.get("name", "?"),
                 )
 
     scorecard_results = _evaluate_scorecards(scorecards_defs, raw_context)

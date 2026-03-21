@@ -7,6 +7,7 @@ import React from "react";
 interface ScoreBadgeProps {
   label: string;
   variant?: "info" | "warning" | "critical" | "success" | "outline" | "default";
+  size?: "sm" | "lg";
 }
 
 const VARIANT_STYLES: Record<string, React.CSSProperties> = {
@@ -45,12 +46,13 @@ const VARIANT_STYLES: Record<string, React.CSSProperties> = {
 export function ScoreBadge({
   label,
   variant = "default",
+  size = "sm",
 }: ScoreBadgeProps): React.JSX.Element {
   const style: React.CSSProperties = {
     ...(VARIANT_STYLES[variant] ?? VARIANT_STYLES.default),
-    padding: "0.15rem 0.5rem",
-    borderRadius: "4px",
-    fontSize: "0.75rem",
+    padding: size === "lg" ? "0.3rem 1rem" : "0.15rem 0.5rem",
+    borderRadius: size === "lg" ? "6px" : "4px",
+    fontSize: size === "lg" ? "1.5rem" : "0.75rem",
     fontWeight: 600,
     textTransform: "uppercase",
     letterSpacing: "0.03em",

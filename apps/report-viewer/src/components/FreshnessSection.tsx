@@ -1,13 +1,8 @@
-/**
- * FreshnessCard — Shows image age and freshness information.
- */
-
 import React from "react";
+import { Grid, Badge } from "@tremor/react";
+import { StatCard } from "./StatCard";
 
 interface FreshnessData {
-  analyzer: string;
-  repository: string;
-  tag: string;
   tag_created?: string;
   latest_created?: string | null;
   age_days?: number;
@@ -15,85 +10,74 @@ interface FreshnessData {
   is_latest?: boolean;
 }
 
-interface FreshnessSectionProps {
-  data: FreshnessData;
-}
-
-function AgeBadge({ days }: { days: number }) {
-  let color = "#22c55e";
-  let label = "Fresh";
-  if (days > 180) {
-    color = "#dc2626";
-    label = "Stale";
-  } else if (days > 90) {
-    color = "#d97706";
-    label = "Aging";
-  } else if (days > 30) {
-    color = "#2563eb";
-    label = "OK";
-  }
-
-  return (
-    <span
-      style={{
-        padding: "3px 10px",
-        borderRadius: "12px",
-        fontSize: "0.75rem",
-        fontWeight: 700,
-        color: "#fff",
-        background: color,
-      }}
-    >
-      {label}
-    </span>
-  );
+function ageBadge(days: number): {
+  label: string;
+  color: "emerald" | "blue" | "amber" | "rose";
+} {
+  if (days > 180) return { label: "Stale", color: "rose" };
+  if (days > 90) return { label: "Aging", color: "amber" };
+  if (days > 30) return { label: "OK", color: "blue" };
+  return { label: "Fresh", color: "emerald" };
 }
 
 export function FreshnessSection({
   data,
-}: FreshnessSectionProps): React.JSX.Element {
+}: {
+  data: FreshnessData;
+}): React.JSX.Element {
+  const age = data.age_days !== undefined ? ageBadge(data.age_days) : null;
+
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-        gap: "0.75rem",
-      }}
-    >
-      <div className="stat-card">
-        <div className="stat-card__label">Image Age</div>
-        <div className="stat-card__value">
-          {data.age_days ?? "?"}{" "}
-          <span style={{ fontSize: "0.7em", opacity: 0.6 }}>days</span>
-        </div>
-        {data.age_days !== undefined && (
-          <div style={{ marginTop: "0.25rem" }}>
-            <AgeBadge days={data.age_days} />
-          </div>
-        )}
-      </div>
-      <div className="stat-card">
-        <div className="stat-card__label">Is Latest</div>
-        <div className="stat-card__value">
-          {data.is_latest ? "✅ Yes" : "❌ No"}
-        </div>
-      </div>
-      <div className="stat-card">
-        <div className="stat-card__label">Behind Latest</div>
-        <div className="stat-card__value">
-          {data.behind_latest_days != null
-            ? `${data.behind_latest_days} days`
-            : "N/A"}
-        </div>
-      </div>
-      <div className="stat-card">
-        <div className="stat-card__label">Created</div>
-        <div className="stat-card__value" style={{ fontSize: "0.85rem" }}>
-          {data.tag_created
+    <Grid numItemsSm={2} numItemsLg={4} className="gap-4">
+      <StatCard
+        label="Image Age"
+        value={
+          <>
+            {data.age_days ?? "?"}{" "}
+            <span style={{ fontSize: "0.4em", fontWeight: 400, opacity: 0.6 }}>
+              days
+            </span>
+          </>
+        }
+        badge={age ? <Badge color={age.color}>{age.label}</Badge> : undefined}
+      />
+      <StatCard
+        label="Is Latest"
+        value={data.is_latest ? "Yes" : "No"}
+        size="lg"
+        badge={
+          <Badge color={data.is_latest ? "emerald" : "rose"}>
+            {data.is_latest ? "Latest" : "Not latest"}
+          </Badge>
+        }
+      />
+      <StatCard
+        label="Behind Latest"
+        value={
+          data.behind_latest_days != null ? (
+            <>
+              {data.behind_latest_days}{" "}
+              <span
+                style={{ fontSize: "0.4em", fontWeight: 400, opacity: 0.6 }}
+              >
+                days
+              </span>
+            </>
+          ) : (
+            "—"
+          )
+        }
+        size={data.behind_latest_days != null ? "xl" : "lg"}
+      />
+      <StatCard
+        label="Created"
+        value={
+          data.tag_created
             ? new Date(data.tag_created).toLocaleDateString()
-            : "N/A"}
-        </div>
-      </div>
-    </div>
+            : "N/A"
+        }
+        size="md"
+      />
+    </Grid>
   );
 }

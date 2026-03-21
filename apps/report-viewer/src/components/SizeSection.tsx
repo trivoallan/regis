@@ -1,83 +1,74 @@
-/**
- * SizeSection — Displays image size and layer breakdown.
- */
-
 import React from "react";
+import {
+  Grid,
+  Card,
+  Text,
+  Badge,
+  Table,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@tremor/react";
+import { StatCard } from "./StatCard";
 
 interface PlatformInfo {
   platform: string;
-  compressed_bytes: number;
   compressed_human: string;
   layer_count: number;
 }
-
 interface SizeData {
-  analyzer: string;
-  repository: string;
-  tag: string;
   multi_arch: boolean;
-  total_compressed_bytes: number;
   total_compressed_human: string;
   layer_count: number;
-  config_size_bytes?: number;
   platforms?: PlatformInfo[];
 }
 
-interface SizeSectionProps {
-  data: SizeData;
-}
-
-export function SizeSection({ data }: SizeSectionProps): React.JSX.Element {
+export function SizeSection({ data }: { data: SizeData }): React.JSX.Element {
   return (
-    <div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-          gap: "0.75rem",
-          marginBottom: "1rem",
-        }}
-      >
-        <div className="stat-card">
-          <div className="stat-card__label">Compressed Size</div>
-          <div className="stat-card__value">{data.total_compressed_human}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">Layers</div>
-          <div className="stat-card__value">{data.layer_count}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">Multi-arch</div>
-          <div className="stat-card__value">
-            {data.multi_arch ? "✅ Yes" : "No"}
-          </div>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <Grid numItemsSm={2} numItemsLg={3} className="gap-4">
+        <StatCard
+          label="Compressed Size"
+          value={data.total_compressed_human}
+          size="lg"
+        />
+        <StatCard label="Layers" value={data.layer_count} />
+        <StatCard
+          label="Multi-arch"
+          value={data.multi_arch ? "Yes" : "No"}
+          size="lg"
+          badge={
+            <Badge color={data.multi_arch ? "emerald" : "gray"}>
+              {data.multi_arch ? "Multi-arch" : "Single arch"}
+            </Badge>
+          }
+        />
+      </Grid>
 
-      {data.platforms && data.platforms.length > 0 && (
-        <div>
-          <h5>Platform Breakdown</h5>
-          <table>
-            <thead>
-              <tr>
-                <th>Platform</th>
-                <th>Size</th>
-                <th>Layers</th>
-              </tr>
-            </thead>
-            <tbody>
+      {data.platforms && data.platforms.length > 1 && (
+        <Card>
+          <Text className="font-medium mb-4">Platform Breakdown</Text>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Platform</TableHeaderCell>
+                <TableHeaderCell>Size</TableHeaderCell>
+                <TableHeaderCell>Layers</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {data.platforms.map((p, i) => (
-                <tr key={i}>
-                  <td>
-                    <code>{p.platform}</code>
-                  </td>
-                  <td>{p.compressed_human}</td>
-                  <td>{p.layer_count}</td>
-                </tr>
+                <TableRow key={i}>
+                  <TableCell className="font-mono">{p.platform}</TableCell>
+                  <TableCell>{p.compressed_human}</TableCell>
+                  <TableCell>{p.layer_count}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </Card>
       )}
     </div>
   );

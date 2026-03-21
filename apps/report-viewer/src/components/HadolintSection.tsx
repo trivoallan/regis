@@ -1,122 +1,116 @@
-/**
- * HadolintSection — Displays Dockerfile linting results.
- */
-
 import React from "react";
+import {
+  Grid,
+  Card,
+  Text,
+  Badge,
+  Table,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@tremor/react";
+import { StatCard } from "./StatCard";
 
 interface HadolintIssue {
   code: string;
   message: string;
   level: string;
   line?: number;
-  column?: number;
-  file?: string;
 }
-
 interface HadolintData {
-  analyzer: string;
-  repository: string;
-  tag: string;
   passed: boolean;
   issues_count: number;
   issues_by_level?: Record<string, number>;
   issues?: HadolintIssue[];
-  dockerfile?: string;
 }
 
-interface HadolintSectionProps {
-  data: HadolintData;
-}
-
-const LEVEL_COLORS: Record<string, string> = {
-  error: "#dc2626",
-  warning: "#d97706",
-  info: "#2563eb",
-  style: "#6b7280",
+const LEVEL_COLOR: Record<string, "rose" | "orange" | "blue" | "gray"> = {
+  error: "rose",
+  warning: "orange",
+  info: "blue",
+  style: "gray",
 };
 
 export function HadolintSection({
   data,
-}: HadolintSectionProps): React.JSX.Element {
+}: {
+  data: HadolintData;
+}): React.JSX.Element {
+  const byLevel = Object.entries(data.issues_by_level ?? {}).filter(
+    ([, n]) => n > 0,
+  );
+
   return (
-    <div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-          gap: "0.75rem",
-          marginBottom: "1rem",
-        }}
+    <div className="space-y-6">
+      <Grid
+        numItemsSm={2}
+        numItemsLg={Math.min(4, 2 + byLevel.length)}
+        className="gap-4"
       >
-        <div className="stat-card">
-          <div className="stat-card__label">Status</div>
-          <div className="stat-card__value">
-            {data.passed ? "✅ Passed" : "⚠️ Issues"}
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">Issues</div>
-          <div className="stat-card__value">{data.issues_count}</div>
-        </div>
-        {data.issues_by_level &&
-          Object.entries(data.issues_by_level)
-            .filter(([, count]) => count > 0)
-            .map(([level, count]) => (
-              <div className="stat-card" key={level}>
-                <div className="stat-card__label">{level}</div>
-                <div
-                  className="stat-card__value"
-                  style={{ color: LEVEL_COLORS[level] ?? "inherit" }}
-                >
-                  {count}
-                </div>
-              </div>
-            ))}
-      </div>
+        <StatCard
+          label="Status"
+          value={data.passed ? "Passed" : "Issues"}
+          size="lg"
+          badge={
+            <Badge color={data.passed ? "emerald" : "rose"}>
+              {data.passed ? "✓ Passed" : "✗ Failed"}
+            </Badge>
+          }
+        />
+        <StatCard label="Total Issues" value={data.issues_count} />
+        {byLevel.map(([level, count]) => (
+          <StatCard
+            key={level}
+            label={level.charAt(0).toUpperCase() + level.slice(1)}
+            value={count}
+            badge={<Badge color={LEVEL_COLOR[level] ?? "gray"}>{level}</Badge>}
+          />
+        ))}
+      </Grid>
 
       {data.issues && data.issues.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Level</th>
-              <th>Line</th>
-              <th>Message</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.issues.map((issue, i) => (
-              <tr key={i}>
-                <td>
-                  <a
-                    href={`https://github.com/hadolint/hadolint/wiki/${issue.code}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ fontFamily: "monospace" }}
-                  >
-                    {issue.code}
-                  </a>
-                </td>
-                <td>
-                  <span
-                    style={{
-                      padding: "2px 8px",
-                      borderRadius: "4px",
-                      fontSize: "0.75rem",
-                      fontWeight: 700,
-                      color: "#fff",
-                      background: LEVEL_COLORS[issue.level] ?? "#6b7280",
-                    }}
-                  >
-                    {issue.level}
-                  </span>
-                </td>
-                <td style={{ fontFamily: "monospace" }}>{issue.line ?? "—"}</td>
-                <td style={{ fontSize: "0.85rem" }}>{issue.message}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Card>
+          <Text className="font-medium mb-4">
+            Issues ({data.issues.length})
+          </Text>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Code</TableHeaderCell>
+                <TableHeaderCell>Level</TableHeaderCell>
+                <TableHeaderCell>Line</TableHeaderCell>
+                <TableHeaderCell>Message</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.issues.map((issue, i) => (
+                <TableRow key={i}>
+                  <TableCell>
+                    <a
+                      href={`https://github.com/hadolint/hadolint/wiki/${issue.code}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono"
+                    >
+                      {issue.code}
+                    </a>
+                  </TableCell>
+                  <TableCell>
+                    <Badge color={LEVEL_COLOR[issue.level] ?? "gray"}>
+                      {issue.level}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="font-mono">
+                    {issue.line ?? "—"}
+                  </TableCell>
+                  <TableCell className="text-sm">{issue.message}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
       )}
     </div>
   );

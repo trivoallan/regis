@@ -1,8 +1,11 @@
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
 
 const config: Config = {
-  title: "regis-cli Report",
+  title: "regis-cli",
   tagline: "Container Security Analysis Report",
   favicon: "img/favicon.ico",
 
@@ -37,9 +40,51 @@ const config: Config = {
           sidebarItemsGenerator: async () => {
             // Custom sidebar: fixed structure matching the report
             return [
-              { type: "doc", id: "index", label: "Overview" },
+              { type: "doc", id: "index", label: "Summary" },
               { type: "doc", id: "rules", label: "Rules" },
-              { type: "doc", id: "playbook", label: "Playbook" },
+              {
+                type: "category",
+                label: "Analyzers",
+                collapsed: false,
+                items: [
+                  { type: "doc", id: "analyzers/dockle", label: "Dockle" },
+                  {
+                    type: "doc",
+                    id: "analyzers/endoflife",
+                    label: "End of Life",
+                  },
+                  {
+                    type: "doc",
+                    id: "analyzers/freshness",
+                    label: "Freshness",
+                  },
+                  { type: "doc", id: "analyzers/hadolint", label: "Hadolint" },
+                  { type: "doc", id: "analyzers/skopeo", label: "Metadata" },
+                  {
+                    type: "doc",
+                    id: "analyzers/popularity",
+                    label: "Popularity",
+                  },
+                  {
+                    type: "doc",
+                    id: "analyzers/provenance",
+                    label: "Provenance",
+                  },
+                  { type: "doc", id: "analyzers/sbom", label: "SBOM" },
+                  {
+                    type: "doc",
+                    id: "analyzers/scorecarddev",
+                    label: "Scorecard",
+                  },
+                  { type: "doc", id: "analyzers/size", label: "Size" },
+                  { type: "doc", id: "analyzers/trivy", label: "Trivy" },
+                  {
+                    type: "doc",
+                    id: "analyzers/versioning",
+                    label: "Versioning",
+                  },
+                ],
+              },
             ];
           },
         },
@@ -52,6 +97,20 @@ const config: Config = {
     ],
   ],
 
+  plugins: [
+    async function tailwindPlugin(context, options) {
+      return {
+        name: "docusaurus-tailwindcss",
+        configurePostCss(postcssOptions) {
+          // Appending tailwindcss and autoprefixer to the plugins list
+          postcssOptions.plugins.push(require("tailwindcss"));
+          postcssOptions.plugins.push(require("autoprefixer"));
+          return postcssOptions;
+        },
+      };
+    },
+  ],
+
   themeConfig: {
     colorMode: {
       defaultMode: "dark",
@@ -59,13 +118,7 @@ const config: Config = {
     },
     navbar: {
       title: "Report",
-      items: [
-        {
-          href: "/report.json",
-          label: "Raw JSON",
-          position: "right",
-        },
-      ],
+      items: [],
     },
     footer: {
       style: "dark",

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from typing import Any
 
-import pytest
 import yaml
 
 from regis_cli.playbook.engine import _flatten, evaluate, load_playbook
@@ -232,14 +231,12 @@ class TestEvaluate:
         result = evaluate(self.PLAYBOOK, report)
         assert isinstance(result["score"], int)
 
-    def test_missing_sections_raises(self):
-        """Playbooks without sections must raise ValueError."""
-        playbook = {
-            "name": "Legacy",
-            "scorecards": [{"name": "r", "condition": {"==": [1, 1]}}],
-        }
-        with pytest.raises(ValueError, match="missing both 'pages' and 'sections'"):
-            evaluate(playbook, {})
+    def test_missing_sections_returns_empty_pages(self):
+        """Playbooks without pages or sections evaluate with empty pages (rules-only mode)."""
+        playbook = {"name": "RulesOnly"}
+        result = evaluate(playbook, {})
+        assert result["pages"] == []
+        assert isinstance(result["score"], int)
 
     def test_multi_section(self):
         """Multiple sections aggregate correctly."""
