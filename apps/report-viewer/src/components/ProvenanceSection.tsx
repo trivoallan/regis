@@ -1,19 +1,24 @@
-/**
- * ProvenanceSection — Displays supply chain evidence and signatures.
- */
-
 import React from "react";
+import {
+  Grid,
+  Card,
+  Text,
+  Badge,
+  Table,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@tremor/react";
+import { StatCard } from "./StatCard";
 
 interface Indicator {
   name: string;
   status: "success" | "failure" | "warning";
   message: string;
 }
-
 interface ProvenanceData {
-  analyzer: string;
-  repository: string;
-  tag: string;
   has_provenance: boolean;
   has_cosign_signature: boolean;
   source_tracked: boolean;
@@ -21,72 +26,78 @@ interface ProvenanceData {
   indicators?: Indicator[];
 }
 
-interface ProvenanceSectionProps {
-  data: ProvenanceData;
-}
-
-const STATUS_ICONS: Record<string, string> = {
-  success: "✅",
-  failure: "❌",
-  warning: "⚠️",
-};
-
-const STATUS_CLASSES: Record<string, string> = {
-  success: "alert--success",
-  failure: "alert--danger",
-  warning: "alert--warning",
+const STATUS_COLOR: Record<string, "emerald" | "rose" | "amber"> = {
+  success: "emerald",
+  failure: "rose",
+  warning: "amber",
 };
 
 export function ProvenanceSection({
   data,
-}: ProvenanceSectionProps): React.JSX.Element {
+}: {
+  data: ProvenanceData;
+}): React.JSX.Element {
   return (
-    <div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-          gap: "0.75rem",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <div className="stat-card">
-          <div className="stat-card__label">SLSA Provenance</div>
-          <div className="stat-card__value">
-            {data.has_provenance ? "✅ Found" : "❌ Missing"}
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">Cosign Signature</div>
-          <div className="stat-card__value">
-            {data.has_cosign_signature ? "✅ Signed" : "❌ No"}
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">Source Tracked</div>
-          <div className="stat-card__value">
-            {data.source_tracked ? "✅ Yes" : "❌ No"}
-          </div>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <Grid numItemsSm={2} numItemsLg={3} className="gap-4">
+        <StatCard
+          label="SLSA Provenance"
+          value={data.has_provenance ? "Found" : "Missing"}
+          size="lg"
+          badge={
+            <Badge color={data.has_provenance ? "emerald" : "rose"}>
+              {data.has_provenance ? "✓ Present" : "✗ Absent"}
+            </Badge>
+          }
+        />
+        <StatCard
+          label="Cosign Signature"
+          value={data.has_cosign_signature ? "Signed" : "Unsigned"}
+          size="lg"
+          badge={
+            <Badge color={data.has_cosign_signature ? "emerald" : "rose"}>
+              {data.has_cosign_signature ? "✓ Signed" : "✗ Unsigned"}
+            </Badge>
+          }
+        />
+        <StatCard
+          label="Source Tracked"
+          value={data.source_tracked ? "Yes" : "No"}
+          size="lg"
+          badge={
+            <Badge color={data.source_tracked ? "emerald" : "rose"}>
+              {data.source_tracked ? "✓ Tracked" : "✗ Not tracked"}
+            </Badge>
+          }
+        />
+      </Grid>
 
       {data.indicators && data.indicators.length > 0 && (
-        <div
-          style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
-        >
-          {data.indicators.map((indicator, i) => (
-            <div
-              key={i}
-              className={`alert ${STATUS_CLASSES[indicator.status]}`}
-              style={{ padding: "0.5rem 1rem" }}
-            >
-              <strong>
-                {STATUS_ICONS[indicator.status]} {indicator.name}
-              </strong>
-              : {indicator.message}
-            </div>
-          ))}
-        </div>
+        <Card>
+          <Text className="font-medium mb-4">
+            Indicators ({data.indicators.length})
+          </Text>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Status</TableHeaderCell>
+                <TableHeaderCell>Indicator</TableHeaderCell>
+                <TableHeaderCell>Details</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.indicators.map((ind, i) => (
+                <TableRow key={i}>
+                  <TableCell>
+                    <Badge color={STATUS_COLOR[ind.status]}>{ind.status}</Badge>
+                  </TableCell>
+                  <TableCell className="font-semibold">{ind.name}</TableCell>
+                  <TableCell className="text-sm">{ind.message}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
       )}
     </div>
   );

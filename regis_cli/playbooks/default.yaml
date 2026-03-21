@@ -12,29 +12,47 @@ tiers:
     condition:
       ">": [{ var: rules_summary.score }, 50]
 
+rules:
+  - provider: trivy
+    rule: cve-count
+    slug: cve-critical
+    level: critical
+    options:
+      level: critical
+      max_count: 0
+  - provider: trivy
+    rule: cve-count
+    slug: cve-high
+    level: warning
+    options:
+      level: high
+      max_count: 100
+
 badges:
-  - slug: score
-    scope: Score
-    value: ${rules_summary.score}
-    class: information
   - slug: cve-critical
     scope: CVE
     value: Critical
     condition:
-      "!!": [{ var: rules.trivy.no-critical.passed }]
+      "!": [{ var: rules.cve-critical.passed }]
     class: error
   - slug: cve-high
     scope: CVE
     value: High
     condition:
-      "!!": [{ var: rules.trivy.no-high.passed }]
+      "!": [{ var: rules.cve-high.passed }]
     class: warning
-  - slug: freshness
+  - slug: freshness-fresh
     scope: Freshness
     value: Fresh !
     condition:
-      "==": [{ var: rules.freshness.age.passed }, true]
+      "==": [{ var: rules.age.passed }, true]
     class: success
+  - slug: freshness-stale
+    scope: Freshness
+    value: Stale !
+    condition:
+      "!": [{ var: rules.age.passed }]
+    class: warning
 
 pages:
   - title: Overview
@@ -134,23 +152,6 @@ pages:
             value: "{{ playbooks.0.pages.compliance.sections.recommended_requirements.score }}%"
             options:
               align: center
-      - name: Mandatory Requirements
-        rules:
-          - core.registry-domain-whitelist
-          - skopeo.no-root
-          - trivy.no-critical
-          - dockle.no-fatal
-          - trivy.fix-available
-          - trivy.secret-scan
-
-      - name: Recommended Requirements
-        rules:
-          - trivy.no-high
-          - freshness.age
-          - skopeo.max-size
-          - skopeo.max-layers
-          - skopeo.tag-not-latest
-          - skopeo.required-labels
 
   - title: Security
     slug: security

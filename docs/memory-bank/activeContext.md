@@ -88,4 +88,22 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Updated documentation site (`cli.md`, `analyze-image.md`, `gitlab.md`) with report viewer and artifact viewing details.
 
 - Monitor CI/CD results for the new PR.
-- Merge PR for `feat/report-viewer`.
+- Merge PR for `feat/report-viewer-tremor`.
+
+## Current Objective
+
+UI overhaul of the Docusaurus report viewer using Tremor components.
+
+## Recent Changes (branch: feature/report-viewer-tremor)
+
+- **Navbar swizzle** (`src/theme/Navbar/Logo/index.tsx`): Replaced broken `custom-imageIdentity` navbar item with a `Navbar/Logo` swizzle. Renders identity badges (Registry, Repository, Tag, Digest) centered in the navbar. Click copies the value to clipboard. Digest is truncated to 19 chars for display.
+- **Raw JSON link**: Moved from static `docusaurus.config.ts` `href: "/report.json"` (broken with non-root baseUrl) into `Navbar/Logo` using `siteConfig.baseUrl` to construct the correct URL dynamically.
+- **`StatCard` component** (`src/components/StatCard.tsx`): Shared KPI card for all analyzer pages. Centered value, configurable font size (xl/lg/md/sm). No badges displayed in card body.
+- **`AnalyzerPage` component** (`src/components/AnalyzerPage.tsx`): Shared wrapper for each analyzer MDX page. Shows warning if analyzer was not run.
+- **Analyzers sidebar section**: Replaced monolithic `playbook.mdx` with 12 individual analyzer MDX pages in `docs/analyzers/` (dockle, endoflife, freshness, hadolint, popul­arity, provenance, sbom, scorecarddev, size, skopeo, trivy, versioning). Sidebar uses `type: "category"` with items sorted alphabetically.
+- **All analyzer sections rewritten** with `StatCard` + Tremor `Table` components for consistent layout across all 12 pages.
+- **TrivySection**: Shows only Critical and High CVEs. Two separate paginated tables (50/page, independent paginators). Sorted by most recent `PublishedDate`. Columns: ID, Package, Installed, Fixed, Published (Title removed).
+- **VersioningSection**: Fixed crash — `variants` field is array of objects `{name, count, percentage, examples}`, not strings.
+- **SummaryView**: Added analyzer badges with links (`/analyzers/{name}`) in the Failed Rules table.
+- **RulesTable**: Analyzer badges wrapped in `@docusaurus/Link` pointing to analyzer pages.
+- **Dashboard components** (`src/components/Dashboard/`): ScoreCard, VulnerabilityChart, ComplianceDonut, AnalyzerCoverageCard, RulesByLevelCard, RulesByTagCard used on Summary page.

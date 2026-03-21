@@ -1,8 +1,17 @@
-/**
- * DockleSection — Displays container image linting results for security.
- */
-
 import React from "react";
+import {
+  Grid,
+  Card,
+  Text,
+  Badge,
+  Table,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@tremor/react";
+import { StatCard } from "./StatCard";
 
 interface DockleIssue {
   code: string;
@@ -10,128 +19,99 @@ interface DockleIssue {
   title: string;
   alerts: string[];
 }
-
 interface DockleData {
-  analyzer: string;
-  repository: string;
-  tag: string;
   passed: boolean;
   issues_count: number;
   issues_by_level: Record<string, number>;
   issues: DockleIssue[];
 }
 
-interface DockleSectionProps {
-  data: DockleData;
-}
-
-const LEVEL_COLORS: Record<string, string> = {
-  FATAL: "#dc2626",
-  WARN: "#d97706",
-  INFO: "#2563eb",
-  SKIP: "#6b7280",
-  PASS: "#22c55e",
+const LEVEL_COLOR: Record<string, "rose" | "orange" | "blue" | "gray"> = {
+  FATAL: "rose",
+  WARN: "orange",
+  INFO: "blue",
+  SKIP: "gray",
 };
 
-export function DockleSection({ data }: DockleSectionProps): React.JSX.Element {
-  return (
-    <div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-          gap: "0.75rem",
-          marginBottom: "1rem",
-        }}
-      >
-        <div className="stat-card">
-          <div className="stat-card__label">Status</div>
-          <div className="stat-card__value">
-            {data.passed ? "✅ Passed" : "⚠️ Issues"}
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">Issues</div>
-          <div className="stat-card__value">{data.issues_count}</div>
-        </div>
-        {data.issues_by_level &&
-          Object.entries(data.issues_by_level)
-            .filter(
-              ([level, count]) =>
-                count > 0 && level !== "PASS" && level !== "SKIP",
-            )
-            .map(([level, count]) => (
-              <div className="stat-card" key={level}>
-                <div className="stat-card__label">{level}</div>
-                <div
-                  className="stat-card__value"
-                  style={{ color: LEVEL_COLORS[level] ?? "inherit" }}
-                >
-                  {count}
-                </div>
-              </div>
-            ))}
-      </div>
+export function DockleSection({
+  data,
+}: {
+  data: DockleData;
+}): React.JSX.Element {
+  const byLevel = Object.entries(data.issues_by_level ?? {}).filter(
+    ([level, n]) => n > 0 && level !== "PASS" && level !== "SKIP",
+  );
+  const displayedIssues = data.issues.filter(
+    (i) => i.level !== "PASS" && i.level !== "SKIP",
+  );
 
-      {data.issues && data.issues.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Level</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.issues
-              .filter((i) => i.level !== "PASS" && i.level !== "SKIP")
-              .map((issue, i) => (
-                <tr key={i}>
-                  <td
-                    style={{
-                      fontFamily: "monospace",
-                      fontSize: "0.85rem",
-                      fontWeight: 600,
-                    }}
-                  >
+  return (
+    <div className="space-y-6">
+      <Grid
+        numItemsSm={2}
+        numItemsLg={Math.min(4, 2 + byLevel.length)}
+        className="gap-4"
+      >
+        <StatCard
+          label="Status"
+          value={data.passed ? "Passed" : "Issues"}
+          size="lg"
+          badge={
+            <Badge color={data.passed ? "emerald" : "rose"}>
+              {data.passed ? "✓ Passed" : "✗ Failed"}
+            </Badge>
+          }
+        />
+        <StatCard label="Total Issues" value={data.issues_count} />
+        {byLevel.map(([level, count]) => (
+          <StatCard
+            key={level}
+            label={level}
+            value={count}
+            badge={<Badge color={LEVEL_COLOR[level] ?? "gray"}>{level}</Badge>}
+          />
+        ))}
+      </Grid>
+
+      {displayedIssues.length > 0 && (
+        <Card>
+          <Text className="font-medium mb-4">
+            Issues ({displayedIssues.length})
+          </Text>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Code</TableHeaderCell>
+                <TableHeaderCell>Level</TableHeaderCell>
+                <TableHeaderCell>Description</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {displayedIssues.map((issue, i) => (
+                <TableRow key={i}>
+                  <TableCell className="font-mono font-semibold text-sm">
                     {issue.code}
-                  </td>
-                  <td>
-                    <span
-                      style={{
-                        padding: "2px 8px",
-                        borderRadius: "4px",
-                        fontSize: "0.75rem",
-                        fontWeight: 700,
-                        color: "#fff",
-                        background: LEVEL_COLORS[issue.level] ?? "#6b7280",
-                      }}
-                    >
+                  </TableCell>
+                  <TableCell>
+                    <Badge color={LEVEL_COLOR[issue.level] ?? "gray"}>
                       {issue.level}
-                    </span>
-                  </td>
-                  <td>
-                    <div style={{ fontSize: "0.85rem", fontWeight: 600 }}>
-                      {issue.title}
-                    </div>
-                    {issue.alerts && issue.alerts.length > 0 && (
-                      <ul
-                        style={{
-                          fontSize: "0.8rem",
-                          marginTop: "0.4rem",
-                          opacity: 0.8,
-                        }}
-                      >
-                        {issue.alerts.map((alert, j) => (
-                          <li key={j}>{alert}</li>
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-sm font-semibold">{issue.title}</div>
+                    {issue.alerts.length > 0 && (
+                      <ul className="text-xs mt-1 opacity-70 list-disc list-inside">
+                        {issue.alerts.map((a, j) => (
+                          <li key={j}>{a}</li>
                         ))}
                       </ul>
                     )}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-          </tbody>
-        </table>
+            </TableBody>
+          </Table>
+        </Card>
       )}
     </div>
   );

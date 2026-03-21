@@ -1,8 +1,9 @@
 /**
- * RequestTable — Displays the request parameters (registry, repository, tag, etc.)
+ * RequestTable — Displays the request parameters as a grid of cards.
  */
 
 import React from "react";
+import { Card, Grid, Text } from "@tremor/react";
 import { useReport } from "./ReportProvider";
 
 export function RequestTable(): React.JSX.Element {
@@ -10,42 +11,28 @@ export function RequestTable(): React.JSX.Element {
   if (!report?.request) return <p>No request metadata available.</p>;
 
   const req = report.request;
-  const rows = [
-    { label: "Registry", value: req.registry },
-    { label: "Repository", value: req.repository },
-    { label: "Tag", value: req.tag },
-    { label: "Digest", value: req.digest },
+  const fields = [
     {
       label: "Timestamp",
-      value: req.timestamp ? new Date(req.timestamp).toLocaleString() : "N/A",
+      value: req.timestamp
+        ? new Date(req.timestamp).toLocaleString()
+        : undefined,
     },
-    { label: "Platform Override", value: req.platform || "Not specified" },
-  ];
+    { label: "Platform", value: req.platform },
+  ].filter((f) => f.value);
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th style={{ width: "200px" }}>Parameter</th>
-          <th>Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row, i) => (
-          <tr key={i}>
-            <td style={{ fontWeight: 600 }}>{row.label}</td>
-            <td
-              style={{
-                fontFamily:
-                  row.value && row.value.length > 20 ? "monospace" : "inherit",
-                fontSize: "0.9rem",
-              }}
-            >
-              {row.value || "—"}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <Grid numItemsSm={2} numItemsLg={3} className="gap-4">
+      {fields.map((field) => (
+        <Card key={field.label} className="p-4">
+          <Text className="text-tremor-label text-tremor-content uppercase tracking-wider font-semibold">
+            {field.label}
+          </Text>
+          <p className="mt-1 text-sm font-mono break-all text-tremor-content-strong dark:text-dark-tremor-content-strong">
+            {field.value}
+          </p>
+        </Card>
+      ))}
+    </Grid>
   );
 }

@@ -24,6 +24,7 @@ export interface ReportData {
     tag?: string;
     digest?: string;
     timestamp?: string;
+    platform?: string;
     analyzers?: string[];
   };
   results?: Record<string, unknown>;
@@ -49,9 +50,9 @@ export interface RuleResult {
 }
 
 export interface RulesSummary {
-  total?: number;
-  passed?: number;
-  failed?: number;
+  total?: number | string[];
+  passed?: number | string[];
+  failed?: number | string[];
   score?: number;
   by_tag?: Record<
     string,

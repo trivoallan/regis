@@ -66,10 +66,5 @@ export function AnalyzerSection({
   name,
   data,
 }: AnalyzerSectionProps): React.JSX.Element {
-  return (
-    <div style={{ marginBottom: "1.5rem" }}>
-      <h4 style={{ textTransform: "capitalize" }}>{name.replace(/_/g, " ")}</h4>
-      {renderAnalyzer(name, data)}
-    </div>
-  );
+  return <>{renderAnalyzer(name, data)}</>;
 }

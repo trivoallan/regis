@@ -1,8 +1,17 @@
-/**
- * VersioningSection — Displays image tagging patterns and variants.
- */
-
 import React from "react";
+import {
+  Grid,
+  Card,
+  Text,
+  Badge,
+  Table,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@tremor/react";
+import { StatCard } from "./StatCard";
 
 interface TagPattern {
   pattern: string;
@@ -10,99 +19,114 @@ interface TagPattern {
   percentage: number;
   examples: string[];
 }
-
+interface TagVariant {
+  name: string;
+  count: number;
+  percentage: number;
+  examples: string[];
+}
 interface VersioningData {
-  analyzer: string;
-  repository: string;
   total_tags: number;
   dominant_pattern?: string;
   semver_compliant_percentage?: number;
   patterns?: TagPattern[];
-  variants?: string[];
-  release_lines?: string[];
-}
-
-interface VersioningSectionProps {
-  data: VersioningData;
+  variants?: TagVariant[];
 }
 
 export function VersioningSection({
   data,
-}: VersioningSectionProps): React.JSX.Element {
+}: {
+  data: VersioningData;
+}): React.JSX.Element {
   return (
-    <div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-          gap: "0.75rem",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <div className="stat-card">
-          <div className="stat-card__label">Total Tags</div>
-          <div className="stat-card__value">{data.total_tags}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">SemVer Compliance</div>
-          <div className="stat-card__value">
-            {data.semver_compliant_percentage?.toFixed(1)}%
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__label">Dominant Pattern</div>
-          <div
-            className="stat-card__value"
-            style={{
-              fontSize: "1rem",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            <code>{data.dominant_pattern || "N/A"}</code>
-          </div>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <Grid numItemsSm={2} numItemsLg={3} className="gap-4">
+        <StatCard label="Total Tags" value={data.total_tags} />
+        <StatCard
+          label="SemVer Compliance"
+          value={
+            <>
+              {data.semver_compliant_percentage?.toFixed(1) ?? "—"}
+              <span
+                style={{ fontSize: "0.5em", fontWeight: 400, opacity: 0.6 }}
+              >
+                %
+              </span>
+            </>
+          }
+        />
+        <StatCard
+          label="Dominant Pattern"
+          value={data.dominant_pattern ?? "N/A"}
+          size="md"
+        />
+      </Grid>
 
-      <div
-        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}
-      >
-        {data.patterns && (
-          <div>
-            <h5>Tag Patterns</h5>
-            <ul style={{ fontSize: "0.9rem" }}>
+      {data.patterns && data.patterns.length > 0 && (
+        <Card>
+          <Text className="font-medium mb-4">Tag Patterns</Text>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Pattern</TableHeaderCell>
+                <TableHeaderCell>Count</TableHeaderCell>
+                <TableHeaderCell>Share</TableHeaderCell>
+                <TableHeaderCell>Examples</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {data.patterns.map((p) => (
-                <li key={p.pattern}>
-                  <code>{p.pattern}</code>: <strong>{p.count}</strong>{" "}
-                  <span style={{ opacity: 0.5 }}>
-                    ({p.percentage.toFixed(1)}%)
-                  </span>
-                </li>
+                <TableRow key={p.pattern}>
+                  <TableCell className="font-mono font-semibold">
+                    {p.pattern}
+                  </TableCell>
+                  <TableCell>{p.count}</TableCell>
+                  <TableCell>
+                    <Badge color="blue">{p.percentage.toFixed(1)}%</Badge>
+                  </TableCell>
+                  <TableCell className="text-sm font-mono">
+                    {p.examples.slice(0, 3).join(", ")}
+                    {p.examples.length > 3 && "…"}
+                  </TableCell>
+                </TableRow>
               ))}
-            </ul>
-          </div>
-        )}
-        {data.variants && data.variants.length > 0 && (
-          <div>
-            <h5>Detected Variants</h5>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+            </TableBody>
+          </Table>
+        </Card>
+      )}
+
+      {data.variants && data.variants.length > 0 && (
+        <Card>
+          <Text className="font-medium mb-4">Detected Variants</Text>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Variant</TableHeaderCell>
+                <TableHeaderCell>Count</TableHeaderCell>
+                <TableHeaderCell>Share</TableHeaderCell>
+                <TableHeaderCell>Examples</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {data.variants.map((v) => (
-                <span
-                  key={v}
-                  style={{
-                    padding: "2px 8px",
-                    background: "var(--ifm-color-emphasis-200)",
-                    borderRadius: "4px",
-                    fontSize: "0.8rem",
-                  }}
-                >
-                  {v}
-                </span>
+                <TableRow key={v.name}>
+                  <TableCell className="font-mono font-semibold">
+                    {v.name}
+                  </TableCell>
+                  <TableCell>{v.count}</TableCell>
+                  <TableCell>
+                    <Badge color="indigo">{v.percentage.toFixed(1)}%</Badge>
+                  </TableCell>
+                  <TableCell className="text-sm font-mono">
+                    {v.examples.slice(0, 3).join(", ")}
+                    {v.examples.length > 3 && "…"}
+                  </TableCell>
+                </TableRow>
               ))}
-            </div>
-          </div>
-        )}
-      </div>
+            </TableBody>
+          </Table>
+        </Card>
+      )}
     </div>
   );
 }

@@ -14,8 +14,6 @@ import { AnalyzerSection } from "./AnalyzerSection";
 import { ErrorCard } from "./ErrorCard";
 import type { PlaybookSection } from "./ReportProvider";
 
-import { RequestTable } from "./RequestTable";
-
 function getAnalyzerNameFromTemplate(template?: string): string | null {
   if (!template || !template.startsWith("analyzers/")) return null;
   const parts = template.split("/");
@@ -43,19 +41,13 @@ function SectionBlock({
           analyzerNames.add(analyzer);
           return false;
         }
-        // Also handle the request table template
         if (w.template === "request/table.html") return false;
         return true;
       });
 
-      const hasRequestTable = section.widgets.some(
-        (w) => w.template === "request/table.html",
-      );
-
       return (
         <>
           {normalWidgets.length > 0 && <WidgetGrid widgets={normalWidgets} />}
-          {hasRequestTable && <RequestTable />}
           {Array.from(analyzerNames).map((name) => {
             const data = results[name];
             if (!data) return null;

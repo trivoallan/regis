@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /**
  * Custom CSS for the report viewer.
  *
@@ -103,14 +107,14 @@
   margin-top: 0.15rem;
 }
 
-/* ─── Tables ─── */
-table {
+/* ─── Tables (Docusaurus markdown only, not Tremor) ─── */
+table:not(.tremor-Table-table) {
   border-collapse: collapse;
   width: 100%;
   font-size: 0.9rem;
 }
 
-table th {
+table:not(.tremor-Table-table) th {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 0.75rem;
@@ -120,14 +124,24 @@ table th {
   border-bottom: 2px solid var(--ifm-color-emphasis-300);
 }
 
-table td {
+table:not(.tremor-Table-table) td {
   padding: 0.55rem 0.75rem;
   border-bottom: 1px solid var(--ifm-color-emphasis-200);
   vertical-align: top;
 }
 
-table tbody tr:hover {
+table:not(.tremor-Table-table) tbody tr:hover {
   background: var(--ifm-color-emphasis-100);
+}
+
+/* ─── Tremor Table full width ─── */
+.tremor-Table-root {
+  width: 100%;
+}
+
+.tremor-Table-table {
+  display: table;
+  width: 100%;
 }
 
 /* ─── Report Links ─── */

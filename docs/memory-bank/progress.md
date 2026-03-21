@@ -26,6 +26,14 @@
 - Integrated the new report viewer into the workspace (`pnpm`).
 - **Added GitLab artifact support** with dynamic `baseUrl` calculation and `--base-url` flag.
 - **Updated documentation** across the site to reflect the new report architecture.
+- **Tremor UI overhaul** of the report viewer (branch: `feature/report-viewer-tremor`):
+  - Navbar identity badges (Registry, Repository, Tag, Digest) with clipboard copy.
+  - Raw JSON link uses dynamic `siteConfig.baseUrl` (fixes broken link with non-root baseUrl).
+  - Shared `StatCard` KPI component used across all 12 analyzer pages.
+  - 12 individual analyzer pages in sidebar submenu (replaces monolithic Playbook page).
+  - All analyzer sections homogenized: StatCards + Tremor Tables.
+  - TrivySection: paginated Critical/High CVE tables sorted by most recent date.
+  - Analyzer badges in rules tables link to their respective analyzer page.
 
 ## Future Roadmap
 

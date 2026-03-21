@@ -1,8 +1,17 @@
-/**
- * SkopeoSection — Displays detailed image metadata and platform configuration.
- */
-
 import React from "react";
+import {
+  Grid,
+  Card,
+  Text,
+  Badge,
+  Table,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@tremor/react";
+import { StatCard } from "./StatCard";
 
 interface PlatformDetail {
   architecture: string;
@@ -17,164 +26,123 @@ interface PlatformDetail {
   env: string[];
   labels: Record<string, string>;
 }
-
 interface SkopeoData {
-  analyzer: string;
-  repository: string;
-  tag: string;
   platforms: PlatformDetail[];
   inspect: Record<string, unknown>;
   tags: string[];
 }
 
-interface SkopeoSectionProps {
+export function SkopeoSection({
+  data,
+}: {
   data: SkopeoData;
-}
-
-export function SkopeoSection({ data }: SkopeoSectionProps): React.JSX.Element {
+}): React.JSX.Element {
   return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "1rem",
-          marginBottom: "1.5rem",
-        }}
+    <div className="space-y-6">
+      <Grid
+        numItemsSm={1}
+        numItemsLg={data.platforms.length > 1 ? 2 : 1}
+        className="gap-4"
       >
         {data.platforms.map((p, i) => (
-          <div
-            key={i}
-            className="stat-card"
-            style={{ flex: "1 1 300px", textAlign: "left" }}
-          >
-            <div className="stat-card__label">
-              Platform: {p.os}/{p.architecture}{" "}
-              {p.variant ? `(${p.variant})` : ""}
-            </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "0.5rem",
-                marginTop: "0.5rem",
-                fontSize: "0.9rem",
-              }}
-            >
-              <div>
-                <strong>User:</strong> <code>{p.user || "root (default)"}</code>
-              </div>
-              <div>
-                <strong>Layers:</strong> {p.layers_count}
-              </div>
-              <div>
-                <strong>Size:</strong> {(p.size / 1024 / 1024).toFixed(1)} MB
-              </div>
-            </div>
-
-            {p.exposed_ports && p.exposed_ports.length > 0 && (
-              <div style={{ marginTop: "0.5rem", fontSize: "0.85rem" }}>
-                <strong>Exposed Ports:</strong>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "0.4rem",
-                    flexWrap: "wrap",
-                    marginTop: "0.2rem",
-                  }}
-                >
+          <Card key={i} className="flex flex-col">
+            <Text className="font-medium mb-4">
+              {p.os}/{p.architecture}
+              {p.variant ? ` (${p.variant})` : ""}
+            </Text>
+            <Grid numItemsSm={2} numItemsLg={3} className="gap-3">
+              <StatCard
+                label="Size"
+                value={`${(p.size / 1024 / 1024).toFixed(1)} MB`}
+                size="md"
+              />
+              <StatCard label="Layers" value={p.layers_count} size="lg" />
+              <StatCard label="User" value={p.user || "root"} size="sm" />
+            </Grid>
+            {p.exposed_ports.length > 0 && (
+              <div className="mt-4">
+                <Text className="mb-2">Exposed Ports</Text>
+                <div className="flex flex-wrap gap-1">
                   {p.exposed_ports.map((port) => (
-                    <span
-                      key={port}
-                      style={{
-                        padding: "1px 6px",
-                        background: "var(--ifm-color-primary-lightest)",
-                        color: "var(--ifm-color-primary-darkest)",
-                        borderRadius: "4px",
-                        fontSize: "0.75rem",
-                      }}
-                    >
+                    <Badge key={port} color="blue">
                       {port}
-                    </span>
+                    </Badge>
                   ))}
                 </div>
               </div>
             )}
-
-            {p.labels && Object.keys(p.labels).length > 0 && (
-              <details style={{ marginTop: "0.5rem", fontSize: "0.8rem" }}>
-                <summary style={{ cursor: "pointer", opacity: 0.7 }}>
-                  Labels ({Object.keys(p.labels).length})
-                </summary>
-                <div
-                  style={{
-                    padding: "0.5rem",
-                    background: "var(--ifm-color-emphasis-100)",
-                    borderRadius: "4px",
-                    marginTop: "0.2rem",
-                    maxHeight: "150px",
-                    overflowY: "auto",
-                  }}
-                >
-                  {Object.entries(p.labels).map(([k, v]) => (
-                    <div
-                      key={k}
-                      style={{ marginBottom: "2px", wordBreak: "break-all" }}
-                    >
-                      <strong style={{ opacity: 0.8 }}>{k}:</strong> {v}
-                    </div>
-                  ))}
-                </div>
-              </details>
+            {p.created && (
+              <div className="mt-3">
+                <Text className="text-xs opacity-60">
+                  Created: {new Date(p.created).toLocaleDateString()}
+                </Text>
+              </div>
             )}
-
-            <div
-              style={{
-                marginTop: "0.5rem",
-                fontSize: "0.75rem",
-                opacity: 0.5,
-                wordBreak: "break-all",
-              }}
-            >
-              Digest: <code>{p.digest}</code>
-            </div>
-          </div>
+            {p.digest && (
+              <div className="mt-1">
+                <Text className="text-xs opacity-40 break-all font-mono">
+                  {p.digest}
+                </Text>
+              </div>
+            )}
+          </Card>
         ))}
-      </div>
+      </Grid>
 
-      {data.tags && data.tags.length > 0 && (
-        <details>
-          <summary style={{ cursor: "pointer", fontWeight: 600 }}>
+      {data.platforms.some((p) => Object.keys(p.labels).length > 0) && (
+        <Card>
+          <Text className="font-medium mb-4">Labels</Text>
+          {data.platforms.map(
+            (p, i) =>
+              Object.keys(p.labels).length > 0 && (
+                <div key={i} className="mb-4">
+                  {data.platforms.length > 1 && (
+                    <Text className="mb-2 text-xs opacity-60">
+                      {p.os}/{p.architecture}
+                    </Text>
+                  )}
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableHeaderCell>Key</TableHeaderCell>
+                        <TableHeaderCell>Value</TableHeaderCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {Object.entries(p.labels).map(([k, v]) => (
+                        <TableRow key={k}>
+                          <TableCell className="font-mono text-sm font-semibold break-all">
+                            {k}
+                          </TableCell>
+                          <TableCell className="text-sm break-all">
+                            {v}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ),
+          )}
+        </Card>
+      )}
+
+      {data.tags.length > 0 && (
+        <Card>
+          <Text className="font-medium mb-3">
             Available Tags ({data.tags.length})
-          </summary>
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "0.4rem",
-              padding: "1rem 0",
-            }}
-          >
+          </Text>
+          <div className="flex flex-wrap gap-1.5">
             {data.tags.slice(0, 50).map((t) => (
-              <span
-                key={t}
-                style={{
-                  padding: "2px 8px",
-                  background: "var(--ifm-color-emphasis-200)",
-                  borderRadius: "4px",
-                  fontSize: "0.8rem",
-                }}
-              >
+              <Badge key={t} color="gray">
                 {t}
-              </span>
+              </Badge>
             ))}
             {data.tags.length > 50 && (
-              <span style={{ opacity: 0.5 }}>
-                ... and {data.tags.length - 50} more
-              </span>
+              <Badge color="gray">+{data.tags.length - 50} more</Badge>
             )}
           </div>
-        </details>
+        </Card>
       )}
     </div>
   );
