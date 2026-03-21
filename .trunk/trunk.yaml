@@ -53,9 +53,15 @@ lint:
         - docs/website/versions.json
 
 actions:
+  definitions:
+    - id: trunk-check-fix-pre-commit
+      triggers:
+        - git_hooks: [pre-commit]
+      run: trunk check --fix
   disabled:
     - trunk-announce
     - trunk-check-pre-push
-  enabled:
     - trunk-fmt-pre-commit
+  enabled:
+    - trunk-check-fix-pre-commit
     - trunk-upgrade-available
