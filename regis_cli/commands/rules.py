@@ -340,7 +340,7 @@ def eval_rules(
     else:
         score = result["score"]
         click.echo(
-            f"\nRules Evaluation Score: {score}% ({result['passed_rules']}/{result['total_rules']})"
+            f"\nRules Evaluation Score: {score}% ({result['passed_rules']}/{result['all_rules']})"
         )
         click.echo("-" * 40)
         for r in result["rules"]:
