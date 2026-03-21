@@ -88,7 +88,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). A
 - Use **GitHub Actions** and [Release Please](https://github.com/googleapis/release-please).
 - GitHub project configuration as code via the [GitHub Settings App](https://github.com/apps/settings).
 - [Semantic Versioning](https://semver.org/).
-- [Super Linter](https://github.com/marketplace/actions/super-linter) — always check results in PRs.
+- [Trunk](https://trunk.io) — linter/formatter orchestrator used in CI. Always check results in PRs.
 - Do not manually edit Release Please PRs unless necessary.
 
 ## Python & External Tools
