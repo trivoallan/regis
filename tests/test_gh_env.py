@@ -35,8 +35,8 @@ class TestGithubEnvironment:
             assert user == "global"
             assert pwd == "secret"
 
-    @patch("regis_cli.cli.RegistryClient")
-    @patch("regis_cli.cli._discover_analyzers")
+    @patch("regis_cli.commands.analyze.RegistryClient")
+    @patch("regis_cli.commands.analyze._discover_analyzers")
     def test_cli_with_mocked_gh_metadata(self, mock_discover, mock_client):
         """Test the CLI when called with GitHub-like environment variables via --meta."""
         from regis_cli.analyzers.base import BaseAnalyzer

@@ -20,7 +20,7 @@ def test_write_report_permission_error():
     pass
 
 
-@patch("regis_cli.cli._discover_analyzers")
+@patch("regis_cli.commands.analyze._discover_analyzers")
 def test_list_analyzers_none(mock_discover):
     mock_discover.return_value = {}
     runner = CliRunner()
@@ -28,7 +28,7 @@ def test_list_analyzers_none(mock_discover):
     assert "No analyzers found." in result.output
 
 
-@patch("regis_cli.cli.version")
+@patch("regis_cli.commands.check.version")
 def test_version_cmd(mock_version):
     mock_version.return_value = "1.2.3"
     runner = CliRunner()
@@ -44,8 +44,8 @@ def test_bootstrap_no_cookiecutter():
         assert "cookiecutter not found" in result.output
 
 
-@patch("regis_cli.cli.RegistryClient")
-@patch("regis_cli.cli._discover_analyzers")
+@patch("regis_cli.commands.analyze.RegistryClient")
+@patch("regis_cli.commands.analyze._discover_analyzers")
 def test_analyze_schema_validation_error(mock_discover, mock_client):
     from regis_cli.analyzers.base import BaseAnalyzer
 
@@ -88,8 +88,8 @@ def test_analyze_schema_validation_error(mock_discover, mock_client):
                 # )
 
 
-@patch("regis_cli.cli.RegistryClient")
-@patch("regis_cli.cli._discover_analyzers")
+@patch("regis_cli.commands.analyze.RegistryClient")
+@patch("regis_cli.commands.analyze._discover_analyzers")
 def test_analyze_all_failed(mock_discover, mock_client):
     from regis_cli.analyzers.base import BaseAnalyzer
 
@@ -103,7 +103,7 @@ def test_analyze_all_failed(mock_discover, mock_client):
     # To hit line 340, we'd need reports to be empty.
     # We can achieve this by having no analyzers discovered or all skipped.
     runner = CliRunner()
-    with patch("regis_cli.cli._discover_analyzers", return_value={}):
+    with patch("regis_cli.commands.analyze._discover_analyzers", return_value={}):
         result = runner.invoke(main, ["analyze", "nginx:latest"])
         assert result.exit_code != 0
         assert "No analyzers found" in result.output

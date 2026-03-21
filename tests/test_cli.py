@@ -51,8 +51,8 @@ class TestCliBasics:
         assert result.exit_code != 0
         assert "Unknown analyzer" in result.output
 
-    @patch("regis_cli.cli.RegistryClient")
-    @patch("regis_cli.cli._discover_analyzers")
+    @patch("regis_cli.commands.analyze.RegistryClient")
+    @patch("regis_cli.commands.analyze._discover_analyzers")
     def test_analyze_with_metadata(self, mock_discover, mock_client):
         from regis_cli.analyzers.base import BaseAnalyzer
 
@@ -93,8 +93,8 @@ class TestCliBasics:
             assert report["metadata"]["env"] == "prod"
             assert report["metadata"]["flag_only"] == "true"
 
-    @patch("regis_cli.cli.RegistryClient")
-    @patch("regis_cli.cli._discover_analyzers")
+    @patch("regis_cli.commands.analyze.RegistryClient")
+    @patch("regis_cli.commands.analyze._discover_analyzers")
     def test_analyze_with_nested_metadata(self, mock_discover, mock_client):
         from regis_cli.analyzers.base import BaseAnalyzer
 
@@ -137,8 +137,8 @@ class TestCliBasics:
             # Also check request metadata
             assert report["request"]["metadata"]["ci"]["job_id"] == "456"
 
-    @patch("regis_cli.cli.RegistryClient")
-    @patch("regis_cli.cli._discover_analyzers")
+    @patch("regis_cli.commands.analyze.RegistryClient")
+    @patch("regis_cli.commands.analyze._discover_analyzers")
     @patch("regis_cli.report.docusaurus.build_report_site")
     def test_analyze_html_with_metadata(
         self, mock_build_site, mock_discover, mock_client
@@ -214,8 +214,8 @@ class TestAnalyzeParallelism:
         DummyAnalyzer.name = name
         return DummyAnalyzer
 
-    @patch("regis_cli.cli.RegistryClient")
-    @patch("regis_cli.cli._discover_analyzers")
+    @patch("regis_cli.commands.analyze.RegistryClient")
+    @patch("regis_cli.commands.analyze._discover_analyzers")
     def test_parallel_analyzers_all_succeed(self, mock_discover, mock_client):
         analyzers = {
             f"dummy{i}": self._make_dummy_analyzer(f"dummy{i}") for i in range(3)
@@ -232,8 +232,8 @@ class TestAnalyzeParallelism:
         for i in range(3):
             assert f"dummy{i}" in result.output
 
-    @patch("regis_cli.cli.RegistryClient")
-    @patch("regis_cli.cli._discover_analyzers")
+    @patch("regis_cli.commands.analyze.RegistryClient")
+    @patch("regis_cli.commands.analyze._discover_analyzers")
     def test_max_workers_capped_at_analyzer_count(self, mock_discover, mock_client):
         """max_workers should not exceed the number of selected analyzers."""
         mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
@@ -247,8 +247,8 @@ class TestAnalyzeParallelism:
         assert result.exit_code == 0
         assert "1 worker(s)" in result.output
 
-    @patch("regis_cli.cli.RegistryClient")
-    @patch("regis_cli.cli._discover_analyzers")
+    @patch("regis_cli.commands.analyze.RegistryClient")
+    @patch("regis_cli.commands.analyze._discover_analyzers")
     def test_serial_execution_with_max_workers_1(self, mock_discover, mock_client):
         mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
         mock_client.return_value.get_digest.return_value = None
@@ -261,8 +261,8 @@ class TestAnalyzeParallelism:
         assert result.exit_code == 0
         assert "1 worker(s)" in result.output
 
-    @patch("regis_cli.cli.RegistryClient")
-    @patch("regis_cli.cli._discover_analyzers")
+    @patch("regis_cli.commands.analyze.RegistryClient")
+    @patch("regis_cli.commands.analyze._discover_analyzers")
     def test_analyzer_failure_does_not_abort_others(self, mock_discover, mock_client):
         """A failing analyzer should be recorded as an error, not abort the run."""
         from regis_cli.analyzers.base import AnalyzerError, BaseAnalyzer
@@ -293,7 +293,7 @@ class TestAnalyzeParallelism:
 class TestCliCheck:
     """Test the check command."""
 
-    @patch("regis_cli.cli.RegistryClient")
+    @patch("regis_cli.commands.check.RegistryClient")
     def test_check_success(self, mock_client_class):
         mock_client = mock_client_class.return_value
         mock_client.get_manifest.return_value = {"schemaVersion": 2}
@@ -306,7 +306,7 @@ class TestCliCheck:
         assert "Success! Manifest is accessible." in result.output
         mock_client.get_manifest.assert_called_once_with("latest")
 
-    @patch("regis_cli.cli.RegistryClient")
+    @patch("regis_cli.commands.check.RegistryClient")
     def test_check_registry_error(self, mock_client_class):
         from regis_cli.registry.client import RegistryError
 
@@ -319,7 +319,7 @@ class TestCliCheck:
         assert result.exit_code != 0
         assert "Registry error: Not found" in result.output
 
-    @patch("regis_cli.cli.RegistryClient")
+    @patch("regis_cli.commands.check.RegistryClient")
     def test_check_empty_manifest(self, mock_client_class):
         mock_client = mock_client_class.return_value
         mock_client.get_manifest.return_value = {}
