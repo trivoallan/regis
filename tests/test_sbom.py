@@ -7,9 +7,38 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from regis_cli.analyzers.base import AnalyzerError
-from regis_cli.analyzers.sbom import SbomAnalyzer, _run_trivy_sbom
+from regis_cli.analyzers.sbom import COPYLEFT_LICENSES, SbomAnalyzer, _run_trivy_sbom
 
-# -- Minimal CycloneDX fixture ------------------------------------------------
+# -- CycloneDX fixtures -------------------------------------------------------
+
+CYCLONEDX_COPYLEFT_SAMPLE = {
+    "bomFormat": "CycloneDX",
+    "specVersion": "1.5",
+    "components": [
+        {
+            "type": "library",
+            "name": "bash",
+            "version": "5.2",
+            "purl": "pkg:apk/alpine/bash@5.2",
+            "licenses": [{"license": {"id": "GPL-3.0-only"}}],
+        },
+        {
+            "type": "library",
+            "name": "libssl",
+            "version": "3.1.4",
+            "purl": "pkg:apk/alpine/libssl@3.1.4",
+            "licenses": [{"license": {"id": "LGPL-2.1-only"}}],
+        },
+        {
+            "type": "library",
+            "name": "openssl",
+            "version": "3.1.4",
+            "purl": "pkg:apk/alpine/openssl@3.1.4",
+            "licenses": [{"license": {"id": "Apache-2.0"}}],
+        },
+    ],
+    "dependencies": [],
+}
 
 CYCLONEDX_SAMPLE = {
     "bomFormat": "CycloneDX",
@@ -108,6 +137,45 @@ class TestSbomAnalyzer:
         assert "Apache-2.0" in report["licenses"]
         assert "Zlib" in report["licenses"]
         assert len(report["components"]) == 3
+
+    @patch("regis_cli.analyzers.sbom._run_trivy_sbom")
+    def test_copyleft_licenses_detected(self, mock_run, analyzer, mock_client):
+        mock_run.return_value = CYCLONEDX_COPYLEFT_SAMPLE
+
+        report = analyzer.analyze(mock_client, "library/alpine", "latest")
+        analyzer.validate(report)
+
+        assert "GPL-3.0-only" in report["copyleft_licenses"]
+        assert "LGPL-2.1-only" in report["copyleft_licenses"]
+        assert "Apache-2.0" not in report["copyleft_licenses"]
+        assert report["copyleft_licenses"] == sorted(report["copyleft_licenses"])
+
+    @patch("regis_cli.analyzers.sbom._run_trivy_sbom")
+    def test_copyleft_licenses_empty_when_none(self, mock_run, analyzer, mock_client):
+        mock_run.return_value = CYCLONEDX_SAMPLE
+
+        report = analyzer.analyze(mock_client, "library/alpine", "latest")
+
+        assert report["copyleft_licenses"] == []
+
+    def test_copyleft_licenses_constant_contains_key_identifiers(self):
+        strong = {"GPL-2.0", "GPL-3.0", "AGPL-3.0", "SSPL-1.0"}
+        weak = {"LGPL-2.1", "MPL-2.0", "EPL-2.0", "CDDL-1.0", "EUPL-1.2"}
+        assert strong <= COPYLEFT_LICENSES
+        assert weak <= COPYLEFT_LICENSES
+
+    def test_default_rules_include_license_blocklist(self, analyzer):
+        slugs = {r["slug"] for r in analyzer.default_rules()}
+        assert "license-blocklist" in slugs
+
+    def test_license_blocklist_rule_structure(self, analyzer):
+        rule = next(
+            r for r in analyzer.default_rules() if r["slug"] == "license-blocklist"
+        )
+        assert "params" in rule
+        assert rule["params"]["blocklist"] == []
+        assert "condition" in rule
+        assert "messages" in rule
 
     @patch("regis_cli.analyzers.sbom._run_trivy_sbom")
     def test_analyze_empty(self, mock_run, analyzer, mock_client):

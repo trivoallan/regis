@@ -9,19 +9,20 @@
 
 **Description:** Software Bill of Materials extracted from a container image using Trivy (CycloneDX).
 
-| Property                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                         |
-| ------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------- |
-| + [analyzer](#analyzer)                     | No      | const           | No         | -          | Unique identifier for the SBOM analyzer.                                  |
-| + [repository](#repository)                 | No      | string          | No         | -          | The image repository that was analyzed.                                   |
-| + [tag](#tag)                               | No      | string          | No         | -          | The image tag that was analyzed.                                          |
-| + [has_sbom](#has_sbom)                     | No      | boolean         | No         | -          | True if an SBOM was successfully generated.                               |
-| + [sbom_format](#sbom_format)               | No      | string          | No         | -          | The format of the generated SBOM (e.g., CycloneDX).                       |
-| + [sbom_version](#sbom_version)             | No      | string          | No         | -          | Version of the SBOM specification used.                                   |
-| + [total_components](#total_components)     | No      | integer         | No         | -          | Total number of software components found (OS packages, apps, etc.).      |
-| + [component_types](#component_types)       | No      | object          | No         | -          | Count of components grouped by type (library, application, framework, …). |
-| + [total_dependencies](#total_dependencies) | No      | integer         | No         | -          | Total number of dependency relationships found.                           |
-| + [licenses](#licenses)                     | No      | array of string | No         | -          | Sorted unique license identifiers found across all components.            |
-| + [components](#components)                 | No      | array of object | No         | -          | List of software components identified in the image.                      |
+| Property                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                    |
+| ------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------ |
+| + [analyzer](#analyzer)                     | No      | const           | No         | -          | Unique identifier for the SBOM analyzer.                                             |
+| + [repository](#repository)                 | No      | string          | No         | -          | The image repository that was analyzed.                                              |
+| + [tag](#tag)                               | No      | string          | No         | -          | The image tag that was analyzed.                                                     |
+| + [has_sbom](#has_sbom)                     | No      | boolean         | No         | -          | True if an SBOM was successfully generated.                                          |
+| + [sbom_format](#sbom_format)               | No      | string          | No         | -          | The format of the generated SBOM (e.g., CycloneDX).                                  |
+| + [sbom_version](#sbom_version)             | No      | string          | No         | -          | Version of the SBOM specification used.                                              |
+| + [total_components](#total_components)     | No      | integer         | No         | -          | Total number of software components found (OS packages, apps, etc.).                 |
+| + [component_types](#component_types)       | No      | object          | No         | -          | Count of components grouped by type (library, application, framework, …).            |
+| + [total_dependencies](#total_dependencies) | No      | integer         | No         | -          | Total number of dependency relationships found.                                      |
+| + [licenses](#licenses)                     | No      | array of string | No         | -          | Sorted unique license identifiers found across all components.                       |
+| + [copyleft_licenses](#copyleft_licenses)   | No      | array of string | No         | -          | Sorted subset of licenses that are known copyleft (GPL, LGPL, AGPL, MPL, EPL, etc.). |
+| + [components](#components)                 | No      | array of object | No         | -          | List of software components identified in the image.                                 |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -146,7 +147,33 @@ Specific value: `"sbom"`
 | -------- | -------- |
 | **Type** | `string` |
 
-## <a name="components"></a>11. ![Required](https://img.shields.io/badge/Required-blue) Property `components`
+## <a name="copyleft_licenses"></a>11. ![Required](https://img.shields.io/badge/Required-blue) Property `copyleft_licenses`
+
+|          |                   |
+| -------- | ----------------- |
+| **Type** | `array of string` |
+
+**Description:** Sorted subset of licenses that are known copyleft (GPL, LGPL, AGPL, MPL, EPL, CDDL, EUPL, SSPL). This field is pre-computed as the intersection between `licenses` and the built-in copyleft reference list. It is empty when no copyleft license is detected.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                     | Description |
+| --------------------------------------------------- | ----------- |
+| [copyleft_licenses items](#copyleft_licenses_items) | -           |
+
+### <a name="copyleft_licenses_items"></a>11.1. copyleft_licenses items
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+## <a name="components"></a>12. ![Required](https://img.shields.io/badge/Required-blue) Property `components`
 
 |          |                   |
 | -------- | ----------------- |
