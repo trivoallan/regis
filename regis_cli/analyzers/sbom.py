@@ -159,7 +159,7 @@ class SbomAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "No blocked licenses detected across ${results.sbom.total_components} components.",
+                    "pass": "No blocked licenses detected across ${results.sbom.total_components} components.",  # nosec B105
                     "fail": "Blocked license(s) detected: ${results.sbom.copyleft_licenses}",
                 },
             },
