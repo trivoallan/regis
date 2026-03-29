@@ -37,14 +37,18 @@ export function SkopeoSection({
 }: {
   data: SkopeoData;
 }): React.JSX.Element {
+  const platforms = data.platforms.filter(
+    (p) => !(p.os === "unknown" && p.architecture === "unknown"),
+  );
+
   return (
     <div className="space-y-6">
       <Grid
         numItemsSm={1}
-        numItemsLg={data.platforms.length > 1 ? 2 : 1}
+        numItemsLg={platforms.length > 1 ? 2 : 1}
         className="gap-4"
       >
-        {data.platforms.map((p, i) => (
+        {platforms.map((p, i) => (
           <Card key={i} className="flex flex-col">
             <Text className="font-medium mb-4">
               {p.os}/{p.architecture}
@@ -89,10 +93,10 @@ export function SkopeoSection({
         ))}
       </Grid>
 
-      {data.platforms.some((p) => Object.keys(p.labels).length > 0) && (
+      {platforms.some((p) => Object.keys(p.labels).length > 0) && (
         <Card>
           <Text className="font-medium mb-4">Labels</Text>
-          {data.platforms.map(
+          {platforms.map(
             (p, i) =>
               Object.keys(p.labels).length > 0 && (
                 <div key={i} className="mb-4">
