@@ -21,7 +21,7 @@ export default function ContentWrapper(props: Props): ReactNode {
               href={reportUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="menu__link flex items-center gap-2 font-medium"
+              className="menu__link flex items-center justify-center gap-2 font-medium"
               style={{
                 fontSize: "0.8rem",
                 color: "var(--ifm-color-primary)",
