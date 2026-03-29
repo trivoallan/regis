@@ -125,12 +125,14 @@ interface ReportContextValue {
   report: ReportData | null;
   loading: boolean;
   error: string | null;
+  reportUrl: string;
 }
 
 const ReportContext = createContext<ReportContextValue>({
   report: null,
   loading: true,
   error: null,
+  reportUrl: "",
 });
 
 export function useReport(): ReportContextValue {
@@ -167,7 +169,7 @@ export function ReportProvider({
   }, [reportUrl]);
 
   return (
-    <ReportContext.Provider value={{ report, loading, error }}>
+    <ReportContext.Provider value={{ report, loading, error, reportUrl }}>
       {children}
     </ReportContext.Provider>
   );

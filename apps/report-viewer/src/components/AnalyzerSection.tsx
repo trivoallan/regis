@@ -18,6 +18,8 @@ import { SkopeoSection } from "./SkopeoSection";
 import { SbomSection } from "./SbomSection";
 import { DockleSection } from "./DockleSection";
 
+import { ErrorCard } from "./ErrorCard";
+
 interface AnalyzerSectionProps {
   name: string;
   data: Record<string, unknown>;
@@ -28,6 +30,19 @@ function renderAnalyzer(
   name: string,
   data: Record<string, unknown>,
 ): React.ReactNode {
+  // Global error handling for analyzers
+  if (data && "analysis_error" in data) {
+    return (
+      <ErrorCard
+        analyzerName={name}
+        error={{
+          type: "Analysis Error",
+          message: String(data.analysis_error),
+        }}
+      />
+    );
+  }
+
   switch (name) {
     case "trivy":
       return <TrivySection data={data as never} />;

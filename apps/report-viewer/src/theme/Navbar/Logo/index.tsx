@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { useLocation } from "@docusaurus/router";
 import { RiLinkM } from "@remixicon/react";
 import { ReportUrlDialog } from "../../../components/ReportUrlDialog";
 import { useReport } from "../../../components/ReportProvider";
 
 export default function NavbarLogo(): React.JSX.Element {
   const { siteConfig } = useDocusaurusContext();
+  const { pathname } = useLocation();
   const { report, loading } = useReport();
   const [copied, setCopied] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -21,6 +23,10 @@ export default function NavbarLogo(): React.JSX.Element {
       full: req.digest,
     },
   ].filter((f) => f.value);
+
+  // Hide report-specific metadata on the Archive (homepage)
+  const isArchivePage =
+    pathname === siteConfig.baseUrl || pathname === `${siteConfig.baseUrl}/`;
 
   function copy(label: string, full: string | undefined) {
     if (!full) return;
@@ -54,16 +60,7 @@ export default function NavbarLogo(): React.JSX.Element {
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
       />
-      <a
-        href={`${siteConfig.baseUrl}report.json`}
-        className="navbar__item navbar__link"
-        style={{ marginRight: "0.5rem", flexShrink: 0 }}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Raw JSON
-      </a>
-      {!loading && fields.length > 0 && (
+      {!loading && !isArchivePage && fields.length > 0 && (
         <div
           className="flex items-center gap-2"
           style={{

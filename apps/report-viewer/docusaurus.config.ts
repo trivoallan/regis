@@ -1,13 +1,21 @@
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 import { createRequire } from "module";
+import fs from "fs";
+import path from "path";
 
-const require = createRequire(import.meta.url);
+const localRequire = createRequire(import.meta.url);
+
+// Ensure static directory and a placeholder exist to avoid Webpack glob errors
+const staticDir = path.join(process.cwd(), "static");
+if (!fs.existsSync(staticDir)) fs.mkdirSync(staticDir, { recursive: true });
+fs.writeFileSync(path.join(staticDir, ".gitkeep"), "");
 
 const config: Config = {
   title: "regis-cli",
   tagline: "Container Security Analysis Report",
   favicon: "img/favicon.ico",
+  staticDirectories: ["static"],
 
   // These are overridden at build time via env vars
   url: process.env.REPORT_URL || "http://localhost",
@@ -36,7 +44,7 @@ const config: Config = {
       "classic",
       {
         docs: {
-          routeBasePath: "/",
+          routeBasePath: "report",
           sidebarItemsGenerator: async () => {
             // Custom sidebar: fixed structure matching the report
             return [
@@ -89,7 +97,7 @@ const config: Config = {
           },
         },
         blog: false,
-        pages: false,
+        pages: {},
         theme: {
           customCss: "./src/css/custom.css",
         },
@@ -103,8 +111,8 @@ const config: Config = {
         name: "docusaurus-tailwindcss",
         configurePostCss(postcssOptions) {
           // Appending tailwindcss and autoprefixer to the plugins list
-          postcssOptions.plugins.push(require("tailwindcss"));
-          postcssOptions.plugins.push(require("autoprefixer"));
+          postcssOptions.plugins.push(localRequire("tailwindcss"));
+          postcssOptions.plugins.push(localRequire("autoprefixer"));
           return postcssOptions;
         },
       };

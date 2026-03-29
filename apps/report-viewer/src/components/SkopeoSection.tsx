@@ -37,9 +37,11 @@ export function SkopeoSection({
 }: {
   data: SkopeoData;
 }): React.JSX.Element {
-  const platforms = (data.platforms ?? []).filter(
+  const platforms = (data?.platforms || []).filter(
     (p) => !(p.os === "unknown" && p.architecture === "unknown"),
   );
+
+  const tags = data?.tags || [];
 
   return (
     <div className="space-y-6">
@@ -57,13 +59,21 @@ export function SkopeoSection({
             <Grid numItemsSm={2} numItemsLg={3} className="gap-3">
               <StatCard
                 label="Size"
-                value={`${(p.size / 1024 / 1024).toFixed(1)} MB`}
+                value={
+                  p.size != null
+                    ? `${(p.size / 1024 / 1024).toFixed(1)} MB`
+                    : "—"
+                }
                 size="md"
               />
-              <StatCard label="Layers" value={p.layers_count} size="lg" />
+              <StatCard
+                label="Layers"
+                value={p.layers_count ?? "—"}
+                size="lg"
+              />
               <StatCard label="User" value={p.user || "root"} size="sm" />
             </Grid>
-            {p.exposed_ports.length > 0 && (
+            {(p.exposed_ports?.length ?? 0) > 0 && (
               <div className="mt-4">
                 <Text className="mb-2">Exposed Ports</Text>
                 <div className="flex flex-wrap gap-1">
@@ -93,14 +103,15 @@ export function SkopeoSection({
         ))}
       </Grid>
 
-      {platforms.some((p) => Object.keys(p.labels).length > 0) && (
+      {platforms.some((p) => p.labels && Object.keys(p.labels).length > 0) && (
         <Card>
           <Text className="font-medium mb-4">Labels</Text>
           {platforms.map(
             (p, i) =>
+              p.labels &&
               Object.keys(p.labels).length > 0 && (
                 <div key={i} className="mb-4">
-                  {data.platforms.length > 1 && (
+                  {platforms.length > 1 && (
                     <Text className="mb-2 text-xs opacity-60">
                       {p.os}/{p.architecture}
                     </Text>
@@ -131,19 +142,19 @@ export function SkopeoSection({
         </Card>
       )}
 
-      {data.tags.length > 0 && (
+      {tags.length > 0 && (
         <Card>
           <Text className="font-medium mb-3">
-            Available Tags ({data.tags.length})
+            Available Tags ({tags.length})
           </Text>
           <div className="flex flex-wrap gap-1.5">
-            {data.tags.slice(0, 50).map((t) => (
+            {tags.slice(0, 50).map((t) => (
               <Badge key={t} color="gray">
                 {t}
               </Badge>
             ))}
-            {data.tags.length > 50 && (
-              <Badge color="gray">+{data.tags.length - 50} more</Badge>
+            {tags.length > 50 && (
+              <Badge color="gray">+{tags.length - 50} more</Badge>
             )}
           </div>
         </Card>
