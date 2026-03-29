@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { RiLinkM } from "@remixicon/react";
+import { ReportUrlDialog } from "../../../components/ReportUrlDialog";
 import { useReport } from "../../../components/ReportProvider";
 
 export default function NavbarLogo(): React.JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   const { report, loading } = useReport();
   const [copied, setCopied] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const req = report?.request ?? {};
   const fields = [
     { label: "Registry", value: req.registry, full: req.registry },
@@ -32,10 +35,29 @@ export default function NavbarLogo(): React.JSX.Element {
       <Link to="/" className="navbar__brand">
         <b className="navbar__title">{siteConfig.title}</b>
       </Link>
+      <button
+        onClick={() => setDialogOpen(true)}
+        className="navbar__item navbar__link inline-flex items-center gap-1"
+        style={{
+          marginLeft: "auto",
+          flexShrink: 0,
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+        }}
+        title="Load report from URL"
+      >
+        <RiLinkM size={14} />
+        Load URL
+      </button>
+      <ReportUrlDialog
+        isOpen={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+      />
       <a
         href={`${siteConfig.baseUrl}report.json`}
         className="navbar__item navbar__link"
-        style={{ marginLeft: "auto", marginRight: "0.5rem", flexShrink: 0 }}
+        style={{ marginRight: "0.5rem", flexShrink: 0 }}
         target="_blank"
         rel="noopener noreferrer"
       >
