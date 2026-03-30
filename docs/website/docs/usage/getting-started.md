@@ -40,4 +40,4 @@ For developers wanting to contribute to the project, use **Pipenv**:
 
 ## GitHub Repository Configuration
 
-If you plan to use automated documentation snapshots or the archive feature on a GitHub repository with protected branches, ensure that the **"Allow auto-merge"** option is enabled in your repository's general settings. This allows the automated workflows to synchronize documentation safely without manual intervention on every update.
+If you plan to use automated documentation snapshots or the archive feature on a GitHub repository with protected branches, ensure that the **"Allow auto-merge"** option is enabled in your repository's general settings. This allows the automated workflows to synchronize documentation safely without manual intervention on every update. See the [GitHub Actions integration guide](./integrations/github.md) for more details.
