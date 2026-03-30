@@ -166,6 +166,16 @@ export function ReportProvider({
         return res.json();
       })
       .then((data) => {
+        if (Array.isArray(data)) {
+          // It's a manifest, redirect to archive view
+          const params = new URLSearchParams(window.location.search);
+          params.set("archive_url", reportUrl);
+          params.delete("url");
+          // Navigate to archive view (usually at root / or some base path)
+          const newPath = window.location.pathname.replace(/\/report\/?$/, "/");
+          window.location.href = `${newPath}?${params.toString()}`;
+          return;
+        }
         setReport(data);
         setError(null);
         setLoading(false);

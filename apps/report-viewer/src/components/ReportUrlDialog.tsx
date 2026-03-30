@@ -32,15 +32,18 @@ export function ReportUrlDialog({
     const trimmed = url.trim();
     if (!trimmed) return;
 
-    // Detect if we are loading a manifest or a report
-    const isManifest = trimmed.toLowerCase().endsWith("manifest.json");
+    // Detect if we are loading a manifest or a report (heuristic)
+    const isManifest =
+      trimmed.toLowerCase().endsWith("manifest.json") ||
+      trimmed.toLowerCase().endsWith("data.json");
 
     if (isManifest) {
       const search = `?archive_url=${encodeURIComponent(trimmed)}`;
       window.location.href = `${siteConfig.baseUrl}${search}`;
     } else {
       const search = `?url=${encodeURIComponent(trimmed)}`;
-      // Navigate to the /report page for detailed viewing
+      // For everything else, default to the report view; ReportProvider will 
+      // redirect back to the archive if it detects a manifest array.
       window.location.href = `${siteConfig.baseUrl}report${search}`;
     }
   }

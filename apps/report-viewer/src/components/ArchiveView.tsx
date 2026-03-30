@@ -72,12 +72,42 @@ function formatDate(ts: string) {
 function tierVariant(
   tier?: string,
 ): "success" | "warning" | "critical" | "info" | "outline" | "default" {
-  if (!tier) return "outline";
-  const t = tier.toLowerCase();
-  if (t === "gold") return "success";
-  if (t === "silver") return "info";
-  if (t === "bronze") return "warning";
+    return "warning";
   return "outline";
+}
+
+function reportToEntry(report: any, url: string): ArchiveEntry {
+  const req = report?.request || {};
+  const rs = report?.rules_summary || {};
+  const rules = report?.rules || [];
+  
+  // Calculate status if not present
+  let status = report?.status;
+  if (!status && rules.length > 0) {
+      const level_order: Record<string, number> = { critical: 1, warning: 2, info: 3 };
+      let max_rank = 99;
+      rules.forEach((r: any) => {
+          if (!r.passed) {
+              const rank = level_order[r.level?.toLowerCase()] || 3;
+              if (rank < max_rank) max_rank = rank;
+          }
+      });
+      status = max_rank === 1 ? "critical" : max_rank === 2 ? "warning" : max_rank === 3 ? "info" : "pass";
+  }
+
+  return {
+    id: `single-${url}`,
+    timestamp: req.timestamp || new Date().toISOString(),
+    registry: req.registry || "single",
+    repository: req.repository || "report",
+    tag: req.tag || "latest",
+    score: rs.score || 0,
+    status: status || "pass",
+    rules_passed: typeof rs.passed === "number" ? rs.passed : (Array.isArray(rs.passed) ? rs.passed.length : 0),
+    rules_total: typeof rs.total === "number" ? rs.total : (Array.isArray(rs.total) ? rs.total.length : 0),
+    path: url,
+    tier: report?.tier,
+  };
 }
 
 const TIERS = ["All", "Gold", "Silver", "Bronze", "None"];
@@ -175,8 +205,15 @@ export function ArchiveView(): React.JSX.Element {
         if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
         return r.json();
       })
-      .then((data: ArchiveEntry[]) => {
-        setEntries(data);
+      .then((data: any) => {
+        if (Array.isArray(data)) {
+          setEntries(data);
+        } else if (data && typeof data === "object") {
+          // It's a single report, wrap it in an array
+          setEntries([reportToEntry(data, archiveUrl)]);
+        } else {
+          throw new Error("Invalid archive format: expected an array or a report object.");
+        }
         setError(null);
         setLoading(false);
       })
