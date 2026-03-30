@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "regis-cli"
-version = "0.20.0"
+version = "0.21.0"
 description = "Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD."
 readme = "README.md"
 requires-python = ">=3.10"
