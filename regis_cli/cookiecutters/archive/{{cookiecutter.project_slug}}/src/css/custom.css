@@ -221,7 +221,6 @@ table:not(.tremor-Table-table) tbody tr:hover {
 
 /* ─── Print styles ─── */
 @media print {
-
   .navbar,
   .footer,
   .theme-doc-sidebar-container {
