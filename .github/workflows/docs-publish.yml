@@ -147,6 +147,12 @@ jobs:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: python scripts/generate_whats_new.py
 
+      - name: Generate coverage badge
+        continue-on-error: true
+        run: |
+          pipenv run pytest --cov --cov-report=xml -q --no-header
+          pipenv run genbadge coverage -i coverage.xml -o coverage-badge.svg
+
       - name: Generate Default Archive
         run: |
           mkdir -p docs/website/static/archives/default
@@ -174,7 +180,7 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token }}
           commit-message: "docs: update documentation reference and snapshots"
-          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          author: regis-ci[bot] <regis-ci[bot]@users.noreply.github.com>
           branch: docs/automated-updates
           delete-branch: true
           title: "docs: update documentation reference and snapshots"
@@ -187,6 +193,7 @@ jobs:
 
             This PR ensures the documentation reflects the latest codebase.
           add-paths: |
+            coverage-badge.svg
             docs/website/docs/whats-new.md
             docs/website/docs/reference/rules/**
             docs/website/docs/reference/schemas/**
@@ -202,6 +209,6 @@ jobs:
           publish_dir: docs/website/build
           destination_dir: docs
           keep_files: true
-          user_name: github-actions[bot]
-          user_email: github-actions[bot]@users.noreply.github.com
+          user_name: regis-ci[bot]
+          user_email: regis-ci[bot]@users.noreply.github.com
           commit_message: "ci(docs): deploy documentation"
