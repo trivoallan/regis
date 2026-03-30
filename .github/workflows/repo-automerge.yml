@@ -13,8 +13,10 @@ permissions:
 jobs:
   automerge:
     if: >-
-      github.event.pull_request.draft == false &&
-      !contains(github.event.pull_request.labels.*.name, 'autorelease: pending')
+      github.event.pull_request.draft == false && (
+        !contains(github.event.pull_request.labels.*.name, 'autorelease: pending') ||
+        !endsWith(github.event.pull_request.title, '.0')
+      )
     runs-on: ubuntu-latest
     steps:
       - name: Generate GitHub App token
