@@ -1,0 +1,135 @@
+dockle:
+  label: dockle
+  description: Related to the Dockle analyzer.
+  permalink: /analyzers/dockle
+
+core:
+  label: core
+  description: Related to the Core engine.
+  permalink: /analyzers/core
+
+endoflife:
+  label: end of life
+  description: Related to the End of Life analyzer.
+  permalink: /analyzers/endoflife
+
+freshness:
+  label: freshness
+  description: Related to the Freshness analyzer.
+  permalink: /analyzers/freshness
+
+hadolint:
+  label: hadolint
+  description: Related to the Hadolint analyzer.
+  permalink: /analyzers/hadolint
+
+popularity:
+  label: popularity
+  description: Related to the Popularity analyzer.
+  permalink: /analyzers/popularity
+
+provenance:
+  label: provenance
+  description: Related to the Provenance analyzer.
+  permalink: /analyzers/provenance
+
+sbom:
+  label: sbom
+  description: Related to the SBOM analyzer.
+  permalink: /analyzers/sbom
+
+scorecarddev:
+  label: scorecard.dev
+  description: Related to the scorecarddev analyzer.
+  permalink: /analyzers/scorecarddev
+
+size:
+  label: size
+  description: Related to the Size analyzer.
+  permalink: /analyzers/size
+
+skopeo:
+  label: skopeo
+  description: Related to the Skopeo analyzer.
+  permalink: /analyzers/skopeo
+
+trivy:
+  label: trivy
+  description: Related to the Trivy analyzer.
+  permalink: /analyzers/trivy
+
+versioning:
+  label: versioning
+  description: Related to the versioning analyzer.
+  permalink: /analyzers/versioning
+
+introduction:
+  label: introduction
+  description: Overview of the regis-cli core concepts and architecture.
+  permalink: /concepts/introduction
+
+analyzers:
+  label: analyzers
+  description: Core concept of extracting data using pluggable analyzers.
+  permalink: /concepts/analyzers
+
+playbooks:
+  label: playbooks
+  description: How regis-cli evaluates results using custom security playbooks.
+  permalink: /concepts/playbooks
+
+rules:
+  label: rules
+  description: Detailed explanation of rule evaluation and JSON logic.
+  permalink: /concepts/rules
+
+reports:
+  label: reports
+  description: Generating HTML and JSON reports from analysis results.
+  permalink: /concepts/reports
+
+scoring:
+  label: scoring
+  description: Translating analysis results into actionable scores and metrics.
+  permalink: /concepts/scoring
+
+security:
+  label: security
+  description: Security-related rules and analyzers.
+
+compliance:
+  label: compliance
+  description: Compliance and regulatory checks.
+
+licensing:
+  label: licensing
+  description: Software licensing and open-source compliance.
+
+best-practices:
+  label: best practices
+  description: Recommended best practices for container images.
+
+hygiene:
+  label: hygiene
+  description: Image hygiene and cleanup.
+
+performance:
+  label: performance
+  description: Performance optimizations.
+
+lifecycle:
+  label: lifecycle
+  description: Image lifecycle management.
+
+compatibility:
+  label: compatibility
+  description: Platform and architecture compatibility.
+
+metadata:
+  label: metadata
+  description: OCI labels and image metadata.
+
+dashboard:
+  label: dashboard
+  description: Related to the interactive report viewer and security dashboards.
+  permalink: /usage/report-viewer
