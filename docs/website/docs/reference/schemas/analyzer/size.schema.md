@@ -9,18 +9,18 @@
 
 **Description:** Image size breakdown.
 
-| Property                                             | Pattern | Type                    | Deprecated | Definition | Title/Description                                                 |
-| ---------------------------------------------------- | ------- | ----------------------- | ---------- | ---------- | ----------------------------------------------------------------- |
-| + [analyzer](#analyzer )                             | No      | const                   | No         | -          | Unique identifier for the Size analyzer.                          |
-| + [repository](#repository )                         | No      | string                  | No         | -          | The image repository that was analyzed.                           |
-| + [tag](#tag )                                       | No      | string                  | No         | -          | The image tag that was analyzed.                                  |
-| + [multi_arch](#multi_arch )                         | No      | boolean                 | No         | -          | True if the image is a multi-architecture manifest list.          |
-| + [total_compressed_bytes](#total_compressed_bytes ) | No      | integer                 | No         | -          | Total compressed size of the image in bytes.                      |
-| + [total_compressed_human](#total_compressed_human ) | No      | string                  | No         | -          | Human-readable total compressed size (e.g., '10.5 MB').           |
-| + [layer_count](#layer_count )                       | No      | integer                 | No         | -          | Total number of layers in the image.                              |
-| + [config_size_bytes](#config_size_bytes )           | No      | integer                 | No         | -          | Size of the image configuration JSON in bytes.                    |
-| + [layers](#layers )                                 | No      | array of object         | No         | -          | Detailed breakdown of each layer in the image.                    |
-| + [platforms](#platforms )                           | No      | array of object or null | No         | -          | Size information for each platform variant in a multi-arch image. |
+| Property                                            | Pattern | Type                    | Deprecated | Definition | Title/Description                                                 |
+| --------------------------------------------------- | ------- | ----------------------- | ---------- | ---------- | ----------------------------------------------------------------- |
+| + [analyzer](#analyzer)                             | No      | const                   | No         | -          | Unique identifier for the Size analyzer.                          |
+| + [repository](#repository)                         | No      | string                  | No         | -          | The image repository that was analyzed.                           |
+| + [tag](#tag)                                       | No      | string                  | No         | -          | The image tag that was analyzed.                                  |
+| + [multi_arch](#multi_arch)                         | No      | boolean                 | No         | -          | True if the image is a multi-architecture manifest list.          |
+| + [total_compressed_bytes](#total_compressed_bytes) | No      | integer                 | No         | -          | Total compressed size of the image in bytes.                      |
+| + [total_compressed_human](#total_compressed_human) | No      | string                  | No         | -          | Human-readable total compressed size (e.g., '10.5 MB').           |
+| + [layer_count](#layer_count)                       | No      | integer                 | No         | -          | Total number of layers in the image.                              |
+| + [config_size_bytes](#config_size_bytes)           | No      | integer                 | No         | -          | Size of the image configuration JSON in bytes.                    |
+| + [layers](#layers)                                 | No      | array of object         | No         | -          | Detailed breakdown of each layer in the image.                    |
+| + [platforms](#platforms)                           | No      | array of object or null | No         | -          | Size information for each platform variant in a multi-arch image. |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -127,12 +127,12 @@ Specific value: `"size"`
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                                  | Pattern | Type    | Deprecated | Definition | Title/Description                       |
-| ----------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------- |
-| + [index](#layers_items_index )           | No      | integer | No         | -          | Zero-indexed position of the layer.     |
-| + [digest](#layers_items_digest )         | No      | string  | No         | -          | Content digest (SHA256) of the layer.   |
-| + [size_bytes](#layers_items_size_bytes ) | No      | integer | No         | -          | Compressed size of this layer in bytes. |
-| + [size_human](#layers_items_size_human ) | No      | string  | No         | -          | Human-readable size of this layer.      |
+| Property                                 | Pattern | Type    | Deprecated | Definition | Title/Description                       |
+| ---------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------- |
+| + [index](#layers_items_index)           | No      | integer | No         | -          | Zero-indexed position of the layer.     |
+| + [digest](#layers_items_digest)         | No      | string  | No         | -          | Content digest (SHA256) of the layer.   |
+| + [size_bytes](#layers_items_size_bytes) | No      | integer | No         | -          | Compressed size of this layer in bytes. |
+| + [size_human](#layers_items_size_human) | No      | string  | No         | -          | Human-readable size of this layer.      |
 
 #### <a name="layers_items_index"></a>9.1.1. Property `index`
 
@@ -201,12 +201,12 @@ Specific value: `"size"`
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                        |
-| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------- |
-| + [platform](#platforms_items_platform )                 | No      | string  | No         | -          | Platform string (e.g., 'linux/amd64').   |
-| + [compressed_bytes](#platforms_items_compressed_bytes ) | No      | integer | No         | -          | Total compressed size for this platform. |
-| + [compressed_human](#platforms_items_compressed_human ) | No      | string  | No         | -          | Human-readable size for this platform.   |
-| + [layer_count](#platforms_items_layer_count )           | No      | integer | No         | -          | Number of layers for this platform.      |
+| Property                                                | Pattern | Type    | Deprecated | Definition | Title/Description                        |
+| ------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------- |
+| + [platform](#platforms_items_platform)                 | No      | string  | No         | -          | Platform string (e.g., 'linux/amd64').   |
+| + [compressed_bytes](#platforms_items_compressed_bytes) | No      | integer | No         | -          | Total compressed size for this platform. |
+| + [compressed_human](#platforms_items_compressed_human) | No      | string  | No         | -          | Human-readable size for this platform.   |
+| + [layer_count](#platforms_items_layer_count)           | No      | integer | No         | -          | Number of layers for this platform.      |
 
 #### <a name="platforms_items_platform"></a>10.1.1. Property `platform`
 
@@ -248,5 +248,6 @@ Specific value: `"size"`
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-----------------------------------------------------------------------------------------------------------------------------
+---
+
 Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 15:51:32 +0000
