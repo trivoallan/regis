@@ -335,3 +335,129 @@ class TestCliCheck:
         result = runner.invoke(main, ["check", "https://not-a-registry"])
 
         assert result.exit_code != 0
+
+
+class TestEvaluateCmd:
+    """Tests for the `evaluate` subcommand."""
+
+    def test_evaluate_basic(self, tmp_path):
+        report = {
+            "version": "0.22.0",
+            "request": {
+                "url": "nginx:latest",
+                "registry": "registry-1.docker.io",
+                "repository": "library/nginx",
+                "tag": "latest",
+                "digest": "latest",
+                "analyzers": [],
+                "timestamp": "2024-01-01T00:00:00+00:00",
+            },
+            "results": {},
+        }
+        report_file = tmp_path / "report.json"
+        report_file.write_text(json.dumps(report))
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["evaluate", str(report_file)])
+        assert result.exit_code == 0
+
+    def test_evaluate_missing_results_key(self, tmp_path):
+        bad_report = {"version": "0.22.0", "not_results": {}}
+        report_file = tmp_path / "bad.json"
+        report_file.write_text(json.dumps(bad_report))
+
+        runner = CliRunner()
+        result = runner.invoke(main, ["evaluate", str(report_file)])
+        assert result.exit_code != 0
+        assert "missing 'results'" in result.output
+
+    def test_evaluate_invalid_json(self, tmp_path):
+        bad_file = tmp_path / "bad.json"
+        bad_file.write_text("not valid json {{{")
+
+        runner = CliRunner()
+        result = runner.invoke(main, ["evaluate", str(bad_file)])
+        assert result.exit_code != 0
+        assert "Failed to load" in result.output
+
+
+class TestAnalyzeCacheAndFail:
+    """Tests for --cache and --fail options of the `analyze` command."""
+
+    @patch("regis_cli.commands.analyze.RegistryClient")
+    def test_analyze_cache_hit_skips_analyzers(self, mock_client):
+        mock_client.return_value.get_digest.return_value = "sha256:abc123"
+        cached_report = {
+            "version": "0.22.0",
+            "request": {
+                "url": "nginx:latest",
+                "registry": "registry-1.docker.io",
+                "repository": "library/nginx",
+                "tag": "latest",
+                "digest": "sha256-abc123",
+                "analyzers": [],
+                "timestamp": "2024-01-01T00:00:00+00:00",
+            },
+            "results": {},
+        }
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            cache_dir = Path("reports/registry-1.docker.io/library-nginx/sha256-abc123")
+            cache_dir.mkdir(parents=True)
+            (cache_dir / "report.json").write_text(json.dumps(cached_report))
+
+            result = runner.invoke(main, ["analyze", "nginx:latest", "--cache"])
+
+        assert result.exit_code == 0
+        assert "cached" in result.output
+
+    @patch("regis_cli.commands.analyze.render_mr_templates")
+    @patch("regis_cli.commands.analyze.render_and_save_reports")
+    @patch("regis_cli.commands.analyze.validate_report")
+    @patch("regis_cli.commands.analyze.run_playbooks")
+    @patch("regis_cli.commands.analyze.RegistryClient")
+    @patch("regis_cli.commands.analyze._discover_analyzers")
+    def test_analyze_fail_exits_on_breached_rules(
+        self,
+        mock_discover,
+        mock_client,
+        mock_playbooks,
+        mock_validate,
+        mock_render,
+        mock_mr,
+    ):
+        from regis_cli.analyzers.base import BaseAnalyzer
+
+        class DummyAnalyzer(BaseAnalyzer):
+            def analyze(self, client, repo, tag, platform=None):
+                return {"analyzer": "dummy"}
+
+            def validate(self, report):
+                pass
+
+        mock_discover.return_value = {"dummy": DummyAnalyzer}
+        mock_client.return_value.get_digest.return_value = None
+        mock_playbooks.return_value = {
+            "version": "0.22.0",
+            "request": {},
+            "results": {},
+            "playbooks": [
+                {
+                    "rules": [{"passed": False, "level": "critical", "slug": "rule-x"}],
+                    "rules_summary": {},
+                    "tier": None,
+                    "badges": [],
+                }
+            ],
+            "rules": [{"passed": False, "level": "critical", "slug": "rule-x"}],
+        }
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main, ["analyze", "nginx:latest", "--evaluate", "--fail"]
+            )
+
+        assert result.exit_code == 1
+        assert "rule breaches" in result.output

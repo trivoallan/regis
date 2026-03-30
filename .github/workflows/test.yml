@@ -51,3 +51,28 @@ jobs:
 
       - name: Run pytest
         run: pipenv run pytest
+
+      - name: Generate coverage badge
+        if: always()
+        continue-on-error: true
+        run: pipenv run genbadge coverage -i coverage.xml -o coverage-badge.svg
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            htmlcov/
+            coverage-badge.svg
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Commit coverage badge
+        if: github.ref == 'refs/heads/main' && hashFiles('coverage-badge.svg') != ''
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "ci(cli): update coverage badge"
+          file_pattern: coverage-badge.svg
+          commit_user_name: regis-ci[bot]
+          commit_user_email: regis-ci[bot]@users.noreply.github.com

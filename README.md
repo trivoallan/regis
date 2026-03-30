@@ -1,5 +1,7 @@
 # regis-cli
 
+![Coverage](./coverage-badge.svg)
+
 `regis-cli` is a **Container Security & Policy-as-Code Orchestration**. It provides unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.
 
 ## Documentation

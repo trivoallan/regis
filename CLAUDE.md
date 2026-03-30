@@ -4,7 +4,8 @@
 
 ```bash
 pipenv install --dev        # Install all dependencies
-pipenv run pytest           # Run test suite
+pipenv run pytest           # Run tests with coverage (fails if < 90%)
+pipenv run pytest --no-cov  # Run tests without coverage check
 pipenv run ruff check .     # Lint
 pipenv run ruff format .    # Format
 pipenv run regis-cli --help # Run CLI locally

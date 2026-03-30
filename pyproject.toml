@@ -41,7 +41,12 @@ hadolint = "regis_cli.analyzers.hadolint:HadolintAnalyzer"
 dockle = "regis_cli.analyzers.dockle:DockleAnalyzer"
 
 [project.optional-dependencies]
-dev = ["pytest>=7.4", "pytest-cov>=4.1", "responses>=0.24"]
+dev = [
+  "pytest>=7.4",
+  "pytest-cov>=4.1",
+  "responses>=0.24",
+  "genbadge[coverage]>=1.1",
+]
 
 [tool.setuptools.packages.find]
 include = ["regis_cli*"]
@@ -61,6 +66,21 @@ regis_cli = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "--cov=regis_cli --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=90"
+
+[tool.coverage.run]
+source = ["regis_cli"]
+omit = ["regis_cli/cookiecutters/*", "regis_cli/viewer_assets/*"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+exclude_lines = [
+  "pragma: no cover",
+  "if TYPE_CHECKING:",
+  "raise NotImplementedError",
+  "@(abc\\.)?abstractmethod",
+]
 
 [tool.mypy]
 python_version = "3.10"

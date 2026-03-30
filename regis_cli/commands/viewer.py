@@ -75,7 +75,7 @@ def export_cmd(output: Path, report: Path | None = None) -> None:
     default=8000,
     help="Port to listen on (default: 8000).",
 )
-def serve_cmd(port: int, report: Path | None = None) -> None:
+def serve_cmd(port: int, report: Path | None = None) -> None:  # pragma: no cover
     """Serve the static React viewer and preview the report locally."""
     assets_dir = get_viewer_assets_dir()
 
