@@ -1,7 +1,7 @@
 name: Enable auto-merge on PRs
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, ready_for_review]
 
 env:
@@ -17,7 +17,6 @@ jobs:
     steps:
       - name: Generate GitHub App token
         id: generate-token
-        continue-on-error: true
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.REGIS_CI_APP_ID }}
@@ -26,6 +25,6 @@ jobs:
       - name: Enable auto-merge
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
-          token: ${{ steps.generate-token.outputs.token || github.token }}
+          token: ${{ steps.generate-token.outputs.token }}
           pull-request-number: ${{ github.event.pull_request.number }}
           merge-method: squash
