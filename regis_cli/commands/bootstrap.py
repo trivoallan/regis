@@ -57,9 +57,6 @@ def _run_initial_analyze(project_path: Path) -> None:
         )
 
 
-
-
-
 @click.group(name="bootstrap")
 def bootstrap():
     """Bootstrap a new project or playbook."""
