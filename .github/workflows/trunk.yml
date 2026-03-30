@@ -28,6 +28,7 @@ jobs:
     steps:
       - name: Generate GitHub App token
         id: generate-token
+        continue-on-error: true
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.REGIS_CI_APP_ID }}
@@ -36,7 +37,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          token: ${{ steps.generate-token.outputs.token }}
+          token: ${{ steps.generate-token.outputs.token || github.token }}
           fetch-depth: 0
 
       - name: Trunk Install
