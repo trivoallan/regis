@@ -24,7 +24,7 @@
     "@docusaurus/module-type-aliases": "^3.9.2",
     "@docusaurus/tsconfig": "^3.9.2",
     "@headlessui/tailwindcss": "^0.2.2",
-    "@types/react": "^18.3.28",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^18.3.7",
     "autoprefixer": "^10.4.27",
     "postcss": "^8.5.8",
