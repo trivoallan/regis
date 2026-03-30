@@ -132,6 +132,21 @@ jobs:
         if: steps.filter.outputs.rules == 'true' || github.event_name != 'push'
         run: pipenv run regis-cli rules list -f markdown -D docs/website/docs/reference/rules
 
+      - name: Ensure whats-new label exists
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          gh label create "whats-new" \
+            --repo trivoallan/regis-cli \
+            --color "0075ca" \
+            --description "Surfaces this PR's summary in the What's New docs page" \
+            2>/dev/null || true
+
+      - name: Generate What's New page
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: python scripts/generate_whats_new.py
+
       - name: Generate Default Archive
         run: |
           mkdir -p docs/website/static/archives/default
@@ -167,10 +182,12 @@ jobs:
             Automated documentation updates:
             - Generated latest JSON Schema reference
             - Generated latest Rules reference
+            - Regenerated What's New page from CHANGELOG.md and labeled PRs
             ${{ github.event_name == 'release' && '- Created Docusaurus version snapshot' || '' }}
 
             This PR ensures the documentation reflects the latest codebase.
           add-paths: |
+            docs/website/docs/whats-new.md
             docs/website/docs/reference/rules/**
             docs/website/docs/reference/schemas/**
             docs/website/static/schemas/**
