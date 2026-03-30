@@ -10,7 +10,7 @@ WORKDIR /app/apps/report-viewer
 RUN pnpm run build
 
 # Stage 2: Build the final Python image
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 LABEL org.opencontainers.image.title="regis-cli" \
       org.opencontainers.image.description="Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD." \
