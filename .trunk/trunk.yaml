@@ -58,16 +58,10 @@ actions:
       triggers:
         - git_hooks: [pre-commit]
       run: trunk check --fix
-    - id: sync-archive-template
-      description: Sync apps/report-viewer UI changes back to the cookiecutter template.
-      triggers:
-        - git_hooks: [pre-commit]
-      run: pipenv run regis-cli bootstrap archive --sync-from apps/report-viewer || true
   disabled:
     - trunk-announce
     - trunk-check-pre-push
     - trunk-fmt-pre-commit
   enabled:
     - trunk-check-fix-pre-commit
-    - sync-archive-template
     - trunk-upgrade-available
