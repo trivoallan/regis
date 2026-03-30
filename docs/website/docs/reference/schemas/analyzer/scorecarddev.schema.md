@@ -9,14 +9,14 @@
 
 **Description:** Report containing OpenSSF Scorecard security assessment for the image source repository.
 
-| Property                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                          |
-| ---------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------- |
-| + [analyzer](#analyzer )                       | No      | const           | No         | -          | Unique identifier for the Scorecard analyzer.              |
-| + [repository](#repository )                   | No      | string          | No         | -          | Docker image repository path.                              |
-| + [source_repo](#source_repo )                 | No      | string or null  | No         | -          | Resolved source code repository URL, or null if not found. |
-| + [scorecard_available](#scorecard_available ) | No      | boolean         | No         | -          | Whether OpenSSF Scorecard data was successfully retrieved. |
-| + [score](#score )                             | No      | number or null  | No         | -          | Overall Scorecard score (0-10), or null if unavailable.    |
-| + [checks](#checks )                           | No      | array of object | No         | -          | Individual Scorecard check results.                        |
+| Property                                      | Pattern | Type            | Deprecated | Definition | Title/Description                                          |
+| --------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------- |
+| + [analyzer](#analyzer)                       | No      | const           | No         | -          | Unique identifier for the Scorecard analyzer.              |
+| + [repository](#repository)                   | No      | string          | No         | -          | Docker image repository path.                              |
+| + [source_repo](#source_repo)                 | No      | string or null  | No         | -          | Resolved source code repository URL, or null if not found. |
+| + [scorecard_available](#scorecard_available) | No      | boolean         | No         | -          | Whether OpenSSF Scorecard data was successfully retrieved. |
+| + [score](#score)                             | No      | number or null  | No         | -          | Overall Scorecard score (0-10), or null if unavailable.    |
+| + [checks](#checks)                           | No      | array of object | No         | -          | Individual Scorecard check results.                        |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -87,11 +87,11 @@ Specific value: `"scorecarddev"`
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                          | Pattern | Type    | Deprecated | Definition | Title/Description                                           |
-| --------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------- |
-| + [name](#checks_items_name )     | No      | string  | No         | -          | Check name (e.g. Maintained, Code-Review, Vulnerabilities). |
-| + [score](#checks_items_score )   | No      | integer | No         | -          | Check score (-1 to 10). -1 means not applicable.            |
-| + [reason](#checks_items_reason ) | No      | string  | No         | -          | Human-readable explanation of the score.                    |
+| Property                         | Pattern | Type    | Deprecated | Definition | Title/Description                                           |
+| -------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------- |
+| + [name](#checks_items_name)     | No      | string  | No         | -          | Check name (e.g. Maintained, Code-Review, Vulnerabilities). |
+| + [score](#checks_items_score)   | No      | integer | No         | -          | Check score (-1 to 10). -1 means not applicable.            |
+| + [reason](#checks_items_reason) | No      | string  | No         | -          | Human-readable explanation of the score.                    |
 
 #### <a name="checks_items_name"></a>6.1.1. Property `name`
 
@@ -117,5 +117,6 @@ Specific value: `"scorecarddev"`
 
 **Description:** Human-readable explanation of the score.
 
-----------------------------------------------------------------------------------------------------------------------------
+---
+
 Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 22:10:00 +0000

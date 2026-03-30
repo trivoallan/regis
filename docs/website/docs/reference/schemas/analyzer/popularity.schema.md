@@ -9,17 +9,17 @@
 
 **Description:** Docker Hub popularity statistics.
 
-| Property                               | Pattern | Type            | Deprecated | Definition | Title/Description                                    |
-| -------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------- |
-| + [analyzer](#analyzer )               | No      | const           | No         | -          | Unique identifier for the Popularity analyzer.       |
-| + [repository](#repository )           | No      | string          | No         | -          | The image repository that was analyzed.              |
-| + [available](#available )             | No      | boolean         | No         | -          | True if the repository was found on Docker Hub.      |
-| + [pull_count](#pull_count )           | No      | integer or null | No         | -          | Total number of pulls for this repository.           |
-| + [star_count](#star_count )           | No      | integer or null | No         | -          | Number of stars for this repository on Docker Hub.   |
-| + [description](#description )         | No      | string or null  | No         | -          | Short description of the repository from Docker Hub. |
-| + [last_updated](#last_updated )       | No      | string or null  | No         | -          | ISO timestamp of the last repository update.         |
-| + [date_registered](#date_registered ) | No      | string or null  | No         | -          | ISO timestamp of when the repository was created.    |
-| + [is_official](#is_official )         | No      | boolean         | No         | -          | True if this is an official Docker Hub repository.   |
+| Property                              | Pattern | Type            | Deprecated | Definition | Title/Description                                    |
+| ------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------- |
+| + [analyzer](#analyzer)               | No      | const           | No         | -          | Unique identifier for the Popularity analyzer.       |
+| + [repository](#repository)           | No      | string          | No         | -          | The image repository that was analyzed.              |
+| + [available](#available)             | No      | boolean         | No         | -          | True if the repository was found on Docker Hub.      |
+| + [pull_count](#pull_count)           | No      | integer or null | No         | -          | Total number of pulls for this repository.           |
+| + [star_count](#star_count)           | No      | integer or null | No         | -          | Number of stars for this repository on Docker Hub.   |
+| + [description](#description)         | No      | string or null  | No         | -          | Short description of the repository from Docker Hub. |
+| + [last_updated](#last_updated)       | No      | string or null  | No         | -          | ISO timestamp of the last repository update.         |
+| + [date_registered](#date_registered) | No      | string or null  | No         | -          | ISO timestamp of when the repository was created.    |
+| + [is_official](#is_official)         | No      | boolean         | No         | -          | True if this is an official Docker Hub repository.   |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -95,5 +95,6 @@ Specific value: `"popularity"`
 
 **Description:** True if this is an official Docker Hub repository.
 
-----------------------------------------------------------------------------------------------------------------------------
+---
+
 Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 22:10:00 +0000
