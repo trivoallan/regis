@@ -7,5 +7,5 @@
     "version": "{{ cookiecutter.version }}",
     "platform": "{{ cookiecutter.platform }}"
   },
-  "ignore": [".docusaurus/**", "docs/**", "build/**", "static/**"]
+  "ignore": [".docusaurus/**", "build/**", "static/**"]
 }

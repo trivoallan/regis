@@ -6,5 +6,5 @@
     "description": "Report Viewer",
     "version": "1.0.0"
   },
-  "ignore": [".docusaurus/**", "docs/**", "build/**", "static/**"]
+  "ignore": [".docusaurus/**", "build/**", "static/**"]
 }
