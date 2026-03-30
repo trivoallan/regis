@@ -30,3 +30,6 @@ htmlcov/
 # Docusaurus
 .docusaurus
 regis-archive-ui/
+
+# Report Viewer
+apps/report-viewer/static/archive

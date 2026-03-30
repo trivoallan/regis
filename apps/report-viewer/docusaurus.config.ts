@@ -5,9 +5,10 @@ import fs from "fs";
 import path from "path";
 
 const localRequire = createRequire(import.meta.url);
+const dirname = path.dirname(new URL(import.meta.url).pathname);
 
 // Ensure static directory and a placeholder exist to avoid Webpack glob errors
-const staticDir = path.join(process.cwd(), "static");
+const staticDir = path.join(dirname, "static");
 if (!fs.existsSync(staticDir)) fs.mkdirSync(staticDir, { recursive: true });
 fs.writeFileSync(path.join(staticDir, ".gitkeep"), "");
 

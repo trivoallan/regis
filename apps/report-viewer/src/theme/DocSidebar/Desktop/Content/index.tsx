@@ -15,17 +15,14 @@ export default function ContentWrapper(props: Props): ReactNode {
     <>
       <Content {...props} />
       {reportUrl && (
-        <ul className="menu__list mt-4 border-t border-gray-200 dark:border-gray-800 pt-4 px-2">
+        <ul className="menu__list mt-4 border-t border-gray-200 dark:border-gray-800 pt-1 px-4">
           <li className="menu__list-item">
             <a
               href={reportUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="menu__link flex items-center justify-center gap-2 font-medium"
-              style={{
-                fontSize: "0.8rem",
-                color: "var(--ifm-color-primary)",
-              }}
+              style={{ fontSize: "0.8rem" }}
             >
               <RiFileListLine size={14} />
               Raw JSON Report
