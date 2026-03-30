@@ -11,7 +11,10 @@ permissions:
   contents: read
 
 jobs:
-  snapshot:
+  # Triggered when Release Please opens/updates a release PR.
+  # Commits the Docusaurus version snapshot directly to the release branch
+  # so the snapshot ships with the release at merge time.
+  snapshot-pending:
     if: "github.event.label.name == 'autorelease: pending'"
     runs-on: ubuntu-latest
     steps:
@@ -75,3 +78,75 @@ jobs:
             git commit -m "docs: add Docusaurus version snapshot for ${{ steps.version.outputs.version }}"
             git push
           fi
+
+  # Fallback: triggered after the release PR is merged (autorelease: tagged).
+  # Creates a docs PR with the snapshot if it was not already committed to main
+  # (e.g. the pending job was missed because the workflow was added mid-cycle).
+  snapshot-tagged:
+    if: "github.event.label.name == 'autorelease: tagged'"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App token
+        id: generate-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.REGIS_CI_APP_ID }}
+          private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
+
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          ref: main
+          fetch-depth: 0
+
+      - name: Extract version from PR title
+        id: version
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          VERSION=$(echo "$PR_TITLE" | grep -oP '\d+\.\d+\.\d+')
+          echo "version=v${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Install docs dependencies
+        run: pnpm install --filter docs
+
+      - name: Create version snapshot
+        working-directory: docs/website
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [ ! -d "versioned_docs/version-${VERSION}" ]; then
+            pnpm run docusaurus docs:version "$VERSION"
+          else
+            echo "Snapshot for ${VERSION} already exists, skipping."
+          fi
+
+      - name: Create Pull Request for snapshot
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          commit-message: "docs: add Docusaurus version snapshot for ${{ steps.version.outputs.version }}"
+          author: regis-ci[bot] <regis-ci[bot]@users.noreply.github.com>
+          branch: docs/snapshot-${{ steps.version.outputs.version }}
+          delete-branch: true
+          title: "docs: add Docusaurus version snapshot for ${{ steps.version.outputs.version }}"
+          body: |
+            Adds the Docusaurus version snapshot for ${{ steps.version.outputs.version }}.
+
+            This PR was created as a fallback because the snapshot was not committed
+            to the release PR before merge.
+          add-paths: |
+            docs/website/versioned_docs/**
+            docs/website/versioned_sidebars/**
+            docs/website/versions.json
