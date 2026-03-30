@@ -8,22 +8,22 @@ tags:
 
 Image should be less than expected days old.
 
-| Provider | Level | Tags |
-| :--- | :--- | :--- |
+| Provider  | Level   | Tags      |
+| :-------- | :------ | :-------- |
 | freshness | Warning | freshness |
 
 ## Parameters
 
-| Name | Default Value | Description |
-| :--- | :--- | :--- |
-| `max_days` | `30` | n/a |
+| Name       | Default Value | Description |
+| :--------- | :------------ | :---------- |
+| `max_days` | `30`          | n/a         |
 
 ## Messages
 
-| Type | Message |
-| :--- | :--- |
+| Type     | Message                                                                                   |
+| :------- | :---------------------------------------------------------------------------------------- |
 | **Pass** | Image is less than ${rule.params.max_days} days old (${results.freshness.age_days} days). |
-| **Fail** | Image is older than ${rule.params.max_days} days (${results.freshness.age_days} days). |
+| **Fail** | Image is older than ${rule.params.max_days} days (${results.freshness.age_days} days).    |
 
 ## Playbook Example
 
