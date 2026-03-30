@@ -7,16 +7,16 @@
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                              | Pattern | Type            | Deprecated | Definition | Title/Description                              |
-| ------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------- |
-| + [analyzer](#analyzer)               | No      | const           | No         | -          | Unique identifier for the Hadolint analyzer.   |
-| + [repository](#repository)           | No      | string          | No         | -          | The image repository that was analyzed.        |
-| + [tag](#tag)                         | No      | string          | No         | -          | The image tag that was analyzed.               |
-| - [error](#error)                     | No      | string          | No         | -          | Any error encountered during execution.        |
-| + [passed](#passed)                   | No      | boolean         | No         | -          | True if no issues were found, False otherwise. |
-| + [issues_count](#issues_count)       | No      | integer         | No         | -          | Total number of issues found.                  |
-| + [issues_by_level](#issues_by_level) | No      | object          | No         | -          | Count of issues grouped by severity level.     |
-| + [issues](#issues)                   | No      | array of object | No         | -          | List of issues found by Hadolint.              |
+| Property                               | Pattern | Type            | Deprecated | Definition | Title/Description                              |
+| -------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------- |
+| + [analyzer](#analyzer )               | No      | const           | No         | -          | Unique identifier for the Hadolint analyzer.   |
+| + [repository](#repository )           | No      | string          | No         | -          | The image repository that was analyzed.        |
+| + [tag](#tag )                         | No      | string          | No         | -          | The image tag that was analyzed.               |
+| - [error](#error )                     | No      | string          | No         | -          | Any error encountered during execution.        |
+| + [passed](#passed )                   | No      | boolean         | No         | -          | True if no issues were found, False otherwise. |
+| + [issues_count](#issues_count )       | No      | integer         | No         | -          | Total number of issues found.                  |
+| + [issues_by_level](#issues_by_level ) | No      | object          | No         | -          | Count of issues grouped by severity level.     |
+| + [issues](#issues )                   | No      | array of object | No         | -          | List of issues found by Hadolint.              |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -77,12 +77,12 @@ Specific value: `"hadolint"`
 
 **Description:** Count of issues grouped by severity level.
 
-| Property                              | Pattern | Type    | Deprecated | Definition | Title/Description |
-| ------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [error](#issues_by_level_error)     | No      | integer | No         | -          | -                 |
-| - [warning](#issues_by_level_warning) | No      | integer | No         | -          | -                 |
-| - [info](#issues_by_level_info)       | No      | integer | No         | -          | -                 |
-| - [style](#issues_by_level_style)     | No      | integer | No         | -          | -                 |
+| Property                               | Pattern | Type    | Deprecated | Definition | Title/Description |
+| -------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [error](#issues_by_level_error )     | No      | integer | No         | -          | -                 |
+| - [warning](#issues_by_level_warning ) | No      | integer | No         | -          | -                 |
+| - [info](#issues_by_level_info )       | No      | integer | No         | -          | -                 |
+| - [style](#issues_by_level_style )     | No      | integer | No         | -          | -                 |
 
 ### <a name="issues_by_level_error"></a>7.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `error`
 
@@ -139,12 +139,12 @@ Specific value: `"hadolint"`
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                           | Pattern | Type             | Deprecated | Definition | Title/Description                     |
-| ---------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------- |
-| + [code](#issues_items_code)       | No      | string           | No         | -          | Hadolint rule code (e.g., DL3008).    |
-| + [level](#issues_items_level)     | No      | enum (of string) | No         | -          | Severity level of the issue.          |
-| + [message](#issues_items_message) | No      | string           | No         | -          | Description of the issue.             |
-| - [line](#issues_items_line)       | No      | integer or null  | No         | -          | Line number in the pseudo-Dockerfile. |
+| Property                            | Pattern | Type             | Deprecated | Definition | Title/Description                     |
+| ----------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------- |
+| + [code](#issues_items_code )       | No      | string           | No         | -          | Hadolint rule code (e.g., DL3008).    |
+| + [level](#issues_items_level )     | No      | enum (of string) | No         | -          | Severity level of the issue.          |
+| + [message](#issues_items_message ) | No      | string           | No         | -          | Description of the issue.             |
+| - [line](#issues_items_line )       | No      | integer or null  | No         | -          | Line number in the pseudo-Dockerfile. |
 
 #### <a name="issues_items_code"></a>8.1.1. Property `code`
 
@@ -163,11 +163,10 @@ Specific value: `"hadolint"`
 **Description:** Severity level of the issue.
 
 Must be one of:
-
-- "error"
-- "warning"
-- "info"
-- "style"
+* "error"
+* "warning"
+* "info"
+* "style"
 
 #### <a name="issues_items_message"></a>8.1.3. Property `message`
 
@@ -185,6 +184,5 @@ Must be one of:
 
 **Description:** Line number in the pseudo-Dockerfile.
 
----
-
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 22:10:00 +0000
+----------------------------------------------------------------------------------------------------------------------------
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 22:34:59 +0000
