@@ -20,7 +20,6 @@ concurrency:
   group: viewer-publish
   cancel-in-progress: true
 
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
