@@ -92,14 +92,12 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 
 ## Current Objective
 
-`bootstrap archive-repo` command implementation and related fixes.
+GitHub Actions authentication centralization complete.
 
-## Recent Changes (branch: feature/archive-viewer)
+## Recent Changes (main branch)
 
-- **`bootstrap archive-repo` command** (`regis_cli/cli.py`): New subcommand that automates the full archive site setup flow — scaffold, `pnpm install`, git init, remote repo creation via `gh`/`glab`, and GitHub Pages activation.
-- **`--platform` flag**: Injects `extra_context={"platform": ...}` into cookiecutter, skipping the interactive platform prompt.
-- **`glab` compatibility fixes**: Use `--public`/`--private` flags (not `--visibility=`); HTTPS remote URL instead of SSH.
-- **Idempotent retry**: `glab repo create` failure is checked against `glab repo view`; creation is skipped if repo exists.
-- **`ARCHIVE_BASE_URL` fix** (GitLab CI): Derive base URL from `CI_PAGES_URL` via Node.js `new URL(...).pathname` to correctly handle subgroups and custom domains. Override via CI/CD variable supported on both platforms.
-- **Progress output**: Each step in `bootstrap archive-repo` emits a `✓` or warning line to stderr.
-- **Documentation**: Updated `docs/website/docs/reference/cli.md`, `progress.md`, `decisionLog.md`.
+- **GitHub Actions Auth Unification**: All 6 workflows migrated to use `actions/create-github-app-token@v1` with `REGIS_CI_APP_ID` + `REGIS_CI_APP_PRIVATE_KEY` secrets.
+  - **`release-please.yml`**: Replaced `secrets.RELEASE_TOKEN` (PAT) with GitHub App token.
+  - **`viewer-publish.yml`** and **`docs-publish.yml`**: Changed `github_token:` to `personal_token:` for `peaceiris/actions-gh-pages` (required for non-GITHUB_TOKEN).
+  - **`trunk.yml`**: Uses App token so auto-committed formatting fixes trigger downstream CI runs (GITHUB_TOKEN commits don't trigger).
+  - **Motivation**: Centralized auth mechanism ensures bot-created PRs and auto-commits trigger proper CI/CD workflows.
