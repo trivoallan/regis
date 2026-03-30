@@ -34,7 +34,11 @@ def viewer_group() -> None:
 
 
 @viewer_group.command(name="export")
-@click.argument("report", type=click.Path(exists=True, dir_okay=False, path_type=Path), required=False)
+@click.argument(
+    "report",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    required=False,
+)
 @click.option(
     "-o",
     "--output",
@@ -59,7 +63,11 @@ def export_cmd(output: Path, report: Path | None = None) -> None:
 
 
 @viewer_group.command(name="serve")
-@click.argument("report", type=click.Path(exists=True, dir_okay=False, path_type=Path), required=False)
+@click.argument(
+    "report",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    required=False,
+)
 @click.option(
     "-p",
     "--port",
@@ -79,7 +87,7 @@ def serve_cmd(port: int, report: Path | None = None) -> None:
         def translate_path(self, path: str) -> str:
             if report and path == "/report.json":
                 return str(report.absolute())
-                
+
             res = super().translate_path(path)
             # SPA Fallback for Docusaurus/React
             if not os.path.exists(res):
