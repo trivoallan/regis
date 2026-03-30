@@ -130,6 +130,16 @@ jobs:
         run: pnpm run build
         working-directory: docs/website
 
+      - name: Build Report Viewer
+        run: pnpm run build
+        working-directory: apps/report-viewer
+        env:
+          REPORT_URL: https://trivoallan.github.io
+          REPORT_BASE_URL: /regis-cli/report-viewer/
+
+      - name: Copy Report Viewer to build
+        run: cp -r apps/report-viewer/build docs/website/build/report-viewer
+
       - name: Commit versioned docs snapshot
         if: github.event_name == 'release'
         uses: stefanzweifel/git-auto-commit-action@v5
