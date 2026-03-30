@@ -23,7 +23,7 @@ jobs:
       - name: Generate GitHub App token
         id: generate-token
         continue-on-error: true
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.REGIS_CI_APP_ID }}
           private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
