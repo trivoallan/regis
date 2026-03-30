@@ -1,4 +1,15 @@
-# Use an official Python slim image as base
+# Stage 1: Build the React viewer assets
+FROM node:22-slim AS frontend-builder
+RUN corepack enable pnpm
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
+COPY apps/ apps/
+COPY docs/ docs/
+RUN pnpm install --frozen-lockfile
+WORKDIR /app/apps/report-viewer
+RUN pnpm run build
+
+# Stage 2: Build the final Python image
 FROM python:3.12-slim
 
 LABEL org.opencontainers.image.title="regis-cli" \
@@ -54,6 +65,9 @@ RUN chown regis:regis /app && chmod 777 /app
 
 # Copy project files and ensure ownership
 COPY --chown=regis:regis . .
+
+# Copy built viewer assets from frontend stage
+COPY --from=frontend-builder --chown=regis:regis /app/apps/report-viewer/build ./regis_cli/viewer_assets
 
 # Install packages
 RUN apt-get update && apt-get install -y git
