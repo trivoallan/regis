@@ -1,5 +1,5 @@
 {
-  "name": "regis-archive",
+  "name": "@regis-cli/report-viewer",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -12,7 +12,10 @@
   "dependencies": {
     "@docusaurus/core": "^3.9.2",
     "@docusaurus/preset-classic": "^3.9.2",
+    "@docusaurus/theme-mermaid": "^3.9.2",
+    "@headlessui/react": "^2.2.9",
     "@mdx-js/react": "^3.1.0",
+    "@remixicon/react": "^4.9.0",
     "@tremor/react": "^3.18.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -20,6 +23,7 @@
   "devDependencies": {
     "@docusaurus/module-type-aliases": "^3.9.2",
     "@docusaurus/tsconfig": "^3.9.2",
+    "@headlessui/tailwindcss": "^0.2.2",
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
     "autoprefixer": "^10.4.27",

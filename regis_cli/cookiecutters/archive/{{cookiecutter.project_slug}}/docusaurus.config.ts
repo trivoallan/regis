@@ -1,34 +1,107 @@
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 import { createRequire } from "module";
+import fs from "fs";
+import path from "path";
 
-const require = createRequire(import.meta.url);
+const localRequire = createRequire(import.meta.url);
+const dirname = path.dirname(new URL(import.meta.url).pathname);
+
+// Ensure static directory and a placeholder exist to avoid Webpack glob errors
+const staticDir = path.join(dirname, "static");
+if (!fs.existsSync(staticDir)) fs.mkdirSync(staticDir, { recursive: true });
+fs.writeFileSync(path.join(staticDir, ".gitkeep"), "");
 
 const config: Config = {
-  title: "{{ cookiecutter.project_name }}",
-  tagline: "{{ cookiecutter.description }}",
+  title: "regis-cli",
+  tagline: "Container Security Analysis Report",
   favicon: "img/favicon.ico",
+  staticDirectories: ["static"],
 
-  url: process.env.ARCHIVE_URL || "http://localhost",
-  baseUrl: process.env.ARCHIVE_BASE_URL || "/",
+  // These are overridden at build time via env vars
+  url: process.env.REPORT_URL || "http://localhost",
+  baseUrl: process.env.REPORT_BASE_URL || "/",
 
   onBrokenLinks: "warn",
 
-  i18n: { defaultLocale: "en", locales: ["en"] },
+  markdown: {
+    format: "detect",
+    mermaid: true,
+  },
+
+  future: {
+    v4: false,
+  },
+
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en"],
+  },
+
+  themes: ["@docusaurus/theme-mermaid"],
 
   presets: [
     [
       "classic",
       {
         docs: {
-          routeBasePath: "/",
-          sidebarItemsGenerator: async () => [
-            { type: "doc", id: "index", label: "Archive" },
-          ],
+          routeBasePath: "report",
+          sidebarItemsGenerator: async () => {
+            // Custom sidebar: fixed structure matching the report
+            return [
+              { type: "doc", id: "index", label: "Summary" },
+              { type: "doc", id: "rules", label: "Rules" },
+              {
+                type: "category",
+                label: "Analyzers",
+                collapsed: false,
+                items: [
+                  { type: "doc", id: "analyzers/dockle", label: "Dockle" },
+                  {
+                    type: "doc",
+                    id: "analyzers/endoflife",
+                    label: "End of Life",
+                  },
+                  {
+                    type: "doc",
+                    id: "analyzers/freshness",
+                    label: "Freshness",
+                  },
+                  { type: "doc", id: "analyzers/hadolint", label: "Hadolint" },
+                  { type: "doc", id: "analyzers/skopeo", label: "Metadata" },
+                  {
+                    type: "doc",
+                    id: "analyzers/popularity",
+                    label: "Popularity",
+                  },
+                  {
+                    type: "doc",
+                    id: "analyzers/provenance",
+                    label: "Provenance",
+                  },
+                  { type: "doc", id: "analyzers/sbom", label: "SBOM" },
+                  {
+                    type: "doc",
+                    id: "analyzers/scorecarddev",
+                    label: "Scorecard",
+                  },
+                  { type: "doc", id: "analyzers/size", label: "Size" },
+                  { type: "doc", id: "analyzers/trivy", label: "Trivy" },
+                  {
+                    type: "doc",
+                    id: "analyzers/versioning",
+                    label: "Versioning",
+                  },
+                ],
+              },
+            ];
+          },
         },
         blog: false,
-        pages: false,
-        theme: { customCss: "./src/css/custom.css" },
+        pages: {},
+        theme: {
+          customCss: "./src/css/custom.css",
+        },
       } satisfies Preset.Options,
     ],
   ],
@@ -38,8 +111,9 @@ const config: Config = {
       return {
         name: "docusaurus-tailwindcss",
         configurePostCss(postcssOptions) {
-          postcssOptions.plugins.push(require("tailwindcss"));
-          postcssOptions.plugins.push(require("autoprefixer"));
+          // Appending tailwindcss and autoprefixer to the plugins list
+          postcssOptions.plugins.push(localRequire("tailwindcss"));
+          postcssOptions.plugins.push(localRequire("autoprefixer"));
           return postcssOptions;
         },
       };
@@ -47,14 +121,17 @@ const config: Config = {
   ],
 
   themeConfig: {
-    colorMode: { defaultMode: "dark", respectPrefersColorScheme: true },
+    colorMode: {
+      defaultMode: "dark",
+      respectPrefersColorScheme: true,
+    },
     navbar: {
-      title: "{{ cookiecutter.project_name }}",
+      title: "Report",
       items: [],
     },
     footer: {
       style: "dark",
-      copyright: `Powered by <a href="https://{{ cookiecutter.platform }}.com/trivoallan/regis-cli">regis-cli</a>`,
+      copyright: `Generated by <a href="https://{{ cookiecutter.platform }}.com/trivoallan/regis-cli">regis-cli</a>`,
     },
   } satisfies Preset.ThemeConfig,
 };
