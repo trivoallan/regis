@@ -17,7 +17,7 @@ from __future__ import annotations
 import json
 import os
 import re
-import subprocess
+import subprocess  # nosec B404
 import sys
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -108,7 +108,11 @@ def parse_changelog(path: Path) -> list[VersionBlock]:
                 continue  # explicitly excluded section
 
             sec_start = sec_m.end()
-            sec_end = sec_matches[j + 1].start() if j + 1 < len(sec_matches) else len(block_text)
+            sec_end = (
+                sec_matches[j + 1].start()
+                if j + 1 < len(sec_matches)
+                else len(block_text)
+            )
             sec_text = block_text[sec_start:sec_end]
 
             entries = [
@@ -120,7 +124,14 @@ def parse_changelog(path: Path) -> list[VersionBlock]:
                 sections[sec_name] = entries
 
         if sections:
-            blocks.append(VersionBlock(version=version, date=date, compare_url=compare_url, sections=sections))
+            blocks.append(
+                VersionBlock(
+                    version=version,
+                    date=date,
+                    compare_url=compare_url,
+                    sections=sections,
+                )
+            )
 
     return blocks
 
@@ -148,7 +159,9 @@ def _parse_merged_at(iso: str) -> datetime:
     return datetime.strptime(iso, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
 
 
-def fetch_highlights(version_blocks: list[VersionBlock]) -> dict[str, list[PRHighlight]]:
+def fetch_highlights(
+    version_blocks: list[VersionBlock],
+) -> dict[str, list[PRHighlight]]:
     """Return per-version PR highlights for PRs labeled `whats-new`.
 
     Requires the `gh` CLI and GH_TOKEN env var. Returns an empty dict on any
@@ -158,14 +171,21 @@ def fetch_highlights(version_blocks: list[VersionBlock]) -> dict[str, list[PRHig
         return {}
 
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # nosec B603 B607
             [
-                "gh", "pr", "list",
-                "--repo", GITHUB_REPO,
-                "--label", "whats-new",
-                "--state", "merged",
-                "--limit", "200",
-                "--json", "number,title,body,mergedAt",
+                "gh",
+                "pr",
+                "list",
+                "--repo",
+                GITHUB_REPO,
+                "--label",
+                "whats-new",
+                "--state",
+                "merged",
+                "--limit",
+                "200",
+                "--json",
+                "number,title,body,mergedAt",
             ],
             capture_output=True,
             text=True,
@@ -294,9 +314,15 @@ def main() -> None:
     highlights = fetch_highlights(version_blocks)
     if highlights:
         total = sum(len(v) for v in highlights.values())
-        print(f"  {total} highlighted PR(s) across {len(highlights)} version(s).", file=sys.stderr)
+        print(
+            f"  {total} highlighted PR(s) across {len(highlights)} version(s).",
+            file=sys.stderr,
+        )
     else:
-        print("  No highlights (GH_TOKEN not set or no `whats-new` labeled PRs found).", file=sys.stderr)
+        print(
+            "  No highlights (GH_TOKEN not set or no `whats-new` labeled PRs found).",
+            file=sys.stderr,
+        )
 
     print(f"Writing {OUTPUT_PATH.relative_to(REPO_ROOT)}…", file=sys.stderr)
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
