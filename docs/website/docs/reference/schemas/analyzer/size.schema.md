@@ -249,4 +249,4 @@ Specific value: `"size"`
 | **Minimum**  | &ge; 0 |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 12:28:06 +0200
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 10:59:15 +0000

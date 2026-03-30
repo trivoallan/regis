@@ -1325,4 +1325,4 @@ Must be one of:
 * "information"
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 12:28:07 +0200
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 10:59:16 +0000
