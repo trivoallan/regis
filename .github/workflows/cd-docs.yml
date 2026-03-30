@@ -198,3 +198,14 @@ jobs:
           user_name: regis-ci[bot]
           user_email: regis-ci[bot]@users.noreply.github.com
           commit_message: "ci(docs): deploy documentation"
+
+      - name: Deploy root redirect to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ steps.generate-token.outputs.token }}
+          publish_dir: .github/pages-root
+          destination_dir: .
+          keep_files: true
+          user_name: regis-ci[bot]
+          user_email: regis-ci[bot]@users.noreply.github.com
+          commit_message: "ci(docs): deploy root redirect"
