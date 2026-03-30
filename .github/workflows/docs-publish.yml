@@ -15,7 +15,9 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
+  id-token: write
 
 concurrency:
   group: docs-publish
@@ -26,11 +28,20 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
+      id-token: write
     steps:
+      - name: Generate GitHub App token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.REGIS_CI_APP_ID }}
+          private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ steps.generate-token.outputs.token }}
           ref: main
           fetch-depth: 0
 
@@ -135,7 +146,7 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ steps.generate-token.outputs.token }}
           commit-message: "docs: update documentation reference and snapshots"
           committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
           author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
@@ -161,14 +172,14 @@ jobs:
         if: steps.cpr.outputs.pull-request-operation == 'created'
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
-          token: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ steps.generate-token.outputs.token }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           merge-method: squash
 
       - name: Deploy docs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.RELEASE_TOKEN }}
+          github_token: ${{ steps.generate-token.outputs.token }}
           publish_dir: docs/website/build
           destination_dir: docs
           keep_files: true
