@@ -19,8 +19,8 @@ const config: Config = {
   staticDirectories: ["static"],
 
   // These are overridden at build time via env vars
-  url: process.env.REPORT_URL || "http://localhost",
-  baseUrl: process.env.REPORT_BASE_URL || "/",
+  url: process.env.ARCHIVE_URL || process.env.REPORT_URL || "http://localhost",
+  baseUrl: process.env.ARCHIVE_BASE_URL || process.env.REPORT_BASE_URL || "/",
 
   onBrokenLinks: "warn",
 
