@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.22.0](https://github.com/trivoallan/regis-cli/compare/v0.21.0...v0.22.0) (2026-03-30)
+
+### Features
+
+- enable single report viewing by adding support for direct report JSON loading and automatic manifest redirection ([3d57ea5](https://github.com/trivoallan/regis-cli/commit/3d57ea5691f56ef71a7987fb5e22fa411383c15b))
+- **viewer:** add status calculation to archive store and implement status filtering in report viewer ([908f2c5](https://github.com/trivoallan/regis-cli/commit/908f2c57338529de2b3738cb5f489711bbca3f9a))
+
+### Documentation
+
+- snapshot versioned docs for v0.21.0 ([05cc267](https://github.com/trivoallan/regis-cli/commit/05cc26744edb15041eb9c7461ba0ae967bea0028))
+
 ## [0.21.0](https://github.com/trivoallan/regis-cli/compare/v0.20.0...v0.21.0) (2026-03-30)
 
 ### Features
