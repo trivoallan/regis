@@ -30,10 +30,10 @@ jobs:
     steps:
       - name: Generate GitHub App token
         id: generate-token
-        uses: actions/create-github-app-token@v3.0.0
+        uses: getsentry/action-github-app-token@v4.0.0
         with:
-          app-id: ${{ secrets.REGIS_CI_APP_ID }}
-          private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
+          app_id: ${{ secrets.REGIS_CI_APP_ID }}
+          private_key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
 
       - name: Checkout repository
         uses: actions/checkout@v4
