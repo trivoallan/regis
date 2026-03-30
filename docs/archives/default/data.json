@@ -1,7 +1,7 @@
 [
   {
-    "id": "ghcr.io/trivoallan/regis-cli/main/2026-03-30T09-46-11",
-    "timestamp": "2026-03-30T09:46:11.455666+00:00",
+    "id": "ghcr.io/trivoallan/regis-cli/main/2026-03-30T10-29-27",
+    "timestamp": "2026-03-30T10:29:27.330106+00:00",
     "registry": "ghcr.io",
     "repository": "trivoallan/regis-cli",
     "tag": "main",
@@ -18,15 +18,15 @@
     "sbom_component_count": null,
     "scorecard_score": null,
     "status": "critical",
-    "path": "ghcr.io/trivoallan_regis-cli/main/2026-03-30T09-46-11Z/report.json"
+    "path": "ghcr.io/trivoallan_regis-cli/main/2026-03-30T10-29-27Z/report.json"
   },
   {
-    "id": "ghcr.io/trivoallan/regis-cli/latest/2026-03-30T09-45-59",
-    "timestamp": "2026-03-30T09:45:59.681395+00:00",
+    "id": "ghcr.io/trivoallan/regis-cli/latest/2026-03-30T10-29-18",
+    "timestamp": "2026-03-30T10:29:18.247252+00:00",
     "registry": "ghcr.io",
     "repository": "trivoallan/regis-cli",
     "tag": "latest",
-    "digest": "sha256-3961b3289b4c6d48149b6ef1e173252827d638dd0b67880f258296a04119f959",
+    "digest": "sha256-4ceef824bde4489fc6d6c9315eca55d027aae0cec6023ef34fca79132cdf79c9",
     "score": 61,
     "tier": "Bronze",
     "rules_passed": 11,
@@ -39,11 +39,11 @@
     "sbom_component_count": null,
     "scorecard_score": null,
     "status": "critical",
-    "path": "ghcr.io/trivoallan_regis-cli/latest/2026-03-30T09-45-59Z/report.json"
+    "path": "ghcr.io/trivoallan_regis-cli/latest/2026-03-30T10-29-18Z/report.json"
   },
   {
-    "id": "registry-1.docker.io/library/alpine/latest/2026-03-30T09-45-47",
-    "timestamp": "2026-03-30T09:45:47.035205+00:00",
+    "id": "registry-1.docker.io/library/alpine/latest/2026-03-30T10-29-07",
+    "timestamp": "2026-03-30T10:29:07.188688+00:00",
     "registry": "registry-1.docker.io",
     "repository": "library/alpine",
     "tag": "latest",
@@ -60,6 +60,6 @@
     "sbom_component_count": null,
     "scorecard_score": null,
     "status": "warning",
-    "path": "registry-1.docker.io/library_alpine/latest/2026-03-30T09-45-47Z/report.json"
+    "path": "registry-1.docker.io/library_alpine/latest/2026-03-30T10-29-07Z/report.json"
   }
 ]
