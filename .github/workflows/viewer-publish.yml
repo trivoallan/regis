@@ -27,9 +27,17 @@ jobs:
       contents: write
 
     steps:
+      - name: Generate GitHub App token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.REGIS_CI_APP_ID }}
+          private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          token: ${{ steps.generate-token.outputs.token }}
           ref: main
           fetch-depth: 0
 
@@ -82,7 +90,7 @@ jobs:
       - name: Deploy Viewer to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          personal_token: ${{ steps.generate-token.outputs.token }}
           publish_dir: apps/report-viewer/build
           destination_dir: ${{ steps.meta.outputs.deploy_path }}
           keep_files: true

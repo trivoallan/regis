@@ -17,17 +17,24 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
+      - name: Generate GitHub App token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.REGIS_CI_APP_ID }}
+          private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
+
       - uses: googleapis/release-please-action@v4
         id: release
         with:
-          token: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Checkout PR branch
         if: ${{ steps.release.outputs.pr }}
         uses: actions/checkout@v4
         with:
           ref: ${{ fromJson(steps.release.outputs.pr).head_branch }}
-          token: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Install Trunk
         if: ${{ steps.release.outputs.pr }}
