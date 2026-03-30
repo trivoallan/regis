@@ -42,7 +42,7 @@ export function ReportUrlDialog({
       window.location.href = `${siteConfig.baseUrl}${search}`;
     } else {
       const search = `?url=${encodeURIComponent(trimmed)}`;
-      // For everything else, default to the report view; ReportProvider will 
+      // For everything else, default to the report view; ReportProvider will
       // redirect back to the archive if it detects a manifest array.
       window.location.href = `${siteConfig.baseUrl}report${search}`;
     }
