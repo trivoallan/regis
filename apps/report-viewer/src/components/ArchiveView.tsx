@@ -183,7 +183,6 @@ export function ArchiveView(): React.JSX.Element {
       });
   }, [archiveUrl]);
 
-
   const filtered = useMemo(
     () =>
       entries.filter((e) => {
