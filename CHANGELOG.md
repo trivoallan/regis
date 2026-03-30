@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.23.3](https://github.com/trivoallan/regis-cli/compare/v0.23.2...v0.23.3) (2026-03-30)
+
+### Bug Fixes
+
+- **build:** install corepack before enabling pnpm in Dockerfile ([#153](https://github.com/trivoallan/regis-cli/issues/153)) ([3e5efee](https://github.com/trivoallan/regis-cli/commit/3e5efeec3f04c305236008b624490cd6513b4609))
+
 ## [0.23.2](https://github.com/trivoallan/regis-cli/compare/v0.23.1...v0.23.2) (2026-03-30)
 
 ### Bug Fixes
