@@ -151,16 +151,21 @@ export function ArchiveView(): React.JSX.Element {
   const [tierFilter, setTierFilter] = useState("All");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const archiveUrl = useMemo(() => {
+  const [archiveUrl, setArchiveUrl] = useState<string>("");
+
+  // Resolve the archive URL on the client only (sessionStorage / window are
+  // not available during SSG/SSR).
+  useEffect(() => {
     const params = new URLSearchParams(search);
-    return (
+    const resolved =
       params.get("archive_url") ||
       sessionStorage.getItem("regis_active_archive_url") ||
-      `${window.location.origin}${baseUrl}archive/manifest.json`
-    );
+      `${window.location.origin}${baseUrl}archive/manifest.json`;
+    setArchiveUrl(resolved);
   }, [search, baseUrl]);
 
   useEffect(() => {
+    if (!archiveUrl) return;
     setLoading(true);
     fetch(archiveUrl)
       .then((r) => {
@@ -177,6 +182,7 @@ export function ArchiveView(): React.JSX.Element {
         setLoading(false);
       });
   }, [archiveUrl]);
+
 
   const filtered = useMemo(
     () =>
