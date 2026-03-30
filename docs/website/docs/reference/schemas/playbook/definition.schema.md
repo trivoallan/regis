@@ -9,19 +9,19 @@
 
 **Description:** Schema for regis-cli playbook definition files (YAML or JSON).
 
-| Property                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                        |
-| ------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| + [name](#name)                 | No      | string          | No         | -          | Display name of the playbook.                                                                                                            |
-| - [description](#description)   | No      | string          | No         | -          | Human-readable description of what this playbook evaluates.                                                                              |
-| - [slug](#slug)                 | No      | string          | No         | -          | Short identifier used for HTML report filename generation.                                                                               |
-| - [links](#links)               | No      | array of object | No         | -          | Optional custom links to display as actions for this playbook.                                                                           |
-| - [pages](#pages)               | No      | array           | No         | -          | Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus report viewer. Use \`rules\` instead. |
-| - [sections](#sections)         | No      | array           | No         | -          | Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus report viewer. Use \`rules\` instead.          |
-| - [sidebar](#sidebar)           | No      | object          | No         | -          | Deprecated: Sidebar navigation for the legacy Jinja2 renderer.                                                                           |
-| - [integrations](#integrations) | No      | object          | No         | -          | Optional third-party platform integrations (e.g. GitLab, GitHub).                                                                        |
-| - [rules](#rules)               | No      | array of object | No         | -          | Custom rule overrides or template instantiations.                                                                                        |
-| - [tiers](#tiers)               | No      | array of object | No         | -          | Compliance tier thresholds. Each tier is awarded when its JsonLogic condition evaluates to true, evaluated in order.                     |
-| - [badges](#badges)             | No      | array of object | No         | -          | Dynamic status badges displayed in the report header. Each badge is conditionally rendered based on a JsonLogic expression.              |
+| Property                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                        |
+| -------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| + [name](#name )                 | No      | string          | No         | -          | Display name of the playbook.                                                                                                            |
+| - [description](#description )   | No      | string          | No         | -          | Human-readable description of what this playbook evaluates.                                                                              |
+| - [slug](#slug )                 | No      | string          | No         | -          | Short identifier used for HTML report filename generation.                                                                               |
+| - [links](#links )               | No      | array of object | No         | -          | Optional custom links to display as actions for this playbook.                                                                           |
+| - [pages](#pages )               | No      | array           | No         | -          | Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus report viewer. Use \`rules\` instead. |
+| - [sections](#sections )         | No      | array           | No         | -          | Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus report viewer. Use \`rules\` instead.          |
+| - [sidebar](#sidebar )           | No      | object          | No         | -          | Deprecated: Sidebar navigation for the legacy Jinja2 renderer.                                                                           |
+| - [integrations](#integrations ) | No      | object          | No         | -          | Optional third-party platform integrations (e.g. GitLab, GitHub).                                                                        |
+| - [rules](#rules )               | No      | array of object | No         | -          | Custom rule overrides or template instantiations.                                                                                        |
+| - [tiers](#tiers )               | No      | array of object | No         | -          | Compliance tier thresholds. Each tier is awarded when its JsonLogic condition evaluates to true, evaluated in order.                     |
+| - [badges](#badges )             | No      | array of object | No         | -          | Dynamic status badges displayed in the report header. Each badge is conditionally rendered based on a JsonLogic expression.              |
 
 ## <a name="name"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `name`
 
@@ -74,11 +74,11 @@
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                              | Pattern | Type                                           | Deprecated | Definition               | Title/Description                                                         |
-| ------------------------------------- | ------- | ---------------------------------------------- | ---------- | ------------------------ | ------------------------------------------------------------------------- |
-| + [label](#links_items_label)         | No      | string                                         | No         | -                        | Display label for the link.                                               |
-| + [url](#links_items_url)             | No      | string                                         | No         | -                        | URL template which can use {metadata[key]} placeholders or Jinja2 syntax. |
-| - [condition](#links_items_condition) | No      | object, array, string, number, boolean or null | No         | In jsonlogic.schema.json | jsonlogic                                                                 |
+| Property                               | Pattern | Type                                           | Deprecated | Definition               | Title/Description                                                         |
+| -------------------------------------- | ------- | ---------------------------------------------- | ---------- | ------------------------ | ------------------------------------------------------------------------- |
+| + [label](#links_items_label )         | No      | string                                         | No         | -                        | Display label for the link.                                               |
+| + [url](#links_items_url )             | No      | string                                         | No         | -                        | URL template which can use {metadata[key]} placeholders or Jinja2 syntax. |
+| - [condition](#links_items_condition ) | No      | object, array, string, number, boolean or null | No         | In jsonlogic.schema.json | jsonlogic                                                                 |
 
 #### <a name="links_items_label"></a>4.1.1. Property `label`
 
@@ -137,11 +137,11 @@
 
 **Description:** A playbook page containing sections.
 
-| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                               |
-| ----------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------- |
-| + [title](#pages_items_title)       | No      | string | No         | -          | Display name of the page.                                                                                       |
-| - [slug](#pages_items_slug)         | No      | string | No         | -          | Short identifier used for HTML report filename generation. If not provided, it falls back to the playbook slug. |
-| + [sections](#pages_items_sections) | No      | array  | No         | -          | List of playbook sections.                                                                                      |
+| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                               |
+| ------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------- |
+| + [title](#pages_items_title )       | No      | string | No         | -          | Display name of the page.                                                                                       |
+| - [slug](#pages_items_slug )         | No      | string | No         | -          | Short identifier used for HTML report filename generation. If not provided, it falls back to the playbook slug. |
+| + [sections](#pages_items_sections ) | No      | array  | No         | -          | List of playbook sections.                                                                                      |
 
 #### <a name="pages_items_title"></a>5.1.1. Property `title`
 
@@ -189,15 +189,15 @@
 
 **Description:** A playbook section containing scorecards, optional levels, and display preferences.
 
-| Property                                               | Pattern | Type   | Deprecated | Definition         | Title/Description                                                                                                     |
-| ------------------------------------------------------ | ------- | ------ | ---------- | ------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| - [name](#pages_items_sections_items_name)             | No      | string | No         | -                  | Display name of the section.                                                                                          |
-| - [hint](#pages_items_sections_items_hint)             | No      | string | No         | -                  | Optional informative text displayed below the section name.                                                           |
-| - [display](#pages_items_sections_items_display)       | No      | object | No         | In #/$defs/display | Rendering preferences for the section.                                                                                |
-| - [levels](#pages_items_sections_items_levels)         | No      | array  | No         | -                  | Priority/severity levels used to group scorecards. Built-in fallback order exists for bronze, silver, gold.           |
-| - [scorecards](#pages_items_sections_items_scorecards) | No      | array  | No         | -                  | Evaluation scorecards with JsonLogic conditions.                                                                      |
-| - [widgets](#pages_items_sections_items_widgets)       | No      | array  | No         | -                  | KPI and Template widgets displayed in the section.                                                                    |
-| - [condition](#pages_items_sections_items_condition)   | No      | object | No         | -                  | Optional jsonLogic expression to conditionally display this section. If it evaluates to falsy, the section is hidden. |
+| Property                                                | Pattern | Type   | Deprecated | Definition         | Title/Description                                                                                                     |
+| ------------------------------------------------------- | ------- | ------ | ---------- | ------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| - [name](#pages_items_sections_items_name )             | No      | string | No         | -                  | Display name of the section.                                                                                          |
+| - [hint](#pages_items_sections_items_hint )             | No      | string | No         | -                  | Optional informative text displayed below the section name.                                                           |
+| - [display](#pages_items_sections_items_display )       | No      | object | No         | In #/$defs/display | Rendering preferences for the section.                                                                                |
+| - [levels](#pages_items_sections_items_levels )         | No      | array  | No         | -                  | Priority/severity levels used to group scorecards. Built-in fallback order exists for bronze, silver, gold.           |
+| - [scorecards](#pages_items_sections_items_scorecards ) | No      | array  | No         | -                  | Evaluation scorecards with JsonLogic conditions.                                                                      |
+| - [widgets](#pages_items_sections_items_widgets )       | No      | array  | No         | -                  | KPI and Template widgets displayed in the section.                                                                    |
+| - [condition](#pages_items_sections_items_condition )   | No      | object | No         | -                  | Optional jsonLogic expression to conditionally display this section. If it evaluates to falsy, the section is hidden. |
 
 ###### <a name="pages_items_sections_items_name"></a>5.1.3.1.1. Property `name`
 
@@ -225,10 +225,10 @@
 
 **Description:** Rendering preferences for the section.
 
-| Property                                                     | Pattern | Type            | Deprecated | Definition | Title/Description                                                       |
-| ------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------- |
-| - [analyzers](#pages_items_sections_items_display_analyzers) | No      | array of string | No         | -          | List of analyzer names whose output should be embedded in this section. |
-| - [widgets](#pages_items_sections_items_display_widgets)     | No      | array           | No         | -          | KPI widgets displayed in the section header.                            |
+| Property                                                      | Pattern | Type            | Deprecated | Definition | Title/Description                                                       |
+| ------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------- |
+| - [analyzers](#pages_items_sections_items_display_analyzers ) | No      | array of string | No         | -          | List of analyzer names whose output should be embedded in this section. |
+| - [widgets](#pages_items_sections_items_display_widgets )     | No      | array           | No         | -          | KPI widgets displayed in the section header.                            |
 
 ###### <a name="pages_items_sections_items_display_analyzers"></a>5.1.3.1.3.1. Property `analyzers`
 
@@ -286,15 +286,15 @@
 
 **Description:** A key-value widget displaying a metric from the analysis report, or a custom HTML template widget.
 
-| Property                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                   |
-| -------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
-| - [label](#pages_items_sections_items_display_widgets_items_label)         | No      | string | No         | -          | Display label for the widget.                                                                                       |
-| - [value](#pages_items_sections_items_display_widgets_items_value)         | No      | string | No         | -          | Dot-separated path into the report data, e.g. 'results.trivy.critical_count'.                                       |
-| - [url](#pages_items_sections_items_display_widgets_items_url)             | No      | string | No         | -          | Optional URL for the widget. Supports Jinja2 templates.                                                             |
-| - [icon](#pages_items_sections_items_display_widgets_items_icon)           | No      | string | No         | -          | Emoji or icon displayed alongside the widget.                                                                       |
-| - [template](#pages_items_sections_items_display_widgets_items_template)   | No      | string | No         | -          | Path to a Jinja2 HTML template within the theme, e.g. analyzers/trivy/table.html.                                   |
-| - [options](#pages_items_sections_items_display_widgets_items_options)     | No      | object | No         | -          | Arbitrary options passed directly to the Jinja2 template.                                                           |
-| - [condition](#pages_items_sections_items_display_widgets_items_condition) | No      | object | No         | -          | Optional jsonLogic expression to conditionally display this widget. If it evaluates to falsy, the widget is hidden. |
+| Property                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                   |
+| --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
+| - [label](#pages_items_sections_items_display_widgets_items_label )         | No      | string | No         | -          | Display label for the widget.                                                                                       |
+| - [value](#pages_items_sections_items_display_widgets_items_value )         | No      | string | No         | -          | Dot-separated path into the report data, e.g. 'results.trivy.critical_count'.                                       |
+| - [url](#pages_items_sections_items_display_widgets_items_url )             | No      | string | No         | -          | Optional URL for the widget. Supports Jinja2 templates.                                                             |
+| - [icon](#pages_items_sections_items_display_widgets_items_icon )           | No      | string | No         | -          | Emoji or icon displayed alongside the widget.                                                                       |
+| - [template](#pages_items_sections_items_display_widgets_items_template )   | No      | string | No         | -          | Path to a Jinja2 HTML template within the theme, e.g. analyzers/trivy/table.html.                                   |
+| - [options](#pages_items_sections_items_display_widgets_items_options )     | No      | object | No         | -          | Arbitrary options passed directly to the Jinja2 template.                                                           |
+| - [condition](#pages_items_sections_items_display_widgets_items_condition ) | No      | object | No         | -          | Optional jsonLogic expression to conditionally display this widget. If it evaluates to falsy, the widget is hidden. |
 
 ###### <a name="pages_items_sections_items_display_widgets_items_label"></a>5.1.3.1.3.2.1.1. Property `label`
 
@@ -345,13 +345,13 @@
 
 **Description:** Arbitrary options passed directly to the Jinja2 template.
 
-| Property                                                                           | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                   |
-| ---------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
-| - [title](#pages_items_sections_items_display_widgets_items_options_title)         | No      | string           | No         | -          | Optional title for the widget. If provided, the widget will be displayed with a header.             |
-| - [collapsed](#pages_items_sections_items_display_widgets_items_options_collapsed) | No      | boolean          | No         | -          | If true, the widget will be collapsible and closed by default.                                      |
-| - [align](#pages_items_sections_items_display_widgets_items_options_align)         | No      | enum (of string) | No         | -          | Text alignment for the widget (left, center, or right)                                              |
-| - [subvalue](#pages_items_sections_items_display_widgets_items_options_subvalue)   | No      | string           | No         | -          | Additional text/value to display below the main value. Follows identical resolution logic as value. |
-| - [class](#pages_items_sections_items_display_widgets_items_options_class)         | No      | string           | No         | -          | Additional CSS class(es) to apply to the widget container.                                          |
+| Property                                                                            | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                   |
+| ----------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| - [title](#pages_items_sections_items_display_widgets_items_options_title )         | No      | string           | No         | -          | Optional title for the widget. If provided, the widget will be displayed with a header.             |
+| - [collapsed](#pages_items_sections_items_display_widgets_items_options_collapsed ) | No      | boolean          | No         | -          | If true, the widget will be collapsible and closed by default.                                      |
+| - [align](#pages_items_sections_items_display_widgets_items_options_align )         | No      | enum (of string) | No         | -          | Text alignment for the widget (left, center, or right)                                              |
+| - [subvalue](#pages_items_sections_items_display_widgets_items_options_subvalue )   | No      | string           | No         | -          | Additional text/value to display below the main value. Follows identical resolution logic as value. |
+| - [class](#pages_items_sections_items_display_widgets_items_options_class )         | No      | string           | No         | -          | Additional CSS class(es) to apply to the widget container.                                          |
 
 ###### <a name="pages_items_sections_items_display_widgets_items_options_title"></a>5.1.3.1.3.2.1.6.1. Property `title`
 
@@ -380,10 +380,9 @@
 **Description:** Text alignment for the widget (left, center, or right)
 
 Must be one of:
-
-- "left"
-- "center"
-- "right"
+* "left"
+* "center"
+* "right"
 
 ###### <a name="pages_items_sections_items_display_widgets_items_options_subvalue"></a>5.1.3.1.3.2.1.6.4. Property `subvalue`
 
@@ -441,11 +440,11 @@ Must be one of:
 
 **Description:** A priority/severity level used to group and summarise scorecards.
 
-| Property                                                  | Pattern | Type    | Deprecated | Definition | Title/Description                                                                          |
-| --------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------ |
-| + [name](#pages_items_sections_items_levels_items_name)   | No      | string  | No         | -          | Level identifier referenced by scorecards.                                                 |
-| - [label](#pages_items_sections_items_levels_items_label) | No      | string  | No         | -          | Human-readable display label.                                                              |
-| - [order](#pages_items_sections_items_levels_items_order) | No      | integer | No         | -          | Sort order (lower value = higher priority). Built-in defaults: bronze=1, silver=2, gold=3. |
+| Property                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                                          |
+| ---------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------ |
+| + [name](#pages_items_sections_items_levels_items_name )   | No      | string  | No         | -          | Level identifier referenced by scorecards.                                                 |
+| - [label](#pages_items_sections_items_levels_items_label ) | No      | string  | No         | -          | Human-readable display label.                                                              |
+| - [order](#pages_items_sections_items_levels_items_order ) | No      | integer | No         | -          | Sort order (lower value = higher priority). Built-in defaults: bronze=1, silver=2, gold=3. |
 
 ###### <a name="pages_items_sections_items_levels_items_name"></a>5.1.3.1.4.1.1. Property `name`
 
@@ -501,13 +500,13 @@ Must be one of:
 
 **Description:** An evaluation scorecard with a JsonLogic condition.
 
-| Property                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                       |
-| ------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [name](#pages_items_sections_items_scorecards_items_name)               | No      | string          | No         | -          | Unique identifier for the scorecard.                                                                                                                                                                    |
-| - [description](#pages_items_sections_items_scorecards_items_description) | No      | string          | No         | -          | Human-readable description. Defaults to name if omitted.                                                                                                                                                |
-| - [level](#pages_items_sections_items_scorecards_items_level)             | No      | string          | No         | -          | Level this scorecard belongs to. Must match a level name defined in the section.                                                                                                                        |
-| - [tags](#pages_items_sections_items_scorecards_items_tags)               | No      | array of string | No         | -          | Arbitrary tags for filtering or grouping.                                                                                                                                                               |
-| + [condition](#pages_items_sections_items_scorecards_items_condition)     | No      | object          | No         | -          | JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {"var": "results.trivy.critical_count"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or. |
+| Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                       |
+| -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [name](#pages_items_sections_items_scorecards_items_name )               | No      | string          | No         | -          | Unique identifier for the scorecard.                                                                                                                                                                    |
+| - [description](#pages_items_sections_items_scorecards_items_description ) | No      | string          | No         | -          | Human-readable description. Defaults to name if omitted.                                                                                                                                                |
+| - [level](#pages_items_sections_items_scorecards_items_level )             | No      | string          | No         | -          | Level this scorecard belongs to. Must match a level name defined in the section.                                                                                                                        |
+| - [tags](#pages_items_sections_items_scorecards_items_tags )               | No      | array of string | No         | -          | Arbitrary tags for filtering or grouping.                                                                                                                                                               |
+| + [condition](#pages_items_sections_items_scorecards_items_condition )     | No      | object          | No         | -          | JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {"var": "results.trivy.critical_count"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or. |
 
 ###### <a name="pages_items_sections_items_scorecards_items_name"></a>5.1.3.1.5.1.1. Property `name`
 
@@ -646,10 +645,10 @@ Must be one of:
 
 **Description:** Deprecated: Sidebar navigation for the legacy Jinja2 renderer.
 
-| Property                        | Pattern | Type            | Deprecated | Definition | Title/Description |
-| ------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| - [sections](#sidebar_sections) | No      | array of object | No         | -          | -                 |
-| - [links](#sidebar_links)       | No      | array of object | No         | -          | -                 |
+| Property                         | Pattern | Type            | Deprecated | Definition | Title/Description |
+| -------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [sections](#sidebar_sections ) | No      | array of object | No         | -          | -                 |
+| - [links](#sidebar_links )       | No      | array of object | No         | -          | -                 |
 
 ### <a name="sidebar_sections"></a>7.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `sections`
 
@@ -676,10 +675,10 @@ Must be one of:
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                 | Pattern | Type            | Deprecated | Definition | Title/Description              |
-| ---------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------ |
-| - [title](#sidebar_sections_items_title) | No      | string          | No         | -          | Title of the sidebar section.  |
-| + [links](#sidebar_sections_items_links) | No      | array of object | No         | -          | List of links in this section. |
+| Property                                  | Pattern | Type            | Deprecated | Definition | Title/Description              |
+| ----------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------ |
+| - [title](#sidebar_sections_items_title ) | No      | string          | No         | -          | Title of the sidebar section.  |
+| + [links](#sidebar_sections_items_links ) | No      | array of object | No         | -          | List of links in this section. |
 
 ##### <a name="sidebar_sections_items_title"></a>7.1.1.1. Property `title`
 
@@ -716,11 +715,11 @@ Must be one of:
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description   |
-| ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------- |
-| + [label](#sidebar_sections_items_links_items_label) | No      | string | No         | -          | Display label.      |
-| + [url](#sidebar_sections_items_links_items_url)     | No      | string | No         | -          | Target URL.         |
-| - [icon](#sidebar_sections_items_links_items_icon)   | No      | string | No         | -          | Icon name or emoji. |
+| Property                                              | Pattern | Type   | Deprecated | Definition | Title/Description   |
+| ----------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------- |
+| + [label](#sidebar_sections_items_links_items_label ) | No      | string | No         | -          | Display label.      |
+| + [url](#sidebar_sections_items_links_items_url )     | No      | string | No         | -          | Target URL.         |
+| - [icon](#sidebar_sections_items_links_items_icon )   | No      | string | No         | -          | Icon name or emoji. |
 
 ###### <a name="sidebar_sections_items_links_items_label"></a>7.1.1.2.1.1. Property `label`
 
@@ -771,11 +770,11 @@ Must be one of:
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                              | Pattern | Type   | Deprecated | Definition | Title/Description   |
-| ------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------- |
-| + [label](#sidebar_links_items_label) | No      | string | No         | -          | Display label.      |
-| + [url](#sidebar_links_items_url)     | No      | string | No         | -          | Target URL.         |
-| - [icon](#sidebar_links_items_icon)   | No      | string | No         | -          | Icon name or emoji. |
+| Property                               | Pattern | Type   | Deprecated | Definition | Title/Description   |
+| -------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------- |
+| + [label](#sidebar_links_items_label ) | No      | string | No         | -          | Display label.      |
+| + [url](#sidebar_links_items_url )     | No      | string | No         | -          | Target URL.         |
+| - [icon](#sidebar_links_items_icon )   | No      | string | No         | -          | Icon name or emoji. |
 
 ##### <a name="sidebar_links_items_label"></a>7.2.1.1. Property `label`
 
@@ -810,9 +809,9 @@ Must be one of:
 
 **Description:** Optional third-party platform integrations (e.g. GitLab, GitHub).
 
-| Property                         | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [gitlab](#integrations_gitlab) | No      | object | No         | -          | -                 |
+| Property                          | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [gitlab](#integrations_gitlab ) | No      | object | No         | -          | -                 |
 
 ### <a name="integrations_gitlab"></a>8.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `gitlab`
 
@@ -821,12 +820,12 @@ Must be one of:
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                           |
-| ----------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------- |
-| - [badges](#integrations_gitlab_badges)         | No      | array of string | No         | -          | List of badge slugs to be imported as GitLab Merge Request labels.                          |
-| - [checklist](#integrations_gitlab_checklist)   | No      | array           | No         | -          | (Deprecated) Single checklist items added as checkboxes to the Merge Request description.   |
-| - [checklists](#integrations_gitlab_checklists) | No      | array of object | No         | -          | Configurable checklists added as checkboxes to the Merge Request description.               |
-| - [templates](#integrations_gitlab_templates)   | No      | array of object | No         | -          | URLs to Cookiecutter templates that will be rendered and added to the Merge Request branch. |
+| Property                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                                           |
+| ------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------- |
+| - [badges](#integrations_gitlab_badges )         | No      | array of string | No         | -          | List of badge slugs to be imported as GitLab Merge Request labels.                          |
+| - [checklist](#integrations_gitlab_checklist )   | No      | array           | No         | -          | (Deprecated) Single checklist items added as checkboxes to the Merge Request description.   |
+| - [checklists](#integrations_gitlab_checklists ) | No      | array of object | No         | -          | Configurable checklists added as checkboxes to the Merge Request description.               |
+| - [templates](#integrations_gitlab_templates )   | No      | array of object | No         | -          | URLs to Cookiecutter templates that will be rendered and added to the Merge Request branch. |
 
 #### <a name="integrations_gitlab_badges"></a>8.1.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `badges`
 
@@ -882,11 +881,11 @@ Must be one of:
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 | **Defined in**            | #/$defs/checklist_item                                         |
 
-| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                     |
-| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [label](#integrations_gitlab_checklist_items_label)       | No      | string | No         | -          | Text of the checkbox item.                                                                                                                            |
-| - [show_if](#integrations_gitlab_checklist_items_show_if)   | No      | object | No         | -          | Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy.                                        |
-| - [check_if](#integrations_gitlab_checklist_items_check_if) | No      | object | No         | -          | Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ]). |
+| Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                     |
+| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [label](#integrations_gitlab_checklist_items_label )       | No      | string | No         | -          | Text of the checkbox item.                                                                                                                            |
+| - [show_if](#integrations_gitlab_checklist_items_show_if )   | No      | object | No         | -          | Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy.                                        |
+| - [check_if](#integrations_gitlab_checklist_items_check_if ) | No      | object | No         | -          | Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ]). |
 
 ###### <a name="integrations_gitlab_checklist_items_label"></a>8.1.2.1.1. Property `label`
 
@@ -941,10 +940,10 @@ Must be one of:
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description                |
-| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | -------------------------------- |
-| - [title](#integrations_gitlab_checklists_items_title) | No      | string | No         | -          | Display title for the checklist. |
-| + [items](#integrations_gitlab_checklists_items_items) | No      | array  | No         | -          | Items in this checklist.         |
+| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description                |
+| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------- |
+| - [title](#integrations_gitlab_checklists_items_title ) | No      | string | No         | -          | Display title for the checklist. |
+| + [items](#integrations_gitlab_checklists_items_items ) | No      | array  | No         | -          | Items in this checklist.         |
 
 ###### <a name="integrations_gitlab_checklists_items_title"></a>8.1.3.1.1. Property `title`
 
@@ -1009,11 +1008,11 @@ Must be one of:
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                                                      | Pattern | Type                                           | Deprecated | Definition                                  | Title/Description                                                    |
-| ------------------------------------------------------------- | ------- | ---------------------------------------------- | ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| + [url](#integrations_gitlab_templates_items_url)             | No      | string                                         | No         | -                                           | Cookiecutter template URL or path.                                   |
-| - [directory](#integrations_gitlab_templates_items_directory) | No      | string                                         | No         | -                                           | Optional subdirectory within the repository containing the template. |
-| - [condition](#integrations_gitlab_templates_items_condition) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#links_items_condition) | jsonlogic                                                            |
+| Property                                                       | Pattern | Type                                           | Deprecated | Definition                                   | Title/Description                                                    |
+| -------------------------------------------------------------- | ------- | ---------------------------------------------- | ---------- | -------------------------------------------- | -------------------------------------------------------------------- |
+| + [url](#integrations_gitlab_templates_items_url )             | No      | string                                         | No         | -                                            | Cookiecutter template URL or path.                                   |
+| - [directory](#integrations_gitlab_templates_items_directory ) | No      | string                                         | No         | -                                            | Optional subdirectory within the repository containing the template. |
+| - [condition](#integrations_gitlab_templates_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#links_items_condition ) | jsonlogic                                                            |
 
 ###### <a name="integrations_gitlab_templates_items_url"></a>8.1.4.1.1. Property `url`
 
@@ -1069,16 +1068,16 @@ Must be one of:
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                            | Pattern | Type             | Deprecated | Definition | Title/Description                                   |
-| ----------------------------------- | ------- | ---------------- | ---------- | ---------- | --------------------------------------------------- |
-| - [slug](#rules_items_slug)         | No      | string           | No         | -          | Unique identifier for the rule instance.            |
-| - [provider](#rules_items_provider) | No      | string           | No         | -          | Analyzer name (e.g. 'trivy').                       |
-| - [rule](#rules_items_rule)         | No      | string           | No         | -          | Template name within the provider (e.g. 'cve-max'). |
-| - [options](#rules_items_options)   | No      | object           | No         | -          | Configuration parameters for the rule template.     |
-| - [enable](#rules_items_enable)     | No      | boolean          | No         | -          | Whether to enable this rule.                        |
-| - [level](#rules_items_level)       | No      | enum (of string) | No         | -          | Severity level of the rule.                         |
-| - [tags](#rules_items_tags)         | No      | array of string  | No         | -          | Arbitrary tags.                                     |
-| - [messages](#rules_items_messages) | No      | object           | No         | -          | -                                                   |
+| Property                             | Pattern | Type             | Deprecated | Definition | Title/Description                                   |
+| ------------------------------------ | ------- | ---------------- | ---------- | ---------- | --------------------------------------------------- |
+| - [slug](#rules_items_slug )         | No      | string           | No         | -          | Unique identifier for the rule instance.            |
+| - [provider](#rules_items_provider ) | No      | string           | No         | -          | Analyzer name (e.g. 'trivy').                       |
+| - [rule](#rules_items_rule )         | No      | string           | No         | -          | Template name within the provider (e.g. 'cve-max'). |
+| - [options](#rules_items_options )   | No      | object           | No         | -          | Configuration parameters for the rule template.     |
+| - [enable](#rules_items_enable )     | No      | boolean          | No         | -          | Whether to enable this rule.                        |
+| - [level](#rules_items_level )       | No      | enum (of string) | No         | -          | Severity level of the rule.                         |
+| - [tags](#rules_items_tags )         | No      | array of string  | No         | -          | Arbitrary tags.                                     |
+| - [messages](#rules_items_messages ) | No      | object           | No         | -          | -                                                   |
 
 #### <a name="rules_items_slug"></a>9.1.1. Property `slug`
 
@@ -1113,9 +1112,9 @@ Must be one of:
 
 **Description:** Configuration parameters for the rule template.
 
-| Property                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#rules_items_options_additionalProperties) | No      | object | No         | -          | -                 |
+| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#rules_items_options_additionalProperties ) | No      | object | No         | -          | -                 |
 
 #### <a name="rules_items_enable"></a>9.1.5. Property `enable`
 
@@ -1135,11 +1134,10 @@ Must be one of:
 **Description:** Severity level of the rule.
 
 Must be one of:
-
-- "info"
-- "warning"
-- "critical"
-- "none"
+* "info"
+* "warning"
+* "critical"
+* "none"
 
 #### <a name="rules_items_tags"></a>9.1.7. Property `tags`
 
@@ -1174,10 +1172,10 @@ Must be one of:
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [pass](#rules_items_messages_pass) | No      | string | No         | -          | -                 |
-| - [fail](#rules_items_messages_fail) | No      | string | No         | -          | -                 |
+| Property                              | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [pass](#rules_items_messages_pass ) | No      | string | No         | -          | -                 |
+| - [fail](#rules_items_messages_fail ) | No      | string | No         | -          | -                 |
 
 ##### <a name="rules_items_messages_pass"></a>9.1.8.1. Property `pass`
 
@@ -1218,10 +1216,10 @@ Must be one of:
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                              | Pattern | Type                                           | Deprecated | Definition                                  | Title/Description                      |
-| ------------------------------------- | ------- | ---------------------------------------------- | ---------- | ------------------------------------------- | -------------------------------------- |
-| + [name](#tiers_items_name)           | No      | string                                         | No         | -                                           | Tier name (e.g. Gold, Silver, Bronze). |
-| + [condition](#tiers_items_condition) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#links_items_condition) | jsonlogic                              |
+| Property                               | Pattern | Type                                           | Deprecated | Definition                                   | Title/Description                      |
+| -------------------------------------- | ------- | ---------------------------------------------- | ---------- | -------------------------------------------- | -------------------------------------- |
+| + [name](#tiers_items_name )           | No      | string                                         | No         | -                                            | Tier name (e.g. Gold, Silver, Bronze). |
+| + [condition](#tiers_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#links_items_condition ) | jsonlogic                              |
 
 #### <a name="tiers_items_name"></a>10.1.1. Property `name`
 
@@ -1269,13 +1267,13 @@ Must be one of:
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                               | Pattern | Type                                           | Deprecated | Definition                                  | Title/Description                                                             |
-| -------------------------------------- | ------- | ---------------------------------------------- | ---------- | ------------------------------------------- | ----------------------------------------------------------------------------- |
-| + [slug](#badges_items_slug)           | No      | string                                         | No         | -                                           | Unique identifier for the badge.                                              |
-| + [scope](#badges_items_scope)         | No      | string                                         | No         | -                                           | Category label displayed on the left part of the badge (e.g. CVE, Freshness). |
-| + [value](#badges_items_value)         | No      | string                                         | No         | -                                           | Value displayed on the right part of the badge.                               |
-| + [condition](#badges_items_condition) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#links_items_condition) | jsonlogic                                                                     |
-| + [class](#badges_items_class)         | No      | enum (of string)                               | No         | -                                           | Visual style class for the badge.                                             |
+| Property                                | Pattern | Type                                           | Deprecated | Definition                                   | Title/Description                                                             |
+| --------------------------------------- | ------- | ---------------------------------------------- | ---------- | -------------------------------------------- | ----------------------------------------------------------------------------- |
+| + [slug](#badges_items_slug )           | No      | string                                         | No         | -                                            | Unique identifier for the badge.                                              |
+| + [scope](#badges_items_scope )         | No      | string                                         | No         | -                                            | Category label displayed on the left part of the badge (e.g. CVE, Freshness). |
+| + [value](#badges_items_value )         | No      | string                                         | No         | -                                            | Value displayed on the right part of the badge.                               |
+| + [condition](#badges_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#links_items_condition ) | jsonlogic                                                                     |
+| + [class](#badges_items_class )         | No      | enum (of string)                               | No         | -                                            | Visual style class for the badge.                                             |
 
 #### <a name="badges_items_slug"></a>11.1.1. Property `slug`
 
@@ -1321,12 +1319,10 @@ Must be one of:
 **Description:** Visual style class for the badge.
 
 Must be one of:
+* "success"
+* "warning"
+* "error"
+* "information"
 
-- "success"
-- "warning"
-- "error"
-- "information"
-
----
-
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 15:36:28 +0000
+----------------------------------------------------------------------------------------------------------------------------
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 15:51:33 +0000
