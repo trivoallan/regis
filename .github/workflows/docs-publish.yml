@@ -160,16 +160,6 @@ jobs:
           pipenv run regis-cli analyze --evaluate ghcr.io/trivoallan/regis-cli:latest -A docs/website/static/archives/default/
           pipenv run regis-cli analyze --evaluate ghcr.io/trivoallan/regis-cli:main -A docs/website/static/archives/default/
 
-      - name: Create Docusaurus version snapshot
-        if: github.event_name == 'release'
-        run: |
-          VERSION="${{ github.event.release.tag_name }}"
-          if [ ! -d "docs/website/versioned_docs/version-${VERSION}" ]; then
-            cd docs/website && pnpm run docusaurus docs:version "$VERSION"
-          else
-            echo "Snapshot for $VERSION already exists, skipping."
-          fi
-
       - name: Docusaurus build
         run: pnpm run build
         working-directory: docs/website
@@ -189,7 +179,6 @@ jobs:
             - Generated latest JSON Schema reference
             - Generated latest Rules reference
             - Regenerated What's New page from CHANGELOG.md and labeled PRs
-            ${{ github.event_name == 'release' && '- Created Docusaurus version snapshot' || '' }}
 
             This PR ensures the documentation reflects the latest codebase.
           add-paths: |
@@ -198,9 +187,6 @@ jobs:
             docs/website/docs/reference/rules/**
             docs/website/docs/reference/schemas/**
             docs/website/static/schemas/**
-            docs/website/versioned_docs/**
-            docs/website/versioned_sidebars/**
-            docs/website/versions.json
 
       - name: Deploy docs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

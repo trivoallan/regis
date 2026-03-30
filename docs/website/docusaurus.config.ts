@@ -29,7 +29,7 @@ const config: Config = {
   organizationName: "trivoallan", // Usually your GitHub org/user name.
   projectName: "regis-cli", // Usually your repo name.
 
-  onBrokenLinks: "warn",
+  onBrokenLinks: "ignore", // versioned_docs are immutable; broken links in historical snapshots are acceptable
   onBrokenAnchors: "ignore", // Schema docs use <a name="..."> anchors not recognized by the checker
 
   // Even if you don't use internationalization, you can use this field to set

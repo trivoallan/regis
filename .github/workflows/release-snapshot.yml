@@ -1,0 +1,77 @@
+name: Create Docusaurus version snapshot for release
+
+on:
+  pull_request_target:
+    types: [labeled]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    if: "github.event.label.name == 'autorelease: pending'"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.REGIS_CI_APP_ID }}
+          private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
+
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Extract version from PR title
+        id: version
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          VERSION=$(echo "$PR_TITLE" | grep -oP '\d+\.\d+\.\d+')
+          echo "version=v${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Install docs dependencies
+        run: pnpm install --filter docs
+
+      - name: Create version snapshot
+        working-directory: docs/website
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [ ! -d "versioned_docs/version-${VERSION}" ]; then
+            pnpm run docusaurus docs:version "$VERSION"
+          else
+            echo "Snapshot for ${VERSION} already exists, skipping."
+          fi
+
+      - name: Commit snapshot to release PR branch
+        run: |
+          git config user.name "regis-ci[bot]"
+          git config user.email "regis-ci[bot]@users.noreply.github.com"
+          git add \
+            docs/website/versioned_docs/ \
+            docs/website/versioned_sidebars/ \
+            docs/website/versions.json
+          if git diff --staged --quiet; then
+            echo "No snapshot changes to commit."
+          else
+            git commit -m "docs: add Docusaurus version snapshot for ${{ steps.version.outputs.version }}"
+            git push
+          fi
