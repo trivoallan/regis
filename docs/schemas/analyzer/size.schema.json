@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/size.schema.json",
+  "title": "size.output",
+  "description": "Image size breakdown.",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "tag",
+    "multi_arch",
+    "total_compressed_bytes",
+    "total_compressed_human",
+    "layer_count",
+    "config_size_bytes",
+    "layers",
+    "platforms"
+  ],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "size",
+      "description": "Unique identifier for the Size analyzer."
+    },
+    "repository": {
+      "type": "string",
+      "description": "The image repository that was analyzed."
+    },
+    "tag": {
+      "type": "string",
+      "description": "The image tag that was analyzed."
+    },
+    "multi_arch": {
+      "type": "boolean",
+      "description": "True if the image is a multi-architecture manifest list."
+    },
+    "total_compressed_bytes": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total compressed size of the image in bytes."
+    },
+    "total_compressed_human": {
+      "type": "string",
+      "description": "Human-readable total compressed size (e.g., '10.5 MB')."
+    },
+    "layer_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of layers in the image."
+    },
+    "config_size_bytes": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Size of the image configuration JSON in bytes."
+    },
+    "layers": {
+      "type": "array",
+      "description": "Detailed breakdown of each layer in the image.",
+      "items": {
+        "type": "object",
+        "required": ["index", "digest", "size_bytes", "size_human"],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-indexed position of the layer."
+          },
+          "digest": {
+            "type": "string",
+            "description": "Content digest (SHA256) of the layer."
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Compressed size of this layer in bytes."
+          },
+          "size_human": {
+            "type": "string",
+            "description": "Human-readable size of this layer."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "platforms": {
+      "type": ["array", "null"],
+      "description": "Size information for each platform variant in a multi-arch image.",
+      "items": {
+        "type": "object",
+        "required": [
+          "platform",
+          "compressed_bytes",
+          "compressed_human",
+          "layer_count"
+        ],
+        "properties": {
+          "platform": {
+            "type": "string",
+            "description": "Platform string (e.g., 'linux/amd64')."
+          },
+          "compressed_bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total compressed size for this platform."
+          },
+          "compressed_human": {
+            "type": "string",
+            "description": "Human-readable size for this platform."
+          },
+          "layer_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of layers for this platform."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

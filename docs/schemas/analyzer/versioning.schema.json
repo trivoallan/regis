@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/versioning.schema.json",
+  "title": "versioning.output",
+  "description": "Report analyzing tag naming conventions and semver adoption.",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "total_tags",
+    "dominant_pattern",
+    "semver_compliant_percentage",
+    "patterns",
+    "variants",
+    "aliases"
+  ],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "versioning",
+      "description": "Unique identifier for the Versioning analyzer."
+    },
+    "repository": {
+      "type": "string",
+      "description": "The image repository that was analyzed."
+    },
+    "total_tags": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of tags found in the remote repository."
+    },
+    "dominant_pattern": {
+      "type": "string",
+      "description": "The most frequently occurring tag naming pattern.",
+      "enum": [
+        "semver",
+        "semver-prerelease",
+        "semver-variant",
+        "calver",
+        "numeric",
+        "numeric-variant",
+        "hash",
+        "named",
+        "unknown"
+      ]
+    },
+    "aliases": {
+      "type": "array",
+      "description": "Other tags in the repository that resolve to the same digest as the analyzed tag.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "release_lines": {
+      "type": "array",
+      "description": "Major/Minor versions identified as active release lines.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "semver_compliant_percentage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Percentage of tags that follow strict Semantic Versioning."
+    },
+    "patterns": {
+      "type": "array",
+      "description": "Frequency breakdown of tag naming patterns.",
+      "items": {
+        "type": "object",
+        "required": ["pattern", "count", "percentage", "examples"],
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "Pattern identifier.",
+            "enum": [
+              "semver",
+              "semver-prerelease",
+              "semver-variant",
+              "calver",
+              "numeric",
+              "numeric-variant",
+              "hash",
+              "named"
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of tags matching this pattern."
+          },
+          "percentage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Percentage of total tags matching this pattern."
+          },
+          "examples": {
+            "type": "array",
+            "description": "Sample tags matching this pattern.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "variants": {
+      "type": "array",
+      "description": "Frequency breakdown of tag variants (e.g., -alpine, -slim).",
+      "items": {
+        "type": "object",
+        "required": ["name", "count", "percentage", "examples"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Variant name or suffix."
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of tags identified with this variant."
+          },
+          "percentage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Percentage of total tags identified with this variant."
+          },
+          "examples": {
+            "type": "array",
+            "description": "Sample tags matching this variant.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

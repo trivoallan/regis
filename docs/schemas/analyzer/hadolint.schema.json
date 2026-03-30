@@ -1,0 +1,92 @@
+{
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/hadolint.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "hadolint.output",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "tag",
+    "passed",
+    "issues_count",
+    "issues_by_level",
+    "issues"
+  ],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "hadolint",
+      "description": "Unique identifier for the Hadolint analyzer."
+    },
+    "repository": {
+      "type": "string",
+      "description": "The image repository that was analyzed."
+    },
+    "tag": {
+      "type": "string",
+      "description": "The image tag that was analyzed."
+    },
+    "error": {
+      "type": "string",
+      "description": "Any error encountered during execution."
+    },
+    "passed": {
+      "type": "boolean",
+      "description": "True if no issues were found, False otherwise."
+    },
+    "issues_count": {
+      "type": "integer",
+      "description": "Total number of issues found."
+    },
+    "issues_by_level": {
+      "type": "object",
+      "description": "Count of issues grouped by severity level.",
+      "properties": {
+        "error": {
+          "type": "integer",
+          "default": 0
+        },
+        "warning": {
+          "type": "integer",
+          "default": 0
+        },
+        "info": {
+          "type": "integer",
+          "default": 0
+        },
+        "style": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "issues": {
+      "type": "array",
+      "description": "List of issues found by Hadolint.",
+      "items": {
+        "type": "object",
+        "required": ["code", "level", "message"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Hadolint rule code (e.g., DL3008)."
+          },
+          "level": {
+            "type": "string",
+            "enum": ["error", "warning", "info", "style"],
+            "description": "Severity level of the issue."
+          },
+          "message": {
+            "type": "string",
+            "description": "Description of the issue."
+          },
+          "line": {
+            "type": ["integer", "null"],
+            "description": "Line number in the pseudo-Dockerfile."
+          }
+        }
+      }
+    }
+  }
+}

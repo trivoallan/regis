@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunk_regis_cli_report_viewer=globalThis.webpackChunk_regis_cli_report_viewer||[]).push([[1235],{88552(e){e.exports=JSON.parse('{"name":"docusaurus-plugin-content-pages","id":"default"}')}}]);

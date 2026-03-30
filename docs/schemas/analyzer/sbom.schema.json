@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/sbom.schema.json",
+  "title": "sbom.output",
+  "description": "Software Bill of Materials extracted from a container image using Trivy (CycloneDX).",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "tag",
+    "has_sbom",
+    "sbom_format",
+    "sbom_version",
+    "total_components",
+    "component_types",
+    "total_dependencies",
+    "licenses",
+    "copyleft_licenses",
+    "components"
+  ],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "sbom",
+      "description": "Unique identifier for the SBOM analyzer."
+    },
+    "repository": {
+      "type": "string",
+      "description": "The image repository that was analyzed."
+    },
+    "tag": {
+      "type": "string",
+      "description": "The image tag that was analyzed."
+    },
+    "has_sbom": {
+      "type": "boolean",
+      "description": "True if an SBOM was successfully generated."
+    },
+    "sbom_format": {
+      "type": "string",
+      "description": "The format of the generated SBOM (e.g., CycloneDX)."
+    },
+    "sbom_version": {
+      "type": "string",
+      "description": "Version of the SBOM specification used."
+    },
+    "total_components": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of software components found (OS packages, apps, etc.)."
+    },
+    "component_types": {
+      "type": "object",
+      "description": "Count of components grouped by type (library, application, framework, …).",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "total_dependencies": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of dependency relationships found."
+    },
+    "licenses": {
+      "type": "array",
+      "description": "Sorted unique license identifiers found across all components.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "copyleft_licenses": {
+      "type": "array",
+      "description": "Sorted subset of licenses that are known copyleft (GPL, LGPL, AGPL, MPL, EPL, etc.).",
+      "items": {
+        "type": "string"
+      }
+    },
+    "components": {
+      "type": "array",
+      "description": "List of software components identified in the image.",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the component."
+          },
+          "version": {
+            "type": ["string", "null"],
+            "description": "Installed version of the component."
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of component (library, application, etc.)."
+          },
+          "purl": {
+            "type": ["string", "null"],
+            "description": "Package URL (purl) for standard identification."
+          },
+          "licenses": {
+            "type": "array",
+            "description": "List of licenses associated with this component.",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

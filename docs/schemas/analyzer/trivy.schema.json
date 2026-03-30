@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/trivy.schema.json",
+  "title": "trivy.output",
+  "description": "Vulnerability scan results from Trivy.",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "tag",
+    "trivy_version",
+    "vulnerability_count",
+    "critical_count",
+    "high_count",
+    "medium_count",
+    "low_count",
+    "unknown_count",
+    "fixed_count",
+    "secrets_count",
+    "targets"
+  ],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "trivy",
+      "description": "Unique identifier for the Trivy analyzer."
+    },
+    "repository": {
+      "type": "string",
+      "description": "The image repository that was analyzed."
+    },
+    "tag": {
+      "type": "string",
+      "description": "The image tag that was analyzed."
+    },
+    "trivy_version": {
+      "type": "string",
+      "description": "Version of the Trivy CLI tool used."
+    },
+    "vulnerability_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of vulnerabilities found."
+    },
+    "critical_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of Critical severity vulnerabilities."
+    },
+    "high_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of High severity vulnerabilities."
+    },
+    "medium_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of Medium severity vulnerabilities."
+    },
+    "low_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of Low severity vulnerabilities."
+    },
+    "unknown_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of Unknown severity vulnerabilities."
+    },
+    "fixed_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of vulnerabilities with available fixes."
+    },
+    "secrets_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of secrets or credentials found."
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["Target", "Vulnerabilities"],
+        "properties": {
+          "Secrets": {
+            "type": ["array", "null"],
+            "description": "List of secrets discovered in this target.",
+            "items": {
+              "type": "object",
+              "required": ["RuleID", "Title", "Severity", "Match"],
+              "properties": {
+                "RuleID": { "type": "string" },
+                "Title": { "type": "string" },
+                "Severity": { "type": "string" },
+                "Match": { "type": "string" }
+              }
+            }
+          },
+          "Target": {
+            "type": "string",
+            "description": "The scan target (e.g., a file path or OS distribution name)."
+          },
+          "Vulnerabilities": {
+            "type": ["array", "null"],
+            "description": "List of vulnerabilities discovered in this target.",
+            "items": {
+              "type": "object",
+              "required": [
+                "VulnerabilityID",
+                "PkgName",
+                "InstalledVersion",
+                "Severity"
+              ],
+              "properties": {
+                "VulnerabilityID": {
+                  "type": "string",
+                  "description": "CVE ID or tool-specific vulnerability identifier."
+                },
+                "PkgName": {
+                  "type": "string",
+                  "description": "Name of the affected package."
+                },
+                "InstalledVersion": {
+                  "type": "string",
+                  "description": "Version of the package installed in the image."
+                },
+                "FixedVersion": {
+                  "type": "string",
+                  "description": "Version of the package that contains a fix, if available."
+                },
+                "Severity": {
+                  "type": "string",
+                  "description": "Severity level assigned by Trivy."
+                },
+                "Title": {
+                  "type": "string",
+                  "description": "Short title describing the vulnerability."
+                },
+                "Description": {
+                  "type": "string",
+                  "description": "Full description of the vulnerability."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

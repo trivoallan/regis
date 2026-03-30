@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/endoflife.schema.json",
+  "title": "endoflife.output",
+  "description": "Report containing lifecycle information from endoflife.date.",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "product",
+    "product_found",
+    "tag",
+    "matched_cycle",
+    "is_eol",
+    "active_cycles_count",
+    "eol_cycles_count"
+  ],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "endoflife",
+      "description": "Unique identifier for the EndOfLife analyzer."
+    },
+    "repository": {
+      "type": "string",
+      "description": "The image repository that was analyzed."
+    },
+    "product": {
+      "type": "string",
+      "description": "Product slug used to query endoflife.date."
+    },
+    "product_found": {
+      "type": "boolean",
+      "description": "Whether the product was found on endoflife.date."
+    },
+    "tag": {
+      "type": "string",
+      "description": "Image tag that was analyzed."
+    },
+    "matched_cycle": {
+      "type": ["object", "null"],
+      "description": "Release cycle matching the image tag, or null if no match.",
+      "properties": {
+        "cycle": {
+          "type": "string",
+          "description": "Release cycle identifier (e.g., '22.04')."
+        },
+        "release_date": {
+          "type": ["string", "null"],
+          "description": "Official release date of the cycle."
+        },
+        "eol": {
+          "type": ["string", "boolean"],
+          "description": "End-of-life date or status for this cycle."
+        },
+        "latest": {
+          "type": ["string", "null"],
+          "description": "Latest version available in this cycle."
+        },
+        "latest_release_date": {
+          "type": ["string", "null"],
+          "description": "Release date of the latest version in this cycle."
+        },
+        "lts": {
+          "type": "boolean",
+          "description": "Whether this is a Long Term Support cycle."
+        }
+      },
+      "additionalProperties": false
+    },
+    "is_eol": {
+      "type": ["boolean", "null"],
+      "description": "Whether the matched cycle has reached end-of-life. Null if no match."
+    },
+    "active_cycles_count": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Number of currently supported release cycles."
+    },
+    "eol_cycles_count": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Number of end-of-life release cycles."
+    }
+  },
+  "additionalProperties": false
+}

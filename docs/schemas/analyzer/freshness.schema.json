@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/freshness.schema.json",
+  "title": "freshness.output",
+  "description": "Image age and delta versus latest tag.",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "tag",
+    "tag_created",
+    "latest_created",
+    "age_days",
+    "behind_latest_days",
+    "is_latest"
+  ],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "freshness",
+      "description": "Unique identifier for the Freshness analyzer."
+    },
+    "repository": {
+      "type": "string",
+      "description": "The image repository that was analyzed."
+    },
+    "tag": {
+      "type": "string",
+      "description": "The image tag that was analyzed."
+    },
+    "tag_created": {
+      "type": ["string", "null"],
+      "description": "ISO timestamp of when the current tag was created."
+    },
+    "latest_created": {
+      "type": ["string", "null"],
+      "description": "ISO timestamp of when the 'latest' tag was created."
+    },
+    "age_days": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Number of days since the current tag was created."
+    },
+    "behind_latest_days": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Number of days between the creation of this tag and the 'latest' tag."
+    },
+    "is_latest": {
+      "type": "boolean",
+      "description": "True if the current tag points to the same digest as the 'latest' tag."
+    }
+  },
+  "additionalProperties": false
+}

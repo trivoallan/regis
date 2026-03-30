@@ -1,0 +1,515 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/playbook/definition.schema.json",
+  "title": "playbook.definition",
+  "description": "Schema for regis-cli playbook definition files (YAML or JSON).",
+  "type": "object",
+  "required": ["name"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Display name of the playbook."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of what this playbook evaluates."
+    },
+    "slug": {
+      "type": "string",
+      "description": "Short identifier used for HTML report filename generation."
+    },
+    "links": {
+      "type": "array",
+      "description": "Optional custom links to display as actions for this playbook.",
+      "items": {
+        "type": "object",
+        "required": ["label", "url"],
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Display label for the link."
+          },
+          "url": {
+            "type": "string",
+            "description": "URL template which can use {metadata[key]} placeholders or Jinja2 syntax."
+          },
+          "condition": {
+            "description": "Optional JsonLogic expression to determine if the link should be displayed.",
+            "$ref": "jsonlogic.schema.json"
+          }
+        }
+      }
+    },
+    "pages": {
+      "type": "array",
+      "deprecated": true,
+      "description": "Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus report viewer. Use `rules` instead.",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/page"
+      }
+    },
+    "sections": {
+      "type": "array",
+      "deprecated": true,
+      "description": "Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus report viewer. Use `rules` instead.",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/section"
+      }
+    },
+    "sidebar": {
+      "type": "object",
+      "deprecated": true,
+      "description": "Deprecated: Sidebar navigation for the legacy Jinja2 renderer.",
+      "properties": {
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["links"],
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Title of the sidebar section."
+              },
+              "links": {
+                "type": "array",
+                "description": "List of links in this section.",
+                "items": {
+                  "type": "object",
+                  "required": ["label", "url"],
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Display label."
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Target URL."
+                    },
+                    "icon": {
+                      "type": "string",
+                      "description": "Icon name or emoji."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "url"],
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Display label."
+              },
+              "url": {
+                "type": "string",
+                "description": "Target URL."
+              },
+              "icon": {
+                "type": "string",
+                "description": "Icon name or emoji."
+              }
+            }
+          }
+        }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "description": "Optional third-party platform integrations (e.g. GitLab, GitHub).",
+      "properties": {
+        "gitlab": {
+          "type": "object",
+          "properties": {
+            "badges": {
+              "type": "array",
+              "description": "List of badge slugs to be imported as GitLab Merge Request labels.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "checklist": {
+              "type": "array",
+              "description": "(Deprecated) Single checklist items added as checkboxes to the Merge Request description.",
+              "items": {
+                "$ref": "#/$defs/checklist_item"
+              }
+            },
+            "checklists": {
+              "type": "array",
+              "description": "Configurable checklists added as checkboxes to the Merge Request description.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Display title for the checklist."
+                  },
+                  "items": {
+                    "type": "array",
+                    "description": "Items in this checklist.",
+                    "items": {
+                      "$ref": "#/$defs/checklist_item"
+                    }
+                  }
+                },
+                "required": ["items"]
+              }
+            },
+            "templates": {
+              "type": "array",
+              "description": "URLs to Cookiecutter templates that will be rendered and added to the Merge Request branch.",
+              "items": {
+                "type": "object",
+                "required": ["url"],
+                "additionalProperties": false,
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "Cookiecutter template URL or path."
+                  },
+                  "directory": {
+                    "type": "string",
+                    "description": "Optional subdirectory within the repository containing the template."
+                  },
+                  "condition": {
+                    "description": "JSON Logic expression to conditionally render the template.",
+                    "$ref": "jsonlogic.schema.json"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "description": "Custom rule overrides or template instantiations.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "Unique identifier for the rule instance."
+          },
+          "provider": {
+            "type": "string",
+            "description": "Analyzer name (e.g. 'trivy')."
+          },
+          "rule": {
+            "type": "string",
+            "description": "Template name within the provider (e.g. 'cve-max')."
+          },
+          "options": {
+            "type": "object",
+            "description": "Configuration parameters for the rule template.",
+            "additionalProperties": true
+          },
+          "enable": {
+            "type": "boolean",
+            "description": "Whether to enable this rule.",
+            "default": true
+          },
+          "level": {
+            "type": "string",
+            "enum": ["info", "warning", "critical", "none"],
+            "description": "Severity level of the rule."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Arbitrary tags."
+          },
+          "messages": {
+            "type": "object",
+            "properties": {
+              "pass": { "type": "string" },
+              "fail": { "type": "string" }
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "tiers": {
+      "type": "array",
+      "description": "Compliance tier thresholds. Each tier is awarded when its JsonLogic condition evaluates to true, evaluated in order.",
+      "items": {
+        "type": "object",
+        "required": ["name", "condition"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Tier name (e.g. Gold, Silver, Bronze)."
+          },
+          "condition": {
+            "description": "JsonLogic expression evaluated against the report context.",
+            "$ref": "jsonlogic.schema.json"
+          }
+        }
+      }
+    },
+    "badges": {
+      "type": "array",
+      "description": "Dynamic status badges displayed in the report header. Each badge is conditionally rendered based on a JsonLogic expression.",
+      "items": {
+        "type": "object",
+        "required": ["slug", "scope", "value", "condition", "class"],
+        "additionalProperties": false,
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "Unique identifier for the badge."
+          },
+          "scope": {
+            "type": "string",
+            "description": "Category label displayed on the left part of the badge (e.g. CVE, Freshness)."
+          },
+          "value": {
+            "type": "string",
+            "description": "Value displayed on the right part of the badge."
+          },
+          "condition": {
+            "description": "JsonLogic expression. The badge is shown when this evaluates to truthy.",
+            "$ref": "jsonlogic.schema.json"
+          },
+          "class": {
+            "type": "string",
+            "enum": ["success", "warning", "error", "information"],
+            "description": "Visual style class for the badge."
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "page": {
+      "type": "object",
+      "description": "A playbook page containing sections.",
+      "required": ["title", "sections"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Display name of the page."
+        },
+        "slug": {
+          "type": "string",
+          "description": "Short identifier used for HTML report filename generation. If not provided, it falls back to the playbook slug."
+        },
+        "sections": {
+          "type": "array",
+          "description": "List of playbook sections.",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/section"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "section": {
+      "type": "object",
+      "description": "A playbook section containing scorecards, optional levels, and display preferences.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name of the section."
+        },
+        "hint": {
+          "type": "string",
+          "description": "Optional informative text displayed below the section name."
+        },
+        "display": {
+          "$ref": "#/$defs/display"
+        },
+        "levels": {
+          "type": "array",
+          "description": "Priority/severity levels used to group scorecards. Built-in fallback order exists for bronze, silver, gold.",
+          "items": {
+            "$ref": "#/$defs/level"
+          }
+        },
+        "scorecards": {
+          "type": "array",
+          "description": "Evaluation scorecards with JsonLogic conditions.",
+          "items": {
+            "$ref": "#/$defs/scorecard"
+          }
+        },
+        "widgets": {
+          "type": "array",
+          "description": "KPI and Template widgets displayed in the section.",
+          "items": {
+            "$ref": "#/$defs/widget"
+          }
+        },
+        "condition": {
+          "type": "object",
+          "description": "Optional jsonLogic expression to conditionally display this section. If it evaluates to falsy, the section is hidden."
+        }
+      },
+      "additionalProperties": false
+    },
+    "display": {
+      "type": "object",
+      "description": "Rendering preferences for the section.",
+      "properties": {
+        "analyzers": {
+          "type": "array",
+          "description": "List of analyzer names whose output should be embedded in this section.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "widgets": {
+          "type": "array",
+          "description": "KPI widgets displayed in the section header.",
+          "items": {
+            "$ref": "#/$defs/widget"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "widget": {
+      "type": "object",
+      "description": "A key-value widget displaying a metric from the analysis report, or a custom HTML template widget.",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Display label for the widget."
+        },
+        "value": {
+          "type": "string",
+          "description": "Dot-separated path into the report data, e.g. 'results.trivy.critical_count'."
+        },
+        "url": {
+          "type": "string",
+          "description": "Optional URL for the widget. Supports Jinja2 templates."
+        },
+        "icon": {
+          "type": "string",
+          "description": "Emoji or icon displayed alongside the widget."
+        },
+        "template": {
+          "type": "string",
+          "description": "Path to a Jinja2 HTML template within the theme, e.g. analyzers/trivy/table.html."
+        },
+        "options": {
+          "type": "object",
+          "description": "Arbitrary options passed directly to the Jinja2 template.",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Optional title for the widget. If provided, the widget will be displayed with a header."
+            },
+            "collapsed": {
+              "type": "boolean",
+              "description": "If true, the widget will be collapsible and closed by default.",
+              "default": false
+            },
+            "align": {
+              "type": "string",
+              "enum": ["left", "center", "right"],
+              "description": "Text alignment for the widget (left, center, or right)",
+              "default": "left"
+            },
+            "subvalue": {
+              "type": "string",
+              "description": "Additional text/value to display below the main value. Follows identical resolution logic as value."
+            },
+            "class": {
+              "type": "string",
+              "description": "Additional CSS class(es) to apply to the widget container.",
+              "default": ""
+            }
+          }
+        },
+        "condition": {
+          "type": "object",
+          "description": "Optional jsonLogic expression to conditionally display this widget. If it evaluates to falsy, the widget is hidden."
+        }
+      },
+      "additionalProperties": false
+    },
+    "level": {
+      "type": "object",
+      "description": "A priority/severity level used to group and summarise scorecards.",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Level identifier referenced by scorecards."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable display label."
+        },
+        "order": {
+          "type": "integer",
+          "description": "Sort order (lower value = higher priority). Built-in defaults: bronze=1, silver=2, gold=3."
+        }
+      },
+      "additionalProperties": false
+    },
+    "scorecard": {
+      "type": "object",
+      "description": "An evaluation scorecard with a JsonLogic condition.",
+      "required": ["name", "condition"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique identifier for the scorecard."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description. Defaults to name if omitted."
+        },
+        "level": {
+          "type": "string",
+          "description": "Level this scorecard belongs to. Must match a level name defined in the section."
+        },
+        "tags": {
+          "type": "array",
+          "description": "Arbitrary tags for filtering or grouping.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "condition": {
+          "description": "JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {\"var\": \"results.trivy.critical_count\"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or."
+        }
+      },
+      "additionalProperties": false
+    },
+    "checklist_item": {
+      "type": "object",
+      "required": ["label"],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Text of the checkbox item."
+        },
+        "show_if": {
+          "type": "object",
+          "description": "Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy."
+        },
+        "check_if": {
+          "type": "object",
+          "description": "Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ])."
+        }
+      }
+    }
+  }
+}

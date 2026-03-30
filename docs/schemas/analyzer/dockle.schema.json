@@ -1,0 +1,99 @@
+{
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/dockle.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "dockle.output",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "tag",
+    "passed",
+    "issues_count",
+    "issues_by_level",
+    "issues"
+  ],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "dockle",
+      "description": "Unique identifier for the Dockle analyzer."
+    },
+    "repository": {
+      "type": "string",
+      "description": "The image repository that was analyzed."
+    },
+    "tag": {
+      "type": "string",
+      "description": "The image tag that was analyzed."
+    },
+    "error": {
+      "type": "string",
+      "description": "Any error encountered during execution."
+    },
+    "passed": {
+      "type": "boolean",
+      "description": "True if no issues were found, False otherwise."
+    },
+    "issues_count": {
+      "type": "integer",
+      "description": "Total number of issues found."
+    },
+    "issues_by_level": {
+      "type": "object",
+      "description": "Count of issues grouped by severity level.",
+      "properties": {
+        "FATAL": {
+          "type": "integer",
+          "default": 0
+        },
+        "WARN": {
+          "type": "integer",
+          "default": 0
+        },
+        "INFO": {
+          "type": "integer",
+          "default": 0
+        },
+        "SKIP": {
+          "type": "integer",
+          "default": 0
+        },
+        "PASS": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "issues": {
+      "type": "array",
+      "description": "List of issues found by Dockle.",
+      "items": {
+        "type": "object",
+        "required": ["code", "title", "level", "alerts"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Dockle rule code (e.g., CIS-DI-0001)."
+          },
+          "title": {
+            "type": "string",
+            "description": "Short description of the rule."
+          },
+          "level": {
+            "type": "string",
+            "enum": ["FATAL", "WARN", "INFO", "SKIP", "PASS"],
+            "description": "Severity level of the issue."
+          },
+          "alerts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific details or files related to the issue."
+          }
+        }
+      }
+    }
+  }
+}

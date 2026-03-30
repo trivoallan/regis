@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/playbook/jsonlogic.schema.json",
+  "title": "jsonlogic",
+  "description": "Simplified schema for JSON Logic expressions used in regis-cli playbooks.",
+  "type": ["object", "array", "string", "number", "boolean", "null"],
+  "definitions": {
+    "rule": {
+      "type": "object",
+      "additionalProperties": {
+        "type": ["object", "array", "string", "number", "boolean", "null"]
+      },
+      "minProperties": 1,
+      "maxProperties": 1
+    }
+  }
+}

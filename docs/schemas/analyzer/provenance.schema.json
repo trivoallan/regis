@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/provenance.schema.json",
+  "title": "provenance.output",
+  "description": "Build provenance and supply-chain attestation information.",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "tag",
+    "has_provenance",
+    "has_cosign_signature",
+    "source_tracked",
+    "indicators_count",
+    "indicators"
+  ],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "provenance",
+      "description": "Unique identifier for the Provenance analyzer."
+    },
+    "repository": {
+      "type": "string",
+      "description": "The image repository that was analyzed."
+    },
+    "tag": {
+      "type": "string",
+      "description": "The image tag that was analyzed."
+    },
+    "has_provenance": {
+      "type": "boolean",
+      "description": "True if SLSA provenance or build attestations were found."
+    },
+    "has_cosign_signature": {
+      "type": "boolean",
+      "description": "True if a Cosign signature was found."
+    },
+    "source_tracked": {
+      "type": "boolean",
+      "description": "True if the source repository URL is tracked in metadata."
+    },
+    "indicators_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of supply-chain indicators found."
+    },
+    "indicators": {
+      "type": "array",
+      "description": "List of specific supply-chain evidence found (e.g., OCI labels, signatures).",
+      "items": {
+        "type": "object",
+        "required": ["type", "key", "value"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of indicator (label, signature, attestation)."
+          },
+          "key": {
+            "type": "string",
+            "description": "The specific metadata key or ID."
+          },
+          "value": {
+            "type": "string",
+            "description": "The value of the indicator."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

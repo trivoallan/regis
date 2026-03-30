@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/popularity.schema.json",
+  "title": "popularity.output",
+  "description": "Docker Hub popularity statistics.",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "available",
+    "pull_count",
+    "star_count",
+    "description",
+    "last_updated",
+    "date_registered",
+    "is_official"
+  ],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "popularity",
+      "description": "Unique identifier for the Popularity analyzer."
+    },
+    "repository": {
+      "type": "string",
+      "description": "The image repository that was analyzed."
+    },
+    "available": {
+      "type": "boolean",
+      "description": "True if the repository was found on Docker Hub."
+    },
+    "pull_count": {
+      "type": ["integer", "null"],
+      "description": "Total number of pulls for this repository."
+    },
+    "star_count": {
+      "type": ["integer", "null"],
+      "description": "Number of stars for this repository on Docker Hub."
+    },
+    "description": {
+      "type": ["string", "null"],
+      "description": "Short description of the repository from Docker Hub."
+    },
+    "last_updated": {
+      "type": ["string", "null"],
+      "description": "ISO timestamp of the last repository update."
+    },
+    "date_registered": {
+      "type": ["string", "null"],
+      "description": "ISO timestamp of when the repository was created."
+    },
+    "is_official": {
+      "type": "boolean",
+      "description": "True if this is an official Docker Hub repository."
+    }
+  },
+  "additionalProperties": false
+}

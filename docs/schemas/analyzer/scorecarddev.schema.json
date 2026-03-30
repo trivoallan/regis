@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/scorecarddev.schema.json",
+  "title": "scorecarddev.output",
+  "description": "Report containing OpenSSF Scorecard security assessment for the image source repository.",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "source_repo",
+    "scorecard_available",
+    "score",
+    "checks"
+  ],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "scorecarddev",
+      "description": "Unique identifier for the Scorecard analyzer."
+    },
+    "repository": {
+      "type": "string",
+      "description": "Docker image repository path."
+    },
+    "source_repo": {
+      "type": ["string", "null"],
+      "description": "Resolved source code repository URL, or null if not found."
+    },
+    "scorecard_available": {
+      "type": "boolean",
+      "description": "Whether OpenSSF Scorecard data was successfully retrieved."
+    },
+    "score": {
+      "type": ["number", "null"],
+      "description": "Overall Scorecard score (0-10), or null if unavailable."
+    },
+    "checks": {
+      "type": "array",
+      "description": "Individual Scorecard check results.",
+      "items": {
+        "type": "object",
+        "required": ["name", "score", "reason"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Check name (e.g. Maintained, Code-Review, Vulnerabilities)."
+          },
+          "score": {
+            "type": "integer",
+            "description": "Check score (-1 to 10). -1 means not applicable."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Human-readable explanation of the score."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

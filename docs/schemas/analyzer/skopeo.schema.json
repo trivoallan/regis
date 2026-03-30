@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "skopeo.output",
+  "type": "object",
+  "required": ["analyzer", "repository", "tag", "platforms"],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "skopeo",
+      "description": "Unique identifier for the Skopeo analyzer."
+    },
+    "repository": {
+      "type": "string",
+      "description": "The image repository that was analyzed."
+    },
+    "tag": {
+      "type": "string",
+      "description": "The image tag that was analyzed."
+    },
+    "inspect": {
+      "type": "object",
+      "description": "Raw output from primary skopeo inspect"
+    },
+    "platforms": {
+      "type": "array",
+      "description": "List of platform variants available for this tag.",
+      "items": {
+        "type": "object",
+        "required": ["architecture", "os"],
+        "properties": {
+          "architecture": {
+            "type": "string",
+            "description": "Processor architecture (e.g., 'amd64')."
+          },
+          "os": {
+            "type": "string",
+            "description": "Operating system (e.g., 'linux')."
+          },
+          "variant": {
+            "type": ["string", "null"],
+            "description": "Architecture variant (e.g., 'v7')."
+          },
+          "digest": {
+            "type": "string",
+            "description": "Manifest digest for this specific variant."
+          },
+          "created": {
+            "type": ["string", "null"],
+            "description": "ISO timestamp of variant creation."
+          },
+          "labels": {
+            "type": "object",
+            "description": "OCI labels associated with this variant.",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "layers_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of layers in this variant."
+          },
+          "user": {
+            "type": ["string", "null"],
+            "description": "Default user from image configuration."
+          }
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "description": "List of tags associated with the repository.",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/skopeo.schema.json"
+}

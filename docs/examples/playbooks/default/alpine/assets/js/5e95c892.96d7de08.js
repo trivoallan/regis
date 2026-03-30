@@ -1,0 +1,23 @@
+"use strict";
+(globalThis.webpackChunk_regis_cli_report_viewer =
+  globalThis.webpackChunk_regis_cli_report_viewer || []).push([
+  [9647],
+  {
+    60650(e, r, s) {
+      (s.r(r), s.d(r, { default: () => o }));
+      s(10162);
+      var i = s(70851),
+        a = s(5043),
+        c = s(65288),
+        l = s(11490),
+        t = s(63264),
+        u = s(56730);
+      function o(e) {
+        return (0, u.jsx)(c.e3, {
+          className: (0, i.A)(a.G.wrapper.docsPages),
+          children: (0, u.jsx)(t.A, { children: (0, l.v)(e.route.routes) }),
+        });
+      }
+    },
+  },
+]);
