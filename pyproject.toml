@@ -52,6 +52,7 @@ regis_cli = [
   "scorecard/*.yaml",
   "templates/**/*",
   "cookiecutters/**/*",
+  "viewer_assets/**/*",
 ]
 
 [tool.setuptools_scm]

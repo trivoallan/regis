@@ -13,6 +13,7 @@ from regis_cli.commands.archive import archive
 from regis_cli.commands.bootstrap import bootstrap
 from regis_cli.commands.check import check, version_cmd
 from regis_cli.commands.rules import rules_group
+from regis_cli.commands.viewer import viewer_group
 from regis_cli.gitlab_cli import gitlab_cmd
 from regis_cli.utils.process import require_tool, run_cmd
 from regis_cli.utils.report import (
@@ -67,6 +68,7 @@ main.add_command(archive)
 main.add_command(check)
 main.add_command(version_cmd, name="version")
 main.add_command(rules_group, name="rules")
+main.add_command(viewer_group, name="viewer")
 
 
 if __name__ == "__main__":

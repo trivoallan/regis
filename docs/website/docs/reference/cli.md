@@ -93,6 +93,34 @@ Evaluate a regis-cli JSON report against rules.
 regis-cli rules evaluate <report.json> [--rules playbook.yaml] [--fail] [--fail-level critical] [-o output.json]
 ```
 
+## Viewer Commands
+
+Manage and serve the interactive report viewer.
+
+### `viewer serve`
+
+Serve the static React viewer and preview a report locally.
+
+```bash
+regis-cli viewer serve [OPTIONS] [REPORT]
+```
+
+_Options:_
+
+- `-p, --port INTEGER`: Port to listen on (default: `8000`).
+
+### `viewer export`
+
+Export the viewer app alongside a target report for static hosting.
+
+```bash
+regis-cli viewer export [OPTIONS] [REPORT]
+```
+
+_Options:_
+
+- `-o, --output PATH`: **(Required)** Directory to export the static site into.
+
 ## Project Bootstrapping {#bootstrap}
 
 ### `bootstrap playbook`

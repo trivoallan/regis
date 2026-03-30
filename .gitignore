@@ -33,3 +33,4 @@ regis-archive-ui/
 
 # Report Viewer
 apps/report-viewer/static/archive
+regis_cli/viewer_assets
