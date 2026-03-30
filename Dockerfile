@@ -1,6 +1,6 @@
 # Stage 1: Build the React viewer assets
 FROM node:25-slim AS frontend-builder
-RUN npm install -g corepack@0.34.6 && corepack enable pnpm
+RUN npm install -g pnpm@10.10.0
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 COPY apps/ apps/
