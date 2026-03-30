@@ -8,7 +8,7 @@ version = "0.20.0"
 description = "Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = "MIT"
 authors = [{ name = "TTC" }]
 dependencies = [
   "click>=8.1",
