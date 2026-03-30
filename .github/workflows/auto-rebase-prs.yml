@@ -13,6 +13,9 @@ permissions:
 jobs:
   rebase:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Generate GitHub App token
         id: generate-token
@@ -21,7 +24,31 @@ jobs:
           app-id: ${{ secrets.REGIS_CI_APP_ID }}
           private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
 
-      - uses: peter-evans/rebase@v4
+      - name: Rebase non-Dependabot PRs
+        uses: peter-evans/rebase@v4
         with:
           token: ${{ steps.generate-token.outputs.token }}
           exclude-drafts: true
+          exclude-labels: dependencies
+
+      - name: Rebase Dependabot PRs
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const prs = await github.paginate(github.rest.pulls.list, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+            });
+            for (const pr of prs) {
+              if (pr.user.login === 'dependabot[bot]' && !pr.draft) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  body: '@dependabot rebase',
+                });
+                core.info(`Requested rebase for Dependabot PR #${pr.number} (${pr.title})`);
+              }
+            }
