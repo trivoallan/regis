@@ -1,4 +1,4 @@
-name: Auto-rebase PRs
+name: Repo / Auto-rebase
 
 on:
   push:

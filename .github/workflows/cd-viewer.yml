@@ -1,4 +1,4 @@
-name: Publish Viewer
+name: CD / Viewer
 
 on:
   push:

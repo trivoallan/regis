@@ -1,4 +1,4 @@
-name: Create Docusaurus version snapshot for release
+name: Release / Docs snapshot
 
 on:
   pull_request_target:
