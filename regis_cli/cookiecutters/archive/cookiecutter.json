@@ -1,15 +1,10 @@
 {
   "project_name": "RegiS Archive",
   "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-') }}",
-  "platform": [
-    "github",
-    "gitlab"
-  ],
+  "platform": ["github", "gitlab"],
   "description": "Archive viewer for regis-cli security analysis reports.",
   "version": "0.21.0",
   "regis_cli_image_url": "ghcr.io/trivoallan/regis-cli:{{ cookiecutter.version }}",
   "regis_cli_image_base": "ghcr.io/trivoallan/regis-cli",
-  "_copy_without_render": [
-    "*.tsx"
-  ]
+  "_copy_without_render": ["*.tsx"]
 }
