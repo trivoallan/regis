@@ -10,11 +10,11 @@ WORKDIR /app/apps/report-viewer
 RUN pnpm run build
 
 # Stage 2: Build the final Python image
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 LABEL org.opencontainers.image.title="regis-cli" \
       org.opencontainers.image.description="Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD." \
-      org.opencontainers.image.url="https://github.com/trivoallan/regis-cli" \
+      org.opencontainers.image.url="https://github.com/trivoallan" \
       org.opencontainers.image.source="https://github.com/trivoallan/regis-cli" \
       org.opencontainers.image.documentation="https://trivoallan.github.io/regis-cli/" \
       org.opencontainers.image.vendor="trivoallan" \
@@ -27,11 +27,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     DEBIAN_FRONTEND=noninteractive
 
 # Install system dependencies and analyzers
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Consolidation and upgrade for latest security patches
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
     gnupg \
     skopeo \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user with a home directory and ensure it's writable
@@ -40,13 +44,14 @@ RUN groupadd -g 1001 regis && \
     chmod 755 /home/regis
 ENV HOME=/home/regis
 
-# Install Trivy
+# Install Trivy (latest version from official install script)
 RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
 
 # Install Hadolint
+ENV HADOLINT_VERSION="2.12.0"
 RUN arch=$(uname -m) && \
     if [ "$arch" = "x86_64" ]; then hadolint_arch="x86_64"; else hadolint_arch="arm64"; fi && \
-    curl -sSfL "https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-${hadolint_arch}" -o /usr/local/bin/hadolint && \
+    curl -sSfL "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-${hadolint_arch}" -o /usr/local/bin/hadolint && \
     chmod +x /usr/local/bin/hadolint
 
 # Install Dockle
@@ -68,9 +73,6 @@ COPY --chown=regis:regis . .
 
 # Copy built viewer assets from frontend stage
 COPY --from=frontend-builder --chown=regis:regis /app/apps/report-viewer/build ./regis_cli/viewer_assets
-
-# Install packages
-RUN apt-get update && apt-get install -y git
 
 # Install regis-cli
 RUN git config --global --add safe.directory /app && \

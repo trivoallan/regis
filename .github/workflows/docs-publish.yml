@@ -112,6 +112,7 @@ jobs:
           mkdir -p docs/website/static/archives/default
           pipenv run regis-cli analyze --evaluate alpine:latest -A docs/website/static/archives/default/
           pipenv run regis-cli analyze --evaluate ghcr.io/trivoallan/regis-cli:latest -A docs/website/static/archives/default/
+          pipenv run regis-cli analyze --evaluate ghcr.io/trivoallan/regis-cli:main -A docs/website/static/archives/default/
 
       - name: Create Docusaurus version snapshot
         if: github.event_name == 'release'

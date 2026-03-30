@@ -1,5 +1,7 @@
 """Tests for the end-of-life analyzer."""
 
+from unittest.mock import patch
+
 from regis_cli.analyzers.endoflife import (
     EndOfLifeAnalyzer,
     _extract_version,
@@ -107,10 +109,27 @@ class MockRegistryClient:
 
 
 class TestEndOfLifeAnalyzer:
-    """Test the end-of-life analyzer end-to-end (calls live API)."""
+    """Test the end-of-life analyzer end-to-end (mocked API)."""
 
-    def test_known_product(self):
+    MOCK_CYCLES = [
+        {
+            "cycle": "1.27",
+            "releaseDate": "2024-05-28",
+            "eol": "2025-06-24",
+            "latest": "1.27.5",
+        },
+        {
+            "cycle": "1.26",
+            "releaseDate": "2024-04-23",
+            "eol": "2025-04-23",
+            "latest": "1.26.3",
+        },
+    ]
+
+    @patch("regis_cli.analyzers.endoflife._fetch_cycles")
+    def test_known_product(self, mock_fetch):
         """Test with nginx which is known on endoflife.date."""
+        mock_fetch.return_value = self.MOCK_CYCLES
         client = MockRegistryClient()
         analyzer = EndOfLifeAnalyzer()
         report = analyzer.analyze(client, "library/nginx", "1.27")
@@ -122,8 +141,10 @@ class TestEndOfLifeAnalyzer:
         assert report["matched_cycle"] is not None
         assert report["matched_cycle"]["cycle"] == "1.27"
 
-    def test_unknown_product(self):
+    @patch("regis_cli.analyzers.endoflife._fetch_cycles")
+    def test_unknown_product(self, mock_fetch):
         """Test with a product not on endoflife.date."""
+        mock_fetch.return_value = None
         client = MockRegistryClient()
         analyzer = EndOfLifeAnalyzer()
         report = analyzer.analyze(client, "library/nonexistent-xyz", "latest")
@@ -133,8 +154,10 @@ class TestEndOfLifeAnalyzer:
         assert report["matched_cycle"] is None
         assert report["is_eol"] is None
 
-    def test_named_tag_no_match(self):
+    @patch("regis_cli.analyzers.endoflife._fetch_cycles")
+    def test_named_tag_no_match(self, mock_fetch):
         """Named tags like 'latest' cannot match a cycle."""
+        mock_fetch.return_value = self.MOCK_CYCLES
         client = MockRegistryClient()
         analyzer = EndOfLifeAnalyzer()
         report = analyzer.analyze(client, "library/nginx", "latest")
