@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.23.1](https://github.com/trivoallan/regis-cli/compare/v0.23.0...v0.23.1) (2026-03-30)
+
+### Bug Fixes
+
+- **ci:** remove coverage badge direct push to main ([#147](https://github.com/trivoallan/regis-cli/issues/147)) ([2d9525d](https://github.com/trivoallan/regis-cli/commit/2d9525d63b8d8596c9949638e607fd214c7db6f2))
+
 ## [0.23.0](https://github.com/trivoallan/regis-cli/compare/v0.22.0...v0.23.0) (2026-03-30)
 
 ### Features
