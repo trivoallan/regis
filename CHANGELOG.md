@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.2](https://github.com/trivoallan/regis-cli/compare/v0.23.1...v0.23.2) (2026-03-30)
+
+
+### Bug Fixes
+
+* **build:** regenerate pnpm lockfile after Dependabot bumps ([#149](https://github.com/trivoallan/regis-cli/issues/149)) ([726c1cc](https://github.com/trivoallan/regis-cli/commit/726c1cc772cfc2404ab20c6ff22643cff5b80398))
+
 ## [0.23.1](https://github.com/trivoallan/regis-cli/compare/v0.23.0...v0.23.1) (2026-03-30)
 
 ### Bug Fixes
