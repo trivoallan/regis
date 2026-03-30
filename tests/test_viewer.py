@@ -31,7 +31,9 @@ class TestViewerExportCmd:
 
     @patch("regis_cli.commands.viewer.get_viewer_assets_dir")
     @patch("regis_cli.commands.viewer.shutil.copytree")
-    def test_export_without_report(self, mock_copytree, mock_get_dir, tmp_path: Path) -> None:
+    def test_export_without_report(
+        self, mock_copytree, mock_get_dir, tmp_path: Path
+    ) -> None:
         mock_get_dir.return_value = tmp_path / "assets"
         runner = CliRunner()
         with runner.isolated_filesystem():

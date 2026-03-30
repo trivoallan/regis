@@ -32,8 +32,12 @@ class TestBuildReportSite:
         viewer_dir.mkdir()
         result = MagicMock(returncode=1, stderr="Build error", stdout="")
         with patch("regis_cli.report.docusaurus._VIEWER_DIR", viewer_dir):
-            with patch("regis_cli.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"):
-                with patch("regis_cli.report.docusaurus.subprocess.run", return_value=result):
+            with patch(
+                "regis_cli.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"
+            ):
+                with patch(
+                    "regis_cli.report.docusaurus.subprocess.run", return_value=result
+                ):
                     with pytest.raises(RuntimeError, match="Docusaurus build failed"):
                         build_report_site({"key": "val"}, tmp_path / "output")
 
@@ -41,7 +45,9 @@ class TestBuildReportSite:
         viewer_dir = tmp_path / "viewer"
         viewer_dir.mkdir()
         with patch("regis_cli.report.docusaurus._VIEWER_DIR", viewer_dir):
-            with patch("regis_cli.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"):
+            with patch(
+                "regis_cli.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"
+            ):
                 with patch(
                     "regis_cli.report.docusaurus.subprocess.run",
                     side_effect=subprocess.TimeoutExpired(["pnpm"], 120),
@@ -54,8 +60,12 @@ class TestBuildReportSite:
         viewer_dir.mkdir()
         result = MagicMock(returncode=0, stdout="OK", stderr="")
         with patch("regis_cli.report.docusaurus._VIEWER_DIR", viewer_dir):
-            with patch("regis_cli.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"):
-                with patch("regis_cli.report.docusaurus.subprocess.run", return_value=result):
+            with patch(
+                "regis_cli.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"
+            ):
+                with patch(
+                    "regis_cli.report.docusaurus.subprocess.run", return_value=result
+                ):
                     with pytest.raises(RuntimeError, match="build directory not found"):
                         build_report_site({"key": "val"}, tmp_path / "output")
 
@@ -69,7 +79,9 @@ class TestBuildReportSite:
         result = MagicMock(returncode=0, stdout="Build OK", stderr="")
         output_dir = tmp_path / "output"
         with patch("regis_cli.report.docusaurus._VIEWER_DIR", viewer_dir):
-            with patch("regis_cli.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"):
+            with patch(
+                "regis_cli.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"
+            ):
                 with patch(
                     "regis_cli.report.docusaurus.subprocess.run", return_value=result
                 ) as mock_run:
@@ -94,7 +106,8 @@ class TestBuildReportSite:
 
         with patch("regis_cli.report.docusaurus._VIEWER_DIR", viewer_dir):
             with patch(
-                "regis_cli.report.docusaurus.shutil.which", side_effect=which_side_effect
+                "regis_cli.report.docusaurus.shutil.which",
+                side_effect=which_side_effect,
             ):
                 with patch(
                     "regis_cli.report.docusaurus.subprocess.run", return_value=result
@@ -114,8 +127,12 @@ class TestBuildReportSite:
         result = MagicMock(returncode=0, stdout="OK", stderr="")
         output_dir = tmp_path / "output"
         with patch("regis_cli.report.docusaurus._VIEWER_DIR", viewer_dir):
-            with patch("regis_cli.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"):
-                with patch("regis_cli.report.docusaurus.subprocess.run", return_value=result):
+            with patch(
+                "regis_cli.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"
+            ):
+                with patch(
+                    "regis_cli.report.docusaurus.subprocess.run", return_value=result
+                ):
                     build_report_site({"data": "value"}, output_dir)
         assert (output_dir / "report.json").exists()
 
@@ -128,7 +145,9 @@ class TestBuildReportSite:
         result = MagicMock(returncode=0, stdout="OK", stderr="")
         output_dir = tmp_path / "output"
         with patch("regis_cli.report.docusaurus._VIEWER_DIR", viewer_dir):
-            with patch("regis_cli.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"):
+            with patch(
+                "regis_cli.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"
+            ):
                 with patch(
                     "regis_cli.report.docusaurus.subprocess.run", return_value=result
                 ) as mock_run:

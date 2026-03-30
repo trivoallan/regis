@@ -43,7 +43,9 @@ class TestRunCmd:
 
         from regis_cli.utils.process import run_cmd
 
-        with patch("regis_cli.utils.process.subprocess.run", side_effect=FileNotFoundError):
+        with patch(
+            "regis_cli.utils.process.subprocess.run", side_effect=FileNotFoundError
+        ):
             with pytest.raises(click.ClickException, match="not found in PATH"):
                 run_cmd(["nonexistent-binary", "--version"])
 
