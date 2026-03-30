@@ -1,0 +1,42 @@
+[
+  {
+    "id": "ghcr.io/trivoallan/regis-cli/latest/2026-03-30T08-42-58",
+    "timestamp": "2026-03-30T08:42:58.885034+00:00",
+    "registry": "ghcr.io",
+    "repository": "trivoallan/regis-cli",
+    "tag": "latest",
+    "digest": "sha256-3adb10a09508f723b75979ed275fe0d685322fb120f7ef706c6fdefccb4ee436",
+    "score": 61,
+    "tier": "Bronze",
+    "rules_passed": 11,
+    "rules_total": 18,
+    "cve_critical": 2,
+    "cve_high": 19,
+    "cve_medium": 54,
+    "cve_low": 148,
+    "age_days": 8,
+    "sbom_component_count": null,
+    "scorecard_score": null,
+    "path": "ghcr.io/trivoallan_regis-cli/latest/2026-03-30T08-42-58Z/report.json"
+  },
+  {
+    "id": "registry-1.docker.io/library/alpine/latest/2026-03-30T08-42-48",
+    "timestamp": "2026-03-30T08:42:48.451833+00:00",
+    "registry": "registry-1.docker.io",
+    "repository": "library/alpine",
+    "tag": "latest",
+    "digest": "sha256-25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659",
+    "score": 78,
+    "tier": "Silver",
+    "rules_passed": 14,
+    "rules_total": 18,
+    "cve_critical": 0,
+    "cve_high": 1,
+    "cve_medium": 1,
+    "cve_low": 0,
+    "age_days": 61,
+    "sbom_component_count": null,
+    "scorecard_score": null,
+    "path": "registry-1.docker.io/library_alpine/latest/2026-03-30T08-42-48Z/report.json"
+  }
+]

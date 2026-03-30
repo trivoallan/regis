@@ -1,11 +1,11 @@
 {
-  "version": "0.20.0",
+  "version": "0.18.0",
   "request": {
-    "url": "ghcr.io/trivoallan/regis-cli:latest",
+    "url": "ghcr.io/trivoallan/regis-cli:0.18.0",
     "registry": "ghcr.io",
     "repository": "trivoallan/regis-cli",
-    "tag": "latest",
-    "digest": "sha256-3adb10a09508f723b75979ed275fe0d685322fb120f7ef706c6fdefccb4ee436",
+    "tag": "0.18.0",
+    "digest": "sha256-b58d5e51fe453d368bc130ff0dc2e4cae34ea848147b9fea979cf854f3505a3e",
     "analyzers": [
       "dockle",
       "endoflife",
@@ -20,45 +20,41 @@
       "trivy",
       "versioning"
     ],
-    "timestamp": "2026-03-30T08:21:11.442271+00:00"
+    "timestamp": "2026-03-21T01:41:47.291167+00:00"
   },
   "results": {
+    "dockle": {
+      "analyzer": "dockle",
+      "error": {
+        "type": "validation",
+        "message": "Failed to parse dockle output: 2026-03-21T02:41:28.666+0100\t\u001b[31mFATAL\u001b[0m\tunable to initialize a image struct: failed to initialize source: failed to initialize: choosing image instance: no image found in image index for architecture \"arm64\", variant \"v8\", OS \"linux\"\n"
+      }
+    },
     "endoflife": {
       "analyzer": "endoflife",
       "repository": "trivoallan/regis-cli",
       "product": "regis-cli",
       "product_found": false,
-      "tag": "latest",
+      "tag": "0.18.0",
       "matched_cycle": null,
       "is_eol": null,
       "active_cycles_count": null,
       "eol_cycles_count": null
     },
-    "popularity": {
-      "analyzer": "popularity",
-      "repository": "trivoallan/regis-cli",
-      "available": false,
-      "pull_count": null,
-      "star_count": null,
-      "description": null,
-      "last_updated": null,
-      "date_registered": null,
-      "is_official": false
-    },
     "freshness": {
       "analyzer": "freshness",
       "repository": "trivoallan/regis-cli",
-      "tag": "latest",
-      "tag_created": "2026-03-21T12:42:16.602259899Z",
-      "latest_created": null,
-      "age_days": 8,
-      "behind_latest_days": null,
+      "tag": "0.18.0",
+      "tag_created": "2026-03-21T01:34:50.907884378Z",
+      "latest_created": "2026-03-21T01:34:50.907884378Z",
+      "age_days": 0,
+      "behind_latest_days": 0,
       "is_latest": true
     },
     "hadolint": {
       "analyzer": "hadolint",
       "repository": "trivoallan/regis-cli",
-      "tag": "latest",
+      "tag": "0.18.0",
       "passed": false,
       "issues_count": 25,
       "issues_by_level": {
@@ -221,10 +217,21 @@
       ],
       "dockerfile": "FROM scratch\nRUN # debian.sh --arch 'amd64' out/ 'trixie' '@1773619200'\nRUN ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\nRUN ENV LANG=C.UTF-8\nRUN RUN /bin/sh -c set -eux; \tapt-get update; \tapt-get install -y --no-install-recommends \t\tca-certificates \t\tnetbase \t\ttzdata \t; \tapt-get dist-clean # buildkit\nRUN ENV GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305\nRUN ENV PYTHON_VERSION=3.12.13\nRUN ENV PYTHON_SHA256=c08bc65a81971c1dd5783182826503369466c7e67374d1646519adf05207b684\nRUN RUN /bin/sh -c set -eux; \t\tsavedAptMark=\"$(apt-mark showmanual)\"; \tapt-get update; \tapt-get install -y --no-install-recommends \t\tdpkg-dev \t\tgcc \t\tgnupg \t\tlibbluetooth-dev \t\tlibbz2-dev \t\tlibc6-dev \t\tlibdb-dev \t\tlibffi-dev \t\tlibgdbm-dev \t\tliblzma-dev \t\tlibncursesw5-dev \t\tlibreadline-dev \t\tlibsqlite3-dev \t\tlibssl-dev \t\tmake \t\ttk-dev \t\tuuid-dev \t\twget \t\txz-utils \t\tzlib1g-dev \t; \t\twget -O python.tar.xz \"https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz\"; \techo \"$PYTHON_SHA256 *python.tar.xz\" | sha256sum -c -; \twget -O python.tar.xz.asc \"https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc\"; \tGNUPGHOME=\"$(mktemp -d)\"; export GNUPGHOME; \tgpg --batch --keyserver hkps://keys.openpgp.org --recv-keys \"$GPG_KEY\"; \tgpg --batch --verify python.tar.xz.asc python.tar.xz; \tgpgconf --kill all; \trm -rf \"$GNUPGHOME\" python.tar.xz.asc; \tmkdir -p /usr/src/python; \ttar --extract --directory /usr/src/python --strip-components=1 --file python.tar.xz; \trm python.tar.xz; \t\tcd /usr/src/python; \tgnuArch=\"$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)\"; \t./configure \t\t--build=\"$gnuArch\" \t\t--enable-loadable-sqlite-extensions \t\t--enable-optimizations \t\t--enable-option-checking=fatal \t\t--enable-shared \t\t$(test \"${gnuArch%%-*}\" != 'riscv64' && echo '--with-lto') \t\t--with-ensurepip \t; \tnproc=\"$(nproc)\"; \tEXTRA_CFLAGS=\"$(dpkg-buildflags --get CFLAGS)\"; \tLDFLAGS=\"$(dpkg-buildflags --get LDFLAGS)\"; \tLDFLAGS=\"${LDFLAGS:-} -Wl,--strip-all\"; \tarch=\"$(dpkg --print-architecture)\"; arch=\"${arch##*-}\"; \tcase \"$arch\" in \t\tamd64|arm64) \t\t\tEXTRA_CFLAGS=\"${EXTRA_CFLAGS:-} -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer\"; \t\t\t;; \t\ti386) \t\t\t;; \t\t*) \t\t\tEXTRA_CFLAGS=\"${EXTRA_CFLAGS:-} -fno-omit-frame-pointer\"; \t\t\t;; \tesac; \tmake -j \"$nproc\" \t\t\"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}\" \t\t\"LDFLAGS=${LDFLAGS:-}\" \t; \trm python; \tmake -j \"$nproc\" \t\t\"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}\" \t\t\"LDFLAGS=${LDFLAGS:-} -Wl,-rpath='\\$\\$ORIGIN/../lib'\" \t\tpython \t; \tmake install; \t\tcd /; \trm -rf /usr/src/python; \t\tfind /usr/local -depth \t\t\\( \t\t\t\\( -type d -a \\( -name test -o -name tests -o -name idle_test \\) \\) \t\t\t-o \\( -type f -a \\( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \\) \\) \t\t\\) -exec rm -rf '{}' + \t; \t\tldconfig; \t\tapt-mark auto '.*' > /dev/null; \tapt-mark manual $savedAptMark; \tfind /usr/local -type f -executable -not \\( -name '*tkinter*' \\) -exec ldd '{}' ';' \t\t| awk '/=>/ { so = $(NF-1); if (index(so, \"/usr/local/\") == 1) { next }; gsub(\"^/(usr/)?\", \"\", so); printf \"*%s\\n\", so }' \t\t| sort -u \t\t| xargs -rt dpkg-query --search \t\t| awk 'sub(\":$\", \"\", $1) { print $1 }' \t\t| sort -u \t\t| xargs -r apt-mark manual \t; \tapt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \tapt-get dist-clean; \t\texport PYTHONDONTWRITEBYTECODE=1; \tpython3 --version; \tpip3 --version # buildkit\nRUN RUN /bin/sh -c set -eux; \tfor src in idle3 pip3 pydoc3 python3 python3-config; do \t\tdst=\"$(echo \"$src\" | tr -d 3)\"; \t\t[ -s \"/usr/local/bin/$src\" ]; \t\t[ ! -e \"/usr/local/bin/$dst\" ]; \t\tln -svT \"$src\" \"/usr/local/bin/$dst\"; \tdone # buildkit\nRUN CMD [\"python3\"]\nRUN LABEL org.opencontainers.image.title=regis-cli org.opencontainers.image.description=Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD. org.opencontainers.image.url=https://github.com/trivoallan/regis-cli org.opencontainers.image.source=https://github.com/trivoallan/regis-cli org.opencontainers.image.documentation=https://trivoallan.github.io/regis-cli/ org.opencontainers.image.vendor=trivoallan org.opencontainers.image.authors=trivoallan org.opencontainers.image.licenses=MIT\nRUN ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 DEBIAN_FRONTEND=noninteractive\nRUN RUN /bin/sh -c apt-get update && apt-get install -y --no-install-recommends     curl     ca-certificates     gnupg     skopeo     && rm -rf /var/lib/apt/lists/* # buildkit\nRUN RUN /bin/sh -c groupadd -g 1001 regis &&     useradd -u 1001 -g regis -m -d /home/regis regis &&     chmod 755 /home/regis # buildkit\nRUN ENV HOME=/home/regis\nRUN RUN /bin/sh -c curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin # buildkit\nRUN RUN /bin/sh -c arch=$(uname -m) &&     if [ \"$arch\" = \"x86_64\" ]; then hadolint_arch=\"x86_64\"; else hadolint_arch=\"arm64\"; fi &&     curl -sSfL \"https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-${hadolint_arch}\" -o /usr/local/bin/hadolint &&     chmod +x /usr/local/bin/hadolint # buildkit\nRUN ENV DOCKLE_VERSION=0.4.15\nRUN RUN /bin/sh -c arch=$(uname -m) &&     if [ \"$arch\" = \"x86_64\" ]; then dockle_arch=\"64bit\"; else dockle_arch=\"ARM64\"; fi &&     curl -L -o dockle.tar.gz https://github.com/goodwithtech/dockle/releases/download/v${DOCKLE_VERSION}/dockle_${DOCKLE_VERSION}_Linux-${dockle_arch}.tar.gz &&     tar zxvf dockle.tar.gz dockle &&     mv dockle /usr/local/bin/dockle &&     rm dockle.tar.gz &&     chmod +x /usr/local/bin/dockle # buildkit\nRUN WORKDIR /app\nRUN RUN /bin/sh -c chown regis:regis /app && chmod 777 /app # buildkit\nRUN COPY --chown=regis:regis . . # buildkit\nRUN RUN /bin/sh -c apt-get update && apt-get install -y git # buildkit\nRUN RUN /bin/sh -c pip install --no-cache-dir . # buildkit\nRUN HEALTHCHECK &{[\"CMD-SHELL\" \"regis-cli list || exit 1\"] \"30s\" \"5s\" \"5s\" \"0s\" '\\x03'}\nRUN USER regis\nRUN ENTRYPOINT [\"regis-cli\"]\nRUN CMD [\"--help\"]"
     },
+    "popularity": {
+      "analyzer": "popularity",
+      "repository": "trivoallan/regis-cli",
+      "available": false,
+      "pull_count": null,
+      "star_count": null,
+      "description": null,
+      "last_updated": null,
+      "date_registered": null,
+      "is_official": false
+    },
     "provenance": {
       "analyzer": "provenance",
       "repository": "trivoallan/regis-cli",
-      "tag": "latest",
+      "tag": "0.18.0",
       "has_provenance": true,
       "has_cosign_signature": false,
       "source_tracked": true,
@@ -238,12 +245,12 @@
         {
           "type": "oci-annotation",
           "key": "org.opencontainers.image.revision",
-          "value": "589baaac8418d0518a86d8a33c9b4ee307259708"
+          "value": "8596aef162aa416662855a46f12733598484eeaf"
         },
         {
           "type": "oci-annotation",
           "key": "org.opencontainers.image.created",
-          "value": "2026-03-21T12:41:47.635Z"
+          "value": "2026-03-21T01:34:17.660Z"
         },
         {
           "type": "oci-annotation",
@@ -252,415 +259,20 @@
         }
       ]
     },
-    "scorecarddev": {
-      "analyzer": "scorecarddev",
-      "repository": "trivoallan/regis-cli",
-      "source_repo": "https://github.com/trivoallan/regis-cli",
-      "scorecard_available": false,
-      "score": null,
-      "checks": []
-    },
-    "size": {
-      "analyzer": "size",
-      "repository": "trivoallan/regis-cli",
-      "tag": "latest",
-      "multi_arch": true,
-      "total_compressed_bytes": 223621088,
-      "total_compressed_human": "213.3 MB",
-      "layer_count": 14,
-      "config_size_bytes": 0,
-      "layers": [],
-      "platforms": [
-        {
-          "platform": "linux/amd64",
-          "compressed_bytes": 223621088,
-          "compressed_human": "213.3 MB",
-          "layer_count": 14
-        },
-        {
-          "platform": "unknown/unknown",
-          "compressed_bytes": 40971,
-          "compressed_human": "40.0 KB",
-          "layer_count": 1
-        }
-      ]
-    },
-    "skopeo": {
-      "analyzer": "skopeo",
-      "repository": "trivoallan/regis-cli",
-      "tag": "latest",
-      "platforms": [
-        {
-          "architecture": "amd64",
-          "os": "linux",
-          "digest": "sha256:915ca3277d033842c622cbe11ca23ec4959c76cd1f8325fdf1e05a3fa090e243",
-          "created": "2026-03-21T12:42:16.602259899Z",
-          "labels": {
-            "org.opencontainers.image.authors": "trivoallan",
-            "org.opencontainers.image.created": "2026-03-21T12:41:47.635Z",
-            "org.opencontainers.image.description": "Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.",
-            "org.opencontainers.image.documentation": "https://trivoallan.github.io/regis-cli/",
-            "org.opencontainers.image.licenses": "",
-            "org.opencontainers.image.revision": "589baaac8418d0518a86d8a33c9b4ee307259708",
-            "org.opencontainers.image.source": "https://github.com/trivoallan/regis-cli",
-            "org.opencontainers.image.title": "regis-cli",
-            "org.opencontainers.image.url": "https://github.com/trivoallan/regis-cli",
-            "org.opencontainers.image.vendor": "trivoallan",
-            "org.opencontainers.image.version": "0.20.0"
-          },
-          "layers_count": 14,
-          "size": 0,
-          "exposed_ports": [],
-          "env": [],
-          "variant": null,
-          "user": "regis"
-        },
-        {
-          "architecture": "unknown",
-          "os": "unknown",
-          "digest": "sha256:f7fab936c529ff1020984728966f4811cdbd8535fdf2dfb9ad33b05f99fab10d",
-          "created": null,
-          "labels": {},
-          "layers_count": 1,
-          "size": 0,
-          "exposed_ports": [],
-          "env": [],
-          "variant": null,
-          "user": ""
-        }
-      ],
-      "inspect": {},
-      "tags": [
-        "main",
-        "sha-dfc66c6",
-        "sha-376c16e",
-        "sha-2823f64",
-        "sha-a5d06a6",
-        "sha-391d74f",
-        "sha-9ef6351",
-        "sha-9cf4087",
-        "sha-ddaba2c",
-        "sha-460871b",
-        "sha-5f11d2d",
-        "sha-4113efb",
-        "sha-a02caa3",
-        "sha-4751370",
-        "sha-83c0066",
-        "sha-895c46b",
-        "sha-f3abf1f",
-        "sha-e1faaf9",
-        "sha-6737a68",
-        "sha-6f1d111",
-        "sha-7a6104d",
-        "sha-21b7549",
-        "sha-97a58fd",
-        "sha-ed8a1f2",
-        "0.2.2",
-        "0.2",
-        "sha-6b3a3ee",
-        "latest",
-        "sha-dfffabd",
-        "sha-88ccaae",
-        "0.3.0",
-        "0.3",
-        "sha-f86862e",
-        "sha-295db88",
-        "sha-44b8b76",
-        "sha-706e2a7",
-        "sha-e7e71c8",
-        "0.4.0",
-        "0.4",
-        "sha-8368b48",
-        "sha-69ef82f",
-        "sha-c985942",
-        "sha-b03914d",
-        "sha-7de98ad",
-        "sha-e178f38",
-        "sha-44bfdf6",
-        "sha-f2dc6eb",
-        "sha-d508b53",
-        "sha-2bffefd",
-        "sha-e0945f2",
-        "sha-676bb4d",
-        "0.5.0",
-        "0.5",
-        "sha-342d0b8",
-        "sha-d6c065a",
-        "sha-194d574",
-        "0.7.0",
-        "0.7",
-        "sha-e5b0e77",
-        "0.8.0",
-        "0.8",
-        "sha-fd24eb9",
-        "0.9.0",
-        "0.9",
-        "sha-57f48a3",
-        "sha-08211a2",
-        "sha-9393b48",
-        "sha-a48b4b2",
-        "sha-abd95d2",
-        "0.10.0",
-        "0.10",
-        "sha-f04d633",
-        "sha-340f44d",
-        "sha-f18e91b",
-        "sha-ef81c05",
-        "sha-1664655",
-        "sha-9898bd8",
-        "0.11.0",
-        "0.11",
-        "sha-9aaef15",
-        "sha-f865cb0",
-        "sha-9a7914f",
-        "0.12.0",
-        "0.12",
-        "sha-42459a3",
-        "0.13.0",
-        "0.13",
-        "sha-8eef298",
-        "0.14.0",
-        "0.14",
-        "sha-bc504b0",
-        "0.14.1",
-        "sha-15794ab",
-        "0.14.2",
-        "sha-a5bd4e5",
-        "0.15.0",
-        "0.15",
-        "sha-1ee30bb",
-        "0.16.0",
-        "0.16",
-        "sha-7baf724",
-        "0.17.0",
-        "0.17",
-        "sha-e7a1749",
-        "0.17.1",
-        "sha-ac404f4",
-        "sha-3678043",
-        "sha-8fd6186",
-        "0.17.2",
-        "sha-1baea9a",
-        "0.17.3",
-        "sha-ff5b296",
-        "0.17.4",
-        "sha-11fde48",
-        "0.18.0",
-        "0.18",
-        "sha-8596aef",
-        "0.19.0",
-        "0.19",
-        "sha-fde3495",
-        "0.20.0",
-        "0.20",
-        "sha-589baaa",
-        "sha-ec016df"
-      ]
-    },
-    "versioning": {
-      "analyzer": "versioning",
-      "repository": "trivoallan/regis-cli",
-      "total_tags": 124,
-      "dominant_pattern": "named",
-      "semver_compliant_percentage": 33.9,
-      "patterns": [
-        {
-          "pattern": "named",
-          "count": 82,
-          "percentage": 66.1,
-          "examples": [
-            "latest",
-            "main",
-            "sha-08211a2",
-            "sha-11fde48",
-            "sha-15794ab",
-            "sha-1664655",
-            "sha-194d574",
-            "sha-1baea9a",
-            "sha-1ee30bb",
-            "sha-21b7549"
-          ]
-        },
-        {
-          "pattern": "numeric",
-          "count": 18,
-          "percentage": 14.5,
-          "examples": [
-            "0.10",
-            "0.11",
-            "0.12",
-            "0.13",
-            "0.14",
-            "0.15",
-            "0.16",
-            "0.17",
-            "0.18",
-            "0.19"
-          ]
-        },
-        {
-          "pattern": "semver",
-          "count": 24,
-          "percentage": 19.4,
-          "examples": [
-            "0.10.0",
-            "0.11.0",
-            "0.12.0",
-            "0.13.0",
-            "0.14.0",
-            "0.14.1",
-            "0.14.2",
-            "0.15.0",
-            "0.16.0",
-            "0.17.0"
-          ]
-        }
-      ],
-      "variants": [],
-      "aliases": [
-        "0.10",
-        "0.10.0",
-        "0.11",
-        "0.11.0",
-        "0.12",
-        "0.12.0",
-        "0.13",
-        "0.13.0",
-        "0.14",
-        "0.14.0",
-        "0.14.1",
-        "0.14.2",
-        "0.15",
-        "0.15.0",
-        "0.16",
-        "0.16.0",
-        "0.17",
-        "0.17.0",
-        "0.17.1",
-        "0.17.2",
-        "0.17.3",
-        "0.17.4",
-        "0.18",
-        "0.18.0",
-        "0.19",
-        "0.19.0",
-        "0.2",
-        "0.2.2",
-        "0.20",
-        "0.20.0",
-        "0.3",
-        "0.3.0",
-        "0.4",
-        "0.4.0",
-        "0.5",
-        "0.5.0",
-        "0.7",
-        "0.7.0",
-        "0.8",
-        "0.8.0",
-        "0.9",
-        "0.9.0",
-        "main",
-        "sha-08211a2",
-        "sha-11fde48",
-        "sha-15794ab",
-        "sha-1664655",
-        "sha-194d574",
-        "sha-1baea9a",
-        "sha-1ee30bb",
-        "sha-21b7549",
-        "sha-2823f64",
-        "sha-295db88",
-        "sha-2bffefd",
-        "sha-340f44d",
-        "sha-342d0b8",
-        "sha-3678043",
-        "sha-376c16e",
-        "sha-391d74f",
-        "sha-4113efb",
-        "sha-42459a3",
-        "sha-44b8b76",
-        "sha-44bfdf6",
-        "sha-460871b",
-        "sha-4751370",
-        "sha-57f48a3",
-        "sha-589baaa",
-        "sha-5f11d2d",
-        "sha-6737a68",
-        "sha-676bb4d",
-        "sha-69ef82f",
-        "sha-6b3a3ee",
-        "sha-6f1d111",
-        "sha-706e2a7",
-        "sha-7a6104d",
-        "sha-7baf724",
-        "sha-7de98ad",
-        "sha-8368b48",
-        "sha-83c0066",
-        "sha-8596aef",
-        "sha-88ccaae",
-        "sha-895c46b",
-        "sha-8eef298",
-        "sha-8fd6186",
-        "sha-9393b48",
-        "sha-97a58fd",
-        "sha-9898bd8",
-        "sha-9a7914f",
-        "sha-9aaef15",
-        "sha-9cf4087",
-        "sha-9ef6351",
-        "sha-a02caa3",
-        "sha-a48b4b2",
-        "sha-a5bd4e5",
-        "sha-a5d06a6",
-        "sha-abd95d2",
-        "sha-ac404f4",
-        "sha-b03914d",
-        "sha-bc504b0",
-        "sha-c985942",
-        "sha-d508b53",
-        "sha-d6c065a",
-        "sha-ddaba2c",
-        "sha-dfc66c6",
-        "sha-dfffabd",
-        "sha-e0945f2",
-        "sha-e178f38",
-        "sha-e1faaf9",
-        "sha-e5b0e77",
-        "sha-e7a1749",
-        "sha-e7e71c8",
-        "sha-ec016df",
-        "sha-ed8a1f2",
-        "sha-ef81c05",
-        "sha-f04d633",
-        "sha-f18e91b",
-        "sha-f2dc6eb",
-        "sha-f3abf1f",
-        "sha-f865cb0",
-        "sha-f86862e",
-        "sha-fd24eb9",
-        "sha-fde3495",
-        "sha-ff5b296"
-      ],
-      "release_lines": [
-        "0.20",
-        "0.20.0"
-      ]
-    },
     "sbom": {
       "analyzer": "sbom",
       "repository": "trivoallan/regis-cli",
-      "tag": "latest",
+      "tag": "0.18.0",
       "has_sbom": true,
       "sbom_format": "CycloneDX",
       "sbom_version": "1.6",
-      "total_components": 692,
+      "total_components": 689,
       "component_types": {
-        "library": 689,
-        "application": 2,
-        "operating-system": 1
+        "library": 686,
+        "operating-system": 1,
+        "application": 2
       },
-      "total_dependencies": 693,
+      "total_dependencies": 690,
       "licenses": [
         "0BSD",
         "Apache-2.0",
@@ -839,20 +451,63 @@
         "public-domain-sha1",
         "verbatim"
       ],
-      "copyleft_licenses": [
-        "GPL-2.0-only",
-        "GPL-2.0-or-later",
-        "GPL-3.0-only",
-        "GPL-3.0-or-later",
-        "LGPL-2.0-only",
-        "LGPL-2.0-or-later",
-        "LGPL-2.1-only",
-        "LGPL-2.1-or-later",
-        "LGPL-3.0-only",
-        "LGPL-3.0-or-later",
-        "MPL-2.0"
-      ],
       "components": [
+        {
+          "name": "github.com/pmezard/go-difflib",
+          "version": "v1.0.1-0.20181226105442-5d4384ee4fb2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/pmezard/go-difflib@v1.0.1-0.20181226105442-5d4384ee4fb2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/stretchr/objx",
+          "version": "v0.5.2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/stretchr/objx@v0.5.2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/felixge/httpsnoop",
+          "version": "v1.0.4",
+          "type": "library",
+          "purl": "pkg:golang/github.com/felixge/httpsnoop@v1.0.4",
+          "licenses": []
+        },
+        {
+          "name": "gopkg.in/yaml.v3",
+          "version": "v3.0.1",
+          "type": "library",
+          "purl": "pkg:golang/gopkg.in/yaml.v3@v3.0.1",
+          "licenses": []
+        },
+        {
+          "name": "github.com/moby/sys/mountinfo",
+          "version": "v0.7.2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/moby/sys/mountinfo@v0.7.2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/hashicorp/errwrap",
+          "version": "v1.1.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/hashicorp/errwrap@v1.1.0",
+          "licenses": []
+        },
+        {
+          "name": "github.com/pkg/errors",
+          "version": "v0.9.1",
+          "type": "library",
+          "purl": "pkg:golang/github.com/pkg/errors@v0.9.1",
+          "licenses": []
+        },
+        {
+          "name": "github.com/docker/distribution",
+          "version": "v2.8.3+incompatible",
+          "type": "library",
+          "purl": "pkg:golang/github.com/docker/distribution@v2.8.3%2Bincompatible",
+          "licenses": []
+        },
         {
           "name": "github.com/moby/sys/mountinfo",
           "version": "v0.7.2",
@@ -868,52 +523,24 @@
           "licenses": []
         },
         {
-          "name": "github.com/hashicorp/go-multierror",
-          "version": "v1.1.1",
+          "name": "regis-cli",
+          "version": "0.18.0",
           "type": "library",
-          "purl": "pkg:golang/github.com/hashicorp/go-multierror@v1.1.1",
+          "purl": "pkg:pypi/regis-cli@0.18.0",
+          "licenses": ["MIT"]
+        },
+        {
+          "name": "github.com/gogo/protobuf",
+          "version": "v1.3.2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/gogo/protobuf@v1.3.2",
           "licenses": []
         },
         {
-          "name": "regis-archive",
-          "version": "0.0.1",
+          "name": "github.com/opencontainers/go-digest",
+          "version": "v1.0.0",
           "type": "library",
-          "purl": "pkg:npm/regis-archive@0.0.1",
-          "licenses": []
-        },
-        {
-          "name": "github.com/go-logr/stdr",
-          "version": "v1.2.2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/go-logr/stdr@v1.2.2",
-          "licenses": []
-        },
-        {
-          "name": "github.com/docker/distribution",
-          "version": "v2.8.3+incompatible",
-          "type": "library",
-          "purl": "pkg:golang/github.com/docker/distribution@v2.8.3%2Bincompatible",
-          "licenses": []
-        },
-        {
-          "name": "github.com/stretchr/objx",
-          "version": "v0.5.2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/stretchr/objx@v0.5.2",
-          "licenses": []
-        },
-        {
-          "name": "github.com/json-iterator/go",
-          "version": "v1.1.12",
-          "type": "library",
-          "purl": "pkg:golang/github.com/json-iterator/go@v1.1.12",
-          "licenses": []
-        },
-        {
-          "name": "github.com/distribution/reference",
-          "version": "v0.6.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/distribution/reference@v0.6.0",
+          "purl": "pkg:golang/github.com/opencontainers/go-digest@v1.0.0",
           "licenses": []
         },
         {
@@ -924,77 +551,10 @@
           "licenses": []
         },
         {
-          "name": "github.com/moby/sys/mountinfo",
-          "version": "v0.7.2",
+          "name": "github.com/go-logr/stdr",
+          "version": "v1.2.2",
           "type": "library",
-          "purl": "pkg:golang/github.com/moby/sys/mountinfo@v0.7.2",
-          "licenses": []
-        },
-        {
-          "name": "github.com/stretchr/objx",
-          "version": "v0.5.2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/stretchr/objx@v0.5.2",
-          "licenses": []
-        },
-        {
-          "name": "gopkg.in/yaml.v3",
-          "version": "v3.0.1",
-          "type": "library",
-          "purl": "pkg:golang/gopkg.in/yaml.v3@v3.0.1",
-          "licenses": []
-        },
-        {
-          "name": "regis-archive",
-          "version": "0.0.1",
-          "type": "library",
-          "purl": "pkg:npm/regis-archive@0.0.1",
-          "licenses": []
-        },
-        {
-          "name": "regis-archive",
-          "version": "0.0.1",
-          "type": "library",
-          "purl": "pkg:npm/regis-archive@0.0.1",
-          "licenses": []
-        },
-        {
-          "name": "github.com/hashicorp/errwrap",
-          "version": "v1.1.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/hashicorp/errwrap@v1.1.0",
-          "licenses": []
-        },
-        {
-          "name": "regis-cli",
-          "version": "0.20.0",
-          "type": "library",
-          "purl": "pkg:pypi/regis-cli@0.20.0",
-          "licenses": [
-            "MIT"
-          ]
-        },
-        {
-          "name": "regis-cli",
-          "version": "0.20.0",
-          "type": "library",
-          "purl": "pkg:pypi/regis-cli@0.20.0",
-          "licenses": [
-            "MIT"
-          ]
-        },
-        {
-          "name": "github.com/pmezard/go-difflib",
-          "version": "v1.0.1-0.20181226105442-5d4384ee4fb2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/pmezard/go-difflib@v1.0.1-0.20181226105442-5d4384ee4fb2",
-          "licenses": []
-        },
-        {
-          "name": "github.com/opencontainers/go-digest",
-          "version": "v1.0.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/opencontainers/go-digest@v1.0.0",
+          "purl": "pkg:golang/github.com/go-logr/stdr@v1.2.2",
           "licenses": []
         },
         {
@@ -1005,27 +565,6 @@
           "licenses": []
         },
         {
-          "name": "github.com/google/uuid",
-          "version": "v1.6.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/google/uuid@v1.6.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/pmezard/go-difflib",
-          "version": "v1.0.1-0.20181226105442-5d4384ee4fb2",
-          "type": "library",
-          "purl": "pkg:golang/github.com/pmezard/go-difflib@v1.0.1-0.20181226105442-5d4384ee4fb2",
-          "licenses": []
-        },
-        {
-          "name": "github.com/opencontainers/go-digest",
-          "version": "v1.0.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/opencontainers/go-digest@v1.0.0",
-          "licenses": []
-        },
-        {
           "name": "github.com/knqyf263/nested",
           "version": "v0.0.1",
           "type": "library",
@@ -1033,17 +572,31 @@
           "licenses": []
         },
         {
-          "name": "github.com/felixge/httpsnoop",
-          "version": "v1.0.4",
+          "name": "github.com/docker/go-units",
+          "version": "v0.5.0",
           "type": "library",
-          "purl": "pkg:golang/github.com/felixge/httpsnoop@v1.0.4",
+          "purl": "pkg:golang/github.com/docker/go-units@v0.5.0",
           "licenses": []
         },
         {
-          "name": "github.com/gogo/protobuf",
-          "version": "v1.3.2",
+          "name": "github.com/distribution/reference",
+          "version": "v0.6.0",
           "type": "library",
-          "purl": "pkg:golang/github.com/gogo/protobuf@v1.3.2",
+          "purl": "pkg:golang/github.com/distribution/reference@v0.6.0",
+          "licenses": []
+        },
+        {
+          "name": "github.com/go-logr/stdr",
+          "version": "v1.2.2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/go-logr/stdr@v1.2.2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/google/uuid",
+          "version": "v1.6.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/google/uuid@v1.6.0",
           "licenses": []
         },
         {
@@ -1051,6 +604,41 @@
           "version": "v1.1.12",
           "type": "library",
           "purl": "pkg:golang/github.com/json-iterator/go@v1.1.12",
+          "licenses": []
+        },
+        {
+          "name": "gopkg.in/yaml.v3",
+          "version": "v3.0.1",
+          "type": "library",
+          "purl": "pkg:golang/gopkg.in/yaml.v3@v3.0.1",
+          "licenses": []
+        },
+        {
+          "name": "regis-cli",
+          "version": "0.18.0",
+          "type": "library",
+          "purl": "pkg:pypi/regis-cli@0.18.0",
+          "licenses": ["MIT"]
+        },
+        {
+          "name": "github.com/russross/blackfriday/v2",
+          "version": "v2.1.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/russross/blackfriday/v2@v2.1.0",
+          "licenses": []
+        },
+        {
+          "name": "github.com/davecgh/go-spew",
+          "version": "v1.1.2-0.20180830191138-d8f796af33cc",
+          "type": "library",
+          "purl": "pkg:golang/github.com/davecgh/go-spew@v1.1.2-0.20180830191138-d8f796af33cc",
+          "licenses": []
+        },
+        {
+          "name": "github.com/toqueteos/webbrowser",
+          "version": "v1.2.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/toqueteos/webbrowser@v1.2.0",
           "licenses": []
         },
         {
@@ -1068,115 +656,10 @@
           "licenses": []
         },
         {
-          "name": "gopkg.in/yaml.v3",
-          "version": "v3.0.1",
-          "type": "library",
-          "purl": "pkg:golang/gopkg.in/yaml.v3@v3.0.1",
-          "licenses": []
-        },
-        {
-          "name": "github.com/davecgh/go-spew",
-          "version": "v1.1.2-0.20180830191138-d8f796af33cc",
-          "type": "library",
-          "purl": "pkg:golang/github.com/davecgh/go-spew@v1.1.2-0.20180830191138-d8f796af33cc",
-          "licenses": []
-        },
-        {
-          "name": "github.com/hashicorp/go-multierror",
-          "version": "v1.1.1",
-          "type": "library",
-          "purl": "pkg:golang/github.com/hashicorp/go-multierror@v1.1.1",
-          "licenses": []
-        },
-        {
-          "name": "github.com/docker/go-units",
-          "version": "v0.5.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/docker/go-units@v0.5.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/russross/blackfriday/v2",
-          "version": "v2.1.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/russross/blackfriday/v2@v2.1.0",
-          "licenses": []
-        },
-        {
-          "name": "usr/local/bin/trivy",
-          "version": null,
-          "type": "application",
-          "purl": null,
-          "licenses": []
-        },
-        {
-          "name": "github.com/knqyf263/nested",
-          "version": "v0.0.1",
-          "type": "library",
-          "purl": "pkg:golang/github.com/knqyf263/nested@v0.0.1",
-          "licenses": []
-        },
-        {
-          "name": "github.com/moby/docker-image-spec",
-          "version": "v1.3.1",
-          "type": "library",
-          "purl": "pkg:golang/github.com/moby/docker-image-spec@v1.3.1",
-          "licenses": []
-        },
-        {
-          "name": "github.com/davecgh/go-spew",
-          "version": "v1.1.2-0.20180830191138-d8f796af33cc",
-          "type": "library",
-          "purl": "pkg:golang/github.com/davecgh/go-spew@v1.1.2-0.20180830191138-d8f796af33cc",
-          "licenses": []
-        },
-        {
           "name": "github.com/docker/distribution",
           "version": "v2.8.3+incompatible",
           "type": "library",
           "purl": "pkg:golang/github.com/docker/distribution@v2.8.3%2Bincompatible",
-          "licenses": []
-        },
-        {
-          "name": "github.com/distribution/reference",
-          "version": "v0.6.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/distribution/reference@v0.6.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/hashicorp/errwrap",
-          "version": "v1.1.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/hashicorp/errwrap@v1.1.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/russross/blackfriday/v2",
-          "version": "v2.1.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/russross/blackfriday/v2@v2.1.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/google/uuid",
-          "version": "v1.6.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/google/uuid@v1.6.0",
-          "licenses": []
-        },
-        {
-          "name": "github.com/felixge/httpsnoop",
-          "version": "v1.0.4",
-          "type": "library",
-          "purl": "pkg:golang/github.com/felixge/httpsnoop@v1.0.4",
-          "licenses": []
-        },
-        {
-          "name": "github.com/toqueteos/webbrowser",
-          "version": "v1.2.0",
-          "type": "library",
-          "purl": "pkg:golang/github.com/toqueteos/webbrowser@v1.2.0",
           "licenses": []
         },
         {
@@ -1187,17 +670,38 @@
           "licenses": []
         },
         {
-          "name": "github.com/go-logr/stdr",
-          "version": "v1.2.2",
+          "name": "github.com/davecgh/go-spew",
+          "version": "v1.1.2-0.20180830191138-d8f796af33cc",
           "type": "library",
-          "purl": "pkg:golang/github.com/go-logr/stdr@v1.2.2",
+          "purl": "pkg:golang/github.com/davecgh/go-spew@v1.1.2-0.20180830191138-d8f796af33cc",
           "licenses": []
         },
         {
-          "name": "github.com/pkg/errors",
-          "version": "v0.9.1",
+          "name": "github.com/russross/blackfriday/v2",
+          "version": "v2.1.0",
           "type": "library",
-          "purl": "pkg:golang/github.com/pkg/errors@v0.9.1",
+          "purl": "pkg:golang/github.com/russross/blackfriday/v2@v2.1.0",
+          "licenses": []
+        },
+        {
+          "name": "github.com/google/uuid",
+          "version": "v1.6.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/google/uuid@v1.6.0",
+          "licenses": []
+        },
+        {
+          "name": "github.com/stretchr/objx",
+          "version": "v0.5.2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/stretchr/objx@v0.5.2",
+          "licenses": []
+        },
+        {
+          "name": "github.com/pmezard/go-difflib",
+          "version": "v1.0.1-0.20181226105442-5d4384ee4fb2",
+          "type": "library",
+          "purl": "pkg:golang/github.com/pmezard/go-difflib@v1.0.1-0.20181226105442-5d4384ee4fb2",
           "licenses": []
         },
         {
@@ -1208,10 +712,17 @@
           "licenses": []
         },
         {
-          "name": "github.com/toqueteos/webbrowser",
-          "version": "v1.2.0",
+          "name": "github.com/moby/docker-image-spec",
+          "version": "v1.3.1",
           "type": "library",
-          "purl": "pkg:golang/github.com/toqueteos/webbrowser@v1.2.0",
+          "purl": "pkg:golang/github.com/moby/docker-image-spec@v1.3.1",
+          "licenses": []
+        },
+        {
+          "name": "github.com/opencontainers/go-digest",
+          "version": "v1.0.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/opencontainers/go-digest@v1.0.0",
           "licenses": []
         },
         {
@@ -1222,14 +733,74 @@
           "licenses": []
         },
         {
+          "name": "github.com/felixge/httpsnoop",
+          "version": "v1.0.4",
+          "type": "library",
+          "purl": "pkg:golang/github.com/felixge/httpsnoop@v1.0.4",
+          "licenses": []
+        },
+        {
+          "name": "github.com/hashicorp/errwrap",
+          "version": "v1.1.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/hashicorp/errwrap@v1.1.0",
+          "licenses": []
+        },
+        {
+          "name": "github.com/hashicorp/go-multierror",
+          "version": "v1.1.1",
+          "type": "library",
+          "purl": "pkg:golang/github.com/hashicorp/go-multierror@v1.1.1",
+          "licenses": []
+        },
+        {
+          "name": "github.com/toqueteos/webbrowser",
+          "version": "v1.2.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/toqueteos/webbrowser@v1.2.0",
+          "licenses": []
+        },
+        {
+          "name": "github.com/knqyf263/nested",
+          "version": "v0.0.1",
+          "type": "library",
+          "purl": "pkg:golang/github.com/knqyf263/nested@v0.0.1",
+          "licenses": []
+        },
+        {
+          "name": "github.com/distribution/reference",
+          "version": "v0.6.0",
+          "type": "library",
+          "purl": "pkg:golang/github.com/distribution/reference@v0.6.0",
+          "licenses": []
+        },
+        {
+          "name": "usr/local/bin/trivy",
+          "version": null,
+          "type": "application",
+          "purl": null,
+          "licenses": []
+        },
+        {
+          "name": "github.com/hashicorp/go-multierror",
+          "version": "v1.1.1",
+          "type": "library",
+          "purl": "pkg:golang/github.com/hashicorp/go-multierror@v1.1.1",
+          "licenses": []
+        },
+        {
+          "name": "github.com/json-iterator/go",
+          "version": "v1.1.12",
+          "type": "library",
+          "purl": "pkg:golang/github.com/json-iterator/go@v1.1.12",
+          "licenses": []
+        },
+        {
           "name": "adduser",
           "version": "3.152",
           "type": "library",
           "purl": "pkg:deb/debian/adduser@3.152?arch=all&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "apt",
@@ -1249,20 +820,14 @@
           "version": "13.8+deb13u4",
           "type": "library",
           "purl": "pkg:deb/debian/base-files@13.8%2Bdeb13u4?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "verbatim"
-          ]
+          "licenses": ["GPL-2.0-or-later", "verbatim"]
         },
         {
           "name": "base-passwd",
           "version": "3.6.7",
           "type": "library",
           "purl": "pkg:deb/debian/base-passwd@3.6.7?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-only",
-            "public-domain"
-          ]
+          "licenses": ["GPL-2.0-only", "public-domain"]
         },
         {
           "name": "bash",
@@ -1313,20 +878,14 @@
           "version": "20250419",
           "type": "library",
           "purl": "pkg:deb/debian/ca-certificates@20250419?arch=all&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "GPL-2.0-only",
-            "MPL-2.0"
-          ]
+          "licenses": ["GPL-2.0-or-later", "GPL-2.0-only", "MPL-2.0"]
         },
         {
           "name": "containernetworking-plugins",
           "version": "1.1.1+ds1-3+b17",
           "type": "library",
           "purl": "pkg:deb/debian/containernetworking-plugins@1.1.1%2Bds1-3%2Bb17?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "coreutils",
@@ -1379,18 +938,14 @@
           "version": "1.5.91",
           "type": "library",
           "purl": "pkg:deb/debian/debconf@1.5.91?arch=all&distro=debian-13.4",
-          "licenses": [
-            "BSD-2-Clause"
-          ]
+          "licenses": ["BSD-2-Clause"]
         },
         {
           "name": "debian-archive-keyring",
           "version": "2025.1",
           "type": "library",
           "purl": "pkg:deb/debian/debian-archive-keyring@2025.1?arch=all&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-or-later"
-          ]
+          "licenses": ["GPL-2.0-or-later"]
         },
         {
           "name": "debianutils",
@@ -1605,19 +1160,14 @@
           "version": "0.62.2+ds1-2",
           "type": "library",
           "purl": "pkg:deb/debian/golang-github-containers-common@0.62.2%2Bds1-2?arch=all&distro=debian-13.4",
-          "licenses": [
-            "Apache-2.0",
-            "MIT"
-          ]
+          "licenses": ["Apache-2.0", "MIT"]
         },
         {
           "name": "golang-github-containers-image",
           "version": "5.34.2-1",
           "type": "library",
           "purl": "pkg:deb/debian/golang-github-containers-image@5.34.2-1?arch=all&distro=debian-13.4",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "gpg-agent",
@@ -1712,10 +1262,7 @@
           "version": "3.11-4",
           "type": "library",
           "purl": "pkg:deb/debian/grep@3.11-4?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-3.0-or-later",
-            "GPL-3.0-only"
-          ]
+          "licenses": ["GPL-3.0-or-later", "GPL-3.0-only"]
         },
         {
           "name": "gzip",
@@ -1735,20 +1282,14 @@
           "version": "3.25",
           "type": "library",
           "purl": "pkg:deb/debian/hostname@3.25?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "init-system-helpers",
           "version": "1.69~deb13u1",
           "type": "library",
           "purl": "pkg:deb/debian/init-system-helpers@1.69~deb13u1?arch=all&distro=debian-13.4",
-          "licenses": [
-            "BSD-3-Clause",
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["BSD-3-Clause", "GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "iptables",
@@ -1841,22 +1382,14 @@
           "version": "1:4.0.2-2",
           "type": "library",
           "purl": "pkg:deb/debian/libaudit-common@4.0.2-2?arch=all&distro=debian-13.4&epoch=1",
-          "licenses": [
-            "GPL-2.0-only",
-            "LGPL-2.1-only",
-            "GPL-1.0-only"
-          ]
+          "licenses": ["GPL-2.0-only", "LGPL-2.1-only", "GPL-1.0-only"]
         },
         {
           "name": "libaudit1",
           "version": "1:4.0.2-2+b2",
           "type": "library",
           "purl": "pkg:deb/debian/libaudit1@4.0.2-2%2Bb2?arch=amd64&distro=debian-13.4&epoch=1",
-          "licenses": [
-            "GPL-2.0-only",
-            "LGPL-2.1-only",
-            "GPL-1.0-only"
-          ]
+          "licenses": ["GPL-2.0-only", "LGPL-2.1-only", "GPL-1.0-only"]
         },
         {
           "name": "libblkid1",
@@ -1888,9 +1421,7 @@
           "version": "1.1.0-2+b7",
           "type": "library",
           "purl": "pkg:deb/debian/libbrotli1@1.1.0-2%2Bb7?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "libbsd0",
@@ -1919,10 +1450,7 @@
           "version": "1.0.8-6",
           "type": "library",
           "purl": "pkg:deb/debian/libbz2-1.0@1.0.8-6?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "BSD-3-Clause",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["BSD-3-Clause", "GPL-2.0-only"]
         },
         {
           "name": "libc-bin",
@@ -2022,20 +1550,14 @@
           "version": "1:2.75-10+b8",
           "type": "library",
           "purl": "pkg:deb/debian/libcap2@2.75-10%2Bb8?arch=amd64&distro=debian-13.4&epoch=1",
-          "licenses": [
-            "BSD-3-Clause",
-            "GPL-2.0-only",
-            "GPL-2.0-or-later"
-          ]
+          "licenses": ["BSD-3-Clause", "GPL-2.0-only", "GPL-2.0-or-later"]
         },
         {
           "name": "libcbor0.10",
           "version": "0.10.2-2",
           "type": "library",
           "purl": "pkg:deb/debian/libcbor0.10@0.10.2-2?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "libcom-err2",
@@ -2128,20 +1650,14 @@
           "version": "0.280",
           "type": "library",
           "purl": "pkg:deb/debian/libdebconfclient0@0.280?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "BSD-2-Clause",
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["BSD-2-Clause", "GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libedit2",
           "version": "3.1-20250104-1",
           "type": "library",
           "purl": "pkg:deb/debian/libedit2@3.1-20250104-1?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "liberror-perl",
@@ -2160,9 +1676,7 @@
           "version": "2.7.1-2",
           "type": "library",
           "purl": "pkg:deb/debian/libexpat1@2.7.1-2?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "libffi8",
@@ -2184,11 +1698,7 @@
           "version": "1.15.0-1+b1",
           "type": "library",
           "purl": "pkg:deb/debian/libfido2-1@1.15.0-1%2Bb1?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "BSD-2-Clause",
-            "ISC",
-            "public-domain"
-          ]
+          "licenses": ["BSD-2-Clause", "ISC", "public-domain"]
         },
         {
           "name": "libgcc-s1",
@@ -2202,10 +1712,7 @@
           "version": "1.11.0-7",
           "type": "library",
           "purl": "pkg:deb/debian/libgcrypt20@1.11.0-7?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "LGPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["LGPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libgdbm-compat4t64",
@@ -2307,9 +1814,7 @@
           "version": "1.21.3-5",
           "type": "library",
           "purl": "pkg:deb/debian/libgssapi-krb5-2@1.21.3-5?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "libhogweed6t64",
@@ -2373,9 +1878,7 @@
           "version": "1.21.3-5",
           "type": "library",
           "purl": "pkg:deb/debian/libk5crypto3@1.21.3-5?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "libkeyutils1",
@@ -2394,29 +1897,21 @@
           "version": "1.21.3-5",
           "type": "library",
           "purl": "pkg:deb/debian/libkrb5-3@1.21.3-5?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "libkrb5support0",
           "version": "1.21.3-5",
           "type": "library",
           "purl": "pkg:deb/debian/libkrb5support0@1.21.3-5?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "libksba8",
           "version": "1.6.7-2+b1",
           "type": "library",
           "purl": "pkg:deb/debian/libksba8@1.6.7-2%2Bb1?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-3.0-only",
-            "FSFUL",
-            "LGPL-2.1-or-later"
-          ]
+          "licenses": ["GPL-3.0-only", "FSFUL", "LGPL-2.1-or-later"]
         },
         {
           "name": "liblastlog2-2",
@@ -2480,11 +1975,7 @@
           "version": "1.10.0-4",
           "type": "library",
           "purl": "pkg:deb/debian/liblz4-1@1.10.0-4?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "BSD-2-Clause",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-or-later", "BSD-2-Clause", "GPL-2.0-only"]
         },
         {
           "name": "liblzma5",
@@ -2530,11 +2021,7 @@
           "version": "1.0.5-3",
           "type": "library",
           "purl": "pkg:deb/debian/libmnl0@1.0.5-3?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "LGPL-2.1-only",
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["LGPL-2.1-only", "GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libmount1",
@@ -2573,10 +2060,7 @@
           "version": "1.1.0-1",
           "type": "library",
           "purl": "pkg:deb/debian/libnetfilter-conntrack3@1.1.0-1?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libnettle8t64",
@@ -2600,20 +2084,14 @@
           "version": "1.0.2-3",
           "type": "library",
           "purl": "pkg:deb/debian/libnfnetlink0@1.0.2-3?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libnftnl11",
           "version": "1.2.9-1",
           "type": "library",
           "purl": "pkg:deb/debian/libnftnl11@1.2.9-1?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libnghttp2-14",
@@ -2687,10 +2165,7 @@
           "version": "1.8-3",
           "type": "library",
           "purl": "pkg:deb/debian/libnpth0t64@1.8-3?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "LGPL-2.1-or-later",
-            "LGPL-2.1-only"
-          ]
+          "licenses": ["LGPL-2.1-or-later", "LGPL-2.1-only"]
         },
         {
           "name": "libp11-kit0",
@@ -2837,11 +2312,7 @@
           "version": "0.21.2-1.1+b1",
           "type": "library",
           "purl": "pkg:deb/debian/libpsl5t64@0.21.2-1.1%2Bb1?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "MIT",
-            "gnulib",
-            "Chromium"
-          ]
+          "licenses": ["MIT", "gnulib", "Chromium"]
         },
         {
           "name": "libreadline8t64",
@@ -2863,10 +2334,7 @@
           "version": "2.4+20151223.gitfa8646d.1-2+b5",
           "type": "library",
           "purl": "pkg:deb/debian/librtmp1@2.4%2B20151223.gitfa8646d.1-2%2Bb5?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-only",
-            "LGPL-2.1-only"
-          ]
+          "licenses": ["GPL-2.0-only", "LGPL-2.1-only"]
         },
         {
           "name": "libsasl2-2",
@@ -2923,41 +2391,28 @@
           "version": "2.6.0-2",
           "type": "library",
           "purl": "pkg:deb/debian/libseccomp2@2.6.0-2?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "LGPL-2.1-only"
-          ]
+          "licenses": ["LGPL-2.1-only"]
         },
         {
           "name": "libselinux1",
           "version": "3.8.1-1",
           "type": "library",
           "purl": "pkg:deb/debian/libselinux1@3.8.1-1?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "public-domain",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["public-domain", "GPL-2.0-only"]
         },
         {
           "name": "libsemanage-common",
           "version": "3.8.1-1",
           "type": "library",
           "purl": "pkg:deb/debian/libsemanage-common@3.8.1-1?arch=all&distro=debian-13.4",
-          "licenses": [
-            "LGPL-2.1-or-later",
-            "LGPL-2.1-only",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["LGPL-2.1-or-later", "LGPL-2.1-only", "GPL-2.0-only"]
         },
         {
           "name": "libsemanage2",
           "version": "3.8.1-1",
           "type": "library",
           "purl": "pkg:deb/debian/libsemanage2@3.8.1-1?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "LGPL-2.1-or-later",
-            "LGPL-2.1-only",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["LGPL-2.1-or-later", "LGPL-2.1-only", "GPL-2.0-only"]
         },
         {
           "name": "libsepol2",
@@ -3002,21 +2457,14 @@
           "version": "3.46.1-7+deb13u1",
           "type": "library",
           "purl": "pkg:deb/debian/libsqlite3-0@3.46.1-7%2Bdeb13u1?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "public-domain",
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["public-domain", "GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libssh2-1t64",
           "version": "1.11.1-1",
           "type": "library",
           "purl": "pkg:deb/debian/libssh2-1t64@1.11.1-1?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "BSD-3-Clause",
-            "ISC"
-          ]
+          "licenses": ["BSD-3-Clause", "ISC"]
         },
         {
           "name": "libssl3t64",
@@ -3070,11 +2518,7 @@
           "version": "6.5+20250216-2",
           "type": "library",
           "purl": "pkg:deb/debian/libtinfo6@6.5%2B20250216-2?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "MIT-X11",
-            "X11",
-            "BSD-3-Clause"
-          ]
+          "licenses": ["MIT-X11", "X11", "BSD-3-Clause"]
         },
         {
           "name": "libudev1",
@@ -3211,23 +2655,14 @@
           "version": "0.8.3-2",
           "type": "library",
           "purl": "pkg:deb/debian/libxxhash0@0.8.3-2?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "BSD-2-Clause",
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["BSD-2-Clause", "GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libzstd1",
           "version": "1.5.7+dfsg-1",
           "type": "library",
           "purl": "pkg:deb/debian/libzstd1@1.5.7%2Bdfsg-1?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "BSD-3-Clause",
-            "GPL-2.0-only",
-            "Zlib",
-            "MIT"
-          ]
+          "licenses": ["BSD-3-Clause", "GPL-2.0-only", "Zlib", "MIT"]
         },
         {
           "name": "login.defs",
@@ -3271,11 +2706,7 @@
           "version": "1.3.4.20250131-1",
           "type": "library",
           "purl": "pkg:deb/debian/mawk@1.3.4.20250131-1?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-only",
-            "X11",
-            "CC-BY-3.0"
-          ]
+          "licenses": ["GPL-2.0-only", "X11", "CC-BY-3.0"]
         },
         {
           "name": "mount",
@@ -3307,31 +2738,21 @@
           "version": "6.5+20250216-2",
           "type": "library",
           "purl": "pkg:deb/debian/ncurses-base@6.5%2B20250216-2?arch=all&distro=debian-13.4",
-          "licenses": [
-            "MIT-X11",
-            "X11",
-            "BSD-3-Clause"
-          ]
+          "licenses": ["MIT-X11", "X11", "BSD-3-Clause"]
         },
         {
           "name": "ncurses-bin",
           "version": "6.5+20250216-2",
           "type": "library",
           "purl": "pkg:deb/debian/ncurses-bin@6.5%2B20250216-2?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "MIT-X11",
-            "X11",
-            "BSD-3-Clause"
-          ]
+          "licenses": ["MIT-X11", "X11", "BSD-3-Clause"]
         },
         {
           "name": "netbase",
           "version": "6.5",
           "type": "library",
           "purl": "pkg:deb/debian/netbase@6.5?arch=all&distro=debian-13.4",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "openssh-client",
@@ -3389,10 +2810,7 @@
           "version": "2.8-2",
           "type": "library",
           "purl": "pkg:deb/debian/patch@2.8-2?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "GPL-3.0-or-later",
-            "GPL-3.0-only"
-          ]
+          "licenses": ["GPL-3.0-or-later", "GPL-3.0-only"]
         },
         {
           "name": "perl-base",
@@ -3537,21 +2955,14 @@
           "version": "1.18.0+ds1-1+b5",
           "type": "library",
           "purl": "pkg:deb/debian/skopeo@1.18.0%2Bds1-1%2Bb5?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "Apache-2.0-and-or-Expat",
-            "Apache-2.0",
-            "MIT"
-          ]
+          "licenses": ["Apache-2.0-and-or-Expat", "Apache-2.0", "MIT"]
         },
         {
           "name": "sqv",
           "version": "1.3.0-3+b2",
           "type": "library",
           "purl": "pkg:deb/debian/sqv@1.3.0-3%2Bb2?arch=amd64&distro=debian-13.4",
-          "licenses": [
-            "LGPL-2.0-or-later",
-            "LGPL-2.0-only"
-          ]
+          "licenses": ["LGPL-2.0-or-later", "LGPL-2.0-only"]
         },
         {
           "name": "sysvinit-utils",
@@ -3588,9 +2999,7 @@
           "version": "2026a-0+deb13u1",
           "type": "library",
           "purl": "pkg:deb/debian/tzdata@2026a-0%2Bdeb13u1?arch=all&distro=debian-13.4",
-          "licenses": [
-            "public-domain"
-          ]
+          "licenses": ["public-domain"]
         },
         {
           "name": "util-linux",
@@ -3629,9 +3038,7 @@
           "version": "1:1.3.dfsg+really1.3.1-1+b1",
           "type": "library",
           "purl": "pkg:deb/debian/zlib1g@1.3.dfsg%2Breally1.3.1-1%2Bb1?arch=amd64&distro=debian-13.4&epoch=1",
-          "licenses": [
-            "Zlib"
-          ]
+          "licenses": ["Zlib"]
         },
         {
           "name": "cel.dev/expr",
@@ -6764,9 +6171,9 @@
         },
         {
           "name": "docs",
-          "version": "0.20.0",
+          "version": "0.18.0",
           "type": "library",
-          "purl": "pkg:npm/docs@0.20.0",
+          "purl": "pkg:npm/docs@0.18.0",
           "licenses": []
         },
         {
@@ -6774,54 +6181,42 @@
           "version": "1.4.0",
           "type": "library",
           "purl": "pkg:pypi/arrow@1.4.0",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "attrs",
           "version": "26.1.0",
           "type": "library",
           "purl": "pkg:pypi/attrs@26.1.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "binaryornot",
           "version": "0.6.0",
           "type": "library",
           "purl": "pkg:pypi/binaryornot@0.6.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "certifi",
           "version": "2026.2.25",
           "type": "library",
           "purl": "pkg:pypi/certifi@2026.2.25",
-          "licenses": [
-            "MPL-2.0"
-          ]
+          "licenses": ["MPL-2.0"]
         },
         {
           "name": "charset-normalizer",
           "version": "3.4.6",
           "type": "library",
           "purl": "pkg:pypi/charset-normalizer@3.4.6",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "click",
           "version": "8.3.1",
           "type": "library",
           "purl": "pkg:pypi/click@8.3.1",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "cookiecutter",
@@ -6835,313 +6230,380 @@
           "version": "3.11",
           "type": "library",
           "purl": "pkg:pypi/idna@3.11",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "Jinja2",
           "version": "3.1.6",
           "type": "library",
           "purl": "pkg:pypi/jinja2@3.1.6",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "json-logic-qubit",
           "version": "0.9.1",
           "type": "library",
           "purl": "pkg:pypi/json-logic-qubit@0.9.1",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "jsonschema-specifications",
           "version": "2025.9.1",
           "type": "library",
           "purl": "pkg:pypi/jsonschema-specifications@2025.9.1",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "jsonschema",
           "version": "4.26.0",
           "type": "library",
           "purl": "pkg:pypi/jsonschema@4.26.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "markdown-it-py",
           "version": "4.0.0",
           "type": "library",
           "purl": "pkg:pypi/markdown-it-py@4.0.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "MarkupSafe",
           "version": "3.0.3",
           "type": "library",
           "purl": "pkg:pypi/markupsafe@3.0.3",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "mdurl",
           "version": "0.1.2",
           "type": "library",
           "purl": "pkg:pypi/mdurl@0.1.2",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "pip",
           "version": "25.0.1",
           "type": "library",
           "purl": "pkg:pypi/pip@25.0.1",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "Pygments",
           "version": "2.19.2",
           "type": "library",
           "purl": "pkg:pypi/pygments@2.19.2",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "python-dateutil",
           "version": "2.9.0.post0",
           "type": "library",
           "purl": "pkg:pypi/python-dateutil@2.9.0.post0",
-          "licenses": [
-            "BSD-3-Clause",
-            "Apache-2.0"
-          ]
+          "licenses": ["BSD-3-Clause", "Apache-2.0"]
         },
         {
           "name": "python-gitlab",
           "version": "8.1.0",
           "type": "library",
           "purl": "pkg:pypi/python-gitlab@8.1.0",
-          "licenses": [
-            "LGPL-3.0-only"
-          ]
+          "licenses": ["LGPL-3.0-only"]
         },
         {
           "name": "python-slugify",
           "version": "8.0.4",
           "type": "library",
           "purl": "pkg:pypi/python-slugify@8.0.4",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "PyYAML",
           "version": "6.0.3",
           "type": "library",
           "purl": "pkg:pypi/pyyaml@6.0.3",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "referencing",
           "version": "0.36.2",
           "type": "library",
           "purl": "pkg:pypi/referencing@0.36.2",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "requests-toolbelt",
           "version": "1.0.0",
           "type": "library",
           "purl": "pkg:pypi/requests-toolbelt@1.0.0",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "requests",
           "version": "2.32.5",
           "type": "library",
           "purl": "pkg:pypi/requests@2.32.5",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "rich",
           "version": "14.3.3",
           "type": "library",
           "purl": "pkg:pypi/rich@14.3.3",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "rpds-py",
           "version": "0.30.0",
           "type": "library",
           "purl": "pkg:pypi/rpds-py@0.30.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "semver",
           "version": "3.0.4",
           "type": "library",
           "purl": "pkg:pypi/semver@3.0.4",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "six",
           "version": "1.17.0",
           "type": "library",
           "purl": "pkg:pypi/six@1.17.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "text-unidecode",
           "version": "1.3",
           "type": "library",
           "purl": "pkg:pypi/text-unidecode@1.3",
-          "licenses": [
-            "Artistic-2.0",
-            "GPL-3.0-or-later",
-            "GPL-2.0-or-later"
-          ]
+          "licenses": ["Artistic-2.0", "GPL-3.0-or-later", "GPL-2.0-or-later"]
         },
         {
           "name": "typing_extensions",
           "version": "4.15.0",
           "type": "library",
           "purl": "pkg:pypi/typing-extensions@4.15.0",
-          "licenses": [
-            "PSF-2.0"
-          ]
+          "licenses": ["PSF-2.0"]
         },
         {
           "name": "tzdata",
           "version": "2025.3",
           "type": "library",
           "purl": "pkg:pypi/tzdata@2025.3",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "urllib3",
           "version": "2.6.3",
           "type": "library",
           "purl": "pkg:pypi/urllib3@2.6.3",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         }
       ]
     },
-    "dockle": {
-      "analyzer": "dockle",
+    "scorecarddev": {
+      "analyzer": "scorecarddev",
       "repository": "trivoallan/regis-cli",
-      "tag": "latest",
-      "passed": false,
-      "issues_count": 6,
-      "issues_by_level": {
-        "FATAL": 2,
-        "WARN": 1,
-        "INFO": 3,
-        "SKIP": 0,
-        "PASS": 0
-      },
-      "issues": [
+      "source_repo": "https://github.com/trivoallan/regis-cli",
+      "scorecard_available": false,
+      "score": null,
+      "checks": []
+    },
+    "size": {
+      "analyzer": "size",
+      "repository": "trivoallan/regis-cli",
+      "tag": "0.18.0",
+      "multi_arch": true,
+      "total_compressed_bytes": 217241583,
+      "total_compressed_human": "207.2 MB",
+      "layer_count": 14,
+      "config_size_bytes": 0,
+      "layers": [],
+      "platforms": [
         {
-          "code": "CIS-DI-0010",
-          "level": "FATAL",
-          "title": "Do not store credential in environment variables/files",
-          "alerts": [
-            "Suspicious filename found : usr/local/lib/python3.12/site-packages/gitlab/v4/objects/settings.py (You can suppress it with \"-af settings.py\")"
-          ]
+          "platform": "linux/amd64",
+          "compressed_bytes": 217241583,
+          "compressed_human": "207.2 MB",
+          "layer_count": 14
         },
         {
-          "code": "DKL-DI-0005",
-          "level": "FATAL",
-          "title": "Clear apt-get caches",
-          "alerts": [
-            "Use 'rm -rf /var/lib/apt/lists' after 'apt-get install|update' : RUN /bin/sh -c set -eux; \tapt-get update; \tapt-get install -y --no-install-recommends \t\tca-certificates \t\tnetbase \t\ttzdata \t; \tapt-get dist-clean # buildkit",
-            "Use 'rm -rf /var/lib/apt/lists' after 'apt-get install|update' : RUN /bin/sh -c apt-get update && apt-get install -y git # buildkit"
-          ]
-        },
-        {
-          "code": "DKL-DI-0006",
-          "level": "WARN",
-          "title": "Avoid latest tag",
-          "alerts": [
-            "Avoid 'latest' tag"
-          ]
-        },
-        {
-          "code": "CIS-DI-0005",
-          "level": "INFO",
-          "title": "Enable Content trust for Docker",
-          "alerts": [
-            "export DOCKER_CONTENT_TRUST=1 before docker pull/build"
-          ]
-        },
-        {
-          "code": "CIS-DI-0008",
-          "level": "INFO",
-          "title": "Confirm safety of setuid/setgid files",
-          "alerts": [
-            "setuid file: urwxr-xr-x usr/bin/mount",
-            "setgid file: grwxr-xr-x usr/bin/chage",
-            "setuid file: urwxr-xr-x usr/lib/openssh/ssh-keysign",
-            "setuid file: urwxr-xr-x usr/bin/gpasswd",
-            "setuid file: urwxr-xr-x usr/bin/su",
-            "setuid file: urwxr-xr-x usr/bin/passwd",
-            "setuid file: urwxr-xr-x usr/bin/newgrp",
-            "setgid file: grwxr-xr-x usr/sbin/unix_chkpwd",
-            "setuid file: urwxr-xr-x usr/bin/umount",
-            "setuid file: urwxr-xr-x usr/bin/chsh",
-            "setgid file: grwxr-xr-x usr/bin/expiry",
-            "setuid file: urwxr-xr-x usr/bin/chfn",
-            "setgid file: grwxr-xr-x usr/bin/ssh-agent"
-          ]
-        },
-        {
-          "code": "DKL-LI-0003",
-          "level": "INFO",
-          "title": "Only put necessary files",
-          "alerts": [
-            "Suspicious directory : app/.git ",
-            "unnecessary file : app/Dockerfile "
-          ]
+          "platform": "unknown/unknown",
+          "compressed_bytes": 40970,
+          "compressed_human": "40.0 KB",
+          "layer_count": 1
         }
+      ]
+    },
+    "skopeo": {
+      "analyzer": "skopeo",
+      "repository": "trivoallan/regis-cli",
+      "tag": "0.18.0",
+      "platforms": [
+        {
+          "architecture": "amd64",
+          "os": "linux",
+          "digest": "sha256:91b474c9c8f3046edb485acc870982f683f5b87b069bc2060448d509491dc729",
+          "created": "2026-03-21T01:34:50.907884378Z",
+          "labels": {
+            "org.opencontainers.image.authors": "trivoallan",
+            "org.opencontainers.image.created": "2026-03-21T01:34:17.660Z",
+            "org.opencontainers.image.description": "Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.",
+            "org.opencontainers.image.documentation": "https://trivoallan.github.io/regis-cli/",
+            "org.opencontainers.image.licenses": "",
+            "org.opencontainers.image.revision": "8596aef162aa416662855a46f12733598484eeaf",
+            "org.opencontainers.image.source": "https://github.com/trivoallan/regis-cli",
+            "org.opencontainers.image.title": "regis-cli",
+            "org.opencontainers.image.url": "https://github.com/trivoallan/regis-cli",
+            "org.opencontainers.image.vendor": "trivoallan",
+            "org.opencontainers.image.version": "0.18.0"
+          },
+          "layers_count": 14,
+          "size": 0,
+          "exposed_ports": [],
+          "env": [],
+          "variant": null,
+          "user": "regis"
+        },
+        {
+          "architecture": "unknown",
+          "os": "unknown",
+          "digest": "sha256:9ba185281fb5dc515a6187a3585ac0cfd9774055dc8af5b9df36086c6714095a",
+          "created": null,
+          "labels": {},
+          "layers_count": 1,
+          "size": 0,
+          "exposed_ports": [],
+          "env": [],
+          "variant": null,
+          "user": ""
+        }
+      ],
+      "inspect": {},
+      "tags": [
+        "main",
+        "sha-dfc66c6",
+        "sha-376c16e",
+        "sha-2823f64",
+        "sha-a5d06a6",
+        "sha-391d74f",
+        "sha-9ef6351",
+        "sha-9cf4087",
+        "sha-ddaba2c",
+        "sha-460871b",
+        "sha-5f11d2d",
+        "sha-4113efb",
+        "sha-a02caa3",
+        "sha-4751370",
+        "sha-83c0066",
+        "sha-895c46b",
+        "sha-f3abf1f",
+        "sha-e1faaf9",
+        "sha-6737a68",
+        "sha-6f1d111",
+        "sha-7a6104d",
+        "sha-21b7549",
+        "sha-97a58fd",
+        "sha-ed8a1f2",
+        "0.2.2",
+        "0.2",
+        "sha-6b3a3ee",
+        "latest",
+        "sha-dfffabd",
+        "sha-88ccaae",
+        "0.3.0",
+        "0.3",
+        "sha-f86862e",
+        "sha-295db88",
+        "sha-44b8b76",
+        "sha-706e2a7",
+        "sha-e7e71c8",
+        "0.4.0",
+        "0.4",
+        "sha-8368b48",
+        "sha-69ef82f",
+        "sha-c985942",
+        "sha-b03914d",
+        "sha-7de98ad",
+        "sha-e178f38",
+        "sha-44bfdf6",
+        "sha-f2dc6eb",
+        "sha-d508b53",
+        "sha-2bffefd",
+        "sha-e0945f2",
+        "sha-676bb4d",
+        "0.5.0",
+        "0.5",
+        "sha-342d0b8",
+        "sha-d6c065a",
+        "sha-194d574",
+        "0.7.0",
+        "0.7",
+        "sha-e5b0e77",
+        "0.8.0",
+        "0.8",
+        "sha-fd24eb9",
+        "0.9.0",
+        "0.9",
+        "sha-57f48a3",
+        "sha-08211a2",
+        "sha-9393b48",
+        "sha-a48b4b2",
+        "sha-abd95d2",
+        "0.10.0",
+        "0.10",
+        "sha-f04d633",
+        "sha-340f44d",
+        "sha-f18e91b",
+        "sha-ef81c05",
+        "sha-1664655",
+        "sha-9898bd8",
+        "0.11.0",
+        "0.11",
+        "sha-9aaef15",
+        "sha-f865cb0",
+        "sha-9a7914f",
+        "0.12.0",
+        "0.12",
+        "sha-42459a3",
+        "0.13.0",
+        "0.13",
+        "sha-8eef298",
+        "0.14.0",
+        "0.14",
+        "sha-bc504b0",
+        "0.14.1",
+        "sha-15794ab",
+        "0.14.2",
+        "sha-a5bd4e5",
+        "0.15.0",
+        "0.15",
+        "sha-1ee30bb",
+        "0.16.0",
+        "0.16",
+        "sha-7baf724",
+        "0.17.0",
+        "0.17",
+        "sha-e7a1749",
+        "0.17.1",
+        "sha-ac404f4",
+        "sha-3678043",
+        "sha-8fd6186",
+        "0.17.2",
+        "sha-1baea9a",
+        "0.17.3",
+        "sha-ff5b296",
+        "0.17.4",
+        "sha-11fde48",
+        "0.18.0",
+        "0.18",
+        "sha-8596aef"
       ]
     },
     "trivy": {
       "analyzer": "trivy",
       "repository": "trivoallan/regis-cli",
-      "tag": "latest",
+      "tag": "0.18.0",
       "trivy_version": "2",
       "vulnerability_count": 224,
       "critical_count": 2,
@@ -7153,7 +6615,7 @@
       "secrets_count": 0,
       "targets": [
         {
-          "Target": "ghcr.io/trivoallan/regis-cli:latest (debian 13.4)",
+          "Target": "ghcr.io/trivoallan/regis-cli:0.18.0 (debian 13.4)",
           "Vulnerabilities": [
             {
               "VulnerabilityID": "CVE-2011-3374",
@@ -9198,6 +8660,68 @@
           "Secrets": null
         }
       ]
+    },
+    "versioning": {
+      "analyzer": "versioning",
+      "repository": "trivoallan/regis-cli",
+      "total_tags": 117,
+      "dominant_pattern": "named",
+      "semver_compliant_percentage": 18.8,
+      "patterns": [
+        {
+          "pattern": "named",
+          "count": 79,
+          "percentage": 67.5,
+          "examples": [
+            "latest",
+            "main",
+            "sha-08211a2",
+            "sha-11fde48",
+            "sha-15794ab",
+            "sha-1664655",
+            "sha-194d574",
+            "sha-1baea9a",
+            "sha-1ee30bb",
+            "sha-21b7549"
+          ]
+        },
+        {
+          "pattern": "numeric",
+          "count": 16,
+          "percentage": 13.7,
+          "examples": [
+            "0.10",
+            "0.11",
+            "0.12",
+            "0.13",
+            "0.14",
+            "0.15",
+            "0.16",
+            "0.17",
+            "0.18",
+            "0.2"
+          ]
+        },
+        {
+          "pattern": "semver",
+          "count": 22,
+          "percentage": 18.8,
+          "examples": [
+            "0.10.0",
+            "0.11.0",
+            "0.12.0",
+            "0.13.0",
+            "0.14.0",
+            "0.14.1",
+            "0.14.2",
+            "0.15.0",
+            "0.16.0",
+            "0.17.0"
+          ]
+        }
+      ],
+      "variants": [],
+      "release_lines": []
     }
   },
   "rules": [
@@ -9205,37 +8729,27 @@
       "slug": "env-blacklist",
       "description": "Image must not contain forbidden environment variables.",
       "level": "critical",
-      "tags": [
-        "security"
-      ],
+      "tags": ["security"],
       "passed": true,
       "status": "passed",
       "message": "No forbidden environment variables found.",
-      "analyzers": [
-        "skopeo"
-      ]
+      "analyzers": ["skopeo"]
     },
     {
       "slug": "no-root",
       "description": "Image must not run as root.",
       "level": "critical",
-      "tags": [
-        "security"
-      ],
+      "tags": ["security"],
       "passed": true,
       "status": "passed",
       "message": "Image does not run as 'root'.",
-      "analyzers": [
-        "skopeo"
-      ]
+      "analyzers": ["skopeo"]
     },
     {
       "slug": "registry-domain-whitelist",
       "description": "Checks if requested image registry domain is in the domains list.",
       "level": "critical",
-      "tags": [
-        "security"
-      ],
+      "tags": ["security"],
       "passed": true,
       "status": "passed",
       "message": "Image registry domain 'ghcr.io' is in the domains list.",
@@ -9245,209 +8759,201 @@
       "slug": "secret-scan",
       "description": "No secrets or credentials should be embedded in the image.",
       "level": "critical",
-      "tags": [
-        "security"
-      ],
+      "tags": ["security"],
       "passed": true,
       "status": "passed",
       "message": "No secrets detected in the image.",
-      "analyzers": [
-        "trivy"
-      ]
+      "analyzers": ["trivy"]
+    },
+    {
+      "slug": "user-blacklist",
+      "description": "Image must not run as root.",
+      "level": "critical",
+      "tags": ["security"],
+      "passed": true,
+      "status": "passed",
+      "message": "Image does not run as 'root'.",
+      "analyzers": ["skopeo"]
     },
     {
       "slug": "exposed-ports-whitelist",
       "description": "Image exposes permitted ports.",
       "level": "warning",
-      "tags": [
-        "security"
-      ],
+      "tags": ["security"],
       "passed": true,
       "status": "passed",
       "message": "All exposed ports are allowed.",
-      "analyzers": [
-        "skopeo"
-      ]
+      "analyzers": ["skopeo"]
     },
     {
       "slug": "has-sbom",
       "description": "Image must provide a Software Bill of Materials.",
       "level": "warning",
-      "tags": [
-        "compliance"
-      ],
+      "tags": ["compliance"],
       "passed": true,
       "status": "passed",
       "message": "SBOM is available for this image.",
-      "analyzers": [
-        "sbom"
-      ]
+      "analyzers": ["sbom"]
     },
     {
       "slug": "layers-count",
       "description": "Image has an acceptable number of layers.",
       "level": "warning",
-      "tags": [
-        "performance"
-      ],
+      "tags": ["performance"],
       "passed": true,
       "status": "passed",
       "message": "Image has 14 layers.",
-      "analyzers": [
-        "skopeo"
-      ]
+      "analyzers": ["skopeo"]
     },
     {
       "slug": "max-size",
       "description": "Image size is within limits.",
       "level": "warning",
-      "tags": [
-        "hygiene"
-      ],
+      "tags": ["hygiene"],
       "passed": true,
       "status": "passed",
       "message": "Image size is within limits (0 bytes).",
-      "analyzers": [
-        "skopeo"
-      ]
+      "analyzers": ["skopeo"]
     },
     {
       "slug": "required-labels",
       "description": "Image must have required OCI labels.",
       "level": "warning",
-      "tags": [
-        "metadata"
-      ],
+      "tags": ["metadata"],
       "passed": true,
       "status": "passed",
       "message": "All required labels are present.",
-      "analyzers": [
-        "skopeo"
-      ]
+      "analyzers": ["skopeo"]
+    },
+    {
+      "slug": "tag-blacklist",
+      "description": "Image tag should not be 'latest'.",
+      "level": "warning",
+      "tags": ["lifecycle"],
+      "passed": true,
+      "status": "passed",
+      "message": "Image tag is not 'latest'.",
+      "analyzers": []
     },
     {
       "slug": "age",
       "description": "Image should be less than expected days old.",
       "level": "info",
-      "tags": [
-        "freshness"
-      ],
+      "tags": ["freshness"],
       "passed": true,
       "status": "passed",
-      "message": "Image is less than 90 days old (8 days).",
-      "analyzers": [
-        "freshness"
-      ]
-    },
-    {
-      "slug": "platforms-count",
-      "description": "Image should support multiple platforms.",
-      "level": "info",
-      "tags": [
-        "compatibility"
-      ],
-      "passed": true,
-      "status": "passed",
-      "message": "Image supports 2 platforms.",
-      "analyzers": [
-        "skopeo"
-      ]
-    },
-    {
-      "slug": "cve-critical",
-      "description": "Max allowed violations for a given severity level.",
-      "level": "critical",
-      "tags": [
-        "security"
-      ],
-      "passed": false,
-      "status": "failed",
-      "message": "Image has 2 critical CVEs (max allowed: 0).",
-      "analyzers": [
-        "trivy"
-      ]
-    },
-    {
-      "slug": "cve-fixable",
-      "description": "All vulnerabilities should be fixed if a patch exists.",
-      "level": "warning",
-      "tags": [
-        "security"
-      ],
-      "passed": false,
-      "status": "failed",
-      "message": "Image has 39 vulnerabilities with available fixes.",
-      "analyzers": [
-        "trivy"
-      ]
-    },
-    {
-      "slug": "cve-high",
-      "description": "Max allowed violations for a given severity level.",
-      "level": "warning",
-      "tags": [
-        "security"
-      ],
-      "passed": false,
-      "status": "failed",
-      "message": "Image has 19 high CVEs (max allowed: 10).",
-      "analyzers": [
-        "trivy"
-      ]
-    },
-    {
-      "slug": "scorecard-min",
-      "description": "OpenSSF Scorecard score is above the threshold.",
-      "level": "warning",
-      "tags": [
-        "security"
-      ],
-      "passed": false,
-      "status": "incomplete",
-      "message": "Scorecard score is too low: None (min required: 5.0).",
-      "analyzers": [
-        "scorecarddev"
-      ]
-    },
-    {
-      "slug": "severity-count",
-      "description": "Max allowed issues for a given severity level.",
-      "level": "warning",
-      "tags": [
-        "security"
-      ],
-      "passed": false,
-      "status": "failed",
-      "message": "Dockle found 2 FATAL issues (max allowed: 0).",
-      "analyzers": [
-        "dockle"
-      ]
-    },
-    {
-      "slug": "severity-count",
-      "description": "Max allowed violations for a given severity level.",
-      "level": "warning",
-      "tags": [
-        "best-practices"
-      ],
-      "passed": false,
-      "status": "failed",
-      "message": "Hadolint found 1 error issues (max allowed: 0).",
-      "analyzers": [
-        "hadolint"
-      ]
+      "message": "Image is less than 90 days old (0 days).",
+      "analyzers": ["freshness"]
     },
     {
       "slug": "no-latest",
       "description": "Image tag should not be 'latest'.",
       "level": "info",
-      "tags": [
-        "lifecycle"
-      ],
+      "tags": ["lifecycle"],
+      "passed": true,
+      "status": "passed",
+      "message": "Image tag is not 'latest'.",
+      "analyzers": []
+    },
+    {
+      "slug": "platforms-count",
+      "description": "Image should support multiple platforms.",
+      "level": "info",
+      "tags": ["compatibility"],
+      "passed": true,
+      "status": "passed",
+      "message": "Image supports 2 platforms.",
+      "analyzers": ["skopeo"]
+    },
+    {
+      "slug": "cve-critical",
+      "description": "Max allowed violations for a given severity level.",
+      "level": "critical",
+      "tags": ["security"],
       "passed": false,
       "status": "failed",
-      "message": "Image is using the 'latest' tag. Use immutable version tags instead.",
-      "analyzers": []
+      "message": "Image has 2 critical CVEs (max allowed: 0).",
+      "analyzers": ["trivy"]
+    },
+    {
+      "slug": "cve-count",
+      "description": "Max allowed violations for a given severity level.",
+      "level": "warning",
+      "tags": ["security"],
+      "passed": false,
+      "status": "failed",
+      "message": "Image has 2 critical CVEs (max allowed: 0).",
+      "analyzers": ["trivy"]
+    },
+    {
+      "slug": "cve-fixable",
+      "description": "All vulnerabilities should be fixed if a patch exists.",
+      "level": "warning",
+      "tags": ["security"],
+      "passed": false,
+      "status": "failed",
+      "message": "Image has 39 vulnerabilities with available fixes.",
+      "analyzers": ["trivy"]
+    },
+    {
+      "slug": "cve-high",
+      "description": "Max allowed violations for a given severity level.",
+      "level": "warning",
+      "tags": ["security"],
+      "passed": false,
+      "status": "failed",
+      "message": "Image has 19 high CVEs (max allowed: 10).",
+      "analyzers": ["trivy"]
+    },
+    {
+      "slug": "fix-available",
+      "description": "All vulnerabilities should be fixed if a patch exists.",
+      "level": "warning",
+      "tags": ["security"],
+      "passed": false,
+      "status": "failed",
+      "message": "Image has 39 vulnerabilities with available fixes.",
+      "analyzers": ["trivy"]
+    },
+    {
+      "slug": "min-score",
+      "description": "OpenSSF Scorecard score is above the threshold.",
+      "level": "warning",
+      "tags": ["security"],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Scorecard score is too low: None (min required: 5.0).",
+      "analyzers": ["scorecarddev"]
+    },
+    {
+      "slug": "scorecard-min",
+      "description": "OpenSSF Scorecard score is above the threshold.",
+      "level": "warning",
+      "tags": ["security"],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Scorecard score is too low: None (min required: 5.0).",
+      "analyzers": ["scorecarddev"]
+    },
+    {
+      "slug": "severity-count",
+      "description": "Max allowed issues for a given severity level.",
+      "level": "warning",
+      "tags": ["security"],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Dockle found MISSING FATAL issues (max allowed: 0).",
+      "analyzers": ["dockle"]
+    },
+    {
+      "slug": "severity-count",
+      "description": "Max allowed violations for a given severity level.",
+      "level": "warning",
+      "tags": ["best-practices"],
+      "passed": false,
+      "status": "failed",
+      "message": "Hadolint found 1 error issues (max allowed: 0).",
+      "analyzers": ["hadolint"]
     }
   ],
   "rules_summary": {
@@ -9457,32 +8963,40 @@
       "no-root",
       "registry-domain-whitelist",
       "secret-scan",
+      "user-blacklist",
       "exposed-ports-whitelist",
       "has-sbom",
       "layers-count",
       "max-size",
       "required-labels",
+      "tag-blacklist",
       "age",
+      "no-latest",
       "platforms-count",
       "cve-critical",
+      "cve-count",
       "cve-fixable",
       "cve-high",
+      "fix-available",
+      "min-score",
       "scorecard-min",
       "severity-count",
-      "severity-count",
-      "no-latest"
+      "severity-count"
     ],
     "passed": [
       "env-blacklist",
       "no-root",
       "registry-domain-whitelist",
       "secret-scan",
+      "user-blacklist",
       "exposed-ports-whitelist",
       "has-sbom",
       "layers-count",
       "max-size",
       "required-labels",
+      "tag-blacklist",
       "age",
+      "no-latest",
       "platforms-count"
     ],
     "by_tag": {
@@ -9492,10 +9006,14 @@
           "no-root",
           "registry-domain-whitelist",
           "secret-scan",
+          "user-blacklist",
           "exposed-ports-whitelist",
           "cve-critical",
+          "cve-count",
           "cve-fixable",
           "cve-high",
+          "fix-available",
+          "min-score",
           "scorecard-min",
           "severity-count"
         ],
@@ -9504,75 +9022,48 @@
           "no-root",
           "registry-domain-whitelist",
           "secret-scan",
+          "user-blacklist",
           "exposed-ports-whitelist"
         ],
-        "score": 50
+        "score": 43
       },
       "compliance": {
-        "rules": [
-          "has-sbom"
-        ],
-        "passed_rules": [
-          "has-sbom"
-        ],
+        "rules": ["has-sbom"],
+        "passed_rules": ["has-sbom"],
         "score": 100
       },
       "performance": {
-        "rules": [
-          "layers-count"
-        ],
-        "passed_rules": [
-          "layers-count"
-        ],
+        "rules": ["layers-count"],
+        "passed_rules": ["layers-count"],
         "score": 100
       },
       "hygiene": {
-        "rules": [
-          "max-size"
-        ],
-        "passed_rules": [
-          "max-size"
-        ],
+        "rules": ["max-size"],
+        "passed_rules": ["max-size"],
         "score": 100
       },
       "metadata": {
-        "rules": [
-          "required-labels"
-        ],
-        "passed_rules": [
-          "required-labels"
-        ],
+        "rules": ["required-labels"],
+        "passed_rules": ["required-labels"],
+        "score": 100
+      },
+      "lifecycle": {
+        "rules": ["tag-blacklist", "no-latest"],
+        "passed_rules": ["tag-blacklist", "no-latest"],
         "score": 100
       },
       "freshness": {
-        "rules": [
-          "age"
-        ],
-        "passed_rules": [
-          "age"
-        ],
+        "rules": ["age"],
+        "passed_rules": ["age"],
         "score": 100
       },
       "compatibility": {
-        "rules": [
-          "platforms-count"
-        ],
-        "passed_rules": [
-          "platforms-count"
-        ],
+        "rules": ["platforms-count"],
+        "passed_rules": ["platforms-count"],
         "score": 100
       },
       "best-practices": {
-        "rules": [
-          "severity-count"
-        ],
-        "passed_rules": [],
-        "score": 0
-      },
-      "lifecycle": {
-        "rules": [
-          "no-latest"
-        ],
+        "rules": ["severity-count"],
         "passed_rules": [],
         "score": 0
       }
@@ -9590,37 +9081,27 @@
           "slug": "env-blacklist",
           "description": "Image must not contain forbidden environment variables.",
           "level": "critical",
-          "tags": [
-            "security"
-          ],
+          "tags": ["security"],
           "passed": true,
           "status": "passed",
           "message": "No forbidden environment variables found.",
-          "analyzers": [
-            "skopeo"
-          ]
+          "analyzers": ["skopeo"]
         },
         {
           "slug": "no-root",
           "description": "Image must not run as root.",
           "level": "critical",
-          "tags": [
-            "security"
-          ],
+          "tags": ["security"],
           "passed": true,
           "status": "passed",
           "message": "Image does not run as 'root'.",
-          "analyzers": [
-            "skopeo"
-          ]
+          "analyzers": ["skopeo"]
         },
         {
           "slug": "registry-domain-whitelist",
           "description": "Checks if requested image registry domain is in the domains list.",
           "level": "critical",
-          "tags": [
-            "security"
-          ],
+          "tags": ["security"],
           "passed": true,
           "status": "passed",
           "message": "Image registry domain 'ghcr.io' is in the domains list.",
@@ -9630,209 +9111,201 @@
           "slug": "secret-scan",
           "description": "No secrets or credentials should be embedded in the image.",
           "level": "critical",
-          "tags": [
-            "security"
-          ],
+          "tags": ["security"],
           "passed": true,
           "status": "passed",
           "message": "No secrets detected in the image.",
-          "analyzers": [
-            "trivy"
-          ]
+          "analyzers": ["trivy"]
+        },
+        {
+          "slug": "user-blacklist",
+          "description": "Image must not run as root.",
+          "level": "critical",
+          "tags": ["security"],
+          "passed": true,
+          "status": "passed",
+          "message": "Image does not run as 'root'.",
+          "analyzers": ["skopeo"]
         },
         {
           "slug": "exposed-ports-whitelist",
           "description": "Image exposes permitted ports.",
           "level": "warning",
-          "tags": [
-            "security"
-          ],
+          "tags": ["security"],
           "passed": true,
           "status": "passed",
           "message": "All exposed ports are allowed.",
-          "analyzers": [
-            "skopeo"
-          ]
+          "analyzers": ["skopeo"]
         },
         {
           "slug": "has-sbom",
           "description": "Image must provide a Software Bill of Materials.",
           "level": "warning",
-          "tags": [
-            "compliance"
-          ],
+          "tags": ["compliance"],
           "passed": true,
           "status": "passed",
           "message": "SBOM is available for this image.",
-          "analyzers": [
-            "sbom"
-          ]
+          "analyzers": ["sbom"]
         },
         {
           "slug": "layers-count",
           "description": "Image has an acceptable number of layers.",
           "level": "warning",
-          "tags": [
-            "performance"
-          ],
+          "tags": ["performance"],
           "passed": true,
           "status": "passed",
           "message": "Image has 14 layers.",
-          "analyzers": [
-            "skopeo"
-          ]
+          "analyzers": ["skopeo"]
         },
         {
           "slug": "max-size",
           "description": "Image size is within limits.",
           "level": "warning",
-          "tags": [
-            "hygiene"
-          ],
+          "tags": ["hygiene"],
           "passed": true,
           "status": "passed",
           "message": "Image size is within limits (0 bytes).",
-          "analyzers": [
-            "skopeo"
-          ]
+          "analyzers": ["skopeo"]
         },
         {
           "slug": "required-labels",
           "description": "Image must have required OCI labels.",
           "level": "warning",
-          "tags": [
-            "metadata"
-          ],
+          "tags": ["metadata"],
           "passed": true,
           "status": "passed",
           "message": "All required labels are present.",
-          "analyzers": [
-            "skopeo"
-          ]
+          "analyzers": ["skopeo"]
+        },
+        {
+          "slug": "tag-blacklist",
+          "description": "Image tag should not be 'latest'.",
+          "level": "warning",
+          "tags": ["lifecycle"],
+          "passed": true,
+          "status": "passed",
+          "message": "Image tag is not 'latest'.",
+          "analyzers": []
         },
         {
           "slug": "age",
           "description": "Image should be less than expected days old.",
           "level": "info",
-          "tags": [
-            "freshness"
-          ],
+          "tags": ["freshness"],
           "passed": true,
           "status": "passed",
-          "message": "Image is less than 90 days old (8 days).",
-          "analyzers": [
-            "freshness"
-          ]
-        },
-        {
-          "slug": "platforms-count",
-          "description": "Image should support multiple platforms.",
-          "level": "info",
-          "tags": [
-            "compatibility"
-          ],
-          "passed": true,
-          "status": "passed",
-          "message": "Image supports 2 platforms.",
-          "analyzers": [
-            "skopeo"
-          ]
-        },
-        {
-          "slug": "cve-critical",
-          "description": "Max allowed violations for a given severity level.",
-          "level": "critical",
-          "tags": [
-            "security"
-          ],
-          "passed": false,
-          "status": "failed",
-          "message": "Image has 2 critical CVEs (max allowed: 0).",
-          "analyzers": [
-            "trivy"
-          ]
-        },
-        {
-          "slug": "cve-fixable",
-          "description": "All vulnerabilities should be fixed if a patch exists.",
-          "level": "warning",
-          "tags": [
-            "security"
-          ],
-          "passed": false,
-          "status": "failed",
-          "message": "Image has 39 vulnerabilities with available fixes.",
-          "analyzers": [
-            "trivy"
-          ]
-        },
-        {
-          "slug": "cve-high",
-          "description": "Max allowed violations for a given severity level.",
-          "level": "warning",
-          "tags": [
-            "security"
-          ],
-          "passed": false,
-          "status": "failed",
-          "message": "Image has 19 high CVEs (max allowed: 10).",
-          "analyzers": [
-            "trivy"
-          ]
-        },
-        {
-          "slug": "scorecard-min",
-          "description": "OpenSSF Scorecard score is above the threshold.",
-          "level": "warning",
-          "tags": [
-            "security"
-          ],
-          "passed": false,
-          "status": "incomplete",
-          "message": "Scorecard score is too low: None (min required: 5.0).",
-          "analyzers": [
-            "scorecarddev"
-          ]
-        },
-        {
-          "slug": "severity-count",
-          "description": "Max allowed issues for a given severity level.",
-          "level": "warning",
-          "tags": [
-            "security"
-          ],
-          "passed": false,
-          "status": "failed",
-          "message": "Dockle found 2 FATAL issues (max allowed: 0).",
-          "analyzers": [
-            "dockle"
-          ]
-        },
-        {
-          "slug": "severity-count",
-          "description": "Max allowed violations for a given severity level.",
-          "level": "warning",
-          "tags": [
-            "best-practices"
-          ],
-          "passed": false,
-          "status": "failed",
-          "message": "Hadolint found 1 error issues (max allowed: 0).",
-          "analyzers": [
-            "hadolint"
-          ]
+          "message": "Image is less than 90 days old (0 days).",
+          "analyzers": ["freshness"]
         },
         {
           "slug": "no-latest",
           "description": "Image tag should not be 'latest'.",
           "level": "info",
-          "tags": [
-            "lifecycle"
-          ],
+          "tags": ["lifecycle"],
+          "passed": true,
+          "status": "passed",
+          "message": "Image tag is not 'latest'.",
+          "analyzers": []
+        },
+        {
+          "slug": "platforms-count",
+          "description": "Image should support multiple platforms.",
+          "level": "info",
+          "tags": ["compatibility"],
+          "passed": true,
+          "status": "passed",
+          "message": "Image supports 2 platforms.",
+          "analyzers": ["skopeo"]
+        },
+        {
+          "slug": "cve-critical",
+          "description": "Max allowed violations for a given severity level.",
+          "level": "critical",
+          "tags": ["security"],
           "passed": false,
           "status": "failed",
-          "message": "Image is using the 'latest' tag. Use immutable version tags instead.",
-          "analyzers": []
+          "message": "Image has 2 critical CVEs (max allowed: 0).",
+          "analyzers": ["trivy"]
+        },
+        {
+          "slug": "cve-count",
+          "description": "Max allowed violations for a given severity level.",
+          "level": "warning",
+          "tags": ["security"],
+          "passed": false,
+          "status": "failed",
+          "message": "Image has 2 critical CVEs (max allowed: 0).",
+          "analyzers": ["trivy"]
+        },
+        {
+          "slug": "cve-fixable",
+          "description": "All vulnerabilities should be fixed if a patch exists.",
+          "level": "warning",
+          "tags": ["security"],
+          "passed": false,
+          "status": "failed",
+          "message": "Image has 39 vulnerabilities with available fixes.",
+          "analyzers": ["trivy"]
+        },
+        {
+          "slug": "cve-high",
+          "description": "Max allowed violations for a given severity level.",
+          "level": "warning",
+          "tags": ["security"],
+          "passed": false,
+          "status": "failed",
+          "message": "Image has 19 high CVEs (max allowed: 10).",
+          "analyzers": ["trivy"]
+        },
+        {
+          "slug": "fix-available",
+          "description": "All vulnerabilities should be fixed if a patch exists.",
+          "level": "warning",
+          "tags": ["security"],
+          "passed": false,
+          "status": "failed",
+          "message": "Image has 39 vulnerabilities with available fixes.",
+          "analyzers": ["trivy"]
+        },
+        {
+          "slug": "min-score",
+          "description": "OpenSSF Scorecard score is above the threshold.",
+          "level": "warning",
+          "tags": ["security"],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Scorecard score is too low: None (min required: 5.0).",
+          "analyzers": ["scorecarddev"]
+        },
+        {
+          "slug": "scorecard-min",
+          "description": "OpenSSF Scorecard score is above the threshold.",
+          "level": "warning",
+          "tags": ["security"],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Scorecard score is too low: None (min required: 5.0).",
+          "analyzers": ["scorecarddev"]
+        },
+        {
+          "slug": "severity-count",
+          "description": "Max allowed issues for a given severity level.",
+          "level": "warning",
+          "tags": ["security"],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Dockle found MISSING FATAL issues (max allowed: 0).",
+          "analyzers": ["dockle"]
+        },
+        {
+          "slug": "severity-count",
+          "description": "Max allowed violations for a given severity level.",
+          "level": "warning",
+          "tags": ["best-practices"],
+          "passed": false,
+          "status": "failed",
+          "message": "Hadolint found 1 error issues (max allowed: 0).",
+          "analyzers": ["hadolint"]
         }
       ],
       "rules_summary": {
@@ -9842,32 +9315,40 @@
           "no-root",
           "registry-domain-whitelist",
           "secret-scan",
+          "user-blacklist",
           "exposed-ports-whitelist",
           "has-sbom",
           "layers-count",
           "max-size",
           "required-labels",
+          "tag-blacklist",
           "age",
+          "no-latest",
           "platforms-count",
           "cve-critical",
+          "cve-count",
           "cve-fixable",
           "cve-high",
+          "fix-available",
+          "min-score",
           "scorecard-min",
           "severity-count",
-          "severity-count",
-          "no-latest"
+          "severity-count"
         ],
         "passed": [
           "env-blacklist",
           "no-root",
           "registry-domain-whitelist",
           "secret-scan",
+          "user-blacklist",
           "exposed-ports-whitelist",
           "has-sbom",
           "layers-count",
           "max-size",
           "required-labels",
+          "tag-blacklist",
           "age",
+          "no-latest",
           "platforms-count"
         ],
         "by_tag": {
@@ -9877,10 +9358,14 @@
               "no-root",
               "registry-domain-whitelist",
               "secret-scan",
+              "user-blacklist",
               "exposed-ports-whitelist",
               "cve-critical",
+              "cve-count",
               "cve-fixable",
               "cve-high",
+              "fix-available",
+              "min-score",
               "scorecard-min",
               "severity-count"
             ],
@@ -9889,75 +9374,48 @@
               "no-root",
               "registry-domain-whitelist",
               "secret-scan",
+              "user-blacklist",
               "exposed-ports-whitelist"
             ],
-            "score": 50
+            "score": 43
           },
           "compliance": {
-            "rules": [
-              "has-sbom"
-            ],
-            "passed_rules": [
-              "has-sbom"
-            ],
+            "rules": ["has-sbom"],
+            "passed_rules": ["has-sbom"],
             "score": 100
           },
           "performance": {
-            "rules": [
-              "layers-count"
-            ],
-            "passed_rules": [
-              "layers-count"
-            ],
+            "rules": ["layers-count"],
+            "passed_rules": ["layers-count"],
             "score": 100
           },
           "hygiene": {
-            "rules": [
-              "max-size"
-            ],
-            "passed_rules": [
-              "max-size"
-            ],
+            "rules": ["max-size"],
+            "passed_rules": ["max-size"],
             "score": 100
           },
           "metadata": {
-            "rules": [
-              "required-labels"
-            ],
-            "passed_rules": [
-              "required-labels"
-            ],
+            "rules": ["required-labels"],
+            "passed_rules": ["required-labels"],
+            "score": 100
+          },
+          "lifecycle": {
+            "rules": ["tag-blacklist", "no-latest"],
+            "passed_rules": ["tag-blacklist", "no-latest"],
             "score": 100
           },
           "freshness": {
-            "rules": [
-              "age"
-            ],
-            "passed_rules": [
-              "age"
-            ],
+            "rules": ["age"],
+            "passed_rules": ["age"],
             "score": 100
           },
           "compatibility": {
-            "rules": [
-              "platforms-count"
-            ],
-            "passed_rules": [
-              "platforms-count"
-            ],
+            "rules": ["platforms-count"],
+            "passed_rules": ["platforms-count"],
             "score": 100
           },
           "best-practices": {
-            "rules": [
-              "severity-count"
-            ],
-            "passed_rules": [],
-            "score": 0
-          },
-          "lifecycle": {
-            "rules": [
-              "no-latest"
-            ],
+            "rules": ["severity-count"],
             "passed_rules": [],
             "score": 0
           }
@@ -10033,37 +9491,27 @@
         "slug": "env-blacklist",
         "description": "Image must not contain forbidden environment variables.",
         "level": "critical",
-        "tags": [
-          "security"
-        ],
+        "tags": ["security"],
         "passed": true,
         "status": "passed",
         "message": "No forbidden environment variables found.",
-        "analyzers": [
-          "skopeo"
-        ]
+        "analyzers": ["skopeo"]
       },
       {
         "slug": "no-root",
         "description": "Image must not run as root.",
         "level": "critical",
-        "tags": [
-          "security"
-        ],
+        "tags": ["security"],
         "passed": true,
         "status": "passed",
         "message": "Image does not run as 'root'.",
-        "analyzers": [
-          "skopeo"
-        ]
+        "analyzers": ["skopeo"]
       },
       {
         "slug": "registry-domain-whitelist",
         "description": "Checks if requested image registry domain is in the domains list.",
         "level": "critical",
-        "tags": [
-          "security"
-        ],
+        "tags": ["security"],
         "passed": true,
         "status": "passed",
         "message": "Image registry domain 'ghcr.io' is in the domains list.",
@@ -10073,209 +9521,201 @@
         "slug": "secret-scan",
         "description": "No secrets or credentials should be embedded in the image.",
         "level": "critical",
-        "tags": [
-          "security"
-        ],
+        "tags": ["security"],
         "passed": true,
         "status": "passed",
         "message": "No secrets detected in the image.",
-        "analyzers": [
-          "trivy"
-        ]
+        "analyzers": ["trivy"]
+      },
+      {
+        "slug": "user-blacklist",
+        "description": "Image must not run as root.",
+        "level": "critical",
+        "tags": ["security"],
+        "passed": true,
+        "status": "passed",
+        "message": "Image does not run as 'root'.",
+        "analyzers": ["skopeo"]
       },
       {
         "slug": "exposed-ports-whitelist",
         "description": "Image exposes permitted ports.",
         "level": "warning",
-        "tags": [
-          "security"
-        ],
+        "tags": ["security"],
         "passed": true,
         "status": "passed",
         "message": "All exposed ports are allowed.",
-        "analyzers": [
-          "skopeo"
-        ]
+        "analyzers": ["skopeo"]
       },
       {
         "slug": "has-sbom",
         "description": "Image must provide a Software Bill of Materials.",
         "level": "warning",
-        "tags": [
-          "compliance"
-        ],
+        "tags": ["compliance"],
         "passed": true,
         "status": "passed",
         "message": "SBOM is available for this image.",
-        "analyzers": [
-          "sbom"
-        ]
+        "analyzers": ["sbom"]
       },
       {
         "slug": "layers-count",
         "description": "Image has an acceptable number of layers.",
         "level": "warning",
-        "tags": [
-          "performance"
-        ],
+        "tags": ["performance"],
         "passed": true,
         "status": "passed",
         "message": "Image has 14 layers.",
-        "analyzers": [
-          "skopeo"
-        ]
+        "analyzers": ["skopeo"]
       },
       {
         "slug": "max-size",
         "description": "Image size is within limits.",
         "level": "warning",
-        "tags": [
-          "hygiene"
-        ],
+        "tags": ["hygiene"],
         "passed": true,
         "status": "passed",
         "message": "Image size is within limits (0 bytes).",
-        "analyzers": [
-          "skopeo"
-        ]
+        "analyzers": ["skopeo"]
       },
       {
         "slug": "required-labels",
         "description": "Image must have required OCI labels.",
         "level": "warning",
-        "tags": [
-          "metadata"
-        ],
+        "tags": ["metadata"],
         "passed": true,
         "status": "passed",
         "message": "All required labels are present.",
-        "analyzers": [
-          "skopeo"
-        ]
+        "analyzers": ["skopeo"]
+      },
+      {
+        "slug": "tag-blacklist",
+        "description": "Image tag should not be 'latest'.",
+        "level": "warning",
+        "tags": ["lifecycle"],
+        "passed": true,
+        "status": "passed",
+        "message": "Image tag is not 'latest'.",
+        "analyzers": []
       },
       {
         "slug": "age",
         "description": "Image should be less than expected days old.",
         "level": "info",
-        "tags": [
-          "freshness"
-        ],
+        "tags": ["freshness"],
         "passed": true,
         "status": "passed",
-        "message": "Image is less than 90 days old (8 days).",
-        "analyzers": [
-          "freshness"
-        ]
-      },
-      {
-        "slug": "platforms-count",
-        "description": "Image should support multiple platforms.",
-        "level": "info",
-        "tags": [
-          "compatibility"
-        ],
-        "passed": true,
-        "status": "passed",
-        "message": "Image supports 2 platforms.",
-        "analyzers": [
-          "skopeo"
-        ]
-      },
-      {
-        "slug": "cve-critical",
-        "description": "Max allowed violations for a given severity level.",
-        "level": "critical",
-        "tags": [
-          "security"
-        ],
-        "passed": false,
-        "status": "failed",
-        "message": "Image has 2 critical CVEs (max allowed: 0).",
-        "analyzers": [
-          "trivy"
-        ]
-      },
-      {
-        "slug": "cve-fixable",
-        "description": "All vulnerabilities should be fixed if a patch exists.",
-        "level": "warning",
-        "tags": [
-          "security"
-        ],
-        "passed": false,
-        "status": "failed",
-        "message": "Image has 39 vulnerabilities with available fixes.",
-        "analyzers": [
-          "trivy"
-        ]
-      },
-      {
-        "slug": "cve-high",
-        "description": "Max allowed violations for a given severity level.",
-        "level": "warning",
-        "tags": [
-          "security"
-        ],
-        "passed": false,
-        "status": "failed",
-        "message": "Image has 19 high CVEs (max allowed: 10).",
-        "analyzers": [
-          "trivy"
-        ]
-      },
-      {
-        "slug": "scorecard-min",
-        "description": "OpenSSF Scorecard score is above the threshold.",
-        "level": "warning",
-        "tags": [
-          "security"
-        ],
-        "passed": false,
-        "status": "incomplete",
-        "message": "Scorecard score is too low: None (min required: 5.0).",
-        "analyzers": [
-          "scorecarddev"
-        ]
-      },
-      {
-        "slug": "severity-count",
-        "description": "Max allowed issues for a given severity level.",
-        "level": "warning",
-        "tags": [
-          "security"
-        ],
-        "passed": false,
-        "status": "failed",
-        "message": "Dockle found 2 FATAL issues (max allowed: 0).",
-        "analyzers": [
-          "dockle"
-        ]
-      },
-      {
-        "slug": "severity-count",
-        "description": "Max allowed violations for a given severity level.",
-        "level": "warning",
-        "tags": [
-          "best-practices"
-        ],
-        "passed": false,
-        "status": "failed",
-        "message": "Hadolint found 1 error issues (max allowed: 0).",
-        "analyzers": [
-          "hadolint"
-        ]
+        "message": "Image is less than 90 days old (0 days).",
+        "analyzers": ["freshness"]
       },
       {
         "slug": "no-latest",
         "description": "Image tag should not be 'latest'.",
         "level": "info",
-        "tags": [
-          "lifecycle"
-        ],
+        "tags": ["lifecycle"],
+        "passed": true,
+        "status": "passed",
+        "message": "Image tag is not 'latest'.",
+        "analyzers": []
+      },
+      {
+        "slug": "platforms-count",
+        "description": "Image should support multiple platforms.",
+        "level": "info",
+        "tags": ["compatibility"],
+        "passed": true,
+        "status": "passed",
+        "message": "Image supports 2 platforms.",
+        "analyzers": ["skopeo"]
+      },
+      {
+        "slug": "cve-critical",
+        "description": "Max allowed violations for a given severity level.",
+        "level": "critical",
+        "tags": ["security"],
         "passed": false,
         "status": "failed",
-        "message": "Image is using the 'latest' tag. Use immutable version tags instead.",
-        "analyzers": []
+        "message": "Image has 2 critical CVEs (max allowed: 0).",
+        "analyzers": ["trivy"]
+      },
+      {
+        "slug": "cve-count",
+        "description": "Max allowed violations for a given severity level.",
+        "level": "warning",
+        "tags": ["security"],
+        "passed": false,
+        "status": "failed",
+        "message": "Image has 2 critical CVEs (max allowed: 0).",
+        "analyzers": ["trivy"]
+      },
+      {
+        "slug": "cve-fixable",
+        "description": "All vulnerabilities should be fixed if a patch exists.",
+        "level": "warning",
+        "tags": ["security"],
+        "passed": false,
+        "status": "failed",
+        "message": "Image has 39 vulnerabilities with available fixes.",
+        "analyzers": ["trivy"]
+      },
+      {
+        "slug": "cve-high",
+        "description": "Max allowed violations for a given severity level.",
+        "level": "warning",
+        "tags": ["security"],
+        "passed": false,
+        "status": "failed",
+        "message": "Image has 19 high CVEs (max allowed: 10).",
+        "analyzers": ["trivy"]
+      },
+      {
+        "slug": "fix-available",
+        "description": "All vulnerabilities should be fixed if a patch exists.",
+        "level": "warning",
+        "tags": ["security"],
+        "passed": false,
+        "status": "failed",
+        "message": "Image has 39 vulnerabilities with available fixes.",
+        "analyzers": ["trivy"]
+      },
+      {
+        "slug": "min-score",
+        "description": "OpenSSF Scorecard score is above the threshold.",
+        "level": "warning",
+        "tags": ["security"],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Scorecard score is too low: None (min required: 5.0).",
+        "analyzers": ["scorecarddev"]
+      },
+      {
+        "slug": "scorecard-min",
+        "description": "OpenSSF Scorecard score is above the threshold.",
+        "level": "warning",
+        "tags": ["security"],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Scorecard score is too low: None (min required: 5.0).",
+        "analyzers": ["scorecarddev"]
+      },
+      {
+        "slug": "severity-count",
+        "description": "Max allowed issues for a given severity level.",
+        "level": "warning",
+        "tags": ["security"],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Dockle found MISSING FATAL issues (max allowed: 0).",
+        "analyzers": ["dockle"]
+      },
+      {
+        "slug": "severity-count",
+        "description": "Max allowed violations for a given severity level.",
+        "level": "warning",
+        "tags": ["best-practices"],
+        "passed": false,
+        "status": "failed",
+        "message": "Hadolint found 1 error issues (max allowed: 0).",
+        "analyzers": ["hadolint"]
       }
     ],
     "rules_summary": {
@@ -10285,32 +9725,40 @@
         "no-root",
         "registry-domain-whitelist",
         "secret-scan",
+        "user-blacklist",
         "exposed-ports-whitelist",
         "has-sbom",
         "layers-count",
         "max-size",
         "required-labels",
+        "tag-blacklist",
         "age",
+        "no-latest",
         "platforms-count",
         "cve-critical",
+        "cve-count",
         "cve-fixable",
         "cve-high",
+        "fix-available",
+        "min-score",
         "scorecard-min",
         "severity-count",
-        "severity-count",
-        "no-latest"
+        "severity-count"
       ],
       "passed": [
         "env-blacklist",
         "no-root",
         "registry-domain-whitelist",
         "secret-scan",
+        "user-blacklist",
         "exposed-ports-whitelist",
         "has-sbom",
         "layers-count",
         "max-size",
         "required-labels",
+        "tag-blacklist",
         "age",
+        "no-latest",
         "platforms-count"
       ],
       "by_tag": {
@@ -10320,10 +9768,14 @@
             "no-root",
             "registry-domain-whitelist",
             "secret-scan",
+            "user-blacklist",
             "exposed-ports-whitelist",
             "cve-critical",
+            "cve-count",
             "cve-fixable",
             "cve-high",
+            "fix-available",
+            "min-score",
             "scorecard-min",
             "severity-count"
           ],
@@ -10332,75 +9784,48 @@
             "no-root",
             "registry-domain-whitelist",
             "secret-scan",
+            "user-blacklist",
             "exposed-ports-whitelist"
           ],
-          "score": 50
+          "score": 43
         },
         "compliance": {
-          "rules": [
-            "has-sbom"
-          ],
-          "passed_rules": [
-            "has-sbom"
-          ],
+          "rules": ["has-sbom"],
+          "passed_rules": ["has-sbom"],
           "score": 100
         },
         "performance": {
-          "rules": [
-            "layers-count"
-          ],
-          "passed_rules": [
-            "layers-count"
-          ],
+          "rules": ["layers-count"],
+          "passed_rules": ["layers-count"],
           "score": 100
         },
         "hygiene": {
-          "rules": [
-            "max-size"
-          ],
-          "passed_rules": [
-            "max-size"
-          ],
+          "rules": ["max-size"],
+          "passed_rules": ["max-size"],
           "score": 100
         },
         "metadata": {
-          "rules": [
-            "required-labels"
-          ],
-          "passed_rules": [
-            "required-labels"
-          ],
+          "rules": ["required-labels"],
+          "passed_rules": ["required-labels"],
+          "score": 100
+        },
+        "lifecycle": {
+          "rules": ["tag-blacklist", "no-latest"],
+          "passed_rules": ["tag-blacklist", "no-latest"],
           "score": 100
         },
         "freshness": {
-          "rules": [
-            "age"
-          ],
-          "passed_rules": [
-            "age"
-          ],
+          "rules": ["age"],
+          "passed_rules": ["age"],
           "score": 100
         },
         "compatibility": {
-          "rules": [
-            "platforms-count"
-          ],
-          "passed_rules": [
-            "platforms-count"
-          ],
+          "rules": ["platforms-count"],
+          "passed_rules": ["platforms-count"],
           "score": 100
         },
         "best-practices": {
-          "rules": [
-            "severity-count"
-          ],
-          "passed_rules": [],
-          "score": 0
-        },
-        "lifecycle": {
-          "rules": [
-            "no-latest"
-          ],
+          "rules": ["severity-count"],
           "passed_rules": [],
           "score": 0
         }
