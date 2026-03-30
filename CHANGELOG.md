@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.23.4](https://github.com/trivoallan/regis-cli/compare/v0.23.3...v0.23.4) (2026-03-30)
+
+### Bug Fixes
+
+- **build:** use pnpm direct install and sync serialize-javascript override ([#155](https://github.com/trivoallan/regis-cli/issues/155)) ([2e468d9](https://github.com/trivoallan/regis-cli/commit/2e468d98d11193bef5aa9a8e1eda4cfbac4aeca0))
+
 ## [0.23.3](https://github.com/trivoallan/regis-cli/compare/v0.23.2...v0.23.3) (2026-03-30)
 
 ### Bug Fixes
