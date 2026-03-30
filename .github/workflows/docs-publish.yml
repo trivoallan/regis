@@ -177,7 +177,7 @@ jobs:
       - name: Deploy docs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ steps.generate-token.outputs.token }}
+          personal_token: ${{ steps.generate-token.outputs.token }}
           publish_dir: docs/website/build
           destination_dir: docs
           keep_files: true
