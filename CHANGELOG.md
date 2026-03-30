@@ -2,15 +2,13 @@
 
 ## [0.23.7](https://github.com/trivoallan/regis-cli/compare/v0.23.6...v0.23.7) (2026-03-30)
 
-
 ### Bug Fixes
 
-* **build:** pin tailwindcss to v3 and ignore v4 Dependabot bumps ([#164](https://github.com/trivoallan/regis-cli/issues/164)) ([cc0cbe0](https://github.com/trivoallan/regis-cli/commit/cc0cbe081c2e72f4786605bee3a1420e157c63ff))
-
+- **build:** pin tailwindcss to v3 and ignore v4 Dependabot bumps ([#164](https://github.com/trivoallan/regis-cli/issues/164)) ([cc0cbe0](https://github.com/trivoallan/regis-cli/commit/cc0cbe081c2e72f4786605bee3a1420e157c63ff))
 
 ### Documentation
 
-* update documentation reference and snapshots ([#163](https://github.com/trivoallan/regis-cli/issues/163)) ([c043a8a](https://github.com/trivoallan/regis-cli/commit/c043a8a4b927fd15fed1c51ba335e669071c1611))
+- update documentation reference and snapshots ([#163](https://github.com/trivoallan/regis-cli/issues/163)) ([c043a8a](https://github.com/trivoallan/regis-cli/commit/c043a8a4b927fd15fed1c51ba335e669071c1611))
 
 ## [0.23.6](https://github.com/trivoallan/regis-cli/compare/v0.23.5...v0.23.6) (2026-03-30)
 
