@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "analyzer.skopeo",
+  "title": "skopeo.output",
   "type": "object",
   "required": ["analyzer", "repository", "tag", "platforms"],
   "properties": {
@@ -51,7 +51,9 @@
           "labels": {
             "type": "object",
             "description": "OCI labels associated with this variant.",
-            "additionalProperties": { "type": "string" }
+            "additionalProperties": {
+              "type": "string"
+            }
           },
           "layers_count": {
             "type": "integer",
@@ -68,8 +70,11 @@
     "tags": {
       "type": "array",
       "description": "List of tags associated with the repository.",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/skopeo.schema.json"
 }

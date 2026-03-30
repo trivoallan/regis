@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/size.schema.json",
-  "title": "analyzer.size",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/size.schema.json",
+  "title": "size.output",
   "description": "Image size breakdown.",
   "type": "object",
   "required": [

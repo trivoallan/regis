@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/versioning.schema.json",
-  "title": "analyzer.versioning",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/versioning.schema.json",
+  "title": "versioning.output",
   "description": "Report analyzing tag naming conventions and semver adoption.",
   "type": "object",
   "required": [
@@ -11,7 +11,8 @@
     "dominant_pattern",
     "semver_compliant_percentage",
     "patterns",
-    "variants"
+    "variants",
+    "aliases"
   ],
   "properties": {
     "analyzer": {
@@ -37,15 +38,25 @@
         "semver-variant",
         "calver",
         "numeric",
+        "numeric-variant",
         "hash",
         "named",
         "unknown"
       ]
     },
+    "aliases": {
+      "type": "array",
+      "description": "Other tags in the repository that resolve to the same digest as the analyzed tag.",
+      "items": {
+        "type": "string"
+      }
+    },
     "release_lines": {
       "type": "array",
       "description": "Major/Minor versions identified as active release lines.",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "semver_compliant_percentage": {
       "type": "number",
@@ -69,6 +80,7 @@
               "semver-variant",
               "calver",
               "numeric",
+              "numeric-variant",
               "hash",
               "named"
             ]
@@ -87,7 +99,9 @@
           "examples": {
             "type": "array",
             "description": "Sample tags matching this pattern.",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "maxItems": 10
           }
         },
@@ -119,7 +133,9 @@
           "examples": {
             "type": "array",
             "description": "Sample tags matching this variant.",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "maxItems": 10
           }
         },

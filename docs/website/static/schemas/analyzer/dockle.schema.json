@@ -1,7 +1,7 @@
 {
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/dockle.schema.json",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/dockle.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "analyzer.dockle",
+  "title": "dockle.output",
   "type": "object",
   "required": [
     "analyzer",
@@ -42,11 +42,26 @@
       "type": "object",
       "description": "Count of issues grouped by severity level.",
       "properties": {
-        "FATAL": { "type": "integer", "default": 0 },
-        "WARN": { "type": "integer", "default": 0 },
-        "INFO": { "type": "integer", "default": 0 },
-        "SKIP": { "type": "integer", "default": 0 },
-        "PASS": { "type": "integer", "default": 0 }
+        "FATAL": {
+          "type": "integer",
+          "default": 0
+        },
+        "WARN": {
+          "type": "integer",
+          "default": 0
+        },
+        "INFO": {
+          "type": "integer",
+          "default": 0
+        },
+        "SKIP": {
+          "type": "integer",
+          "default": 0
+        },
+        "PASS": {
+          "type": "integer",
+          "default": 0
+        }
       },
       "additionalProperties": false
     },

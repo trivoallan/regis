@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/scorecard.schema.json",
-  "title": "analyzer.scorecarddev",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/scorecarddev.schema.json",
+  "title": "scorecarddev.output",
   "description": "Report containing OpenSSF Scorecard security assessment for the image source repository.",
   "type": "object",
   "required": [

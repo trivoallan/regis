@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/freshness.schema.json",
-  "title": "analyzer.freshness",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/freshness.schema.json",
+  "title": "freshness.output",
   "description": "Image age and delta versus latest tag.",
   "type": "object",
   "required": [

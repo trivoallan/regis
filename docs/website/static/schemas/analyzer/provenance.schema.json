@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/provenance.schema.json",
-  "title": "analyzer.provenance",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/provenance.schema.json",
+  "title": "provenance.output",
   "description": "Build provenance and supply-chain attestation information.",
   "type": "object",
   "required": [

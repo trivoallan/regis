@@ -1,7 +1,7 @@
 {
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/hadolint.schema.json",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/hadolint.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "analyzer.hadolint",
+  "title": "hadolint.output",
   "type": "object",
   "required": [
     "analyzer",
@@ -42,10 +42,22 @@
       "type": "object",
       "description": "Count of issues grouped by severity level.",
       "properties": {
-        "error": { "type": "integer", "default": 0 },
-        "warning": { "type": "integer", "default": 0 },
-        "info": { "type": "integer", "default": 0 },
-        "style": { "type": "integer", "default": 0 }
+        "error": {
+          "type": "integer",
+          "default": 0
+        },
+        "warning": {
+          "type": "integer",
+          "default": 0
+        },
+        "info": {
+          "type": "integer",
+          "default": 0
+        },
+        "style": {
+          "type": "integer",
+          "default": 0
+        }
       },
       "additionalProperties": false
     },

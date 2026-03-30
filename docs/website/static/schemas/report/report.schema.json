@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/report.schema.json",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/report/report.schema.json",
   "title": "report",
   "description": "Final report envelope produced by regis-cli, containing request metadata and analyzer results.",
   "type": "object",
@@ -60,7 +60,10 @@
             "type": "string",
             "description": "Display label for the link."
           },
-          "url": { "type": "string", "description": "Target URL." }
+          "url": {
+            "type": "string",
+            "description": "Target URL."
+          }
         }
       }
     },
@@ -93,12 +96,14 @@
           "description": "Image tag that was analyzed."
         },
         "digest": {
-          "type": "string",
+          "type": ["string", "null"],
           "description": "Resolved image manifest digest (e.g. sha256-xxx), if available."
         },
         "analyzers": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "List of analyzer names that were executed."
         },
         "timestamp": {
@@ -124,24 +129,26 @@
     "playbooks": {
       "type": "array",
       "description": "List of evaluated playbook results.",
-      "items": { "$ref": "playbook/result.schema.json" }
+      "items": {
+        "$ref": "../playbook/result.schema.json"
+      }
     },
     "playbook": {
       "description": "Primary playbook result (shorthand for playbooks[0]).",
-      "$ref": "playbook/result.schema.json"
+      "$ref": "../playbook/result.schema.json"
     },
     "rules": {
       "type": "array",
       "description": "List of unified rule results (promoted from playbooks[0]).",
       "items": {
         "type": "object",
-        "required": ["slug", "title", "passed", "status", "message"],
+        "required": ["slug", "description", "passed", "status", "message"],
         "properties": {
           "slug": {
             "type": "string",
             "description": "Unique identifier for the rule."
           },
-          "title": {
+          "description": {
             "type": "string",
             "description": "Human-readable name of the rule."
           },
@@ -151,7 +158,9 @@
           },
           "tags": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "Associated metadata tags."
           },
           "passed": {
@@ -169,7 +178,9 @@
           },
           "analyzers": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "List of analyzers that contributed data to this rule."
           }
         }
@@ -179,9 +190,23 @@
       "type": "object",
       "description": "Summary of rule evaluation results.",
       "properties": {
-        "score": { "type": "integer", "minimum": 0, "maximum": 100 },
-        "total": { "type": "array", "items": { "type": "string" } },
-        "passed": { "type": "array", "items": { "type": "string" } },
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "total": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "passed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "by_tag": {
           "type": "object",
           "additionalProperties": {
@@ -190,12 +215,16 @@
             "properties": {
               "rules": {
                 "type": "array",
-                "items": { "type": "string" },
+                "items": {
+                  "type": "string"
+                },
                 "description": "List of rule slugs in this group."
               },
               "passed_rules": {
                 "type": "array",
-                "items": { "type": "string" },
+                "items": {
+                  "type": "string"
+                },
                 "description": "List of slugs for rules that passed."
               },
               "score": {
