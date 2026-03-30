@@ -96,6 +96,9 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). A
 ## CI/CD
 
 - **GitHub App authentication**: All workflows use `actions/create-github-app-token@v1` with secrets `REGIS_CI_APP_ID` + `REGIS_CI_APP_PRIVATE_KEY`. Never use `GITHUB_TOKEN` for checkouts that need to trigger downstream CI runs — it won't.
+- **Dependabot PRs + secrets**: Workflows triggered by Dependabot PRs via `pull_request` run with read-only `GITHUB_TOKEN` and no secret access. Use `pull_request_target` for any workflow that needs to act on Dependabot PRs (safe when no PR code is checked out).
+- **Release Please PRs**: Labelled `autorelease: pending` — exclude from auto-merge with `!contains(github.event.pull_request.labels.*.name, 'autorelease: pending')`.
+- **Auto-rebase + squash merge gotcha**: If a fix branch gets auto-rebased after main already includes the same change, the squash merge becomes a no-op. Always create fix branches from the latest main immediately before committing.
 - **`peaceiris/actions-gh-pages` with App token**: use `personal_token:`, not `github_token:`.
 - **Trunk auto-fmt in CI**: The trunk workflow commits formatting fixes using `stefanzweifel/git-auto-commit-action`. The checkout must use the App token so the auto-commit triggers a new workflow run.
 - Use **GitHub Actions** and [Release Please](https://github.com/googleapis/release-please).
