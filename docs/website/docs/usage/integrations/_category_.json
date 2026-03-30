@@ -1,6 +1,7 @@
 {
   "label": "CI/CD Integration",
   "link": {
-    "type": "generated-index"
+    "type": "generated-index",
+    "description": "Guides for integrating regis-cli with various CI/CD platforms."
   }
 }

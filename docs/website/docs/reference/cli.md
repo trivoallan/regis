@@ -133,7 +133,7 @@ regis-cli bootstrap playbook [OUTPUT_DIR] [--no-input]
 
 ### `bootstrap archive`
 
-Bootstrap a standalone archive viewer site for browsing and filtering historical regis-cli reports. The generated site is built with Docusaurus and Tremor, deploys to GitHub Pages or GitLab Pages, and exposes a PowerBI-compatible JSON endpoint.
+Bootstrap a standalone archive viewer site for browsing and filtering historical regis-cli reports. The generated site is built with Docusaurus and Tremor, deploys to [GitHub Pages or GitLab Pages](../usage/integrations/), and exposes a PowerBI-compatible JSON endpoint.
 
 ```bash
 regis-cli bootstrap archive [OUTPUT_DIR] [OPTIONS]
