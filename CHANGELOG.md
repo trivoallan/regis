@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.23.5](https://github.com/trivoallan/regis-cli/compare/v0.23.4...v0.23.5) (2026-03-30)
+
+### Bug Fixes
+
+- **docs:** resolve Docusaurus broken links and anchor warnings ([#159](https://github.com/trivoallan/regis-cli/issues/159)) ([7307cd3](https://github.com/trivoallan/regis-cli/commit/7307cd30614797e23cb82ef4e2bb4bc76614c8bd))
+- **docs:** revert versioned_docs additions and add release snapshot workflow ([#160](https://github.com/trivoallan/regis-cli/issues/160)) ([575700d](https://github.com/trivoallan/regis-cli/commit/575700d7108918e26d6ba5e1b640fbc94129be06))
+
+### Documentation
+
+- update documentation reference and snapshots ([#157](https://github.com/trivoallan/regis-cli/issues/157)) ([5b6692c](https://github.com/trivoallan/regis-cli/commit/5b6692c969fda11098ebcc81d44a592de42d02c2))
+
 ## [0.23.4](https://github.com/trivoallan/regis-cli/compare/v0.23.3...v0.23.4) (2026-03-30)
 
 ### Bug Fixes
