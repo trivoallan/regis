@@ -136,11 +136,11 @@ jobs:
           pipenv run genbadge coverage -i coverage.xml -o coverage-badge.svg
 
       - name: Generate Default Archive
+        continue-on-error: true
         run: |
           mkdir -p docs/website/static/archives/default
           pipenv run regis analyze --evaluate alpine:latest -A docs/website/static/archives/default/
           pipenv run regis analyze --evaluate ghcr.io/trivoallan/regis:latest -A docs/website/static/archives/default/
-          pipenv run regis analyze --evaluate ghcr.io/trivoallan/regis:main -A docs/website/static/archives/default/
 
       - name: Docusaurus build
         run: pnpm run build
@@ -148,6 +148,7 @@ jobs:
 
       - name: Create Pull Request for documentation updates
         id: cpr
+        continue-on-error: true
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ steps.generate-token.outputs.token }}
