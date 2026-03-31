@@ -9,16 +9,16 @@
 
 **Description:** Build provenance and supply-chain attestation information.
 
-| Property                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                            |
-| ----------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------- |
-| + [analyzer](#analyzer)                         | No      | const           | No         | -          | Unique identifier for the Provenance analyzer.                               |
-| + [repository](#repository)                     | No      | string          | No         | -          | The image repository that was analyzed.                                      |
-| + [tag](#tag)                                   | No      | string          | No         | -          | The image tag that was analyzed.                                             |
-| + [has_provenance](#has_provenance)             | No      | boolean         | No         | -          | True if SLSA provenance or build attestations were found.                    |
-| + [has_cosign_signature](#has_cosign_signature) | No      | boolean         | No         | -          | True if a Cosign signature was found.                                        |
-| + [source_tracked](#source_tracked)             | No      | boolean         | No         | -          | True if the source repository URL is tracked in metadata.                    |
-| + [indicators_count](#indicators_count)         | No      | integer         | No         | -          | Total number of supply-chain indicators found.                               |
-| + [indicators](#indicators)                     | No      | array of object | No         | -          | List of specific supply-chain evidence found (e.g., OCI labels, signatures). |
+| Property                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                            |
+| ------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------- |
+| + [analyzer](#analyzer )                         | No      | const           | No         | -          | Unique identifier for the Provenance analyzer.                               |
+| + [repository](#repository )                     | No      | string          | No         | -          | The image repository that was analyzed.                                      |
+| + [tag](#tag )                                   | No      | string          | No         | -          | The image tag that was analyzed.                                             |
+| + [has_provenance](#has_provenance )             | No      | boolean         | No         | -          | True if SLSA provenance or build attestations were found.                    |
+| + [has_cosign_signature](#has_cosign_signature ) | No      | boolean         | No         | -          | True if a Cosign signature was found.                                        |
+| + [source_tracked](#source_tracked )             | No      | boolean         | No         | -          | True if the source repository URL is tracked in metadata.                    |
+| + [indicators_count](#indicators_count )         | No      | integer         | No         | -          | Total number of supply-chain indicators found.                               |
+| + [indicators](#indicators )                     | No      | array of object | No         | -          | List of specific supply-chain evidence found (e.g., OCI labels, signatures). |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -109,11 +109,11 @@ Specific value: `"provenance"`
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                           | Pattern | Type   | Deprecated | Definition | Title/Description                                  |
-| ---------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------- |
-| + [type](#indicators_items_type)   | No      | string | No         | -          | Type of indicator (label, signature, attestation). |
-| + [key](#indicators_items_key)     | No      | string | No         | -          | The specific metadata key or ID.                   |
-| + [value](#indicators_items_value) | No      | string | No         | -          | The value of the indicator.                        |
+| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description                                  |
+| ----------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------- |
+| + [type](#indicators_items_type )   | No      | string | No         | -          | Type of indicator (label, signature, attestation). |
+| + [key](#indicators_items_key )     | No      | string | No         | -          | The specific metadata key or ID.                   |
+| + [value](#indicators_items_value ) | No      | string | No         | -          | The value of the indicator.                        |
 
 #### <a name="indicators_items_type"></a>8.1.1. Property `type`
 
@@ -139,6 +139,5 @@ Specific value: `"provenance"`
 
 **Description:** The value of the indicator.
 
----
-
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 23:02:39 +0000
+----------------------------------------------------------------------------------------------------------------------------
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 04:53:55 +0000
