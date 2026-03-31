@@ -160,12 +160,11 @@ jobs:
             Automated documentation updates:
             - Generated latest JSON Schema reference
             - Generated latest Rules reference
-            - Regenerated What's New page from CHANGELOG.md and labeled PRs
 
             This PR ensures the documentation reflects the latest codebase.
+            What's New page is generated at deploy time only (not committed).
           add-paths: |
             coverage-badge.svg
-            docs/website/docs/whats-new.md
             docs/website/docs/reference/rules/**
             docs/website/docs/reference/schemas/**
             docs/website/static/schemas/**

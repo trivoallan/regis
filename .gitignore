@@ -32,6 +32,9 @@ htmlcov/
 .docusaurus
 regis-archive-ui/
 
-# Report Viewer
-apps/report-viewer/static/archive
-regis_cli/viewer_assets
+# Dashboard
+apps/dashboard/static/archive
+regis/dashboard_assets
+
+# Generated docs (built at deploy time by cd-docs workflow)
+docs/website/docs/whats-new.md
