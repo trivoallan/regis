@@ -1,4 +1,4 @@
-# Stage 1: Build the React viewer assets
+# Stage 1: Build the dashboard assets
 FROM node:25-slim AS frontend-builder
 RUN npm install -g pnpm@10.10.0
 WORKDIR /app
@@ -6,7 +6,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 COPY apps/ apps/
 COPY docs/ docs/
 RUN pnpm install --frozen-lockfile
-WORKDIR /app/apps/report-viewer
+WORKDIR /app/apps/dashboard
 RUN pnpm run build
 
 # Stage 2: Build the final Python image
@@ -71,8 +71,8 @@ RUN chown regis:regis /app && chmod 777 /app
 # Copy project files and ensure ownership
 COPY --chown=regis:regis . .
 
-# Copy built viewer assets from frontend stage
-COPY --from=frontend-builder --chown=regis:regis /app/apps/report-viewer/build ./regis/viewer_assets
+# Copy built dashboard assets from frontend stage
+COPY --from=frontend-builder --chown=regis:regis /app/apps/dashboard/build ./regis/dashboard_assets
 
 # Install regis
 RUN git config --global --add safe.directory /app && \

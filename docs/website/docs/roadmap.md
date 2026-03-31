@@ -55,9 +55,9 @@ The following are considered **stable** and safe to depend on in custom playbook
 
 ## Deferred
 
-| Feature                                   | Reason                                          |
-| ----------------------------------------- | ----------------------------------------------- |
-| **Tailwind v4 migration** (report viewer) | Blocked on `@headlessui/tailwindcss` v4 support |
+| Feature                               | Reason                                          |
+| ------------------------------------- | ----------------------------------------------- |
+| **Tailwind v4 migration** (dashboard) | Blocked on `@headlessui/tailwindcss` v4 support |
 
 ---
 

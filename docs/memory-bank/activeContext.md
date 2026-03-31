@@ -79,7 +79,7 @@ Documentation update following the pipeline refactoring and checklist enhancemen
   - Suppressed `RequestsDependencyWarning` by pinning `urllib3`, `chardet`, and `charset-normalizer` in `Pipfile`.
 - Added `--format` and `--output` options to `regis rules list` to support Markdown documentation generation.
 - Generated `docs/website/docs/reference/rules.md` rules reference documentation using the new CLI capabilities.
-- Migrated the report viewer to a modern Docusaurus-based application (located in `apps/report-viewer`).
+- Migrated the report viewer to a modern Docusaurus-based application (located in `apps/dashboard`).
 - Updated `regis/cli.py` and `regis/report/docusaurus.py` to support the new report generation flow.
 - Added `--base-url` option to `regis analyze` and `evaluate` for correct asset loading in static viewers (GitLab artifacts).
 - Updated the `.gitlab-ci.yml` template in the repository cookiecutter to dynamically calculate and pass the `baseUrl`.
@@ -88,7 +88,7 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Updated documentation site (`cli.md`, `analyze-image.md`, `gitlab.md`) with report viewer and artifact viewing details.
 
 - Monitor CI/CD results for the new PR.
-- Merge PR for `feat/report-viewer-tremor`.
+- Merge PR for `feat/dashboard-tremor`.
 
 ## Current Objective
 

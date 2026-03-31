@@ -17,8 +17,8 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-# The report-viewer Docusaurus app lives relative to the package root
-_VIEWER_DIR = Path(__file__).resolve().parent.parent.parent / "apps" / "report-viewer"
+# The dashboard Docusaurus app lives relative to the package root
+_VIEWER_DIR = Path(__file__).resolve().parent.parent.parent / "apps" / "dashboard"
 
 
 def build_report_site(
@@ -46,15 +46,15 @@ def build_report_site(
         base_url += "/"
     if not _VIEWER_DIR.is_dir():
         raise RuntimeError(
-            f"Report viewer app not found at {_VIEWER_DIR}. "
-            "Make sure the apps/report-viewer directory exists and "
+            f"Dashboard app not found at {_VIEWER_DIR}. "
+            "Make sure the apps/dashboard directory exists and "
             "dependencies are installed (pnpm install)."
         )
 
     static_dir = _VIEWER_DIR / "static"
     static_dir.mkdir(parents=True, exist_ok=True)
 
-    # Write report.json into the viewer's static directory
+    # Write report.json into the dashboard's static directory
     report_path = static_dir / "report.json"
     indent = 2 if pretty else None
     report_path.write_text(

@@ -2,7 +2,7 @@
   "template": "archive",
   "context": {
     "project_name": "Report Viewer",
-    "project_slug": "report-viewer",
+    "project_slug": "dashboard",
     "description": "Report Viewer",
     "version": "1.0.0"
   },

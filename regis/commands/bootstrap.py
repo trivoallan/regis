@@ -164,7 +164,7 @@ def bootstrap_archive(
     public: bool | None,
     org: str | None,
 ) -> None:
-    """Bootstrap a standalone archive viewer site for regis reports.
+    """Bootstrap a standalone archive dashboard site for regis reports.
 
     Use --dev to start a local dev server after scaffolding.
     Use --repo to create a remote repository and enable Pages.

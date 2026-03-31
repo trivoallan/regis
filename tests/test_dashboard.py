@@ -1,4 +1,4 @@
-"""Tests for commands/viewer.py."""
+"""Tests for commands/dashboard.py."""
 
 from __future__ import annotations
 
@@ -9,25 +9,25 @@ from unittest.mock import patch
 import pytest
 from click.testing import CliRunner
 
-from regis.commands.viewer import (
+from regis.commands.dashboard import (
     _parse_archives,
-    get_viewer_assets_dir,
-    viewer_group,
+    dashboard_group,
+    get_dashboard_assets_dir,
 )
 
 
 class TestGetViewerAssetsDir:
-    """Tests for get_viewer_assets_dir()."""
+    """Tests for get_dashboard_assets_dir()."""
 
     def test_returns_path_when_dir_exists(self) -> None:
         with patch.object(Path, "exists", return_value=True):
-            result = get_viewer_assets_dir()
-        assert result.name == "viewer_assets"
+            result = get_dashboard_assets_dir()
+        assert result.name == "dashboard_assets"
 
     def test_exits_when_dir_missing(self) -> None:
         with patch.object(Path, "exists", return_value=False):
             with pytest.raises(SystemExit) as exc_info:
-                get_viewer_assets_dir()
+                get_dashboard_assets_dir()
         assert exc_info.value.code == 1
 
 
@@ -98,22 +98,22 @@ class TestParseArchives:
 class TestViewerExportCmd:
     """Tests for the `viewer export` subcommand."""
 
-    @patch("regis.commands.viewer.get_viewer_assets_dir")
-    @patch("regis.commands.viewer.shutil.copytree")
+    @patch("regis.commands.dashboard.get_dashboard_assets_dir")
+    @patch("regis.commands.dashboard.shutil.copytree")
     def test_export_without_report(
         self, mock_copytree, mock_get_dir, tmp_path: Path
     ) -> None:
         mock_get_dir.return_value = tmp_path / "assets"
         runner = CliRunner()
         with runner.isolated_filesystem():
-            result = runner.invoke(viewer_group, ["export", "-o", "output"])
+            result = runner.invoke(dashboard_group, ["export", "-o", "output"])
         assert result.exit_code == 0
         assert "Successfully exported" in result.output
         mock_copytree.assert_called_once()
 
-    @patch("regis.commands.viewer.get_viewer_assets_dir")
-    @patch("regis.commands.viewer.shutil.copytree")
-    @patch("regis.commands.viewer.shutil.copy2")
+    @patch("regis.commands.dashboard.get_dashboard_assets_dir")
+    @patch("regis.commands.dashboard.shutil.copytree")
+    @patch("regis.commands.dashboard.shutil.copy2")
     def test_export_with_report(
         self, mock_copy2, mock_copytree, mock_get_dir, tmp_path: Path
     ) -> None:
@@ -123,15 +123,15 @@ class TestViewerExportCmd:
         runner = CliRunner()
         with runner.isolated_filesystem():
             result = runner.invoke(
-                viewer_group,
+                dashboard_group,
                 ["export", "-o", "output", str(report_file)],
             )
         assert result.exit_code == 0
         assert "Successfully exported" in result.output
         mock_copy2.assert_called_once()
 
-    @patch("regis.commands.viewer.get_viewer_assets_dir")
-    @patch("regis.commands.viewer.shutil.copytree")
+    @patch("regis.commands.dashboard.get_dashboard_assets_dir")
+    @patch("regis.commands.dashboard.shutil.copytree")
     def test_export_with_archives_writes_archives_json(
         self, mock_copytree, mock_get_dir, tmp_path: Path
     ) -> None:
@@ -139,7 +139,7 @@ class TestViewerExportCmd:
         output_dir = tmp_path / "output"
         runner = CliRunner()
         result = runner.invoke(
-            viewer_group,
+            dashboard_group,
             [
                 "export",
                 "-o",
@@ -162,8 +162,8 @@ class TestViewerExportCmd:
         }
         assert "Archives config written" in result.output
 
-    @patch("regis.commands.viewer.get_viewer_assets_dir")
-    @patch("regis.commands.viewer.shutil.copytree")
+    @patch("regis.commands.dashboard.get_dashboard_assets_dir")
+    @patch("regis.commands.dashboard.shutil.copytree")
     def test_export_without_archives_does_not_write_archives_json(
         self, mock_copytree, mock_get_dir, tmp_path: Path
     ) -> None:
@@ -171,15 +171,15 @@ class TestViewerExportCmd:
         output_dir = tmp_path / "output"
         runner = CliRunner()
         result = runner.invoke(
-            viewer_group,
+            dashboard_group,
             ["export", "-o", str(output_dir)],
         )
         assert result.exit_code == 0, result.output
         assert not (output_dir / "archives.json").exists()
         assert "Archives config written" not in result.output
 
-    @patch("regis.commands.viewer.get_viewer_assets_dir")
-    @patch("regis.commands.viewer.shutil.copytree")
+    @patch("regis.commands.dashboard.get_dashboard_assets_dir")
+    @patch("regis.commands.dashboard.shutil.copytree")
     def test_export_bad_archive_format_fails(
         self, mock_copytree, mock_get_dir, tmp_path: Path
     ) -> None:
@@ -187,14 +187,14 @@ class TestViewerExportCmd:
         runner = CliRunner()
         with runner.isolated_filesystem():
             result = runner.invoke(
-                viewer_group,
+                dashboard_group,
                 ["export", "-o", "output", "-a", "BadEntry"],
             )
         assert result.exit_code != 0
 
-    def test_viewer_group_help(self) -> None:
+    def test_dashboard_group_help(self) -> None:
         runner = CliRunner()
-        result = runner.invoke(viewer_group, ["--help"])
+        result = runner.invoke(dashboard_group, ["--help"])
         assert result.exit_code == 0
         assert "export" in result.output
         assert "serve" in result.output

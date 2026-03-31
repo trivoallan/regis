@@ -11,7 +11,7 @@ importers:
 
   .: {}
 
-  apps/report-viewer:
+  apps/dashboard:
     dependencies:
       '@docusaurus/core':
         specifier: ^3.9.2

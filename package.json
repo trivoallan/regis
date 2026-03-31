@@ -3,9 +3,9 @@
   "private": true,
   "scripts": {
     "build:ui": "pnpm --filter @regis/ui build",
-    "build:viewer": "pnpm --filter @regis/report-viewer build",
+    "build:viewer": "pnpm --filter @regis/dashboard build",
     "build": "pnpm run build:ui && pnpm run build:viewer",
-    "dev": "pnpm --filter @regis/report-viewer dev",
+    "dev": "pnpm --filter @regis/dashboard dev",
     "typecheck": "pnpm -r typecheck"
   },
   "pnpm": {

@@ -36,7 +36,7 @@ jobs:
         with:
           issue-number: "{% raw %}${{ github.event.pull_request.number }}{% endraw %}"
           body: |
-            Browse the [RegiS Report](https://trivoallan.github.io/regis/report-viewer/report/?url={% raw %}${{ steps.pr-preview.outputs.preview-url }}${{ steps.split.outputs.fragment }}{% endraw %}/report.json)
+            Browse the [RegiS Report](https://trivoallan.github.io/regis/dashboard/report/?url={% raw %}${{ steps.pr-preview.outputs.preview-url }}${{ steps.split.outputs.fragment }}{% endraw %}/report.json)
 
   cleanup:
     if: github.event.action == 'closed'

@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "report-viewer",
+      "name": "dashboard",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@regis/report-viewer", "dev"],
+      "runtimeArgs": ["--filter", "@regis/dashboard", "dev"],
       "port": 3000
     },
     {

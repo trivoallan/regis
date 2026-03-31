@@ -6163,10 +6163,10 @@
           "licenses": []
         },
         {
-          "name": "report-viewer",
+          "name": "dashboard",
           "version": "0.0.1",
           "type": "library",
-          "purl": "pkg:npm/%40regis/report-viewer@0.0.1",
+          "purl": "pkg:npm/%40regis/dashboard@0.0.1",
           "licenses": []
         },
         {

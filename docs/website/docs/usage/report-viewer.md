@@ -4,9 +4,9 @@ tags:
   - dashboard
 ---
 
-# Report Viewer
+# Dashboard
 
-The `regis` Report Viewer is a modern, interactive Single Page Application (SPA) designed to transform complex security data into clear, actionable insights.
+The `regis` Dashboard is a modern, interactive Single Page Application (SPA) designed to transform complex security data into clear, actionable insights.
 
 :::info
 For a deep dive into the architecture and core philosophy of our reporting engine, including how the CLI interacts with the SPA, see the **[Reporting Concepts](../concepts/reports.md)** page.
@@ -22,7 +22,7 @@ For a deep dive into the architecture and core philosophy of our reporting engin
 
 ## Playbook-Driven UI
 
-A key feature of the Report Viewer is that its **entire structure is dynamic**. The pages, sections, and even the individual widgets you see are defined by your active **Playbook**.
+A key feature of the Dashboard is that its **entire structure is dynamic**. The pages, sections, and even the individual widgets you see are defined by your active **Playbook**.
 
 This means that `regis` doesn't just display a hard-coded list of results; it renders a custom dashboard tailored to your specific compliance requirements.
 
@@ -64,7 +64,7 @@ Raw metadata and layer-by-layer analysis for deep troubleshooting and size optim
 
 ## Interactivity
 
-The report viewer is designed for high-performance interaction:
+The dashboard is designed for high-performance interaction:
 
 - **Instant Filtering**: Narrow down results by severity, analyzer, or pass/fail status.
 - **Search**: Quickly find specific rules or vulnerabilities.

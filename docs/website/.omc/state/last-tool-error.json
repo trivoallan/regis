@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd /Users/tristan/Documents/Workspaces/ttc/regis-cli/.claude/worktrees/agent-a8a2c5c4 && git add docs/website/docs/roadmap.md && git commit -m \\\"$(cat <<'EOF'\\ndocs(docs): add public roadm...",
+  "error": "Exit code 1\n\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[0G\r\u001b[2K\u001b[...",
+  "timestamp": "2026-03-31T06:30:00.371Z",
+  "retry_count": 2
+}

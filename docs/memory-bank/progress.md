@@ -21,7 +21,7 @@
 - Unified linting experience by migrating to Trunk.
 - Migrated documentation to Docusaurus, established dynamic versioning strategy with tag names, and cleaned up redundant folders.
 - Added support for Markdown output in `regis rules list` and generated rules reference documentation.
-- **Implemented modern Docusaurus-based report viewer** (`apps/report-viewer`).
+- **Implemented modern Docusaurus-based report viewer** (`apps/dashboard`).
 - Replaced legacy Jinja2 HTML report generation with the new React/Docusaurus architecture.
 - Integrated the new report viewer into the workspace (`pnpm`).
 - **Added GitLab artifact support** with dynamic `baseUrl` calculation and `--base-url` flag.
@@ -30,7 +30,7 @@
   - `--platform [github|gitlab]` flag skips the cookiecutter prompt via `extra_context`.
   - Robust `ARCHIVE_BASE_URL` derivation: GitLab uses `CI_PAGES_URL` (handles subgroups and custom domains); GitHub exposes `vars.ARCHIVE_BASE_URL` override.
   - Idempotent retry: if the remote repo already exists, creation is skipped and push continues.
-- **Tremor UI overhaul** of the report viewer (branch: `feature/report-viewer-tremor`):
+- **Tremor UI overhaul** of the report viewer (branch: `feature/dashboard-tremor`):
   - Navbar identity badges (Registry, Repository, Tag, Digest) with clipboard copy.
   - Raw JSON link uses dynamic `siteConfig.baseUrl` (fixes broken link with non-root baseUrl).
   - Shared `StatCard` KPI component used across all 12 analyzer pages.

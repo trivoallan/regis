@@ -1,4 +1,4 @@
-"""React report viewer commands for regis."""
+"""Dashboard commands for regis."""
 
 import http.server
 import json
@@ -15,12 +15,12 @@ import click
 logger = logging.getLogger(__name__)
 
 
-def get_viewer_assets_dir() -> Path:
-    """Returns the path to the bundled viewer assets."""
-    assets_dir = Path(__file__).parent.parent / "viewer_assets"
+def get_dashboard_assets_dir() -> Path:
+    """Returns the path to the bundled dashboard assets."""
+    assets_dir = Path(__file__).parent.parent / "dashboard_assets"
     if not assets_dir.exists():
         click.echo(
-            f"Error: Viewer assets not found at {assets_dir}.\n"
+            f"Error: Dashboard assets not found at {assets_dir}.\n"
             "This installation of regis might not have been packaged with the front-end build.",
             err=True,
         )
@@ -58,12 +58,12 @@ def _parse_archives(archives: tuple[str, ...]) -> list[dict[str, str]]:
 
 
 @click.group()
-def viewer_group() -> None:
+def dashboard_group() -> None:
     """Preview or export interactive security reports."""
     pass
 
 
-@viewer_group.command(name="export")
+@dashboard_group.command(name="export")
 @click.argument(
     "report",
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
@@ -86,11 +86,11 @@ def viewer_group() -> None:
 def export_cmd(
     output: Path, report: Path | None = None, archives: tuple[str, ...] = ()
 ) -> None:
-    """Export the viewer app alongside the target report for static hosting."""
-    assets_dir = get_viewer_assets_dir()
+    """Export the dashboard app alongside the target report for static hosting."""
+    assets_dir = get_dashboard_assets_dir()
     output.mkdir(parents=True, exist_ok=True)
 
-    click.echo(f"Exporting viewer assets to {output} ...")
+    click.echo(f"Exporting dashboard assets to {output} ...")
     shutil.copytree(assets_dir, output, dirs_exist_ok=True)
 
     if report:
@@ -109,7 +109,7 @@ def export_cmd(
     click.echo("You can now host this directory using any static web server.")
 
 
-@viewer_group.command(name="serve")
+@dashboard_group.command(name="serve")
 @click.argument(
     "report",
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
@@ -132,8 +132,8 @@ def export_cmd(
 def serve_cmd(  # pragma: no cover
     port: int, report: Path | None = None, archives: tuple[str, ...] = ()
 ) -> None:
-    """Serve the static React viewer and preview the report locally."""
-    assets_dir = get_viewer_assets_dir()
+    """Serve the interactive dashboard and preview the report locally."""
+    assets_dir = get_dashboard_assets_dir()
 
     archives_payload: bytes | None = None
     if archives:
@@ -182,7 +182,7 @@ def serve_cmd(  # pragma: no cover
     url = f"http://localhost:{port}/"
     if report:
         click.echo(f"Serving report from {report}")
-    click.echo(f"Viewer application running at {url}")
+    click.echo(f"Dashboard application running at {url}")
 
     try:
         webbrowser.open(url)

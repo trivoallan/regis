@@ -1,11 +1,11 @@
-name: CD / Viewer
+name: CD / Dashboard
 
 on:
   push:
     branches:
       - main
     paths:
-      - apps/report-viewer/**
+      - apps/dashboard/**
   release:
     types: [published]
   workflow_dispatch:
@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: viewer-publish
+  group: dashboard-publish
   cancel-in-progress: true
 
 jobs:
@@ -46,11 +46,11 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "release" ]; then
             VERSION="${{ github.event.release.tag_name }}"
-            echo "deploy_path=tools/${VERSION}/viewer" >> "$GITHUB_OUTPUT"
-            echo "base_url=/regis/tools/${VERSION}/viewer/" >> "$GITHUB_OUTPUT"
+            echo "deploy_path=tools/${VERSION}/dashboard" >> "$GITHUB_OUTPUT"
+            echo "base_url=/regis/tools/${VERSION}/dashboard/" >> "$GITHUB_OUTPUT"
           else
-            echo "deploy_path=tools/main/viewer" >> "$GITHUB_OUTPUT"
-            echo "base_url=/regis/tools/main/viewer/" >> "$GITHUB_OUTPUT"
+            echo "deploy_path=tools/main/dashboard" >> "$GITHUB_OUTPUT"
+            echo "base_url=/regis/tools/main/dashboard/" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Setup Node
@@ -80,20 +80,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build Report Viewer
+      - name: Build Dashboard
         run: pnpm run build
-        working-directory: apps/report-viewer
+        working-directory: apps/dashboard
         env:
           REPORT_URL: https://trivoallan.github.io
           REPORT_BASE_URL: ${{ steps.meta.outputs.base_url }}
 
-      - name: Deploy Viewer to GitHub Pages
+      - name: Deploy Dashboard to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ steps.generate-token.outputs.token }}
-          publish_dir: apps/report-viewer/build
+          publish_dir: apps/dashboard/build
           destination_dir: ${{ steps.meta.outputs.deploy_path }}
           keep_files: true
           user_name: github-actions[bot]
           user_email: github-actions[bot]@users.noreply.github.com
-          commit_message: "ci(viewer): deploy viewer to ${{ steps.meta.outputs.deploy_path }}"
+          commit_message: "ci(dashboard): deploy dashboard to ${{ steps.meta.outputs.deploy_path }}"

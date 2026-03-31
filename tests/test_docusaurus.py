@@ -14,24 +14,24 @@ from regis.report.docusaurus import build_report_site
 class TestBuildReportSite:
     """Tests for build_report_site()."""
 
-    def test_viewer_dir_not_found_raises(self, tmp_path: Path) -> None:
+    def test_dashboard_dir_not_found_raises(self, tmp_path: Path) -> None:
         with patch("regis.report.docusaurus._VIEWER_DIR", tmp_path / "nonexistent"):
-            with pytest.raises(RuntimeError, match="Report viewer app not found"):
+            with pytest.raises(RuntimeError, match="Dashboard app not found"):
                 build_report_site({"key": "val"}, tmp_path / "output")
 
     def test_no_package_manager_raises(self, tmp_path: Path) -> None:
-        viewer_dir = tmp_path / "viewer"
-        viewer_dir.mkdir()
-        with patch("regis.report.docusaurus._VIEWER_DIR", viewer_dir):
+        dashboard_dir = tmp_path / "dashboard"
+        dashboard_dir.mkdir()
+        with patch("regis.report.docusaurus._VIEWER_DIR", dashboard_dir):
             with patch("regis.report.docusaurus.shutil.which", return_value=None):
                 with pytest.raises(RuntimeError, match="Neither pnpm nor npm"):
                     build_report_site({"key": "val"}, tmp_path / "output")
 
     def test_build_failure_raises(self, tmp_path: Path) -> None:
-        viewer_dir = tmp_path / "viewer"
-        viewer_dir.mkdir()
+        dashboard_dir = tmp_path / "dashboard"
+        dashboard_dir.mkdir()
         result = MagicMock(returncode=1, stderr="Build error", stdout="")
-        with patch("regis.report.docusaurus._VIEWER_DIR", viewer_dir):
+        with patch("regis.report.docusaurus._VIEWER_DIR", dashboard_dir):
             with patch(
                 "regis.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"
             ):
@@ -42,9 +42,9 @@ class TestBuildReportSite:
                         build_report_site({"key": "val"}, tmp_path / "output")
 
     def test_build_timeout_raises(self, tmp_path: Path) -> None:
-        viewer_dir = tmp_path / "viewer"
-        viewer_dir.mkdir()
-        with patch("regis.report.docusaurus._VIEWER_DIR", viewer_dir):
+        dashboard_dir = tmp_path / "dashboard"
+        dashboard_dir.mkdir()
+        with patch("regis.report.docusaurus._VIEWER_DIR", dashboard_dir):
             with patch(
                 "regis.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"
             ):
@@ -56,10 +56,10 @@ class TestBuildReportSite:
                         build_report_site({"key": "val"}, tmp_path / "output")
 
     def test_build_output_dir_missing_raises(self, tmp_path: Path) -> None:
-        viewer_dir = tmp_path / "viewer"
-        viewer_dir.mkdir()
+        dashboard_dir = tmp_path / "dashboard"
+        dashboard_dir.mkdir()
         result = MagicMock(returncode=0, stdout="OK", stderr="")
-        with patch("regis.report.docusaurus._VIEWER_DIR", viewer_dir):
+        with patch("regis.report.docusaurus._VIEWER_DIR", dashboard_dir):
             with patch(
                 "regis.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"
             ):
@@ -70,15 +70,15 @@ class TestBuildReportSite:
                         build_report_site({"key": "val"}, tmp_path / "output")
 
     def test_successful_build_with_pnpm(self, tmp_path: Path) -> None:
-        viewer_dir = tmp_path / "viewer"
-        viewer_dir.mkdir()
-        (viewer_dir / "node_modules").mkdir()
-        build_dir = viewer_dir / "build"
+        dashboard_dir = tmp_path / "dashboard"
+        dashboard_dir.mkdir()
+        (dashboard_dir / "node_modules").mkdir()
+        build_dir = dashboard_dir / "build"
         build_dir.mkdir()
         (build_dir / "index.html").write_text("<html/>")
         result = MagicMock(returncode=0, stdout="Build OK", stderr="")
         output_dir = tmp_path / "output"
-        with patch("regis.report.docusaurus._VIEWER_DIR", viewer_dir):
+        with patch("regis.report.docusaurus._VIEWER_DIR", dashboard_dir):
             with patch(
                 "regis.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"
             ):
@@ -93,9 +93,9 @@ class TestBuildReportSite:
         assert "/usr/bin/pnpm" in call_cmd
 
     def test_successful_build_with_npm_fallback(self, tmp_path: Path) -> None:
-        viewer_dir = tmp_path / "viewer"
-        viewer_dir.mkdir()
-        build_dir = viewer_dir / "build"
+        dashboard_dir = tmp_path / "dashboard"
+        dashboard_dir.mkdir()
+        build_dir = dashboard_dir / "build"
         build_dir.mkdir()
         (build_dir / "index.html").write_text("<html/>")
         result = MagicMock(returncode=0, stdout="Build OK", stderr="")
@@ -104,7 +104,7 @@ class TestBuildReportSite:
         def which_side_effect(cmd: str) -> str | None:
             return None if cmd == "pnpm" else "/usr/bin/npm"
 
-        with patch("regis.report.docusaurus._VIEWER_DIR", viewer_dir):
+        with patch("regis.report.docusaurus._VIEWER_DIR", dashboard_dir):
             with patch(
                 "regis.report.docusaurus.shutil.which",
                 side_effect=which_side_effect,
@@ -119,14 +119,14 @@ class TestBuildReportSite:
 
     def test_report_json_copied_when_absent_from_build(self, tmp_path: Path) -> None:
         """report.json is explicitly copied to output if not present after copytree."""
-        viewer_dir = tmp_path / "viewer"
-        viewer_dir.mkdir()
-        build_dir = viewer_dir / "build"
+        dashboard_dir = tmp_path / "dashboard"
+        dashboard_dir.mkdir()
+        build_dir = dashboard_dir / "build"
         build_dir.mkdir()
         # No report.json in build output — function should copy it separately.
         result = MagicMock(returncode=0, stdout="OK", stderr="")
         output_dir = tmp_path / "output"
-        with patch("regis.report.docusaurus._VIEWER_DIR", viewer_dir):
+        with patch("regis.report.docusaurus._VIEWER_DIR", dashboard_dir):
             with patch(
                 "regis.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"
             ):
@@ -138,13 +138,13 @@ class TestBuildReportSite:
 
     def test_base_url_trailing_slash_added(self, tmp_path: Path) -> None:
         """base_url without trailing slash gets one appended."""
-        viewer_dir = tmp_path / "viewer"
-        viewer_dir.mkdir()
-        build_dir = viewer_dir / "build"
+        dashboard_dir = tmp_path / "dashboard"
+        dashboard_dir.mkdir()
+        build_dir = dashboard_dir / "build"
         build_dir.mkdir()
         result = MagicMock(returncode=0, stdout="OK", stderr="")
         output_dir = tmp_path / "output"
-        with patch("regis.report.docusaurus._VIEWER_DIR", viewer_dir):
+        with patch("regis.report.docusaurus._VIEWER_DIR", dashboard_dir):
             with patch(
                 "regis.report.docusaurus.shutil.which", return_value="/usr/bin/pnpm"
             ):

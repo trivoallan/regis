@@ -95,26 +95,26 @@ regis rules evaluate <report.json> [--rules playbook.yaml] [--fail] [--fail-leve
 
 ## Viewer Commands
 
-Manage and serve the interactive report viewer.
+Manage and serve the interactive dashboard.
 
-### `viewer serve`
+### `dashboard serve`
 
 Serve the static React viewer and preview a report locally.
 
 ```bash
-regis viewer serve [OPTIONS] [REPORT]
+regis dashboard serve [OPTIONS] [REPORT]
 ```
 
 _Options:_
 
 - `-p, --port INTEGER`: Port to listen on (default: `8000`).
 
-### `viewer export`
+### `dashboard export`
 
 Export the viewer app alongside a target report for static hosting.
 
 ```bash
-regis viewer export [OPTIONS] [REPORT]
+regis dashboard export [OPTIONS] [REPORT]
 ```
 
 _Options:_

@@ -57,7 +57,7 @@ regis = [
   "scorecard/*.yaml",
   "templates/**/*",
   "cookiecutters/**/*",
-  "viewer_assets/**/*",
+  "dashboard_assets/**/*",
 ]
 
 [tool.setuptools_scm]
@@ -70,7 +70,7 @@ addopts = "--cov=regis --cov-report=term-missing --cov-report=html --cov-report=
 
 [tool.coverage.run]
 source = ["regis"]
-omit = ["regis/cookiecutters/*", "regis/viewer_assets/*"]
+omit = ["regis/cookiecutters/*", "regis/dashboard_assets/*"]
 
 [tool.coverage.report]
 fail_under = 90

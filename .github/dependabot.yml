@@ -6,7 +6,7 @@ updates:
       interval: weekly
 
   - package-ecosystem: npm
-    directory: /apps/report-viewer
+    directory: /apps/dashboard
     schedule:
       interval: weekly
     ignore:
