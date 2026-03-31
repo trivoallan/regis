@@ -23,7 +23,7 @@ jobs:
           private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
 
       - name: Checkout PR branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ steps.generate-token.outputs.token }}
           ref: ${{ github.event.pull_request.head.ref }}

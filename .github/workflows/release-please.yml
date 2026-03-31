@@ -31,7 +31,7 @@ jobs:
 
       - name: Checkout PR branch
         if: ${{ steps.release.outputs.pr }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ fromJson(steps.release.outputs.pr).head_branch }}
           token: ${{ steps.generate-token.outputs.token }}
