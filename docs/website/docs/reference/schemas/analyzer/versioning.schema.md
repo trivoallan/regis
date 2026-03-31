@@ -9,17 +9,17 @@
 
 **Description:** Report analyzing tag naming conventions and semver adoption.
 
-| Property                                                      | Pattern | Type             | Deprecated | Definition | Title/Description                                                                 |
-| ------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | --------------------------------------------------------------------------------- |
-| + [analyzer](#analyzer)                                       | No      | const            | No         | -          | Unique identifier for the Versioning analyzer.                                    |
-| + [repository](#repository)                                   | No      | string           | No         | -          | The image repository that was analyzed.                                           |
-| + [total_tags](#total_tags)                                   | No      | integer          | No         | -          | Total number of tags found in the remote repository.                              |
-| + [dominant_pattern](#dominant_pattern)                       | No      | enum (of string) | No         | -          | The most frequently occurring tag naming pattern.                                 |
-| + [aliases](#aliases)                                         | No      | array of string  | No         | -          | Other tags in the repository that resolve to the same digest as the analyzed tag. |
-| - [release_lines](#release_lines)                             | No      | array of string  | No         | -          | Major/Minor versions identified as active release lines.                          |
-| + [semver_compliant_percentage](#semver_compliant_percentage) | No      | number           | No         | -          | Percentage of tags that follow strict Semantic Versioning.                        |
-| + [patterns](#patterns)                                       | No      | array of object  | No         | -          | Frequency breakdown of tag naming patterns.                                       |
-| + [variants](#variants)                                       | No      | array of object  | No         | -          | Frequency breakdown of tag variants (e.g., -alpine, -slim).                       |
+| Property                                                       | Pattern | Type             | Deprecated | Definition | Title/Description                                                                 |
+| -------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | --------------------------------------------------------------------------------- |
+| + [analyzer](#analyzer )                                       | No      | const            | No         | -          | Unique identifier for the Versioning analyzer.                                    |
+| + [repository](#repository )                                   | No      | string           | No         | -          | The image repository that was analyzed.                                           |
+| + [total_tags](#total_tags )                                   | No      | integer          | No         | -          | Total number of tags found in the remote repository.                              |
+| + [dominant_pattern](#dominant_pattern )                       | No      | enum (of string) | No         | -          | The most frequently occurring tag naming pattern.                                 |
+| + [aliases](#aliases )                                         | No      | array of string  | No         | -          | Other tags in the repository that resolve to the same digest as the analyzed tag. |
+| - [release_lines](#release_lines )                             | No      | array of string  | No         | -          | Major/Minor versions identified as active release lines.                          |
+| + [semver_compliant_percentage](#semver_compliant_percentage ) | No      | number           | No         | -          | Percentage of tags that follow strict Semantic Versioning.                        |
+| + [patterns](#patterns )                                       | No      | array of object  | No         | -          | Frequency breakdown of tag naming patterns.                                       |
+| + [variants](#variants )                                       | No      | array of object  | No         | -          | Frequency breakdown of tag variants (e.g., -alpine, -slim).                       |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -60,16 +60,15 @@ Specific value: `"versioning"`
 **Description:** The most frequently occurring tag naming pattern.
 
 Must be one of:
-
-- "semver"
-- "semver-prerelease"
-- "semver-variant"
-- "calver"
-- "numeric"
-- "numeric-variant"
-- "hash"
-- "named"
-- "unknown"
+* "semver"
+* "semver-prerelease"
+* "semver-variant"
+* "calver"
+* "numeric"
+* "numeric-variant"
+* "hash"
+* "named"
+* "unknown"
 
 ## <a name="aliases"></a>5. ![Required](https://img.shields.io/badge/Required-blue) Property `aliases`
 
@@ -163,12 +162,12 @@ Must be one of:
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                                   | Pattern | Type             | Deprecated | Definition | Title/Description                               |
-| ------------------------------------------ | ------- | ---------------- | ---------- | ---------- | ----------------------------------------------- |
-| + [pattern](#patterns_items_pattern)       | No      | enum (of string) | No         | -          | Pattern identifier.                             |
-| + [count](#patterns_items_count)           | No      | integer          | No         | -          | Number of tags matching this pattern.           |
-| + [percentage](#patterns_items_percentage) | No      | number           | No         | -          | Percentage of total tags matching this pattern. |
-| + [examples](#patterns_items_examples)     | No      | array of string  | No         | -          | Sample tags matching this pattern.              |
+| Property                                    | Pattern | Type             | Deprecated | Definition | Title/Description                               |
+| ------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------------------------------------- |
+| + [pattern](#patterns_items_pattern )       | No      | enum (of string) | No         | -          | Pattern identifier.                             |
+| + [count](#patterns_items_count )           | No      | integer          | No         | -          | Number of tags matching this pattern.           |
+| + [percentage](#patterns_items_percentage ) | No      | number           | No         | -          | Percentage of total tags matching this pattern. |
+| + [examples](#patterns_items_examples )     | No      | array of string  | No         | -          | Sample tags matching this pattern.              |
 
 #### <a name="patterns_items_pattern"></a>8.1.1. Property `pattern`
 
@@ -179,15 +178,14 @@ Must be one of:
 **Description:** Pattern identifier.
 
 Must be one of:
-
-- "semver"
-- "semver-prerelease"
-- "semver-variant"
-- "calver"
-- "numeric"
-- "numeric-variant"
-- "hash"
-- "named"
+* "semver"
+* "semver-prerelease"
+* "semver-variant"
+* "calver"
+* "numeric"
+* "numeric-variant"
+* "hash"
+* "named"
 
 #### <a name="patterns_items_count"></a>8.1.2. Property `count`
 
@@ -267,12 +265,12 @@ Must be one of:
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                                   | Pattern | Type            | Deprecated | Definition | Title/Description                                      |
-| ------------------------------------------ | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------ |
-| + [name](#variants_items_name)             | No      | string          | No         | -          | Variant name or suffix.                                |
-| + [count](#variants_items_count)           | No      | integer         | No         | -          | Number of tags identified with this variant.           |
-| + [percentage](#variants_items_percentage) | No      | number          | No         | -          | Percentage of total tags identified with this variant. |
-| + [examples](#variants_items_examples)     | No      | array of string | No         | -          | Sample tags matching this variant.                     |
+| Property                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                      |
+| ------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------ |
+| + [name](#variants_items_name )             | No      | string          | No         | -          | Variant name or suffix.                                |
+| + [count](#variants_items_count )           | No      | integer         | No         | -          | Number of tags identified with this variant.           |
+| + [percentage](#variants_items_percentage ) | No      | number          | No         | -          | Percentage of total tags identified with this variant. |
+| + [examples](#variants_items_examples )     | No      | array of string | No         | -          | Sample tags matching this variant.                     |
 
 #### <a name="variants_items_name"></a>9.1.1. Property `name`
 
@@ -333,6 +331,5 @@ Must be one of:
 | -------- | -------- |
 | **Type** | `string` |
 
----
-
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 09:06:31 +0000
+----------------------------------------------------------------------------------------------------------------------------
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 09:19:26 +0000
