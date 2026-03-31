@@ -23,7 +23,7 @@ report artifact, and posting a PR comment—into a single step.
 ```yaml
 permissions:
   contents: read
-  packages: write
+  packages: write # Required only if pushing to GHCR
   pull-requests: write # Required only for PR comments
 ```
 
@@ -83,7 +83,7 @@ jobs:
 | `playbook`        | No       | —                       | URL or path to a custom playbook YAML file.                                     |
 | `report-url`      | No       | —                       | URL to a hosted report (used as a link in the PR comment).                      |
 | `github-token`    | No       | `${{ github.token }}`   | Token used to post PR comments (`pull-requests: write` required).               |
-| `pr-url`          | No       | Auto-detected           | PR URL to post results on. Defaults to the current PR on `pull_request` events. |
+| `pr-url`          | No       | —                       | PR URL to post results on. Defaults to the current PR on `pull_request` events. |
 | `upload-artifact` | No       | `true`                  | Upload the report directory as a workflow artifact.                             |
 | `artifact-name`   | No       | `regis-security-report` | Name for the uploaded artifact.                                                 |
 | `version`         | No       | `latest`                | `regis-cli` Docker image version to use.                                        |
