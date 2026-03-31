@@ -186,6 +186,12 @@ After a successful bootstrap, all `bootstrap` commands display **Post-install no
 
 ## Utility Commands
 
+### `github`
+
+Commands for seamless integration with GitHub Actions.
+
+- `github update-pr`: Post or update a Pull Request comment with analysis results, score, and report link. Applies playbook labels to the PR.
+
 ### `gitlab`
 
 Commands for seamless integration with GitLab CI/CD.

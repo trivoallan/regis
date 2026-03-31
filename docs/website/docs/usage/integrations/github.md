@@ -172,6 +172,47 @@ regis-cli analyze <image-url> \
   --meta "trigger.url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 ```
 
+## Posting Results to Pull Requests
+
+After running the analysis, you can post the results directly to a Pull Request
+as a comment using the `github update-pr` command:
+
+```yaml
+- name: Post analysis results to PR
+  if: github.event_name == 'pull_request'
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: |
+    regis-cli github update-pr \
+      --report reports/report.json \
+      --report-url "${{ steps.pages.outputs.page_url }}" \
+      --pr-url "${{ github.event.pull_request.html_url }}"
+```
+
+The command will:
+
+- Post a summary comment with the playbook score, tier, and vulnerability counts.
+- Include a link to the full HTML report.
+- Apply any labels defined in the playbook.
+- **Update** the existing comment on re-runs instead of creating duplicates.
+
+### CLI reference
+
+```bash
+regis-cli github update-pr \
+  --report <path-to-report.json> \
+  --report-url <url-to-html-report> \
+  --pr-url <github-pr-url> \
+  --token <github-token>  # or set GITHUB_TOKEN env var
+```
+
+| Option | Description |
+|--------|-------------|
+| `--report` | Path to the `report.json` file produced by `regis-cli analyze` |
+| `--report-url` | URL where the HTML report is hosted (artifact, Pages, etc.) |
+| `--pr-url` | Full GitHub PR URL (`https://github.com/owner/repo/pull/42`) |
+| `--token` | GitHub token — also reads `GITHUB_TOKEN` environment variable |
+
 ## Viewing Reports
 
 When using the `--site` flag, `regis-cli` generates a full HTML site in the `reports/` directory. By uploading this directory as a workflow artifact (as shown in the example), you can download and view the interactive reports directly from the GitHub Actions run page.
