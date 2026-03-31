@@ -9,16 +9,16 @@
 
 **Description:** Image age and delta versus latest tag.
 
-| Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description                                                      |
-| -------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------- |
-| + [analyzer](#analyzer )                     | No      | const           | No         | -          | Unique identifier for the Freshness analyzer.                          |
-| + [repository](#repository )                 | No      | string          | No         | -          | The image repository that was analyzed.                                |
-| + [tag](#tag )                               | No      | string          | No         | -          | The image tag that was analyzed.                                       |
-| + [tag_created](#tag_created )               | No      | string or null  | No         | -          | ISO timestamp of when the current tag was created.                     |
-| + [latest_created](#latest_created )         | No      | string or null  | No         | -          | ISO timestamp of when the 'latest' tag was created.                    |
-| + [age_days](#age_days )                     | No      | integer or null | No         | -          | Number of days since the current tag was created.                      |
-| + [behind_latest_days](#behind_latest_days ) | No      | integer or null | No         | -          | Number of days between the creation of this tag and the 'latest' tag.  |
-| + [is_latest](#is_latest )                   | No      | boolean         | No         | -          | True if the current tag points to the same digest as the 'latest' tag. |
+| Property                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                      |
+| ------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------- |
+| + [analyzer](#analyzer)                     | No      | const           | No         | -          | Unique identifier for the Freshness analyzer.                          |
+| + [repository](#repository)                 | No      | string          | No         | -          | The image repository that was analyzed.                                |
+| + [tag](#tag)                               | No      | string          | No         | -          | The image tag that was analyzed.                                       |
+| + [tag_created](#tag_created)               | No      | string or null  | No         | -          | ISO timestamp of when the current tag was created.                     |
+| + [latest_created](#latest_created)         | No      | string or null  | No         | -          | ISO timestamp of when the 'latest' tag was created.                    |
+| + [age_days](#age_days)                     | No      | integer or null | No         | -          | Number of days since the current tag was created.                      |
+| + [behind_latest_days](#behind_latest_days) | No      | integer or null | No         | -          | Number of days between the creation of this tag and the 'latest' tag.  |
+| + [is_latest](#is_latest)                   | No      | boolean         | No         | -          | True if the current tag points to the same digest as the 'latest' tag. |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -94,5 +94,6 @@ Specific value: `"freshness"`
 
 **Description:** True if the current tag points to the same digest as the 'latest' tag.
 
-----------------------------------------------------------------------------------------------------------------------------
+---
+
 Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 08:29:43 +0000
