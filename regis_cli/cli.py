@@ -14,6 +14,7 @@ from regis_cli.commands.bootstrap import bootstrap
 from regis_cli.commands.check import check, version_cmd
 from regis_cli.commands.rules import rules_group
 from regis_cli.commands.viewer import viewer_group
+from regis_cli.github_cli import github_cmd
 from regis_cli.gitlab_cli import gitlab_cmd
 from regis_cli.utils.process import require_tool, run_cmd
 from regis_cli.utils.report import (
@@ -59,6 +60,7 @@ def main(verbose: bool) -> None:
     )
 
 
+main.add_command(github_cmd, name="github")
 main.add_command(gitlab_cmd, name="gitlab")
 main.add_command(analyze)
 main.add_command(evaluate_cmd, name="evaluate")
