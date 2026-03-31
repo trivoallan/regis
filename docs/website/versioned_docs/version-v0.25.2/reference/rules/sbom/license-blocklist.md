@@ -9,22 +9,22 @@ tags:
 
 Image must not include components with licenses from the configured blocklist.
 
-| Provider | Level | Tags |
-| :--- | :--- | :--- |
-| sbom | Critical | compliance, licensing |
+| Provider | Level    | Tags                  |
+| :------- | :------- | :-------------------- |
+| sbom     | Critical | compliance, licensing |
 
 ## Parameters
 
-| Name | Default Value | Description |
-| :--- | :--- | :--- |
-| `blocklist` | `[]` | n/a |
+| Name        | Default Value | Description |
+| :---------- | :------------ | :---------- |
+| `blocklist` | `[]`          | n/a         |
 
 ## Messages
 
-| Type | Message |
-| :--- | :--- |
+| Type     | Message                                                                          |
+| :------- | :------------------------------------------------------------------------------- |
 | **Pass** | No blocked licenses detected across ${results.sbom.total_components} components. |
-| **Fail** | Blocked license(s) detected: ${results.sbom.copyleft_licenses} |
+| **Fail** | Blocked license(s) detected: ${results.sbom.copyleft_licenses}                   |
 
 ## Playbook Example
 
