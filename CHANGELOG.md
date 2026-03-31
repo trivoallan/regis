@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.26.1](https://github.com/trivoallan/regis-cli/compare/v0.26.0...v0.26.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* **ci:** clean up docs pipeline after rebrand and release loop ([#231](https://github.com/trivoallan/regis-cli/issues/231)) ([ce4ffb6](https://github.com/trivoallan/regis-cli/commit/ce4ffb610be45aefbd3f735747aaa556e1f0a9fd))
+* **ci:** skip trunk checks on generated schema docs ([#230](https://github.com/trivoallan/regis-cli/issues/230)) ([14144ce](https://github.com/trivoallan/regis-cli/commit/14144ce30bc3b6aa60f91d4152a54b1525fe3264))
+* **cli:** bug sweep — narrow exception, remove dead code, boost coverage ([#233](https://github.com/trivoallan/regis-cli/issues/233)) ([3e7d602](https://github.com/trivoallan/regis-cli/commit/3e7d602726b4e6c39fbf4da129e6a6c583c57717))
+
 ## [0.26.0](https://github.com/trivoallan/regis-cli/compare/v0.25.15...v0.26.0) (2026-03-31)
 
 ### Features
