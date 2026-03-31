@@ -1,0 +1,1355 @@
+{
+  "version": "0.25.10",
+  "request": {
+    "url": "ghcr.io/trivoallan/regis:main",
+    "registry": "ghcr.io",
+    "repository": "trivoallan/regis",
+    "tag": "main",
+    "digest": "main",
+    "analyzers": [
+      "dockle",
+      "endoflife",
+      "freshness",
+      "hadolint",
+      "popularity",
+      "provenance",
+      "sbom",
+      "scorecarddev",
+      "size",
+      "skopeo",
+      "trivy",
+      "versioning"
+    ],
+    "timestamp": "2026-03-31T08:18:19.789340+00:00"
+  },
+  "results": {
+    "endoflife": {
+      "analyzer": "endoflife",
+      "repository": "trivoallan/regis",
+      "product": "regis",
+      "product_found": false,
+      "tag": "main",
+      "matched_cycle": null,
+      "is_eol": null,
+      "active_cycles_count": null,
+      "eol_cycles_count": null
+    },
+    "hadolint": {
+      "analyzer": "hadolint",
+      "error": {
+        "type": "analysis",
+        "message": "Failed to fetch config for docker://ghcr.io/trivoallan/regis:main: time=\"2026-03-31T08:18:19Z\" level=fatal msg=\"Error parsing image name \\\"docker://ghcr.io/trivoallan/regis:main\\\": Requesting bearer token: invalid status code from registry 403 (Forbidden)\"\n"
+      }
+    },
+    "dockle": {
+      "analyzer": "dockle",
+      "error": {
+        "type": "analysis",
+        "message": "Failed to parse dockle output: 2026-03-31T08:18:19.471Z\t\u001b[31mFATAL\u001b[0m\tunable to initialize a image struct: failed to initialize source: Requesting bearer token: invalid status code from registry 403 (Forbidden)\n"
+      }
+    },
+    "popularity": {
+      "analyzer": "popularity",
+      "repository": "trivoallan/regis",
+      "available": false,
+      "pull_count": null,
+      "star_count": null,
+      "description": null,
+      "last_updated": null,
+      "date_registered": null,
+      "is_official": false
+    },
+    "provenance": {
+      "analyzer": "provenance",
+      "repository": "trivoallan/regis",
+      "tag": "main",
+      "has_provenance": false,
+      "has_cosign_signature": false,
+      "source_tracked": false,
+      "indicators_count": 0,
+      "indicators": []
+    },
+    "freshness": {
+      "analyzer": "freshness",
+      "repository": "trivoallan/regis",
+      "tag": "main",
+      "tag_created": null,
+      "latest_created": null,
+      "age_days": null,
+      "behind_latest_days": null,
+      "is_latest": false
+    },
+    "sbom": {
+      "analyzer": "sbom",
+      "error": {
+        "type": "analysis",
+        "message": "trivy sbom failed: 2026-03-31T08:18:19Z\tFATAL\tFatal error\trun error: image scan error: scan error: unable to initialize a scan service: unable to initialize artifact: unable to initialize container image: unable to find the specified image \"ghcr.io/trivoallan/regis:main\" in [\"docker\" \"containerd\" \"podman\" \"remote\"]: 4 errors occurred:\n\t* docker error: unable to inspect the image (ghcr.io/trivoallan/regis:main): Error response from daemon: No such image: ghcr.io/trivoallan/regis:main\n\t* containerd error: failed to list images from containerd client: connection error: desc = \"transport: Error while dialing: dial unix /run/containerd/containerd.sock: connect: permission denied\"\n\t* podman error: unable to initialize Podman client: no podman socket found: stat /run/user/1001/podman/podman.sock: no such file or directory\n\t* remote error: GET https://ghcr.io/token?scope=repository%3Atrivoallan%2Fregis%3Apull&service=ghcr.io: DENIED: requested access to the resource is denied\n\n\n"
+      }
+    },
+    "size": {
+      "analyzer": "size",
+      "error": {
+        "type": "analysis",
+        "message": "Skopeo inspect failed for docker://ghcr.io/trivoallan/regis:main: time=\"2026-03-31T08:18:19Z\" level=fatal msg=\"Error parsing image name \\\"docker://ghcr.io/trivoallan/regis:main\\\": Requesting bearer token: invalid status code from registry 403 (Forbidden)\"\n"
+      }
+    },
+    "skopeo": {
+      "analyzer": "skopeo",
+      "error": {
+        "type": "analysis",
+        "message": "Skopeo inspect --raw failed for docker://ghcr.io/trivoallan/regis:main: time=\"2026-03-31T08:18:19Z\" level=fatal msg=\"Error parsing image name \\\"docker://ghcr.io/trivoallan/regis:main\\\": Requesting bearer token: invalid status code from registry 403 (Forbidden)\"\n"
+      }
+    },
+    "scorecarddev": {
+      "analyzer": "scorecarddev",
+      "repository": "trivoallan/regis",
+      "source_repo": null,
+      "scorecard_available": false,
+      "score": null,
+      "checks": []
+    },
+    "trivy": {
+      "analyzer": "trivy",
+      "error": {
+        "type": "analysis",
+        "message": "trivy failed: 2026-03-31T08:18:19Z\tFATAL\tFatal error\trun error: image scan error: scan error: unable to initialize a scan service: unable to initialize artifact: unable to initialize container image: unable to find the specified image \"ghcr.io/trivoallan/regis:main\" in [\"docker\" \"containerd\" \"podman\" \"remote\"]: 4 errors occurred:\n\t* docker error: unable to inspect the image (ghcr.io/trivoallan/regis:main): Error response from daemon: No such image: ghcr.io/trivoallan/regis:main\n\t* containerd error: failed to list images from containerd client: connection error: desc = \"transport: Error while dialing: dial unix /run/containerd/containerd.sock: connect: permission denied\"\n\t* podman error: unable to initialize Podman client: no podman socket found: stat /run/user/1001/podman/podman.sock: no such file or directory\n\t* remote error: GET https://ghcr.io/token?scope=repository%3Atrivoallan%2Fregis%3Apull&service=ghcr.io: DENIED: requested access to the resource is denied\n\n\n"
+      }
+    },
+    "versioning": {
+      "analyzer": "versioning",
+      "error": {
+        "type": "analysis",
+        "message": "Failed to list tags via skopeo for docker://ghcr.io/trivoallan/regis: Command '['skopeo', 'list-tags', 'docker://ghcr.io/trivoallan/regis']' returned non-zero exit status 1."
+      }
+    }
+  },
+  "rules": [
+    {
+      "slug": "env-blacklist",
+      "description": "Image must not contain forbidden environment variables.",
+      "level": "critical",
+      "tags": [
+        "security"
+      ],
+      "passed": true,
+      "status": "incomplete",
+      "message": "No forbidden environment variables found.",
+      "analyzers": [
+        "skopeo"
+      ]
+    },
+    {
+      "slug": "no-root",
+      "description": "Image must not run as root.",
+      "level": "critical",
+      "tags": [
+        "security"
+      ],
+      "passed": true,
+      "status": "incomplete",
+      "message": "Image does not run as 'root'.",
+      "analyzers": [
+        "skopeo"
+      ]
+    },
+    {
+      "slug": "registry-domain-whitelist",
+      "description": "Checks if requested image registry domain is in the domains list.",
+      "level": "critical",
+      "tags": [
+        "security"
+      ],
+      "passed": true,
+      "status": "passed",
+      "message": "Image registry domain 'ghcr.io' is in the domains list.",
+      "analyzers": []
+    },
+    {
+      "slug": "no-latest",
+      "description": "Image tag should not be 'latest'.",
+      "level": "info",
+      "tags": [
+        "lifecycle"
+      ],
+      "passed": true,
+      "status": "passed",
+      "message": "Image tag is not 'latest'.",
+      "analyzers": []
+    },
+    {
+      "slug": "cve-critical",
+      "description": "Max allowed violations for a given severity level.",
+      "level": "critical",
+      "tags": [
+        "security"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Image has MISSING critical CVEs (max allowed: 0).",
+      "analyzers": [
+        "trivy"
+      ]
+    },
+    {
+      "slug": "secret-scan",
+      "description": "No secrets or credentials should be embedded in the image.",
+      "level": "critical",
+      "tags": [
+        "security"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Trivy detected MISSING secrets or credentials in the image.",
+      "analyzers": [
+        "trivy"
+      ]
+    },
+    {
+      "slug": "cve-fixable",
+      "description": "All vulnerabilities should be fixed if a patch exists.",
+      "level": "warning",
+      "tags": [
+        "security"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Image has MISSING vulnerabilities with available fixes.",
+      "analyzers": [
+        "trivy"
+      ]
+    },
+    {
+      "slug": "cve-high",
+      "description": "Max allowed violations for a given severity level.",
+      "level": "warning",
+      "tags": [
+        "security"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Image has MISSING high CVEs (max allowed: 10).",
+      "analyzers": [
+        "trivy"
+      ]
+    },
+    {
+      "slug": "exposed-ports-whitelist",
+      "description": "Image exposes permitted ports.",
+      "level": "warning",
+      "tags": [
+        "security"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Image exposes unauthorized ports: MISSING.",
+      "analyzers": [
+        "skopeo"
+      ]
+    },
+    {
+      "slug": "has-sbom",
+      "description": "Image must provide a Software Bill of Materials.",
+      "level": "warning",
+      "tags": [
+        "compliance"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "No SBOM could be generated or found for this image.",
+      "analyzers": [
+        "sbom"
+      ]
+    },
+    {
+      "slug": "layers-count",
+      "description": "Image has an acceptable number of layers.",
+      "level": "warning",
+      "tags": [
+        "performance"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Image has too many layers (MISSING). Max allowed: 30.",
+      "analyzers": [
+        "skopeo"
+      ]
+    },
+    {
+      "slug": "max-size",
+      "description": "Image size is within limits.",
+      "level": "warning",
+      "tags": [
+        "hygiene"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Image size exceeds 1000 MB (MISSING bytes).",
+      "analyzers": [
+        "skopeo"
+      ]
+    },
+    {
+      "slug": "required-labels",
+      "description": "Image must have required OCI labels.",
+      "level": "warning",
+      "tags": [
+        "metadata"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Image is missing one or more required labels: ['org.opencontainers.image.source'].",
+      "analyzers": [
+        "skopeo"
+      ]
+    },
+    {
+      "slug": "scorecard-min",
+      "description": "OpenSSF Scorecard score is above the threshold.",
+      "level": "warning",
+      "tags": [
+        "security"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Scorecard score is too low: None (min required: 5.0).",
+      "analyzers": [
+        "scorecarddev"
+      ]
+    },
+    {
+      "slug": "severity-count",
+      "description": "Max allowed issues for a given severity level.",
+      "level": "warning",
+      "tags": [
+        "security"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Dockle found MISSING FATAL issues (max allowed: 0).",
+      "analyzers": [
+        "dockle"
+      ]
+    },
+    {
+      "slug": "severity-count",
+      "description": "Max allowed violations for a given severity level.",
+      "level": "warning",
+      "tags": [
+        "best-practices"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Hadolint found MISSING error issues (max allowed: 0).",
+      "analyzers": [
+        "hadolint"
+      ]
+    },
+    {
+      "slug": "age",
+      "description": "Image should be less than expected days old.",
+      "level": "info",
+      "tags": [
+        "freshness"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Image is older than 90 days (None days).",
+      "analyzers": [
+        "freshness"
+      ]
+    },
+    {
+      "slug": "platforms-count",
+      "description": "Image should support multiple platforms.",
+      "level": "info",
+      "tags": [
+        "compatibility"
+      ],
+      "passed": false,
+      "status": "incomplete",
+      "message": "Image only supports MISSING platforms (min required: 2).",
+      "analyzers": [
+        "skopeo"
+      ]
+    }
+  ],
+  "rules_summary": {
+    "score": 22,
+    "total": [
+      "env-blacklist",
+      "no-root",
+      "registry-domain-whitelist",
+      "no-latest",
+      "cve-critical",
+      "secret-scan",
+      "cve-fixable",
+      "cve-high",
+      "exposed-ports-whitelist",
+      "has-sbom",
+      "layers-count",
+      "max-size",
+      "required-labels",
+      "scorecard-min",
+      "severity-count",
+      "severity-count",
+      "age",
+      "platforms-count"
+    ],
+    "passed": [
+      "env-blacklist",
+      "no-root",
+      "registry-domain-whitelist",
+      "no-latest"
+    ],
+    "by_tag": {
+      "security": {
+        "rules": [
+          "env-blacklist",
+          "no-root",
+          "registry-domain-whitelist",
+          "cve-critical",
+          "secret-scan",
+          "cve-fixable",
+          "cve-high",
+          "exposed-ports-whitelist",
+          "scorecard-min",
+          "severity-count"
+        ],
+        "passed_rules": [
+          "env-blacklist",
+          "no-root",
+          "registry-domain-whitelist"
+        ],
+        "score": 30
+      },
+      "lifecycle": {
+        "rules": [
+          "no-latest"
+        ],
+        "passed_rules": [
+          "no-latest"
+        ],
+        "score": 100
+      },
+      "compliance": {
+        "rules": [
+          "has-sbom"
+        ],
+        "passed_rules": [],
+        "score": 0
+      },
+      "performance": {
+        "rules": [
+          "layers-count"
+        ],
+        "passed_rules": [],
+        "score": 0
+      },
+      "hygiene": {
+        "rules": [
+          "max-size"
+        ],
+        "passed_rules": [],
+        "score": 0
+      },
+      "metadata": {
+        "rules": [
+          "required-labels"
+        ],
+        "passed_rules": [],
+        "score": 0
+      },
+      "best-practices": {
+        "rules": [
+          "severity-count"
+        ],
+        "passed_rules": [],
+        "score": 0
+      },
+      "freshness": {
+        "rules": [
+          "age"
+        ],
+        "passed_rules": [],
+        "score": 0
+      },
+      "compatibility": {
+        "rules": [
+          "platforms-count"
+        ],
+        "passed_rules": [],
+        "score": 0
+      }
+    }
+  },
+  "playbooks": [
+    {
+      "playbook_name": "RegiS Default Playbook",
+      "score": 0,
+      "total_scorecards": 0,
+      "passed_scorecards": 0,
+      "pages": [],
+      "rules": [
+        {
+          "slug": "env-blacklist",
+          "description": "Image must not contain forbidden environment variables.",
+          "level": "critical",
+          "tags": [
+            "security"
+          ],
+          "passed": true,
+          "status": "incomplete",
+          "message": "No forbidden environment variables found.",
+          "analyzers": [
+            "skopeo"
+          ]
+        },
+        {
+          "slug": "no-root",
+          "description": "Image must not run as root.",
+          "level": "critical",
+          "tags": [
+            "security"
+          ],
+          "passed": true,
+          "status": "incomplete",
+          "message": "Image does not run as 'root'.",
+          "analyzers": [
+            "skopeo"
+          ]
+        },
+        {
+          "slug": "registry-domain-whitelist",
+          "description": "Checks if requested image registry domain is in the domains list.",
+          "level": "critical",
+          "tags": [
+            "security"
+          ],
+          "passed": true,
+          "status": "passed",
+          "message": "Image registry domain 'ghcr.io' is in the domains list.",
+          "analyzers": []
+        },
+        {
+          "slug": "no-latest",
+          "description": "Image tag should not be 'latest'.",
+          "level": "info",
+          "tags": [
+            "lifecycle"
+          ],
+          "passed": true,
+          "status": "passed",
+          "message": "Image tag is not 'latest'.",
+          "analyzers": []
+        },
+        {
+          "slug": "cve-critical",
+          "description": "Max allowed violations for a given severity level.",
+          "level": "critical",
+          "tags": [
+            "security"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Image has MISSING critical CVEs (max allowed: 0).",
+          "analyzers": [
+            "trivy"
+          ]
+        },
+        {
+          "slug": "secret-scan",
+          "description": "No secrets or credentials should be embedded in the image.",
+          "level": "critical",
+          "tags": [
+            "security"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Trivy detected MISSING secrets or credentials in the image.",
+          "analyzers": [
+            "trivy"
+          ]
+        },
+        {
+          "slug": "cve-fixable",
+          "description": "All vulnerabilities should be fixed if a patch exists.",
+          "level": "warning",
+          "tags": [
+            "security"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Image has MISSING vulnerabilities with available fixes.",
+          "analyzers": [
+            "trivy"
+          ]
+        },
+        {
+          "slug": "cve-high",
+          "description": "Max allowed violations for a given severity level.",
+          "level": "warning",
+          "tags": [
+            "security"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Image has MISSING high CVEs (max allowed: 10).",
+          "analyzers": [
+            "trivy"
+          ]
+        },
+        {
+          "slug": "exposed-ports-whitelist",
+          "description": "Image exposes permitted ports.",
+          "level": "warning",
+          "tags": [
+            "security"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Image exposes unauthorized ports: MISSING.",
+          "analyzers": [
+            "skopeo"
+          ]
+        },
+        {
+          "slug": "has-sbom",
+          "description": "Image must provide a Software Bill of Materials.",
+          "level": "warning",
+          "tags": [
+            "compliance"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "No SBOM could be generated or found for this image.",
+          "analyzers": [
+            "sbom"
+          ]
+        },
+        {
+          "slug": "layers-count",
+          "description": "Image has an acceptable number of layers.",
+          "level": "warning",
+          "tags": [
+            "performance"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Image has too many layers (MISSING). Max allowed: 30.",
+          "analyzers": [
+            "skopeo"
+          ]
+        },
+        {
+          "slug": "max-size",
+          "description": "Image size is within limits.",
+          "level": "warning",
+          "tags": [
+            "hygiene"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Image size exceeds 1000 MB (MISSING bytes).",
+          "analyzers": [
+            "skopeo"
+          ]
+        },
+        {
+          "slug": "required-labels",
+          "description": "Image must have required OCI labels.",
+          "level": "warning",
+          "tags": [
+            "metadata"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Image is missing one or more required labels: ['org.opencontainers.image.source'].",
+          "analyzers": [
+            "skopeo"
+          ]
+        },
+        {
+          "slug": "scorecard-min",
+          "description": "OpenSSF Scorecard score is above the threshold.",
+          "level": "warning",
+          "tags": [
+            "security"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Scorecard score is too low: None (min required: 5.0).",
+          "analyzers": [
+            "scorecarddev"
+          ]
+        },
+        {
+          "slug": "severity-count",
+          "description": "Max allowed issues for a given severity level.",
+          "level": "warning",
+          "tags": [
+            "security"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Dockle found MISSING FATAL issues (max allowed: 0).",
+          "analyzers": [
+            "dockle"
+          ]
+        },
+        {
+          "slug": "severity-count",
+          "description": "Max allowed violations for a given severity level.",
+          "level": "warning",
+          "tags": [
+            "best-practices"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Hadolint found MISSING error issues (max allowed: 0).",
+          "analyzers": [
+            "hadolint"
+          ]
+        },
+        {
+          "slug": "age",
+          "description": "Image should be less than expected days old.",
+          "level": "info",
+          "tags": [
+            "freshness"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Image is older than 90 days (None days).",
+          "analyzers": [
+            "freshness"
+          ]
+        },
+        {
+          "slug": "platforms-count",
+          "description": "Image should support multiple platforms.",
+          "level": "info",
+          "tags": [
+            "compatibility"
+          ],
+          "passed": false,
+          "status": "incomplete",
+          "message": "Image only supports MISSING platforms (min required: 2).",
+          "analyzers": [
+            "skopeo"
+          ]
+        }
+      ],
+      "rules_summary": {
+        "score": 22,
+        "total": [
+          "env-blacklist",
+          "no-root",
+          "registry-domain-whitelist",
+          "no-latest",
+          "cve-critical",
+          "secret-scan",
+          "cve-fixable",
+          "cve-high",
+          "exposed-ports-whitelist",
+          "has-sbom",
+          "layers-count",
+          "max-size",
+          "required-labels",
+          "scorecard-min",
+          "severity-count",
+          "severity-count",
+          "age",
+          "platforms-count"
+        ],
+        "passed": [
+          "env-blacklist",
+          "no-root",
+          "registry-domain-whitelist",
+          "no-latest"
+        ],
+        "by_tag": {
+          "security": {
+            "rules": [
+              "env-blacklist",
+              "no-root",
+              "registry-domain-whitelist",
+              "cve-critical",
+              "secret-scan",
+              "cve-fixable",
+              "cve-high",
+              "exposed-ports-whitelist",
+              "scorecard-min",
+              "severity-count"
+            ],
+            "passed_rules": [
+              "env-blacklist",
+              "no-root",
+              "registry-domain-whitelist"
+            ],
+            "score": 30
+          },
+          "lifecycle": {
+            "rules": [
+              "no-latest"
+            ],
+            "passed_rules": [
+              "no-latest"
+            ],
+            "score": 100
+          },
+          "compliance": {
+            "rules": [
+              "has-sbom"
+            ],
+            "passed_rules": [],
+            "score": 0
+          },
+          "performance": {
+            "rules": [
+              "layers-count"
+            ],
+            "passed_rules": [],
+            "score": 0
+          },
+          "hygiene": {
+            "rules": [
+              "max-size"
+            ],
+            "passed_rules": [],
+            "score": 0
+          },
+          "metadata": {
+            "rules": [
+              "required-labels"
+            ],
+            "passed_rules": [],
+            "score": 0
+          },
+          "best-practices": {
+            "rules": [
+              "severity-count"
+            ],
+            "passed_rules": [],
+            "score": 0
+          },
+          "freshness": {
+            "rules": [
+              "age"
+            ],
+            "passed_rules": [],
+            "score": 0
+          },
+          "compatibility": {
+            "rules": [
+              "platforms-count"
+            ],
+            "passed_rules": [],
+            "score": 0
+          }
+        }
+      },
+      "slug": null,
+      "badges": [
+        {
+          "slug": "cve-critical",
+          "scope": "CVE",
+          "value": "Critical",
+          "class": "error",
+          "label": "CVE: Critical"
+        },
+        {
+          "slug": "cve-high",
+          "scope": "CVE",
+          "value": "High",
+          "class": "warning",
+          "label": "CVE: High"
+        },
+        {
+          "slug": "freshness-stale",
+          "scope": "Freshness",
+          "value": "Stale",
+          "class": "warning",
+          "label": "Freshness: Stale"
+        }
+      ],
+      "mr_description_checklists": [
+        {
+          "title": "\ud83d\udcdd Review Checklist",
+          "items": [
+            {
+              "label": "Revue de s\u00e9curit\u00e9 r\u00e9alis\u00e9e",
+              "checked": false
+            },
+            {
+              "label": "Aucune vuln\u00e9rabilit\u00e9 CRITIQUE d\u00e9tect\u00e9e",
+              "checked": false
+            },
+            {
+              "label": "Image issue d'un registre de confiance",
+              "checked": true
+            },
+            {
+              "label": "Image ne tourne pas en root",
+              "checked": true
+            }
+          ]
+        }
+      ],
+      "mr_templates": [
+        {
+          "url": "https://github.com/trivoallan/regis",
+          "directory": "regis/cookiecutters/mr-evidence"
+        }
+      ],
+      "_meta": {
+        "source_name": "default"
+      }
+    }
+  ],
+  "playbook": {
+    "playbook_name": "RegiS Default Playbook",
+    "score": 0,
+    "total_scorecards": 0,
+    "passed_scorecards": 0,
+    "pages": [],
+    "rules": [
+      {
+        "slug": "env-blacklist",
+        "description": "Image must not contain forbidden environment variables.",
+        "level": "critical",
+        "tags": [
+          "security"
+        ],
+        "passed": true,
+        "status": "incomplete",
+        "message": "No forbidden environment variables found.",
+        "analyzers": [
+          "skopeo"
+        ]
+      },
+      {
+        "slug": "no-root",
+        "description": "Image must not run as root.",
+        "level": "critical",
+        "tags": [
+          "security"
+        ],
+        "passed": true,
+        "status": "incomplete",
+        "message": "Image does not run as 'root'.",
+        "analyzers": [
+          "skopeo"
+        ]
+      },
+      {
+        "slug": "registry-domain-whitelist",
+        "description": "Checks if requested image registry domain is in the domains list.",
+        "level": "critical",
+        "tags": [
+          "security"
+        ],
+        "passed": true,
+        "status": "passed",
+        "message": "Image registry domain 'ghcr.io' is in the domains list.",
+        "analyzers": []
+      },
+      {
+        "slug": "no-latest",
+        "description": "Image tag should not be 'latest'.",
+        "level": "info",
+        "tags": [
+          "lifecycle"
+        ],
+        "passed": true,
+        "status": "passed",
+        "message": "Image tag is not 'latest'.",
+        "analyzers": []
+      },
+      {
+        "slug": "cve-critical",
+        "description": "Max allowed violations for a given severity level.",
+        "level": "critical",
+        "tags": [
+          "security"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Image has MISSING critical CVEs (max allowed: 0).",
+        "analyzers": [
+          "trivy"
+        ]
+      },
+      {
+        "slug": "secret-scan",
+        "description": "No secrets or credentials should be embedded in the image.",
+        "level": "critical",
+        "tags": [
+          "security"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Trivy detected MISSING secrets or credentials in the image.",
+        "analyzers": [
+          "trivy"
+        ]
+      },
+      {
+        "slug": "cve-fixable",
+        "description": "All vulnerabilities should be fixed if a patch exists.",
+        "level": "warning",
+        "tags": [
+          "security"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Image has MISSING vulnerabilities with available fixes.",
+        "analyzers": [
+          "trivy"
+        ]
+      },
+      {
+        "slug": "cve-high",
+        "description": "Max allowed violations for a given severity level.",
+        "level": "warning",
+        "tags": [
+          "security"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Image has MISSING high CVEs (max allowed: 10).",
+        "analyzers": [
+          "trivy"
+        ]
+      },
+      {
+        "slug": "exposed-ports-whitelist",
+        "description": "Image exposes permitted ports.",
+        "level": "warning",
+        "tags": [
+          "security"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Image exposes unauthorized ports: MISSING.",
+        "analyzers": [
+          "skopeo"
+        ]
+      },
+      {
+        "slug": "has-sbom",
+        "description": "Image must provide a Software Bill of Materials.",
+        "level": "warning",
+        "tags": [
+          "compliance"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "No SBOM could be generated or found for this image.",
+        "analyzers": [
+          "sbom"
+        ]
+      },
+      {
+        "slug": "layers-count",
+        "description": "Image has an acceptable number of layers.",
+        "level": "warning",
+        "tags": [
+          "performance"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Image has too many layers (MISSING). Max allowed: 30.",
+        "analyzers": [
+          "skopeo"
+        ]
+      },
+      {
+        "slug": "max-size",
+        "description": "Image size is within limits.",
+        "level": "warning",
+        "tags": [
+          "hygiene"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Image size exceeds 1000 MB (MISSING bytes).",
+        "analyzers": [
+          "skopeo"
+        ]
+      },
+      {
+        "slug": "required-labels",
+        "description": "Image must have required OCI labels.",
+        "level": "warning",
+        "tags": [
+          "metadata"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Image is missing one or more required labels: ['org.opencontainers.image.source'].",
+        "analyzers": [
+          "skopeo"
+        ]
+      },
+      {
+        "slug": "scorecard-min",
+        "description": "OpenSSF Scorecard score is above the threshold.",
+        "level": "warning",
+        "tags": [
+          "security"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Scorecard score is too low: None (min required: 5.0).",
+        "analyzers": [
+          "scorecarddev"
+        ]
+      },
+      {
+        "slug": "severity-count",
+        "description": "Max allowed issues for a given severity level.",
+        "level": "warning",
+        "tags": [
+          "security"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Dockle found MISSING FATAL issues (max allowed: 0).",
+        "analyzers": [
+          "dockle"
+        ]
+      },
+      {
+        "slug": "severity-count",
+        "description": "Max allowed violations for a given severity level.",
+        "level": "warning",
+        "tags": [
+          "best-practices"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Hadolint found MISSING error issues (max allowed: 0).",
+        "analyzers": [
+          "hadolint"
+        ]
+      },
+      {
+        "slug": "age",
+        "description": "Image should be less than expected days old.",
+        "level": "info",
+        "tags": [
+          "freshness"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Image is older than 90 days (None days).",
+        "analyzers": [
+          "freshness"
+        ]
+      },
+      {
+        "slug": "platforms-count",
+        "description": "Image should support multiple platforms.",
+        "level": "info",
+        "tags": [
+          "compatibility"
+        ],
+        "passed": false,
+        "status": "incomplete",
+        "message": "Image only supports MISSING platforms (min required: 2).",
+        "analyzers": [
+          "skopeo"
+        ]
+      }
+    ],
+    "rules_summary": {
+      "score": 22,
+      "total": [
+        "env-blacklist",
+        "no-root",
+        "registry-domain-whitelist",
+        "no-latest",
+        "cve-critical",
+        "secret-scan",
+        "cve-fixable",
+        "cve-high",
+        "exposed-ports-whitelist",
+        "has-sbom",
+        "layers-count",
+        "max-size",
+        "required-labels",
+        "scorecard-min",
+        "severity-count",
+        "severity-count",
+        "age",
+        "platforms-count"
+      ],
+      "passed": [
+        "env-blacklist",
+        "no-root",
+        "registry-domain-whitelist",
+        "no-latest"
+      ],
+      "by_tag": {
+        "security": {
+          "rules": [
+            "env-blacklist",
+            "no-root",
+            "registry-domain-whitelist",
+            "cve-critical",
+            "secret-scan",
+            "cve-fixable",
+            "cve-high",
+            "exposed-ports-whitelist",
+            "scorecard-min",
+            "severity-count"
+          ],
+          "passed_rules": [
+            "env-blacklist",
+            "no-root",
+            "registry-domain-whitelist"
+          ],
+          "score": 30
+        },
+        "lifecycle": {
+          "rules": [
+            "no-latest"
+          ],
+          "passed_rules": [
+            "no-latest"
+          ],
+          "score": 100
+        },
+        "compliance": {
+          "rules": [
+            "has-sbom"
+          ],
+          "passed_rules": [],
+          "score": 0
+        },
+        "performance": {
+          "rules": [
+            "layers-count"
+          ],
+          "passed_rules": [],
+          "score": 0
+        },
+        "hygiene": {
+          "rules": [
+            "max-size"
+          ],
+          "passed_rules": [],
+          "score": 0
+        },
+        "metadata": {
+          "rules": [
+            "required-labels"
+          ],
+          "passed_rules": [],
+          "score": 0
+        },
+        "best-practices": {
+          "rules": [
+            "severity-count"
+          ],
+          "passed_rules": [],
+          "score": 0
+        },
+        "freshness": {
+          "rules": [
+            "age"
+          ],
+          "passed_rules": [],
+          "score": 0
+        },
+        "compatibility": {
+          "rules": [
+            "platforms-count"
+          ],
+          "passed_rules": [],
+          "score": 0
+        }
+      }
+    },
+    "slug": null,
+    "badges": [
+      {
+        "slug": "cve-critical",
+        "scope": "CVE",
+        "value": "Critical",
+        "class": "error",
+        "label": "CVE: Critical"
+      },
+      {
+        "slug": "cve-high",
+        "scope": "CVE",
+        "value": "High",
+        "class": "warning",
+        "label": "CVE: High"
+      },
+      {
+        "slug": "freshness-stale",
+        "scope": "Freshness",
+        "value": "Stale",
+        "class": "warning",
+        "label": "Freshness: Stale"
+      }
+    ],
+    "mr_description_checklists": [
+      {
+        "title": "\ud83d\udcdd Review Checklist",
+        "items": [
+          {
+            "label": "Revue de s\u00e9curit\u00e9 r\u00e9alis\u00e9e",
+            "checked": false
+          },
+          {
+            "label": "Aucune vuln\u00e9rabilit\u00e9 CRITIQUE d\u00e9tect\u00e9e",
+            "checked": false
+          },
+          {
+            "label": "Image issue d'un registre de confiance",
+            "checked": true
+          },
+          {
+            "label": "Image ne tourne pas en root",
+            "checked": true
+          }
+        ]
+      }
+    ],
+    "mr_templates": [
+      {
+        "url": "https://github.com/trivoallan/regis",
+        "directory": "regis/cookiecutters/mr-evidence"
+      }
+    ],
+    "_meta": {
+      "source_name": "default"
+    }
+  },
+  "tier": null,
+  "badges": [
+    {
+      "slug": "cve-critical",
+      "scope": "CVE",
+      "value": "Critical",
+      "class": "error",
+      "label": "CVE: Critical"
+    },
+    {
+      "slug": "cve-high",
+      "scope": "CVE",
+      "value": "High",
+      "class": "warning",
+      "label": "CVE: High"
+    },
+    {
+      "slug": "freshness-stale",
+      "scope": "Freshness",
+      "value": "Stale",
+      "class": "warning",
+      "label": "Freshness: Stale"
+    }
+  ]
+}
