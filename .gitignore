@@ -25,6 +25,9 @@ htmlcov/
 # OS
 .DS_Store
 
+# OMC state
+.omc/
+
 # Reports
 /reports
 
