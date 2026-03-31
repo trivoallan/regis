@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.25.8](https://github.com/trivoallan/regis-cli/compare/v0.25.7...v0.25.8) (2026-03-31)
+
+
+### Documentation
+
+* update documentation reference and snapshots ([#202](https://github.com/trivoallan/regis-cli/issues/202)) ([1898b40](https://github.com/trivoallan/regis-cli/commit/1898b40dc5721df33310b467e767d2585e61421e))
+
 ## [0.25.7](https://github.com/trivoallan/regis-cli/compare/v0.25.6...v0.25.7) (2026-03-31)
 
 ### Documentation
