@@ -5,21 +5,21 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from regis_cli.analyzers.base import AnalyzerError
-from regis_cli.analyzers.trivy import TrivyAnalyzer, _run_trivy
+from regis.analyzers.base import AnalyzerError
+from regis.analyzers.trivy import TrivyAnalyzer, _run_trivy
 
 
 class TestRunTrivy:
     """Tests for _run_trivy helper."""
 
-    @patch("regis_cli.analyzers.trivy.shutil.which")
+    @patch("regis.analyzers.trivy.shutil.which")
     def test_trivy_not_found(self, mock_which):
         mock_which.return_value = None
         with pytest.raises(AnalyzerError, match="trivy executable not found"):
             _run_trivy("alpine:latest")
 
-    @patch("regis_cli.analyzers.trivy.shutil.which")
-    @patch("regis_cli.analyzers.trivy.subprocess.run")
+    @patch("regis.analyzers.trivy.shutil.which")
+    @patch("regis.analyzers.trivy.subprocess.run")
     def test_success(self, mock_run, mock_which):
         mock_which.return_value = "/usr/local/bin/trivy"
         mock_run.return_value.stdout = '{"SchemaVersion": 2, "Results": []}'
@@ -31,8 +31,8 @@ class TestRunTrivy:
         assert args[0] == "/usr/local/bin/trivy"
         assert "alpine:latest" in args
 
-    @patch("regis_cli.analyzers.trivy.shutil.which")
-    @patch("regis_cli.analyzers.trivy.subprocess.run")
+    @patch("regis.analyzers.trivy.shutil.which")
+    @patch("regis.analyzers.trivy.subprocess.run")
     def test_failure(self, mock_run, mock_which):
         mock_which.return_value = "/usr/local/bin/trivy"
         mock_run.side_effect = subprocess.CalledProcessError(
@@ -56,7 +56,7 @@ class TestTrivyAnalyzer:
         client.registry = "registry-1.docker.io"
         return client
 
-    @patch("regis_cli.analyzers.trivy._run_trivy")
+    @patch("regis.analyzers.trivy._run_trivy")
     def test_analyze_success(self, mock_run, analyzer, mock_client):
         mock_run.return_value = {
             "SchemaVersion": 2,
@@ -108,7 +108,7 @@ class TestTrivyAnalyzer:
         assert len(targets[0]["Vulnerabilities"]) == 2
         assert targets[0]["Vulnerabilities"][0]["VulnerabilityID"] == "CVE-2023-1234"
 
-    @patch("regis_cli.analyzers.trivy._run_trivy")
+    @patch("regis.analyzers.trivy._run_trivy")
     def test_analyze_no_vulns(self, mock_run, analyzer, mock_client):
         mock_run.return_value = {
             "SchemaVersion": 2,
@@ -121,7 +121,7 @@ class TestTrivyAnalyzer:
         assert report["critical_count"] == 0
         assert report["targets"][0]["Vulnerabilities"] is None
 
-    @patch("regis_cli.analyzers.trivy._run_trivy")
+    @patch("regis.analyzers.trivy._run_trivy")
     def test_analyze_custom_registry(self, mock_run, analyzer):
         client = MagicMock()
         client.registry = "my.registry.com"

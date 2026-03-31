@@ -4,16 +4,16 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from regis_cli.analyzers.base import AnalyzerError
-from regis_cli.analyzers.hadolint import HadolintAnalyzer
-from regis_cli.analyzers.provenance import ProvenanceAnalyzer
-from regis_cli.analyzers.scorecarddev import (
+from regis.analyzers.base import AnalyzerError
+from regis.analyzers.hadolint import HadolintAnalyzer
+from regis.analyzers.provenance import ProvenanceAnalyzer
+from regis.analyzers.scorecarddev import (
     _fetch_scorecard,
     _resolve_source_repo,
     _source_repo_from_dockerhub,
 )
-from regis_cli.analyzers.size import SizeAnalyzer, _human_size
-from regis_cli.analyzers.skopeo import SkopeoAnalyzer
+from regis.analyzers.size import SizeAnalyzer, _human_size
+from regis.analyzers.skopeo import SkopeoAnalyzer
 
 
 class TestSkopeoCoverage:

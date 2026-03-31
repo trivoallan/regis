@@ -12,7 +12,7 @@ The `skopeo` analyzer fetches image metadata and platform details using the [Sko
 
 - **Analyzer Name**: `skopeo`
 - **Tool Dependency**: `skopeo`
-- **Output Schema**: [`skopeo.schema.json`](pathname:///regis-cli/schemas/analyzer/skopeo.schema.json)
+- **Output Schema**: [`skopeo.schema.json`](pathname:///regis/schemas/analyzer/skopeo.schema.json)
 
 ## Functionality
 

@@ -2,7 +2,7 @@
 
 ## Architecture
 
-`regis-cli` follows a modular, pluggable architecture.
+`regis` follows a modular, pluggable architecture.
 
 ### Key Components
 

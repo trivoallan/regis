@@ -1,9 +1,9 @@
 {
   "version": "0.18.0",
   "request": {
-    "url": "ghcr.io/trivoallan/regis-cli:0.18.0",
+    "url": "ghcr.io/trivoallan/regis:0.18.0",
     "registry": "ghcr.io",
-    "repository": "trivoallan/regis-cli",
+    "repository": "trivoallan/regis",
     "tag": "0.18.0",
     "digest": "sha256-b58d5e51fe453d368bc130ff0dc2e4cae34ea848147b9fea979cf854f3505a3e",
     "analyzers": [
@@ -32,8 +32,8 @@
     },
     "endoflife": {
       "analyzer": "endoflife",
-      "repository": "trivoallan/regis-cli",
-      "product": "regis-cli",
+      "repository": "trivoallan/regis",
+      "product": "regis",
       "product_found": false,
       "tag": "0.18.0",
       "matched_cycle": null,
@@ -43,7 +43,7 @@
     },
     "freshness": {
       "analyzer": "freshness",
-      "repository": "trivoallan/regis-cli",
+      "repository": "trivoallan/regis",
       "tag": "0.18.0",
       "tag_created": "2026-03-21T01:34:50.907884378Z",
       "latest_created": "2026-03-21T01:34:50.907884378Z",
@@ -53,7 +53,7 @@
     },
     "hadolint": {
       "analyzer": "hadolint",
-      "repository": "trivoallan/regis-cli",
+      "repository": "trivoallan/regis",
       "tag": "0.18.0",
       "passed": false,
       "issues_count": 25,
@@ -215,11 +215,11 @@
           "line": 29
         }
       ],
-      "dockerfile": "FROM scratch\nRUN # debian.sh --arch 'amd64' out/ 'trixie' '@1773619200'\nRUN ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\nRUN ENV LANG=C.UTF-8\nRUN RUN /bin/sh -c set -eux; \tapt-get update; \tapt-get install -y --no-install-recommends \t\tca-certificates \t\tnetbase \t\ttzdata \t; \tapt-get dist-clean # buildkit\nRUN ENV GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305\nRUN ENV PYTHON_VERSION=3.12.13\nRUN ENV PYTHON_SHA256=c08bc65a81971c1dd5783182826503369466c7e67374d1646519adf05207b684\nRUN RUN /bin/sh -c set -eux; \t\tsavedAptMark=\"$(apt-mark showmanual)\"; \tapt-get update; \tapt-get install -y --no-install-recommends \t\tdpkg-dev \t\tgcc \t\tgnupg \t\tlibbluetooth-dev \t\tlibbz2-dev \t\tlibc6-dev \t\tlibdb-dev \t\tlibffi-dev \t\tlibgdbm-dev \t\tliblzma-dev \t\tlibncursesw5-dev \t\tlibreadline-dev \t\tlibsqlite3-dev \t\tlibssl-dev \t\tmake \t\ttk-dev \t\tuuid-dev \t\twget \t\txz-utils \t\tzlib1g-dev \t; \t\twget -O python.tar.xz \"https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz\"; \techo \"$PYTHON_SHA256 *python.tar.xz\" | sha256sum -c -; \twget -O python.tar.xz.asc \"https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc\"; \tGNUPGHOME=\"$(mktemp -d)\"; export GNUPGHOME; \tgpg --batch --keyserver hkps://keys.openpgp.org --recv-keys \"$GPG_KEY\"; \tgpg --batch --verify python.tar.xz.asc python.tar.xz; \tgpgconf --kill all; \trm -rf \"$GNUPGHOME\" python.tar.xz.asc; \tmkdir -p /usr/src/python; \ttar --extract --directory /usr/src/python --strip-components=1 --file python.tar.xz; \trm python.tar.xz; \t\tcd /usr/src/python; \tgnuArch=\"$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)\"; \t./configure \t\t--build=\"$gnuArch\" \t\t--enable-loadable-sqlite-extensions \t\t--enable-optimizations \t\t--enable-option-checking=fatal \t\t--enable-shared \t\t$(test \"${gnuArch%%-*}\" != 'riscv64' && echo '--with-lto') \t\t--with-ensurepip \t; \tnproc=\"$(nproc)\"; \tEXTRA_CFLAGS=\"$(dpkg-buildflags --get CFLAGS)\"; \tLDFLAGS=\"$(dpkg-buildflags --get LDFLAGS)\"; \tLDFLAGS=\"${LDFLAGS:-} -Wl,--strip-all\"; \tarch=\"$(dpkg --print-architecture)\"; arch=\"${arch##*-}\"; \tcase \"$arch\" in \t\tamd64|arm64) \t\t\tEXTRA_CFLAGS=\"${EXTRA_CFLAGS:-} -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer\"; \t\t\t;; \t\ti386) \t\t\t;; \t\t*) \t\t\tEXTRA_CFLAGS=\"${EXTRA_CFLAGS:-} -fno-omit-frame-pointer\"; \t\t\t;; \tesac; \tmake -j \"$nproc\" \t\t\"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}\" \t\t\"LDFLAGS=${LDFLAGS:-}\" \t; \trm python; \tmake -j \"$nproc\" \t\t\"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}\" \t\t\"LDFLAGS=${LDFLAGS:-} -Wl,-rpath='\\$\\$ORIGIN/../lib'\" \t\tpython \t; \tmake install; \t\tcd /; \trm -rf /usr/src/python; \t\tfind /usr/local -depth \t\t\\( \t\t\t\\( -type d -a \\( -name test -o -name tests -o -name idle_test \\) \\) \t\t\t-o \\( -type f -a \\( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \\) \\) \t\t\\) -exec rm -rf '{}' + \t; \t\tldconfig; \t\tapt-mark auto '.*' > /dev/null; \tapt-mark manual $savedAptMark; \tfind /usr/local -type f -executable -not \\( -name '*tkinter*' \\) -exec ldd '{}' ';' \t\t| awk '/=>/ { so = $(NF-1); if (index(so, \"/usr/local/\") == 1) { next }; gsub(\"^/(usr/)?\", \"\", so); printf \"*%s\\n\", so }' \t\t| sort -u \t\t| xargs -rt dpkg-query --search \t\t| awk 'sub(\":$\", \"\", $1) { print $1 }' \t\t| sort -u \t\t| xargs -r apt-mark manual \t; \tapt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \tapt-get dist-clean; \t\texport PYTHONDONTWRITEBYTECODE=1; \tpython3 --version; \tpip3 --version # buildkit\nRUN RUN /bin/sh -c set -eux; \tfor src in idle3 pip3 pydoc3 python3 python3-config; do \t\tdst=\"$(echo \"$src\" | tr -d 3)\"; \t\t[ -s \"/usr/local/bin/$src\" ]; \t\t[ ! -e \"/usr/local/bin/$dst\" ]; \t\tln -svT \"$src\" \"/usr/local/bin/$dst\"; \tdone # buildkit\nRUN CMD [\"python3\"]\nRUN LABEL org.opencontainers.image.title=regis-cli org.opencontainers.image.description=Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD. org.opencontainers.image.url=https://github.com/trivoallan/regis-cli org.opencontainers.image.source=https://github.com/trivoallan/regis-cli org.opencontainers.image.documentation=https://trivoallan.github.io/regis-cli/ org.opencontainers.image.vendor=trivoallan org.opencontainers.image.authors=trivoallan org.opencontainers.image.licenses=MIT\nRUN ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 DEBIAN_FRONTEND=noninteractive\nRUN RUN /bin/sh -c apt-get update && apt-get install -y --no-install-recommends     curl     ca-certificates     gnupg     skopeo     && rm -rf /var/lib/apt/lists/* # buildkit\nRUN RUN /bin/sh -c groupadd -g 1001 regis &&     useradd -u 1001 -g regis -m -d /home/regis regis &&     chmod 755 /home/regis # buildkit\nRUN ENV HOME=/home/regis\nRUN RUN /bin/sh -c curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin # buildkit\nRUN RUN /bin/sh -c arch=$(uname -m) &&     if [ \"$arch\" = \"x86_64\" ]; then hadolint_arch=\"x86_64\"; else hadolint_arch=\"arm64\"; fi &&     curl -sSfL \"https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-${hadolint_arch}\" -o /usr/local/bin/hadolint &&     chmod +x /usr/local/bin/hadolint # buildkit\nRUN ENV DOCKLE_VERSION=0.4.15\nRUN RUN /bin/sh -c arch=$(uname -m) &&     if [ \"$arch\" = \"x86_64\" ]; then dockle_arch=\"64bit\"; else dockle_arch=\"ARM64\"; fi &&     curl -L -o dockle.tar.gz https://github.com/goodwithtech/dockle/releases/download/v${DOCKLE_VERSION}/dockle_${DOCKLE_VERSION}_Linux-${dockle_arch}.tar.gz &&     tar zxvf dockle.tar.gz dockle &&     mv dockle /usr/local/bin/dockle &&     rm dockle.tar.gz &&     chmod +x /usr/local/bin/dockle # buildkit\nRUN WORKDIR /app\nRUN RUN /bin/sh -c chown regis:regis /app && chmod 777 /app # buildkit\nRUN COPY --chown=regis:regis . . # buildkit\nRUN RUN /bin/sh -c apt-get update && apt-get install -y git # buildkit\nRUN RUN /bin/sh -c pip install --no-cache-dir . # buildkit\nRUN HEALTHCHECK &{[\"CMD-SHELL\" \"regis-cli list || exit 1\"] \"30s\" \"5s\" \"5s\" \"0s\" '\\x03'}\nRUN USER regis\nRUN ENTRYPOINT [\"regis-cli\"]\nRUN CMD [\"--help\"]"
+      "dockerfile": "FROM scratch\nRUN # debian.sh --arch 'amd64' out/ 'trixie' '@1773619200'\nRUN ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\nRUN ENV LANG=C.UTF-8\nRUN RUN /bin/sh -c set -eux; \tapt-get update; \tapt-get install -y --no-install-recommends \t\tca-certificates \t\tnetbase \t\ttzdata \t; \tapt-get dist-clean # buildkit\nRUN ENV GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305\nRUN ENV PYTHON_VERSION=3.12.13\nRUN ENV PYTHON_SHA256=c08bc65a81971c1dd5783182826503369466c7e67374d1646519adf05207b684\nRUN RUN /bin/sh -c set -eux; \t\tsavedAptMark=\"$(apt-mark showmanual)\"; \tapt-get update; \tapt-get install -y --no-install-recommends \t\tdpkg-dev \t\tgcc \t\tgnupg \t\tlibbluetooth-dev \t\tlibbz2-dev \t\tlibc6-dev \t\tlibdb-dev \t\tlibffi-dev \t\tlibgdbm-dev \t\tliblzma-dev \t\tlibncursesw5-dev \t\tlibreadline-dev \t\tlibsqlite3-dev \t\tlibssl-dev \t\tmake \t\ttk-dev \t\tuuid-dev \t\twget \t\txz-utils \t\tzlib1g-dev \t; \t\twget -O python.tar.xz \"https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz\"; \techo \"$PYTHON_SHA256 *python.tar.xz\" | sha256sum -c -; \twget -O python.tar.xz.asc \"https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc\"; \tGNUPGHOME=\"$(mktemp -d)\"; export GNUPGHOME; \tgpg --batch --keyserver hkps://keys.openpgp.org --recv-keys \"$GPG_KEY\"; \tgpg --batch --verify python.tar.xz.asc python.tar.xz; \tgpgconf --kill all; \trm -rf \"$GNUPGHOME\" python.tar.xz.asc; \tmkdir -p /usr/src/python; \ttar --extract --directory /usr/src/python --strip-components=1 --file python.tar.xz; \trm python.tar.xz; \t\tcd /usr/src/python; \tgnuArch=\"$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)\"; \t./configure \t\t--build=\"$gnuArch\" \t\t--enable-loadable-sqlite-extensions \t\t--enable-optimizations \t\t--enable-option-checking=fatal \t\t--enable-shared \t\t$(test \"${gnuArch%%-*}\" != 'riscv64' && echo '--with-lto') \t\t--with-ensurepip \t; \tnproc=\"$(nproc)\"; \tEXTRA_CFLAGS=\"$(dpkg-buildflags --get CFLAGS)\"; \tLDFLAGS=\"$(dpkg-buildflags --get LDFLAGS)\"; \tLDFLAGS=\"${LDFLAGS:-} -Wl,--strip-all\"; \tarch=\"$(dpkg --print-architecture)\"; arch=\"${arch##*-}\"; \tcase \"$arch\" in \t\tamd64|arm64) \t\t\tEXTRA_CFLAGS=\"${EXTRA_CFLAGS:-} -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer\"; \t\t\t;; \t\ti386) \t\t\t;; \t\t*) \t\t\tEXTRA_CFLAGS=\"${EXTRA_CFLAGS:-} -fno-omit-frame-pointer\"; \t\t\t;; \tesac; \tmake -j \"$nproc\" \t\t\"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}\" \t\t\"LDFLAGS=${LDFLAGS:-}\" \t; \trm python; \tmake -j \"$nproc\" \t\t\"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}\" \t\t\"LDFLAGS=${LDFLAGS:-} -Wl,-rpath='\\$\\$ORIGIN/../lib'\" \t\tpython \t; \tmake install; \t\tcd /; \trm -rf /usr/src/python; \t\tfind /usr/local -depth \t\t\\( \t\t\t\\( -type d -a \\( -name test -o -name tests -o -name idle_test \\) \\) \t\t\t-o \\( -type f -a \\( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \\) \\) \t\t\\) -exec rm -rf '{}' + \t; \t\tldconfig; \t\tapt-mark auto '.*' > /dev/null; \tapt-mark manual $savedAptMark; \tfind /usr/local -type f -executable -not \\( -name '*tkinter*' \\) -exec ldd '{}' ';' \t\t| awk '/=>/ { so = $(NF-1); if (index(so, \"/usr/local/\") == 1) { next }; gsub(\"^/(usr/)?\", \"\", so); printf \"*%s\\n\", so }' \t\t| sort -u \t\t| xargs -rt dpkg-query --search \t\t| awk 'sub(\":$\", \"\", $1) { print $1 }' \t\t| sort -u \t\t| xargs -r apt-mark manual \t; \tapt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \tapt-get dist-clean; \t\texport PYTHONDONTWRITEBYTECODE=1; \tpython3 --version; \tpip3 --version # buildkit\nRUN RUN /bin/sh -c set -eux; \tfor src in idle3 pip3 pydoc3 python3 python3-config; do \t\tdst=\"$(echo \"$src\" | tr -d 3)\"; \t\t[ -s \"/usr/local/bin/$src\" ]; \t\t[ ! -e \"/usr/local/bin/$dst\" ]; \t\tln -svT \"$src\" \"/usr/local/bin/$dst\"; \tdone # buildkit\nRUN CMD [\"python3\"]\nRUN LABEL org.opencontainers.image.title=regis org.opencontainers.image.description=Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD. org.opencontainers.image.url=https://github.com/trivoallan/regis org.opencontainers.image.source=https://github.com/trivoallan/regis org.opencontainers.image.documentation=https://trivoallan.github.io/regis/ org.opencontainers.image.vendor=trivoallan org.opencontainers.image.authors=trivoallan org.opencontainers.image.licenses=MIT\nRUN ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 DEBIAN_FRONTEND=noninteractive\nRUN RUN /bin/sh -c apt-get update && apt-get install -y --no-install-recommends     curl     ca-certificates     gnupg     skopeo     && rm -rf /var/lib/apt/lists/* # buildkit\nRUN RUN /bin/sh -c groupadd -g 1001 regis &&     useradd -u 1001 -g regis -m -d /home/regis regis &&     chmod 755 /home/regis # buildkit\nRUN ENV HOME=/home/regis\nRUN RUN /bin/sh -c curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin # buildkit\nRUN RUN /bin/sh -c arch=$(uname -m) &&     if [ \"$arch\" = \"x86_64\" ]; then hadolint_arch=\"x86_64\"; else hadolint_arch=\"arm64\"; fi &&     curl -sSfL \"https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-${hadolint_arch}\" -o /usr/local/bin/hadolint &&     chmod +x /usr/local/bin/hadolint # buildkit\nRUN ENV DOCKLE_VERSION=0.4.15\nRUN RUN /bin/sh -c arch=$(uname -m) &&     if [ \"$arch\" = \"x86_64\" ]; then dockle_arch=\"64bit\"; else dockle_arch=\"ARM64\"; fi &&     curl -L -o dockle.tar.gz https://github.com/goodwithtech/dockle/releases/download/v${DOCKLE_VERSION}/dockle_${DOCKLE_VERSION}_Linux-${dockle_arch}.tar.gz &&     tar zxvf dockle.tar.gz dockle &&     mv dockle /usr/local/bin/dockle &&     rm dockle.tar.gz &&     chmod +x /usr/local/bin/dockle # buildkit\nRUN WORKDIR /app\nRUN RUN /bin/sh -c chown regis:regis /app && chmod 777 /app # buildkit\nRUN COPY --chown=regis:regis . . # buildkit\nRUN RUN /bin/sh -c apt-get update && apt-get install -y git # buildkit\nRUN RUN /bin/sh -c pip install --no-cache-dir . # buildkit\nRUN HEALTHCHECK &{[\"CMD-SHELL\" \"regis list || exit 1\"] \"30s\" \"5s\" \"5s\" \"0s\" '\\x03'}\nRUN USER regis\nRUN ENTRYPOINT [\"regis\"]\nRUN CMD [\"--help\"]"
     },
     "popularity": {
       "analyzer": "popularity",
-      "repository": "trivoallan/regis-cli",
+      "repository": "trivoallan/regis",
       "available": false,
       "pull_count": null,
       "star_count": null,
@@ -230,7 +230,7 @@
     },
     "provenance": {
       "analyzer": "provenance",
-      "repository": "trivoallan/regis-cli",
+      "repository": "trivoallan/regis",
       "tag": "0.18.0",
       "has_provenance": true,
       "has_cosign_signature": false,
@@ -240,7 +240,7 @@
         {
           "type": "oci-annotation",
           "key": "org.opencontainers.image.source",
-          "value": "https://github.com/trivoallan/regis-cli"
+          "value": "https://github.com/trivoallan/regis"
         },
         {
           "type": "oci-annotation",
@@ -261,7 +261,7 @@
     },
     "sbom": {
       "analyzer": "sbom",
-      "repository": "trivoallan/regis-cli",
+      "repository": "trivoallan/regis",
       "tag": "0.18.0",
       "has_sbom": true,
       "sbom_format": "CycloneDX",
@@ -523,10 +523,10 @@
           "licenses": []
         },
         {
-          "name": "regis-cli",
+          "name": "regis",
           "version": "0.18.0",
           "type": "library",
-          "purl": "pkg:pypi/regis-cli@0.18.0",
+          "purl": "pkg:pypi/regis@0.18.0",
           "licenses": ["MIT"]
         },
         {
@@ -614,10 +614,10 @@
           "licenses": []
         },
         {
-          "name": "regis-cli",
+          "name": "regis",
           "version": "0.18.0",
           "type": "library",
-          "purl": "pkg:pypi/regis-cli@0.18.0",
+          "purl": "pkg:pypi/regis@0.18.0",
           "licenses": ["MIT"]
         },
         {
@@ -6166,7 +6166,7 @@
           "name": "report-viewer",
           "version": "0.0.1",
           "type": "library",
-          "purl": "pkg:npm/%40regis-cli/report-viewer@0.0.1",
+          "purl": "pkg:npm/%40regis/report-viewer@0.0.1",
           "licenses": []
         },
         {
@@ -6404,15 +6404,15 @@
     },
     "scorecarddev": {
       "analyzer": "scorecarddev",
-      "repository": "trivoallan/regis-cli",
-      "source_repo": "https://github.com/trivoallan/regis-cli",
+      "repository": "trivoallan/regis",
+      "source_repo": "https://github.com/trivoallan/regis",
       "scorecard_available": false,
       "score": null,
       "checks": []
     },
     "size": {
       "analyzer": "size",
-      "repository": "trivoallan/regis-cli",
+      "repository": "trivoallan/regis",
       "tag": "0.18.0",
       "multi_arch": true,
       "total_compressed_bytes": 217241583,
@@ -6437,7 +6437,7 @@
     },
     "skopeo": {
       "analyzer": "skopeo",
-      "repository": "trivoallan/regis-cli",
+      "repository": "trivoallan/regis",
       "tag": "0.18.0",
       "platforms": [
         {
@@ -6449,12 +6449,12 @@
             "org.opencontainers.image.authors": "trivoallan",
             "org.opencontainers.image.created": "2026-03-21T01:34:17.660Z",
             "org.opencontainers.image.description": "Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.",
-            "org.opencontainers.image.documentation": "https://trivoallan.github.io/regis-cli/",
+            "org.opencontainers.image.documentation": "https://trivoallan.github.io/regis/",
             "org.opencontainers.image.licenses": "",
             "org.opencontainers.image.revision": "8596aef162aa416662855a46f12733598484eeaf",
-            "org.opencontainers.image.source": "https://github.com/trivoallan/regis-cli",
-            "org.opencontainers.image.title": "regis-cli",
-            "org.opencontainers.image.url": "https://github.com/trivoallan/regis-cli",
+            "org.opencontainers.image.source": "https://github.com/trivoallan/regis",
+            "org.opencontainers.image.title": "regis",
+            "org.opencontainers.image.url": "https://github.com/trivoallan/regis",
             "org.opencontainers.image.vendor": "trivoallan",
             "org.opencontainers.image.version": "0.18.0"
           },
@@ -6602,7 +6602,7 @@
     },
     "trivy": {
       "analyzer": "trivy",
-      "repository": "trivoallan/regis-cli",
+      "repository": "trivoallan/regis",
       "tag": "0.18.0",
       "trivy_version": "2",
       "vulnerability_count": 224,
@@ -6615,7 +6615,7 @@
       "secrets_count": 0,
       "targets": [
         {
-          "Target": "ghcr.io/trivoallan/regis-cli:0.18.0 (debian 13.4)",
+          "Target": "ghcr.io/trivoallan/regis:0.18.0 (debian 13.4)",
           "Vulnerabilities": [
             {
               "VulnerabilityID": "CVE-2011-3374",
@@ -8663,7 +8663,7 @@
     },
     "versioning": {
       "analyzer": "versioning",
-      "repository": "trivoallan/regis-cli",
+      "repository": "trivoallan/regis",
       "total_tags": 117,
       "dominant_pattern": "named",
       "semver_compliant_percentage": 18.8,
@@ -9471,8 +9471,8 @@
       ],
       "mr_templates": [
         {
-          "url": "https://github.com/trivoallan/regis-cli",
-          "directory": "regis_cli/cookiecutters/mr-evidence"
+          "url": "https://github.com/trivoallan/regis",
+          "directory": "regis/cookiecutters/mr-evidence"
         }
       ],
       "_meta": {
@@ -9881,8 +9881,8 @@
     ],
     "mr_templates": [
       {
-        "url": "https://github.com/trivoallan/regis-cli",
-        "directory": "regis_cli/cookiecutters/mr-evidence"
+        "url": "https://github.com/trivoallan/regis",
+        "directory": "regis/cookiecutters/mr-evidence"
       }
     ],
     "_meta": {

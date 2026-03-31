@@ -1,13 +1,15 @@
-# regis-cli
+# Regis
+
+> **Registry Scores** — Container Security & Policy-as-Code Orchestration
 
 ![Coverage](./coverage-badge.svg)
 
-`regis-cli` is a **Container Security & Policy-as-Code Orchestration**. It provides unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.
+Regis provides unified container analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.
 
 ## Documentation
 
 Comprehensive documentation, including installation and usage guides, is available at:
-**[https://trivoallan.github.io/regis-cli/](https://trivoallan.github.io/regis-cli/)**
+**[https://trivoallan.github.io/regis/](https://trivoallan.github.io/regis/)**
 
 ## Key Features
 
@@ -35,10 +37,10 @@ Comprehensive documentation, including installation and usage guides, is availab
 
 ## Report Preview
 
-`regis-cli` generates high-quality, interactive HTML dashboards.
+`regis` generates high-quality, interactive HTML dashboards.
 Below is a preview of the different sections available in a standard report.
 
-**[Explore the interactive Alpine example report here](https://trivoallan.github.io/regis-cli/regis-cli/0.14.0/_attachments/examples/alpine/index.html)**
+**[Explore the interactive Alpine example report here](https://trivoallan.github.io/regis/regis/0.14.0/_attachments/examples/alpine/index.html)**
 
 <details>
 <summary>📈 Dashboard Overview</summary>

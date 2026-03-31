@@ -1,4 +1,4 @@
-"""Tests for the github CLI subcommands in regis-cli."""
+"""Tests for the github CLI subcommands in regis."""
 
 import json
 from unittest import mock
@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 from click.testing import CliRunner
 
-from regis_cli.cli import main
+from regis.cli import main
 
 
 @pytest.fixture
@@ -46,7 +46,7 @@ def report_file(tmp_path, report_data):
 
 def test_creates_new_comment(runner, report_file):
     """When no existing comment is found, POST is called to create a new one."""
-    with mock.patch("regis_cli.github_cli.requests") as mock_requests:
+    with mock.patch("regis.github_cli.requests") as mock_requests:
         # GET returns empty list — no existing comment
         mock_requests.get.return_value.json.return_value = []
         mock_requests.get.return_value.raise_for_status.return_value = None
@@ -77,7 +77,7 @@ def test_creates_new_comment(runner, report_file):
         assert "42" in post_url
 
         post_body = mock_requests.post.call_args[1]["json"]["body"]
-        assert "<!-- regis-cli -->" in post_body
+        assert "<!-- regis -->" in post_body
         assert "85/100" in post_body  # score
         assert "7/10" in post_body  # rules
 
@@ -88,10 +88,10 @@ def test_creates_new_comment(runner, report_file):
 def test_updates_existing_comment(runner, report_file):
     """When a comment with the marker is found, PATCH is called to update it."""
     existing_comment_id = 999
-    with mock.patch("regis_cli.github_cli.requests") as mock_requests:
+    with mock.patch("regis.github_cli.requests") as mock_requests:
         # GET returns one comment containing the marker
         mock_requests.get.return_value.json.return_value = [
-            {"id": existing_comment_id, "body": "<!-- regis-cli -->\nOld content"},
+            {"id": existing_comment_id, "body": "<!-- regis -->\nOld content"},
         ]
         mock_requests.get.return_value.raise_for_status.return_value = None
         mock_requests.patch.return_value.raise_for_status.return_value = None
@@ -120,7 +120,7 @@ def test_updates_existing_comment(runner, report_file):
         assert str(existing_comment_id) in patch_url
 
         patch_body = mock_requests.patch.call_args[1]["json"]["body"]
-        assert "<!-- regis-cli -->" in patch_body
+        assert "<!-- regis -->" in patch_body
 
         # POST must NOT be called
         mock_requests.post.assert_not_called()
@@ -149,7 +149,7 @@ def test_rejects_invalid_pr_url(runner, report_file):
 
 def test_comment_body_contains_tier_and_vuln_counts(runner, report_file):
     """The comment body should include tier and vulnerability counts."""
-    with mock.patch("regis_cli.github_cli.requests") as mock_requests:
+    with mock.patch("regis.github_cli.requests") as mock_requests:
         mock_requests.get.return_value.json.return_value = []
         mock_requests.get.return_value.raise_for_status.return_value = None
         mock_requests.post.return_value.raise_for_status.return_value = None
@@ -193,7 +193,7 @@ def test_applies_labels_to_pr(runner, tmp_path):
     report_file = tmp_path / "report.json"
     report_file.write_text(json.dumps(data))
 
-    with mock.patch("regis_cli.github_cli.requests") as mock_requests:
+    with mock.patch("regis.github_cli.requests") as mock_requests:
         mock_requests.get.return_value.json.return_value = []
         mock_requests.get.return_value.raise_for_status.return_value = None
         mock_requests.post.return_value.status_code = 201
@@ -239,7 +239,7 @@ def test_token_read_from_env(runner, report_file, monkeypatch):
     """The --token option should fall back to GITHUB_TOKEN env var."""
     monkeypatch.setenv("GITHUB_TOKEN", "env_token")
 
-    with mock.patch("regis_cli.github_cli.requests") as mock_requests:
+    with mock.patch("regis.github_cli.requests") as mock_requests:
         mock_requests.get.return_value.json.return_value = []
         mock_requests.get.return_value.raise_for_status.return_value = None
         mock_requests.post.return_value.raise_for_status.return_value = None

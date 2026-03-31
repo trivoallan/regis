@@ -1,6 +1,6 @@
 """Tests for the provenance analyzer."""
 
-from regis_cli.analyzers.provenance import ProvenanceAnalyzer
+from regis.analyzers.provenance import ProvenanceAnalyzer
 
 
 class MockRegistryClient:

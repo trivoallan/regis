@@ -1,6 +1,6 @@
-# 🛡️ regis-cli Security Evidence
+# 🛡️ regis Security Evidence
 
-> Generated automatically by `regis-cli`
+> Generated automatically by `regis`
 
 Analysis performed on **2026-03-21T01:41:20.377688+00:00**.
 

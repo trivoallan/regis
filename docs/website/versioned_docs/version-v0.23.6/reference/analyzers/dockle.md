@@ -12,7 +12,7 @@ The `dockle` analyzer is a container image linter that checks for security issue
 
 - **Analyzer Name**: `dockle`
 - **Tool Dependency**: `dockle`
-- **Output Schema**: [`dockle.schema.json`](pathname:///regis-cli/schemas/analyzer/dockle.schema.json)
+- **Output Schema**: [`dockle.schema.json`](pathname:///regis/schemas/analyzer/dockle.schema.json)
 
 ## Functionality
 

@@ -4,16 +4,16 @@ sidebar_position: 1
 
 # Getting Started
 
-`regis-cli` is designed to be easy to set up and run, whether locally or in a CI/CD environment.
+`regis` is designed to be easy to set up and run, whether locally or in a CI/CD environment.
 
 ## Installation
 
 ### Docker (Recommended)
 
-The easiest way to use `regis-cli` without managing local dependencies is to use the official Docker image. It comes pre-packaged with Skopeo, Trivy, Hadolint, and Dockle.
+The easiest way to use `regis` without managing local dependencies is to use the official Docker image. It comes pre-packaged with Skopeo, Trivy, Hadolint, and Dockle.
 
 ```bash
-docker run --rm trivoallan/regis-cli --help
+docker run --rm trivoallan/regis --help
 ```
 
 ### Local Installation
@@ -30,7 +30,7 @@ The requirements depend on whether you use the Docker image or install the tool 
   - **Dockle**: Required for container image security linting.
 
 ```bash
-pip install regis-cli
+pip install regis
 ```
 
 :::tip

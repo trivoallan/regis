@@ -12,7 +12,7 @@ The `trivy` analyzer scans container images for vulnerabilities and secrets usin
 
 - **Analyzer Name**: `trivy`
 - **Tool Dependency**: `trivy`
-- **Output Schema**: [`trivy.schema.json`](pathname:///regis-cli/schemas/analyzer/trivy.schema.json)
+- **Output Schema**: [`trivy.schema.json`](pathname:///regis/schemas/analyzer/trivy.schema.json)
 
 ## Functionality
 

@@ -5,7 +5,7 @@ tags:
 
 # Scoring & Metrics
 
-`regis-cli` doesn't just provide raw data; it translates analysis results into actionable **Scores** and **Metrics** based on your security and operational policies.
+`regis` doesn't just provide raw data; it translates analysis results into actionable **Scores** and **Metrics** based on your security and operational policies.
 
 ## How Scores are Calculated
 

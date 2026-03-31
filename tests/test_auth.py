@@ -4,17 +4,17 @@ from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
-from regis_cli.cli import main
-from regis_cli.registry.client import RegistryClient
+from regis.cli import main
+from regis.registry.client import RegistryClient
 
 
 class TestRegistryAuth:
     """Test registry authentication logic."""
 
-    @patch("regis_cli.registry.auth.Path.home")
+    @patch("regis.registry.auth.Path.home")
     def test_resolve_credentials_aliases(self, mock_home):
         """Test resolve_credentials handles Docker Hub aliases."""
-        from regis_cli.registry.auth import resolve_credentials
+        from regis.registry.auth import resolve_credentials
 
         # Test CLI override with alias
         user, pwd = resolve_credentials(
@@ -44,7 +44,7 @@ class TestRegistryAuth:
         assert client.username == "user"
         assert client.password == "password"
 
-    @patch("regis_cli.registry.client.requests.Session")
+    @patch("regis.registry.client.requests.Session")
     def test_client_authentication_token_request(self, mock_session_cls):
         """Test that credentials are sent during token authentication."""
         mock_session = mock_session_cls.return_value
@@ -96,9 +96,9 @@ class TestRegistryAuth:
         assert args[0] == "https://auth.docker.io/token"
         assert kwargs["auth"] == ("myuser", "mypassword")
 
-    @patch("regis_cli.utils.report.jsonschema")
-    @patch("regis_cli.commands.analyze._discover_analyzers")
-    @patch("regis_cli.commands.analyze.RegistryClient")
+    @patch("regis.utils.report.jsonschema")
+    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.commands.analyze.RegistryClient")
     def test_cli_passes_credentials(
         self, mock_client_cls, mock_discover, mock_validate
     ):
@@ -130,10 +130,10 @@ class TestRegistryAuth:
             assert kwargs["username"] == "env_user"
             assert kwargs["password"] == "env_password"
 
-    @patch("regis_cli.registry.auth.Path.home")
+    @patch("regis.registry.auth.Path.home")
     def test_resolve_credentials_precedence(self, mock_home):
         """Test resolve_credentials precedence: CLI > Domain Env > Global Env > config.json."""
-        from regis_cli.registry.auth import resolve_credentials
+        from regis.registry.auth import resolve_credentials
 
         # 1. Test CLI overrides
         user, pwd = resolve_credentials(
@@ -179,18 +179,16 @@ class TestRegistryAuth:
             }
         }
         with patch.dict(os.environ, {}, clear=True):
-            with patch(
-                "regis_cli.registry.auth.open", new_callable=MagicMock
-            ) as mock_open:
+            with patch("regis.registry.auth.open", new_callable=MagicMock) as mock_open:
                 mock_open.return_value.__enter__.return_value.read.return_value = ""
                 with patch("json.load", return_value=mock_config):
                     user, pwd = resolve_credentials("registry.example.com")
                     assert user == "docker_user"
                     assert pwd == "docker_pass"
 
-    @patch("regis_cli.utils.report.jsonschema")
-    @patch("regis_cli.commands.analyze._discover_analyzers")
-    @patch("regis_cli.commands.analyze.RegistryClient")
+    @patch("regis.utils.report.jsonschema")
+    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.commands.analyze.RegistryClient")
     def test_cli_passes_cli_auth_override(
         self, mock_client_cls, mock_discover, mock_validate
     ):
@@ -228,7 +226,7 @@ class TestRegistryAuth:
 
     def test_resolve_credentials_from_docker_auth_config_env(self):
         """Test resolve_credentials from DOCKER_AUTH_CONFIG env var."""
-        from regis_cli.registry.auth import resolve_credentials
+        from regis.registry.auth import resolve_credentials
 
         auth_config = {
             "auths": {
@@ -245,7 +243,7 @@ class TestRegistryAuth:
 
     def test_resolve_credentials_from_docker_hub_env(self):
         """Test resolve_credentials from DOCKER_HUB_* and DOCKER_* env vars."""
-        from regis_cli.registry.auth import resolve_credentials
+        from regis.registry.auth import resolve_credentials
 
         # Test DOCKER_HUB_*
         env = {

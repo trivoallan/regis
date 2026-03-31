@@ -1,6 +1,6 @@
 """Tests for the popularity analyzer."""
 
-from regis_cli.analyzers.popularity import PopularityAnalyzer
+from regis.analyzers.popularity import PopularityAnalyzer
 
 
 class MockRegistryClient:

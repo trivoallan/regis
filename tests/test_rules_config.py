@@ -1,4 +1,4 @@
-from regis_cli.rules.evaluator import evaluate_rules
+from regis.rules.evaluator import evaluate_rules
 
 
 def test_parameterized_rules():

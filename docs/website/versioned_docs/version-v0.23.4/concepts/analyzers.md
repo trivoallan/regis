@@ -5,7 +5,7 @@ tags:
 
 # Analyzers
 
-`regis-cli` uses a pluggable architecture where separate **Analyzers** are responsible for extracting specific types of data from container images or their build artifacts.
+`regis` uses a pluggable architecture where separate **Analyzers** are responsible for extracting specific types of data from container images or their build artifacts.
 
 Each analyzer runs independently and contributes to a unified data model that is later evaluated against your [Playbooks](./playbooks.md).
 
@@ -25,7 +25,7 @@ For a complete list and technical details for each, see the [Analyzers Reference
 
 ## How it works
 
-Below is the step-by-step process `regis-cli` follows when analyzing an image:
+Below is the step-by-step process `regis` follows when analyzing an image:
 
 ```mermaid
 graph TD

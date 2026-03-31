@@ -1,5 +1,5 @@
 name: Regis Security Analysis
-description: Analyze a container image with regis-cli and optionally post results to a PR.
+description: Analyze a container image with regis and optionally post results to a PR.
 author: trivoallan
 
 branding:
@@ -40,7 +40,7 @@ inputs:
     required: false
     default: regis-security-report
   version:
-    description: regis-cli Docker image version tag.
+    description: regis Docker image version tag.
     required: false
     default: latest
 
@@ -52,7 +52,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Run regis-cli analysis
+    - name: Run regis analysis
       id: analyze
       shell: bash
       env:
@@ -90,7 +90,7 @@ runs:
         fi
 
         docker "${DOCKER_ARGS[@]}" \
-          "ghcr.io/trivoallan/regis-cli:${REGIS_VERSION}" \
+          "ghcr.io/trivoallan/regis:${REGIS_VERSION}" \
           "${CLI_ARGS[@]}"
 
         echo "report-path=${REPORT_DIR}" >> "${GITHUB_OUTPUT}"
@@ -103,7 +103,7 @@ runs:
         path: ${{ steps.analyze.outputs.report-path }}
 
     - name: Post PR comment
-      # Requires regis-cli v0.25.0+ in the Docker image for the `github update-pr` command.
+      # Requires regis v0.25.0+ in the Docker image for the `github update-pr` command.
       if: inputs.pr-url != '' || github.event_name == 'pull_request'
       shell: bash
       env:
@@ -135,5 +135,5 @@ runs:
         fi
 
         docker "${DOCKER_ARGS[@]}" \
-          "ghcr.io/trivoallan/regis-cli:${REGIS_VERSION}" \
+          "ghcr.io/trivoallan/regis:${REGIS_VERSION}" \
           "${CLI_ARGS[@]}"

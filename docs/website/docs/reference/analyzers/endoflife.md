@@ -12,7 +12,7 @@ The `endoflife` analyzer checks the support status of the software in the image 
 
 - **Analyzer Name**: `endoflife`
 - **External API**: `https://endoflife.date/api`
-- **Output Schema**: [`endoflife.schema.json`](pathname:///regis-cli/schemas/analyzer/endoflife.schema.json)
+- **Output Schema**: [`endoflife.schema.json`](pathname:///regis/schemas/analyzer/endoflife.schema.json)
 
 ## Functionality
 

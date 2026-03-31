@@ -36,7 +36,7 @@ glab auth login
 ## Usage
 
 ```bash
-regis-cli bootstrap archive [OUTPUT_DIR] --repo [OPTIONS]
+regis bootstrap archive [OUTPUT_DIR] --repo [OPTIONS]
 ```
 
 | Option                        | Default                                    | Description                                                          |
@@ -63,7 +63,7 @@ The command runs the following steps in sequence:
 ## GitHub example
 
 ```bash
-regis-cli bootstrap archive ./my-archives \
+regis bootstrap archive ./my-archives \
   --repo \
   --platform github \
   --repo-name regis-archive \
@@ -92,7 +92,7 @@ The workflow reads this variable and passes it to the Docusaurus build.
 ## GitLab example
 
 ```bash
-regis-cli bootstrap archive ./my-archives \
+regis bootstrap archive ./my-archives \
   --repo \
   --platform gitlab \
   --repo-name regis-archive \
@@ -117,7 +117,7 @@ If you use a custom Pages domain or a deeply nested subgroup, the base URL is de
 Once the archive site is live, append reports to it from any project:
 
 ```bash
-regis-cli analyze <image> \
+regis analyze <image> \
   --archive /path/to/regis-archive/static/archive
 ```
 

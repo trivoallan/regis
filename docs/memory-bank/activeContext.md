@@ -7,7 +7,7 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 ## Recent Changes
 
 - Refactored `.gitlab-ci.yml` (consumer cookiecutter): split monolithic `analyze_image` into four independent jobs:
-  - `analyze_image` — runs `regis-cli analyze`, produces `reports/` artifacts.
+  - `analyze_image` — runs `regis analyze`, produces `reports/` artifacts.
   - `push_results` — commits report to branch, prepends report URL to MR description, posts MR comment.
   - `set_labels` — applies scoped GitLab labels from `playbook.labels` via API.
   - `set_checklist` — appends Markdown review checklist from `playbook.mr_description_checklist` to MR description.
@@ -23,7 +23,7 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Improved documentation for CI/CD integration (moved Cookiecutter, added tips, added C4 diagrams).
 - Unified linting experience by migrating to Trunk.
 - Migrated documentation to Docusaurus, established dynamic versioning strategy with tag names, and cleaned up redundant folders.
-- Added support for Markdown output in `regis-cli rules list` and generated rules reference documentation.
+- Added support for Markdown output in `regis rules list` and generated rules reference documentation.
 - Refactored `generate` command into a `bootstrap` command group:
   - `bootstrap playbook` — creates a new custom playbook from the `cookiecutters/playbook` template.
   - `bootstrap archive` — bootstraps a standalone Docusaurus + Tremor archive viewer site.
@@ -47,7 +47,7 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Added `README.md` to `release-please-config.json` `extra-files` to ensure consistent versioning and updates.
 - Redesign of `README.md` now properly redirects all technical documentation to the official Antora site.
 - Fixed `bootstrap` command failure in Docker image:
-  - Moved `cookiecutters/` directory into the `regis_cli` package.
+  - Moved `cookiecutters/` directory into the `regis` package.
   - Updated `cli.py` to use `importlib.resources.files` for finding templates, ensuring compatibility with installed packages.
   - Updated `pyproject.toml` to include `cookiecutters/**/*` in package data.
 - Fixed `fatal: ambiguous argument 'HEAD^2'` in Trunk Check workflow:
@@ -55,8 +55,8 @@ Documentation update following the pipeline refactoring and checklist enhancemen
   - Removed explicit `ref` override to allow Trunk's default merge-base detection on PRs.
   - Updated auto-commit step to explicitly push to the PR branch.
 - Migrated Documentation from Antora to Docusaurus (located in `docs/website`).
-- Relocated JSON schemas from `reference/schemas/` to `regis_cli/schemas/` to ensure they are properly packaged.
-- Added `__init__.py` files to `regis_cli/schemas/` and subdirectories to support `importlib.resources`.
+- Relocated JSON schemas from `reference/schemas/` to `regis/schemas/` to ensure they are properly packaged.
+- Added `__init__.py` files to `regis/schemas/` and subdirectories to support `importlib.resources`.
 - Updated `pyproject.toml` to include the new schemas directory in package data.
 - Exported JSON schemas to `docs/website/static/schemas/` for Docusaurus referencing.
 - Configured Docusaurus versioning:
@@ -73,17 +73,17 @@ Documentation update following the pipeline refactoring and checklist enhancemen
   - Updated `.github/workflows/docs-publish.yml` to use `${{ github.ref_name }}` for dynamic versioning on tags.
   - Cleaned up redundant `version-current` files and `versions.json` entries.
 - Fixed CI Warnings and Errors:
-  - Added `regis_cli/schemas/playbook/jsonlogic.schema.json` to resolve schema generation warnings.
+  - Added `regis/schemas/playbook/jsonlogic.schema.json` to resolve schema generation warnings.
   - Updated `docs-publish.yml` to copy all schemas to a shared static directory, fixing cross-category references.
   - Resolved `fatal: ambiguous argument 'HEAD^2'` in Trunk Check CI by refining checkout and specifying `check-mode`.
   - Suppressed `RequestsDependencyWarning` by pinning `urllib3`, `chardet`, and `charset-normalizer` in `Pipfile`.
-- Added `--format` and `--output` options to `regis-cli rules list` to support Markdown documentation generation.
+- Added `--format` and `--output` options to `regis rules list` to support Markdown documentation generation.
 - Generated `docs/website/docs/reference/rules.md` rules reference documentation using the new CLI capabilities.
 - Migrated the report viewer to a modern Docusaurus-based application (located in `apps/report-viewer`).
-- Updated `regis_cli/cli.py` and `regis_cli/report/docusaurus.py` to support the new report generation flow.
-- Added `--base-url` option to `regis-cli analyze` and `evaluate` for correct asset loading in static viewers (GitLab artifacts).
+- Updated `regis/cli.py` and `regis/report/docusaurus.py` to support the new report generation flow.
+- Added `--base-url` option to `regis analyze` and `evaluate` for correct asset loading in static viewers (GitLab artifacts).
 - Updated the `.gitlab-ci.yml` template in the repository cookiecutter to dynamically calculate and pass the `baseUrl`.
-- Removed legacy Jinja2-based HTML templates from `regis_cli/templates/default/`.
+- Removed legacy Jinja2-based HTML templates from `regis/templates/default/`.
 - Updated `pnpm-workspace.yaml` and `release-please-config.json` to include the new report viewer application.
 - Updated documentation site (`cli.md`, `analyze-image.md`, `gitlab.md`) with report viewer and artifact viewing details.
 

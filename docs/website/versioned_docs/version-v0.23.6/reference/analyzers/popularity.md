@@ -12,7 +12,7 @@ The `popularity` analyzer provides community adoption metrics from public regist
 
 - **Analyzer Name**: `popularity`
 - **External API**: `https://hub.docker.com/v2/repositories` (Docker Hub)
-- **Output Schema**: [`popularity.schema.json`](pathname:///regis-cli/schemas/analyzer/popularity.schema.json)
+- **Output Schema**: [`popularity.schema.json`](pathname:///regis/schemas/analyzer/popularity.schema.json)
 
 ## Functionality
 

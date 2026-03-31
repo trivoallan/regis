@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - docs/**
-      - regis_cli/**
+      - regis/**
   release:
     types: [published]
   workflow_dispatch:
@@ -50,9 +50,9 @@ jobs:
         with:
           filters: |
             schemas:
-              - 'regis_cli/schemas/**'
+              - 'regis/schemas/**'
             rules:
-              - 'regis_cli/**'
+              - 'regis/**'
 
       - name: Setup Python
         uses: actions/setup-python@v6
@@ -118,11 +118,11 @@ jobs:
         run: |
           # Copy all schemas first to allow cross-category resolution
           mkdir -p docs/website/static/schemas
-          cp -rv regis_cli/schemas/* docs/website/static/schemas/
+          cp -rv regis/schemas/* docs/website/static/schemas/
           # Clean up any non-JSON files (like __init__.py) inadvertently copied
           find docs/website/static/schemas/ -type f ! -name "*.json" -delete
 
-          for cat in $(find regis_cli/schemas/* -maxdepth 0 -type d); do
+          for cat in $(find regis/schemas/* -maxdepth 0 -type d); do
             cat=$(basename $cat);
             mkdir -p docs/website/docs/reference/schemas/$cat
             pipenv run generate-schema-doc --config-file docs/website/json-schema-for-humans.config.json docs/website/static/schemas/$cat docs/website/docs/reference/schemas/$cat
@@ -130,14 +130,14 @@ jobs:
 
       - name: Generate Rules Reference
         if: steps.filter.outputs.rules == 'true' || github.event_name != 'push'
-        run: pipenv run regis-cli rules list -f markdown -D docs/website/docs/reference/rules
+        run: pipenv run regis rules list -f markdown -D docs/website/docs/reference/rules
 
       - name: Ensure whats-new label exists
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           gh label create "whats-new" \
-            --repo trivoallan/regis-cli \
+            --repo trivoallan/regis \
             --color "0075ca" \
             --description "Surfaces this PR's summary in the What's New docs page" \
             2>/dev/null || true
@@ -156,9 +156,9 @@ jobs:
       - name: Generate Default Archive
         run: |
           mkdir -p docs/website/static/archives/default
-          pipenv run regis-cli analyze --evaluate alpine:latest -A docs/website/static/archives/default/
-          pipenv run regis-cli analyze --evaluate ghcr.io/trivoallan/regis-cli:latest -A docs/website/static/archives/default/
-          pipenv run regis-cli analyze --evaluate ghcr.io/trivoallan/regis-cli:main -A docs/website/static/archives/default/
+          pipenv run regis analyze --evaluate alpine:latest -A docs/website/static/archives/default/
+          pipenv run regis analyze --evaluate ghcr.io/trivoallan/regis:latest -A docs/website/static/archives/default/
+          pipenv run regis analyze --evaluate ghcr.io/trivoallan/regis:main -A docs/website/static/archives/default/
 
       - name: Docusaurus build
         run: pnpm run build

@@ -1,20 +1,20 @@
 # GitHub Actions
 
-Integrating `regis-cli` into your GitHub Actions workflows allows you to automate security and compliance checks for every container image you build. This ensures that only images meeting your predefined standards are promoted through your pipeline.
+Integrating `regis` into your GitHub Actions workflows allows you to automate security and compliance checks for every container image you build. This ensures that only images meeting your predefined standards are promoted through your pipeline.
 
 ## Prerequisites
 
 To follow this guide, you should have a GitHub repository with a `Dockerfile` and a basic understanding of GitHub Actions.
 
 :::tip
-To quickly bootstrap a new GitHub repository pre-configured with `regis-cli` and GitHub Actions, you can use our [Project Bootstrapping](../../reference/cli.md#bootstrap) command.
+To quickly bootstrap a new GitHub repository pre-configured with `regis` and GitHub Actions, you can use our [Project Bootstrapping](../../reference/cli.md#bootstrap) command.
 
 **Note**: For repositories with branch protection, please ensure the **"Allow auto-merge"** option is enabled in the repository's general settings to support automated documentation updates.
 :::
 
 ## Quick Start with the Reusable Action
 
-The fastest way to integrate `regis-cli` is to use the official reusable GitHub
+The fastest way to integrate `regis` is to use the official reusable GitHub
 Action. It wraps the full analysis workflow—running the scanner, uploading the
 report artifact, and posting a PR comment—into a single step.
 
@@ -67,8 +67,8 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}:latest
 
-      - name: Analyze with regis-cli
-        uses: trivoallan/regis-cli@v0.25.0
+      - name: Analyze with regis
+        uses: trivoallan/regis@v0.25.0
         with:
           image-url: ghcr.io/${{ github.repository }}:latest
           auth: ghcr.io=${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}
@@ -86,7 +86,7 @@ jobs:
 | `pr-url`          | No       | —                       | PR URL to post results on. Defaults to the current PR on `pull_request` events. |
 | `upload-artifact` | No       | `true`                  | Upload the report directory as a workflow artifact.                             |
 | `artifact-name`   | No       | `regis-security-report` | Name for the uploaded artifact.                                                 |
-| `version`         | No       | `latest`                | `regis-cli` Docker image version to use.                                        |
+| `version`         | No       | `latest`                | `regis` Docker image version to use.                                            |
 
 ### Action outputs
 
@@ -95,14 +95,14 @@ jobs:
 | `report-path` | Absolute path to the report directory on the runner. |
 
 :::note
-PR comments require `regis-cli` **v0.25.0 or later**. When running on a
+PR comments require `regis` **v0.25.0 or later**. When running on a
 `pull_request` event, the action posts automatically. For other events, pass
 `pr-url` explicitly.
 :::
 
 ## Workflow Setup
 
-A robust integration typically involves building your image, pushing it to a registry (like GitHub Container Registry), and then running `regis-cli` to analyze the results.
+A robust integration typically involves building your image, pushing it to a registry (like GitHub Container Registry), and then running `regis` to analyze the results.
 
 ### Required Permissions
 
@@ -161,14 +161,14 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install regis-cli
+      - name: Install regis
         run: |
           pip install pipenv
           pipenv install --deploy
 
       - name: Run Analysis
         run: |
-          pipenv run regis-cli analyze ghcr.io/${{ github.repository }}:latest \
+          pipenv run regis analyze ghcr.io/${{ github.repository }}:latest \
             --auth ghcr.io=${{ github.actor }}:${{ secrets.GITHUB_TOKEN }} \
             --site \
             --meta "trigger.user=${{ github.actor }}" \
@@ -232,15 +232,15 @@ You can further customize the integration to meet specific security requirements
 To analyze images in private registries, use the `--auth` flag. For GitHub Container Registry, you can use the automatically provided `GITHUB_TOKEN`.
 
 ```bash
-regis-cli analyze <image-url> --auth ghcr.io=<username>:<token>
+regis analyze <image-url> --auth ghcr.io=<username>:<token>
 ```
 
 ### Using Security Playbooks
 
-By default, `regis-cli` uses its built-in evaluation logic. For standardized security enforcement, you can point to the project's recommended security playbook.
+By default, `regis` uses its built-in evaluation logic. For standardized security enforcement, you can point to the project's recommended security playbook.
 
 ```bash
-regis-cli analyze <image-url> --playbook https://raw.githubusercontent.com/trivoallan/regis-cli/main/regis_cli/playbooks/default.yaml
+regis analyze <image-url> --playbook https://raw.githubusercontent.com/trivoallan/regis/main/regis/playbooks/default.yaml
 ```
 
 :::tip
@@ -249,13 +249,13 @@ You can also define local playbooks in your repository to enforce custom organiz
 
 ### Adding CI Metadata
 
-Use the `--meta` flag to attach arbitrary metadata to your reports. `regis-cli` recognizes certain "well-known" keys that are used by the default playbook to enhance the report:
+Use the `--meta` flag to attach arbitrary metadata to your reports. `regis` recognizes certain "well-known" keys that are used by the default playbook to enhance the report:
 
 - `trigger.user`: The user who initiated the analysis (e.g., `${{ github.actor }}`).
 - `trigger.url`: A link to the CI job or environment (e.g., the URL to the GitHub Actions run).
 
 ```bash
-regis-cli analyze <image-url> \
+regis analyze <image-url> \
   --meta "trigger.user=${{ github.actor }}" \
   --meta "trigger.url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 ```
@@ -271,7 +271,7 @@ as a comment using the `github update-pr` command:
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   run: |
-    regis-cli github update-pr \
+    regis github update-pr \
       --report reports/report.json \
       --report-url "${{ steps.pages.outputs.page_url }}" \
       --pr-url "${{ github.event.pull_request.html_url }}"
@@ -287,20 +287,20 @@ The command will:
 ### CLI reference
 
 ```bash
-regis-cli github update-pr \
+regis github update-pr \
   --report <path-to-report.json> \
   --report-url <url-to-html-report> \
   --pr-url <github-pr-url> \
   --token <github-token>  # or set GITHUB_TOKEN env var
 ```
 
-| Option         | Description                                                    |
-| -------------- | -------------------------------------------------------------- |
-| `--report`     | Path to the `report.json` file produced by `regis-cli analyze` |
-| `--report-url` | URL where the HTML report is hosted (artifact, Pages, etc.)    |
-| `--pr-url`     | Full GitHub PR URL (`https://github.com/owner/repo/pull/42`)   |
-| `--token`      | GitHub token — also reads `GITHUB_TOKEN` environment variable  |
+| Option         | Description                                                   |
+| -------------- | ------------------------------------------------------------- |
+| `--report`     | Path to the `report.json` file produced by `regis analyze`    |
+| `--report-url` | URL where the HTML report is hosted (artifact, Pages, etc.)   |
+| `--pr-url`     | Full GitHub PR URL (`https://github.com/owner/repo/pull/42`)  |
+| `--token`      | GitHub token — also reads `GITHUB_TOKEN` environment variable |
 
 ## Viewing Reports
 
-When using the `--site` flag, `regis-cli` generates a full HTML site in the `reports/` directory. By uploading this directory as a workflow artifact (as shown in the example), you can download and view the interactive reports directly from the GitHub Actions run page.
+When using the `--site` flag, `regis` generates a full HTML site in the `reports/` directory. By uploading this directory as a workflow artifact (as shown in the example), you can download and view the interactive reports directly from the GitHub Actions run page.

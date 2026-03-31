@@ -3,7 +3,7 @@ requires = ["setuptools>=80", "setuptools-scm[simple]>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "regis-cli"
+name = "regis"
 version = "0.24.0"
 description = "Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD."
 readme = "README.md"
@@ -24,21 +24,21 @@ dependencies = [
 ]
 
 [project.scripts]
-regis-cli = "regis_cli.cli:main"
+regis = "regis.cli:main"
 
-[project.entry-points."regis_cli.analyzers"]
-versioning = "regis_cli.analyzers.versioning:VersioningAnalyzer"
-scorecarddev = "regis_cli.analyzers.scorecarddev:ScorecardDevAnalyzer"
-skopeo = "regis_cli.analyzers.skopeo:SkopeoAnalyzer"
-trivy = "regis_cli.analyzers.trivy:TrivyAnalyzer"
-endoflife = "regis_cli.analyzers.endoflife:EndOfLifeAnalyzer"
-popularity = "regis_cli.analyzers.popularity:PopularityAnalyzer"
-size = "regis_cli.analyzers.size:SizeAnalyzer"
-freshness = "regis_cli.analyzers.freshness:FreshnessAnalyzer"
-provenance = "regis_cli.analyzers.provenance:ProvenanceAnalyzer"
-sbom = "regis_cli.analyzers.sbom:SbomAnalyzer"
-hadolint = "regis_cli.analyzers.hadolint:HadolintAnalyzer"
-dockle = "regis_cli.analyzers.dockle:DockleAnalyzer"
+[project.entry-points."regis.analyzers"]
+versioning = "regis.analyzers.versioning:VersioningAnalyzer"
+scorecarddev = "regis.analyzers.scorecarddev:ScorecardDevAnalyzer"
+skopeo = "regis.analyzers.skopeo:SkopeoAnalyzer"
+trivy = "regis.analyzers.trivy:TrivyAnalyzer"
+endoflife = "regis.analyzers.endoflife:EndOfLifeAnalyzer"
+popularity = "regis.analyzers.popularity:PopularityAnalyzer"
+size = "regis.analyzers.size:SizeAnalyzer"
+freshness = "regis.analyzers.freshness:FreshnessAnalyzer"
+provenance = "regis.analyzers.provenance:ProvenanceAnalyzer"
+sbom = "regis.analyzers.sbom:SbomAnalyzer"
+hadolint = "regis.analyzers.hadolint:HadolintAnalyzer"
+dockle = "regis.analyzers.dockle:DockleAnalyzer"
 
 [project.optional-dependencies]
 dev = [
@@ -49,10 +49,10 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["regis_cli*"]
+include = ["regis*"]
 
 [tool.setuptools.package-data]
-regis_cli = [
+regis = [
   "schemas/**/*",
   "scorecard/*.yaml",
   "templates/**/*",
@@ -66,11 +66,11 @@ regis_cli = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=regis_cli --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=90"
+addopts = "--cov=regis --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=90"
 
 [tool.coverage.run]
-source = ["regis_cli"]
-omit = ["regis_cli/cookiecutters/*", "regis_cli/viewer_assets/*"]
+source = ["regis"]
+omit = ["regis/cookiecutters/*", "regis/viewer_assets/*"]
 
 [tool.coverage.report]
 fail_under = 90

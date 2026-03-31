@@ -6,11 +6,11 @@ tags:
 
 # Introduction
 
-`regis-cli` is a command-line tool designed to analyze container image registries, evaluate security playbooks, and generate comprehensive reports. It provides deep visibility into container image metadata and security posture, enabling automated policy enforcement in CI/CD environments.
+`regis` is a command-line tool designed to analyze container image registries, evaluate security playbooks, and generate comprehensive reports. It provides deep visibility into container image metadata and security posture, enabling automated policy enforcement in CI/CD environments.
 
 ## Purpose
 
-You use `regis-cli` to:
+You use `regis` to:
 
 - Analyze multi-architecture container images.
 - Evaluate custom security and compliance rules using JSON logic.
@@ -19,14 +19,14 @@ You use `regis-cli` to:
 
 ## Architecture
 
-`regis-cli` uses a modular, pluggable architecture that separates data extraction from policy evaluation and reporting.
+`regis` uses a modular, pluggable architecture that separates data extraction from policy evaluation and reporting.
 
 ```mermaid
 C4Context
-    title System Context — regis-cli
+    title System Context — regis
 
     Person(user, "User / CI Bot", "Developer or automated CI/CD pipeline.")
-    System(regis, "regis-cli", "Analyzes container images, evaluates security playbooks, and generates HTML and JSON reports.")
+    System(regis, "regis", "Analyzes container images, evaluates security playbooks, and generates HTML and JSON reports.")
     System_Ext(registry, "Container Registry", "OCI-compliant registry: GHCR, Docker Hub, etc.")
     System_Ext(tools, "Security Tools", "External binaries: Trivy, Skopeo, Hadolint.")
 
@@ -49,10 +49,10 @@ C4Context
 
 ```mermaid
 C4Container
-    title Container Diagram — regis-cli
+    title Container Diagram — regis
 
     Person(user, "User / CI Bot", "Developer or automated CI/CD pipeline.")
-    System_Boundary(boundary, "regis-cli") {
+    System_Boundary(boundary, "regis") {
         Container(cli, "CLI", "Python · Click", "Entry point: parses arguments and orchestrates the analysis workflow.")
         Container(engine, "Analysis Engine", "Python", "Manages the analyzer lifecycle, shared auth, and result aggregation.")
         Container(playbook, "Playbook Engine", "Python · JSON Logic", "Evaluates consolidated metadata against user-defined security rules.")
@@ -93,7 +93,7 @@ C4Container
 
 ## Core Components
 
-The following sections describe the primary components of the `regis-cli` system.
+The following sections describe the primary components of the `regis` system.
 
 ### CLI Layer
 

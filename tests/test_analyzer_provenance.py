@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from regis_cli.analyzers.provenance import ProvenanceAnalyzer
+from regis.analyzers.provenance import ProvenanceAnalyzer
 
 
 class TestProvenanceAnalyzer:

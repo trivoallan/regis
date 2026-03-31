@@ -7,13 +7,13 @@
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-**Description:** Final playbook result produced by regis-cli, containing metadata and analyzer results.
+**Description:** Final playbook result produced by regis, containing metadata and analyzer results.
 
 | Property                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                         |
 | ----------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------- |
 | + [playbook_name](#playbook_name)         | No      | string          | No         | -          | Identifier of the playbook that was executed.                             |
 | - [sidebar](#sidebar)                     | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                            |
-| - [version](#version)                     | No      | string or null  | No         | -          | Version of regis-cli that generated this report.                          |
+| - [version](#version)                     | No      | string or null  | No         | -          | Version of regis that generated this report.                              |
 | - [tier](#tier)                           | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions. |
 | - [badges](#badges)                       | No      | array of object | No         | -          | -                                                                         |
 | - [rules](#rules)                         | No      | array of object | No         | -          | -                                                                         |
@@ -48,7 +48,7 @@
 | -------- | ---------------- |
 | **Type** | `string or null` |
 
-**Description:** Version of regis-cli that generated this report.
+**Description:** Version of regis that generated this report.
 
 ## <a name="tier"></a>4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `tier`
 

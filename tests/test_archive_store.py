@@ -1,9 +1,9 @@
-"""Tests for regis_cli.archive.store."""
+"""Tests for regis.archive.store."""
 
 import json
 from pathlib import Path
 
-from regis_cli.archive.store import (
+from regis.archive.store import (
     _load_json_array,
     _make_summary,
     _safe_segment,

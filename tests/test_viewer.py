@@ -9,7 +9,7 @@ from unittest.mock import patch
 import pytest
 from click.testing import CliRunner
 
-from regis_cli.commands.viewer import (
+from regis.commands.viewer import (
     _parse_archives,
     get_viewer_assets_dir,
     viewer_group,
@@ -98,8 +98,8 @@ class TestParseArchives:
 class TestViewerExportCmd:
     """Tests for the `viewer export` subcommand."""
 
-    @patch("regis_cli.commands.viewer.get_viewer_assets_dir")
-    @patch("regis_cli.commands.viewer.shutil.copytree")
+    @patch("regis.commands.viewer.get_viewer_assets_dir")
+    @patch("regis.commands.viewer.shutil.copytree")
     def test_export_without_report(
         self, mock_copytree, mock_get_dir, tmp_path: Path
     ) -> None:
@@ -111,9 +111,9 @@ class TestViewerExportCmd:
         assert "Successfully exported" in result.output
         mock_copytree.assert_called_once()
 
-    @patch("regis_cli.commands.viewer.get_viewer_assets_dir")
-    @patch("regis_cli.commands.viewer.shutil.copytree")
-    @patch("regis_cli.commands.viewer.shutil.copy2")
+    @patch("regis.commands.viewer.get_viewer_assets_dir")
+    @patch("regis.commands.viewer.shutil.copytree")
+    @patch("regis.commands.viewer.shutil.copy2")
     def test_export_with_report(
         self, mock_copy2, mock_copytree, mock_get_dir, tmp_path: Path
     ) -> None:
@@ -130,8 +130,8 @@ class TestViewerExportCmd:
         assert "Successfully exported" in result.output
         mock_copy2.assert_called_once()
 
-    @patch("regis_cli.commands.viewer.get_viewer_assets_dir")
-    @patch("regis_cli.commands.viewer.shutil.copytree")
+    @patch("regis.commands.viewer.get_viewer_assets_dir")
+    @patch("regis.commands.viewer.shutil.copytree")
     def test_export_with_archives_writes_archives_json(
         self, mock_copytree, mock_get_dir, tmp_path: Path
     ) -> None:
@@ -162,8 +162,8 @@ class TestViewerExportCmd:
         }
         assert "Archives config written" in result.output
 
-    @patch("regis_cli.commands.viewer.get_viewer_assets_dir")
-    @patch("regis_cli.commands.viewer.shutil.copytree")
+    @patch("regis.commands.viewer.get_viewer_assets_dir")
+    @patch("regis.commands.viewer.shutil.copytree")
     def test_export_without_archives_does_not_write_archives_json(
         self, mock_copytree, mock_get_dir, tmp_path: Path
     ) -> None:
@@ -178,8 +178,8 @@ class TestViewerExportCmd:
         assert not (output_dir / "archives.json").exists()
         assert "Archives config written" not in result.output
 
-    @patch("regis_cli.commands.viewer.get_viewer_assets_dir")
-    @patch("regis_cli.commands.viewer.shutil.copytree")
+    @patch("regis.commands.viewer.get_viewer_assets_dir")
+    @patch("regis.commands.viewer.shutil.copytree")
     def test_export_bad_archive_format_fails(
         self, mock_copytree, mock_get_dir, tmp_path: Path
     ) -> None:

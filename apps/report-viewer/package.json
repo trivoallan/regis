@@ -1,5 +1,5 @@
 {
-  "name": "@regis-cli/report-viewer",
+  "name": "@regis/report-viewer",
   "version": "0.0.1",
   "private": true,
   "scripts": {

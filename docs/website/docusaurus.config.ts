@@ -5,8 +5,9 @@ import type * as Preset from "@docusaurus/preset-classic";
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: "regis-cli",
-  tagline: "Container Security & Policy-as-Code Orchestration",
+  title: "Regis",
+  tagline:
+    "Registry Scores — Container Security & Policy-as-Code Orchestration",
   markdown: {
     format: "detect",
     mermaid: true,
@@ -22,12 +23,12 @@ const config: Config = {
   url: "https://trivoallan.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: "/regis-cli/docs/",
+  baseUrl: "/regis/docs/",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "trivoallan", // Usually your GitHub org/user name.
-  projectName: "regis-cli", // Usually your repo name.
+  projectName: "regis", // Usually your repo name.
 
   onBrokenLinks: "ignore", // versioned_docs are immutable; broken links in historical snapshots are acceptable
   onBrokenAnchors: "ignore", // Schema docs use <a name="..."> anchors not recognized by the checker
@@ -65,7 +66,7 @@ const config: Config = {
             },
           },
           editUrl:
-            "https://github.com/trivoallan/regis-cli/edit/main/docs/website/",
+            "https://github.com/trivoallan/regis/edit/main/docs/website/",
         },
         blog: false,
         pages: false,
@@ -87,7 +88,7 @@ const config: Config = {
           dropdownActiveClassDisabled: true,
         },
         {
-          href: "https://github.com/trivoallan/regis-cli",
+          href: "https://github.com/trivoallan/regis",
           label: "GitHub",
           position: "right",
         },

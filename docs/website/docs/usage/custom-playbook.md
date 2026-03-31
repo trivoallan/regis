@@ -13,7 +13,7 @@ Playbooks allow you to define your own security policies and customize the struc
 The easiest way to start is by using the `bootstrap` command. This creates a new directory with a skeleton playbook and necessary configuration files.
 
 ```bash
-regis-cli bootstrap playbook my-security-policy
+regis bootstrap playbook my-security-policy
 ```
 
 This command will prompt you for:
@@ -46,7 +46,7 @@ sections:
 To analyze an image using your newly created playbook, use the `--playbook` (or `-p`) flag:
 
 ```bash
-regis-cli analyze nginx:latest -p my-security-policy/playbook.yaml --site
+regis analyze nginx:latest -p my-security-policy/playbook.yaml --site
 ```
 
 ## 4. Local Iteration (Dry-run)
@@ -55,10 +55,10 @@ If you already have a report from a previous analysis, you can iterate on your p
 
 ```bash
 # 1. Save analysis results to a file
-regis-cli analyze nginx:latest -o report.json
+regis analyze nginx:latest -o report.json
 
 # 2. Test your playbook against the saved report
-regis-cli evaluate report.json -p my-security-policy/playbook.yaml --site
+regis evaluate report.json -p my-security-policy/playbook.yaml --site
 ```
 
 :::tip

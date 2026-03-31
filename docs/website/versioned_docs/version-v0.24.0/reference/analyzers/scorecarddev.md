@@ -12,7 +12,7 @@ The `scorecarddev` analyzer fetches [OpenSSF Scorecard](https://scorecard.dev/) 
 
 - **Analyzer Name**: `scorecarddev`
 - **External API**: `https://api.securityscorecards.dev`
-- **Output Schema**: [`scorecarddev.schema.json`](pathname:///regis-cli/schemas/analyzer/scorecarddev.schema.json)
+- **Output Schema**: [`scorecarddev.schema.json`](pathname:///regis/schemas/analyzer/scorecarddev.schema.json)
 
 ## Functionality
 

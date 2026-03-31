@@ -3,7 +3,7 @@
 import json
 from unittest.mock import patch
 
-from regis_cli.analyzers.freshness import FreshnessAnalyzer
+from regis.analyzers.freshness import FreshnessAnalyzer
 
 
 class MockRegistryClient:
@@ -14,7 +14,7 @@ class MockRegistryClient:
 
 
 class TestFreshnessAnalyzer:
-    @patch("regis_cli.analyzers.freshness.subprocess.run")
+    @patch("regis.analyzers.freshness.subprocess.run")
     def test_with_created_date(self, mock_run):
         def side_effect(cmd, **kwargs):
             class MockResponse:

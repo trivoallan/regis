@@ -8,7 +8,7 @@
 - Jinja2-based HTML report generation.
 - GitHub Actions workflows for release and Docker publishing.
 - Docusaurus documentation structure initialized and migrated from Antora, including versioning setup.
-- Relocated JSON schemas to `regis_cli/schemas/` for better packaging.
+- Relocated JSON schemas to `regis/schemas/` for better packaging.
 - Fixed Skopeo architecture mismatch handling for multi-arch image indexes.
 - Automated Antora documentation publishing to GitHub Pages (Legacy).
 - Automated `trunk fmt` in CI with auto-commit of style changes.
@@ -20,7 +20,7 @@
 
 - Unified linting experience by migrating to Trunk.
 - Migrated documentation to Docusaurus, established dynamic versioning strategy with tag names, and cleaned up redundant folders.
-- Added support for Markdown output in `regis-cli rules list` and generated rules reference documentation.
+- Added support for Markdown output in `regis rules list` and generated rules reference documentation.
 - **Implemented modern Docusaurus-based report viewer** (`apps/report-viewer`).
 - Replaced legacy Jinja2 HTML report generation with the new React/Docusaurus architecture.
 - Integrated the new report viewer into the workspace (`pnpm`).

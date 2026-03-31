@@ -4,8 +4,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from regis_cli.analyzers.base import AnalyzerError
-from regis_cli.analyzers.skopeo import SkopeoAnalyzer
+from regis.analyzers.base import AnalyzerError
+from regis.analyzers.skopeo import SkopeoAnalyzer
 
 OCI_INDEX = "application/vnd.oci.image.index.v1+json"
 

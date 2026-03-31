@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from regis_cli.analyzers.base import AnalyzerError
-from regis_cli.analyzers.dockle import DockleAnalyzer
+from regis.analyzers.base import AnalyzerError
+from regis.analyzers.dockle import DockleAnalyzer
 
 
 class TestDockleAnalyzer:

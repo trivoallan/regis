@@ -5,8 +5,8 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from regis_cli.cli import main
-from regis_cli.registry.auth import resolve_credentials
+from regis.cli import main
+from regis.registry.auth import resolve_credentials
 
 
 class TestGithubEnvironment:
@@ -35,11 +35,11 @@ class TestGithubEnvironment:
             assert user == "global"
             assert pwd == "secret"
 
-    @patch("regis_cli.commands.analyze.RegistryClient")
-    @patch("regis_cli.commands.analyze._discover_analyzers")
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
     def test_cli_with_mocked_gh_metadata(self, mock_discover, mock_client):
         """Test the CLI when called with GitHub-like environment variables via --meta."""
-        from regis_cli.analyzers.base import BaseAnalyzer
+        from regis.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
             def analyze(self, client, repo, tag, platform=None):
@@ -54,7 +54,7 @@ class TestGithubEnvironment:
         runner = CliRunner()
         with runner.isolated_filesystem():
             # Simulate a call from GitHub Actions:
-            # regis-cli analyze $IMAGE --meta trigger.user=${{ github.actor }} ...
+            # regis analyze $IMAGE --meta trigger.user=${{ github.actor }} ...
             result = runner.invoke(
                 main,
                 [

@@ -25,7 +25,7 @@ flowchart TD
     H & I --> J[(Rules Report\nscore · by_tag · results)]
 ```
 
-When `regis-cli` runs an analysis, the rules engine:
+When `regis` runs an analysis, the rules engine:
 
 1. **Collects default rules** from every analyzer that participated in the run.
 2. **Merges playbook rules** on top — overriding defaults or instantiating new rule instances from templates.
@@ -46,10 +46,10 @@ You can inspect them at any time from the CLI:
 
 ```bash
 # List all default rules (table)
-regis-cli rules list
+regis rules list
 
 # Show the full definition of a specific rule
-regis-cli rules show trivy cve-count
+regis rules show trivy cve-count
 ```
 
 ## Customizing Rules in a Playbook
@@ -167,13 +167,13 @@ If the evaluation context is missing data that a condition accesses (e.g. an ana
 
 ```bash
 # Evaluate a report against the default rules
-regis-cli rules evaluate report.json
+regis rules evaluate report.json
 
 # Use a custom playbook
-regis-cli rules evaluate report.json --rules playbook.yaml
+regis rules evaluate report.json --rules playbook.yaml
 
 # Export results as JSON
-regis-cli rules evaluate report.json -o rules_report.json
+regis rules evaluate report.json -o rules_report.json
 ```
 
 ### Blocking CI/CD Pipelines
@@ -182,8 +182,8 @@ Use `--fail` to exit with a non-zero code when rules breach a given severity thr
 
 ```bash
 # Fail the pipeline if any CRITICAL rule is breached
-regis-cli rules evaluate report.json --fail
+regis rules evaluate report.json --fail
 
 # Fail on WARNING or above
-regis-cli rules evaluate report.json --fail --fail-level warning
+regis rules evaluate report.json --fail --fail-level warning
 ```
