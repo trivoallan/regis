@@ -74,8 +74,16 @@ function formatDate(ts: string) {
 function tierVariant(
   tier?: string,
 ): "success" | "warning" | "critical" | "info" | "outline" | "default" {
-  return "warning";
-  return "outline";
+  switch (tier?.toLowerCase()) {
+    case "gold":
+      return "success";
+    case "silver":
+      return "info";
+    case "bronze":
+      return "warning";
+    default:
+      return "outline";
+  }
 }
 
 function reportToEntry(report: any, url: string): ArchiveEntry {
@@ -131,6 +139,37 @@ function reportToEntry(report: any, url: string): ArchiveEntry {
     path: url,
     tier: report?.tier,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Module-level helpers
+// ---------------------------------------------------------------------------
+
+function fetchManifest(
+  manifestUrl: string,
+  archiveName?: string,
+): Promise<ArchiveEntry[]> {
+  return fetch(manifestUrl)
+    .then((r) => {
+      if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+      return r.json();
+    })
+    .then((data: any) => {
+      let result: ArchiveEntry[];
+      if (Array.isArray(data)) {
+        result = data as ArchiveEntry[];
+      } else if (data && typeof data === "object") {
+        result = [reportToEntry(data, manifestUrl)];
+      } else {
+        throw new Error(
+          "Invalid archive format: expected an array or a report object.",
+        );
+      }
+      if (archiveName) {
+        result = result.map((e) => ({ ...e, _archive: archiveName }));
+      }
+      return result;
+    });
 }
 
 const TIERS = ["All", "Gold", "Silver", "Bronze", "None"];
@@ -238,10 +277,16 @@ export function ArchiveView(): React.JSX.Element {
           setArchiveDefs(data.archives as ArchiveDef[]);
           // Restore persisted index if available
           const stored = sessionStorage.getItem("regis_active_archive_idx");
-          setActiveArchiveIdx(stored !== null ? parseInt(stored, 10) : -1);
+          const idx = stored !== null ? parseInt(stored, 10) : -1;
+          setActiveArchiveIdx(idx >= 0 && idx < data.archives.length ? idx : -1);
         }
       })
-      .catch(() => {}); // silent fallback — single-archive mode
+      .catch((err) =>
+        console.debug(
+          "archives.json not available, falling back to single-archive mode",
+          err,
+        ),
+      );
   }, [baseUrl]);
 
   // Persist activeArchiveIdx to sessionStorage on change
@@ -251,34 +296,6 @@ export function ArchiveView(): React.JSX.Element {
       String(activeArchiveIdx),
     );
   }, [activeArchiveIdx]);
-
-  // Helper: fetch a manifest URL and return entries tagged with archive name
-  function fetchManifest(
-    manifestUrl: string,
-    archiveName?: string,
-  ): Promise<ArchiveEntry[]> {
-    return fetch(manifestUrl)
-      .then((r) => {
-        if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-        return r.json();
-      })
-      .then((data: any) => {
-        let result: ArchiveEntry[];
-        if (Array.isArray(data)) {
-          result = data as ArchiveEntry[];
-        } else if (data && typeof data === "object") {
-          result = [reportToEntry(data, manifestUrl)];
-        } else {
-          throw new Error(
-            "Invalid archive format: expected an array or a report object.",
-          );
-        }
-        if (archiveName) {
-          result = result.map((e) => ({ ...e, _archive: archiveName }));
-        }
-        return result;
-      });
-  }
 
   useEffect(() => {
     // Multi-archive mode
@@ -293,11 +310,13 @@ export function ArchiveView(): React.JSX.Element {
           }),
         )
           .then((results) => {
-            const merged = results.flat().sort(
-              (a, b) =>
-                new Date(b.timestamp).getTime() -
-                new Date(a.timestamp).getTime(),
-            );
+            const merged = results
+              .flat()
+              .sort(
+                (a, b) =>
+                  new Date(b.timestamp).getTime() -
+                  new Date(a.timestamp).getTime(),
+              );
             setEntries(merged);
             setError(null);
             setLoading(false);
@@ -506,9 +525,7 @@ export function ArchiveView(): React.JSX.Element {
   return (
     <div className="p-6 space-y-8 max-w-7xl mx-auto">
       <div className="flex flex-col gap-2">
-        <Title>
-          {isMultiArchive ? activeArchiveName : "Report Archive"}
-        </Title>
+        <Title>{isMultiArchive ? activeArchiveName : "Report Archive"}</Title>
         <Text>Browse historical reports archived from this repository.</Text>
       </div>
 
@@ -679,9 +696,7 @@ export function ArchiveView(): React.JSX.Element {
                 <TableRow>
                   <TableHeaderCell>Date</TableHeaderCell>
                   <TableHeaderCell>Image</TableHeaderCell>
-                  {isCombinedView && (
-                    <TableHeaderCell>Source</TableHeaderCell>
-                  )}
+                  {isCombinedView && <TableHeaderCell>Source</TableHeaderCell>}
                   <TableHeaderCell>Status</TableHeaderCell>
                   <TableHeaderCell>Tier</TableHeaderCell>
                   <TableHeaderCell>Score</TableHeaderCell>
