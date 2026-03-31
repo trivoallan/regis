@@ -8,21 +8,21 @@ tags:
 
 Image has an acceptable number of layers.
 
-| Provider | Level | Tags |
-| :--- | :--- | :--- |
-| skopeo | Warning | performance |
+| Provider | Level   | Tags        |
+| :------- | :------ | :---------- |
+| skopeo   | Warning | performance |
 
 ## Parameters
 
-| Name | Default Value | Description |
-| :--- | :--- | :--- |
-| `max_layers` | `30` | n/a |
+| Name         | Default Value | Description |
+| :----------- | :------------ | :---------- |
+| `max_layers` | `30`          | n/a         |
 
 ## Messages
 
-| Type | Message |
-| :--- | :--- |
-| **Pass** | Image has ${results.skopeo.platforms.0.layers_count} layers. |
+| Type     | Message                                                                                                         |
+| :------- | :-------------------------------------------------------------------------------------------------------------- |
+| **Pass** | Image has ${results.skopeo.platforms.0.layers_count} layers.                                                    |
 | **Fail** | Image has too many layers (${results.skopeo.platforms.0.layers_count}). Max allowed: ${rule.params.max_layers}. |
 
 ## Playbook Example
