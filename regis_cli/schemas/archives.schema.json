@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ArchivesConfig",
+  "description": "Configuration listing multiple named archives for the regis-cli viewer.",
+  "type": "object",
+  "required": ["archives"],
+  "properties": {
+    "archives": {
+      "type": "array",
+      "description": "List of named archives to display in the viewer.",
+      "items": {
+        "type": "object",
+        "required": ["name", "path"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Display name for this archive (e.g. 'Autorisation d\u2019import').",
+            "minLength": 1
+          },
+          "path": {
+            "type": "string",
+            "description": "Relative path or HTTP(S) URL to the archive's manifest.json.",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false
+}

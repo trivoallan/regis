@@ -20,6 +20,7 @@ import {
   Title,
 } from "@tremor/react";
 import { ScoreBadge, levelToVariant } from "./ScoreBadge";
+import { ArchiveSelector, type ArchiveDef } from "./ArchiveSelector";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -45,6 +46,7 @@ export interface ArchiveEntry {
   scorecard_score?: number;
   status?: string;
   path: string;
+  _archive?: string; // archive display name, set in combined view
 }
 
 // ---------------------------------------------------------------------------
@@ -72,8 +74,16 @@ function formatDate(ts: string) {
 function tierVariant(
   tier?: string,
 ): "success" | "warning" | "critical" | "info" | "outline" | "default" {
-  return "warning";
-  return "outline";
+  switch (tier?.toLowerCase()) {
+    case "gold":
+      return "success";
+    case "silver":
+      return "info";
+    case "bronze":
+      return "warning";
+    default:
+      return "outline";
+  }
 }
 
 function reportToEntry(report: any, url: string): ArchiveEntry {
@@ -129,6 +139,37 @@ function reportToEntry(report: any, url: string): ArchiveEntry {
     path: url,
     tier: report?.tier,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Module-level helpers
+// ---------------------------------------------------------------------------
+
+function fetchManifest(
+  manifestUrl: string,
+  archiveName?: string,
+): Promise<ArchiveEntry[]> {
+  return fetch(manifestUrl)
+    .then((r) => {
+      if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+      return r.json();
+    })
+    .then((data: any) => {
+      let result: ArchiveEntry[];
+      if (Array.isArray(data)) {
+        result = data as ArchiveEntry[];
+      } else if (data && typeof data === "object") {
+        result = [reportToEntry(data, manifestUrl)];
+      } else {
+        throw new Error(
+          "Invalid archive format: expected an array or a report object.",
+        );
+      }
+      if (archiveName) {
+        result = result.map((e) => ({ ...e, _archive: archiveName }));
+      }
+      return result;
+    });
 }
 
 const TIERS = ["All", "Gold", "Silver", "Bronze", "None"];
@@ -203,9 +244,15 @@ export function ArchiveView(): React.JSX.Element {
   const [imageFilter, setImageFilter] = useState("");
   const [tierFilter, setTierFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [sourceFilter, setSourceFilter] = useState("All");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const [archiveUrl, setArchiveUrl] = useState<string>("");
+
+  // Multi-archive state
+  const [archiveDefs, setArchiveDefs] = useState<ArchiveDef[]>([]);
+  const [archivesJsonUrl, setArchivesJsonUrl] = useState<string>("");
+  const [activeArchiveIdx, setActiveArchiveIdx] = useState<number>(-1);
 
   // Resolve the archive URL on the client only (sessionStorage / window are
   // not available during SSG/SSR).
@@ -218,7 +265,87 @@ export function ArchiveView(): React.JSX.Element {
     setArchiveUrl(resolved);
   }, [search, baseUrl]);
 
+  // Load archives.json once baseUrl is known
   useEffect(() => {
+    if (!baseUrl) return;
+    const url = `${window.location.origin}${baseUrl}archives.json`;
+    setArchivesJsonUrl(url);
+    fetch(url)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: any) => {
+        if (data?.archives?.length >= 2) {
+          setArchiveDefs(data.archives as ArchiveDef[]);
+          // Restore persisted index if available
+          const stored = sessionStorage.getItem("regis_active_archive_idx");
+          const idx = stored !== null ? parseInt(stored, 10) : -1;
+          setActiveArchiveIdx(
+            idx >= 0 && idx < data.archives.length ? idx : -1,
+          );
+        }
+      })
+      .catch((err) =>
+        console.debug(
+          "archives.json not available, falling back to single-archive mode",
+          err,
+        ),
+      );
+  }, [baseUrl]);
+
+  // Persist activeArchiveIdx to sessionStorage on change
+  useEffect(() => {
+    sessionStorage.setItem(
+      "regis_active_archive_idx",
+      String(activeArchiveIdx),
+    );
+  }, [activeArchiveIdx]);
+
+  useEffect(() => {
+    // Multi-archive mode
+    if (archiveDefs.length >= 2) {
+      setLoading(true);
+      if (activeArchiveIdx === -1) {
+        // "All" — fetch all manifests in parallel
+        Promise.all(
+          archiveDefs.map((def) => {
+            const url = new URL(def.path, archivesJsonUrl).toString();
+            return fetchManifest(url, def.name);
+          }),
+        )
+          .then((results) => {
+            const merged = results
+              .flat()
+              .sort(
+                (a, b) =>
+                  new Date(b.timestamp).getTime() -
+                  new Date(a.timestamp).getTime(),
+              );
+            setEntries(merged);
+            setError(null);
+            setLoading(false);
+          })
+          .catch((e) => {
+            setError(e.message);
+            setLoading(false);
+          });
+      } else {
+        // Single archive selected
+        const def = archiveDefs[activeArchiveIdx];
+        const url = new URL(def.path, archivesJsonUrl).toString();
+        fetchManifest(url)
+          .then((result) => {
+            setEntries(result);
+            setError(null);
+            setLoading(false);
+          })
+          .catch((e) => {
+            setError(`${e.message} (from ${url})`);
+            setLoading(false);
+          });
+      }
+      return;
+    }
+
+    // Single-archive mode (original behaviour)
     if (!archiveUrl) return;
     setLoading(true);
     fetch(archiveUrl)
@@ -244,7 +371,7 @@ export function ArchiveView(): React.JSX.Element {
         setError(`${e.message} (from ${archiveUrl})`);
         setLoading(false);
       });
-  }, [archiveUrl]);
+  }, [archiveUrl, archiveDefs, activeArchiveIdx, archivesJsonUrl]);
 
   const filtered = useMemo(
     () =>
@@ -269,9 +396,24 @@ export function ArchiveView(): React.JSX.Element {
             return false;
           }
         }
+        if (
+          sourceFilter !== "All" &&
+          archiveDefs.length >= 2 &&
+          activeArchiveIdx === -1
+        ) {
+          if (e._archive !== sourceFilter) return false;
+        }
         return true;
       }),
-    [entries, imageFilter, tierFilter, statusFilter],
+    [
+      entries,
+      imageFilter,
+      tierFilter,
+      statusFilter,
+      sourceFilter,
+      archiveDefs,
+      activeArchiveIdx,
+    ],
   );
 
   const uniqueImages = useMemo(
@@ -374,12 +516,32 @@ export function ArchiveView(): React.JSX.Element {
     );
   }
 
+  const isMultiArchive = archiveDefs.length >= 2;
+  const isCombinedView = isMultiArchive && activeArchiveIdx === -1;
+
+  const activeArchiveName =
+    isMultiArchive && activeArchiveIdx >= 0
+      ? archiveDefs[activeArchiveIdx].name
+      : "All Archives";
+
   return (
     <div className="p-6 space-y-8 max-w-7xl mx-auto">
       <div className="flex flex-col gap-2">
-        <Title>Report Archive</Title>
+        <Title>{isMultiArchive ? activeArchiveName : "Report Archive"}</Title>
         <Text>Browse historical reports archived from this repository.</Text>
       </div>
+
+      {/* Archive switcher */}
+      {isMultiArchive && (
+        <ArchiveSelector
+          archives={archiveDefs}
+          activeIndex={activeArchiveIdx}
+          onSelect={(idx) => {
+            setActiveArchiveIdx(idx);
+            setSourceFilter("All");
+          }}
+        />
+      )}
 
       {/* KPI */}
       <Grid numItemsSm={3} className="gap-4">
@@ -429,6 +591,20 @@ export function ArchiveView(): React.JSX.Element {
             </SelectItem>
           ))}
         </Select>
+        {isCombinedView && (
+          <Select
+            value={sourceFilter}
+            onValueChange={setSourceFilter}
+            className="max-w-[10rem]"
+          >
+            <SelectItem value="All">All Sources</SelectItem>
+            {archiveDefs.map((a) => (
+              <SelectItem key={a.path} value={a.name}>
+                {a.name}
+              </SelectItem>
+            ))}
+          </Select>
+        )}
         <div className="flex-grow" />
         <Text className="text-tremor-content italic">
           Showing {filtered.length} report{filtered.length !== 1 ? "s" : ""}
@@ -522,6 +698,7 @@ export function ArchiveView(): React.JSX.Element {
                 <TableRow>
                   <TableHeaderCell>Date</TableHeaderCell>
                   <TableHeaderCell>Image</TableHeaderCell>
+                  {isCombinedView && <TableHeaderCell>Source</TableHeaderCell>}
                   <TableHeaderCell>Status</TableHeaderCell>
                   <TableHeaderCell>Tier</TableHeaderCell>
                   <TableHeaderCell>Score</TableHeaderCell>
@@ -544,6 +721,11 @@ export function ArchiveView(): React.JSX.Element {
                     <TableCell className="font-mono text-xs">
                       {imageKey(e)}
                     </TableCell>
+                    {isCombinedView && (
+                      <TableCell className="text-xs text-gray-500 whitespace-nowrap">
+                        {e._archive ?? "—"}
+                      </TableCell>
+                    )}
                     <TableCell>
                       {e.status ? (
                         <ScoreBadge

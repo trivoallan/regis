@@ -1,6 +1,7 @@
 """React report viewer commands for regis-cli."""
 
 import http.server
+import json
 import logging
 import os
 import shutil
@@ -27,6 +28,35 @@ def get_viewer_assets_dir() -> Path:
     return assets_dir
 
 
+def _parse_archives(archives: tuple[str, ...]) -> list[dict[str, str]]:
+    """Parses archive entries from CLI format into a list of dicts.
+
+    Args:
+        archives: Tuple of strings in "Name:path-or-url" format.
+
+    Returns:
+        List of {"name": ..., "path": ...} dicts.
+
+    Raises:
+        click.BadParameter: If any entry does not contain a colon separator.
+    """
+    result = []
+    for entry in archives:
+        if ":" not in entry:
+            raise click.BadParameter(
+                f'Invalid archive format {entry!r}. Expected "Name:path-or-url".',
+                param_hint="'--archive'",
+            )
+        name, path = entry.split(":", 1)
+        if not name.strip() or not path.strip():
+            raise click.BadParameter(
+                f'Invalid archive format {entry!r}. Expected "Name:path-or-url".',
+                param_hint="'--archive'",
+            )
+        result.append({"name": name, "path": path})
+    return result
+
+
 @click.group()
 def viewer_group() -> None:
     """Preview or export interactive security reports."""
@@ -46,7 +76,16 @@ def viewer_group() -> None:
     required=True,
     help="Directory to export the static site into.",
 )
-def export_cmd(output: Path, report: Path | None = None) -> None:
+@click.option(
+    "-a",
+    "--archive",
+    "archives",
+    multiple=True,
+    help='Named archive to include, format "Name:path-or-url". Repeatable.',
+)
+def export_cmd(
+    output: Path, report: Path | None = None, archives: tuple[str, ...] = ()
+) -> None:
     """Export the viewer app alongside the target report for static hosting."""
     assets_dir = get_viewer_assets_dir()
     output.mkdir(parents=True, exist_ok=True)
@@ -57,6 +96,14 @@ def export_cmd(output: Path, report: Path | None = None) -> None:
     if report:
         dest_report = output / "report.json"
         shutil.copy2(report, dest_report)
+
+    if archives:
+        parsed = _parse_archives(archives)
+        archives_path = output / "archives.json"
+        archives_path.write_text(
+            json.dumps({"archives": parsed}, indent=2), encoding="utf-8"
+        )
+        click.echo(f"Archives config written: {archives_path}")
 
     click.echo(f"Successfully exported to {output}")
     click.echo("You can now host this directory using any static web server.")
@@ -75,14 +122,41 @@ def export_cmd(output: Path, report: Path | None = None) -> None:
     default=8000,
     help="Port to listen on (default: 8000).",
 )
-def serve_cmd(port: int, report: Path | None = None) -> None:  # pragma: no cover
+@click.option(
+    "-a",
+    "--archive",
+    "archives",
+    multiple=True,
+    help='Named archive to include, format "Name:path-or-url". Repeatable.',
+)
+def serve_cmd(  # pragma: no cover
+    port: int, report: Path | None = None, archives: tuple[str, ...] = ()
+) -> None:
     """Serve the static React viewer and preview the report locally."""
     assets_dir = get_viewer_assets_dir()
 
+    archives_payload: bytes | None = None
+    if archives:
+        parsed = _parse_archives(archives)
+        archives_payload = json.dumps({"archives": parsed}, indent=2).encode()
+
     class ReportRequestHandler(http.server.SimpleHTTPRequestHandler):
-        def __init__(self, *args, **kwargs):
+        def __init__(self, *args, **kwargs) -> None:
             # Python 3.7+ supports the directory argument
             super().__init__(*args, directory=str(assets_dir), **kwargs)
+
+        def do_GET(self) -> None:
+            if (
+                archives_payload is not None
+                and self.path.split("?")[0] == "/archives.json"
+            ):
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(archives_payload)))
+                self.end_headers()
+                self.wfile.write(archives_payload)
+                return
+            super().do_GET()
 
         def translate_path(self, path: str) -> str:
             if report and path == "/report.json":
