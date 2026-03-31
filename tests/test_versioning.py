@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from regis_cli.analyzers.versioning import VersioningAnalyzer, _classify_tag
+from regis.analyzers.versioning import VersioningAnalyzer, _classify_tag
 
 # ---------------------------------------------------------------------------
 # Tag classification unit tests
@@ -141,7 +141,7 @@ class MockRegistryClient:
 class TestVersioningAnalyzer:
     """Test the versioning analyzer end-to-end."""
 
-    @patch("regis_cli.analyzers.versioning.subprocess.run")
+    @patch("regis.analyzers.versioning.subprocess.run")
     def test_semver_dominant(self, mock_run):
         tags = ["1.0.0", "1.1.0", "1.2.0", "2.0.0", "2.0.0-rc.1", "latest"]
         mock_run.return_value.stdout = json.dumps({"Tags": tags})
@@ -155,7 +155,7 @@ class TestVersioningAnalyzer:
         # 4 semver + 1 prerelease = 5/6 ≈ 83.3%
         assert report["semver_compliant_percentage"] == pytest.approx(83.3, abs=0.1)
 
-    @patch("regis_cli.analyzers.versioning.subprocess.run")
+    @patch("regis.analyzers.versioning.subprocess.run")
     def test_named_dominant(self, mock_run):
         tags = ["latest", "alpine", "bookworm", "slim"]
         mock_run.return_value.stdout = json.dumps({"Tags": tags})
@@ -167,7 +167,7 @@ class TestVersioningAnalyzer:
         assert report["dominant_pattern"] == "named"
         assert report["semver_compliant_percentage"] == 0
 
-    @patch("regis_cli.analyzers.versioning.subprocess.run")
+    @patch("regis.analyzers.versioning.subprocess.run")
     def test_mixed_patterns(self, mock_run):
         tags = ["1.0.0", "1.1.0", "latest", "alpine", "2024.01", "abc1234"]
         mock_run.return_value.stdout = json.dumps({"Tags": tags})
@@ -182,7 +182,7 @@ class TestVersioningAnalyzer:
         assert "calver" in pattern_names
         assert "hash" in pattern_names
 
-    @patch("regis_cli.analyzers.versioning.subprocess.run")
+    @patch("regis.analyzers.versioning.subprocess.run")
     def test_empty_tags(self, mock_run):
         mock_run.return_value.stdout = json.dumps({"Tags": []})
         client = MockRegistryClient()
@@ -194,7 +194,7 @@ class TestVersioningAnalyzer:
         assert report["dominant_pattern"] == "unknown"
         assert report["patterns"] == []
 
-    @patch("regis_cli.analyzers.versioning.subprocess.run")
+    @patch("regis.analyzers.versioning.subprocess.run")
     def test_variant_detection(self, mock_run):
         """Test detection and counting of variants."""
         tags = [
@@ -224,7 +224,7 @@ class TestVersioningAnalyzer:
         alpine_entry = next(v for v in variants if v["name"] == "alpine")
         assert "1.0.0-alpine" in alpine_entry["examples"]
 
-    @patch("regis_cli.analyzers.versioning.subprocess.run")
+    @patch("regis.analyzers.versioning.subprocess.run")
     def test_subvariant_detection(self, mock_run):
         """Test detection of subvariants like cli, fpm, apache."""
         tags = [
@@ -251,7 +251,7 @@ class TestVersioningAnalyzer:
         assert v_map["buster"] == 1
         assert v_map["bullseye"] == 1
 
-    @patch("regis_cli.analyzers.versioning.subprocess.run")
+    @patch("regis.analyzers.versioning.subprocess.run")
     def test_ubi_detection(self, mock_run):
         """Test detection of RedHat UBI images."""
         tags = [
@@ -279,7 +279,7 @@ class TestVersioningAnalyzer:
         assert v_map["init"] == 1
         assert v_map["rhel"] == 1
 
-    @patch("regis_cli.analyzers.versioning.subprocess.run")
+    @patch("regis.analyzers.versioning.subprocess.run")
     def test_release_line_detection_for_alias(self, mock_run):
         """Test detection of release_lines and aliases for alias tags."""
         # mock_run will be called twice: 1. skopeo list-tags  2. skopeo inspect
@@ -302,7 +302,7 @@ class TestVersioningAnalyzer:
         assert report["aliases"] == ["1.10", "1.10.4", "latest"]
         assert mock_run.call_count == 2
 
-    @patch("regis_cli.analyzers.versioning.subprocess.run")
+    @patch("regis.analyzers.versioning.subprocess.run")
     def test_aliases_for_semver_tag(self, mock_run):
         """Aliases are detected even when the analyzed tag is a strict semver."""
         mock_list_tags = MagicMock()

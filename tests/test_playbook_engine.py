@@ -6,7 +6,7 @@ from typing import Any
 
 import yaml
 
-from regis_cli.playbook.engine import _flatten, evaluate, load_playbook
+from regis.playbook.engine import _flatten, evaluate, load_playbook
 
 
 class TestFlatten:

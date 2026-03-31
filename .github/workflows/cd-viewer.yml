@@ -47,10 +47,10 @@ jobs:
           if [ "${{ github.event_name }}" = "release" ]; then
             VERSION="${{ github.event.release.tag_name }}"
             echo "deploy_path=tools/${VERSION}/viewer" >> "$GITHUB_OUTPUT"
-            echo "base_url=/regis-cli/tools/${VERSION}/viewer/" >> "$GITHUB_OUTPUT"
+            echo "base_url=/regis/tools/${VERSION}/viewer/" >> "$GITHUB_OUTPUT"
           else
             echo "deploy_path=tools/main/viewer" >> "$GITHUB_OUTPUT"
-            echo "base_url=/regis-cli/tools/main/viewer/" >> "$GITHUB_OUTPUT"
+            echo "base_url=/regis/tools/main/viewer/" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Setup Node

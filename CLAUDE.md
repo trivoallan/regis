@@ -8,7 +8,7 @@ pipenv run pytest           # Run tests with coverage (fails if < 90%)
 pipenv run pytest --no-cov  # Run tests without coverage check
 pipenv run ruff check .     # Lint
 pipenv run ruff format .    # Format
-pipenv run regis-cli --help # Run CLI locally
+pipenv run regis --help # Run CLI locally
 trunk check                   # Run trunk check
 trunk check --fix             # Fix issues
 trunk check --fix --all       # Fix issues in all files
@@ -17,8 +17,8 @@ trunk check --fix --all       # Fix issues in all files
 ## Architecture
 
 ```
-regis_cli/
-  cli.py              # Main entry point — `regis-cli` console script
+regis/
+  cli.py              # Main entry point — `regis` console script
   analyzers/          # Pluggable analyzers (registered via pyproject.toml entry points)
   analyzers/discovery.py  # discover_analyzers() — entry point loader
   commands/           # CLI commands (analyze, archive, bootstrap, check, rules)
@@ -34,11 +34,11 @@ regis_cli/
 
 ## Key Patterns
 
-- **Analyzer plugins**: Discovered via `project.entry-points."regis_cli.analyzers"` in `pyproject.toml`. Each must subclass `BaseAnalyzer` and implement `analyze()`, `validate()`, and `default_rules()`.
+- **Analyzer plugins**: Discovered via `project.entry-points."regis.analyzers"` in `pyproject.toml`. Each must subclass `BaseAnalyzer` and implement `analyze()`, `validate()`, and `default_rules()`.
 - **Rule templates**: `default_rules()` can return both concrete rules and reusable templates (identified by `slug`). Playbooks instantiate templates via `rule: <slug>` + `options:`.
 - **JSON Logic operators**: Custom operators (`intersects`, `contains_all`, `subset`, `keys`, `get`, `env_contains`) are registered in `rules/evaluator.py`.
 - **Parallel analysis**: Analyzers run concurrently via `ThreadPoolExecutor` (default 4 workers, `--max-workers` to override). Each thread gets its own `RegistryClient` instance.
-- **Test patch targets**: After the CLI split, patch at the new module locations — not `regis_cli.cli.*`. Key targets: `regis_cli.commands.analyze.{RegistryClient,_discover_analyzers}`, `regis_cli.commands.check.{RegistryClient,version}`, `regis_cli.utils.process.{shutil,subprocess}`, `regis_cli.utils.report.jsonschema`.
+- **Test patch targets**: After the CLI split, patch at the new module locations — not `regis.cli.*`. Key targets: `regis.commands.analyze.{RegistryClient,_discover_analyzers}`, `regis.commands.check.{RegistryClient,version}`, `regis.utils.process.{shutil,subprocess}`, `regis.utils.report.jsonschema`.
 - **Lazy imports in functions**: `from module import X` inside a function body — patch at the source (`module.X`), not at the importing module.
 
 ## Craftsmanship

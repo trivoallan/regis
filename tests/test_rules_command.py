@@ -1,4 +1,4 @@
-"""Tests for 'regis-cli rules show' and 'rules evaluate' commands."""
+"""Tests for 'regis rules show' and 'rules evaluate' commands."""
 
 import json
 from pathlib import Path
@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from regis_cli.cli import main
+from regis.cli import main
 
 # Minimal analysis report that satisfies the evaluator
 _MINIMAL_REPORT = {
@@ -161,7 +161,7 @@ class TestRulesEvaluate:
         # Use docker.io which passes the whitelist check
         report_file = self._write_report(tmp_path)
         runner = CliRunner()
-        with patch("regis_cli.rules.evaluator.evaluate_rules") as mock_eval:
+        with patch("regis.rules.evaluator.evaluate_rules") as mock_eval:
             mock_eval.return_value = {
                 "score": 100,
                 "all_rules": ["r1"],

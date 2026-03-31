@@ -1,6 +1,6 @@
 """Tests for rules evaluator."""
 
-from regis_cli.rules.evaluator import evaluate_rules, get_default_rules, merge_rules
+from regis.rules.evaluator import evaluate_rules, get_default_rules, merge_rules
 
 
 def test_get_default_rules():

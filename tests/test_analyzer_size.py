@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from regis_cli.analyzers.base import AnalyzerError
-from regis_cli.analyzers.size import SizeAnalyzer, _human_size
+from regis.analyzers.base import AnalyzerError
+from regis.analyzers.size import SizeAnalyzer, _human_size
 
 
 class TestSizeAnalyzer:

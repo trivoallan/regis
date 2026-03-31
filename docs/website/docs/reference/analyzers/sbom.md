@@ -12,7 +12,7 @@ The `sbom` analyzer generates a Software Bill of Materials (SBOM) for container 
 
 - **Analyzer Name**: `sbom`
 - **Tool Dependency**: `trivy`
-- **Output Schema**: [`sbom.schema.json`](pathname:///regis-cli/schemas/analyzer/sbom.schema.json)
+- **Output Schema**: [`sbom.schema.json`](pathname:///regis/schemas/analyzer/sbom.schema.json)
 
 ## Functionality
 

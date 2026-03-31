@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # default
 
-The RegiS Default Playbook is the standard security and governance profile used by `regis-cli`. It provides a comprehensive set of checks to ensure container images meet baseline security requirements and follow best practices.
+The RegiS Default Playbook is the standard security and governance profile used by `regis`. It provides a comprehensive set of checks to ensure container images meet baseline security requirements and follow best practices.
 
 ## Default Tiers
 
@@ -63,7 +63,7 @@ The report header displays the following dynamic status badges:
 
 ## Analysis Case Studies
 
-These examples demonstrate how `regis-cli` adapts its recommendations based on the security posture and lifecycle of different container images.
+These examples demonstrate how `regis` adapts its recommendations based on the security posture and lifecycle of different container images.
 
 ### Case 1: The "Gold Standard" (Compliant)
 
@@ -77,7 +77,7 @@ These examples demonstrate how `regis-cli` adapts its recommendations based on t
 | **Findings**   | Image is lightweight, runs as a non-root user (if configured), and uses a trusted registry. |
 
 ```bash
-regis-cli analyze alpine:latest -s -D docs/website/static/examples/alpine
+regis analyze alpine:latest -s -D docs/website/static/examples/alpine
 ```
 
 :::info
@@ -114,16 +114,16 @@ This image fails the **Critical** rules and should be blocked from reaching prod
 **Insight:** Even if an image is currently "secure" at the vulnerability level, lifecycle checks flag it as a maintenance risk. The playbook recommends a rebuild to ensure continued support and freshness.
 :::
 
-### Benchmark: `regis-cli`
+### Benchmark: `regis`
 
-Finally, we analyze [regis-cli](https://github.com/trivoallan/regis-cli) itself. As a tool designed to enforce security, its own image is built following all the "Gold Standard" practices: minimal base image, no vulnerabilities, and full provenance.
+Finally, we analyze [regis](https://github.com/trivoallan/regis) itself. As a tool designed to enforce security, its own image is built following all the "Gold Standard" practices: minimal base image, no vulnerabilities, and full provenance.
 
 :::tip
 You can view the live result of this analysis here:
-[**Live `regis-cli:latest` Benchmark Report**](pathname:///regis-cli/examples/playbooks/default/regis-cli/index.html)
+[**Live `regis:latest` Benchmark Report**](pathname:///regis/examples/playbooks/default/regis/index.html)
 
 ```bash
-regis-cli analyze ghcr.io/trivoallan/regis-cli:latest -s -D docs/website/static/examples/regis-cli
+regis analyze ghcr.io/trivoallan/regis:latest -s -D docs/website/static/examples/regis
 ```
 
 :::
@@ -163,9 +163,9 @@ The following items are appended as checkboxes to the Merge Request description.
 
 The default playbook automatically generates a security evidence document for Merge Requests.
 
-| Template                                                                               | Condition                                                                                                   |
-| :------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
-| `https://github.com/trivoallan/regis-cli` (dir: `regis_cli/cookiecutters/mr-evidence`) | Always generated (no condition). Outputs a `SECURITY_EVIDENCE.md` file in the `.regis-evidence/` directory. |
+| Template                                                                       | Condition                                                                                                   |
+| :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
+| `https://github.com/trivoallan/regis` (dir: `regis/cookiecutters/mr-evidence`) | Always generated (no condition). Outputs a `SECURITY_EVIDENCE.md` file in the `.regis-evidence/` directory. |
 
 :::tip
 For more information on how to define your own compliance rules, see the [Playbooks](../../../concepts/playbooks.md) guide.

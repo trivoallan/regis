@@ -7,7 +7,7 @@
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-**Description:** Schema for regis-cli playbook definition files (YAML or JSON).
+**Description:** Schema for regis playbook definition files (YAML or JSON).
 
 | Property                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                        |
 | ------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |

@@ -5,11 +5,11 @@ tags:
 
 # Reports
 
-One of the core missions of `regis-cli` is to bridge the gap between automated tools and human review through **Visual Excellence**.
+One of the core missions of `regis` is to bridge the gap between automated tools and human review through **Visual Excellence**.
 
 ## The Reporting Engine
 
-`regis-cli` uses a modern **Single Page Application (SPA)** architecture for its reports. Instead of static, server-side rendered pages, every report is a fully-featured, client-side application built with **React** and **Docusaurus**.
+`regis` uses a modern **Single Page Application (SPA)** architecture for its reports. Instead of static, server-side rendered pages, every report is a fully-featured, client-side application built with **React** and **Docusaurus**.
 
 The following diagram illustrates the relationship between the CLI and the generated report:
 
@@ -19,7 +19,7 @@ C4Component
 
     Person(user, "User / Security Reviewer", "Reviews security findings in a browser.")
 
-    Container_Boundary(cli_boundary, "regis-cli (CLI)") {
+    Container_Boundary(cli_boundary, "regis (CLI)") {
         Component(engine, "Analysis Engine", "Python", "Orchestrates analyzers and playbooks; produces consolidated results.")
         Component(reporter, "Docusaurus Reporter", "Python", "Injects analysis data into the SPA and triggers the static build.")
     }
@@ -64,7 +64,7 @@ We believe that security reports should be easy to read and aesthetically pleasi
 
 ## Hybrid Reporting
 
-`regis-cli` follows a "hybrid" reporting strategy:
+`regis` follows a "hybrid" reporting strategy:
 
 - **JSON Report**: The source of truth. A machine-readable document containing all analysis and evaluation data, perfect for automated processing.
 - **SPA Viewer**: A human-friendly dashboard that consumes the JSON report to provide a rich, interactive experience.

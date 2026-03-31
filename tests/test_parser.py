@@ -2,7 +2,7 @@
 
 import pytest
 
-from regis_cli.registry.parser import RegistryRef, parse_image_url
+from regis.registry.parser import RegistryRef, parse_image_url
 
 
 class TestParseDockerHubUrls:

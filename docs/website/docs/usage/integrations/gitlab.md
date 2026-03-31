@@ -1,8 +1,8 @@
 # GitLab CI
 
-:description: Guide to using regis-cli in GitLab CI/CD pipelines.
+:description: Guide to using regis in GitLab CI/CD pipelines.
 
-This guide explains how to integrate `regis-cli` into your GitLab CI/CD pipelines to automate container image analysis and security scoring.
+This guide explains how to integrate `regis` into your GitLab CI/CD pipelines to automate container image analysis and security scoring.
 
 ## Prerequisites
 
@@ -11,7 +11,7 @@ This guide explains how to integrate `regis-cli` into your GitLab CI/CD pipeline
 - (Optional) `glab` CLI installed locally.
 
 :::tip
-To quickly bootstrap a new GitLab repository pre-configured with `regis-cli` and GitLab CI, you can use our [Project Bootstrapping](../../reference/cli.md#bootstrap) command.
+To quickly bootstrap a new GitLab repository pre-configured with `regis` and GitLab CI, you can use our [Project Bootstrapping](../../reference/cli.md#bootstrap) command.
 :::
 
 ## GitLab CI Configuration
@@ -23,7 +23,7 @@ include::example$gitlab-ci-fragment.yml[]
 ```
 
 :::note
-In GitLab CI, the workspace is automatically available. The template uses a `before_script` to symlink workspace directories to the `/app/playbooks` and `/app/reports` paths expected by the `regis-cli` container.
+In GitLab CI, the workspace is automatically available. The template uses a `before_script` to symlink workspace directories to the `/app/playbooks` and `/app/reports` paths expected by the `regis` container.
 :::
 
 ## Running Analysis
@@ -37,7 +37,7 @@ Once pushed, you can trigger an analysis manually from the GitLab UI:
 
 ## Publishing to GitLab Pages
 
-`regis-cli` reports are perfectly suited for GitLab Pages. In GitLab CI, any files placed in a directory named `public` at the end of a job named `pages` will be automatically published.
+`regis` reports are perfectly suited for GitLab Pages. In GitLab CI, any files placed in a directory named `public` at the end of a job named `pages` will be automatically published.
 
 ### Deployment Job
 
@@ -80,7 +80,7 @@ You can enrich your reports with GitLab CI metadata using the `--meta` flag. The
 - `trigger.url`: A link to the CI job (e.g., `$CI_JOB_URL`).
 
 ```bash
-regis-cli analyze <image-url> \
+regis analyze <image-url> \
   --meta "trigger.user=$GITLAB_USER_LOGIN" \
   --meta "trigger.url=$CI_JOB_URL"
 ```
@@ -141,13 +141,13 @@ Once the analysis job completes, the pipeline runs the `push_results` reporting 
 
 While GitLab Pages is great for the latest report, you often want to view the specific report for a given job. Our standard template exposes the `reports/` directory as an artifact.
 
-When viewing a Docusaurus report as an artifact, the `baseUrl` must be set correctly. The `regis-cli` command in our template handles this automatically:
+When viewing a Docusaurus report as an artifact, the `baseUrl` must be set correctly. The `regis` command in our template handles this automatically:
 
 ```bash
 # Calculate the base URL dynamically for GitLab artifact viewer
 REPORT_BASE_URL="/${CI_PROJECT_PATH}/-/jobs/${CI_JOB_ID}/artifacts/file/reports/${CI_JOB_ID}/"
 
-regis-cli analyze "$IMAGE_URL" --site --base-url "$REPORT_BASE_URL" ...
+regis analyze "$IMAGE_URL" --site --base-url "$REPORT_BASE_URL" ...
 ```
 
 This ensures that all interactive elements and stylesheets load correctly directly from the GitLab UI.
@@ -158,11 +158,11 @@ Security teams can review the MR, check the compliance score via the direct HTML
 
 ## Automated Labeling and Governance
 
-The `regis-cli` integration automatically applies **scoped labels** to the Merge Request based on the analysis results and your playbook configuration.
+The `regis` integration automatically applies **scoped labels** to the Merge Request based on the analysis results and your playbook configuration.
 
 ### Badge Synchronization
 
-Instead of defining complex conditions for labels, `regis-cli` can automatically synchronize its **Badges** as GitLab labels.
+Instead of defining complex conditions for labels, `regis` can automatically synchronize its **Badges** as GitLab labels.
 
 In your `playbook.yaml`, you simply list the badge slugs you want to import under the `integrations.gitlab.badges` section:
 
@@ -190,13 +190,13 @@ These labels can be used to drive **GitLab Approval Rules** (Premium/Ultimate). 
 - **Example**: Require `@security-team` approval if the `security::critical` label is applied.
 - **Workflow**:
   1.  User requests analysis.
-  2.  `regis-cli` finds a critical vulnerability.
+  2.  `regis` finds a critical vulnerability.
   3.  Pipeline applies `security::critical` label via the GitLab API.
   4.  GitLab Approval Rule detects the label and blocks the Merge Request until a security officer approves it.
 
 ### MR Description Checklists
 
-The `regis-cli` integration can also append review checklists to the Merge Request description based on your playbook configuration. This allows you to define manual or automated verification steps directly in the Merge Request.
+The `regis` integration can also append review checklists to the Merge Request description based on your playbook configuration. This allows you to define manual or automated verification steps directly in the Merge Request.
 
 This is driven by the `integrations.gitlab.checklists` section in your playbook. You can dynamically include items using `show_if` conditions, and automatically pre-check them using `check_if` conditions.
 :::tip
@@ -250,7 +250,7 @@ Set `DOCKER_AUTH_CONFIG` to a JSON string matching the content of a standard `~/
 }
 ```
 
-### 2. regis-cli Specific Variables
+### 2. regis Specific Variables
 
 You can set domain-specific or global variables:
 
@@ -259,7 +259,7 @@ You can set domain-specific or global variables:
 
 ### 3. Standard Environment Variables
 
-`regis-cli` also supports standard Docker Cloud/Hub environment variables for `docker.io` registry:
+`regis` also supports standard Docker Cloud/Hub environment variables for `docker.io` registry:
 
 - `DOCKER_HUB_USERNAME` & `DOCKER_HUB_PASSWORD`
 - `DOCKER_USERNAME` & `DOCKER_PASSWORD`

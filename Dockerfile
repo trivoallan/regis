@@ -12,11 +12,11 @@ RUN pnpm run build
 # Stage 2: Build the final Python image
 FROM python:3.14-slim
 
-LABEL org.opencontainers.image.title="regis-cli" \
-      org.opencontainers.image.description="Container Security & Policy-as-Code Orchestration. Unified analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD." \
+LABEL org.opencontainers.image.title="regis" \
+      org.opencontainers.image.description="Regis — Registry Scores. Container Security & Policy-as-Code Orchestration." \
       org.opencontainers.image.url="https://github.com/trivoallan" \
-      org.opencontainers.image.source="https://github.com/trivoallan/regis-cli" \
-      org.opencontainers.image.documentation="https://trivoallan.github.io/regis-cli/" \
+      org.opencontainers.image.source="https://github.com/trivoallan/regis" \
+      org.opencontainers.image.documentation="https://trivoallan.github.io/regis/" \
       org.opencontainers.image.vendor="trivoallan" \
       org.opencontainers.image.authors="trivoallan" \
       org.opencontainers.image.licenses="MIT"
@@ -72,19 +72,19 @@ RUN chown regis:regis /app && chmod 777 /app
 COPY --chown=regis:regis . .
 
 # Copy built viewer assets from frontend stage
-COPY --from=frontend-builder --chown=regis:regis /app/apps/report-viewer/build ./regis_cli/viewer_assets
+COPY --from=frontend-builder --chown=regis:regis /app/apps/report-viewer/build ./regis/viewer_assets
 
-# Install regis-cli
+# Install regis
 RUN git config --global --add safe.directory /app && \
     pip install --no-cache-dir .
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD regis-cli list || exit 1
+  CMD regis list || exit 1
 
 # Switch to non-root user
 USER regis
 
 # Default command
-ENTRYPOINT ["regis-cli"]
+ENTRYPOINT ["regis"]
 CMD ["--help"]

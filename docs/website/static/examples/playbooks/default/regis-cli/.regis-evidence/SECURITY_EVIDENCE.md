@@ -1,13 +1,13 @@
-# 🛡️ regis-cli Security Evidence
+# 🛡️ regis Security Evidence
 
-> Generated automatically by `regis-cli`
+> Generated automatically by `regis`
 
 Analysis performed on **2026-03-21T01:41:47.291167+00:00**.
 
 ## 📦 Target Details
 
 - **Registry**: `ghcr.io`
-- **Repository**: `trivoallan/regis-cli`
+- **Repository**: `trivoallan/regis`
 - **Tag**: `0.18.0`
 
 ## 📊 Playbook Results: RegiS Default Playbook

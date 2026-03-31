@@ -1,10 +1,10 @@
-"""Tests for 'regis-cli archive' command group."""
+"""Tests for 'regis archive' command group."""
 
 import json
 
 from click.testing import CliRunner
 
-from regis_cli.cli import main
+from regis.cli import main
 
 
 class TestArchiveAdd:

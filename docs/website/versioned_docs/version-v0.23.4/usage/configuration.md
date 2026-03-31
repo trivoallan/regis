@@ -6,11 +6,11 @@ tags:
 
 # Advanced Configuration
 
-For more complex projects, `regis-cli` can be configured using a dedicated YAML file or environment variables.
+For more complex projects, `regis` can be configured using a dedicated YAML file or environment variables.
 
 ## Configuration File
 
-By default, `regis-cli` searches for a `.regis.yaml` file in the root of your project.
+By default, `regis` searches for a `.regis.yaml` file in the root of your project.
 
 ```yaml
 # .regis.yaml example
@@ -36,7 +36,7 @@ All configuration options can be overridden using environment variables prefixed
 
 ## Managing the Cache
 
-`regis-cli` caches analyzer results to improve performance. You can control the cache behavior via:
+`regis` caches analyzer results to improve performance. You can control the cache behavior via:
 
 ```bash
 regis analyze my-image --clear-cache

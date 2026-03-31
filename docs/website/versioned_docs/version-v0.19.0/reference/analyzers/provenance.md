@@ -11,7 +11,7 @@ The `provenance` analyzer checks for SLSA (Supply-chain Levels for Software Arti
 ## Overview
 
 - **Analyzer Name**: `provenance`
-- **Output Schema**: [`provenance.schema.json`](pathname:///regis-cli/schemas/analyzer/provenance.schema.json)
+- **Output Schema**: [`provenance.schema.json`](pathname:///regis/schemas/analyzer/provenance.schema.json)
 
 ## Functionality
 

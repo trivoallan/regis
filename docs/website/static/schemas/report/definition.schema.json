@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/report.schema.json",
+  "$id": "https://trivoallan.github.io/regis/schemas/report.schema.json",
   "title": "report.definition",
-  "description": "Final report envelope produced by regis-cli, containing request metadata and analyzer results.",
+  "description": "Final report envelope produced by regis, containing request metadata and analyzer results.",
   "type": "object",
   "required": ["request", "results", "version"],
   "properties": {
     "version": {
       "type": ["string", "null"],
-      "description": "Version of regis-cli that generated this report."
+      "description": "Version of regis that generated this report."
     },
     "tier": {
       "type": ["string", "null"],

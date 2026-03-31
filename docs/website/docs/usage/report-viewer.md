@@ -6,7 +6,7 @@ tags:
 
 # Report Viewer
 
-The `regis-cli` Report Viewer is a modern, interactive Single Page Application (SPA) designed to transform complex security data into clear, actionable insights.
+The `regis` Report Viewer is a modern, interactive Single Page Application (SPA) designed to transform complex security data into clear, actionable insights.
 
 :::info
 For a deep dive into the architecture and core philosophy of our reporting engine, including how the CLI interacts with the SPA, see the **[Reporting Concepts](../concepts/reports.md)** page.
@@ -24,7 +24,7 @@ For a deep dive into the architecture and core philosophy of our reporting engin
 
 A key feature of the Report Viewer is that its **entire structure is dynamic**. The pages, sections, and even the individual widgets you see are defined by your active **Playbook**.
 
-This means that `regis-cli` doesn't just display a hard-coded list of results; it renders a custom dashboard tailored to your specific compliance requirements.
+This means that `regis` doesn't just display a hard-coded list of results; it renders a custom dashboard tailored to your specific compliance requirements.
 
 :::tip
 To learn more about how to customize this structure, see the [Playbook Customization](../concepts/playbooks.md) guide.
@@ -32,7 +32,7 @@ To learn more about how to customize this structure, see the [Playbook Customiza
 
 ## Default Organization
 
-When you use `regis-cli` without specifying a custom playbook, it uses the **[Default Regis Playbook](../reference/playbooks/default/index.md)**, which provides the following professional organization:
+When you use `regis` without specifying a custom playbook, it uses the **[Default Regis Playbook](../reference/playbooks/default/index.md)**, which provides the following professional organization:
 
 ### 📈 Dashboard Overview
 

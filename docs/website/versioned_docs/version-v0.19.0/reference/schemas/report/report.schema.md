@@ -7,11 +7,11 @@
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-**Description:** Final report envelope produced by regis-cli, containing request metadata and analyzer results.
+**Description:** Final report envelope produced by regis, containing request metadata and analyzer results.
 
 | Property                          | Pattern | Type            | Deprecated | Definition                     | Title/Description                                                         |
 | --------------------------------- | ------- | --------------- | ---------- | ------------------------------ | ------------------------------------------------------------------------- |
-| + [version](#version)             | No      | string or null  | No         | -                              | Version of regis-cli that generated this report.                          |
+| + [version](#version)             | No      | string or null  | No         | -                              | Version of regis that generated this report.                              |
 | - [tier](#tier)                   | No      | string or null  | No         | -                              | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions. |
 | - [badges](#badges)               | No      | array of object | No         | -                              | -                                                                         |
 | - [metadata](#metadata)           | No      | object          | No         | -                              | Arbitrary user-provided metadata.                                         |
@@ -29,7 +29,7 @@
 | -------- | ---------------- |
 | **Type** | `string or null` |
 
-**Description:** Version of regis-cli that generated this report.
+**Description:** Version of regis that generated this report.
 
 ## <a name="tier"></a>2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `tier`
 

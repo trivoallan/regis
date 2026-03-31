@@ -7,11 +7,11 @@
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-**Description:** Final report envelope produced by regis-cli, containing request metadata and analyzer results.
+**Description:** Final report envelope produced by regis, containing request metadata and analyzer results.
 
 | Property                          | Pattern | Type            | Deprecated | Definition                                  | Title/Description                                                         |
 | --------------------------------- | ------- | --------------- | ---------- | ------------------------------------------- | ------------------------------------------------------------------------- |
-| + [version](#version)             | No      | string or null  | No         | -                                           | Version of regis-cli that generated this report.                          |
+| + [version](#version)             | No      | string or null  | No         | -                                           | Version of regis that generated this report.                              |
 | - [tier](#tier)                   | No      | string or null  | No         | -                                           | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions. |
 | - [badges](#badges)               | No      | array of object | No         | -                                           | -                                                                         |
 | - [metadata](#metadata)           | No      | object          | No         | -                                           | Arbitrary user-provided metadata.                                         |
@@ -29,7 +29,7 @@
 | -------- | ---------------- |
 | **Type** | `string or null` |
 
-**Description:** Version of regis-cli that generated this report.
+**Description:** Version of regis that generated this report.
 
 ## <a name="tier"></a>2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `tier`
 
@@ -324,9 +324,9 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be     | Description                                                                            |
-| ----------------------------------- | -------------------------------------------------------------------------------------- |
-| [playbook.result](#playbooks_items) | Final playbook result produced by regis-cli, containing metadata and analyzer results. |
+| Each item of this array must be     | Description                                                                        |
+| ----------------------------------- | ---------------------------------------------------------------------------------- |
+| [playbook.result](#playbooks_items) | Final playbook result produced by regis, containing metadata and analyzer results. |
 
 ### <a name="playbooks_items"></a>8.1. playbook.result
 
@@ -338,13 +338,13 @@ Must be one of:
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 | **Defined in**            | ../playbook/result.schema.json                                              |
 
-**Description:** Final playbook result produced by regis-cli, containing metadata and analyzer results.
+**Description:** Final playbook result produced by regis, containing metadata and analyzer results.
 
 | Property                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                         |
 | --------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------- |
 | + [playbook_name](#playbooks_items_playbook_name)         | No      | string          | No         | -          | Identifier of the playbook that was executed.                             |
 | - [sidebar](#playbooks_items_sidebar)                     | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                            |
-| - [version](#playbooks_items_version)                     | No      | string or null  | No         | -          | Version of regis-cli that generated this report.                          |
+| - [version](#playbooks_items_version)                     | No      | string or null  | No         | -          | Version of regis that generated this report.                              |
 | - [tier](#playbooks_items_tier)                           | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions. |
 | - [badges](#playbooks_items_badges)                       | No      | array of object | No         | -          | -                                                                         |
 | - [rules](#playbooks_items_rules)                         | No      | array of object | No         | -          | -                                                                         |
@@ -379,7 +379,7 @@ Must be one of:
 | -------- | ---------------- |
 | **Type** | `string or null` |
 
-**Description:** Version of regis-cli that generated this report.
+**Description:** Version of regis that generated this report.
 
 #### <a name="playbooks_items_tier"></a>8.1.4. Property `tier`
 

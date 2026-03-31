@@ -1,8 +1,8 @@
-"""Tests for regis_cli.utils.report — uncovered paths."""
+"""Tests for regis.utils.report — uncovered paths."""
 
 from unittest.mock import patch
 
-from regis_cli.utils.report import escape_jinja, run_playbooks
+from regis.utils.report import escape_jinja, run_playbooks
 
 
 class TestEscapeJinja:
@@ -75,13 +75,13 @@ class TestRunPlaybooks:
             result["links"] = [{"url": "https://example.com", "label": "Docs"}]
         return result
 
-    @patch("regis_cli.playbook.engine.load_playbook")
-    @patch("regis_cli.playbook.engine.evaluate")
+    @patch("regis.playbook.engine.load_playbook")
+    @patch("regis.playbook.engine.evaluate")
     def test_remote_path_shows_downloading(self, mock_eval, mock_load, capsys):
         mock_load.return_value = {}
         mock_eval.return_value = self._make_pb_result()
 
-        with patch("regis_cli.utils.report.click.echo") as mock_echo:
+        with patch("regis.utils.report.click.echo") as mock_echo:
             run_playbooks(
                 ("http://example.com/playbook.yaml",),
                 self._ANALYSIS_REPORT,
@@ -90,13 +90,13 @@ class TestRunPlaybooks:
             calls = [str(c) for c in mock_echo.call_args_list]
             assert any("Downloading" in c for c in calls)
 
-    @patch("regis_cli.playbook.engine.load_playbook")
-    @patch("regis_cli.playbook.engine.evaluate")
+    @patch("regis.playbook.engine.load_playbook")
+    @patch("regis.playbook.engine.evaluate")
     def test_local_path_shows_evaluating(self, mock_eval, mock_load, tmp_path):
         mock_load.return_value = {}
         mock_eval.return_value = self._make_pb_result()
 
-        with patch("regis_cli.utils.report.click.echo") as mock_echo:
+        with patch("regis.utils.report.click.echo") as mock_echo:
             run_playbooks(
                 (str(tmp_path / "playbook.yaml"),),
                 self._ANALYSIS_REPORT,
@@ -105,13 +105,13 @@ class TestRunPlaybooks:
             calls = [str(c) for c in mock_echo.call_args_list]
             assert any("Evaluating" in c for c in calls)
 
-    @patch("regis_cli.playbook.engine.load_playbook")
-    @patch("regis_cli.playbook.engine.evaluate")
+    @patch("regis.playbook.engine.load_playbook")
+    @patch("regis.playbook.engine.evaluate")
     def test_show_rules_prints_icons(self, mock_eval, mock_load):
         mock_load.return_value = {}
         mock_eval.return_value = self._make_pb_result(with_rules=True)
 
-        with patch("regis_cli.utils.report.click.echo") as mock_echo:
+        with patch("regis.utils.report.click.echo") as mock_echo:
             run_playbooks(
                 ("local.yaml",),
                 self._ANALYSIS_REPORT,
@@ -123,8 +123,8 @@ class TestRunPlaybooks:
             assert "❌" in all_output
             assert "⚠️" in all_output
 
-    @patch("regis_cli.playbook.engine.load_playbook")
-    @patch("regis_cli.playbook.engine.evaluate")
+    @patch("regis.playbook.engine.load_playbook")
+    @patch("regis.playbook.engine.evaluate")
     def test_links_accumulated_in_final_report(self, mock_eval, mock_load):
         mock_load.return_value = {}
         mock_eval.return_value = self._make_pb_result(with_links=True)
@@ -137,8 +137,8 @@ class TestRunPlaybooks:
         assert "links" in result
         assert result["links"][0]["url"] == "https://example.com"
 
-    @patch("regis_cli.playbook.engine.load_playbook")
-    @patch("regis_cli.playbook.engine.evaluate")
+    @patch("regis.playbook.engine.load_playbook")
+    @patch("regis.playbook.engine.evaluate")
     def test_links_deduplicated(self, mock_eval, mock_load):
         mock_load.return_value = {}
         link = {"url": "https://example.com", "label": "Docs"}
@@ -155,9 +155,10 @@ class TestRunPlaybooks:
 
     def test_no_playbook_paths_uses_default(self):
         """When no paths given, default playbook is loaded (if it exists)."""
-        with patch("regis_cli.playbook.engine.load_playbook") as mock_load, patch(
-            "regis_cli.playbook.engine.evaluate"
-        ) as mock_eval:
+        with (
+            patch("regis.playbook.engine.load_playbook") as mock_load,
+            patch("regis.playbook.engine.evaluate") as mock_eval,
+        ):
             mock_load.return_value = {}
             mock_eval.return_value = self._make_pb_result()
             result = run_playbooks((), self._ANALYSIS_REPORT, formats=["json"])

@@ -15,7 +15,7 @@ bootstrap archive --dev   →   edit UI files   →   bootstrap archive --sync-f
 ### 1. Scaffold a local working copy
 
 ```bash
-regis-cli bootstrap archive ./my-archive --dev
+regis bootstrap archive ./my-archive --dev
 ```
 
 This scaffolds the site, runs `pnpm install`, and starts a dev server at `http://localhost:3000`. A `.regis-sync.json` file is written to the project root — it stores the resolved cookiecutter context and is used later by `--sync-from`.
@@ -36,7 +36,7 @@ Edit any file inside the working copy:
 ### 3. Sync changes back to the template
 
 ```bash
-regis-cli bootstrap archive --sync-from ./my-archive/my-archive/
+regis bootstrap archive --sync-from ./my-archive/my-archive/
 ```
 
 The command compares each file in the working copy against the cookiecutter template source and writes back any differences.
@@ -67,8 +67,8 @@ Sync: /path/to/my-archive → template
 The `.github/workflows/deploy.yml` and `.gitlab-ci.yml` files contain `{% raw %}` blocks (to escape GitHub Actions `${{ }}` syntax) and are skipped automatically. If you need to modify these CI/CD files, edit the template source directly:
 
 ```
-regis_cli/cookiecutters/archive/{{cookiecutter.project_slug}}/.github/workflows/deploy.yml
-regis_cli/cookiecutters/archive/{{cookiecutter.project_slug}}/.gitlab-ci.yml
+regis/cookiecutters/archive/{{cookiecutter.project_slug}}/.github/workflows/deploy.yml
+regis/cookiecutters/archive/{{cookiecutter.project_slug}}/.gitlab-ci.yml
 ```
 
 ## The `.regis-sync.json` file
@@ -81,7 +81,7 @@ Every bootstrapped working copy contains a `.regis-sync.json` file:
   "context": {
     "project_name": "My Archive",
     "project_slug": "my-archive",
-    "description": "Archive viewer for regis-cli security analysis reports.",
+    "description": "Archive viewer for regis security analysis reports.",
     "version": "0.19.0",
     "platform": "github"
   }

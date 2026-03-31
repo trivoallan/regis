@@ -65,7 +65,7 @@ versioning:
 
 introduction:
   label: introduction
-  description: Overview of the regis-cli core concepts and architecture.
+  description: Overview of the regis core concepts and architecture.
   permalink: /concepts/introduction
 
 analyzers:
@@ -75,7 +75,7 @@ analyzers:
 
 playbooks:
   label: playbooks
-  description: How regis-cli evaluates results using custom security playbooks.
+  description: How regis evaluates results using custom security playbooks.
   permalink: /concepts/playbooks
 
 rules:

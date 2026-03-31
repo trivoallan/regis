@@ -1659,8 +1659,8 @@
       ],
       "mr_templates": [
         {
-          "url": "https://github.com/trivoallan/regis-cli",
-          "directory": "regis_cli/cookiecutters/mr-evidence"
+          "url": "https://github.com/trivoallan/regis",
+          "directory": "regis/cookiecutters/mr-evidence"
         }
       ],
       "_meta": {
@@ -2061,8 +2061,8 @@
     ],
     "mr_templates": [
       {
-        "url": "https://github.com/trivoallan/regis-cli",
-        "directory": "regis_cli/cookiecutters/mr-evidence"
+        "url": "https://github.com/trivoallan/regis",
+        "directory": "regis/cookiecutters/mr-evidence"
       }
     ],
     "_meta": {

@@ -6,7 +6,7 @@
 | -------- | ------------------------------------------------ |
 | **Type** | `object, array, string, number, boolean or null` |
 
-**Description:** Simplified schema for JSON Logic expressions used in regis-cli playbooks.
+**Description:** Simplified schema for JSON Logic expressions used in regis playbooks.
 
 ---
 

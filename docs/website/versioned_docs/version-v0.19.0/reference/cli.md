@@ -1,6 +1,6 @@
 # Commands
 
-This page provides a reference for all commands available in the `regis-cli` tool.
+This page provides a reference for all commands available in the `regis` tool.
 
 ## Global Options
 
@@ -16,7 +16,7 @@ This page provides a reference for all commands available in the `regis-cli` too
 Analyze a Docker image and evaluate playbooks.
 
 ```bash
-regis-cli analyze [OPTIONS] URL
+regis analyze [OPTIONS] URL
 ```
 
 _Options:_
@@ -39,7 +39,7 @@ _Options:_
 Add an existing `report.json` to an archive directory.
 
 ```bash
-regis-cli archive add REPORT_PATH --archive-dir DIR
+regis archive add REPORT_PATH --archive-dir DIR
 ```
 
 ### `evaluate`
@@ -47,7 +47,7 @@ regis-cli archive add REPORT_PATH --archive-dir DIR
 Evaluate playbooks against an existing analysis report (dry-run).
 
 ```bash
-regis-cli evaluate [OPTIONS] INPUT_PATH
+regis evaluate [OPTIONS] INPUT_PATH
 ```
 
 _Options:_
@@ -62,7 +62,7 @@ _Options:_
 Check if an image manifest is accessible on the registry.
 
 ```bash
-regis-cli check [OPTIONS] URL
+regis check [OPTIONS] URL
 ```
 
 ## Rules Commands
@@ -74,7 +74,7 @@ Manage and evaluate rules against reports.
 List all available default rules provided by analyzers, and optionally merge with overrides.
 
 ```bash
-regis-cli rules list [--rules playbook.yaml]
+regis rules list [--rules playbook.yaml]
 ```
 
 ### `rules show`
@@ -82,15 +82,15 @@ regis-cli rules list [--rules playbook.yaml]
 Show the full JSON definition of a specific rule.
 
 ```bash
-regis-cli rules show <slug> [--rules rules.yaml]
+regis rules show <slug> [--rules rules.yaml]
 ```
 
 ### `rules evaluate`
 
-Evaluate a regis-cli JSON report against rules.
+Evaluate a regis JSON report against rules.
 
 ```bash
-regis-cli rules evaluate <report.json> [--rules playbook.yaml] [--fail] [--fail-level critical] [-o output.json]
+regis rules evaluate <report.json> [--rules playbook.yaml] [--fail] [--fail-level critical] [-o output.json]
 ```
 
 ## Project Bootstrapping {#bootstrap}
@@ -100,15 +100,15 @@ regis-cli rules evaluate <report.json> [--rules playbook.yaml] [--fail] [--fail-
 Bootstrap a new custom RegiS playbook from a template.
 
 ```bash
-regis-cli bootstrap playbook [OUTPUT_DIR] [--no-input]
+regis bootstrap playbook [OUTPUT_DIR] [--no-input]
 ```
 
 ### `bootstrap archive`
 
-Bootstrap a standalone archive viewer site for browsing and filtering historical regis-cli reports. The generated site is built with Docusaurus and Tremor, deploys to GitHub Pages or GitLab Pages, and exposes a PowerBI-compatible JSON endpoint.
+Bootstrap a standalone archive viewer site for browsing and filtering historical regis reports. The generated site is built with Docusaurus and Tremor, deploys to GitHub Pages or GitLab Pages, and exposes a PowerBI-compatible JSON endpoint.
 
 ```bash
-regis-cli bootstrap archive [OUTPUT_DIR] [OPTIONS]
+regis bootstrap archive [OUTPUT_DIR] [OPTIONS]
 ```
 
 _Options:_
@@ -129,7 +129,7 @@ _Options:_
 **`--dev` mode** — local iteration without a remote repository:
 
 ```bash
-regis-cli bootstrap archive ./my-archive --no-input --dev
+regis bootstrap archive ./my-archive --no-input --dev
 # Scaffolds, runs pnpm install, starts http://localhost:3000
 ```
 
@@ -144,7 +144,7 @@ regis-cli bootstrap archive ./my-archive --no-input --dev
 7. Prints the expected Pages URL and the command to add your first report.
 
 ```bash
-regis-cli bootstrap archive ./my-archive --repo --platform github --no-input
+regis bootstrap archive ./my-archive --repo --platform github --no-input
 ```
 
 :::tip
@@ -170,4 +170,4 @@ List all available analyzers (e.g., `skopeo`, `trivy`, `hadolint`).
 
 ### `version`
 
-Display the current version of `regis-cli`.
+Display the current version of `regis`.

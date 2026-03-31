@@ -1,737 +1,737 @@
 # Changelog
 
-## [0.24.0](https://github.com/trivoallan/regis-cli/compare/v0.23.7...v0.24.0) (2026-03-30)
+## [0.24.0](https://github.com/trivoallan/regis/compare/v0.23.7...v0.24.0) (2026-03-30)
 
 ### Features
 
-- **ci:** handle autorelease:tagged as fallback for version snapshot ([#173](https://github.com/trivoallan/regis-cli/issues/173)) ([706f4d5](https://github.com/trivoallan/regis-cli/commit/706f4d5e2ae9ac15ee0178a0deb1f45bf7f22716))
+- **ci:** handle autorelease:tagged as fallback for version snapshot ([#173](https://github.com/trivoallan/regis/issues/173)) ([706f4d5](https://github.com/trivoallan/regis/commit/706f4d5e2ae9ac15ee0178a0deb1f45bf7f22716))
 
 ### Documentation
 
-- update documentation reference and snapshots ([#171](https://github.com/trivoallan/regis-cli/issues/171)) ([a5170cc](https://github.com/trivoallan/regis-cli/commit/a5170cc05d7387cf8348ef7fff85a1b4242681ad))
+- update documentation reference and snapshots ([#171](https://github.com/trivoallan/regis/issues/171)) ([a5170cc](https://github.com/trivoallan/regis/commit/a5170cc05d7387cf8348ef7fff85a1b4242681ad))
 
-## [0.23.7](https://github.com/trivoallan/regis-cli/compare/v0.23.6...v0.23.7) (2026-03-30)
+## [0.23.7](https://github.com/trivoallan/regis/compare/v0.23.6...v0.23.7) (2026-03-30)
 
 ### Bug Fixes
 
-- **build:** pin tailwindcss to v3 and ignore v4 Dependabot bumps ([#164](https://github.com/trivoallan/regis-cli/issues/164)) ([cc0cbe0](https://github.com/trivoallan/regis-cli/commit/cc0cbe081c2e72f4786605bee3a1420e157c63ff))
+- **build:** pin tailwindcss to v3 and ignore v4 Dependabot bumps ([#164](https://github.com/trivoallan/regis/issues/164)) ([cc0cbe0](https://github.com/trivoallan/regis/commit/cc0cbe081c2e72f4786605bee3a1420e157c63ff))
 
 ### Documentation
 
-- update documentation reference and snapshots ([#163](https://github.com/trivoallan/regis-cli/issues/163)) ([c043a8a](https://github.com/trivoallan/regis-cli/commit/c043a8a4b927fd15fed1c51ba335e669071c1611))
+- update documentation reference and snapshots ([#163](https://github.com/trivoallan/regis/issues/163)) ([c043a8a](https://github.com/trivoallan/regis/commit/c043a8a4b927fd15fed1c51ba335e669071c1611))
 
-## [0.23.6](https://github.com/trivoallan/regis-cli/compare/v0.23.5...v0.23.6) (2026-03-30)
-
-### Documentation
-
-- update documentation reference and snapshots ([#161](https://github.com/trivoallan/regis-cli/issues/161)) ([a26564c](https://github.com/trivoallan/regis-cli/commit/a26564cf2259437b83f3862ecf5612ee421767a8))
-
-## [0.23.5](https://github.com/trivoallan/regis-cli/compare/v0.23.4...v0.23.5) (2026-03-30)
-
-### Bug Fixes
-
-- **docs:** resolve Docusaurus broken links and anchor warnings ([#159](https://github.com/trivoallan/regis-cli/issues/159)) ([7307cd3](https://github.com/trivoallan/regis-cli/commit/7307cd30614797e23cb82ef4e2bb4bc76614c8bd))
-- **docs:** revert versioned_docs additions and add release snapshot workflow ([#160](https://github.com/trivoallan/regis-cli/issues/160)) ([575700d](https://github.com/trivoallan/regis-cli/commit/575700d7108918e26d6ba5e1b640fbc94129be06))
+## [0.23.6](https://github.com/trivoallan/regis/compare/v0.23.5...v0.23.6) (2026-03-30)
 
 ### Documentation
 
-- update documentation reference and snapshots ([#157](https://github.com/trivoallan/regis-cli/issues/157)) ([5b6692c](https://github.com/trivoallan/regis-cli/commit/5b6692c969fda11098ebcc81d44a592de42d02c2))
+- update documentation reference and snapshots ([#161](https://github.com/trivoallan/regis/issues/161)) ([a26564c](https://github.com/trivoallan/regis/commit/a26564cf2259437b83f3862ecf5612ee421767a8))
 
-## [0.23.4](https://github.com/trivoallan/regis-cli/compare/v0.23.3...v0.23.4) (2026-03-30)
-
-### Bug Fixes
-
-- **build:** use pnpm direct install and sync serialize-javascript override ([#155](https://github.com/trivoallan/regis-cli/issues/155)) ([2e468d9](https://github.com/trivoallan/regis-cli/commit/2e468d98d11193bef5aa9a8e1eda4cfbac4aeca0))
-
-## [0.23.3](https://github.com/trivoallan/regis-cli/compare/v0.23.2...v0.23.3) (2026-03-30)
+## [0.23.5](https://github.com/trivoallan/regis/compare/v0.23.4...v0.23.5) (2026-03-30)
 
 ### Bug Fixes
 
-- **build:** install corepack before enabling pnpm in Dockerfile ([#153](https://github.com/trivoallan/regis-cli/issues/153)) ([3e5efee](https://github.com/trivoallan/regis-cli/commit/3e5efeec3f04c305236008b624490cd6513b4609))
+- **docs:** resolve Docusaurus broken links and anchor warnings ([#159](https://github.com/trivoallan/regis/issues/159)) ([7307cd3](https://github.com/trivoallan/regis/commit/7307cd30614797e23cb82ef4e2bb4bc76614c8bd))
+- **docs:** revert versioned_docs additions and add release snapshot workflow ([#160](https://github.com/trivoallan/regis/issues/160)) ([575700d](https://github.com/trivoallan/regis/commit/575700d7108918e26d6ba5e1b640fbc94129be06))
 
-## [0.23.2](https://github.com/trivoallan/regis-cli/compare/v0.23.1...v0.23.2) (2026-03-30)
+### Documentation
+
+- update documentation reference and snapshots ([#157](https://github.com/trivoallan/regis/issues/157)) ([5b6692c](https://github.com/trivoallan/regis/commit/5b6692c969fda11098ebcc81d44a592de42d02c2))
+
+## [0.23.4](https://github.com/trivoallan/regis/compare/v0.23.3...v0.23.4) (2026-03-30)
 
 ### Bug Fixes
 
-- **build:** regenerate pnpm lockfile after Dependabot bumps ([#149](https://github.com/trivoallan/regis-cli/issues/149)) ([726c1cc](https://github.com/trivoallan/regis-cli/commit/726c1cc772cfc2404ab20c6ff22643cff5b80398))
+- **build:** use pnpm direct install and sync serialize-javascript override ([#155](https://github.com/trivoallan/regis/issues/155)) ([2e468d9](https://github.com/trivoallan/regis/commit/2e468d98d11193bef5aa9a8e1eda4cfbac4aeca0))
 
-## [0.23.1](https://github.com/trivoallan/regis-cli/compare/v0.23.0...v0.23.1) (2026-03-30)
+## [0.23.3](https://github.com/trivoallan/regis/compare/v0.23.2...v0.23.3) (2026-03-30)
 
 ### Bug Fixes
 
-- **ci:** remove coverage badge direct push to main ([#147](https://github.com/trivoallan/regis-cli/issues/147)) ([2d9525d](https://github.com/trivoallan/regis-cli/commit/2d9525d63b8d8596c9949638e607fd214c7db6f2))
+- **build:** install corepack before enabling pnpm in Dockerfile ([#153](https://github.com/trivoallan/regis/issues/153)) ([3e5efee](https://github.com/trivoallan/regis/commit/3e5efeec3f04c305236008b624490cd6513b4609))
 
-## [0.23.0](https://github.com/trivoallan/regis-cli/compare/v0.22.0...v0.23.0) (2026-03-30)
+## [0.23.2](https://github.com/trivoallan/regis/compare/v0.23.1...v0.23.2) (2026-03-30)
+
+### Bug Fixes
+
+- **build:** regenerate pnpm lockfile after Dependabot bumps ([#149](https://github.com/trivoallan/regis/issues/149)) ([726c1cc](https://github.com/trivoallan/regis/commit/726c1cc772cfc2404ab20c6ff22643cff5b80398))
+
+## [0.23.1](https://github.com/trivoallan/regis/compare/v0.23.0...v0.23.1) (2026-03-30)
+
+### Bug Fixes
+
+- **ci:** remove coverage badge direct push to main ([#147](https://github.com/trivoallan/regis/issues/147)) ([2d9525d](https://github.com/trivoallan/regis/commit/2d9525d63b8d8596c9949638e607fd214c7db6f2))
+
+## [0.23.0](https://github.com/trivoallan/regis/compare/v0.22.0...v0.23.0) (2026-03-30)
 
 ### Features
 
-- **ci:** add auto-rebase and auto-merge workflows for PRs ([#115](https://github.com/trivoallan/regis-cli/issues/115)) ([cc2688b](https://github.com/trivoallan/regis-cli/commit/cc2688b671a4f3ca7e3fc5c75e3fcb96ff7d4b4d))
-- **ci:** auto-rebase Dependabot PRs via [@dependabot](https://github.com/dependabot) rebase comment ([#140](https://github.com/trivoallan/regis-cli/issues/140)) ([8d913e5](https://github.com/trivoallan/regis-cli/commit/8d913e5ee7e0a5b01a95e5ee5522ad1e870280c1))
-- **ci:** skip schema/rules doc generation when source unchanged ([#139](https://github.com/trivoallan/regis-cli/issues/139)) ([d5dd9c1](https://github.com/trivoallan/regis-cli/commit/d5dd9c101085a9ddad18c98204e3f4f6d464be15))
+- **ci:** add auto-rebase and auto-merge workflows for PRs ([#115](https://github.com/trivoallan/regis/issues/115)) ([cc2688b](https://github.com/trivoallan/regis/commit/cc2688b671a4f3ca7e3fc5c75e3fcb96ff7d4b4d))
+- **ci:** auto-rebase Dependabot PRs via [@dependabot](https://github.com/dependabot) rebase comment ([#140](https://github.com/trivoallan/regis/issues/140)) ([8d913e5](https://github.com/trivoallan/regis/commit/8d913e5ee7e0a5b01a95e5ee5522ad1e870280c1))
+- **ci:** skip schema/rules doc generation when source unchanged ([#139](https://github.com/trivoallan/regis/issues/139)) ([d5dd9c1](https://github.com/trivoallan/regis/commit/d5dd9c101085a9ddad18c98204e3f4f6d464be15))
 
 ### Bug Fixes
 
-- **ci:** fall back to github.token when App secrets unavailable (dependabot PRs) ([#137](https://github.com/trivoallan/regis-cli/issues/137)) ([7cd0c69](https://github.com/trivoallan/regis-cli/commit/7cd0c69cece6f06db36ae4ebfef576b89a118435))
-- **ci:** remove broken [@dependabot](https://github.com/dependabot) rebase comment approach ([#142](https://github.com/trivoallan/regis-cli/issues/142)) ([30cd17a](https://github.com/trivoallan/regis-cli/commit/30cd17a38884e9b7c468cbfc755f74e7fbcdf6ca))
-- **ci:** revert actions/create-github-app-token to v1 in docs-publish workflow ([#106](https://github.com/trivoallan/regis-cli/issues/106)) ([6ffaab5](https://github.com/trivoallan/regis-cli/commit/6ffaab59a82f548bcf38d7d41ee909a8eb203d87))
-- **ci:** skip auto-merge for release-please PRs ([#144](https://github.com/trivoallan/regis-cli/issues/144)) ([a933af0](https://github.com/trivoallan/regis-cli/commit/a933af03a8ea945061193caf9fdfad941b3b5b43))
-- **ci:** use GitHub App token for Trunk auto-commit to trigger new workflow runs ([#108](https://github.com/trivoallan/regis-cli/issues/108)) ([7a19d35](https://github.com/trivoallan/regis-cli/commit/7a19d3523388a2d243affdd2c5b30c8aec58b805))
-- **ci:** use personal_token for peaceiris/actions-gh-pages in docs-publish ([#113](https://github.com/trivoallan/regis-cli/issues/113)) ([5613da2](https://github.com/trivoallan/regis-cli/commit/5613da201b21142bec147a72f86ac9b96302d66d))
-- **ci:** use pull_request_target so auto-merge works on Dependabot PRs ([#143](https://github.com/trivoallan/regis-cli/issues/143)) ([eac77c0](https://github.com/trivoallan/regis-cli/commit/eac77c08518f9a713be095a4a5d82851615650a5))
-- update GitHub App ID secret reference in docs-publish workflow ([adc0e99](https://github.com/trivoallan/regis-cli/commit/adc0e9933114704e1ab3924455d927a22e3cc53b))
-- update GitHub App private key secret reference in docs-publish workflow ([72725ea](https://github.com/trivoallan/regis-cli/commit/72725ea03eb7950dc7a31df9e7b84275fb1beaaa))
+- **ci:** fall back to github.token when App secrets unavailable (dependabot PRs) ([#137](https://github.com/trivoallan/regis/issues/137)) ([7cd0c69](https://github.com/trivoallan/regis/commit/7cd0c69cece6f06db36ae4ebfef576b89a118435))
+- **ci:** remove broken [@dependabot](https://github.com/dependabot) rebase comment approach ([#142](https://github.com/trivoallan/regis/issues/142)) ([30cd17a](https://github.com/trivoallan/regis/commit/30cd17a38884e9b7c468cbfc755f74e7fbcdf6ca))
+- **ci:** revert actions/create-github-app-token to v1 in docs-publish workflow ([#106](https://github.com/trivoallan/regis/issues/106)) ([6ffaab5](https://github.com/trivoallan/regis/commit/6ffaab59a82f548bcf38d7d41ee909a8eb203d87))
+- **ci:** skip auto-merge for release-please PRs ([#144](https://github.com/trivoallan/regis/issues/144)) ([a933af0](https://github.com/trivoallan/regis/commit/a933af03a8ea945061193caf9fdfad941b3b5b43))
+- **ci:** use GitHub App token for Trunk auto-commit to trigger new workflow runs ([#108](https://github.com/trivoallan/regis/issues/108)) ([7a19d35](https://github.com/trivoallan/regis/commit/7a19d3523388a2d243affdd2c5b30c8aec58b805))
+- **ci:** use personal_token for peaceiris/actions-gh-pages in docs-publish ([#113](https://github.com/trivoallan/regis/issues/113)) ([5613da2](https://github.com/trivoallan/regis/commit/5613da201b21142bec147a72f86ac9b96302d66d))
+- **ci:** use pull_request_target so auto-merge works on Dependabot PRs ([#143](https://github.com/trivoallan/regis/issues/143)) ([eac77c0](https://github.com/trivoallan/regis/commit/eac77c08518f9a713be095a4a5d82851615650a5))
+- update GitHub App ID secret reference in docs-publish workflow ([adc0e99](https://github.com/trivoallan/regis/commit/adc0e9933114704e1ab3924455d927a22e3cc53b))
+- update GitHub App private key secret reference in docs-publish workflow ([72725ea](https://github.com/trivoallan/regis/commit/72725ea03eb7950dc7a31df9e7b84275fb1beaaa))
 
 ### Reverts
 
-- **ci:** remove broken [@dependabot](https://github.com/dependabot) rebase comment approach ([#141](https://github.com/trivoallan/regis-cli/issues/141)) ([9580b6c](https://github.com/trivoallan/regis-cli/commit/9580b6c75af674deee1b506c4ec973260b57699a))
+- **ci:** remove broken [@dependabot](https://github.com/dependabot) rebase comment approach ([#141](https://github.com/trivoallan/regis/issues/141)) ([9580b6c](https://github.com/trivoallan/regis/commit/9580b6c75af674deee1b506c4ec973260b57699a))
 
 ### Documentation
 
-- add CI/CD gotchas for Dependabot, Release Please, and auto-rebase ([3737d55](https://github.com/trivoallan/regis-cli/commit/3737d557f1b673f302860669194a1fe69dd90773))
-- **ci:** update memory bank with GitHub Actions auth unification ([#114](https://github.com/trivoallan/regis-cli/issues/114)) ([9df431a](https://github.com/trivoallan/regis-cli/commit/9df431a8cf0700ab5870ca7f07444df239160b3d))
-- snapshot versioned docs for v0.22.0 ([e1ac04f](https://github.com/trivoallan/regis-cli/commit/e1ac04f5911285c8a1f870a74178cfbdcaec0736))
-- update documentation reference and snapshots ([#103](https://github.com/trivoallan/regis-cli/issues/103)) ([8b9ff9c](https://github.com/trivoallan/regis-cli/commit/8b9ff9c88d0db65d61f3b51e508bc1b6497b4af3))
-- update documentation reference and snapshots ([#107](https://github.com/trivoallan/regis-cli/issues/107)) ([c7d8772](https://github.com/trivoallan/regis-cli/commit/c7d87724f0878ec31788cb0f6a38d7cb65070493))
-- update documentation reference and snapshots ([#109](https://github.com/trivoallan/regis-cli/issues/109)) ([467b9d6](https://github.com/trivoallan/regis-cli/commit/467b9d65733b96b44ffc2537ca22f26516f225a8))
-- update documentation reference and snapshots ([#110](https://github.com/trivoallan/regis-cli/issues/110)) ([56e0557](https://github.com/trivoallan/regis-cli/commit/56e05579c71fb6654ff3e8444d62970b9887ff99))
-- update documentation reference and snapshots ([#112](https://github.com/trivoallan/regis-cli/issues/112)) ([0fedaee](https://github.com/trivoallan/regis-cli/commit/0fedaee057ca5d740f3937d5121eae9c3fbc1d63))
-- update documentation reference and snapshots ([#116](https://github.com/trivoallan/regis-cli/issues/116)) ([ad715b7](https://github.com/trivoallan/regis-cli/commit/ad715b719e4b18e0c6b62f85fa2ee03823302715))
-- update documentation reference and snapshots ([#118](https://github.com/trivoallan/regis-cli/issues/118)) ([71bc0de](https://github.com/trivoallan/regis-cli/commit/71bc0de6a1ddd65e5ba4f941738352fc59f363e0))
-- update documentation reference and snapshots ([#135](https://github.com/trivoallan/regis-cli/issues/135)) ([a8bc72f](https://github.com/trivoallan/regis-cli/commit/a8bc72ff4a4cfc75b57c76211de211dbbc41601e))
+- add CI/CD gotchas for Dependabot, Release Please, and auto-rebase ([3737d55](https://github.com/trivoallan/regis/commit/3737d557f1b673f302860669194a1fe69dd90773))
+- **ci:** update memory bank with GitHub Actions auth unification ([#114](https://github.com/trivoallan/regis/issues/114)) ([9df431a](https://github.com/trivoallan/regis/commit/9df431a8cf0700ab5870ca7f07444df239160b3d))
+- snapshot versioned docs for v0.22.0 ([e1ac04f](https://github.com/trivoallan/regis/commit/e1ac04f5911285c8a1f870a74178cfbdcaec0736))
+- update documentation reference and snapshots ([#103](https://github.com/trivoallan/regis/issues/103)) ([8b9ff9c](https://github.com/trivoallan/regis/commit/8b9ff9c88d0db65d61f3b51e508bc1b6497b4af3))
+- update documentation reference and snapshots ([#107](https://github.com/trivoallan/regis/issues/107)) ([c7d8772](https://github.com/trivoallan/regis/commit/c7d87724f0878ec31788cb0f6a38d7cb65070493))
+- update documentation reference and snapshots ([#109](https://github.com/trivoallan/regis/issues/109)) ([467b9d6](https://github.com/trivoallan/regis/commit/467b9d65733b96b44ffc2537ca22f26516f225a8))
+- update documentation reference and snapshots ([#110](https://github.com/trivoallan/regis/issues/110)) ([56e0557](https://github.com/trivoallan/regis/commit/56e05579c71fb6654ff3e8444d62970b9887ff99))
+- update documentation reference and snapshots ([#112](https://github.com/trivoallan/regis/issues/112)) ([0fedaee](https://github.com/trivoallan/regis/commit/0fedaee057ca5d740f3937d5121eae9c3fbc1d63))
+- update documentation reference and snapshots ([#116](https://github.com/trivoallan/regis/issues/116)) ([ad715b7](https://github.com/trivoallan/regis/commit/ad715b719e4b18e0c6b62f85fa2ee03823302715))
+- update documentation reference and snapshots ([#118](https://github.com/trivoallan/regis/issues/118)) ([71bc0de](https://github.com/trivoallan/regis/commit/71bc0de6a1ddd65e5ba4f941738352fc59f363e0))
+- update documentation reference and snapshots ([#135](https://github.com/trivoallan/regis/issues/135)) ([a8bc72f](https://github.com/trivoallan/regis/commit/a8bc72ff4a4cfc75b57c76211de211dbbc41601e))
 
-## [0.22.0](https://github.com/trivoallan/regis-cli/compare/v0.21.0...v0.22.0) (2026-03-30)
+## [0.22.0](https://github.com/trivoallan/regis/compare/v0.21.0...v0.22.0) (2026-03-30)
 
 ### Features
 
-- enable single report viewing by adding support for direct report JSON loading and automatic manifest redirection ([3d57ea5](https://github.com/trivoallan/regis-cli/commit/3d57ea5691f56ef71a7987fb5e22fa411383c15b))
-- **viewer:** add status calculation to archive store and implement status filtering in report viewer ([908f2c5](https://github.com/trivoallan/regis-cli/commit/908f2c57338529de2b3738cb5f489711bbca3f9a))
+- enable single report viewing by adding support for direct report JSON loading and automatic manifest redirection ([3d57ea5](https://github.com/trivoallan/regis/commit/3d57ea5691f56ef71a7987fb5e22fa411383c15b))
+- **viewer:** add status calculation to archive store and implement status filtering in report viewer ([908f2c5](https://github.com/trivoallan/regis/commit/908f2c57338529de2b3738cb5f489711bbca3f9a))
 
 ### Documentation
 
-- snapshot versioned docs for v0.21.0 ([05cc267](https://github.com/trivoallan/regis-cli/commit/05cc26744edb15041eb9c7461ba0ae967bea0028))
+- snapshot versioned docs for v0.21.0 ([05cc267](https://github.com/trivoallan/regis/commit/05cc26744edb15041eb9c7461ba0ae967bea0028))
 
-## [0.21.0](https://github.com/trivoallan/regis-cli/compare/v0.20.0...v0.21.0) (2026-03-30)
-
-### Features
-
-- **analyzer/endoflie:** enhance EndOfLifeSection to display detailed cycle information and prune report.json data ([2b6f72a](https://github.com/trivoallan/regis-cli/commit/2b6f72a47ad2c759b959e534640e231d136ade72))
-- **analyzer/versioning:** improve tag classification and expose digest aliases ([#97](https://github.com/trivoallan/regis-cli/issues/97)) ([5f77b73](https://github.com/trivoallan/regis-cli/commit/5f77b73eb7ed6aa6b4aaa106314afbe964e6928b))
-- **ci:** isolate viewer publication in dedicated workflow ([f944a68](https://github.com/trivoallan/regis-cli/commit/f944a689707ed9a6e1db0142c1d4ce7ea55b3b3f))
-- **cli:** add viewer serve and export commands ([#99](https://github.com/trivoallan/regis-cli/issues/99)) ([ed36988](https://github.com/trivoallan/regis-cli/commit/ed36988b78af350c5650850ee0b4d797eabb1959))
-- **cli:** run initial regis-cli image analysis during bootstrap archive ([3407788](https://github.com/trivoallan/regis-cli/commit/34077888d879174fa2aa8bdaa313a97f65fa6484))
-- prevent concurrent use of --site and --archive and skip template rendering when archiving ([14247fb](https://github.com/trivoallan/regis-cli/commit/14247fb4b7cfbca4dabadae5bbef89fa0bdbee10))
-- **report:** implement dynamic archive loading and build robustness ([#98](https://github.com/trivoallan/regis-cli/issues/98)) ([6cf6f7b](https://github.com/trivoallan/regis-cli/commit/6cf6f7b23ec0f29c88ee048c34e0de2a29e95187))
-- **report:** load report from a custom URL via query parameter ([#94](https://github.com/trivoallan/regis-cli/issues/94)) ([f47047f](https://github.com/trivoallan/regis-cli/commit/f47047fa4df9865c4f4a4ceddc680d1bedd374d1))
-- **template:** implement two-pass sync to add new files from working directory to template ([8423efd](https://github.com/trivoallan/regis-cli/commit/8423efd933aaa05a8990ca42dd3732d38fdf4c22))
-- **templates:** implement comprehensive dashboard components and reporting UI for container analysis ([7dc3333](https://github.com/trivoallan/regis-cli/commit/7dc3333dba4791b43f280919962341903a2c90d6))
-
-### Bug Fixes
-
-- **analyzer/skopeo:** filter out unknown platform entries in SkopeoSection ([ad04aa6](https://github.com/trivoallan/regis-cli/commit/ad04aa67cb7f52c5fa9a52d9e2856a136a379bfb))
-- **ci:** build viewer assets before exporting to static site ([05d14e7](https://github.com/trivoallan/regis-cli/commit/05d14e78167b6f43a11e46a9afccbbf9b708bc30))
-- upgrade Python to 3.13, harden Dockerfile, mock EOL analyzer tests, and add main branch analysis to docs workflow ([d3cf3c1](https://github.com/trivoallan/regis-cli/commit/d3cf3c1d915e36750c591a4685ddccc67f48d860))
-
-## [0.20.0](https://github.com/trivoallan/regis-cli/compare/v0.19.0...v0.20.0) (2026-03-21)
+## [0.21.0](https://github.com/trivoallan/regis/compare/v0.20.0...v0.21.0) (2026-03-30)
 
 ### Features
 
-- Add `trunk check` commands, introduce the `--sync-from` option for `bootstrap archive`, and document the archive UI customization workflow. ([e7ae0dc](https://github.com/trivoallan/regis-cli/commit/e7ae0dc5d3298419d7f6a00847d3a2771de84db1))
-- **analyzer/sbom:** Add license-blocklist rule for invasive open source license detection ([#83](https://github.com/trivoallan/regis-cli/issues/83)) ([a49713b](https://github.com/trivoallan/regis-cli/commit/a49713bcafac9926d802fb92d53e46206ca28336))
-- **cli:** Add `bootstrap archive --sync-from` to sync UI changes back to template ([#90](https://github.com/trivoallan/regis-cli/issues/90)) ([738a6da](https://github.com/trivoallan/regis-cli/commit/738a6daa7be9f86c3a2fe3121d9bfd294fdb2b22))
-- **cli:** Run analyzers in parallel with ThreadPoolExecutor ([#84](https://github.com/trivoallan/regis-cli/issues/84)) ([5cba9fc](https://github.com/trivoallan/regis-cli/commit/5cba9fc5449a4f603f9a3e66dadbcc420e754328))
-- **docs:** Add two-version documentation (main-dev + vX.Y.Z) ([#87](https://github.com/trivoallan/regis-cli/issues/87)) ([664a4f4](https://github.com/trivoallan/regis-cli/commit/664a4f49d72d2935a331235077a9d5f08b5b7868))
+- **analyzer/endoflie:** enhance EndOfLifeSection to display detailed cycle information and prune report.json data ([2b6f72a](https://github.com/trivoallan/regis/commit/2b6f72a47ad2c759b959e534640e231d136ade72))
+- **analyzer/versioning:** improve tag classification and expose digest aliases ([#97](https://github.com/trivoallan/regis/issues/97)) ([5f77b73](https://github.com/trivoallan/regis/commit/5f77b73eb7ed6aa6b4aaa106314afbe964e6928b))
+- **ci:** isolate viewer publication in dedicated workflow ([f944a68](https://github.com/trivoallan/regis/commit/f944a689707ed9a6e1db0142c1d4ce7ea55b3b3f))
+- **cli:** add viewer serve and export commands ([#99](https://github.com/trivoallan/regis/issues/99)) ([ed36988](https://github.com/trivoallan/regis/commit/ed36988b78af350c5650850ee0b4d797eabb1959))
+- **cli:** run initial regis image analysis during bootstrap archive ([3407788](https://github.com/trivoallan/regis/commit/34077888d879174fa2aa8bdaa313a97f65fa6484))
+- prevent concurrent use of --site and --archive and skip template rendering when archiving ([14247fb](https://github.com/trivoallan/regis/commit/14247fb4b7cfbca4dabadae5bbef89fa0bdbee10))
+- **report:** implement dynamic archive loading and build robustness ([#98](https://github.com/trivoallan/regis/issues/98)) ([6cf6f7b](https://github.com/trivoallan/regis/commit/6cf6f7b23ec0f29c88ee048c34e0de2a29e95187))
+- **report:** load report from a custom URL via query parameter ([#94](https://github.com/trivoallan/regis/issues/94)) ([f47047f](https://github.com/trivoallan/regis/commit/f47047fa4df9865c4f4a4ceddc680d1bedd374d1))
+- **template:** implement two-pass sync to add new files from working directory to template ([8423efd](https://github.com/trivoallan/regis/commit/8423efd933aaa05a8990ca42dd3732d38fdf4c22))
+- **templates:** implement comprehensive dashboard components and reporting UI for container analysis ([7dc3333](https://github.com/trivoallan/regis/commit/7dc3333dba4791b43f280919962341903a2c90d6))
 
 ### Bug Fixes
 
-- **ci:** Fix Trunk auto-format workflow to avoid stale SHA issue ([#86](https://github.com/trivoallan/regis-cli/issues/86)) ([5b55df6](https://github.com/trivoallan/regis-cli/commit/5b55df64f509cf11c74c0e424486162e5fc36beb))
-- **playbook:** Remove duplicate rules when templates are instantiated by playbook ([#89](https://github.com/trivoallan/regis-cli/issues/89)) ([99cfd75](https://github.com/trivoallan/regis-cli/commit/99cfd751064fd9c8b7b5c959744a4e0c04970cd9))
-- Update the `yaml-language-server` schema path in the default playbook. ([450a58d](https://github.com/trivoallan/regis-cli/commit/450a58db7dc6cee292d2ce10dec95f6d427f22eb))
+- **analyzer/skopeo:** filter out unknown platform entries in SkopeoSection ([ad04aa6](https://github.com/trivoallan/regis/commit/ad04aa67cb7f52c5fa9a52d9e2856a136a379bfb))
+- **ci:** build viewer assets before exporting to static site ([05d14e7](https://github.com/trivoallan/regis/commit/05d14e78167b6f43a11e46a9afccbbf9b708bc30))
+- upgrade Python to 3.13, harden Dockerfile, mock EOL analyzer tests, and add main branch analysis to docs workflow ([d3cf3c1](https://github.com/trivoallan/regis/commit/d3cf3c1d915e36750c591a4685ddccc67f48d860))
+
+## [0.20.0](https://github.com/trivoallan/regis/compare/v0.19.0...v0.20.0) (2026-03-21)
+
+### Features
+
+- Add `trunk check` commands, introduce the `--sync-from` option for `bootstrap archive`, and document the archive UI customization workflow. ([e7ae0dc](https://github.com/trivoallan/regis/commit/e7ae0dc5d3298419d7f6a00847d3a2771de84db1))
+- **analyzer/sbom:** Add license-blocklist rule for invasive open source license detection ([#83](https://github.com/trivoallan/regis/issues/83)) ([a49713b](https://github.com/trivoallan/regis/commit/a49713bcafac9926d802fb92d53e46206ca28336))
+- **cli:** Add `bootstrap archive --sync-from` to sync UI changes back to template ([#90](https://github.com/trivoallan/regis/issues/90)) ([738a6da](https://github.com/trivoallan/regis/commit/738a6daa7be9f86c3a2fe3121d9bfd294fdb2b22))
+- **cli:** Run analyzers in parallel with ThreadPoolExecutor ([#84](https://github.com/trivoallan/regis/issues/84)) ([5cba9fc](https://github.com/trivoallan/regis/commit/5cba9fc5449a4f603f9a3e66dadbcc420e754328))
+- **docs:** Add two-version documentation (main-dev + vX.Y.Z) ([#87](https://github.com/trivoallan/regis/issues/87)) ([664a4f4](https://github.com/trivoallan/regis/commit/664a4f49d72d2935a331235077a9d5f08b5b7868))
+
+### Bug Fixes
+
+- **ci:** Fix Trunk auto-format workflow to avoid stale SHA issue ([#86](https://github.com/trivoallan/regis/issues/86)) ([5b55df6](https://github.com/trivoallan/regis/commit/5b55df64f509cf11c74c0e424486162e5fc36beb))
+- **playbook:** Remove duplicate rules when templates are instantiated by playbook ([#89](https://github.com/trivoallan/regis/issues/89)) ([99cfd75](https://github.com/trivoallan/regis/commit/99cfd751064fd9c8b7b5c959744a4e0c04970cd9))
+- Update the `yaml-language-server` schema path in the default playbook. ([450a58d](https://github.com/trivoallan/regis/commit/450a58db7dc6cee292d2ce10dec95f6d427f22eb))
 
 ### Documentation
 
-- add licensing tag and correct relative path in archive-repo documentation. ([932278e](https://github.com/trivoallan/regis-cli/commit/932278e94f8ad9c8343d70face044a8ae6a64025))
-- **archive:** rename "Archive Repo Setup" to "Archive Repository" ([aa6a7ef](https://github.com/trivoallan/regis-cli/commit/aa6a7efcfe596ffddf0a5cd8f332f00008edf7bc))
-- delete versioned documentation and update the reports concept page. ([98d32db](https://github.com/trivoallan/regis-cli/commit/98d32dbacb50d2f5fb34e4fa168fee70d5e1262d))
-- **docs:** Redesign homepage with feature cards and report preview gallery ([#88](https://github.com/trivoallan/regis-cli/issues/88)) ([af23533](https://github.com/trivoallan/regis-cli/commit/af23533c55be423eb0309db0124219cdba10102b))
-- Improve CLAUDE.md with commands, architecture, and key patterns ([#85](https://github.com/trivoallan/regis-cli/issues/85)) ([8cc840c](https://github.com/trivoallan/regis-cli/commit/8cc840c3893b548f13f262b8b293f8082ba6798c))
-- update CLAUDE.md with CLI module split, test patch targets, and trunk hooks ([09500a4](https://github.com/trivoallan/regis-cli/commit/09500a4ddc67906c28a28452bff739818498c275))
+- add licensing tag and correct relative path in archive-repo documentation. ([932278e](https://github.com/trivoallan/regis/commit/932278e94f8ad9c8343d70face044a8ae6a64025))
+- **archive:** rename "Archive Repo Setup" to "Archive Repository" ([aa6a7ef](https://github.com/trivoallan/regis/commit/aa6a7efcfe596ffddf0a5cd8f332f00008edf7bc))
+- delete versioned documentation and update the reports concept page. ([98d32db](https://github.com/trivoallan/regis/commit/98d32dbacb50d2f5fb34e4fa168fee70d5e1262d))
+- **docs:** Redesign homepage with feature cards and report preview gallery ([#88](https://github.com/trivoallan/regis/issues/88)) ([af23533](https://github.com/trivoallan/regis/commit/af23533c55be423eb0309db0124219cdba10102b))
+- Improve CLAUDE.md with commands, architecture, and key patterns ([#85](https://github.com/trivoallan/regis/issues/85)) ([8cc840c](https://github.com/trivoallan/regis/commit/8cc840c3893b548f13f262b8b293f8082ba6798c))
+- update CLAUDE.md with CLI module split, test patch targets, and trunk hooks ([09500a4](https://github.com/trivoallan/regis/commit/09500a4ddc67906c28a28452bff739818498c275))
 
-## [0.19.0](https://github.com/trivoallan/regis-cli/compare/v0.18.1...v0.19.0) (2026-03-21)
+## [0.19.0](https://github.com/trivoallan/regis/compare/v0.18.1...v0.19.0) (2026-03-21)
 
 ### Features
 
-- add --cache option to the analyze command to load and use an existing report.json, skipping re-analysis. ([3a7a710](https://github.com/trivoallan/regis-cli/commit/3a7a710c9329e4f5d812804044bf8bb190b9f416))
-- add `--theme` option for HTML report generation and ignore the `/reports` directory ([8bb9e7b](https://github.com/trivoallan/regis-cli/commit/8bb9e7bec6268d5219d37818f0177846cc6aa81f))
-- add Dockerfile and GitHub Actions workflow for building and publishing regis-cli Docker images. ([dfc66c6](https://github.com/trivoallan/regis-cli/commit/dfc66c6d6231748e5a893f6b38f4caba4c3be69b))
-- add domain-trusted scorecard ([41ca994](https://github.com/trivoallan/regis-cli/commit/41ca994967acca90e4d410acae5a6317f97c4f9f))
-- Add extensive test coverage for analyzers and core components, integrate Ruff linter, and refine Skopeo schema. ([ec215e0](https://github.com/trivoallan/regis-cli/commit/ec215e0bedb0adafda66ddfa57b01eb39e17e164))
-- add GitHub Actions workflows for Super-Linter and automated releases. ([d8c8a28](https://github.com/trivoallan/regis-cli/commit/d8c8a282afdd1a5959ed8cc3b4f08daf3b54a65b))
-- Add Hadolint analyzer to lint Dockerfiles and display results. ([b8802cb](https://github.com/trivoallan/regis-cli/commit/b8802cb29cee41ab08d70c87945d3265cdc505ca))
-- Add initial HTML report for image health scores generated by regis-cli. ([419c65a](https://github.com/trivoallan/regis-cli/commit/419c65a8583704ec9e3d28dbd7448901c3374663))
-- add Skopeo analyzer and refactor versioning analyzer to use Skopeo for tag listing. ([b933931](https://github.com/trivoallan/regis-cli/commit/b9339312aae5a1a3c42aabb7347bfa71f99436a0))
-- add support for multiple output formats and templated output paths for the `run` command. ([6a70c93](https://github.com/trivoallan/regis-cli/commit/6a70c93d842609a4d091f413acc4f8aa0de94238))
-- add support for passing metadata via CLI to reports and update report schema. ([07050ea](https://github.com/trivoallan/regis-cli/commit/07050ea6ceb8bc5e3c19d1c22f5249db1b9531dc))
-- add support for templated links in scorecards and reports ([bc191af](https://github.com/trivoallan/regis-cli/commit/bc191afb2c8fad75dde499531533f35abf691fb7))
-- add time formatting and recursive metadata rendering to improve report request details display. ([f86862e](https://github.com/trivoallan/regis-cli/commit/f86862e7289083562ad348dd0a4ac96127d64f8b))
-- Add user and digest extraction and display to Skopeo image analysis. ([4cbacba](https://github.com/trivoallan/regis-cli/commit/4cbacba1b3e1ef3e4ce066dfaf32280884b25693))
-- add variant detection and reporting to the versioning analyzer ([8c61394](https://github.com/trivoallan/regis-cli/commit/8c613946148fbd8d095de1ebc1bb27269b6532b8))
-- **analyzer/dockle:** add Dockle analyzer for container image security and best practices linting with supporting schema, tests, and documentation. ([e32c1f2](https://github.com/trivoallan/regis-cli/commit/e32c1f2f375e284619b521d37a8f05b4f8e75fff))
-- **analyzer/size:** add layer digest to the size analysis output for individual layers ([9393b48](https://github.com/trivoallan/regis-cli/commit/9393b48d6ebda82b7be2e9db5aad74a014f415f3))
-- **analyzer/versioning:** implement digest-based reporting and release lines hierarchy ([#21](https://github.com/trivoallan/regis-cli/issues/21)) ([e54d04f](https://github.com/trivoallan/regis-cli/commit/e54d04f17077333fbc73d1b133a5b7b61228ed18))
-- **analyzers:** Enable private registry authentication for Trivy-based analyzers and update documentation. ([06c35eb](https://github.com/trivoallan/regis-cli/commit/06c35eb80a95a94846c29154ff658861c0331d5f))
-- **analyzers:** Reusable rules and simplified rule slugs ([#63](https://github.com/trivoallan/regis-cli/issues/63)) ([40d9f63](https://github.com/trivoallan/regis-cli/commit/40d9f63ea63ce8858e31c53c1991c409150ece63))
-- **archive-repo:** Update CI/CD workflows, modify CLI logic, and adjust bootstrap tests. ([a47f472](https://github.com/trivoallan/regis-cli/commit/a47f4725ce5b2c520baeb6b82c8898389466e2cc))
-- **bootstrap:** Add `bootstrap archive --repo` command for automated archive site deployment to GitHub/GitLab Pages. ([61d4157](https://github.com/trivoallan/regis-cli/commit/61d4157781e01581d68528696ec7fdce417c7d8b))
-- **ci:** Add a configurable playbook URL input to GitLab CI/CD. ([801dd3c](https://github.com/trivoallan/regis-cli/commit/801dd3c861b0fbc0af4b279204affd4d06c352cc))
-- **ci:** add OCI image labels to Dockerfile ([#39](https://github.com/trivoallan/regis-cli/issues/39)) ([8deeb50](https://github.com/trivoallan/regis-cli/commit/8deeb50114a3a54c841e3fa7bce8ae0cba5a746b))
-- **ci:** add standard OCI annotations to Dockerfile ([#43](https://github.com/trivoallan/regis-cli/issues/43)) ([#40](https://github.com/trivoallan/regis-cli/issues/40)) ([6c16c42](https://github.com/trivoallan/regis-cli/commit/6c16c4256143f1139b4d46fcfa25ead7d6cc212a))
-- **ci:** allow Docker authentication to prevent rate limits ([#45](https://github.com/trivoallan/regis-cli/issues/45)) ([15f985b](https://github.com/trivoallan/regis-cli/commit/15f985bc13bcdd300746f2653a514cf7745b229f))
-- **ci:** automate trunk fmt and auto-commit in CI ([#48](https://github.com/trivoallan/regis-cli/issues/48)) ([76070ad](https://github.com/trivoallan/regis-cli/commit/76070ad58a2fce9f87113860e1863cebf04191a3))
-- **ci:** implement gitlab subcommand for CI workflow ([#18](https://github.com/trivoallan/regis-cli/issues/18)) ([515069c](https://github.com/trivoallan/regis-cli/commit/515069cb5263b7addaa47551681cbcb43d3da995))
-- **ci:** introduce GitLab CI workflow for image analysis with MR-driven triggers and review app deployments. ([d85449d](https://github.com/trivoallan/regis-cli/commit/d85449d19e9e6cb6232b72cb5940e297c4608261))
-- **ci:** make regis-cli image version configurable in generated GitLab CI. ([8da67d0](https://github.com/trivoallan/regis-cli/commit/8da67d08b4e12433157cb67a9516e269c732a5c3))
-- **ci:** migrate linting to trunk and add mypy/hadolint ([#29](https://github.com/trivoallan/regis-cli/issues/29)) ([4219843](https://github.com/trivoallan/regis-cli/commit/4219843ff5ecb512f708e6cc8acb3f824e841213))
-- **cli/bootstrap:** display post-install notes after bootstrap ([#52](https://github.com/trivoallan/regis-cli/issues/52)) ([89419bf](https://github.com/trivoallan/regis-cli/commit/89419bf821fc40f9548598dca95ab00f926fb18b))
-- **cli:** Add CLI command to check image manifest accessibility. Use it to prevent bogus requests. ([be291ee](https://github.com/trivoallan/regis-cli/commit/be291ee5e475c9617187549df2a88f8b7d229c67))
-- **cli:** add evaluate command for dry-run evaluation of playbooks ([#25](https://github.com/trivoallan/regis-cli/issues/25)) ([f35d6f3](https://github.com/trivoallan/regis-cli/commit/f35d6f3655283993eced3c7c9e18b27d794c8d77))
-- **cli:** add rules list command and improve evaluator ([11a9118](https://github.com/trivoallan/regis-cli/commit/11a91189480b84cc0cb71aa35e72c4d9b32ea478))
-- **cli:** Implement `generate` command with `cookiecutter` for project scaffolding and update project templates. ([44bfdf6](https://github.com/trivoallan/regis-cli/commit/44bfdf6e87070d4515ac685d43b1bf1d0974f948))
-- **cli:** Implement a CLI version command, refactor `importlib.metadata` imports, and update tests and GitLab CI artifact handling. ([d508b53](https://github.com/trivoallan/regis-cli/commit/d508b53f72bf9396f060663fc1262ccc4e62a292))
-- **cli:** refactor generate to bootstrap command group ([#28](https://github.com/trivoallan/regis-cli/issues/28)) ([ee9710e](https://github.com/trivoallan/regis-cli/commit/ee9710eae6ea9b92c6e00971ad18fe0742f65904))
-- configure Antora Mermaid extension with a specific library URL and script stem. ([190fcc4](https://github.com/trivoallan/regis-cli/commit/190fcc49632bc50a466a2c56b8bcaf8d5ae6937d))
-- **cookiecutter:** integrate GitHub Actions metadata into analysis reports for improved traceability and remove unused scorecard levels. ([4113efb](https://github.com/trivoallan/regis-cli/commit/4113efbecb2a92497c1de451b4efc09feee96934))
-- **cookiecutter:** introduce Cookiecutter template for bootstrapping new image analysis projects with documentation, workflows, and default scorecards. ([391d74f](https://github.com/trivoallan/regis-cli/commit/391d74fa53f45e93dbb2204104a7a1869f70ad03))
-- **cookiecutter:** Introduce Cookiecutter template for project bootstrapping and add its comprehensive usage guide, refining the template's analysis workflow input. ([9ef6351](https://github.com/trivoallan/regis-cli/commit/9ef6351574929e9f217c5c1eae2fae597cf3286e))
-- display structured analyzer errors in the UI and store them in reports. ([f3dd654](https://github.com/trivoallan/regis-cli/commit/f3dd654fd8533147fef78550d72126ca3bd1a1d3))
-- **doc:** Add 'Get Started' and 'Understand Playbooks' documentation pages and update navigation. ([e791354](https://github.com/trivoallan/regis-cli/commit/e791354736aad353c06c60189e040bd9f61c0f48))
-- **docs:** initialize Antora documentation ([6ca4154](https://github.com/trivoallan/regis-cli/commit/6ca41541c17a0a942d8407c6256a59004d26805c))
-- dynamically set cookiecutter image URL and simplify release-please extra-files configuration. ([b86853a](https://github.com/trivoallan/regis-cli/commit/b86853a7f9a7b032a1171e5ff7e9dbbe724c6fbf))
-- embed regis-cli version in analysis reports and update cookiecutter image URLs. ([3ab5430](https://github.com/trivoallan/regis-cli/commit/3ab543048e4972ff9ec6c461f710c93991ad8924))
-- enhance default playbook overview with new recommendation and compliance widgets and update widget styling. ([6737a68](https://github.com/trivoallan/regis-cli/commit/6737a6839152fea82141eda59241792cb5a59985))
-- enhance registry credential resolution by normalizing Docker Hub aliases and remove the `score.html` report file. ([c2dd0e1](https://github.com/trivoallan/regis-cli/commit/c2dd0e17ab0810a247df8148d0c10f5ccf3ef682))
-- enhance report output with per-scorecard HTML files, `slug` support, and improved file writing logic. ([895c46b](https://github.com/trivoallan/regis-cli/commit/895c46bbc98d8fe650ed3a657eb98b415abb4266))
-- Enhance scorecard rule evaluation to track missing data, provide detailed condition stringification, and include rule tags in results and UI. ([cd94912](https://github.com/trivoallan/regis-cli/commit/cd949129cd65c20584c6a258c765bc8b4a378e34))
-- enhance Trivy report display for multiple targets and refine report layout with dedicated sections for links and scorecards. ([9a29bad](https://github.com/trivoallan/regis-cli/commit/9a29bad85018b3fa93bf49ce4b204d99e1cca374))
-- **gitlab:** append review checklist from `report.json` to merge request descriptions and unquote `$REGIS_CLI_IMAGE` in CI. ([08211a2](https://github.com/trivoallan/regis-cli/commit/08211a264c32147c22e4c98aae089fdf02514501))
-- Implement conditional widget rendering, add new widget styling options including alignment and subvalues, and introduce new CSS for recommendations and header elements. ([78ade17](https://github.com/trivoallan/regis-cli/commit/78ade17344380013a2429d8bf519728d7d346415))
-- implement flexible registry credential resolution via new `--auth` CLI option and dedicated module ([ac5afb3](https://github.com/trivoallan/regis-cli/commit/ac5afb33639d018d4d04611777c95b194f11d6dc))
-- implement Playbook Tiers, Dynamic Badges and restore multi-page reporting ([#56](https://github.com/trivoallan/regis-cli/issues/56)) ([ce91c37](https://github.com/trivoallan/regis-cli/commit/ce91c376766f99a0fca7f42ec9f262a1f6ecae07))
-- implement registry authentication using environment variables and add new tests. ([1894969](https://github.com/trivoallan/regis-cli/commit/18949692ac8c493f3ea62d0485efea75661e38e3))
-- initialize regis-cli project with image analysis, scorecard engine, schema validation, and comprehensive project setup. ([3af2207](https://github.com/trivoallan/regis-cli/commit/3af2207ef86d5265c7fc32997219b3841172b0bb))
-- Integrate scorecard evaluation directly into the `analyze` command, supporting multiple custom scorecards, and remove the dedicated `score` command. ([8301c36](https://github.com/trivoallan/regis-cli/commit/8301c36f77c897057a44b03abaeaf525067a4163))
-- introduce new HTML report structure and styling with updated templates and CSS. ([94f5130](https://github.com/trivoallan/regis-cli/commit/94f5130d1c7dd0e0ad34098de757242e5d81a37b))
-- Introduce OpenSSF Scorecard, Freshness, and Popularity analyzer reports with supporting configuration and robustness improvements. ([df311cc](https://github.com/trivoallan/regis-cli/commit/df311ccc38bb6c99c6c0ad0eaa9fd77fd21f49a0))
-- introduce SBOM analysis using Trivy and CycloneDX, replacing the license analyzer. ([8fa1d24](https://github.com/trivoallan/regis-cli/commit/8fa1d24166324d4224287250b3456db7251924e2))
-- introduce scorecard pages to group sections and add new size and versioning analyzers. ([2dd6b31](https://github.com/trivoallan/regis-cli/commit/2dd6b315c41cc440d57b349187acaa8e1a783b5b))
-- Introduce section-based scorecards with a new schema and remove the dependency analyzer. ([e7adbea](https://github.com/trivoallan/regis-cli/commit/e7adbeab5a8404a2b983be5dad715b3f310f66fa))
-- **playbook:** add support for multiple titled GitLab MR description checklists with backward compatibility. ([f865cb0](https://github.com/trivoallan/regis-cli/commit/f865cb00735d90a8185bb98f87373d05431b5caf))
-- **playbook:** Enhance GitLab MR checklist items with `show_if` and `check_if` conditions. ([ccde35e](https://github.com/trivoallan/regis-cli/commit/ccde35eb51a62199cb07113d9da1dda0240e2184))
-- **playbook:** Implement GitLab MR description checklist feature for custom compliance checks. ([c22402e](https://github.com/trivoallan/regis-cli/commit/c22402ec2cab75ad19c2ba227d56eec2eb9d35a6))
-- **playbook:** Implement named addressing for playbook pages and sections ([cdbaefa](https://github.com/trivoallan/regis-cli/commit/cdbaefae55c5a25b828944dc8ec1f0f41e7fc0d6))
-- **playbook:** integrate Dockle security analysis with a new policy, dedicated UI, and updated documentation. ([7806a53](https://github.com/trivoallan/regis-cli/commit/7806a53d52c30027926a24bc5fa18da08c7506e3))
-- **playbook:** Introduce configurable additional MR content generation from templates ([340f44d](https://github.com/trivoallan/regis-cli/commit/340f44d04891039080603fa2a86ba634f49ad82c))
-- **playbooks:** Add support for loading playbooks from remote URLs and update cookiecutters to utilize this feature. ([69ef82f](https://github.com/trivoallan/regis-cli/commit/69ef82f57b4704135c0f3a4809a11be5294aa19b))
-- refactor cookiecutter templates to support both GitHub and GitLab platforms with dedicated CI configurations and documentation. ([295db88](https://github.com/trivoallan/regis-cli/commit/295db881cd1b2eae17f595d567fe182fef087623))
-- Refine scorecard reporting by updating schemas, engine logic, templates, and removing old report files. ([f3abf1f](https://github.com/trivoallan/regis-cli/commit/f3abf1f9a94faa638039bc959566315acf014b8f))
-- render error cards for all unhandled analyzer errors in the report ([9bf27db](https://github.com/trivoallan/regis-cli/commit/9bf27db38e8bc9a542f286aa7638dc92e19be87e))
-- replace single achieved level with a detailed summary by level in scorecard results, CLI output, and HTML report. ([c81c2ce](https://github.com/trivoallan/regis-cli/commit/c81c2ce854c25896765c2e9938361b02569c005e))
-- **report:** archive store and standalone archive viewer cookiecutter ([#74](https://github.com/trivoallan/regis-cli/issues/74)) ([2001b08](https://github.com/trivoallan/regis-cli/commit/2001b081535c70680464cd52c9103a4f941bda84))
-- **report:** Embed regis-cli version into analysis reports and schema ([ac3efb5](https://github.com/trivoallan/regis-cli/commit/ac3efb55d70263c5417c02df59522201e7ca501e))
-- **report:** implement docusaurus report viewer ([#68](https://github.com/trivoallan/regis-cli/issues/68)) ([880047c](https://github.com/trivoallan/regis-cli/commit/880047c6b53f7e8698bbf8e8b16c5f1746c2a5d0))
-- **report:** overhaul report viewer UI with Tremor components ([#70](https://github.com/trivoallan/regis-cli/issues/70)) ([75ffc3c](https://github.com/trivoallan/regis-cli/commit/75ffc3ccd773eba0a88fba05322630129708bd5a))
-- **reports:** Implement automatic versioning of analysis reports in GitLab CI and document its configuration. ([c985942](https://github.com/trivoallan/regis-cli/commit/c9859427c88ce06ae0cde3a64566fe6dc961a788))
-- **review:** enhance GitLab CI report delivery by committing to `reports/`, posting direct links to MR comments, and updating documentation. ([d934913](https://github.com/trivoallan/regis-cli/commit/d934913c7451a9565ce3f8a2626ae3b54f24002a))
-- **review:** enhance GitLab CI/CD to specify output filename, run site generation on the default branch, and dynamically configure Pages deployments for review apps and main branch, while updating the project backlog. ([342d0b8](https://github.com/trivoallan/regis-cli/commit/342d0b86d4b9111f5dc4d43a680c53ec4af7a335))
-- **review:** Expose analysis reports as Merge Request artifacts instead of deploying to Review Apps and update documentation accordingly. ([c4850be](https://github.com/trivoallan/regis-cli/commit/c4850be3bbd6548d6d854529a59f2353bbc595b5))
-- **review:** Implement and document a self-service analysis workflow in GitLab CI, including optional report commits to the branch and dynamic Review App links. ([016659d](https://github.com/trivoallan/regis-cli/commit/016659d34cf87e68b1af8e68e4806372c923979a))
-- **review:** Introduce automated GitLab MR labeling and conditional playbook links based on analysis outcomes. ([86e5986](https://github.com/trivoallan/regis-cli/commit/86e59862895324ebb6276d31b94b99ec53f432bf))
-- **review:** use GitLab API for merge request creation to enable setting reviewers and assignees, and add `curl` dependency. ([32f98f2](https://github.com/trivoallan/regis-cli/commit/32f98f226263ed577fd649743af69f0f7f2eff85))
-- set default output directory template to include the tag. ([157f425](https://github.com/trivoallan/regis-cli/commit/157f425cca42a71afb089dd4fff6d1944abf9c95))
-- Track and display involved data analyzers for scorecard rule evaluations in the schema, engine, and HTML report. ([42bcace](https://github.com/trivoallan/regis-cli/commit/42bcace830ae4aebb83b23c17486c79c867fc61d))
-- **ui:** Implement a new report rendering engine with a sidebar layout and dedicated pages for various analysis results. ([e1faaf9](https://github.com/trivoallan/regis-cli/commit/e1faaf92dadc215bbcdfecf90d164b5a2658ad64))
-- **ui:** Introduce new analyzer display templates and enhance the playbook engine to support section widgets. ([b998f63](https://github.com/trivoallan/regis-cli/commit/b998f63f50691a9a186ba83b1a3ebe42cb21751e))
+- add --cache option to the analyze command to load and use an existing report.json, skipping re-analysis. ([3a7a710](https://github.com/trivoallan/regis/commit/3a7a710c9329e4f5d812804044bf8bb190b9f416))
+- add `--theme` option for HTML report generation and ignore the `/reports` directory ([8bb9e7b](https://github.com/trivoallan/regis/commit/8bb9e7bec6268d5219d37818f0177846cc6aa81f))
+- add Dockerfile and GitHub Actions workflow for building and publishing regis Docker images. ([dfc66c6](https://github.com/trivoallan/regis/commit/dfc66c6d6231748e5a893f6b38f4caba4c3be69b))
+- add domain-trusted scorecard ([41ca994](https://github.com/trivoallan/regis/commit/41ca994967acca90e4d410acae5a6317f97c4f9f))
+- Add extensive test coverage for analyzers and core components, integrate Ruff linter, and refine Skopeo schema. ([ec215e0](https://github.com/trivoallan/regis/commit/ec215e0bedb0adafda66ddfa57b01eb39e17e164))
+- add GitHub Actions workflows for Super-Linter and automated releases. ([d8c8a28](https://github.com/trivoallan/regis/commit/d8c8a282afdd1a5959ed8cc3b4f08daf3b54a65b))
+- Add Hadolint analyzer to lint Dockerfiles and display results. ([b8802cb](https://github.com/trivoallan/regis/commit/b8802cb29cee41ab08d70c87945d3265cdc505ca))
+- Add initial HTML report for image health scores generated by regis. ([419c65a](https://github.com/trivoallan/regis/commit/419c65a8583704ec9e3d28dbd7448901c3374663))
+- add Skopeo analyzer and refactor versioning analyzer to use Skopeo for tag listing. ([b933931](https://github.com/trivoallan/regis/commit/b9339312aae5a1a3c42aabb7347bfa71f99436a0))
+- add support for multiple output formats and templated output paths for the `run` command. ([6a70c93](https://github.com/trivoallan/regis/commit/6a70c93d842609a4d091f413acc4f8aa0de94238))
+- add support for passing metadata via CLI to reports and update report schema. ([07050ea](https://github.com/trivoallan/regis/commit/07050ea6ceb8bc5e3c19d1c22f5249db1b9531dc))
+- add support for templated links in scorecards and reports ([bc191af](https://github.com/trivoallan/regis/commit/bc191afb2c8fad75dde499531533f35abf691fb7))
+- add time formatting and recursive metadata rendering to improve report request details display. ([f86862e](https://github.com/trivoallan/regis/commit/f86862e7289083562ad348dd0a4ac96127d64f8b))
+- Add user and digest extraction and display to Skopeo image analysis. ([4cbacba](https://github.com/trivoallan/regis/commit/4cbacba1b3e1ef3e4ce066dfaf32280884b25693))
+- add variant detection and reporting to the versioning analyzer ([8c61394](https://github.com/trivoallan/regis/commit/8c613946148fbd8d095de1ebc1bb27269b6532b8))
+- **analyzer/dockle:** add Dockle analyzer for container image security and best practices linting with supporting schema, tests, and documentation. ([e32c1f2](https://github.com/trivoallan/regis/commit/e32c1f2f375e284619b521d37a8f05b4f8e75fff))
+- **analyzer/size:** add layer digest to the size analysis output for individual layers ([9393b48](https://github.com/trivoallan/regis/commit/9393b48d6ebda82b7be2e9db5aad74a014f415f3))
+- **analyzer/versioning:** implement digest-based reporting and release lines hierarchy ([#21](https://github.com/trivoallan/regis/issues/21)) ([e54d04f](https://github.com/trivoallan/regis/commit/e54d04f17077333fbc73d1b133a5b7b61228ed18))
+- **analyzers:** Enable private registry authentication for Trivy-based analyzers and update documentation. ([06c35eb](https://github.com/trivoallan/regis/commit/06c35eb80a95a94846c29154ff658861c0331d5f))
+- **analyzers:** Reusable rules and simplified rule slugs ([#63](https://github.com/trivoallan/regis/issues/63)) ([40d9f63](https://github.com/trivoallan/regis/commit/40d9f63ea63ce8858e31c53c1991c409150ece63))
+- **archive-repo:** Update CI/CD workflows, modify CLI logic, and adjust bootstrap tests. ([a47f472](https://github.com/trivoallan/regis/commit/a47f4725ce5b2c520baeb6b82c8898389466e2cc))
+- **bootstrap:** Add `bootstrap archive --repo` command for automated archive site deployment to GitHub/GitLab Pages. ([61d4157](https://github.com/trivoallan/regis/commit/61d4157781e01581d68528696ec7fdce417c7d8b))
+- **ci:** Add a configurable playbook URL input to GitLab CI/CD. ([801dd3c](https://github.com/trivoallan/regis/commit/801dd3c861b0fbc0af4b279204affd4d06c352cc))
+- **ci:** add OCI image labels to Dockerfile ([#39](https://github.com/trivoallan/regis/issues/39)) ([8deeb50](https://github.com/trivoallan/regis/commit/8deeb50114a3a54c841e3fa7bce8ae0cba5a746b))
+- **ci:** add standard OCI annotations to Dockerfile ([#43](https://github.com/trivoallan/regis/issues/43)) ([#40](https://github.com/trivoallan/regis/issues/40)) ([6c16c42](https://github.com/trivoallan/regis/commit/6c16c4256143f1139b4d46fcfa25ead7d6cc212a))
+- **ci:** allow Docker authentication to prevent rate limits ([#45](https://github.com/trivoallan/regis/issues/45)) ([15f985b](https://github.com/trivoallan/regis/commit/15f985bc13bcdd300746f2653a514cf7745b229f))
+- **ci:** automate trunk fmt and auto-commit in CI ([#48](https://github.com/trivoallan/regis/issues/48)) ([76070ad](https://github.com/trivoallan/regis/commit/76070ad58a2fce9f87113860e1863cebf04191a3))
+- **ci:** implement gitlab subcommand for CI workflow ([#18](https://github.com/trivoallan/regis/issues/18)) ([515069c](https://github.com/trivoallan/regis/commit/515069cb5263b7addaa47551681cbcb43d3da995))
+- **ci:** introduce GitLab CI workflow for image analysis with MR-driven triggers and review app deployments. ([d85449d](https://github.com/trivoallan/regis/commit/d85449d19e9e6cb6232b72cb5940e297c4608261))
+- **ci:** make regis image version configurable in generated GitLab CI. ([8da67d0](https://github.com/trivoallan/regis/commit/8da67d08b4e12433157cb67a9516e269c732a5c3))
+- **ci:** migrate linting to trunk and add mypy/hadolint ([#29](https://github.com/trivoallan/regis/issues/29)) ([4219843](https://github.com/trivoallan/regis/commit/4219843ff5ecb512f708e6cc8acb3f824e841213))
+- **cli/bootstrap:** display post-install notes after bootstrap ([#52](https://github.com/trivoallan/regis/issues/52)) ([89419bf](https://github.com/trivoallan/regis/commit/89419bf821fc40f9548598dca95ab00f926fb18b))
+- **cli:** Add CLI command to check image manifest accessibility. Use it to prevent bogus requests. ([be291ee](https://github.com/trivoallan/regis/commit/be291ee5e475c9617187549df2a88f8b7d229c67))
+- **cli:** add evaluate command for dry-run evaluation of playbooks ([#25](https://github.com/trivoallan/regis/issues/25)) ([f35d6f3](https://github.com/trivoallan/regis/commit/f35d6f3655283993eced3c7c9e18b27d794c8d77))
+- **cli:** add rules list command and improve evaluator ([11a9118](https://github.com/trivoallan/regis/commit/11a91189480b84cc0cb71aa35e72c4d9b32ea478))
+- **cli:** Implement `generate` command with `cookiecutter` for project scaffolding and update project templates. ([44bfdf6](https://github.com/trivoallan/regis/commit/44bfdf6e87070d4515ac685d43b1bf1d0974f948))
+- **cli:** Implement a CLI version command, refactor `importlib.metadata` imports, and update tests and GitLab CI artifact handling. ([d508b53](https://github.com/trivoallan/regis/commit/d508b53f72bf9396f060663fc1262ccc4e62a292))
+- **cli:** refactor generate to bootstrap command group ([#28](https://github.com/trivoallan/regis/issues/28)) ([ee9710e](https://github.com/trivoallan/regis/commit/ee9710eae6ea9b92c6e00971ad18fe0742f65904))
+- configure Antora Mermaid extension with a specific library URL and script stem. ([190fcc4](https://github.com/trivoallan/regis/commit/190fcc49632bc50a466a2c56b8bcaf8d5ae6937d))
+- **cookiecutter:** integrate GitHub Actions metadata into analysis reports for improved traceability and remove unused scorecard levels. ([4113efb](https://github.com/trivoallan/regis/commit/4113efbecb2a92497c1de451b4efc09feee96934))
+- **cookiecutter:** introduce Cookiecutter template for bootstrapping new image analysis projects with documentation, workflows, and default scorecards. ([391d74f](https://github.com/trivoallan/regis/commit/391d74fa53f45e93dbb2204104a7a1869f70ad03))
+- **cookiecutter:** Introduce Cookiecutter template for project bootstrapping and add its comprehensive usage guide, refining the template's analysis workflow input. ([9ef6351](https://github.com/trivoallan/regis/commit/9ef6351574929e9f217c5c1eae2fae597cf3286e))
+- display structured analyzer errors in the UI and store them in reports. ([f3dd654](https://github.com/trivoallan/regis/commit/f3dd654fd8533147fef78550d72126ca3bd1a1d3))
+- **doc:** Add 'Get Started' and 'Understand Playbooks' documentation pages and update navigation. ([e791354](https://github.com/trivoallan/regis/commit/e791354736aad353c06c60189e040bd9f61c0f48))
+- **docs:** initialize Antora documentation ([6ca4154](https://github.com/trivoallan/regis/commit/6ca41541c17a0a942d8407c6256a59004d26805c))
+- dynamically set cookiecutter image URL and simplify release-please extra-files configuration. ([b86853a](https://github.com/trivoallan/regis/commit/b86853a7f9a7b032a1171e5ff7e9dbbe724c6fbf))
+- embed regis version in analysis reports and update cookiecutter image URLs. ([3ab5430](https://github.com/trivoallan/regis/commit/3ab543048e4972ff9ec6c461f710c93991ad8924))
+- enhance default playbook overview with new recommendation and compliance widgets and update widget styling. ([6737a68](https://github.com/trivoallan/regis/commit/6737a6839152fea82141eda59241792cb5a59985))
+- enhance registry credential resolution by normalizing Docker Hub aliases and remove the `score.html` report file. ([c2dd0e1](https://github.com/trivoallan/regis/commit/c2dd0e17ab0810a247df8148d0c10f5ccf3ef682))
+- enhance report output with per-scorecard HTML files, `slug` support, and improved file writing logic. ([895c46b](https://github.com/trivoallan/regis/commit/895c46bbc98d8fe650ed3a657eb98b415abb4266))
+- Enhance scorecard rule evaluation to track missing data, provide detailed condition stringification, and include rule tags in results and UI. ([cd94912](https://github.com/trivoallan/regis/commit/cd949129cd65c20584c6a258c765bc8b4a378e34))
+- enhance Trivy report display for multiple targets and refine report layout with dedicated sections for links and scorecards. ([9a29bad](https://github.com/trivoallan/regis/commit/9a29bad85018b3fa93bf49ce4b204d99e1cca374))
+- **gitlab:** append review checklist from `report.json` to merge request descriptions and unquote `$REGIS_CLI_IMAGE` in CI. ([08211a2](https://github.com/trivoallan/regis/commit/08211a264c32147c22e4c98aae089fdf02514501))
+- Implement conditional widget rendering, add new widget styling options including alignment and subvalues, and introduce new CSS for recommendations and header elements. ([78ade17](https://github.com/trivoallan/regis/commit/78ade17344380013a2429d8bf519728d7d346415))
+- implement flexible registry credential resolution via new `--auth` CLI option and dedicated module ([ac5afb3](https://github.com/trivoallan/regis/commit/ac5afb33639d018d4d04611777c95b194f11d6dc))
+- implement Playbook Tiers, Dynamic Badges and restore multi-page reporting ([#56](https://github.com/trivoallan/regis/issues/56)) ([ce91c37](https://github.com/trivoallan/regis/commit/ce91c376766f99a0fca7f42ec9f262a1f6ecae07))
+- implement registry authentication using environment variables and add new tests. ([1894969](https://github.com/trivoallan/regis/commit/18949692ac8c493f3ea62d0485efea75661e38e3))
+- initialize regis project with image analysis, scorecard engine, schema validation, and comprehensive project setup. ([3af2207](https://github.com/trivoallan/regis/commit/3af2207ef86d5265c7fc32997219b3841172b0bb))
+- Integrate scorecard evaluation directly into the `analyze` command, supporting multiple custom scorecards, and remove the dedicated `score` command. ([8301c36](https://github.com/trivoallan/regis/commit/8301c36f77c897057a44b03abaeaf525067a4163))
+- introduce new HTML report structure and styling with updated templates and CSS. ([94f5130](https://github.com/trivoallan/regis/commit/94f5130d1c7dd0e0ad34098de757242e5d81a37b))
+- Introduce OpenSSF Scorecard, Freshness, and Popularity analyzer reports with supporting configuration and robustness improvements. ([df311cc](https://github.com/trivoallan/regis/commit/df311ccc38bb6c99c6c0ad0eaa9fd77fd21f49a0))
+- introduce SBOM analysis using Trivy and CycloneDX, replacing the license analyzer. ([8fa1d24](https://github.com/trivoallan/regis/commit/8fa1d24166324d4224287250b3456db7251924e2))
+- introduce scorecard pages to group sections and add new size and versioning analyzers. ([2dd6b31](https://github.com/trivoallan/regis/commit/2dd6b315c41cc440d57b349187acaa8e1a783b5b))
+- Introduce section-based scorecards with a new schema and remove the dependency analyzer. ([e7adbea](https://github.com/trivoallan/regis/commit/e7adbeab5a8404a2b983be5dad715b3f310f66fa))
+- **playbook:** add support for multiple titled GitLab MR description checklists with backward compatibility. ([f865cb0](https://github.com/trivoallan/regis/commit/f865cb00735d90a8185bb98f87373d05431b5caf))
+- **playbook:** Enhance GitLab MR checklist items with `show_if` and `check_if` conditions. ([ccde35e](https://github.com/trivoallan/regis/commit/ccde35eb51a62199cb07113d9da1dda0240e2184))
+- **playbook:** Implement GitLab MR description checklist feature for custom compliance checks. ([c22402e](https://github.com/trivoallan/regis/commit/c22402ec2cab75ad19c2ba227d56eec2eb9d35a6))
+- **playbook:** Implement named addressing for playbook pages and sections ([cdbaefa](https://github.com/trivoallan/regis/commit/cdbaefae55c5a25b828944dc8ec1f0f41e7fc0d6))
+- **playbook:** integrate Dockle security analysis with a new policy, dedicated UI, and updated documentation. ([7806a53](https://github.com/trivoallan/regis/commit/7806a53d52c30027926a24bc5fa18da08c7506e3))
+- **playbook:** Introduce configurable additional MR content generation from templates ([340f44d](https://github.com/trivoallan/regis/commit/340f44d04891039080603fa2a86ba634f49ad82c))
+- **playbooks:** Add support for loading playbooks from remote URLs and update cookiecutters to utilize this feature. ([69ef82f](https://github.com/trivoallan/regis/commit/69ef82f57b4704135c0f3a4809a11be5294aa19b))
+- refactor cookiecutter templates to support both GitHub and GitLab platforms with dedicated CI configurations and documentation. ([295db88](https://github.com/trivoallan/regis/commit/295db881cd1b2eae17f595d567fe182fef087623))
+- Refine scorecard reporting by updating schemas, engine logic, templates, and removing old report files. ([f3abf1f](https://github.com/trivoallan/regis/commit/f3abf1f9a94faa638039bc959566315acf014b8f))
+- render error cards for all unhandled analyzer errors in the report ([9bf27db](https://github.com/trivoallan/regis/commit/9bf27db38e8bc9a542f286aa7638dc92e19be87e))
+- replace single achieved level with a detailed summary by level in scorecard results, CLI output, and HTML report. ([c81c2ce](https://github.com/trivoallan/regis/commit/c81c2ce854c25896765c2e9938361b02569c005e))
+- **report:** archive store and standalone archive viewer cookiecutter ([#74](https://github.com/trivoallan/regis/issues/74)) ([2001b08](https://github.com/trivoallan/regis/commit/2001b081535c70680464cd52c9103a4f941bda84))
+- **report:** Embed regis version into analysis reports and schema ([ac3efb5](https://github.com/trivoallan/regis/commit/ac3efb55d70263c5417c02df59522201e7ca501e))
+- **report:** implement docusaurus report viewer ([#68](https://github.com/trivoallan/regis/issues/68)) ([880047c](https://github.com/trivoallan/regis/commit/880047c6b53f7e8698bbf8e8b16c5f1746c2a5d0))
+- **report:** overhaul report viewer UI with Tremor components ([#70](https://github.com/trivoallan/regis/issues/70)) ([75ffc3c](https://github.com/trivoallan/regis/commit/75ffc3ccd773eba0a88fba05322630129708bd5a))
+- **reports:** Implement automatic versioning of analysis reports in GitLab CI and document its configuration. ([c985942](https://github.com/trivoallan/regis/commit/c9859427c88ce06ae0cde3a64566fe6dc961a788))
+- **review:** enhance GitLab CI report delivery by committing to `reports/`, posting direct links to MR comments, and updating documentation. ([d934913](https://github.com/trivoallan/regis/commit/d934913c7451a9565ce3f8a2626ae3b54f24002a))
+- **review:** enhance GitLab CI/CD to specify output filename, run site generation on the default branch, and dynamically configure Pages deployments for review apps and main branch, while updating the project backlog. ([342d0b8](https://github.com/trivoallan/regis/commit/342d0b86d4b9111f5dc4d43a680c53ec4af7a335))
+- **review:** Expose analysis reports as Merge Request artifacts instead of deploying to Review Apps and update documentation accordingly. ([c4850be](https://github.com/trivoallan/regis/commit/c4850be3bbd6548d6d854529a59f2353bbc595b5))
+- **review:** Implement and document a self-service analysis workflow in GitLab CI, including optional report commits to the branch and dynamic Review App links. ([016659d](https://github.com/trivoallan/regis/commit/016659d34cf87e68b1af8e68e4806372c923979a))
+- **review:** Introduce automated GitLab MR labeling and conditional playbook links based on analysis outcomes. ([86e5986](https://github.com/trivoallan/regis/commit/86e59862895324ebb6276d31b94b99ec53f432bf))
+- **review:** use GitLab API for merge request creation to enable setting reviewers and assignees, and add `curl` dependency. ([32f98f2](https://github.com/trivoallan/regis/commit/32f98f226263ed577fd649743af69f0f7f2eff85))
+- set default output directory template to include the tag. ([157f425](https://github.com/trivoallan/regis/commit/157f425cca42a71afb089dd4fff6d1944abf9c95))
+- Track and display involved data analyzers for scorecard rule evaluations in the schema, engine, and HTML report. ([42bcace](https://github.com/trivoallan/regis/commit/42bcace830ae4aebb83b23c17486c79c867fc61d))
+- **ui:** Implement a new report rendering engine with a sidebar layout and dedicated pages for various analysis results. ([e1faaf9](https://github.com/trivoallan/regis/commit/e1faaf92dadc215bbcdfecf90d164b5a2658ad64))
+- **ui:** Introduce new analyzer display templates and enhance the playbook engine to support section widgets. ([b998f63](https://github.com/trivoallan/regis/commit/b998f63f50691a9a186ba83b1a3ebe42cb21751e))
 
 ### Bug Fixes
 
-- Add step to re-checkout merge ref for pull requests in the Trunk workflow. ([3678043](https://github.com/trivoallan/regis-cli/commit/36780437ade9f5ad69a39cc5596e6f820b34535b))
-- **analyzers:** Expose analyzer results at the root of the scorecard evaluation context and update default Trivy rules. ([460871b](https://github.com/trivoallan/regis-cli/commit/460871ba19698bfff3b33f40183f742501d80045))
-- **analyzers:** prevent Skopeo analyzer from failing on index image inspection and formalize commit message guidelines. ([c80f88c](https://github.com/trivoallan/regis-cli/commit/c80f88c0dc4dcefa2610c959812d8232649629a3))
-- **analyzer:** standardize rule names and fix analyzer validation ([#62](https://github.com/trivoallan/regis-cli/issues/62)) ([1a64c24](https://github.com/trivoallan/regis-cli/commit/1a64c24252459519e6765256b4364e140eaf0b9f))
-- **build:** install git in Dockerfile ([dfffabd](https://github.com/trivoallan/regis-cli/commit/dfffabd778a1fbbe8d371f2d8713f95568427d04))
-- **ci:** add workflow_dispatch trigger and refine tag matching for Docker publish workflow. ([21b7549](https://github.com/trivoallan/regis-cli/commit/21b754967ad212cea23c0a13d623ce06902c0058))
-- **ci:** configure releaser-pleaser action with release token ([ed8a1f2](https://github.com/trivoallan/regis-cli/commit/ed8a1f2ff386d0f54b91b4b2cde3c07b770c73aa))
-- **ci:** Fix broken Publish Documentation workflow ([300e313](https://github.com/trivoallan/regis-cli/commit/300e3133246ded1ff55b7aac01ee265ffada76e4))
-- **ci:** fix trunk fmt conflict and resolve HTML syntax errors ([6aa52c1](https://github.com/trivoallan/regis-cli/commit/6aa52c16eb749ba6095bb814d6622c8ec39198c4))
-- **ci:** Reorder documentation generation steps in the CI workflow and enhance the Docusaurus report builder with improved build commands and dependency checks. ([87527e4](https://github.com/trivoallan/regis-cli/commit/87527e4cb9bca51643a9b10b0fb467fdaa76f5c3))
-- **ci:** robust auto-formatting and protected branch handling ([#51](https://github.com/trivoallan/regis-cli/issues/51)) ([ae9ae51](https://github.com/trivoallan/regis-cli/commit/ae9ae5144612dfb845371db50cab813888bd089c))
-- **ci:** Update Python version to 3.14 in test workflow. ([e260b53](https://github.com/trivoallan/regis-cli/commit/e260b5351e6484357ffa712d8b5e5b16cde4529b))
-- **cli:** resolve bootstrap command failure in Docker image ([#46](https://github.com/trivoallan/regis-cli/issues/46)) ([5c6ed6b](https://github.com/trivoallan/regis-cli/commit/5c6ed6b384527dd3c31f4a865872802c4d72acf4))
-- Correct malformed `versions.json` and add a workflow step to validate and reset it if corrupted. ([8fd6186](https://github.com/trivoallan/regis-cli/commit/8fd6186906c0809936955bfc0d31608f7f4c268d))
-- Correct relative path for the "Understand Playbooks" guide link in the default playbook overview. ([31c4d1b](https://github.com/trivoallan/regis-cli/commit/31c4d1b7b1a9dffeb035b4127a56f27464b9bc70))
-- **docker:** address permission denied errors in Docker by setting user UID/GID, ensuring directory writability, and adding a report output fallback. ([ddaba2c](https://github.com/trivoallan/regis-cli/commit/ddaba2ceb4c931fca1f68555e63e6408a32baec6))
-- **docker:** Resolve Docker container permission issues by creating a home directory for the `regis` user and setting report directory permissions, and update the analysis workflow. ([9cf4087](https://github.com/trivoallan/regis-cli/commit/9cf408788e2923524da428b0eb19f2eb90f763bf))
-- **docs:** Add base URL configuration for Docusaurus reports and update workflow output directory. ([23d363a](https://github.com/trivoallan/regis-cli/commit/23d363afe7544e3768d02b43bd8d11a1ad36784d))
-- **docs:** corrupted versions.json ([f568663](https://github.com/trivoallan/regis-cli/commit/f568663dd8fdd6fee805fffe3fd34766126699d3))
-- **gitlab:** Fix report generation path ([4a1cfe7](https://github.com/trivoallan/regis-cli/commit/4a1cfe7f141b41736dbc928abcf4367c93b5476d))
-- **gitlab:** Improve GitLab CI report path handling ([9a7914f](https://github.com/trivoallan/regis-cli/commit/9a7914f8a5828eb2b8493d517dcc92af4f8df1a4))
-- Prevent `AttributeError` in scorecard link processing by adding type checks and update `regis-cli` workflow flags to long form. ([a02caa3](https://github.com/trivoallan/regis-cli/commit/a02caa33bb8fc47fbed119bdd797ad84eeb7cdc0))
-- Remove `--force` from Docusaurus versioning in CI and correct `versions.json` format. ([4fee11d](https://github.com/trivoallan/regis-cli/commit/4fee11d7d3697570751eb32351febc3bafa4e56d))
-- Remove redundant entries from `versions.json`. ([5407d53](https://github.com/trivoallan/regis-cli/commit/5407d5353c3e9d969239be96d6418ee4b4587f0f))
-- resolve Trunk Check `HEAD^2` error by adjusting git checkout depth and auto-commit logic in the lint workflow. ([44100f1](https://github.com/trivoallan/regis-cli/commit/44100f13ec550990e468493105a2a2431912c520))
-- **schema:** add missing fields to trivy schema and fix id resolution ([8894b25](https://github.com/trivoallan/regis-cli/commit/8894b254336cc82f554831d20ab721c0454e5deb))
-- **template:** add missing `format_number` Jinja2 filter ([f76b30b](https://github.com/trivoallan/regis-cli/commit/f76b30b803125177543e2d47098c345f012b3b4d))
-- trunk pipeline ([5fa5639](https://github.com/trivoallan/regis-cli/commit/5fa56393fe1c2dc5d1fe806623655911b716c223))
-- versions... ([e247847](https://github.com/trivoallan/regis-cli/commit/e2478470f3713df0cce720265d7dbe7af333fcc3))
+- Add step to re-checkout merge ref for pull requests in the Trunk workflow. ([3678043](https://github.com/trivoallan/regis/commit/36780437ade9f5ad69a39cc5596e6f820b34535b))
+- **analyzers:** Expose analyzer results at the root of the scorecard evaluation context and update default Trivy rules. ([460871b](https://github.com/trivoallan/regis/commit/460871ba19698bfff3b33f40183f742501d80045))
+- **analyzers:** prevent Skopeo analyzer from failing on index image inspection and formalize commit message guidelines. ([c80f88c](https://github.com/trivoallan/regis/commit/c80f88c0dc4dcefa2610c959812d8232649629a3))
+- **analyzer:** standardize rule names and fix analyzer validation ([#62](https://github.com/trivoallan/regis/issues/62)) ([1a64c24](https://github.com/trivoallan/regis/commit/1a64c24252459519e6765256b4364e140eaf0b9f))
+- **build:** install git in Dockerfile ([dfffabd](https://github.com/trivoallan/regis/commit/dfffabd778a1fbbe8d371f2d8713f95568427d04))
+- **ci:** add workflow_dispatch trigger and refine tag matching for Docker publish workflow. ([21b7549](https://github.com/trivoallan/regis/commit/21b754967ad212cea23c0a13d623ce06902c0058))
+- **ci:** configure releaser-pleaser action with release token ([ed8a1f2](https://github.com/trivoallan/regis/commit/ed8a1f2ff386d0f54b91b4b2cde3c07b770c73aa))
+- **ci:** Fix broken Publish Documentation workflow ([300e313](https://github.com/trivoallan/regis/commit/300e3133246ded1ff55b7aac01ee265ffada76e4))
+- **ci:** fix trunk fmt conflict and resolve HTML syntax errors ([6aa52c1](https://github.com/trivoallan/regis/commit/6aa52c16eb749ba6095bb814d6622c8ec39198c4))
+- **ci:** Reorder documentation generation steps in the CI workflow and enhance the Docusaurus report builder with improved build commands and dependency checks. ([87527e4](https://github.com/trivoallan/regis/commit/87527e4cb9bca51643a9b10b0fb467fdaa76f5c3))
+- **ci:** robust auto-formatting and protected branch handling ([#51](https://github.com/trivoallan/regis/issues/51)) ([ae9ae51](https://github.com/trivoallan/regis/commit/ae9ae5144612dfb845371db50cab813888bd089c))
+- **ci:** Update Python version to 3.14 in test workflow. ([e260b53](https://github.com/trivoallan/regis/commit/e260b5351e6484357ffa712d8b5e5b16cde4529b))
+- **cli:** resolve bootstrap command failure in Docker image ([#46](https://github.com/trivoallan/regis/issues/46)) ([5c6ed6b](https://github.com/trivoallan/regis/commit/5c6ed6b384527dd3c31f4a865872802c4d72acf4))
+- Correct malformed `versions.json` and add a workflow step to validate and reset it if corrupted. ([8fd6186](https://github.com/trivoallan/regis/commit/8fd6186906c0809936955bfc0d31608f7f4c268d))
+- Correct relative path for the "Understand Playbooks" guide link in the default playbook overview. ([31c4d1b](https://github.com/trivoallan/regis/commit/31c4d1b7b1a9dffeb035b4127a56f27464b9bc70))
+- **docker:** address permission denied errors in Docker by setting user UID/GID, ensuring directory writability, and adding a report output fallback. ([ddaba2c](https://github.com/trivoallan/regis/commit/ddaba2ceb4c931fca1f68555e63e6408a32baec6))
+- **docker:** Resolve Docker container permission issues by creating a home directory for the `regis` user and setting report directory permissions, and update the analysis workflow. ([9cf4087](https://github.com/trivoallan/regis/commit/9cf408788e2923524da428b0eb19f2eb90f763bf))
+- **docs:** Add base URL configuration for Docusaurus reports and update workflow output directory. ([23d363a](https://github.com/trivoallan/regis/commit/23d363afe7544e3768d02b43bd8d11a1ad36784d))
+- **docs:** corrupted versions.json ([f568663](https://github.com/trivoallan/regis/commit/f568663dd8fdd6fee805fffe3fd34766126699d3))
+- **gitlab:** Fix report generation path ([4a1cfe7](https://github.com/trivoallan/regis/commit/4a1cfe7f141b41736dbc928abcf4367c93b5476d))
+- **gitlab:** Improve GitLab CI report path handling ([9a7914f](https://github.com/trivoallan/regis/commit/9a7914f8a5828eb2b8493d517dcc92af4f8df1a4))
+- Prevent `AttributeError` in scorecard link processing by adding type checks and update `regis` workflow flags to long form. ([a02caa3](https://github.com/trivoallan/regis/commit/a02caa33bb8fc47fbed119bdd797ad84eeb7cdc0))
+- Remove `--force` from Docusaurus versioning in CI and correct `versions.json` format. ([4fee11d](https://github.com/trivoallan/regis/commit/4fee11d7d3697570751eb32351febc3bafa4e56d))
+- Remove redundant entries from `versions.json`. ([5407d53](https://github.com/trivoallan/regis/commit/5407d5353c3e9d969239be96d6418ee4b4587f0f))
+- resolve Trunk Check `HEAD^2` error by adjusting git checkout depth and auto-commit logic in the lint workflow. ([44100f1](https://github.com/trivoallan/regis/commit/44100f13ec550990e468493105a2a2431912c520))
+- **schema:** add missing fields to trivy schema and fix id resolution ([8894b25](https://github.com/trivoallan/regis/commit/8894b254336cc82f554831d20ab721c0454e5deb))
+- **template:** add missing `format_number` Jinja2 filter ([f76b30b](https://github.com/trivoallan/regis/commit/f76b30b803125177543e2d47098c345f012b3b4d))
+- trunk pipeline ([5fa5639](https://github.com/trivoallan/regis/commit/5fa56393fe1c2dc5d1fe806623655911b716c223))
+- versions... ([e247847](https://github.com/trivoallan/regis/commit/e2478470f3713df0cce720265d7dbe7af333fcc3))
 
 ### Dependencies
 
-- Populate Pipfile.lock with resolved dependency versions. ([e87ee2c](https://github.com/trivoallan/regis-cli/commit/e87ee2cd971b4d35c8cf4ccbf1ad5ee574701d58))
+- Populate Pipfile.lock with resolved dependency versions. ([e87ee2c](https://github.com/trivoallan/regis/commit/e87ee2cd971b4d35c8cf4ccbf1ad5ee574701d58))
 
 ### Documentation
 
-- Add a comprehensive architectural overview, update documentation structure, and refine the GitLab CI template. ([194d574](https://github.com/trivoallan/regis-cli/commit/194d5744a5bf45f316f757bcce05aa0e5cc4047e))
-- Add and update generated static assets and reports for regis-cli and alpine playbook examples. ([11c467c](https://github.com/trivoallan/regis-cli/commit/11c467c04eb0a8ab419fe51117ae4975348d626a))
-- add documentation for the default playbook, detailing its rules and report organization, and link it in the navigation. ([e67daab](https://github.com/trivoallan/regis-cli/commit/e67daabd9cb32faa2672a0deae48d0e7d95482d8))
-- Add new example report assets and update documentation pages. ([a247d93](https://github.com/trivoallan/regis-cli/commit/a247d93417d32419e3cc89b1c944a4318a618b93))
-- Add script to generate example reports and update documentation with new report data and publishing workflow. ([3598a1e](https://github.com/trivoallan/regis-cli/commit/3598a1e79f47bc177e94e7a5ca10111beb08b50a))
-- add workflow step to generate rules reference documentation. ([e325793](https://github.com/trivoallan/regis-cli/commit/e325793df08eb713a47038c639845a47cbbdef32))
-- **architecture:** add C4 Context and Container diagrams to architecture overview ([#24](https://github.com/trivoallan/regis-cli/issues/24)) ([fa8504e](https://github.com/trivoallan/regis-cli/commit/fa8504e8e2ee2a5c045f652b5a1aa6ce453cb766))
-- Change Docusaurus broken link handling from `throw` to `warn`. ([112bbbb](https://github.com/trivoallan/regis-cli/commit/112bbbb6e61e4c71bd0647aa032a87d43b036e77))
-- **commitmessages:** add Google Blockly commit style guide link ([8c61162](https://github.com/trivoallan/regis-cli/commit/8c611621d59b4600f0cfcea2d6970387b40ccb2c))
-- Configure Antora to generate a documentation website for each release ([077497b](https://github.com/trivoallan/regis-cli/commit/077497bd962b5906bcf0e43715eb7a7588fe1e16))
-- enable local search and fix broken links ([#60](https://github.com/trivoallan/regis-cli/issues/60)) ([0ebae0f](https://github.com/trivoallan/regis-cli/commit/0ebae0fcaf9bede74eb9d20b1a519eb41292b203))
-- Enhance GitHub Actions and GitLab CI integration guides with comprehensive examples, CI metadata, and deployment to respective pages services. ([3ae83e5](https://github.com/trivoallan/regis-cli/commit/3ae83e54fc89f8254602687afe4871cf379a4296))
-- enhance Python, CI/CD, commit message, and documentation rules with new tools, scope definitions, and process clarifications. ([6f1d111](https://github.com/trivoallan/regis-cli/commit/6f1d11119d40d556b0a0bff7c963939b49f6421a))
-- **gitlab-workflow:** add section on GitLab Review Apps for Premium/Ultimate tiers with CI/CD configuration example ([c919743](https://github.com/trivoallan/regis-cli/commit/c91974304d212da4f55139ba9124c3fa73336e25))
-- implement dynamic documentation versioning and cleanup ([#58](https://github.com/trivoallan/regis-cli/issues/58)) ([98f4d47](https://github.com/trivoallan/regis-cli/commit/98f4d47db682ead6ef394a58597f4b7c88500dce))
-- Implemented automated generation of schema documentation and integrate it into the Antora build workflow. ([11b9399](https://github.com/trivoallan/regis-cli/commit/11b93999f0dd063df64a1fc22aac25ba7a2b4c61))
-- **integrations:** group GitLab and GitHub documentation into Integrations section ([#22](https://github.com/trivoallan/regis-cli/issues/22)) ([c045323](https://github.com/trivoallan/regis-cli/commit/c04532366de32ec7f5eb07e1bbbde2cb6bc8f55f))
-- **integrations:** restructure integration sub-chapter and add cookiecutter tips ([#23](https://github.com/trivoallan/regis-cli/issues/23)) ([1a5616b](https://github.com/trivoallan/regis-cli/commit/1a5616b2cea3851fba2b6f3c5c3091b2e8afcf7f))
-- migrate documentation from Antora to Docusaurus ([#57](https://github.com/trivoallan/regis-cli/issues/57)) ([7620e6d](https://github.com/trivoallan/regis-cli/commit/7620e6db51357f053c50458452c8edcd2c6cc0ff))
-- modernize getting started and project generation guides ([#26](https://github.com/trivoallan/regis-cli/issues/26)) ([2603c0c](https://github.com/trivoallan/regis-cli/commit/2603c0c1a1d02ff438953665174324c258229cbb))
-- overhaul rules documentation by separating concepts from reference, introducing MDX for detailed rule listings, and updating the rules engine explanation. ([721c13a](https://github.com/trivoallan/regis-cli/commit/721c13aa3f3b1601c2346da2627a1bf47929ed07))
-- **playbook:** Document GitLab MR checklists with conditional display and pre-checking based on analysis results. ([9ca7a85](https://github.com/trivoallan/regis-cli/commit/9ca7a85fa885f566591dff68617924337b2cff7b))
-- **playbook:** explain how to use bootstrap playbook in documentation ([#30](https://github.com/trivoallan/regis-cli/issues/30)) ([e1d20df](https://github.com/trivoallan/regis-cli/commit/e1d20df294ab9e67013b0d207820d2069d59debe))
-- **README:** redesign README.md and update report preview ([#32](https://github.com/trivoallan/regis-cli/issues/32)) ([31d27fb](https://github.com/trivoallan/regis-cli/commit/31d27fb132276e4eaea7dd2c447da6cc011a5870))
-- refine project description and branding ([#37](https://github.com/trivoallan/regis-cli/issues/37)) ([bbe8fc7](https://github.com/trivoallan/regis-cli/commit/bbe8fc7e796df8974a256cdbf83a67978f1f9228))
-- refine usage and concepts documentation ([6e09d1d](https://github.com/trivoallan/regis-cli/commit/6e09d1d9f20c90b32fec3e6bd6298740bb14e4f1))
-- Remove old versioned documentation, reorganize current docs, and introduce a new CLI reference. ([b8a0b92](https://github.com/trivoallan/regis-cli/commit/b8a0b9275802e193035166fbcff385f7a74f86ad))
-- restructure documentation and update index ([74b9090](https://github.com/trivoallan/regis-cli/commit/74b90905aa3030a3e6cd16b4ed2976235498f6e1))
-- **rules:** add commit message guidelines and refine CI/CD semantic versioning and conventional commit references. ([376c16e](https://github.com/trivoallan/regis-cli/commit/376c16eb2ac1cd1d9f5c47dfb51bf6c1eaabaeb5))
-- standardize rule documentation and add concept tags ([#61](https://github.com/trivoallan/regis-cli/issues/61)) ([3fadb26](https://github.com/trivoallan/regis-cli/commit/3fadb2678dcf9b7cc1949de7eaf2d74df0807ac9))
-- **ui:** enable mermaid diagram rendering ([8edd450](https://github.com/trivoallan/regis-cli/commit/8edd4505f23d26cbb34441e8f5424ee481558c1b))
-- **ui:** use correct mermaid extension package ([c622961](https://github.com/trivoallan/regis-cli/commit/c6229618d30d9629194ab74fe8a21b383f2e6cc1))
-- **ui:** use correct mermaid extension package in playbook ([e7fed19](https://github.com/trivoallan/regis-cli/commit/e7fed19ea0f9dbc7c30d1dff9a05a2831fbbcb94))
-- Update TIP block formatting in playbooks and add documentation versioning and CLI control to notes. ([544e51c](https://github.com/trivoallan/regis-cli/commit/544e51ca75c2dcb9430009d6b859921caeb30715))
-- **versioning:** setup docusaurus versioning and generate reference docs ([5ec6529](https://github.com/trivoallan/regis-cli/commit/5ec6529dc2d1874399223cd0d844b1939f550e92))
-- **website:** fix configuration reload errors ([438dd86](https://github.com/trivoallan/regis-cli/commit/438dd86e3089916276e0c7096984227063664ed7))
+- Add a comprehensive architectural overview, update documentation structure, and refine the GitLab CI template. ([194d574](https://github.com/trivoallan/regis/commit/194d5744a5bf45f316f757bcce05aa0e5cc4047e))
+- Add and update generated static assets and reports for regis and alpine playbook examples. ([11c467c](https://github.com/trivoallan/regis/commit/11c467c04eb0a8ab419fe51117ae4975348d626a))
+- add documentation for the default playbook, detailing its rules and report organization, and link it in the navigation. ([e67daab](https://github.com/trivoallan/regis/commit/e67daabd9cb32faa2672a0deae48d0e7d95482d8))
+- Add new example report assets and update documentation pages. ([a247d93](https://github.com/trivoallan/regis/commit/a247d93417d32419e3cc89b1c944a4318a618b93))
+- Add script to generate example reports and update documentation with new report data and publishing workflow. ([3598a1e](https://github.com/trivoallan/regis/commit/3598a1e79f47bc177e94e7a5ca10111beb08b50a))
+- add workflow step to generate rules reference documentation. ([e325793](https://github.com/trivoallan/regis/commit/e325793df08eb713a47038c639845a47cbbdef32))
+- **architecture:** add C4 Context and Container diagrams to architecture overview ([#24](https://github.com/trivoallan/regis/issues/24)) ([fa8504e](https://github.com/trivoallan/regis/commit/fa8504e8e2ee2a5c045f652b5a1aa6ce453cb766))
+- Change Docusaurus broken link handling from `throw` to `warn`. ([112bbbb](https://github.com/trivoallan/regis/commit/112bbbb6e61e4c71bd0647aa032a87d43b036e77))
+- **commitmessages:** add Google Blockly commit style guide link ([8c61162](https://github.com/trivoallan/regis/commit/8c611621d59b4600f0cfcea2d6970387b40ccb2c))
+- Configure Antora to generate a documentation website for each release ([077497b](https://github.com/trivoallan/regis/commit/077497bd962b5906bcf0e43715eb7a7588fe1e16))
+- enable local search and fix broken links ([#60](https://github.com/trivoallan/regis/issues/60)) ([0ebae0f](https://github.com/trivoallan/regis/commit/0ebae0fcaf9bede74eb9d20b1a519eb41292b203))
+- Enhance GitHub Actions and GitLab CI integration guides with comprehensive examples, CI metadata, and deployment to respective pages services. ([3ae83e5](https://github.com/trivoallan/regis/commit/3ae83e54fc89f8254602687afe4871cf379a4296))
+- enhance Python, CI/CD, commit message, and documentation rules with new tools, scope definitions, and process clarifications. ([6f1d111](https://github.com/trivoallan/regis/commit/6f1d11119d40d556b0a0bff7c963939b49f6421a))
+- **gitlab-workflow:** add section on GitLab Review Apps for Premium/Ultimate tiers with CI/CD configuration example ([c919743](https://github.com/trivoallan/regis/commit/c91974304d212da4f55139ba9124c3fa73336e25))
+- implement dynamic documentation versioning and cleanup ([#58](https://github.com/trivoallan/regis/issues/58)) ([98f4d47](https://github.com/trivoallan/regis/commit/98f4d47db682ead6ef394a58597f4b7c88500dce))
+- Implemented automated generation of schema documentation and integrate it into the Antora build workflow. ([11b9399](https://github.com/trivoallan/regis/commit/11b93999f0dd063df64a1fc22aac25ba7a2b4c61))
+- **integrations:** group GitLab and GitHub documentation into Integrations section ([#22](https://github.com/trivoallan/regis/issues/22)) ([c045323](https://github.com/trivoallan/regis/commit/c04532366de32ec7f5eb07e1bbbde2cb6bc8f55f))
+- **integrations:** restructure integration sub-chapter and add cookiecutter tips ([#23](https://github.com/trivoallan/regis/issues/23)) ([1a5616b](https://github.com/trivoallan/regis/commit/1a5616b2cea3851fba2b6f3c5c3091b2e8afcf7f))
+- migrate documentation from Antora to Docusaurus ([#57](https://github.com/trivoallan/regis/issues/57)) ([7620e6d](https://github.com/trivoallan/regis/commit/7620e6db51357f053c50458452c8edcd2c6cc0ff))
+- modernize getting started and project generation guides ([#26](https://github.com/trivoallan/regis/issues/26)) ([2603c0c](https://github.com/trivoallan/regis/commit/2603c0c1a1d02ff438953665174324c258229cbb))
+- overhaul rules documentation by separating concepts from reference, introducing MDX for detailed rule listings, and updating the rules engine explanation. ([721c13a](https://github.com/trivoallan/regis/commit/721c13aa3f3b1601c2346da2627a1bf47929ed07))
+- **playbook:** Document GitLab MR checklists with conditional display and pre-checking based on analysis results. ([9ca7a85](https://github.com/trivoallan/regis/commit/9ca7a85fa885f566591dff68617924337b2cff7b))
+- **playbook:** explain how to use bootstrap playbook in documentation ([#30](https://github.com/trivoallan/regis/issues/30)) ([e1d20df](https://github.com/trivoallan/regis/commit/e1d20df294ab9e67013b0d207820d2069d59debe))
+- **README:** redesign README.md and update report preview ([#32](https://github.com/trivoallan/regis/issues/32)) ([31d27fb](https://github.com/trivoallan/regis/commit/31d27fb132276e4eaea7dd2c447da6cc011a5870))
+- refine project description and branding ([#37](https://github.com/trivoallan/regis/issues/37)) ([bbe8fc7](https://github.com/trivoallan/regis/commit/bbe8fc7e796df8974a256cdbf83a67978f1f9228))
+- refine usage and concepts documentation ([6e09d1d](https://github.com/trivoallan/regis/commit/6e09d1d9f20c90b32fec3e6bd6298740bb14e4f1))
+- Remove old versioned documentation, reorganize current docs, and introduce a new CLI reference. ([b8a0b92](https://github.com/trivoallan/regis/commit/b8a0b9275802e193035166fbcff385f7a74f86ad))
+- restructure documentation and update index ([74b9090](https://github.com/trivoallan/regis/commit/74b90905aa3030a3e6cd16b4ed2976235498f6e1))
+- **rules:** add commit message guidelines and refine CI/CD semantic versioning and conventional commit references. ([376c16e](https://github.com/trivoallan/regis/commit/376c16eb2ac1cd1d9f5c47dfb51bf6c1eaabaeb5))
+- standardize rule documentation and add concept tags ([#61](https://github.com/trivoallan/regis/issues/61)) ([3fadb26](https://github.com/trivoallan/regis/commit/3fadb2678dcf9b7cc1949de7eaf2d74df0807ac9))
+- **ui:** enable mermaid diagram rendering ([8edd450](https://github.com/trivoallan/regis/commit/8edd4505f23d26cbb34441e8f5424ee481558c1b))
+- **ui:** use correct mermaid extension package ([c622961](https://github.com/trivoallan/regis/commit/c6229618d30d9629194ab74fe8a21b383f2e6cc1))
+- **ui:** use correct mermaid extension package in playbook ([e7fed19](https://github.com/trivoallan/regis/commit/e7fed19ea0f9dbc7c30d1dff9a05a2831fbbcb94))
+- Update TIP block formatting in playbooks and add documentation versioning and CLI control to notes. ([544e51c](https://github.com/trivoallan/regis/commit/544e51ca75c2dcb9430009d6b859921caeb30715))
+- **versioning:** setup docusaurus versioning and generate reference docs ([5ec6529](https://github.com/trivoallan/regis/commit/5ec6529dc2d1874399223cd0d844b1939f550e92))
+- **website:** fix configuration reload errors ([438dd86](https://github.com/trivoallan/regis/commit/438dd86e3089916276e0c7096984227063664ed7))
 
-## [0.18.1](https://github.com/trivoallan/regis-cli/compare/v0.18.0...v0.18.1) (2026-03-21)
-
-### Documentation
-
-- Add and update generated static assets and reports for regis-cli and alpine playbook examples. ([11c467c](https://github.com/trivoallan/regis-cli/commit/11c467c04eb0a8ab419fe51117ae4975348d626a))
-
-## [0.18.0](https://github.com/trivoallan/regis-cli/compare/v0.17.4...v0.18.0) (2026-03-21)
-
-### Features
-
-- **report:** implement docusaurus report viewer ([#68](https://github.com/trivoallan/regis-cli/issues/68)) ([880047c](https://github.com/trivoallan/regis-cli/commit/880047c6b53f7e8698bbf8e8b16c5f1746c2a5d0))
-- **report:** overhaul report viewer UI with Tremor components ([#70](https://github.com/trivoallan/regis-cli/issues/70)) ([75ffc3c](https://github.com/trivoallan/regis-cli/commit/75ffc3ccd773eba0a88fba05322630129708bd5a))
-
-### Bug Fixes
-
-- **ci:** Reorder documentation generation steps in the CI workflow and enhance the Docusaurus report builder with improved build commands and dependency checks. ([87527e4](https://github.com/trivoallan/regis-cli/commit/87527e4cb9bca51643a9b10b0fb467fdaa76f5c3))
-
-## [0.17.4](https://github.com/trivoallan/regis-cli/compare/v0.17.3...v0.17.4) (2026-03-20)
-
-### Bug Fixes
-
-- versions... ([e247847](https://github.com/trivoallan/regis-cli/commit/e2478470f3713df0cce720265d7dbe7af333fcc3))
-
-## [0.17.3](https://github.com/trivoallan/regis-cli/compare/v0.17.2...v0.17.3) (2026-03-20)
-
-### Bug Fixes
-
-- **docs:** corrupted versions.json ([f568663](https://github.com/trivoallan/regis-cli/commit/f568663dd8fdd6fee805fffe3fd34766126699d3))
-- trunk pipeline ([5fa5639](https://github.com/trivoallan/regis-cli/commit/5fa56393fe1c2dc5d1fe806623655911b716c223))
-
-## [0.17.2](https://github.com/trivoallan/regis-cli/compare/v0.17.1...v0.17.2) (2026-03-20)
-
-### Bug Fixes
-
-- Correct malformed `versions.json` and add a workflow step to validate and reset it if corrupted. ([8fd6186](https://github.com/trivoallan/regis-cli/commit/8fd6186906c0809936955bfc0d31608f7f4c268d))
-
-## [0.17.1](https://github.com/trivoallan/regis-cli/compare/v0.17.0...v0.17.1) (2026-03-20)
-
-### Bug Fixes
-
-- Add step to re-checkout merge ref for pull requests in the Trunk workflow. ([3678043](https://github.com/trivoallan/regis-cli/commit/36780437ade9f5ad69a39cc5596e6f820b34535b))
-- Remove `--force` from Docusaurus versioning in CI and correct `versions.json` format. ([4fee11d](https://github.com/trivoallan/regis-cli/commit/4fee11d7d3697570751eb32351febc3bafa4e56d))
-
-## [0.17.0](https://github.com/trivoallan/regis-cli/compare/v0.16.0...v0.17.0) (2026-03-20)
-
-### Features
-
-- **analyzers:** Reusable rules and simplified rule slugs ([#63](https://github.com/trivoallan/regis-cli/issues/63)) ([40d9f63](https://github.com/trivoallan/regis-cli/commit/40d9f63ea63ce8858e31c53c1991c409150ece63))
-- **cli:** add rules list command and improve evaluator ([11a9118](https://github.com/trivoallan/regis-cli/commit/11a91189480b84cc0cb71aa35e72c4d9b32ea478))
-
-### Bug Fixes
-
-- **analyzer:** standardize rule names and fix analyzer validation ([#62](https://github.com/trivoallan/regis-cli/issues/62)) ([1a64c24](https://github.com/trivoallan/regis-cli/commit/1a64c24252459519e6765256b4364e140eaf0b9f))
-- Correct relative path for the "Understand Playbooks" guide link in the default playbook overview. ([31c4d1b](https://github.com/trivoallan/regis-cli/commit/31c4d1b7b1a9dffeb035b4127a56f27464b9bc70))
-- Remove redundant entries from `versions.json`. ([5407d53](https://github.com/trivoallan/regis-cli/commit/5407d5353c3e9d969239be96d6418ee4b4587f0f))
-- **schema:** add missing fields to trivy schema and fix id resolution ([8894b25](https://github.com/trivoallan/regis-cli/commit/8894b254336cc82f554831d20ab721c0454e5deb))
+## [0.18.1](https://github.com/trivoallan/regis/compare/v0.18.0...v0.18.1) (2026-03-21)
 
 ### Documentation
 
-- add workflow step to generate rules reference documentation. ([e325793](https://github.com/trivoallan/regis-cli/commit/e325793df08eb713a47038c639845a47cbbdef32))
-- Change Docusaurus broken link handling from `throw` to `warn`. ([112bbbb](https://github.com/trivoallan/regis-cli/commit/112bbbb6e61e4c71bd0647aa032a87d43b036e77))
-- enable local search and fix broken links ([#60](https://github.com/trivoallan/regis-cli/issues/60)) ([0ebae0f](https://github.com/trivoallan/regis-cli/commit/0ebae0fcaf9bede74eb9d20b1a519eb41292b203))
-- overhaul rules documentation by separating concepts from reference, introducing MDX for detailed rule listings, and updating the rules engine explanation. ([721c13a](https://github.com/trivoallan/regis-cli/commit/721c13aa3f3b1601c2346da2627a1bf47929ed07))
-- refine usage and concepts documentation ([6e09d1d](https://github.com/trivoallan/regis-cli/commit/6e09d1d9f20c90b32fec3e6bd6298740bb14e4f1))
-- Remove old versioned documentation, reorganize current docs, and introduce a new CLI reference. ([b8a0b92](https://github.com/trivoallan/regis-cli/commit/b8a0b9275802e193035166fbcff385f7a74f86ad))
-- restructure documentation and update index ([74b9090](https://github.com/trivoallan/regis-cli/commit/74b90905aa3030a3e6cd16b4ed2976235498f6e1))
-- standardize rule documentation and add concept tags ([#61](https://github.com/trivoallan/regis-cli/issues/61)) ([3fadb26](https://github.com/trivoallan/regis-cli/commit/3fadb2678dcf9b7cc1949de7eaf2d74df0807ac9))
-- **versioning:** setup docusaurus versioning and generate reference docs ([5ec6529](https://github.com/trivoallan/regis-cli/commit/5ec6529dc2d1874399223cd0d844b1939f550e92))
-- **website:** fix configuration reload errors ([438dd86](https://github.com/trivoallan/regis-cli/commit/438dd86e3089916276e0c7096984227063664ed7))
+- Add and update generated static assets and reports for regis and alpine playbook examples. ([11c467c](https://github.com/trivoallan/regis/commit/11c467c04eb0a8ab419fe51117ae4975348d626a))
 
-## [0.16.0](https://github.com/trivoallan/regis-cli/compare/v0.15.0...v0.16.0) (2026-03-20)
+## [0.18.0](https://github.com/trivoallan/regis/compare/v0.17.4...v0.18.0) (2026-03-21)
 
 ### Features
 
-- **ci:** automate trunk fmt and auto-commit in CI ([#48](https://github.com/trivoallan/regis-cli/issues/48)) ([76070ad](https://github.com/trivoallan/regis-cli/commit/76070ad58a2fce9f87113860e1863cebf04191a3))
-- **cli/bootstrap:** display post-install notes after bootstrap ([#52](https://github.com/trivoallan/regis-cli/issues/52)) ([89419bf](https://github.com/trivoallan/regis-cli/commit/89419bf821fc40f9548598dca95ab00f926fb18b))
-- implement Playbook Tiers, Dynamic Badges and restore multi-page reporting ([#56](https://github.com/trivoallan/regis-cli/issues/56)) ([ce91c37](https://github.com/trivoallan/regis-cli/commit/ce91c376766f99a0fca7f42ec9f262a1f6ecae07))
+- **report:** implement docusaurus report viewer ([#68](https://github.com/trivoallan/regis/issues/68)) ([880047c](https://github.com/trivoallan/regis/commit/880047c6b53f7e8698bbf8e8b16c5f1746c2a5d0))
+- **report:** overhaul report viewer UI with Tremor components ([#70](https://github.com/trivoallan/regis/issues/70)) ([75ffc3c](https://github.com/trivoallan/regis/commit/75ffc3ccd773eba0a88fba05322630129708bd5a))
 
 ### Bug Fixes
 
-- **ci:** fix trunk fmt conflict and resolve HTML syntax errors ([6aa52c1](https://github.com/trivoallan/regis-cli/commit/6aa52c16eb749ba6095bb814d6622c8ec39198c4))
-- **ci:** robust auto-formatting and protected branch handling ([#51](https://github.com/trivoallan/regis-cli/issues/51)) ([ae9ae51](https://github.com/trivoallan/regis-cli/commit/ae9ae5144612dfb845371db50cab813888bd089c))
-- **ci:** Update Python version to 3.14 in test workflow. ([e260b53](https://github.com/trivoallan/regis-cli/commit/e260b5351e6484357ffa712d8b5e5b16cde4529b))
-- **cli:** resolve bootstrap command failure in Docker image ([#46](https://github.com/trivoallan/regis-cli/issues/46)) ([5c6ed6b](https://github.com/trivoallan/regis-cli/commit/5c6ed6b384527dd3c31f4a865872802c4d72acf4))
-- resolve Trunk Check `HEAD^2` error by adjusting git checkout depth and auto-commit logic in the lint workflow. ([44100f1](https://github.com/trivoallan/regis-cli/commit/44100f13ec550990e468493105a2a2431912c520))
+- **ci:** Reorder documentation generation steps in the CI workflow and enhance the Docusaurus report builder with improved build commands and dependency checks. ([87527e4](https://github.com/trivoallan/regis/commit/87527e4cb9bca51643a9b10b0fb467fdaa76f5c3))
 
-### Documentation
-
-- implement dynamic documentation versioning and cleanup ([#58](https://github.com/trivoallan/regis-cli/issues/58)) ([98f4d47](https://github.com/trivoallan/regis-cli/commit/98f4d47db682ead6ef394a58597f4b7c88500dce))
-- migrate documentation from Antora to Docusaurus ([#57](https://github.com/trivoallan/regis-cli/issues/57)) ([7620e6d](https://github.com/trivoallan/regis-cli/commit/7620e6db51357f053c50458452c8edcd2c6cc0ff))
-
-## [0.15.0](https://github.com/trivoallan/regis-cli/compare/v0.14.2...v0.15.0) (2026-03-11)
-
-### Features
-
-- **ci:** add OCI image labels to Dockerfile ([#39](https://github.com/trivoallan/regis-cli/issues/39)) ([8deeb50](https://github.com/trivoallan/regis-cli/commit/8deeb50114a3a54c841e3fa7bce8ae0cba5a746b))
-- **ci:** add standard OCI annotations to Dockerfile ([#43](https://github.com/trivoallan/regis-cli/issues/43)) ([#40](https://github.com/trivoallan/regis-cli/issues/40)) ([6c16c42](https://github.com/trivoallan/regis-cli/commit/6c16c4256143f1139b4d46fcfa25ead7d6cc212a))
-- **ci:** allow Docker authentication to prevent rate limits ([#45](https://github.com/trivoallan/regis-cli/issues/45)) ([15f985b](https://github.com/trivoallan/regis-cli/commit/15f985bc13bcdd300746f2653a514cf7745b229f))
-
-## [0.14.2](https://github.com/trivoallan/regis-cli/compare/v0.14.1...v0.14.2) (2026-03-05)
-
-### Documentation
-
-- refine project description and branding ([#37](https://github.com/trivoallan/regis-cli/issues/37)) ([bbe8fc7](https://github.com/trivoallan/regis-cli/commit/bbe8fc7e796df8974a256cdbf83a67978f1f9228))
-
-## [0.14.1](https://github.com/trivoallan/regis-cli/compare/v0.14.0...v0.14.1) (2026-03-05)
-
-### Documentation
-
-- **README:** redesign README.md and update report preview ([#32](https://github.com/trivoallan/regis-cli/issues/32)) ([31d27fb](https://github.com/trivoallan/regis-cli/commit/31d27fb132276e4eaea7dd2c447da6cc011a5870))
-
-## [0.14.0](https://github.com/trivoallan/regis-cli/compare/v0.13.0...v0.14.0) (2026-03-05)
-
-### Features
-
-- **ci:** migrate linting to trunk and add mypy/hadolint ([#29](https://github.com/trivoallan/regis-cli/issues/29)) ([4219843](https://github.com/trivoallan/regis-cli/commit/4219843ff5ecb512f708e6cc8acb3f824e841213))
-- **cli:** refactor generate to bootstrap command group ([#28](https://github.com/trivoallan/regis-cli/issues/28)) ([ee9710e](https://github.com/trivoallan/regis-cli/commit/ee9710eae6ea9b92c6e00971ad18fe0742f65904))
-
-### Documentation
-
-- modernize getting started and project generation guides ([#26](https://github.com/trivoallan/regis-cli/issues/26)) ([2603c0c](https://github.com/trivoallan/regis-cli/commit/2603c0c1a1d02ff438953665174324c258229cbb))
-- **playbook:** explain how to use bootstrap playbook in documentation ([#30](https://github.com/trivoallan/regis-cli/issues/30)) ([e1d20df](https://github.com/trivoallan/regis-cli/commit/e1d20df294ab9e67013b0d207820d2069d59debe))
-
-## [0.13.0](https://github.com/trivoallan/regis-cli/compare/v0.12.0...v0.13.0) (2026-03-05)
-
-### Features
-
-- **analyzer/versioning:** implement digest-based reporting and release lines hierarchy ([#21](https://github.com/trivoallan/regis-cli/issues/21)) ([e54d04f](https://github.com/trivoallan/regis-cli/commit/e54d04f17077333fbc73d1b133a5b7b61228ed18))
-- **ci:** implement gitlab subcommand for CI workflow ([#18](https://github.com/trivoallan/regis-cli/issues/18)) ([515069c](https://github.com/trivoallan/regis-cli/commit/515069cb5263b7addaa47551681cbcb43d3da995))
-
-### Documentation
-
-- **architecture:** add C4 Context and Container diagrams to architecture overview ([#24](https://github.com/trivoallan/regis-cli/issues/24)) ([fa8504e](https://github.com/trivoallan/regis-cli/commit/fa8504e8e2ee2a5c045f652b5a1aa6ce453cb766))
-- **integrations:** group GitLab and GitHub documentation into Integrations section ([#22](https://github.com/trivoallan/regis-cli/issues/22)) ([c045323](https://github.com/trivoallan/regis-cli/commit/c04532366de32ec7f5eb07e1bbbde2cb6bc8f55f))
-- **integrations:** restructure integration sub-chapter and add cookiecutter tips ([#23](https://github.com/trivoallan/regis-cli/issues/23)) ([1a5616b](https://github.com/trivoallan/regis-cli/commit/1a5616b2cea3851fba2b6f3c5c3091b2e8afcf7f))
-
-## [0.12.0](https://github.com/trivoallan/regis-cli/compare/v0.11.0...v0.12.0) (2026-03-05)
-
-### Features
-
-- **playbook:** add support for multiple titled GitLab MR description checklists with backward compatibility. ([f865cb0](https://github.com/trivoallan/regis-cli/commit/f865cb00735d90a8185bb98f87373d05431b5caf))
+## [0.17.4](https://github.com/trivoallan/regis/compare/v0.17.3...v0.17.4) (2026-03-20)
 
 ### Bug Fixes
 
-- **gitlab:** Improve GitLab CI report path handling ([9a7914f](https://github.com/trivoallan/regis-cli/commit/9a7914f8a5828eb2b8493d517dcc92af4f8df1a4))
-- **template:** add missing `format_number` Jinja2 filter ([f76b30b](https://github.com/trivoallan/regis-cli/commit/f76b30b803125177543e2d47098c345f012b3b4d))
+- versions... ([e247847](https://github.com/trivoallan/regis/commit/e2478470f3713df0cce720265d7dbe7af333fcc3))
 
-## [0.11.0](https://github.com/trivoallan/regis-cli/compare/v0.10.0...v0.11.0) (2026-03-05)
+## [0.17.3](https://github.com/trivoallan/regis/compare/v0.17.2...v0.17.3) (2026-03-20)
+
+### Bug Fixes
+
+- **docs:** corrupted versions.json ([f568663](https://github.com/trivoallan/regis/commit/f568663dd8fdd6fee805fffe3fd34766126699d3))
+- trunk pipeline ([5fa5639](https://github.com/trivoallan/regis/commit/5fa56393fe1c2dc5d1fe806623655911b716c223))
+
+## [0.17.2](https://github.com/trivoallan/regis/compare/v0.17.1...v0.17.2) (2026-03-20)
+
+### Bug Fixes
+
+- Correct malformed `versions.json` and add a workflow step to validate and reset it if corrupted. ([8fd6186](https://github.com/trivoallan/regis/commit/8fd6186906c0809936955bfc0d31608f7f4c268d))
+
+## [0.17.1](https://github.com/trivoallan/regis/compare/v0.17.0...v0.17.1) (2026-03-20)
+
+### Bug Fixes
+
+- Add step to re-checkout merge ref for pull requests in the Trunk workflow. ([3678043](https://github.com/trivoallan/regis/commit/36780437ade9f5ad69a39cc5596e6f820b34535b))
+- Remove `--force` from Docusaurus versioning in CI and correct `versions.json` format. ([4fee11d](https://github.com/trivoallan/regis/commit/4fee11d7d3697570751eb32351febc3bafa4e56d))
+
+## [0.17.0](https://github.com/trivoallan/regis/compare/v0.16.0...v0.17.0) (2026-03-20)
 
 ### Features
 
-- **cli:** Add CLI command to check image manifest accessibility. Use it to prevent bogus requests. ([be291ee](https://github.com/trivoallan/regis-cli/commit/be291ee5e475c9617187549df2a88f8b7d229c67))
-- **playbook:** Introduce configurable additional MR content generation from templates ([340f44d](https://github.com/trivoallan/regis-cli/commit/340f44d04891039080603fa2a86ba634f49ad82c))
+- **analyzers:** Reusable rules and simplified rule slugs ([#63](https://github.com/trivoallan/regis/issues/63)) ([40d9f63](https://github.com/trivoallan/regis/commit/40d9f63ea63ce8858e31c53c1991c409150ece63))
+- **cli:** add rules list command and improve evaluator ([11a9118](https://github.com/trivoallan/regis/commit/11a91189480b84cc0cb71aa35e72c4d9b32ea478))
+
+### Bug Fixes
+
+- **analyzer:** standardize rule names and fix analyzer validation ([#62](https://github.com/trivoallan/regis/issues/62)) ([1a64c24](https://github.com/trivoallan/regis/commit/1a64c24252459519e6765256b4364e140eaf0b9f))
+- Correct relative path for the "Understand Playbooks" guide link in the default playbook overview. ([31c4d1b](https://github.com/trivoallan/regis/commit/31c4d1b7b1a9dffeb035b4127a56f27464b9bc70))
+- Remove redundant entries from `versions.json`. ([5407d53](https://github.com/trivoallan/regis/commit/5407d5353c3e9d969239be96d6418ee4b4587f0f))
+- **schema:** add missing fields to trivy schema and fix id resolution ([8894b25](https://github.com/trivoallan/regis/commit/8894b254336cc82f554831d20ab721c0454e5deb))
 
 ### Documentation
 
-- **playbook:** Document GitLab MR checklists with conditional display and pre-checking based on analysis results. ([9ca7a85](https://github.com/trivoallan/regis-cli/commit/9ca7a85fa885f566591dff68617924337b2cff7b))
+- add workflow step to generate rules reference documentation. ([e325793](https://github.com/trivoallan/regis/commit/e325793df08eb713a47038c639845a47cbbdef32))
+- Change Docusaurus broken link handling from `throw` to `warn`. ([112bbbb](https://github.com/trivoallan/regis/commit/112bbbb6e61e4c71bd0647aa032a87d43b036e77))
+- enable local search and fix broken links ([#60](https://github.com/trivoallan/regis/issues/60)) ([0ebae0f](https://github.com/trivoallan/regis/commit/0ebae0fcaf9bede74eb9d20b1a519eb41292b203))
+- overhaul rules documentation by separating concepts from reference, introducing MDX for detailed rule listings, and updating the rules engine explanation. ([721c13a](https://github.com/trivoallan/regis/commit/721c13aa3f3b1601c2346da2627a1bf47929ed07))
+- refine usage and concepts documentation ([6e09d1d](https://github.com/trivoallan/regis/commit/6e09d1d9f20c90b32fec3e6bd6298740bb14e4f1))
+- Remove old versioned documentation, reorganize current docs, and introduce a new CLI reference. ([b8a0b92](https://github.com/trivoallan/regis/commit/b8a0b9275802e193035166fbcff385f7a74f86ad))
+- restructure documentation and update index ([74b9090](https://github.com/trivoallan/regis/commit/74b90905aa3030a3e6cd16b4ed2976235498f6e1))
+- standardize rule documentation and add concept tags ([#61](https://github.com/trivoallan/regis/issues/61)) ([3fadb26](https://github.com/trivoallan/regis/commit/3fadb2678dcf9b7cc1949de7eaf2d74df0807ac9))
+- **versioning:** setup docusaurus versioning and generate reference docs ([5ec6529](https://github.com/trivoallan/regis/commit/5ec6529dc2d1874399223cd0d844b1939f550e92))
+- **website:** fix configuration reload errors ([438dd86](https://github.com/trivoallan/regis/commit/438dd86e3089916276e0c7096984227063664ed7))
 
-## [0.10.0](https://github.com/trivoallan/regis-cli/compare/v0.9.0...v0.10.0) (2026-03-04)
+## [0.16.0](https://github.com/trivoallan/regis/compare/v0.15.0...v0.16.0) (2026-03-20)
 
 ### Features
 
-- **analyzer/size:** add layer digest to the size analysis output for individual layers ([9393b48](https://github.com/trivoallan/regis-cli/commit/9393b48d6ebda82b7be2e9db5aad74a014f415f3))
-- **ci:** Add a configurable playbook URL input to GitLab CI/CD. ([801dd3c](https://github.com/trivoallan/regis-cli/commit/801dd3c861b0fbc0af4b279204affd4d06c352cc))
-- **ci:** make regis-cli image version configurable in generated GitLab CI. ([8da67d0](https://github.com/trivoallan/regis-cli/commit/8da67d08b4e12433157cb67a9516e269c732a5c3))
-- **gitlab:** append review checklist from `report.json` to merge request descriptions and unquote `$REGIS_CLI_IMAGE` in CI. ([08211a2](https://github.com/trivoallan/regis-cli/commit/08211a264c32147c22e4c98aae089fdf02514501))
-- **playbook:** Enhance GitLab MR checklist items with `show_if` and `check_if` conditions. ([ccde35e](https://github.com/trivoallan/regis-cli/commit/ccde35eb51a62199cb07113d9da1dda0240e2184))
+- **ci:** automate trunk fmt and auto-commit in CI ([#48](https://github.com/trivoallan/regis/issues/48)) ([76070ad](https://github.com/trivoallan/regis/commit/76070ad58a2fce9f87113860e1863cebf04191a3))
+- **cli/bootstrap:** display post-install notes after bootstrap ([#52](https://github.com/trivoallan/regis/issues/52)) ([89419bf](https://github.com/trivoallan/regis/commit/89419bf821fc40f9548598dca95ab00f926fb18b))
+- implement Playbook Tiers, Dynamic Badges and restore multi-page reporting ([#56](https://github.com/trivoallan/regis/issues/56)) ([ce91c37](https://github.com/trivoallan/regis/commit/ce91c376766f99a0fca7f42ec9f262a1f6ecae07))
 
 ### Bug Fixes
 
-- **gitlab:** Fix report generation path ([4a1cfe7](https://github.com/trivoallan/regis-cli/commit/4a1cfe7f141b41736dbc928abcf4367c93b5476d))
-
-## [0.9.0](https://github.com/trivoallan/regis-cli/compare/v0.8.0...v0.9.0) (2026-03-04)
-
-### Features
-
-- **playbook:** Implement GitLab MR description checklist feature for custom compliance checks. ([c22402e](https://github.com/trivoallan/regis-cli/commit/c22402ec2cab75ad19c2ba227d56eec2eb9d35a6))
-
-### Bug Fixes
-
-- **ci:** Fix broken Publish Documentation workflow ([300e313](https://github.com/trivoallan/regis-cli/commit/300e3133246ded1ff55b7aac01ee265ffada76e4))
-
-## [0.8.0](https://github.com/trivoallan/regis-cli/compare/v0.7.0...v0.8.0) (2026-03-04)
-
-### Features
-
-- **analyzer/dockle:** add Dockle analyzer for container image security and best practices linting with supporting schema, tests, and documentation. ([e32c1f2](https://github.com/trivoallan/regis-cli/commit/e32c1f2f375e284619b521d37a8f05b4f8e75fff))
-- **playbook:** Implement named addressing for playbook pages and sections ([cdbaefa](https://github.com/trivoallan/regis-cli/commit/cdbaefae55c5a25b828944dc8ec1f0f41e7fc0d6))
-- **playbook:** integrate Dockle security analysis with a new policy, dedicated UI, and updated documentation. ([7806a53](https://github.com/trivoallan/regis-cli/commit/7806a53d52c30027926a24bc5fa18da08c7506e3))
+- **ci:** fix trunk fmt conflict and resolve HTML syntax errors ([6aa52c1](https://github.com/trivoallan/regis/commit/6aa52c16eb749ba6095bb814d6622c8ec39198c4))
+- **ci:** robust auto-formatting and protected branch handling ([#51](https://github.com/trivoallan/regis/issues/51)) ([ae9ae51](https://github.com/trivoallan/regis/commit/ae9ae5144612dfb845371db50cab813888bd089c))
+- **ci:** Update Python version to 3.14 in test workflow. ([e260b53](https://github.com/trivoallan/regis/commit/e260b5351e6484357ffa712d8b5e5b16cde4529b))
+- **cli:** resolve bootstrap command failure in Docker image ([#46](https://github.com/trivoallan/regis/issues/46)) ([5c6ed6b](https://github.com/trivoallan/regis/commit/5c6ed6b384527dd3c31f4a865872802c4d72acf4))
+- resolve Trunk Check `HEAD^2` error by adjusting git checkout depth and auto-commit logic in the lint workflow. ([44100f1](https://github.com/trivoallan/regis/commit/44100f13ec550990e468493105a2a2431912c520))
 
 ### Documentation
 
-- Add script to generate example reports and update documentation with new report data and publishing workflow. ([3598a1e](https://github.com/trivoallan/regis-cli/commit/3598a1e79f47bc177e94e7a5ca10111beb08b50a))
-- Configure Antora to generate a documentation website for each release ([077497b](https://github.com/trivoallan/regis-cli/commit/077497bd962b5906bcf0e43715eb7a7588fe1e16))
-- Implemented automated generation of schema documentation and integrate it into the Antora build workflow. ([11b9399](https://github.com/trivoallan/regis-cli/commit/11b93999f0dd063df64a1fc22aac25ba7a2b4c61))
+- implement dynamic documentation versioning and cleanup ([#58](https://github.com/trivoallan/regis/issues/58)) ([98f4d47](https://github.com/trivoallan/regis/commit/98f4d47db682ead6ef394a58597f4b7c88500dce))
+- migrate documentation from Antora to Docusaurus ([#57](https://github.com/trivoallan/regis/issues/57)) ([7620e6d](https://github.com/trivoallan/regis/commit/7620e6db51357f053c50458452c8edcd2c6cc0ff))
 
-## [0.7.0](https://github.com/trivoallan/regis-cli/compare/v0.6.0...v0.7.0) (2026-02-23)
+## [0.15.0](https://github.com/trivoallan/regis/compare/v0.14.2...v0.15.0) (2026-03-11)
 
 ### Features
 
-- add --cache option to the analyze command to load and use an existing report.json, skipping re-analysis. ([3a7a710](https://github.com/trivoallan/regis-cli/commit/3a7a710c9329e4f5d812804044bf8bb190b9f416))
-- add `--theme` option for HTML report generation and ignore the `/reports` directory ([8bb9e7b](https://github.com/trivoallan/regis-cli/commit/8bb9e7bec6268d5219d37818f0177846cc6aa81f))
-- add Dockerfile and GitHub Actions workflow for building and publishing regis-cli Docker images. ([dfc66c6](https://github.com/trivoallan/regis-cli/commit/dfc66c6d6231748e5a893f6b38f4caba4c3be69b))
-- add domain-trusted scorecard ([41ca994](https://github.com/trivoallan/regis-cli/commit/41ca994967acca90e4d410acae5a6317f97c4f9f))
-- Add extensive test coverage for analyzers and core components, integrate Ruff linter, and refine Skopeo schema. ([ec215e0](https://github.com/trivoallan/regis-cli/commit/ec215e0bedb0adafda66ddfa57b01eb39e17e164))
-- add GitHub Actions workflows for Super-Linter and automated releases. ([d8c8a28](https://github.com/trivoallan/regis-cli/commit/d8c8a282afdd1a5959ed8cc3b4f08daf3b54a65b))
-- Add Hadolint analyzer to lint Dockerfiles and display results. ([b8802cb](https://github.com/trivoallan/regis-cli/commit/b8802cb29cee41ab08d70c87945d3265cdc505ca))
-- Add initial HTML report for image health scores generated by regis-cli. ([419c65a](https://github.com/trivoallan/regis-cli/commit/419c65a8583704ec9e3d28dbd7448901c3374663))
-- add Skopeo analyzer and refactor versioning analyzer to use Skopeo for tag listing. ([b933931](https://github.com/trivoallan/regis-cli/commit/b9339312aae5a1a3c42aabb7347bfa71f99436a0))
-- add support for multiple output formats and templated output paths for the `run` command. ([6a70c93](https://github.com/trivoallan/regis-cli/commit/6a70c93d842609a4d091f413acc4f8aa0de94238))
-- add support for passing metadata via CLI to reports and update report schema. ([07050ea](https://github.com/trivoallan/regis-cli/commit/07050ea6ceb8bc5e3c19d1c22f5249db1b9531dc))
-- add support for templated links in scorecards and reports ([bc191af](https://github.com/trivoallan/regis-cli/commit/bc191afb2c8fad75dde499531533f35abf691fb7))
-- add time formatting and recursive metadata rendering to improve report request details display. ([f86862e](https://github.com/trivoallan/regis-cli/commit/f86862e7289083562ad348dd0a4ac96127d64f8b))
-- Add user and digest extraction and display to Skopeo image analysis. ([4cbacba](https://github.com/trivoallan/regis-cli/commit/4cbacba1b3e1ef3e4ce066dfaf32280884b25693))
-- add variant detection and reporting to the versioning analyzer ([8c61394](https://github.com/trivoallan/regis-cli/commit/8c613946148fbd8d095de1ebc1bb27269b6532b8))
-- **analyzers:** Enable private registry authentication for Trivy-based analyzers and update documentation. ([06c35eb](https://github.com/trivoallan/regis-cli/commit/06c35eb80a95a94846c29154ff658861c0331d5f))
-- **ci:** introduce GitLab CI workflow for image analysis with MR-driven triggers and review app deployments. ([d85449d](https://github.com/trivoallan/regis-cli/commit/d85449d19e9e6cb6232b72cb5940e297c4608261))
-- **cli:** Implement `generate` command with `cookiecutter` for project scaffolding and update project templates. ([44bfdf6](https://github.com/trivoallan/regis-cli/commit/44bfdf6e87070d4515ac685d43b1bf1d0974f948))
-- **cli:** Implement a CLI version command, refactor `importlib.metadata` imports, and update tests and GitLab CI artifact handling. ([d508b53](https://github.com/trivoallan/regis-cli/commit/d508b53f72bf9396f060663fc1262ccc4e62a292))
-- configure Antora Mermaid extension with a specific library URL and script stem. ([190fcc4](https://github.com/trivoallan/regis-cli/commit/190fcc49632bc50a466a2c56b8bcaf8d5ae6937d))
-- **cookiecutter:** integrate GitHub Actions metadata into analysis reports for improved traceability and remove unused scorecard levels. ([4113efb](https://github.com/trivoallan/regis-cli/commit/4113efbecb2a92497c1de451b4efc09feee96934))
-- **cookiecutter:** introduce Cookiecutter template for bootstrapping new image analysis projects with documentation, workflows, and default scorecards. ([391d74f](https://github.com/trivoallan/regis-cli/commit/391d74fa53f45e93dbb2204104a7a1869f70ad03))
-- **cookiecutter:** Introduce Cookiecutter template for project bootstrapping and add its comprehensive usage guide, refining the template's analysis workflow input. ([9ef6351](https://github.com/trivoallan/regis-cli/commit/9ef6351574929e9f217c5c1eae2fae597cf3286e))
-- display structured analyzer errors in the UI and store them in reports. ([f3dd654](https://github.com/trivoallan/regis-cli/commit/f3dd654fd8533147fef78550d72126ca3bd1a1d3))
-- **doc:** Add 'Get Started' and 'Understand Playbooks' documentation pages and update navigation. ([e791354](https://github.com/trivoallan/regis-cli/commit/e791354736aad353c06c60189e040bd9f61c0f48))
-- **docs:** initialize Antora documentation ([6ca4154](https://github.com/trivoallan/regis-cli/commit/6ca41541c17a0a942d8407c6256a59004d26805c))
-- dynamically set cookiecutter image URL and simplify release-please extra-files configuration. ([b86853a](https://github.com/trivoallan/regis-cli/commit/b86853a7f9a7b032a1171e5ff7e9dbbe724c6fbf))
-- embed regis-cli version in analysis reports and update cookiecutter image URLs. ([3ab5430](https://github.com/trivoallan/regis-cli/commit/3ab543048e4972ff9ec6c461f710c93991ad8924))
-- enhance default playbook overview with new recommendation and compliance widgets and update widget styling. ([6737a68](https://github.com/trivoallan/regis-cli/commit/6737a6839152fea82141eda59241792cb5a59985))
-- enhance registry credential resolution by normalizing Docker Hub aliases and remove the `score.html` report file. ([c2dd0e1](https://github.com/trivoallan/regis-cli/commit/c2dd0e17ab0810a247df8148d0c10f5ccf3ef682))
-- enhance report output with per-scorecard HTML files, `slug` support, and improved file writing logic. ([895c46b](https://github.com/trivoallan/regis-cli/commit/895c46bbc98d8fe650ed3a657eb98b415abb4266))
-- Enhance scorecard rule evaluation to track missing data, provide detailed condition stringification, and include rule tags in results and UI. ([cd94912](https://github.com/trivoallan/regis-cli/commit/cd949129cd65c20584c6a258c765bc8b4a378e34))
-- enhance Trivy report display for multiple targets and refine report layout with dedicated sections for links and scorecards. ([9a29bad](https://github.com/trivoallan/regis-cli/commit/9a29bad85018b3fa93bf49ce4b204d99e1cca374))
-- Implement conditional widget rendering, add new widget styling options including alignment and subvalues, and introduce new CSS for recommendations and header elements. ([78ade17](https://github.com/trivoallan/regis-cli/commit/78ade17344380013a2429d8bf519728d7d346415))
-- implement flexible registry credential resolution via new `--auth` CLI option and dedicated module ([ac5afb3](https://github.com/trivoallan/regis-cli/commit/ac5afb33639d018d4d04611777c95b194f11d6dc))
-- implement registry authentication using environment variables and add new tests. ([1894969](https://github.com/trivoallan/regis-cli/commit/18949692ac8c493f3ea62d0485efea75661e38e3))
-- initialize regis-cli project with image analysis, scorecard engine, schema validation, and comprehensive project setup. ([3af2207](https://github.com/trivoallan/regis-cli/commit/3af2207ef86d5265c7fc32997219b3841172b0bb))
-- Integrate scorecard evaluation directly into the `analyze` command, supporting multiple custom scorecards, and remove the dedicated `score` command. ([8301c36](https://github.com/trivoallan/regis-cli/commit/8301c36f77c897057a44b03abaeaf525067a4163))
-- introduce new HTML report structure and styling with updated templates and CSS. ([94f5130](https://github.com/trivoallan/regis-cli/commit/94f5130d1c7dd0e0ad34098de757242e5d81a37b))
-- Introduce OpenSSF Scorecard, Freshness, and Popularity analyzer reports with supporting configuration and robustness improvements. ([df311cc](https://github.com/trivoallan/regis-cli/commit/df311ccc38bb6c99c6c0ad0eaa9fd77fd21f49a0))
-- introduce SBOM analysis using Trivy and CycloneDX, replacing the license analyzer. ([8fa1d24](https://github.com/trivoallan/regis-cli/commit/8fa1d24166324d4224287250b3456db7251924e2))
-- introduce scorecard pages to group sections and add new size and versioning analyzers. ([2dd6b31](https://github.com/trivoallan/regis-cli/commit/2dd6b315c41cc440d57b349187acaa8e1a783b5b))
-- Introduce section-based scorecards with a new schema and remove the dependency analyzer. ([e7adbea](https://github.com/trivoallan/regis-cli/commit/e7adbeab5a8404a2b983be5dad715b3f310f66fa))
-- **playbooks:** Add support for loading playbooks from remote URLs and update cookiecutters to utilize this feature. ([69ef82f](https://github.com/trivoallan/regis-cli/commit/69ef82f57b4704135c0f3a4809a11be5294aa19b))
-- refactor cookiecutter templates to support both GitHub and GitLab platforms with dedicated CI configurations and documentation. ([295db88](https://github.com/trivoallan/regis-cli/commit/295db881cd1b2eae17f595d567fe182fef087623))
-- Refine scorecard reporting by updating schemas, engine logic, templates, and removing old report files. ([f3abf1f](https://github.com/trivoallan/regis-cli/commit/f3abf1f9a94faa638039bc959566315acf014b8f))
-- render error cards for all unhandled analyzer errors in the report ([9bf27db](https://github.com/trivoallan/regis-cli/commit/9bf27db38e8bc9a542f286aa7638dc92e19be87e))
-- replace single achieved level with a detailed summary by level in scorecard results, CLI output, and HTML report. ([c81c2ce](https://github.com/trivoallan/regis-cli/commit/c81c2ce854c25896765c2e9938361b02569c005e))
-- **report:** Embed regis-cli version into analysis reports and schema ([ac3efb5](https://github.com/trivoallan/regis-cli/commit/ac3efb55d70263c5417c02df59522201e7ca501e))
-- **reports:** Implement automatic versioning of analysis reports in GitLab CI and document its configuration. ([c985942](https://github.com/trivoallan/regis-cli/commit/c9859427c88ce06ae0cde3a64566fe6dc961a788))
-- **review:** enhance GitLab CI report delivery by committing to `reports/`, posting direct links to MR comments, and updating documentation. ([d934913](https://github.com/trivoallan/regis-cli/commit/d934913c7451a9565ce3f8a2626ae3b54f24002a))
-- **review:** enhance GitLab CI/CD to specify output filename, run site generation on the default branch, and dynamically configure Pages deployments for review apps and main branch, while updating the project backlog. ([342d0b8](https://github.com/trivoallan/regis-cli/commit/342d0b86d4b9111f5dc4d43a680c53ec4af7a335))
-- **review:** Expose analysis reports as Merge Request artifacts instead of deploying to Review Apps and update documentation accordingly. ([c4850be](https://github.com/trivoallan/regis-cli/commit/c4850be3bbd6548d6d854529a59f2353bbc595b5))
-- **review:** Implement and document a self-service analysis workflow in GitLab CI, including optional report commits to the branch and dynamic Review App links. ([016659d](https://github.com/trivoallan/regis-cli/commit/016659d34cf87e68b1af8e68e4806372c923979a))
-- **review:** Introduce automated GitLab MR labeling and conditional playbook links based on analysis outcomes. ([86e5986](https://github.com/trivoallan/regis-cli/commit/86e59862895324ebb6276d31b94b99ec53f432bf))
-- **review:** use GitLab API for merge request creation to enable setting reviewers and assignees, and add `curl` dependency. ([32f98f2](https://github.com/trivoallan/regis-cli/commit/32f98f226263ed577fd649743af69f0f7f2eff85))
-- set default output directory template to include the tag. ([157f425](https://github.com/trivoallan/regis-cli/commit/157f425cca42a71afb089dd4fff6d1944abf9c95))
-- Track and display involved data analyzers for scorecard rule evaluations in the schema, engine, and HTML report. ([42bcace](https://github.com/trivoallan/regis-cli/commit/42bcace830ae4aebb83b23c17486c79c867fc61d))
-- **ui:** Implement a new report rendering engine with a sidebar layout and dedicated pages for various analysis results. ([e1faaf9](https://github.com/trivoallan/regis-cli/commit/e1faaf92dadc215bbcdfecf90d164b5a2658ad64))
-- **ui:** Introduce new analyzer display templates and enhance the playbook engine to support section widgets. ([b998f63](https://github.com/trivoallan/regis-cli/commit/b998f63f50691a9a186ba83b1a3ebe42cb21751e))
+- **ci:** add OCI image labels to Dockerfile ([#39](https://github.com/trivoallan/regis/issues/39)) ([8deeb50](https://github.com/trivoallan/regis/commit/8deeb50114a3a54c841e3fa7bce8ae0cba5a746b))
+- **ci:** add standard OCI annotations to Dockerfile ([#43](https://github.com/trivoallan/regis/issues/43)) ([#40](https://github.com/trivoallan/regis/issues/40)) ([6c16c42](https://github.com/trivoallan/regis/commit/6c16c4256143f1139b4d46fcfa25ead7d6cc212a))
+- **ci:** allow Docker authentication to prevent rate limits ([#45](https://github.com/trivoallan/regis/issues/45)) ([15f985b](https://github.com/trivoallan/regis/commit/15f985bc13bcdd300746f2653a514cf7745b229f))
+
+## [0.14.2](https://github.com/trivoallan/regis/compare/v0.14.1...v0.14.2) (2026-03-05)
+
+### Documentation
+
+- refine project description and branding ([#37](https://github.com/trivoallan/regis/issues/37)) ([bbe8fc7](https://github.com/trivoallan/regis/commit/bbe8fc7e796df8974a256cdbf83a67978f1f9228))
+
+## [0.14.1](https://github.com/trivoallan/regis/compare/v0.14.0...v0.14.1) (2026-03-05)
+
+### Documentation
+
+- **README:** redesign README.md and update report preview ([#32](https://github.com/trivoallan/regis/issues/32)) ([31d27fb](https://github.com/trivoallan/regis/commit/31d27fb132276e4eaea7dd2c447da6cc011a5870))
+
+## [0.14.0](https://github.com/trivoallan/regis/compare/v0.13.0...v0.14.0) (2026-03-05)
+
+### Features
+
+- **ci:** migrate linting to trunk and add mypy/hadolint ([#29](https://github.com/trivoallan/regis/issues/29)) ([4219843](https://github.com/trivoallan/regis/commit/4219843ff5ecb512f708e6cc8acb3f824e841213))
+- **cli:** refactor generate to bootstrap command group ([#28](https://github.com/trivoallan/regis/issues/28)) ([ee9710e](https://github.com/trivoallan/regis/commit/ee9710eae6ea9b92c6e00971ad18fe0742f65904))
+
+### Documentation
+
+- modernize getting started and project generation guides ([#26](https://github.com/trivoallan/regis/issues/26)) ([2603c0c](https://github.com/trivoallan/regis/commit/2603c0c1a1d02ff438953665174324c258229cbb))
+- **playbook:** explain how to use bootstrap playbook in documentation ([#30](https://github.com/trivoallan/regis/issues/30)) ([e1d20df](https://github.com/trivoallan/regis/commit/e1d20df294ab9e67013b0d207820d2069d59debe))
+
+## [0.13.0](https://github.com/trivoallan/regis/compare/v0.12.0...v0.13.0) (2026-03-05)
+
+### Features
+
+- **analyzer/versioning:** implement digest-based reporting and release lines hierarchy ([#21](https://github.com/trivoallan/regis/issues/21)) ([e54d04f](https://github.com/trivoallan/regis/commit/e54d04f17077333fbc73d1b133a5b7b61228ed18))
+- **ci:** implement gitlab subcommand for CI workflow ([#18](https://github.com/trivoallan/regis/issues/18)) ([515069c](https://github.com/trivoallan/regis/commit/515069cb5263b7addaa47551681cbcb43d3da995))
+
+### Documentation
+
+- **architecture:** add C4 Context and Container diagrams to architecture overview ([#24](https://github.com/trivoallan/regis/issues/24)) ([fa8504e](https://github.com/trivoallan/regis/commit/fa8504e8e2ee2a5c045f652b5a1aa6ce453cb766))
+- **integrations:** group GitLab and GitHub documentation into Integrations section ([#22](https://github.com/trivoallan/regis/issues/22)) ([c045323](https://github.com/trivoallan/regis/commit/c04532366de32ec7f5eb07e1bbbde2cb6bc8f55f))
+- **integrations:** restructure integration sub-chapter and add cookiecutter tips ([#23](https://github.com/trivoallan/regis/issues/23)) ([1a5616b](https://github.com/trivoallan/regis/commit/1a5616b2cea3851fba2b6f3c5c3091b2e8afcf7f))
+
+## [0.12.0](https://github.com/trivoallan/regis/compare/v0.11.0...v0.12.0) (2026-03-05)
+
+### Features
+
+- **playbook:** add support for multiple titled GitLab MR description checklists with backward compatibility. ([f865cb0](https://github.com/trivoallan/regis/commit/f865cb00735d90a8185bb98f87373d05431b5caf))
 
 ### Bug Fixes
 
-- **analyzers:** Expose analyzer results at the root of the scorecard evaluation context and update default Trivy rules. ([460871b](https://github.com/trivoallan/regis-cli/commit/460871ba19698bfff3b33f40183f742501d80045))
-- **analyzers:** prevent Skopeo analyzer from failing on index image inspection and formalize commit message guidelines. ([c80f88c](https://github.com/trivoallan/regis-cli/commit/c80f88c0dc4dcefa2610c959812d8232649629a3))
-- **build:** install git in Dockerfile ([dfffabd](https://github.com/trivoallan/regis-cli/commit/dfffabd778a1fbbe8d371f2d8713f95568427d04))
-- **ci:** add workflow_dispatch trigger and refine tag matching for Docker publish workflow. ([21b7549](https://github.com/trivoallan/regis-cli/commit/21b754967ad212cea23c0a13d623ce06902c0058))
-- **ci:** configure releaser-pleaser action with release token ([ed8a1f2](https://github.com/trivoallan/regis-cli/commit/ed8a1f2ff386d0f54b91b4b2cde3c07b770c73aa))
-- **docker:** address permission denied errors in Docker by setting user UID/GID, ensuring directory writability, and adding a report output fallback. ([ddaba2c](https://github.com/trivoallan/regis-cli/commit/ddaba2ceb4c931fca1f68555e63e6408a32baec6))
-- **docker:** Resolve Docker container permission issues by creating a home directory for the `regis` user and setting report directory permissions, and update the analysis workflow. ([9cf4087](https://github.com/trivoallan/regis-cli/commit/9cf408788e2923524da428b0eb19f2eb90f763bf))
-- Prevent `AttributeError` in scorecard link processing by adding type checks and update `regis-cli` workflow flags to long form. ([a02caa3](https://github.com/trivoallan/regis-cli/commit/a02caa33bb8fc47fbed119bdd797ad84eeb7cdc0))
+- **gitlab:** Improve GitLab CI report path handling ([9a7914f](https://github.com/trivoallan/regis/commit/9a7914f8a5828eb2b8493d517dcc92af4f8df1a4))
+- **template:** add missing `format_number` Jinja2 filter ([f76b30b](https://github.com/trivoallan/regis/commit/f76b30b803125177543e2d47098c345f012b3b4d))
+
+## [0.11.0](https://github.com/trivoallan/regis/compare/v0.10.0...v0.11.0) (2026-03-05)
+
+### Features
+
+- **cli:** Add CLI command to check image manifest accessibility. Use it to prevent bogus requests. ([be291ee](https://github.com/trivoallan/regis/commit/be291ee5e475c9617187549df2a88f8b7d229c67))
+- **playbook:** Introduce configurable additional MR content generation from templates ([340f44d](https://github.com/trivoallan/regis/commit/340f44d04891039080603fa2a86ba634f49ad82c))
+
+### Documentation
+
+- **playbook:** Document GitLab MR checklists with conditional display and pre-checking based on analysis results. ([9ca7a85](https://github.com/trivoallan/regis/commit/9ca7a85fa885f566591dff68617924337b2cff7b))
+
+## [0.10.0](https://github.com/trivoallan/regis/compare/v0.9.0...v0.10.0) (2026-03-04)
+
+### Features
+
+- **analyzer/size:** add layer digest to the size analysis output for individual layers ([9393b48](https://github.com/trivoallan/regis/commit/9393b48d6ebda82b7be2e9db5aad74a014f415f3))
+- **ci:** Add a configurable playbook URL input to GitLab CI/CD. ([801dd3c](https://github.com/trivoallan/regis/commit/801dd3c861b0fbc0af4b279204affd4d06c352cc))
+- **ci:** make regis image version configurable in generated GitLab CI. ([8da67d0](https://github.com/trivoallan/regis/commit/8da67d08b4e12433157cb67a9516e269c732a5c3))
+- **gitlab:** append review checklist from `report.json` to merge request descriptions and unquote `$REGIS_CLI_IMAGE` in CI. ([08211a2](https://github.com/trivoallan/regis/commit/08211a264c32147c22e4c98aae089fdf02514501))
+- **playbook:** Enhance GitLab MR checklist items with `show_if` and `check_if` conditions. ([ccde35e](https://github.com/trivoallan/regis/commit/ccde35eb51a62199cb07113d9da1dda0240e2184))
+
+### Bug Fixes
+
+- **gitlab:** Fix report generation path ([4a1cfe7](https://github.com/trivoallan/regis/commit/4a1cfe7f141b41736dbc928abcf4367c93b5476d))
+
+## [0.9.0](https://github.com/trivoallan/regis/compare/v0.8.0...v0.9.0) (2026-03-04)
+
+### Features
+
+- **playbook:** Implement GitLab MR description checklist feature for custom compliance checks. ([c22402e](https://github.com/trivoallan/regis/commit/c22402ec2cab75ad19c2ba227d56eec2eb9d35a6))
+
+### Bug Fixes
+
+- **ci:** Fix broken Publish Documentation workflow ([300e313](https://github.com/trivoallan/regis/commit/300e3133246ded1ff55b7aac01ee265ffada76e4))
+
+## [0.8.0](https://github.com/trivoallan/regis/compare/v0.7.0...v0.8.0) (2026-03-04)
+
+### Features
+
+- **analyzer/dockle:** add Dockle analyzer for container image security and best practices linting with supporting schema, tests, and documentation. ([e32c1f2](https://github.com/trivoallan/regis/commit/e32c1f2f375e284619b521d37a8f05b4f8e75fff))
+- **playbook:** Implement named addressing for playbook pages and sections ([cdbaefa](https://github.com/trivoallan/regis/commit/cdbaefae55c5a25b828944dc8ec1f0f41e7fc0d6))
+- **playbook:** integrate Dockle security analysis with a new policy, dedicated UI, and updated documentation. ([7806a53](https://github.com/trivoallan/regis/commit/7806a53d52c30027926a24bc5fa18da08c7506e3))
+
+### Documentation
+
+- Add script to generate example reports and update documentation with new report data and publishing workflow. ([3598a1e](https://github.com/trivoallan/regis/commit/3598a1e79f47bc177e94e7a5ca10111beb08b50a))
+- Configure Antora to generate a documentation website for each release ([077497b](https://github.com/trivoallan/regis/commit/077497bd962b5906bcf0e43715eb7a7588fe1e16))
+- Implemented automated generation of schema documentation and integrate it into the Antora build workflow. ([11b9399](https://github.com/trivoallan/regis/commit/11b93999f0dd063df64a1fc22aac25ba7a2b4c61))
+
+## [0.7.0](https://github.com/trivoallan/regis/compare/v0.6.0...v0.7.0) (2026-02-23)
+
+### Features
+
+- add --cache option to the analyze command to load and use an existing report.json, skipping re-analysis. ([3a7a710](https://github.com/trivoallan/regis/commit/3a7a710c9329e4f5d812804044bf8bb190b9f416))
+- add `--theme` option for HTML report generation and ignore the `/reports` directory ([8bb9e7b](https://github.com/trivoallan/regis/commit/8bb9e7bec6268d5219d37818f0177846cc6aa81f))
+- add Dockerfile and GitHub Actions workflow for building and publishing regis Docker images. ([dfc66c6](https://github.com/trivoallan/regis/commit/dfc66c6d6231748e5a893f6b38f4caba4c3be69b))
+- add domain-trusted scorecard ([41ca994](https://github.com/trivoallan/regis/commit/41ca994967acca90e4d410acae5a6317f97c4f9f))
+- Add extensive test coverage for analyzers and core components, integrate Ruff linter, and refine Skopeo schema. ([ec215e0](https://github.com/trivoallan/regis/commit/ec215e0bedb0adafda66ddfa57b01eb39e17e164))
+- add GitHub Actions workflows for Super-Linter and automated releases. ([d8c8a28](https://github.com/trivoallan/regis/commit/d8c8a282afdd1a5959ed8cc3b4f08daf3b54a65b))
+- Add Hadolint analyzer to lint Dockerfiles and display results. ([b8802cb](https://github.com/trivoallan/regis/commit/b8802cb29cee41ab08d70c87945d3265cdc505ca))
+- Add initial HTML report for image health scores generated by regis. ([419c65a](https://github.com/trivoallan/regis/commit/419c65a8583704ec9e3d28dbd7448901c3374663))
+- add Skopeo analyzer and refactor versioning analyzer to use Skopeo for tag listing. ([b933931](https://github.com/trivoallan/regis/commit/b9339312aae5a1a3c42aabb7347bfa71f99436a0))
+- add support for multiple output formats and templated output paths for the `run` command. ([6a70c93](https://github.com/trivoallan/regis/commit/6a70c93d842609a4d091f413acc4f8aa0de94238))
+- add support for passing metadata via CLI to reports and update report schema. ([07050ea](https://github.com/trivoallan/regis/commit/07050ea6ceb8bc5e3c19d1c22f5249db1b9531dc))
+- add support for templated links in scorecards and reports ([bc191af](https://github.com/trivoallan/regis/commit/bc191afb2c8fad75dde499531533f35abf691fb7))
+- add time formatting and recursive metadata rendering to improve report request details display. ([f86862e](https://github.com/trivoallan/regis/commit/f86862e7289083562ad348dd0a4ac96127d64f8b))
+- Add user and digest extraction and display to Skopeo image analysis. ([4cbacba](https://github.com/trivoallan/regis/commit/4cbacba1b3e1ef3e4ce066dfaf32280884b25693))
+- add variant detection and reporting to the versioning analyzer ([8c61394](https://github.com/trivoallan/regis/commit/8c613946148fbd8d095de1ebc1bb27269b6532b8))
+- **analyzers:** Enable private registry authentication for Trivy-based analyzers and update documentation. ([06c35eb](https://github.com/trivoallan/regis/commit/06c35eb80a95a94846c29154ff658861c0331d5f))
+- **ci:** introduce GitLab CI workflow for image analysis with MR-driven triggers and review app deployments. ([d85449d](https://github.com/trivoallan/regis/commit/d85449d19e9e6cb6232b72cb5940e297c4608261))
+- **cli:** Implement `generate` command with `cookiecutter` for project scaffolding and update project templates. ([44bfdf6](https://github.com/trivoallan/regis/commit/44bfdf6e87070d4515ac685d43b1bf1d0974f948))
+- **cli:** Implement a CLI version command, refactor `importlib.metadata` imports, and update tests and GitLab CI artifact handling. ([d508b53](https://github.com/trivoallan/regis/commit/d508b53f72bf9396f060663fc1262ccc4e62a292))
+- configure Antora Mermaid extension with a specific library URL and script stem. ([190fcc4](https://github.com/trivoallan/regis/commit/190fcc49632bc50a466a2c56b8bcaf8d5ae6937d))
+- **cookiecutter:** integrate GitHub Actions metadata into analysis reports for improved traceability and remove unused scorecard levels. ([4113efb](https://github.com/trivoallan/regis/commit/4113efbecb2a92497c1de451b4efc09feee96934))
+- **cookiecutter:** introduce Cookiecutter template for bootstrapping new image analysis projects with documentation, workflows, and default scorecards. ([391d74f](https://github.com/trivoallan/regis/commit/391d74fa53f45e93dbb2204104a7a1869f70ad03))
+- **cookiecutter:** Introduce Cookiecutter template for project bootstrapping and add its comprehensive usage guide, refining the template's analysis workflow input. ([9ef6351](https://github.com/trivoallan/regis/commit/9ef6351574929e9f217c5c1eae2fae597cf3286e))
+- display structured analyzer errors in the UI and store them in reports. ([f3dd654](https://github.com/trivoallan/regis/commit/f3dd654fd8533147fef78550d72126ca3bd1a1d3))
+- **doc:** Add 'Get Started' and 'Understand Playbooks' documentation pages and update navigation. ([e791354](https://github.com/trivoallan/regis/commit/e791354736aad353c06c60189e040bd9f61c0f48))
+- **docs:** initialize Antora documentation ([6ca4154](https://github.com/trivoallan/regis/commit/6ca41541c17a0a942d8407c6256a59004d26805c))
+- dynamically set cookiecutter image URL and simplify release-please extra-files configuration. ([b86853a](https://github.com/trivoallan/regis/commit/b86853a7f9a7b032a1171e5ff7e9dbbe724c6fbf))
+- embed regis version in analysis reports and update cookiecutter image URLs. ([3ab5430](https://github.com/trivoallan/regis/commit/3ab543048e4972ff9ec6c461f710c93991ad8924))
+- enhance default playbook overview with new recommendation and compliance widgets and update widget styling. ([6737a68](https://github.com/trivoallan/regis/commit/6737a6839152fea82141eda59241792cb5a59985))
+- enhance registry credential resolution by normalizing Docker Hub aliases and remove the `score.html` report file. ([c2dd0e1](https://github.com/trivoallan/regis/commit/c2dd0e17ab0810a247df8148d0c10f5ccf3ef682))
+- enhance report output with per-scorecard HTML files, `slug` support, and improved file writing logic. ([895c46b](https://github.com/trivoallan/regis/commit/895c46bbc98d8fe650ed3a657eb98b415abb4266))
+- Enhance scorecard rule evaluation to track missing data, provide detailed condition stringification, and include rule tags in results and UI. ([cd94912](https://github.com/trivoallan/regis/commit/cd949129cd65c20584c6a258c765bc8b4a378e34))
+- enhance Trivy report display for multiple targets and refine report layout with dedicated sections for links and scorecards. ([9a29bad](https://github.com/trivoallan/regis/commit/9a29bad85018b3fa93bf49ce4b204d99e1cca374))
+- Implement conditional widget rendering, add new widget styling options including alignment and subvalues, and introduce new CSS for recommendations and header elements. ([78ade17](https://github.com/trivoallan/regis/commit/78ade17344380013a2429d8bf519728d7d346415))
+- implement flexible registry credential resolution via new `--auth` CLI option and dedicated module ([ac5afb3](https://github.com/trivoallan/regis/commit/ac5afb33639d018d4d04611777c95b194f11d6dc))
+- implement registry authentication using environment variables and add new tests. ([1894969](https://github.com/trivoallan/regis/commit/18949692ac8c493f3ea62d0485efea75661e38e3))
+- initialize regis project with image analysis, scorecard engine, schema validation, and comprehensive project setup. ([3af2207](https://github.com/trivoallan/regis/commit/3af2207ef86d5265c7fc32997219b3841172b0bb))
+- Integrate scorecard evaluation directly into the `analyze` command, supporting multiple custom scorecards, and remove the dedicated `score` command. ([8301c36](https://github.com/trivoallan/regis/commit/8301c36f77c897057a44b03abaeaf525067a4163))
+- introduce new HTML report structure and styling with updated templates and CSS. ([94f5130](https://github.com/trivoallan/regis/commit/94f5130d1c7dd0e0ad34098de757242e5d81a37b))
+- Introduce OpenSSF Scorecard, Freshness, and Popularity analyzer reports with supporting configuration and robustness improvements. ([df311cc](https://github.com/trivoallan/regis/commit/df311ccc38bb6c99c6c0ad0eaa9fd77fd21f49a0))
+- introduce SBOM analysis using Trivy and CycloneDX, replacing the license analyzer. ([8fa1d24](https://github.com/trivoallan/regis/commit/8fa1d24166324d4224287250b3456db7251924e2))
+- introduce scorecard pages to group sections and add new size and versioning analyzers. ([2dd6b31](https://github.com/trivoallan/regis/commit/2dd6b315c41cc440d57b349187acaa8e1a783b5b))
+- Introduce section-based scorecards with a new schema and remove the dependency analyzer. ([e7adbea](https://github.com/trivoallan/regis/commit/e7adbeab5a8404a2b983be5dad715b3f310f66fa))
+- **playbooks:** Add support for loading playbooks from remote URLs and update cookiecutters to utilize this feature. ([69ef82f](https://github.com/trivoallan/regis/commit/69ef82f57b4704135c0f3a4809a11be5294aa19b))
+- refactor cookiecutter templates to support both GitHub and GitLab platforms with dedicated CI configurations and documentation. ([295db88](https://github.com/trivoallan/regis/commit/295db881cd1b2eae17f595d567fe182fef087623))
+- Refine scorecard reporting by updating schemas, engine logic, templates, and removing old report files. ([f3abf1f](https://github.com/trivoallan/regis/commit/f3abf1f9a94faa638039bc959566315acf014b8f))
+- render error cards for all unhandled analyzer errors in the report ([9bf27db](https://github.com/trivoallan/regis/commit/9bf27db38e8bc9a542f286aa7638dc92e19be87e))
+- replace single achieved level with a detailed summary by level in scorecard results, CLI output, and HTML report. ([c81c2ce](https://github.com/trivoallan/regis/commit/c81c2ce854c25896765c2e9938361b02569c005e))
+- **report:** Embed regis version into analysis reports and schema ([ac3efb5](https://github.com/trivoallan/regis/commit/ac3efb55d70263c5417c02df59522201e7ca501e))
+- **reports:** Implement automatic versioning of analysis reports in GitLab CI and document its configuration. ([c985942](https://github.com/trivoallan/regis/commit/c9859427c88ce06ae0cde3a64566fe6dc961a788))
+- **review:** enhance GitLab CI report delivery by committing to `reports/`, posting direct links to MR comments, and updating documentation. ([d934913](https://github.com/trivoallan/regis/commit/d934913c7451a9565ce3f8a2626ae3b54f24002a))
+- **review:** enhance GitLab CI/CD to specify output filename, run site generation on the default branch, and dynamically configure Pages deployments for review apps and main branch, while updating the project backlog. ([342d0b8](https://github.com/trivoallan/regis/commit/342d0b86d4b9111f5dc4d43a680c53ec4af7a335))
+- **review:** Expose analysis reports as Merge Request artifacts instead of deploying to Review Apps and update documentation accordingly. ([c4850be](https://github.com/trivoallan/regis/commit/c4850be3bbd6548d6d854529a59f2353bbc595b5))
+- **review:** Implement and document a self-service analysis workflow in GitLab CI, including optional report commits to the branch and dynamic Review App links. ([016659d](https://github.com/trivoallan/regis/commit/016659d34cf87e68b1af8e68e4806372c923979a))
+- **review:** Introduce automated GitLab MR labeling and conditional playbook links based on analysis outcomes. ([86e5986](https://github.com/trivoallan/regis/commit/86e59862895324ebb6276d31b94b99ec53f432bf))
+- **review:** use GitLab API for merge request creation to enable setting reviewers and assignees, and add `curl` dependency. ([32f98f2](https://github.com/trivoallan/regis/commit/32f98f226263ed577fd649743af69f0f7f2eff85))
+- set default output directory template to include the tag. ([157f425](https://github.com/trivoallan/regis/commit/157f425cca42a71afb089dd4fff6d1944abf9c95))
+- Track and display involved data analyzers for scorecard rule evaluations in the schema, engine, and HTML report. ([42bcace](https://github.com/trivoallan/regis/commit/42bcace830ae4aebb83b23c17486c79c867fc61d))
+- **ui:** Implement a new report rendering engine with a sidebar layout and dedicated pages for various analysis results. ([e1faaf9](https://github.com/trivoallan/regis/commit/e1faaf92dadc215bbcdfecf90d164b5a2658ad64))
+- **ui:** Introduce new analyzer display templates and enhance the playbook engine to support section widgets. ([b998f63](https://github.com/trivoallan/regis/commit/b998f63f50691a9a186ba83b1a3ebe42cb21751e))
+
+### Bug Fixes
+
+- **analyzers:** Expose analyzer results at the root of the scorecard evaluation context and update default Trivy rules. ([460871b](https://github.com/trivoallan/regis/commit/460871ba19698bfff3b33f40183f742501d80045))
+- **analyzers:** prevent Skopeo analyzer from failing on index image inspection and formalize commit message guidelines. ([c80f88c](https://github.com/trivoallan/regis/commit/c80f88c0dc4dcefa2610c959812d8232649629a3))
+- **build:** install git in Dockerfile ([dfffabd](https://github.com/trivoallan/regis/commit/dfffabd778a1fbbe8d371f2d8713f95568427d04))
+- **ci:** add workflow_dispatch trigger and refine tag matching for Docker publish workflow. ([21b7549](https://github.com/trivoallan/regis/commit/21b754967ad212cea23c0a13d623ce06902c0058))
+- **ci:** configure releaser-pleaser action with release token ([ed8a1f2](https://github.com/trivoallan/regis/commit/ed8a1f2ff386d0f54b91b4b2cde3c07b770c73aa))
+- **docker:** address permission denied errors in Docker by setting user UID/GID, ensuring directory writability, and adding a report output fallback. ([ddaba2c](https://github.com/trivoallan/regis/commit/ddaba2ceb4c931fca1f68555e63e6408a32baec6))
+- **docker:** Resolve Docker container permission issues by creating a home directory for the `regis` user and setting report directory permissions, and update the analysis workflow. ([9cf4087](https://github.com/trivoallan/regis/commit/9cf408788e2923524da428b0eb19f2eb90f763bf))
+- Prevent `AttributeError` in scorecard link processing by adding type checks and update `regis` workflow flags to long form. ([a02caa3](https://github.com/trivoallan/regis/commit/a02caa33bb8fc47fbed119bdd797ad84eeb7cdc0))
 
 ### Dependencies
 
-- Populate Pipfile.lock with resolved dependency versions. ([e87ee2c](https://github.com/trivoallan/regis-cli/commit/e87ee2cd971b4d35c8cf4ccbf1ad5ee574701d58))
+- Populate Pipfile.lock with resolved dependency versions. ([e87ee2c](https://github.com/trivoallan/regis/commit/e87ee2cd971b4d35c8cf4ccbf1ad5ee574701d58))
 
 ### Documentation
 
-- Add a comprehensive architectural overview, update documentation structure, and refine the GitLab CI template. ([194d574](https://github.com/trivoallan/regis-cli/commit/194d5744a5bf45f316f757bcce05aa0e5cc4047e))
-- add documentation for the default playbook, detailing its rules and report organization, and link it in the navigation. ([e67daab](https://github.com/trivoallan/regis-cli/commit/e67daabd9cb32faa2672a0deae48d0e7d95482d8))
-- Add new example report assets and update documentation pages. ([a247d93](https://github.com/trivoallan/regis-cli/commit/a247d93417d32419e3cc89b1c944a4318a618b93))
-- **commitmessages:** add Google Blockly commit style guide link ([8c61162](https://github.com/trivoallan/regis-cli/commit/8c611621d59b4600f0cfcea2d6970387b40ccb2c))
-- Enhance GitHub Actions and GitLab CI integration guides with comprehensive examples, CI metadata, and deployment to respective pages services. ([3ae83e5](https://github.com/trivoallan/regis-cli/commit/3ae83e54fc89f8254602687afe4871cf379a4296))
-- enhance Python, CI/CD, commit message, and documentation rules with new tools, scope definitions, and process clarifications. ([6f1d111](https://github.com/trivoallan/regis-cli/commit/6f1d11119d40d556b0a0bff7c963939b49f6421a))
-- **gitlab-workflow:** add section on GitLab Review Apps for Premium/Ultimate tiers with CI/CD configuration example ([c919743](https://github.com/trivoallan/regis-cli/commit/c91974304d212da4f55139ba9124c3fa73336e25))
-- **rules:** add commit message guidelines and refine CI/CD semantic versioning and conventional commit references. ([376c16e](https://github.com/trivoallan/regis-cli/commit/376c16eb2ac1cd1d9f5c47dfb51bf6c1eaabaeb5))
-- **ui:** enable mermaid diagram rendering ([8edd450](https://github.com/trivoallan/regis-cli/commit/8edd4505f23d26cbb34441e8f5424ee481558c1b))
-- **ui:** use correct mermaid extension package ([c622961](https://github.com/trivoallan/regis-cli/commit/c6229618d30d9629194ab74fe8a21b383f2e6cc1))
-- **ui:** use correct mermaid extension package in playbook ([e7fed19](https://github.com/trivoallan/regis-cli/commit/e7fed19ea0f9dbc7c30d1dff9a05a2831fbbcb94))
-- Update TIP block formatting in playbooks and add documentation versioning and CLI control to notes. ([544e51c](https://github.com/trivoallan/regis-cli/commit/544e51ca75c2dcb9430009d6b859921caeb30715))
+- Add a comprehensive architectural overview, update documentation structure, and refine the GitLab CI template. ([194d574](https://github.com/trivoallan/regis/commit/194d5744a5bf45f316f757bcce05aa0e5cc4047e))
+- add documentation for the default playbook, detailing its rules and report organization, and link it in the navigation. ([e67daab](https://github.com/trivoallan/regis/commit/e67daabd9cb32faa2672a0deae48d0e7d95482d8))
+- Add new example report assets and update documentation pages. ([a247d93](https://github.com/trivoallan/regis/commit/a247d93417d32419e3cc89b1c944a4318a618b93))
+- **commitmessages:** add Google Blockly commit style guide link ([8c61162](https://github.com/trivoallan/regis/commit/8c611621d59b4600f0cfcea2d6970387b40ccb2c))
+- Enhance GitHub Actions and GitLab CI integration guides with comprehensive examples, CI metadata, and deployment to respective pages services. ([3ae83e5](https://github.com/trivoallan/regis/commit/3ae83e54fc89f8254602687afe4871cf379a4296))
+- enhance Python, CI/CD, commit message, and documentation rules with new tools, scope definitions, and process clarifications. ([6f1d111](https://github.com/trivoallan/regis/commit/6f1d11119d40d556b0a0bff7c963939b49f6421a))
+- **gitlab-workflow:** add section on GitLab Review Apps for Premium/Ultimate tiers with CI/CD configuration example ([c919743](https://github.com/trivoallan/regis/commit/c91974304d212da4f55139ba9124c3fa73336e25))
+- **rules:** add commit message guidelines and refine CI/CD semantic versioning and conventional commit references. ([376c16e](https://github.com/trivoallan/regis/commit/376c16eb2ac1cd1d9f5c47dfb51bf6c1eaabaeb5))
+- **ui:** enable mermaid diagram rendering ([8edd450](https://github.com/trivoallan/regis/commit/8edd4505f23d26cbb34441e8f5424ee481558c1b))
+- **ui:** use correct mermaid extension package ([c622961](https://github.com/trivoallan/regis/commit/c6229618d30d9629194ab74fe8a21b383f2e6cc1))
+- **ui:** use correct mermaid extension package in playbook ([e7fed19](https://github.com/trivoallan/regis/commit/e7fed19ea0f9dbc7c30d1dff9a05a2831fbbcb94))
+- Update TIP block formatting in playbooks and add documentation versioning and CLI control to notes. ([544e51c](https://github.com/trivoallan/regis/commit/544e51ca75c2dcb9430009d6b859921caeb30715))
 
-## [0.6.0](https://github.com/trivoallan/regis-cli/compare/regis-cli-v0.5.0...regis-cli-v0.6.0) (2026-02-21)
+## [0.6.0](https://github.com/trivoallan/regis/compare/regis-v0.5.0...regis-v0.6.0) (2026-02-21)
 
 ### Features
 
-- add --cache option to the analyze command to load and use an existing report.json, skipping re-analysis. ([3a7a710](https://github.com/trivoallan/regis-cli/commit/3a7a710c9329e4f5d812804044bf8bb190b9f416))
-- add `--theme` option for HTML report generation and ignore the `/reports` directory ([8bb9e7b](https://github.com/trivoallan/regis-cli/commit/8bb9e7bec6268d5219d37818f0177846cc6aa81f))
-- add Dockerfile and GitHub Actions workflow for building and publishing regis-cli Docker images. ([dfc66c6](https://github.com/trivoallan/regis-cli/commit/dfc66c6d6231748e5a893f6b38f4caba4c3be69b))
-- add domain-trusted scorecard ([41ca994](https://github.com/trivoallan/regis-cli/commit/41ca994967acca90e4d410acae5a6317f97c4f9f))
-- Add extensive test coverage for analyzers and core components, integrate Ruff linter, and refine Skopeo schema. ([ec215e0](https://github.com/trivoallan/regis-cli/commit/ec215e0bedb0adafda66ddfa57b01eb39e17e164))
-- add GitHub Actions workflows for Super-Linter and automated releases. ([d8c8a28](https://github.com/trivoallan/regis-cli/commit/d8c8a282afdd1a5959ed8cc3b4f08daf3b54a65b))
-- Add Hadolint analyzer to lint Dockerfiles and display results. ([b8802cb](https://github.com/trivoallan/regis-cli/commit/b8802cb29cee41ab08d70c87945d3265cdc505ca))
-- Add initial HTML report for image health scores generated by regis-cli. ([419c65a](https://github.com/trivoallan/regis-cli/commit/419c65a8583704ec9e3d28dbd7448901c3374663))
-- add Skopeo analyzer and refactor versioning analyzer to use Skopeo for tag listing. ([b933931](https://github.com/trivoallan/regis-cli/commit/b9339312aae5a1a3c42aabb7347bfa71f99436a0))
-- add support for multiple output formats and templated output paths for the `run` command. ([6a70c93](https://github.com/trivoallan/regis-cli/commit/6a70c93d842609a4d091f413acc4f8aa0de94238))
-- add support for passing metadata via CLI to reports and update report schema. ([07050ea](https://github.com/trivoallan/regis-cli/commit/07050ea6ceb8bc5e3c19d1c22f5249db1b9531dc))
-- add support for templated links in scorecards and reports ([bc191af](https://github.com/trivoallan/regis-cli/commit/bc191afb2c8fad75dde499531533f35abf691fb7))
-- add time formatting and recursive metadata rendering to improve report request details display. ([f86862e](https://github.com/trivoallan/regis-cli/commit/f86862e7289083562ad348dd0a4ac96127d64f8b))
-- Add user and digest extraction and display to Skopeo image analysis. ([4cbacba](https://github.com/trivoallan/regis-cli/commit/4cbacba1b3e1ef3e4ce066dfaf32280884b25693))
-- add variant detection and reporting to the versioning analyzer ([8c61394](https://github.com/trivoallan/regis-cli/commit/8c613946148fbd8d095de1ebc1bb27269b6532b8))
-- **analyzers:** Enable private registry authentication for Trivy-based analyzers and update documentation. ([06c35eb](https://github.com/trivoallan/regis-cli/commit/06c35eb80a95a94846c29154ff658861c0331d5f))
-- **ci:** introduce GitLab CI workflow for image analysis with MR-driven triggers and review app deployments. ([d85449d](https://github.com/trivoallan/regis-cli/commit/d85449d19e9e6cb6232b72cb5940e297c4608261))
-- **cli:** Implement `generate` command with `cookiecutter` for project scaffolding and update project templates. ([44bfdf6](https://github.com/trivoallan/regis-cli/commit/44bfdf6e87070d4515ac685d43b1bf1d0974f948))
-- **cli:** Implement a CLI version command, refactor `importlib.metadata` imports, and update tests and GitLab CI artifact handling. ([d508b53](https://github.com/trivoallan/regis-cli/commit/d508b53f72bf9396f060663fc1262ccc4e62a292))
-- configure Antora Mermaid extension with a specific library URL and script stem. ([190fcc4](https://github.com/trivoallan/regis-cli/commit/190fcc49632bc50a466a2c56b8bcaf8d5ae6937d))
-- **cookiecutter:** integrate GitHub Actions metadata into analysis reports for improved traceability and remove unused scorecard levels. ([4113efb](https://github.com/trivoallan/regis-cli/commit/4113efbecb2a92497c1de451b4efc09feee96934))
-- **cookiecutter:** introduce Cookiecutter template for bootstrapping new image analysis projects with documentation, workflows, and default scorecards. ([391d74f](https://github.com/trivoallan/regis-cli/commit/391d74fa53f45e93dbb2204104a7a1869f70ad03))
-- **cookiecutter:** Introduce Cookiecutter template for project bootstrapping and add its comprehensive usage guide, refining the template's analysis workflow input. ([9ef6351](https://github.com/trivoallan/regis-cli/commit/9ef6351574929e9f217c5c1eae2fae597cf3286e))
-- display structured analyzer errors in the UI and store them in reports. ([f3dd654](https://github.com/trivoallan/regis-cli/commit/f3dd654fd8533147fef78550d72126ca3bd1a1d3))
-- **doc:** Add 'Get Started' and 'Understand Playbooks' documentation pages and update navigation. ([e791354](https://github.com/trivoallan/regis-cli/commit/e791354736aad353c06c60189e040bd9f61c0f48))
-- **docs:** initialize Antora documentation ([6ca4154](https://github.com/trivoallan/regis-cli/commit/6ca41541c17a0a942d8407c6256a59004d26805c))
-- dynamically set cookiecutter image URL and simplify release-please extra-files configuration. ([b86853a](https://github.com/trivoallan/regis-cli/commit/b86853a7f9a7b032a1171e5ff7e9dbbe724c6fbf))
-- embed regis-cli version in analysis reports and update cookiecutter image URLs. ([3ab5430](https://github.com/trivoallan/regis-cli/commit/3ab543048e4972ff9ec6c461f710c93991ad8924))
-- enhance default playbook overview with new recommendation and compliance widgets and update widget styling. ([6737a68](https://github.com/trivoallan/regis-cli/commit/6737a6839152fea82141eda59241792cb5a59985))
-- enhance registry credential resolution by normalizing Docker Hub aliases and remove the `score.html` report file. ([c2dd0e1](https://github.com/trivoallan/regis-cli/commit/c2dd0e17ab0810a247df8148d0c10f5ccf3ef682))
-- enhance report output with per-scorecard HTML files, `slug` support, and improved file writing logic. ([895c46b](https://github.com/trivoallan/regis-cli/commit/895c46bbc98d8fe650ed3a657eb98b415abb4266))
-- Enhance scorecard rule evaluation to track missing data, provide detailed condition stringification, and include rule tags in results and UI. ([cd94912](https://github.com/trivoallan/regis-cli/commit/cd949129cd65c20584c6a258c765bc8b4a378e34))
-- enhance Trivy report display for multiple targets and refine report layout with dedicated sections for links and scorecards. ([9a29bad](https://github.com/trivoallan/regis-cli/commit/9a29bad85018b3fa93bf49ce4b204d99e1cca374))
-- Implement conditional widget rendering, add new widget styling options including alignment and subvalues, and introduce new CSS for recommendations and header elements. ([78ade17](https://github.com/trivoallan/regis-cli/commit/78ade17344380013a2429d8bf519728d7d346415))
-- implement flexible registry credential resolution via new `--auth` CLI option and dedicated module ([ac5afb3](https://github.com/trivoallan/regis-cli/commit/ac5afb33639d018d4d04611777c95b194f11d6dc))
-- implement registry authentication using environment variables and add new tests. ([1894969](https://github.com/trivoallan/regis-cli/commit/18949692ac8c493f3ea62d0485efea75661e38e3))
-- initialize regis-cli project with image analysis, scorecard engine, schema validation, and comprehensive project setup. ([3af2207](https://github.com/trivoallan/regis-cli/commit/3af2207ef86d5265c7fc32997219b3841172b0bb))
-- Integrate scorecard evaluation directly into the `analyze` command, supporting multiple custom scorecards, and remove the dedicated `score` command. ([8301c36](https://github.com/trivoallan/regis-cli/commit/8301c36f77c897057a44b03abaeaf525067a4163))
-- introduce new HTML report structure and styling with updated templates and CSS. ([94f5130](https://github.com/trivoallan/regis-cli/commit/94f5130d1c7dd0e0ad34098de757242e5d81a37b))
-- Introduce OpenSSF Scorecard, Freshness, and Popularity analyzer reports with supporting configuration and robustness improvements. ([df311cc](https://github.com/trivoallan/regis-cli/commit/df311ccc38bb6c99c6c0ad0eaa9fd77fd21f49a0))
-- introduce SBOM analysis using Trivy and CycloneDX, replacing the license analyzer. ([8fa1d24](https://github.com/trivoallan/regis-cli/commit/8fa1d24166324d4224287250b3456db7251924e2))
-- introduce scorecard pages to group sections and add new size and versioning analyzers. ([2dd6b31](https://github.com/trivoallan/regis-cli/commit/2dd6b315c41cc440d57b349187acaa8e1a783b5b))
-- Introduce section-based scorecards with a new schema and remove the dependency analyzer. ([e7adbea](https://github.com/trivoallan/regis-cli/commit/e7adbeab5a8404a2b983be5dad715b3f310f66fa))
-- **playbooks:** Add support for loading playbooks from remote URLs and update cookiecutters to utilize this feature. ([69ef82f](https://github.com/trivoallan/regis-cli/commit/69ef82f57b4704135c0f3a4809a11be5294aa19b))
-- refactor cookiecutter templates to support both GitHub and GitLab platforms with dedicated CI configurations and documentation. ([295db88](https://github.com/trivoallan/regis-cli/commit/295db881cd1b2eae17f595d567fe182fef087623))
-- Refine scorecard reporting by updating schemas, engine logic, templates, and removing old report files. ([f3abf1f](https://github.com/trivoallan/regis-cli/commit/f3abf1f9a94faa638039bc959566315acf014b8f))
-- render error cards for all unhandled analyzer errors in the report ([9bf27db](https://github.com/trivoallan/regis-cli/commit/9bf27db38e8bc9a542f286aa7638dc92e19be87e))
-- replace single achieved level with a detailed summary by level in scorecard results, CLI output, and HTML report. ([c81c2ce](https://github.com/trivoallan/regis-cli/commit/c81c2ce854c25896765c2e9938361b02569c005e))
-- **report:** Embed regis-cli version into analysis reports and schema ([ac3efb5](https://github.com/trivoallan/regis-cli/commit/ac3efb55d70263c5417c02df59522201e7ca501e))
-- **reports:** Implement automatic versioning of analysis reports in GitLab CI and document its configuration. ([c985942](https://github.com/trivoallan/regis-cli/commit/c9859427c88ce06ae0cde3a64566fe6dc961a788))
-- **review:** enhance GitLab CI report delivery by committing to `reports/`, posting direct links to MR comments, and updating documentation. ([d934913](https://github.com/trivoallan/regis-cli/commit/d934913c7451a9565ce3f8a2626ae3b54f24002a))
-- **review:** enhance GitLab CI/CD to specify output filename, run site generation on the default branch, and dynamically configure Pages deployments for review apps and main branch, while updating the project backlog. ([342d0b8](https://github.com/trivoallan/regis-cli/commit/342d0b86d4b9111f5dc4d43a680c53ec4af7a335))
-- **review:** Expose analysis reports as Merge Request artifacts instead of deploying to Review Apps and update documentation accordingly. ([c4850be](https://github.com/trivoallan/regis-cli/commit/c4850be3bbd6548d6d854529a59f2353bbc595b5))
-- **review:** Implement and document a self-service analysis workflow in GitLab CI, including optional report commits to the branch and dynamic Review App links. ([016659d](https://github.com/trivoallan/regis-cli/commit/016659d34cf87e68b1af8e68e4806372c923979a))
-- **review:** Introduce automated GitLab MR labeling and conditional playbook links based on analysis outcomes. ([86e5986](https://github.com/trivoallan/regis-cli/commit/86e59862895324ebb6276d31b94b99ec53f432bf))
-- **review:** use GitLab API for merge request creation to enable setting reviewers and assignees, and add `curl` dependency. ([32f98f2](https://github.com/trivoallan/regis-cli/commit/32f98f226263ed577fd649743af69f0f7f2eff85))
-- set default output directory template to include the tag. ([157f425](https://github.com/trivoallan/regis-cli/commit/157f425cca42a71afb089dd4fff6d1944abf9c95))
-- Track and display involved data analyzers for scorecard rule evaluations in the schema, engine, and HTML report. ([42bcace](https://github.com/trivoallan/regis-cli/commit/42bcace830ae4aebb83b23c17486c79c867fc61d))
-- **ui:** Implement a new report rendering engine with a sidebar layout and dedicated pages for various analysis results. ([e1faaf9](https://github.com/trivoallan/regis-cli/commit/e1faaf92dadc215bbcdfecf90d164b5a2658ad64))
-- **ui:** Introduce new analyzer display templates and enhance the playbook engine to support section widgets. ([b998f63](https://github.com/trivoallan/regis-cli/commit/b998f63f50691a9a186ba83b1a3ebe42cb21751e))
+- add --cache option to the analyze command to load and use an existing report.json, skipping re-analysis. ([3a7a710](https://github.com/trivoallan/regis/commit/3a7a710c9329e4f5d812804044bf8bb190b9f416))
+- add `--theme` option for HTML report generation and ignore the `/reports` directory ([8bb9e7b](https://github.com/trivoallan/regis/commit/8bb9e7bec6268d5219d37818f0177846cc6aa81f))
+- add Dockerfile and GitHub Actions workflow for building and publishing regis Docker images. ([dfc66c6](https://github.com/trivoallan/regis/commit/dfc66c6d6231748e5a893f6b38f4caba4c3be69b))
+- add domain-trusted scorecard ([41ca994](https://github.com/trivoallan/regis/commit/41ca994967acca90e4d410acae5a6317f97c4f9f))
+- Add extensive test coverage for analyzers and core components, integrate Ruff linter, and refine Skopeo schema. ([ec215e0](https://github.com/trivoallan/regis/commit/ec215e0bedb0adafda66ddfa57b01eb39e17e164))
+- add GitHub Actions workflows for Super-Linter and automated releases. ([d8c8a28](https://github.com/trivoallan/regis/commit/d8c8a282afdd1a5959ed8cc3b4f08daf3b54a65b))
+- Add Hadolint analyzer to lint Dockerfiles and display results. ([b8802cb](https://github.com/trivoallan/regis/commit/b8802cb29cee41ab08d70c87945d3265cdc505ca))
+- Add initial HTML report for image health scores generated by regis. ([419c65a](https://github.com/trivoallan/regis/commit/419c65a8583704ec9e3d28dbd7448901c3374663))
+- add Skopeo analyzer and refactor versioning analyzer to use Skopeo for tag listing. ([b933931](https://github.com/trivoallan/regis/commit/b9339312aae5a1a3c42aabb7347bfa71f99436a0))
+- add support for multiple output formats and templated output paths for the `run` command. ([6a70c93](https://github.com/trivoallan/regis/commit/6a70c93d842609a4d091f413acc4f8aa0de94238))
+- add support for passing metadata via CLI to reports and update report schema. ([07050ea](https://github.com/trivoallan/regis/commit/07050ea6ceb8bc5e3c19d1c22f5249db1b9531dc))
+- add support for templated links in scorecards and reports ([bc191af](https://github.com/trivoallan/regis/commit/bc191afb2c8fad75dde499531533f35abf691fb7))
+- add time formatting and recursive metadata rendering to improve report request details display. ([f86862e](https://github.com/trivoallan/regis/commit/f86862e7289083562ad348dd0a4ac96127d64f8b))
+- Add user and digest extraction and display to Skopeo image analysis. ([4cbacba](https://github.com/trivoallan/regis/commit/4cbacba1b3e1ef3e4ce066dfaf32280884b25693))
+- add variant detection and reporting to the versioning analyzer ([8c61394](https://github.com/trivoallan/regis/commit/8c613946148fbd8d095de1ebc1bb27269b6532b8))
+- **analyzers:** Enable private registry authentication for Trivy-based analyzers and update documentation. ([06c35eb](https://github.com/trivoallan/regis/commit/06c35eb80a95a94846c29154ff658861c0331d5f))
+- **ci:** introduce GitLab CI workflow for image analysis with MR-driven triggers and review app deployments. ([d85449d](https://github.com/trivoallan/regis/commit/d85449d19e9e6cb6232b72cb5940e297c4608261))
+- **cli:** Implement `generate` command with `cookiecutter` for project scaffolding and update project templates. ([44bfdf6](https://github.com/trivoallan/regis/commit/44bfdf6e87070d4515ac685d43b1bf1d0974f948))
+- **cli:** Implement a CLI version command, refactor `importlib.metadata` imports, and update tests and GitLab CI artifact handling. ([d508b53](https://github.com/trivoallan/regis/commit/d508b53f72bf9396f060663fc1262ccc4e62a292))
+- configure Antora Mermaid extension with a specific library URL and script stem. ([190fcc4](https://github.com/trivoallan/regis/commit/190fcc49632bc50a466a2c56b8bcaf8d5ae6937d))
+- **cookiecutter:** integrate GitHub Actions metadata into analysis reports for improved traceability and remove unused scorecard levels. ([4113efb](https://github.com/trivoallan/regis/commit/4113efbecb2a92497c1de451b4efc09feee96934))
+- **cookiecutter:** introduce Cookiecutter template for bootstrapping new image analysis projects with documentation, workflows, and default scorecards. ([391d74f](https://github.com/trivoallan/regis/commit/391d74fa53f45e93dbb2204104a7a1869f70ad03))
+- **cookiecutter:** Introduce Cookiecutter template for project bootstrapping and add its comprehensive usage guide, refining the template's analysis workflow input. ([9ef6351](https://github.com/trivoallan/regis/commit/9ef6351574929e9f217c5c1eae2fae597cf3286e))
+- display structured analyzer errors in the UI and store them in reports. ([f3dd654](https://github.com/trivoallan/regis/commit/f3dd654fd8533147fef78550d72126ca3bd1a1d3))
+- **doc:** Add 'Get Started' and 'Understand Playbooks' documentation pages and update navigation. ([e791354](https://github.com/trivoallan/regis/commit/e791354736aad353c06c60189e040bd9f61c0f48))
+- **docs:** initialize Antora documentation ([6ca4154](https://github.com/trivoallan/regis/commit/6ca41541c17a0a942d8407c6256a59004d26805c))
+- dynamically set cookiecutter image URL and simplify release-please extra-files configuration. ([b86853a](https://github.com/trivoallan/regis/commit/b86853a7f9a7b032a1171e5ff7e9dbbe724c6fbf))
+- embed regis version in analysis reports and update cookiecutter image URLs. ([3ab5430](https://github.com/trivoallan/regis/commit/3ab543048e4972ff9ec6c461f710c93991ad8924))
+- enhance default playbook overview with new recommendation and compliance widgets and update widget styling. ([6737a68](https://github.com/trivoallan/regis/commit/6737a6839152fea82141eda59241792cb5a59985))
+- enhance registry credential resolution by normalizing Docker Hub aliases and remove the `score.html` report file. ([c2dd0e1](https://github.com/trivoallan/regis/commit/c2dd0e17ab0810a247df8148d0c10f5ccf3ef682))
+- enhance report output with per-scorecard HTML files, `slug` support, and improved file writing logic. ([895c46b](https://github.com/trivoallan/regis/commit/895c46bbc98d8fe650ed3a657eb98b415abb4266))
+- Enhance scorecard rule evaluation to track missing data, provide detailed condition stringification, and include rule tags in results and UI. ([cd94912](https://github.com/trivoallan/regis/commit/cd949129cd65c20584c6a258c765bc8b4a378e34))
+- enhance Trivy report display for multiple targets and refine report layout with dedicated sections for links and scorecards. ([9a29bad](https://github.com/trivoallan/regis/commit/9a29bad85018b3fa93bf49ce4b204d99e1cca374))
+- Implement conditional widget rendering, add new widget styling options including alignment and subvalues, and introduce new CSS for recommendations and header elements. ([78ade17](https://github.com/trivoallan/regis/commit/78ade17344380013a2429d8bf519728d7d346415))
+- implement flexible registry credential resolution via new `--auth` CLI option and dedicated module ([ac5afb3](https://github.com/trivoallan/regis/commit/ac5afb33639d018d4d04611777c95b194f11d6dc))
+- implement registry authentication using environment variables and add new tests. ([1894969](https://github.com/trivoallan/regis/commit/18949692ac8c493f3ea62d0485efea75661e38e3))
+- initialize regis project with image analysis, scorecard engine, schema validation, and comprehensive project setup. ([3af2207](https://github.com/trivoallan/regis/commit/3af2207ef86d5265c7fc32997219b3841172b0bb))
+- Integrate scorecard evaluation directly into the `analyze` command, supporting multiple custom scorecards, and remove the dedicated `score` command. ([8301c36](https://github.com/trivoallan/regis/commit/8301c36f77c897057a44b03abaeaf525067a4163))
+- introduce new HTML report structure and styling with updated templates and CSS. ([94f5130](https://github.com/trivoallan/regis/commit/94f5130d1c7dd0e0ad34098de757242e5d81a37b))
+- Introduce OpenSSF Scorecard, Freshness, and Popularity analyzer reports with supporting configuration and robustness improvements. ([df311cc](https://github.com/trivoallan/regis/commit/df311ccc38bb6c99c6c0ad0eaa9fd77fd21f49a0))
+- introduce SBOM analysis using Trivy and CycloneDX, replacing the license analyzer. ([8fa1d24](https://github.com/trivoallan/regis/commit/8fa1d24166324d4224287250b3456db7251924e2))
+- introduce scorecard pages to group sections and add new size and versioning analyzers. ([2dd6b31](https://github.com/trivoallan/regis/commit/2dd6b315c41cc440d57b349187acaa8e1a783b5b))
+- Introduce section-based scorecards with a new schema and remove the dependency analyzer. ([e7adbea](https://github.com/trivoallan/regis/commit/e7adbeab5a8404a2b983be5dad715b3f310f66fa))
+- **playbooks:** Add support for loading playbooks from remote URLs and update cookiecutters to utilize this feature. ([69ef82f](https://github.com/trivoallan/regis/commit/69ef82f57b4704135c0f3a4809a11be5294aa19b))
+- refactor cookiecutter templates to support both GitHub and GitLab platforms with dedicated CI configurations and documentation. ([295db88](https://github.com/trivoallan/regis/commit/295db881cd1b2eae17f595d567fe182fef087623))
+- Refine scorecard reporting by updating schemas, engine logic, templates, and removing old report files. ([f3abf1f](https://github.com/trivoallan/regis/commit/f3abf1f9a94faa638039bc959566315acf014b8f))
+- render error cards for all unhandled analyzer errors in the report ([9bf27db](https://github.com/trivoallan/regis/commit/9bf27db38e8bc9a542f286aa7638dc92e19be87e))
+- replace single achieved level with a detailed summary by level in scorecard results, CLI output, and HTML report. ([c81c2ce](https://github.com/trivoallan/regis/commit/c81c2ce854c25896765c2e9938361b02569c005e))
+- **report:** Embed regis version into analysis reports and schema ([ac3efb5](https://github.com/trivoallan/regis/commit/ac3efb55d70263c5417c02df59522201e7ca501e))
+- **reports:** Implement automatic versioning of analysis reports in GitLab CI and document its configuration. ([c985942](https://github.com/trivoallan/regis/commit/c9859427c88ce06ae0cde3a64566fe6dc961a788))
+- **review:** enhance GitLab CI report delivery by committing to `reports/`, posting direct links to MR comments, and updating documentation. ([d934913](https://github.com/trivoallan/regis/commit/d934913c7451a9565ce3f8a2626ae3b54f24002a))
+- **review:** enhance GitLab CI/CD to specify output filename, run site generation on the default branch, and dynamically configure Pages deployments for review apps and main branch, while updating the project backlog. ([342d0b8](https://github.com/trivoallan/regis/commit/342d0b86d4b9111f5dc4d43a680c53ec4af7a335))
+- **review:** Expose analysis reports as Merge Request artifacts instead of deploying to Review Apps and update documentation accordingly. ([c4850be](https://github.com/trivoallan/regis/commit/c4850be3bbd6548d6d854529a59f2353bbc595b5))
+- **review:** Implement and document a self-service analysis workflow in GitLab CI, including optional report commits to the branch and dynamic Review App links. ([016659d](https://github.com/trivoallan/regis/commit/016659d34cf87e68b1af8e68e4806372c923979a))
+- **review:** Introduce automated GitLab MR labeling and conditional playbook links based on analysis outcomes. ([86e5986](https://github.com/trivoallan/regis/commit/86e59862895324ebb6276d31b94b99ec53f432bf))
+- **review:** use GitLab API for merge request creation to enable setting reviewers and assignees, and add `curl` dependency. ([32f98f2](https://github.com/trivoallan/regis/commit/32f98f226263ed577fd649743af69f0f7f2eff85))
+- set default output directory template to include the tag. ([157f425](https://github.com/trivoallan/regis/commit/157f425cca42a71afb089dd4fff6d1944abf9c95))
+- Track and display involved data analyzers for scorecard rule evaluations in the schema, engine, and HTML report. ([42bcace](https://github.com/trivoallan/regis/commit/42bcace830ae4aebb83b23c17486c79c867fc61d))
+- **ui:** Implement a new report rendering engine with a sidebar layout and dedicated pages for various analysis results. ([e1faaf9](https://github.com/trivoallan/regis/commit/e1faaf92dadc215bbcdfecf90d164b5a2658ad64))
+- **ui:** Introduce new analyzer display templates and enhance the playbook engine to support section widgets. ([b998f63](https://github.com/trivoallan/regis/commit/b998f63f50691a9a186ba83b1a3ebe42cb21751e))
 
 ### Bug Fixes
 
-- **analyzers:** Expose analyzer results at the root of the scorecard evaluation context and update default Trivy rules. ([460871b](https://github.com/trivoallan/regis-cli/commit/460871ba19698bfff3b33f40183f742501d80045))
-- **analyzers:** prevent Skopeo analyzer from failing on index image inspection and formalize commit message guidelines. ([c80f88c](https://github.com/trivoallan/regis-cli/commit/c80f88c0dc4dcefa2610c959812d8232649629a3))
-- **build:** install git in Dockerfile ([dfffabd](https://github.com/trivoallan/regis-cli/commit/dfffabd778a1fbbe8d371f2d8713f95568427d04))
-- **ci:** add workflow_dispatch trigger and refine tag matching for Docker publish workflow. ([21b7549](https://github.com/trivoallan/regis-cli/commit/21b754967ad212cea23c0a13d623ce06902c0058))
-- **ci:** configure releaser-pleaser action with release token ([ed8a1f2](https://github.com/trivoallan/regis-cli/commit/ed8a1f2ff386d0f54b91b4b2cde3c07b770c73aa))
-- **docker:** address permission denied errors in Docker by setting user UID/GID, ensuring directory writability, and adding a report output fallback. ([ddaba2c](https://github.com/trivoallan/regis-cli/commit/ddaba2ceb4c931fca1f68555e63e6408a32baec6))
-- **docker:** Resolve Docker container permission issues by creating a home directory for the `regis` user and setting report directory permissions, and update the analysis workflow. ([9cf4087](https://github.com/trivoallan/regis-cli/commit/9cf408788e2923524da428b0eb19f2eb90f763bf))
-- Prevent `AttributeError` in scorecard link processing by adding type checks and update `regis-cli` workflow flags to long form. ([a02caa3](https://github.com/trivoallan/regis-cli/commit/a02caa33bb8fc47fbed119bdd797ad84eeb7cdc0))
+- **analyzers:** Expose analyzer results at the root of the scorecard evaluation context and update default Trivy rules. ([460871b](https://github.com/trivoallan/regis/commit/460871ba19698bfff3b33f40183f742501d80045))
+- **analyzers:** prevent Skopeo analyzer from failing on index image inspection and formalize commit message guidelines. ([c80f88c](https://github.com/trivoallan/regis/commit/c80f88c0dc4dcefa2610c959812d8232649629a3))
+- **build:** install git in Dockerfile ([dfffabd](https://github.com/trivoallan/regis/commit/dfffabd778a1fbbe8d371f2d8713f95568427d04))
+- **ci:** add workflow_dispatch trigger and refine tag matching for Docker publish workflow. ([21b7549](https://github.com/trivoallan/regis/commit/21b754967ad212cea23c0a13d623ce06902c0058))
+- **ci:** configure releaser-pleaser action with release token ([ed8a1f2](https://github.com/trivoallan/regis/commit/ed8a1f2ff386d0f54b91b4b2cde3c07b770c73aa))
+- **docker:** address permission denied errors in Docker by setting user UID/GID, ensuring directory writability, and adding a report output fallback. ([ddaba2c](https://github.com/trivoallan/regis/commit/ddaba2ceb4c931fca1f68555e63e6408a32baec6))
+- **docker:** Resolve Docker container permission issues by creating a home directory for the `regis` user and setting report directory permissions, and update the analysis workflow. ([9cf4087](https://github.com/trivoallan/regis/commit/9cf408788e2923524da428b0eb19f2eb90f763bf))
+- Prevent `AttributeError` in scorecard link processing by adding type checks and update `regis` workflow flags to long form. ([a02caa3](https://github.com/trivoallan/regis/commit/a02caa33bb8fc47fbed119bdd797ad84eeb7cdc0))
 
 ### Dependencies
 
-- Populate Pipfile.lock with resolved dependency versions. ([e87ee2c](https://github.com/trivoallan/regis-cli/commit/e87ee2cd971b4d35c8cf4ccbf1ad5ee574701d58))
+- Populate Pipfile.lock with resolved dependency versions. ([e87ee2c](https://github.com/trivoallan/regis/commit/e87ee2cd971b4d35c8cf4ccbf1ad5ee574701d58))
 
 ### Documentation
 
-- Add a comprehensive architectural overview, update documentation structure, and refine the GitLab CI template. ([194d574](https://github.com/trivoallan/regis-cli/commit/194d5744a5bf45f316f757bcce05aa0e5cc4047e))
-- add documentation for the default playbook, detailing its rules and report organization, and link it in the navigation. ([e67daab](https://github.com/trivoallan/regis-cli/commit/e67daabd9cb32faa2672a0deae48d0e7d95482d8))
-- Add new example report assets and update documentation pages. ([a247d93](https://github.com/trivoallan/regis-cli/commit/a247d93417d32419e3cc89b1c944a4318a618b93))
-- **commitmessages:** add Google Blockly commit style guide link ([8c61162](https://github.com/trivoallan/regis-cli/commit/8c611621d59b4600f0cfcea2d6970387b40ccb2c))
-- Enhance GitHub Actions and GitLab CI integration guides with comprehensive examples, CI metadata, and deployment to respective pages services. ([3ae83e5](https://github.com/trivoallan/regis-cli/commit/3ae83e54fc89f8254602687afe4871cf379a4296))
-- enhance Python, CI/CD, commit message, and documentation rules with new tools, scope definitions, and process clarifications. ([6f1d111](https://github.com/trivoallan/regis-cli/commit/6f1d11119d40d556b0a0bff7c963939b49f6421a))
-- **gitlab-workflow:** add section on GitLab Review Apps for Premium/Ultimate tiers with CI/CD configuration example ([c919743](https://github.com/trivoallan/regis-cli/commit/c91974304d212da4f55139ba9124c3fa73336e25))
-- **rules:** add commit message guidelines and refine CI/CD semantic versioning and conventional commit references. ([376c16e](https://github.com/trivoallan/regis-cli/commit/376c16eb2ac1cd1d9f5c47dfb51bf6c1eaabaeb5))
-- **ui:** enable mermaid diagram rendering ([8edd450](https://github.com/trivoallan/regis-cli/commit/8edd4505f23d26cbb34441e8f5424ee481558c1b))
-- **ui:** use correct mermaid extension package ([c622961](https://github.com/trivoallan/regis-cli/commit/c6229618d30d9629194ab74fe8a21b383f2e6cc1))
-- **ui:** use correct mermaid extension package in playbook ([e7fed19](https://github.com/trivoallan/regis-cli/commit/e7fed19ea0f9dbc7c30d1dff9a05a2831fbbcb94))
-- Update TIP block formatting in playbooks and add documentation versioning and CLI control to notes. ([544e51c](https://github.com/trivoallan/regis-cli/commit/544e51ca75c2dcb9430009d6b859921caeb30715))
+- Add a comprehensive architectural overview, update documentation structure, and refine the GitLab CI template. ([194d574](https://github.com/trivoallan/regis/commit/194d5744a5bf45f316f757bcce05aa0e5cc4047e))
+- add documentation for the default playbook, detailing its rules and report organization, and link it in the navigation. ([e67daab](https://github.com/trivoallan/regis/commit/e67daabd9cb32faa2672a0deae48d0e7d95482d8))
+- Add new example report assets and update documentation pages. ([a247d93](https://github.com/trivoallan/regis/commit/a247d93417d32419e3cc89b1c944a4318a618b93))
+- **commitmessages:** add Google Blockly commit style guide link ([8c61162](https://github.com/trivoallan/regis/commit/8c611621d59b4600f0cfcea2d6970387b40ccb2c))
+- Enhance GitHub Actions and GitLab CI integration guides with comprehensive examples, CI metadata, and deployment to respective pages services. ([3ae83e5](https://github.com/trivoallan/regis/commit/3ae83e54fc89f8254602687afe4871cf379a4296))
+- enhance Python, CI/CD, commit message, and documentation rules with new tools, scope definitions, and process clarifications. ([6f1d111](https://github.com/trivoallan/regis/commit/6f1d11119d40d556b0a0bff7c963939b49f6421a))
+- **gitlab-workflow:** add section on GitLab Review Apps for Premium/Ultimate tiers with CI/CD configuration example ([c919743](https://github.com/trivoallan/regis/commit/c91974304d212da4f55139ba9124c3fa73336e25))
+- **rules:** add commit message guidelines and refine CI/CD semantic versioning and conventional commit references. ([376c16e](https://github.com/trivoallan/regis/commit/376c16eb2ac1cd1d9f5c47dfb51bf6c1eaabaeb5))
+- **ui:** enable mermaid diagram rendering ([8edd450](https://github.com/trivoallan/regis/commit/8edd4505f23d26cbb34441e8f5424ee481558c1b))
+- **ui:** use correct mermaid extension package ([c622961](https://github.com/trivoallan/regis/commit/c6229618d30d9629194ab74fe8a21b383f2e6cc1))
+- **ui:** use correct mermaid extension package in playbook ([e7fed19](https://github.com/trivoallan/regis/commit/e7fed19ea0f9dbc7c30d1dff9a05a2831fbbcb94))
+- Update TIP block formatting in playbooks and add documentation versioning and CLI control to notes. ([544e51c](https://github.com/trivoallan/regis/commit/544e51ca75c2dcb9430009d6b859921caeb30715))
 
-## [v0.5.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.5.0)
+## [v0.5.0](https://github.com/trivoallan/regis/releases/tag/v0.5.0)
 
 ### Features
 
-- embed regis-cli version in analysis reports and update cookiecutter image URLs.
-- **report**: Embed regis-cli version into analysis reports and schema
+- embed regis version in analysis reports and update cookiecutter image URLs.
+- **report**: Embed regis version into analysis reports and schema
 - **playbooks**: Add support for loading playbooks from remote URLs and update cookiecutters to utilize this feature.
 - **reports**: Implement automatic versioning of analysis reports in GitLab CI and document its configuration.
 - **cli**: Implement `generate` command with `cookiecutter` for project scaffolding and update project templates.
 - **ci**: introduce GitLab CI workflow for image analysis with MR-driven triggers and review app deployments.
 - **cli**: Implement a CLI version command, refactor `importlib.metadata` imports, and update tests and GitLab CI artifact handling.
 
-## [v0.4.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.4.0)
+## [v0.4.0](https://github.com/trivoallan/regis/releases/tag/v0.4.0)
 
 ### Features
 
 - add time formatting and recursive metadata rendering to improve report request details display.
 - refactor cookiecutter templates to support both GitHub and GitLab platforms with dedicated CI configurations and documentation.
 
-## [v0.3.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.3.0)
+## [v0.3.0](https://github.com/trivoallan/regis/releases/tag/v0.3.0)
 
 ### Features
 
@@ -741,19 +741,19 @@
 
 - **build**: install git in Dockerfile
 
-## [v0.2.2](https://github.com/trivoallan/regis-cli/releases/tag/v0.2.2)
+## [v0.2.2](https://github.com/trivoallan/regis/releases/tag/v0.2.2)
 
 ### Bug Fixes
 
 - **ci**: configure releaser-pleaser action with release token
 
-## [v0.2.1](https://github.com/trivoallan/regis-cli/releases/tag/v0.2.1)
+## [v0.2.1](https://github.com/trivoallan/regis/releases/tag/v0.2.1)
 
 ### Bug Fixes
 
 - **ci**: add workflow_dispatch trigger and refine tag matching for Docker publish workflow.
 
-## [v0.2.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.2.0)
+## [v0.2.0](https://github.com/trivoallan/regis/releases/tag/v0.2.0)
 
 ### Features
 
@@ -772,14 +772,14 @@
 - **docker**: Resolve Docker container permission issues by creating a home directory for the `regis` user and setting report directory permissions, and update the analysis workflow.
 - **docker**: address permission denied errors in Docker by setting user UID/GID, ensuring directory writability, and adding a report output fallback.
 - **analyzers**: Expose analyzer results at the root of the scorecard evaluation context and update default Trivy rules.
-- Prevent `AttributeError` in scorecard link processing by adding type checks and update `regis-cli` workflow flags to long form.
+- Prevent `AttributeError` in scorecard link processing by adding type checks and update `regis` workflow flags to long form.
 
-## [v0.1.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.1.0)
+## [v0.1.0](https://github.com/trivoallan/regis/releases/tag/v0.1.0)
 
 ### Features
 
 - **docs**: initialize Antora documentation
-- add Dockerfile and GitHub Actions workflow for building and publishing regis-cli Docker images.
+- add Dockerfile and GitHub Actions workflow for building and publishing regis Docker images.
 - add GitHub Actions workflows for Super-Linter and automated releases.
 - add --cache option to the analyze command to load and use an existing report.json, skipping re-analysis.
 - Add user and digest extraction and display to Skopeo image analysis.
@@ -804,11 +804,11 @@
 - enhance registry credential resolution by normalizing Docker Hub aliases and remove the `score.html` report file.
 - implement flexible registry credential resolution via new `--auth` CLI option and dedicated module
 - add support for passing metadata via CLI to reports and update report schema.
-- Add initial HTML report for image health scores generated by regis-cli.
+- Add initial HTML report for image health scores generated by regis.
 - add variant detection and reporting to the versioning analyzer
 - add domain-trusted scorecard
 - implement registry authentication using environment variables and add new tests.
-- initialize regis-cli project with image analysis, scorecard engine, schema validation, and comprehensive project setup.
+- initialize regis project with image analysis, scorecard engine, schema validation, and comprehensive project setup.
 
 ### Bug Fixes
 

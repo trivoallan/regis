@@ -3,7 +3,7 @@
 import json
 from unittest.mock import MagicMock, patch
 
-from regis_cli.analyzers.hadolint import HadolintAnalyzer
+from regis.analyzers.hadolint import HadolintAnalyzer
 
 
 class MockRegistryClient:
@@ -14,7 +14,7 @@ class MockRegistryClient:
 
 
 class TestHadolintAnalyzer:
-    @patch("regis_cli.analyzers.hadolint.subprocess.run")
+    @patch("regis.analyzers.hadolint.subprocess.run")
     def test_hadolint_passes(self, mock_run):
         # We need two mock returns for the two subprocess.run calls
         # 1. skopeo inspect
@@ -48,7 +48,7 @@ class TestHadolintAnalyzer:
         assert report["issues_by_level"]["error"] == 0
         assert report["issues_by_level"]["warning"] == 0
 
-    @patch("regis_cli.analyzers.hadolint.subprocess.run")
+    @patch("regis.analyzers.hadolint.subprocess.run")
     def test_hadolint_fails(self, mock_run):
         def side_effect(cmd, **kwargs):
             if cmd[0] == "skopeo":

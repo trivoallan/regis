@@ -2,7 +2,7 @@ import pytest
 import requests
 import responses
 
-from regis_cli.analyzers.popularity import PopularityAnalyzer
+from regis.analyzers.popularity import PopularityAnalyzer
 
 
 class TestPopularityAnalyzer:

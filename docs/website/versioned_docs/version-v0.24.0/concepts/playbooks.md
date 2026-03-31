@@ -5,7 +5,7 @@ tags:
 
 # Playbooks
 
-Playbooks are the core of the `regis-cli` evaluation engine. They define the security and compliance rules that the tool evaluates against container image metadata.
+Playbooks are the core of the `regis` evaluation engine. They define the security and compliance rules that the tool evaluates against container image metadata.
 
 ## Purpose
 
@@ -77,7 +77,7 @@ badges:
 
 ## Evaluation Mechanism
 
-`regis-cli` uses two powerful technologies to evaluate and present data in playbooks.
+`regis` uses two powerful technologies to evaluate and present data in playbooks.
 
 ### JSON Logic
 
@@ -110,7 +110,7 @@ Commonly used operators include:
 
 ### Template Interpolation (Jinja2)
 
-While JSON Logic handles the evaluation "truth," `regis-cli` uses **Jinja2** for dynamic data interpolation within the report. You can use Jinja2 expressions within widgets to format values or calculate percentages directly from the analysis context.
+While JSON Logic handles the evaluation "truth," `regis` uses **Jinja2** for dynamic data interpolation within the report. You can use Jinja2 expressions within widgets to format values or calculate percentages directly from the analysis context.
 
 For example, to display the overall compliance score in a widget, you might use:
 
@@ -225,7 +225,7 @@ During evaluation, templates whose condition passes are aggregated. The CLI then
 While you can write a playbook from scratch, the easiest way to start is by using the `bootstrap playbook` command. This creates a new directory with a pre-configured playbook template and all necessary files.
 
 ```bash
-regis-cli bootstrap playbook my-custom-playbook
+regis bootstrap playbook my-custom-playbook
 ```
 
 This command will prompt you for basic information (name, slug, etc.) and generate a skeleton playbook that you can then customize with your own rules and scorecards. For more information, see the [Bootstrapping Reference](../reference/cli.md#bootstrap).
@@ -264,10 +264,10 @@ Use the `evaluate` subcommand:
 
 ```bash
 # 1. Run a full analysis once to get the raw data
-regis-cli analyze nginx:latest -o report.json
+regis analyze nginx:latest -o report.json
 
 # 2. Iterate on your playbook locally
-regis-cli evaluate report.json -p my-playbook.yaml --site
+regis evaluate report.json -p my-playbook.yaml --site
 ```
 
 The `evaluate` command supports most of the reporting options found in `analyze`, including `--site`, `--theme`, and `--output-dir`.

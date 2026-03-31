@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from regis_cli.analyzers.scorecarddev import (
+from regis.analyzers.scorecarddev import (
     ScorecardDevAnalyzer,
     _fetch_scorecard,
     _resolve_source_repo,
@@ -69,17 +69,17 @@ class TestScorecardAnalyzer:
         # 99 search logic
         cl = MagicMock()
         with patch(
-            "regis_cli.analyzers.scorecarddev._source_repo_from_labels",
+            "regis.analyzers.scorecarddev._source_repo_from_labels",
             return_value="https://github.com/a/b",
         ):
             assert _resolve_source_repo(cl, "r", "t") == "https://github.com/a/b"
 
         with patch(
-            "regis_cli.analyzers.scorecarddev._source_repo_from_labels",
+            "regis.analyzers.scorecarddev._source_repo_from_labels",
             return_value=None,
         ):
             with patch(
-                "regis_cli.analyzers.scorecarddev._source_repo_from_dockerhub",
+                "regis.analyzers.scorecarddev._source_repo_from_dockerhub",
                 return_value=None,
             ):
                 assert _resolve_source_repo(cl, "r", "t") is None
@@ -96,13 +96,13 @@ class TestScorecardAnalyzer:
         cl = MagicMock()
         # 147, 158, 171
         with patch(
-            "regis_cli.analyzers.scorecarddev._resolve_source_repo",
+            "regis.analyzers.scorecarddev._resolve_source_repo",
             side_effect=[None, "https://github.com/o/r"],
         ):
             assert analyzer.analyze(cl, "r", "t")["source_repo"] is None
 
             with patch(
-                "regis_cli.analyzers.scorecarddev._fetch_scorecard",
+                "regis.analyzers.scorecarddev._fetch_scorecard",
                 return_value={"score": 5},
             ):
                 res = analyzer.analyze(cl, "r", "t")

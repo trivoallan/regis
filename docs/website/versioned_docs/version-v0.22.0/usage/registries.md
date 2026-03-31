@@ -1,6 +1,6 @@
 # Registry Authentication
 
-To analyze private images, `regis-cli` needs to authenticate with your container registry. It typically leverages the authentication mechanisms of its underlying [Analyzers](../concepts/analyzers.md), such as **Skopeo** and **Trivy**.
+To analyze private images, `regis` needs to authenticate with your container registry. It typically leverages the authentication mechanisms of its underlying [Analyzers](../concepts/analyzers.md), such as **Skopeo** and **Trivy**.
 
 ## Using Docker Credentials
 

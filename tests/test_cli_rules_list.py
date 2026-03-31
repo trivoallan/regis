@@ -1,10 +1,10 @@
-"""Tests for 'regis-cli rules list' command."""
+"""Tests for 'regis rules list' command."""
 
 from pathlib import Path
 
 from click.testing import CliRunner
 
-from regis_cli.cli import main
+from regis.cli import main
 
 
 class TestCliRulesList:

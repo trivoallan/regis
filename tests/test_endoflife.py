@@ -2,7 +2,7 @@
 
 from unittest.mock import patch
 
-from regis_cli.analyzers.endoflife import (
+from regis.analyzers.endoflife import (
     EndOfLifeAnalyzer,
     _extract_version,
     _image_to_product,
@@ -126,7 +126,7 @@ class TestEndOfLifeAnalyzer:
         },
     ]
 
-    @patch("regis_cli.analyzers.endoflife._fetch_cycles")
+    @patch("regis.analyzers.endoflife._fetch_cycles")
     def test_known_product(self, mock_fetch):
         """Test with nginx which is known on endoflife.date."""
         mock_fetch.return_value = self.MOCK_CYCLES
@@ -141,7 +141,7 @@ class TestEndOfLifeAnalyzer:
         assert report["matched_cycle"] is not None
         assert report["matched_cycle"]["cycle"] == "1.27"
 
-    @patch("regis_cli.analyzers.endoflife._fetch_cycles")
+    @patch("regis.analyzers.endoflife._fetch_cycles")
     def test_unknown_product(self, mock_fetch):
         """Test with a product not on endoflife.date."""
         mock_fetch.return_value = None
@@ -154,7 +154,7 @@ class TestEndOfLifeAnalyzer:
         assert report["matched_cycle"] is None
         assert report["is_eol"] is None
 
-    @patch("regis_cli.analyzers.endoflife._fetch_cycles")
+    @patch("regis.analyzers.endoflife._fetch_cycles")
     def test_named_tag_no_match(self, mock_fetch):
         """Named tags like 'latest' cannot match a cycle."""
         mock_fetch.return_value = self.MOCK_CYCLES

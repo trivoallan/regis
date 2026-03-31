@@ -1,4 +1,4 @@
-"""Tests for the gitlab CLI subcommands in regis-cli."""
+"""Tests for the gitlab CLI subcommands in regis."""
 
 import json
 from unittest import mock
@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 from click.testing import CliRunner
 
-from regis_cli.cli import main
+from regis.cli import main
 
 
 @pytest.fixture
@@ -74,7 +74,7 @@ def test_update_mr_success(runner, tmp_path):
     report_file.write_text(json.dumps(report_data))
 
     # Mock python-gitlab execution
-    with mock.patch("regis_cli.gitlab_cli.gitlab.Gitlab") as mock_gl:
+    with mock.patch("regis.gitlab_cli.gitlab.Gitlab") as mock_gl:
         mock_instance = mock_gl.return_value
         mock_project = mock_instance.projects.get.return_value
         mock_mr = mock_project.mergerequests.get.return_value

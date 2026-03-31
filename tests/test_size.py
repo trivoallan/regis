@@ -3,7 +3,7 @@
 import json
 from unittest.mock import patch
 
-from regis_cli.analyzers.size import SizeAnalyzer, _human_size
+from regis.analyzers.size import SizeAnalyzer, _human_size
 
 
 class MockRegistryClient:
@@ -25,7 +25,7 @@ class TestHumanSize:
 
 
 class TestSizeAnalyzer:
-    @patch("regis_cli.analyzers.size.subprocess.run")
+    @patch("regis.analyzers.size.subprocess.run")
     def test_single_manifest(self, mock_run):
         def side_effect(cmd, **kwargs):
             class MockResponse:
@@ -56,7 +56,7 @@ class TestSizeAnalyzer:
         assert report["layer_count"] == 2
         assert len(report["layers"]) == 2
 
-    @patch("regis_cli.analyzers.size.subprocess.run")
+    @patch("regis.analyzers.size.subprocess.run")
     def test_multi_arch_manifest(self, mock_run):
         def side_effect(cmd, **kwargs):
             class MockResponse:
@@ -114,7 +114,7 @@ class TestSizeAnalyzer:
         assert report["total_compressed_bytes"] == 1500
         assert len(report["platforms"]) == 2
 
-    @patch("regis_cli.analyzers.size.subprocess.run")
+    @patch("regis.analyzers.size.subprocess.run")
     def test_empty_manifest(self, mock_run):
         def side_effect(cmd, **kwargs):
             class MockResponse:

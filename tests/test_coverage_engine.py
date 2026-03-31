@@ -1,4 +1,4 @@
-from regis_cli.playbook.engine import (
+from regis.playbook.engine import (
     MissingDataTracker,
     _format_date,
     _format_datetime,

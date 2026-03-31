@@ -4,7 +4,7 @@
     {
       "name": "report-viewer",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@regis-cli/report-viewer", "dev"],
+      "runtimeArgs": ["--filter", "@regis/report-viewer", "dev"],
       "port": 3000
     },
     {
@@ -16,7 +16,7 @@
     {
       "name": "regis-viewer",
       "runtimeExecutable": "pipenv",
-      "runtimeArgs": ["run", "regis-cli", "viewer", "serve"],
+      "runtimeArgs": ["run", "regis", "viewer", "serve"],
       "port": 8000
     }
   ]

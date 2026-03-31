@@ -5,8 +5,8 @@ from unittest.mock import patch
 
 import pytest
 
-from regis_cli.analyzers.base import AnalyzerError
-from regis_cli.analyzers.skopeo import SkopeoAnalyzer
+from regis.analyzers.base import AnalyzerError
+from regis.analyzers.skopeo import SkopeoAnalyzer
 
 
 class MockRegistryClient:
@@ -19,7 +19,7 @@ class MockRegistryClient:
 class TestSkopeoAnalyzer:
     """Test the skopeo analyzer (successor of image analyzer)."""
 
-    @patch("regis_cli.analyzers.skopeo.subprocess.run")
+    @patch("regis.analyzers.skopeo.subprocess.run")
     def test_single_platform_manifest(self, mock_run):
         def side_effect(cmd, **kwargs):
             class MockResponse:
@@ -76,7 +76,7 @@ class TestSkopeoAnalyzer:
         assert plat["layers_count"] == 2
         assert plat["user"] == "postgres"
 
-    @patch("regis_cli.analyzers.skopeo.subprocess.run")
+    @patch("regis.analyzers.skopeo.subprocess.run")
     def test_multi_arch_manifest(self, mock_run):
         def side_effect(cmd, **kwargs):
             class MockResponse:

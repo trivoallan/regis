@@ -1,11 +1,11 @@
-"""Tests for the regis-cli bootstrap command."""
+"""Tests for the regis bootstrap command."""
 
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
-from regis_cli.cli import main
+from regis.cli import main
 
 
 def test_bootstrap_help():
@@ -76,8 +76,8 @@ class TestBootstrapArchiveRepo:
         assert "--org" in result.output
         assert "--repo" in result.output
 
-    @patch("regis_cli.utils.process.shutil.which", return_value="/usr/bin/fake")
-    @patch("regis_cli.utils.process.subprocess.run")
+    @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
+    @patch("regis.utils.process.subprocess.run")
     def test_github_happy_path(self, mock_run, _mock_which):
         mock_run.side_effect = _make_subprocess_mock("myuser\n").side_effect
         runner = CliRunner()
@@ -88,8 +88,8 @@ class TestBootstrapArchiveRepo:
         assert result.exit_code == 0, result.output
         assert "github.io" in result.output
 
-    @patch("regis_cli.utils.process.shutil.which", return_value="/usr/bin/fake")
-    @patch("regis_cli.utils.process.subprocess.run")
+    @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
+    @patch("regis.utils.process.subprocess.run")
     def test_gitlab_happy_path(self, mock_run, _mock_which):
         mock_run.side_effect = _make_subprocess_mock(
             '{"username":"myuser"}\n'
@@ -111,15 +111,15 @@ class TestBootstrapArchiveRepo:
         assert result.exit_code == 0, result.output
         assert "gitlab.io" in result.output
 
-    @patch("regis_cli.utils.process.shutil.which", return_value=None)
+    @patch("regis.utils.process.shutil.which", return_value=None)
     def test_missing_pnpm_fails(self, _mock_which):
         runner = CliRunner()
         result = runner.invoke(main, ["bootstrap", "archive", "--repo", "--no-input"])
         assert result.exit_code != 0
         assert "pnpm" in result.output
 
-    @patch("regis_cli.utils.process.shutil.which", return_value="/usr/bin/fake")
-    @patch("regis_cli.utils.process.subprocess.run")
+    @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
+    @patch("regis.utils.process.subprocess.run")
     def test_auth_failure(self, mock_run, _mock_which):
         def _side_effect(args, **kwargs):
             result = MagicMock()
@@ -142,8 +142,8 @@ class TestBootstrapArchiveRepo:
         assert result.exit_code != 0
         assert "failed" in result.output.lower()
 
-    @patch("regis_cli.utils.process.shutil.which", return_value="/usr/bin/fake")
-    @patch("regis_cli.utils.process.subprocess.run")
+    @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
+    @patch("regis.utils.process.subprocess.run")
     def test_pnpm_install_failure(self, mock_run, _mock_which):
         def _side_effect(args, **kwargs):
             result = MagicMock()
@@ -166,8 +166,8 @@ class TestBootstrapArchiveRepo:
         assert result.exit_code != 0
         assert "pnpm install" in result.output
 
-    @patch("regis_cli.utils.process.shutil.which", return_value="/usr/bin/fake")
-    @patch("regis_cli.utils.process.subprocess.run")
+    @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
+    @patch("regis.utils.process.subprocess.run")
     def test_repo_name_defaults_to_slug(self, mock_run, _mock_which):
         gh_create_args: list[str] = []
 
@@ -189,8 +189,8 @@ class TestBootstrapArchiveRepo:
         assert result.exit_code == 0, result.output
         assert any("regis-archive" in arg for arg in gh_create_args)
 
-    @patch("regis_cli.utils.process.shutil.which", return_value="/usr/bin/fake")
-    @patch("regis_cli.utils.process.subprocess.run")
+    @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
+    @patch("regis.utils.process.subprocess.run")
     def test_org_passed_to_gh(self, mock_run, _mock_which):
         gh_create_args: list[str] = []
 

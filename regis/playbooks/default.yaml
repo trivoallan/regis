@@ -1,0 +1,174 @@
+# yaml-language-server: $schema=../schemas/playbook/definition.schema.json
+name: RegiS Default Playbook
+
+tiers:
+  - name: Gold
+    condition:
+      ">": [{ var: rules_summary.score }, 90]
+  - name: Silver
+    condition:
+      ">": [{ var: rules_summary.score }, 70]
+  - name: Bronze
+    condition:
+      ">": [{ var: rules_summary.score }, 50]
+
+rules:
+  # --- Security (Critical) ---
+  - provider: core
+    rule: registry-domain-whitelist
+    slug: registry-domain-whitelist
+    level: critical
+
+  - provider: skopeo
+    rule: user-blacklist
+    slug: no-root
+    level: critical
+
+  - provider: trivy
+    rule: cve-count
+    slug: cve-critical
+    level: critical
+    options:
+      level: critical
+      max_count: 0
+
+  # --- Security (Warning) ---
+  - provider: trivy
+    rule: cve-count
+    slug: cve-high
+    level: warning
+    options:
+      level: high
+      max_count: 10
+
+  - provider: trivy
+    rule: fix-available
+    slug: cve-fixable
+    level: warning
+
+  - provider: sbom
+    rule: has-sbom
+    slug: has-sbom
+    level: warning
+
+  # Opt-in: block strong copyleft licenses (GPL, AGPL). Images based on
+  # standard Linux distributions commonly include GPL-licensed packages —
+  # enable this rule only when your policy explicitly forbids strong copyleft.
+  - provider: sbom
+    rule: license-blocklist
+    slug: no-strong-copyleft
+    level: critical
+    enable: false
+    options:
+      blocklist:
+        - GPL-2.0
+        - GPL-2.0-only
+        - GPL-2.0-or-later
+        - GPL-3.0
+        - GPL-3.0-only
+        - GPL-3.0-or-later
+        - AGPL-1.0
+        - AGPL-3.0
+        - AGPL-3.0-only
+        - AGPL-3.0-or-later
+        - SSPL-1.0
+
+  # Opt-in: warn on weak copyleft licenses (LGPL, MPL, EPL, CDDL, EUPL).
+  - provider: sbom
+    rule: license-blocklist
+    slug: no-weak-copyleft
+    level: warning
+    enable: false
+    options:
+      blocklist:
+        - LGPL-2.0
+        - LGPL-2.0-only
+        - LGPL-2.0-or-later
+        - LGPL-2.1
+        - LGPL-2.1-only
+        - LGPL-2.1-or-later
+        - LGPL-3.0
+        - LGPL-3.0-only
+        - LGPL-3.0-or-later
+        - MPL-2.0
+        - MPL-2.0-no-copyleft-exception
+        - EPL-1.0
+        - EPL-2.0
+        - CDDL-1.0
+        - EUPL-1.1
+        - EUPL-1.2
+
+  - provider: scorecarddev
+    rule: min-score
+    slug: scorecard-min
+    level: warning
+    options:
+      min_score: 5.0
+
+  # --- Hygiene (Info) ---
+  - provider: freshness
+    rule: age
+    slug: age
+    level: info
+    options:
+      max_days: 90
+
+  - provider: skopeo
+    rule: tag-blacklist
+    slug: no-latest
+    level: info
+
+badges:
+  - slug: cve-critical
+    scope: CVE
+    value: Critical
+    condition:
+      "!": [{ var: rules.cve-critical.passed }]
+    class: error
+  - slug: cve-high
+    scope: CVE
+    value: High
+    condition:
+      "!": [{ var: rules.cve-high.passed }]
+    class: warning
+  - slug: freshness-fresh
+    scope: Freshness
+    value: Fresh
+    condition:
+      "==": [{ var: rules.age.passed }, true]
+    class: success
+  - slug: freshness-stale
+    scope: Freshness
+    value: Stale
+    condition:
+      "!": [{ var: rules.age.passed }]
+    class: warning
+
+integrations:
+  gitlab:
+    badges:
+      - score
+      - freshness
+      - cve-critical
+      - cve-high
+    checklists:
+      - title: 📝 Review Checklist
+        items:
+          - label: Revue de sécurité réalisée
+          - label: Aucune vulnérabilité CRITIQUE détectée
+            show_if: { "!!": [{ var: rules.cve-critical }] }
+            check_if: { var: rules.cve-critical.passed }
+          - label: Image issue d'un registre de confiance
+            show_if: { "!!": [{ var: rules.registry-domain-whitelist }] }
+            check_if: { var: rules.registry-domain-whitelist.passed }
+          - label: Image ne tourne pas en root
+            show_if: { "!!": [{ var: rules.no-root }] }
+            check_if: { var: rules.no-root.passed }
+    templates:
+      - url: https://github.com/trivoallan/regis
+        directory: regis/cookiecutters/mr-evidence
+
+links:
+  - label: Return to Merge Request
+    url: "{{ request.metadata['gitlab.mr_url'] }}"
+    condition: { "!!": [{ var: request.metadata.gitlab.mr_url }] }
