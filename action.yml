@@ -71,7 +71,6 @@ runs:
         DOCKER_ARGS=(
           run --rm
           -v "${REPORT_DIR}:/app/reports"
-          -e REGIS_IMAGE_URL
         )
 
         CLI_ARGS=(
@@ -108,7 +107,7 @@ runs:
       if: inputs.pr-url != '' || github.event_name == 'pull_request'
       shell: bash
       env:
-        GH_TOKEN: ${{ inputs.github-token }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
         REGIS_PR_URL: ${{ inputs.pr-url != '' && inputs.pr-url || github.event.pull_request.html_url }}
         REGIS_REPORT_URL: ${{ inputs.report-url }}
         REGIS_VERSION: ${{ inputs.version }}
@@ -122,7 +121,7 @@ runs:
         DOCKER_ARGS=(
           run --rm
           -v "${REGIS_REPORT_DIR}:/app/reports"
-          -e GH_TOKEN
+          -e GITHUB_TOKEN
         )
 
         CLI_ARGS=(
