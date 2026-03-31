@@ -1,12 +1,6 @@
 name: CD / Docs
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - docs/**
-      - regis/**
   release:
     types: [published]
   workflow_dispatch:
@@ -43,16 +37,6 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           ref: main
           fetch-depth: 0
-
-      - name: Detect changed sources
-        id: filter
-        uses: dorny/paths-filter@v4
-        with:
-          filters: |
-            schemas:
-              - 'regis/schemas/**'
-            rules:
-              - 'regis/**'
 
       - name: Setup Python
         uses: actions/setup-python@v6
@@ -114,7 +98,6 @@ jobs:
         run: pnpm install
 
       - name: Generate Schema Docs
-        if: steps.filter.outputs.schemas == 'true' || github.event_name != 'push'
         run: |
           # Copy all schemas first to allow cross-category resolution
           mkdir -p docs/website/static/schemas
@@ -129,7 +112,6 @@ jobs:
           done
 
       - name: Generate Rules Reference
-        if: steps.filter.outputs.rules == 'true' || github.event_name != 'push'
         run: pipenv run regis rules list -f markdown -D docs/website/docs/reference/rules
 
       - name: Ensure whats-new label exists
