@@ -1,0 +1,139 @@
+name: Regis Security Analysis
+description: Analyze a container image with regis-cli and optionally post results to a PR.
+author: trivoallan
+
+branding:
+  icon: shield
+  color: blue
+
+inputs:
+  image-url:
+    description: Container image URL to analyze.
+    required: true
+  auth:
+    description: Registry credentials as `registry=user:pass`.
+    required: false
+    default: ""
+  playbook:
+    description: URL or path to a custom playbook YAML.
+    required: false
+    default: ""
+  report-url:
+    description: URL to the hosted report (used as a link in the PR comment).
+    required: false
+    default: ""
+  github-token:
+    description: >
+      Token for posting PR comments. Requires the pull-requests: write permission.
+    required: false
+    default: ${{ github.token }}
+  pr-url:
+    description: PR URL to post the comment on (auto-detected in pull_request context).
+    required: false
+    default: ""
+  upload-artifact:
+    description: Whether to upload the report as a workflow artifact.
+    required: false
+    default: "true"
+  artifact-name:
+    description: Name for the uploaded artifact.
+    required: false
+    default: regis-security-report
+  version:
+    description: regis-cli Docker image version tag.
+    required: false
+    default: latest
+
+outputs:
+  report-path:
+    description: Absolute path to the report directory on the runner.
+    value: ${{ steps.analyze.outputs.report-path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Run regis-cli analysis
+      id: analyze
+      shell: bash
+      env:
+        REGIS_IMAGE_URL: ${{ inputs.image-url }}
+        REGIS_AUTH: ${{ inputs.auth }}
+        REGIS_PLAYBOOK: ${{ inputs.playbook }}
+        REGIS_VERSION: ${{ inputs.version }}
+        REGIS_ACTOR: ${{ github.actor }}
+        REGIS_SERVER_URL: ${{ github.server_url }}
+        REGIS_REPOSITORY: ${{ github.repository }}
+        REGIS_RUN_ID: ${{ github.run_id }}
+      run: |
+        REPORT_DIR="${RUNNER_TEMP}/regis-reports"
+        mkdir -p "${REPORT_DIR}"
+
+        DOCKER_ARGS=(
+          run --rm
+          -v "${REPORT_DIR}:/app/reports"
+        )
+
+        CLI_ARGS=(
+          analyze "${REGIS_IMAGE_URL}"
+          --site
+          --output-dir reports
+          --meta "trigger.user=${REGIS_ACTOR}"
+          --meta "trigger.url=${REGIS_SERVER_URL}/${REGIS_REPOSITORY}/actions/runs/${REGIS_RUN_ID}"
+        )
+
+        if [ -n "${REGIS_AUTH}" ]; then
+          CLI_ARGS+=(--auth "${REGIS_AUTH}")
+        fi
+
+        if [ -n "${REGIS_PLAYBOOK}" ]; then
+          CLI_ARGS+=(--playbook "${REGIS_PLAYBOOK}")
+        fi
+
+        docker "${DOCKER_ARGS[@]}" \
+          "ghcr.io/trivoallan/regis-cli:${REGIS_VERSION}" \
+          "${CLI_ARGS[@]}"
+
+        echo "report-path=${REPORT_DIR}" >> "${GITHUB_OUTPUT}"
+
+    - name: Upload report artifact
+      if: inputs.upload-artifact == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ steps.analyze.outputs.report-path }}
+
+    - name: Post PR comment
+      # Requires regis-cli v0.25.0+ in the Docker image for the `github update-pr` command.
+      if: inputs.pr-url != '' || github.event_name == 'pull_request'
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        REGIS_PR_URL: ${{ inputs.pr-url != '' && inputs.pr-url || github.event.pull_request.html_url }}
+        REGIS_REPORT_URL: ${{ inputs.report-url }}
+        REGIS_VERSION: ${{ inputs.version }}
+        REGIS_REPORT_DIR: ${{ steps.analyze.outputs.report-path }}
+      run: |
+        if [ -z "${REGIS_PR_URL}" ]; then
+          echo "::error::No PR URL available. Pass pr-url explicitly or run on a pull_request event."
+          exit 1
+        fi
+
+        DOCKER_ARGS=(
+          run --rm
+          -v "${REGIS_REPORT_DIR}:/app/reports"
+          -e GITHUB_TOKEN
+        )
+
+        CLI_ARGS=(
+          github update-pr
+          --report /app/reports/report.json
+          --pr-url "${REGIS_PR_URL}"
+        )
+
+        if [ -n "${REGIS_REPORT_URL}" ]; then
+          CLI_ARGS+=(--report-url "${REGIS_REPORT_URL}")
+        fi
+
+        docker "${DOCKER_ARGS[@]}" \
+          "ghcr.io/trivoallan/regis-cli:${REGIS_VERSION}" \
+          "${CLI_ARGS[@]}"

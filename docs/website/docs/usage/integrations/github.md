@@ -12,6 +12,94 @@ To quickly bootstrap a new GitHub repository pre-configured with `regis-cli` and
 **Note**: For repositories with branch protection, please ensure the **"Allow auto-merge"** option is enabled in the repository's general settings to support automated documentation updates.
 :::
 
+## Quick Start with the Reusable Action
+
+The fastest way to integrate `regis-cli` is to use the official reusable GitHub
+Action. It wraps the full analysis workflow—running the scanner, uploading the
+report artifact, and posting a PR comment—into a single step.
+
+### Permissions
+
+```yaml
+permissions:
+  contents: read
+  packages: write # Required only if pushing to GHCR
+  pull-requests: write # Required only for PR comments
+```
+
+### Minimal example
+
+```yaml
+name: Build and Analyze
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
+
+      - name: Analyze with regis-cli
+        uses: trivoallan/regis-cli@v0.25.0
+        with:
+          image-url: ghcr.io/${{ github.repository }}:latest
+          auth: ghcr.io=${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}
+```
+
+### Action inputs
+
+| Input             | Required | Default                 | Description                                                                     |
+| ----------------- | -------- | ----------------------- | ------------------------------------------------------------------------------- |
+| `image-url`       | Yes      | —                       | Container image URL to analyze.                                                 |
+| `auth`            | No       | —                       | Registry credentials as `registry=user:pass`.                                   |
+| `playbook`        | No       | —                       | URL or path to a custom playbook YAML file.                                     |
+| `report-url`      | No       | —                       | URL to a hosted report (used as a link in the PR comment).                      |
+| `github-token`    | No       | `${{ github.token }}`   | Token used to post PR comments (`pull-requests: write` required).               |
+| `pr-url`          | No       | —                       | PR URL to post results on. Defaults to the current PR on `pull_request` events. |
+| `upload-artifact` | No       | `true`                  | Upload the report directory as a workflow artifact.                             |
+| `artifact-name`   | No       | `regis-security-report` | Name for the uploaded artifact.                                                 |
+| `version`         | No       | `latest`                | `regis-cli` Docker image version to use.                                        |
+
+### Action outputs
+
+| Output        | Description                                          |
+| ------------- | ---------------------------------------------------- |
+| `report-path` | Absolute path to the report directory on the runner. |
+
+:::note
+PR comments require `regis-cli` **v0.25.0 or later**. When running on a
+`pull_request` event, the action posts automatically. For other events, pass
+`pr-url` explicitly.
+:::
+
 ## Workflow Setup
 
 A robust integration typically involves building your image, pushing it to a registry (like GitHub Container Registry), and then running `regis-cli` to analyze the results.
@@ -81,7 +169,7 @@ jobs:
       - name: Run Analysis
         run: |
           pipenv run regis-cli analyze ghcr.io/${{ github.repository }}:latest \
-            --auth ghcr.io:${{ github.actor }}:${{ secrets.GITHUB_TOKEN }} \
+            --auth ghcr.io=${{ github.actor }}:${{ secrets.GITHUB_TOKEN }} \
             --site \
             --meta "trigger.user=${{ github.actor }}" \
             --meta "trigger.url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -144,7 +232,7 @@ You can further customize the integration to meet specific security requirements
 To analyze images in private registries, use the `--auth` flag. For GitHub Container Registry, you can use the automatically provided `GITHUB_TOKEN`.
 
 ```bash
-regis-cli analyze <image-url> --auth ghcr.io:<username>:<token>
+regis-cli analyze <image-url> --auth ghcr.io=<username>:<token>
 ```
 
 ### Using Security Playbooks
