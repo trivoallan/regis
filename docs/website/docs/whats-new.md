@@ -11,28 +11,27 @@ For the complete list of changes, see the [full changelog](https://github.com/tr
 
 ---
 
+## [v0.25.0](https://github.com/trivoallan/regis-cli/compare/v0.24.0...v0.25.0) — March 31, 2026
+
+### ✨ Features
+
+- **ci:** reusable GitHub composite action for container image analysis ([#183](https://github.com/trivoallan/regis-cli/issues/183))
+- **cli:** add github update-pr command for PR comment posting ([#180](https://github.com/trivoallan/regis-cli/issues/180))
+- **docs:** redirect root GitHub Pages URL to /docs/ ([#175](https://github.com/trivoallan/regis-cli/issues/175))
+- Multi-archive support in viewer ([#182](https://github.com/trivoallan/regis-cli/issues/182))
+
+### 📚 Documentation
+
+- Add Docusaurus version snapshot for v0.24.0 ([#176](https://github.com/trivoallan/regis-cli/issues/176))
+- **docs:** add public roadmap and stability commitments ([#187](https://github.com/trivoallan/regis-cli/issues/187))
+- Update documentation reference and snapshots ([#179](https://github.com/trivoallan/regis-cli/issues/179))
+- Update documentation reference and snapshots ([#181](https://github.com/trivoallan/regis-cli/issues/181))
+- Update documentation reference and snapshots ([#184](https://github.com/trivoallan/regis-cli/issues/184))
+- Update documentation reference and snapshots ([#186](https://github.com/trivoallan/regis-cli/issues/186))
+
+---
+
 ## [v0.24.0](https://github.com/trivoallan/regis/compare/v0.23.7...v0.24.0) — March 30, 2026
-
-:::info[Highlights]
-
-**fix(build): regenerate pnpm lockfile after Dependabot bumps** ([#149](https://github.com/trivoallan/regis/pull/149))
-
-- Regenerates `pnpm-lock.yaml` to sync with `apps/report-viewer/package.json` after Dependabot bumped `@types/react`, `@types/react-dom`, `tailwindcss`, and `typescript`
-- Fixes frozen-lockfile CI failure in the Publish Viewer workflow
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**test(cli): enforce 90% unit test coverage permanently** ([#146](https://github.com/trivoallan/regis/pull/146))
-
-- **Threshold enforced**: `pytest` now fails automatically if coverage drops below 90% (`--cov-fail-under=90` in `addopts`), blocking any PR via the required CI status check.
-- **Coverage bridged**: 21 targeted new tests to go from 86% → **90.02%** (330 tests, 0 failing).
-- **Badge + report**: `genbadge` generates `coverage-badge.svg` in CI; the badge is auto-committed on `main` and the `htmlcov/` artifact is uploaded on every run.
-
-**Add What's New documentation page with auto-generation from changelog** ([#145](https://github.com/trivoallan/regis/pull/145))
-
-Introduces an automated "What's New" documentation page that summarizes new features and improvements for each release of regis. The page is generated from the CHANGELOG.md and optionally enriched with PR highlights from GitHub.
-
-:::
 
 ### ✨ Features
 
@@ -46,27 +45,6 @@ Introduces an automated "What's New" documentation page that summarizes new feat
 
 ## [v0.23.7](https://github.com/trivoallan/regis/compare/v0.23.6...v0.23.7) — March 30, 2026
 
-:::info[Highlights]
-
-**fix(build): regenerate pnpm lockfile after Dependabot bumps** ([#149](https://github.com/trivoallan/regis/pull/149))
-
-- Regenerates `pnpm-lock.yaml` to sync with `apps/report-viewer/package.json` after Dependabot bumped `@types/react`, `@types/react-dom`, `tailwindcss`, and `typescript`
-- Fixes frozen-lockfile CI failure in the Publish Viewer workflow
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**test(cli): enforce 90% unit test coverage permanently** ([#146](https://github.com/trivoallan/regis/pull/146))
-
-- **Threshold enforced**: `pytest` now fails automatically if coverage drops below 90% (`--cov-fail-under=90` in `addopts`), blocking any PR via the required CI status check.
-- **Coverage bridged**: 21 targeted new tests to go from 86% → **90.02%** (330 tests, 0 failing).
-- **Badge + report**: `genbadge` generates `coverage-badge.svg` in CI; the badge is auto-committed on `main` and the `htmlcov/` artifact is uploaded on every run.
-
-**Add What's New documentation page with auto-generation from changelog** ([#145](https://github.com/trivoallan/regis/pull/145))
-
-Introduces an automated "What's New" documentation page that summarizes new features and improvements for each release of regis. The page is generated from the CHANGELOG.md and optionally enriched with PR highlights from GitHub.
-
-:::
-
 ### 🐛 Bug Fixes
 
 - **build:** pin tailwindcss to v3 and ignore v4 Dependabot bumps ([#164](https://github.com/trivoallan/regis/issues/164))
@@ -79,27 +57,6 @@ Introduces an automated "What's New" documentation page that summarizes new feat
 
 ## [v0.23.6](https://github.com/trivoallan/regis/compare/v0.23.5...v0.23.6) — March 30, 2026
 
-:::info[Highlights]
-
-**fix(build): regenerate pnpm lockfile after Dependabot bumps** ([#149](https://github.com/trivoallan/regis/pull/149))
-
-- Regenerates `pnpm-lock.yaml` to sync with `apps/report-viewer/package.json` after Dependabot bumped `@types/react`, `@types/react-dom`, `tailwindcss`, and `typescript`
-- Fixes frozen-lockfile CI failure in the Publish Viewer workflow
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**test(cli): enforce 90% unit test coverage permanently** ([#146](https://github.com/trivoallan/regis/pull/146))
-
-- **Threshold enforced**: `pytest` now fails automatically if coverage drops below 90% (`--cov-fail-under=90` in `addopts`), blocking any PR via the required CI status check.
-- **Coverage bridged**: 21 targeted new tests to go from 86% → **90.02%** (330 tests, 0 failing).
-- **Badge + report**: `genbadge` generates `coverage-badge.svg` in CI; the badge is auto-committed on `main` and the `htmlcov/` artifact is uploaded on every run.
-
-**Add What's New documentation page with auto-generation from changelog** ([#145](https://github.com/trivoallan/regis/pull/145))
-
-Introduces an automated "What's New" documentation page that summarizes new features and improvements for each release of regis. The page is generated from the CHANGELOG.md and optionally enriched with PR highlights from GitHub.
-
-:::
-
 ### 📚 Documentation
 
 - Update documentation reference and snapshots ([#161](https://github.com/trivoallan/regis/issues/161))
@@ -107,27 +64,6 @@ Introduces an automated "What's New" documentation page that summarizes new feat
 ---
 
 ## [v0.23.5](https://github.com/trivoallan/regis/compare/v0.23.4...v0.23.5) — March 30, 2026
-
-:::info[Highlights]
-
-**fix(build): regenerate pnpm lockfile after Dependabot bumps** ([#149](https://github.com/trivoallan/regis/pull/149))
-
-- Regenerates `pnpm-lock.yaml` to sync with `apps/report-viewer/package.json` after Dependabot bumped `@types/react`, `@types/react-dom`, `tailwindcss`, and `typescript`
-- Fixes frozen-lockfile CI failure in the Publish Viewer workflow
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**test(cli): enforce 90% unit test coverage permanently** ([#146](https://github.com/trivoallan/regis/pull/146))
-
-- **Threshold enforced**: `pytest` now fails automatically if coverage drops below 90% (`--cov-fail-under=90` in `addopts`), blocking any PR via the required CI status check.
-- **Coverage bridged**: 21 targeted new tests to go from 86% → **90.02%** (330 tests, 0 failing).
-- **Badge + report**: `genbadge` generates `coverage-badge.svg` in CI; the badge is auto-committed on `main` and the `htmlcov/` artifact is uploaded on every run.
-
-**Add What's New documentation page with auto-generation from changelog** ([#145](https://github.com/trivoallan/regis/pull/145))
-
-Introduces an automated "What's New" documentation page that summarizes new features and improvements for each release of regis. The page is generated from the CHANGELOG.md and optionally enriched with PR highlights from GitHub.
-
-:::
 
 ### 🐛 Bug Fixes
 
@@ -142,27 +78,6 @@ Introduces an automated "What's New" documentation page that summarizes new feat
 
 ## [v0.23.4](https://github.com/trivoallan/regis/compare/v0.23.3...v0.23.4) — March 30, 2026
 
-:::info[Highlights]
-
-**fix(build): regenerate pnpm lockfile after Dependabot bumps** ([#149](https://github.com/trivoallan/regis/pull/149))
-
-- Regenerates `pnpm-lock.yaml` to sync with `apps/report-viewer/package.json` after Dependabot bumped `@types/react`, `@types/react-dom`, `tailwindcss`, and `typescript`
-- Fixes frozen-lockfile CI failure in the Publish Viewer workflow
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**test(cli): enforce 90% unit test coverage permanently** ([#146](https://github.com/trivoallan/regis/pull/146))
-
-- **Threshold enforced**: `pytest` now fails automatically if coverage drops below 90% (`--cov-fail-under=90` in `addopts`), blocking any PR via the required CI status check.
-- **Coverage bridged**: 21 targeted new tests to go from 86% → **90.02%** (330 tests, 0 failing).
-- **Badge + report**: `genbadge` generates `coverage-badge.svg` in CI; the badge is auto-committed on `main` and the `htmlcov/` artifact is uploaded on every run.
-
-**Add What's New documentation page with auto-generation from changelog** ([#145](https://github.com/trivoallan/regis/pull/145))
-
-Introduces an automated "What's New" documentation page that summarizes new features and improvements for each release of regis. The page is generated from the CHANGELOG.md and optionally enriched with PR highlights from GitHub.
-
-:::
-
 ### 🐛 Bug Fixes
 
 - **build:** use pnpm direct install and sync serialize-javascript override ([#155](https://github.com/trivoallan/regis/issues/155))
@@ -170,27 +85,6 @@ Introduces an automated "What's New" documentation page that summarizes new feat
 ---
 
 ## [v0.23.3](https://github.com/trivoallan/regis/compare/v0.23.2...v0.23.3) — March 30, 2026
-
-:::info[Highlights]
-
-**fix(build): regenerate pnpm lockfile after Dependabot bumps** ([#149](https://github.com/trivoallan/regis/pull/149))
-
-- Regenerates `pnpm-lock.yaml` to sync with `apps/report-viewer/package.json` after Dependabot bumped `@types/react`, `@types/react-dom`, `tailwindcss`, and `typescript`
-- Fixes frozen-lockfile CI failure in the Publish Viewer workflow
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**test(cli): enforce 90% unit test coverage permanently** ([#146](https://github.com/trivoallan/regis/pull/146))
-
-- **Threshold enforced**: `pytest` now fails automatically if coverage drops below 90% (`--cov-fail-under=90` in `addopts`), blocking any PR via the required CI status check.
-- **Coverage bridged**: 21 targeted new tests to go from 86% → **90.02%** (330 tests, 0 failing).
-- **Badge + report**: `genbadge` generates `coverage-badge.svg` in CI; the badge is auto-committed on `main` and the `htmlcov/` artifact is uploaded on every run.
-
-**Add What's New documentation page with auto-generation from changelog** ([#145](https://github.com/trivoallan/regis/pull/145))
-
-Introduces an automated "What's New" documentation page that summarizes new features and improvements for each release of regis. The page is generated from the CHANGELOG.md and optionally enriched with PR highlights from GitHub.
-
-:::
 
 ### 🐛 Bug Fixes
 
@@ -200,27 +94,6 @@ Introduces an automated "What's New" documentation page that summarizes new feat
 
 ## [v0.23.2](https://github.com/trivoallan/regis/compare/v0.23.1...v0.23.2) — March 30, 2026
 
-:::info[Highlights]
-
-**fix(build): regenerate pnpm lockfile after Dependabot bumps** ([#149](https://github.com/trivoallan/regis/pull/149))
-
-- Regenerates `pnpm-lock.yaml` to sync with `apps/report-viewer/package.json` after Dependabot bumped `@types/react`, `@types/react-dom`, `tailwindcss`, and `typescript`
-- Fixes frozen-lockfile CI failure in the Publish Viewer workflow
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**test(cli): enforce 90% unit test coverage permanently** ([#146](https://github.com/trivoallan/regis/pull/146))
-
-- **Threshold enforced**: `pytest` now fails automatically if coverage drops below 90% (`--cov-fail-under=90` in `addopts`), blocking any PR via the required CI status check.
-- **Coverage bridged**: 21 targeted new tests to go from 86% → **90.02%** (330 tests, 0 failing).
-- **Badge + report**: `genbadge` generates `coverage-badge.svg` in CI; the badge is auto-committed on `main` and the `htmlcov/` artifact is uploaded on every run.
-
-**Add What's New documentation page with auto-generation from changelog** ([#145](https://github.com/trivoallan/regis/pull/145))
-
-Introduces an automated "What's New" documentation page that summarizes new features and improvements for each release of regis. The page is generated from the CHANGELOG.md and optionally enriched with PR highlights from GitHub.
-
-:::
-
 ### 🐛 Bug Fixes
 
 - **build:** regenerate pnpm lockfile after Dependabot bumps ([#149](https://github.com/trivoallan/regis/issues/149))
@@ -229,27 +102,6 @@ Introduces an automated "What's New" documentation page that summarizes new feat
 
 ## [v0.23.1](https://github.com/trivoallan/regis/compare/v0.23.0...v0.23.1) — March 30, 2026
 
-:::info[Highlights]
-
-**fix(build): regenerate pnpm lockfile after Dependabot bumps** ([#149](https://github.com/trivoallan/regis/pull/149))
-
-- Regenerates `pnpm-lock.yaml` to sync with `apps/report-viewer/package.json` after Dependabot bumped `@types/react`, `@types/react-dom`, `tailwindcss`, and `typescript`
-- Fixes frozen-lockfile CI failure in the Publish Viewer workflow
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**test(cli): enforce 90% unit test coverage permanently** ([#146](https://github.com/trivoallan/regis/pull/146))
-
-- **Threshold enforced**: `pytest` now fails automatically if coverage drops below 90% (`--cov-fail-under=90` in `addopts`), blocking any PR via the required CI status check.
-- **Coverage bridged**: 21 targeted new tests to go from 86% → **90.02%** (330 tests, 0 failing).
-- **Badge + report**: `genbadge` generates `coverage-badge.svg` in CI; the badge is auto-committed on `main` and the `htmlcov/` artifact is uploaded on every run.
-
-**Add What's New documentation page with auto-generation from changelog** ([#145](https://github.com/trivoallan/regis/pull/145))
-
-Introduces an automated "What's New" documentation page that summarizes new features and improvements for each release of regis. The page is generated from the CHANGELOG.md and optionally enriched with PR highlights from GitHub.
-
-:::
-
 ### 🐛 Bug Fixes
 
 - **ci:** remove coverage badge direct push to main ([#147](https://github.com/trivoallan/regis/issues/147))
@@ -257,27 +109,6 @@ Introduces an automated "What's New" documentation page that summarizes new feat
 ---
 
 ## [v0.23.0](https://github.com/trivoallan/regis/compare/v0.22.0...v0.23.0) — March 30, 2026
-
-:::info[Highlights]
-
-**fix(build): regenerate pnpm lockfile after Dependabot bumps** ([#149](https://github.com/trivoallan/regis/pull/149))
-
-- Regenerates `pnpm-lock.yaml` to sync with `apps/report-viewer/package.json` after Dependabot bumped `@types/react`, `@types/react-dom`, `tailwindcss`, and `typescript`
-- Fixes frozen-lockfile CI failure in the Publish Viewer workflow
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**test(cli): enforce 90% unit test coverage permanently** ([#146](https://github.com/trivoallan/regis/pull/146))
-
-- **Threshold enforced**: `pytest` now fails automatically if coverage drops below 90% (`--cov-fail-under=90` in `addopts`), blocking any PR via the required CI status check.
-- **Coverage bridged**: 21 targeted new tests to go from 86% → **90.02%** (330 tests, 0 failing).
-- **Badge + report**: `genbadge` generates `coverage-badge.svg` in CI; the badge is auto-committed on `main` and the `htmlcov/` artifact is uploaded on every run.
-
-**Add What's New documentation page with auto-generation from changelog** ([#145](https://github.com/trivoallan/regis/pull/145))
-
-Introduces an automated "What's New" documentation page that summarizes new features and improvements for each release of regis. The page is generated from the CHANGELOG.md and optionally enriched with PR highlights from GitHub.
-
-:::
 
 ### ✨ Features
 
@@ -319,27 +150,6 @@ Introduces an automated "What's New" documentation page that summarizes new feat
 
 ## [v0.22.0](https://github.com/trivoallan/regis/compare/v0.21.0...v0.22.0) — March 30, 2026
 
-:::info[Highlights]
-
-**fix(build): regenerate pnpm lockfile after Dependabot bumps** ([#149](https://github.com/trivoallan/regis/pull/149))
-
-- Regenerates `pnpm-lock.yaml` to sync with `apps/report-viewer/package.json` after Dependabot bumped `@types/react`, `@types/react-dom`, `tailwindcss`, and `typescript`
-- Fixes frozen-lockfile CI failure in the Publish Viewer workflow
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**test(cli): enforce 90% unit test coverage permanently** ([#146](https://github.com/trivoallan/regis/pull/146))
-
-- **Threshold enforced**: `pytest` now fails automatically if coverage drops below 90% (`--cov-fail-under=90` in `addopts`), blocking any PR via the required CI status check.
-- **Coverage bridged**: 21 targeted new tests to go from 86% → **90.02%** (330 tests, 0 failing).
-- **Badge + report**: `genbadge` generates `coverage-badge.svg` in CI; the badge is auto-committed on `main` and the `htmlcov/` artifact is uploaded on every run.
-
-**Add What's New documentation page with auto-generation from changelog** ([#145](https://github.com/trivoallan/regis/pull/145))
-
-Introduces an automated "What's New" documentation page that summarizes new features and improvements for each release of regis. The page is generated from the CHANGELOG.md and optionally enriched with PR highlights from GitHub.
-
-:::
-
 ### ✨ Features
 
 - Enable single report viewing by adding support for direct report JSON loading and automatic manifest redirection
@@ -352,27 +162,6 @@ Introduces an automated "What's New" documentation page that summarizes new feat
 ---
 
 ## [v0.21.0](https://github.com/trivoallan/regis/compare/v0.20.0...v0.21.0) — March 30, 2026
-
-:::info[Highlights]
-
-**fix(build): regenerate pnpm lockfile after Dependabot bumps** ([#149](https://github.com/trivoallan/regis/pull/149))
-
-- Regenerates `pnpm-lock.yaml` to sync with `apps/report-viewer/package.json` after Dependabot bumped `@types/react`, `@types/react-dom`, `tailwindcss`, and `typescript`
-- Fixes frozen-lockfile CI failure in the Publish Viewer workflow
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**test(cli): enforce 90% unit test coverage permanently** ([#146](https://github.com/trivoallan/regis/pull/146))
-
-- **Threshold enforced**: `pytest` now fails automatically if coverage drops below 90% (`--cov-fail-under=90` in `addopts`), blocking any PR via the required CI status check.
-- **Coverage bridged**: 21 targeted new tests to go from 86% → **90.02%** (330 tests, 0 failing).
-- **Badge + report**: `genbadge` generates `coverage-badge.svg` in CI; the badge is auto-committed on `main` and the `htmlcov/` artifact is uploaded on every run.
-
-**Add What's New documentation page with auto-generation from changelog** ([#145](https://github.com/trivoallan/regis/pull/145))
-
-Introduces an automated "What's New" documentation page that summarizes new features and improvements for each release of regis. The page is generated from the CHANGELOG.md and optionally enriched with PR highlights from GitHub.
-
-:::
 
 ### ✨ Features
 
