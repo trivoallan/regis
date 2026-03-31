@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunk_regis_report_viewer=globalThis.webpackChunk_regis_report_viewer||[]).push([[7393],{67393(e,r,i){i.d(r,{createInfoServices:()=>s.v});var s=i(91527);i(6057)}}]);
