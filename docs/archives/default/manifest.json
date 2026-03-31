@@ -1,7 +1,7 @@
 [
   {
-    "id": "ghcr.io/trivoallan/regis/main/2026-03-31T07-25-19",
-    "timestamp": "2026-03-31T07:25:19.621539+00:00",
+    "id": "ghcr.io/trivoallan/regis/main/2026-03-31T07-34-45",
+    "timestamp": "2026-03-31T07:34:45.134159+00:00",
     "registry": "ghcr.io",
     "repository": "trivoallan/regis",
     "tag": "main",
@@ -18,11 +18,11 @@
     "sbom_component_count": null,
     "scorecard_score": null,
     "status": "critical",
-    "path": "ghcr.io/trivoallan_regis/main/2026-03-31T07-25-19Z/report.json"
+    "path": "ghcr.io/trivoallan_regis/main/2026-03-31T07-34-45Z/report.json"
   },
   {
-    "id": "ghcr.io/trivoallan/regis/latest/2026-03-31T07-25-17",
-    "timestamp": "2026-03-31T07:25:17.866429+00:00",
+    "id": "ghcr.io/trivoallan/regis/latest/2026-03-31T07-34-43",
+    "timestamp": "2026-03-31T07:34:43.845023+00:00",
     "registry": "ghcr.io",
     "repository": "trivoallan/regis",
     "tag": "latest",
@@ -39,11 +39,11 @@
     "sbom_component_count": null,
     "scorecard_score": null,
     "status": "critical",
-    "path": "ghcr.io/trivoallan_regis/latest/2026-03-31T07-25-17Z/report.json"
+    "path": "ghcr.io/trivoallan_regis/latest/2026-03-31T07-34-43Z/report.json"
   },
   {
-    "id": "registry-1.docker.io/library/alpine/latest/2026-03-31T07-25-16",
-    "timestamp": "2026-03-31T07:25:16.179069+00:00",
+    "id": "registry-1.docker.io/library/alpine/latest/2026-03-31T07-34-42",
+    "timestamp": "2026-03-31T07:34:42.574660+00:00",
     "registry": "registry-1.docker.io",
     "repository": "library/alpine",
     "tag": "latest",
@@ -60,6 +60,6 @@
     "sbom_component_count": null,
     "scorecard_score": null,
     "status": "warning",
-    "path": "registry-1.docker.io/library_alpine/latest/2026-03-31T07-25-16Z/report.json"
+    "path": "registry-1.docker.io/library_alpine/latest/2026-03-31T07-34-42Z/report.json"
   }
 ]
