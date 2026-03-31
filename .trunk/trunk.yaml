@@ -43,13 +43,15 @@ lint:
   ignore:
     - linters: [bandit, mypy]
       paths: [tests/**, regis/cookiecutters/**]
+    - linters: [ALL]
+      paths:
+        - docs/website/docs/reference/schemas/**
+        - docs/website/versioned_docs/**
     - linters: [markdownlint]
       paths:
         - "**/*.mdx"
         - CHANGELOG.md
         - CLAUDE.md
-        - docs/website/docs/reference/schemas/**
-        - docs/website/versioned_docs/**
         - report.json
     - linters: [prettier]
       paths:
