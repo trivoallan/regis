@@ -9,19 +9,19 @@
 
 **Description:** Final report envelope produced by regis, containing request metadata and analyzer results.
 
-| Property                          | Pattern | Type            | Deprecated | Definition                     | Title/Description                                                         |
-| --------------------------------- | ------- | --------------- | ---------- | ------------------------------ | ------------------------------------------------------------------------- |
-| + [version](#version)             | No      | string or null  | No         | -                              | Version of regis that generated this report.                              |
-| - [tier](#tier)                   | No      | string or null  | No         | -                              | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions. |
-| - [badges](#badges)               | No      | array of object | No         | -                              | -                                                                         |
-| - [metadata](#metadata)           | No      | object          | No         | -                              | Arbitrary user-provided metadata.                                         |
-| - [links](#links)                 | No      | array of object | No         | -                              | Custom templated links.                                                   |
-| + [request](#request)             | No      | object          | No         | -                              | Metadata describing the analysis request.                                 |
-| + [results](#results)             | No      | object          | No         | -                              | Analyzer results keyed by analyzer name.                                  |
-| - [playbooks](#playbooks)         | No      | array           | No         | -                              | List of evaluated playbook results.                                       |
-| - [playbook](#playbook)           | No      | object          | No         | In playbook_result.schema.json | Primary playbook result (shorthand for playbooks[0]).                     |
-| - [rules](#rules)                 | No      | array of object | No         | -                              | List of unified rule results (promoted from playbooks[0]).                |
-| - [rules_summary](#rules_summary) | No      | object          | No         | -                              | Summary of rule evaluation results.                                       |
+| Property                           | Pattern | Type            | Deprecated | Definition                     | Title/Description                                                         |
+| ---------------------------------- | ------- | --------------- | ---------- | ------------------------------ | ------------------------------------------------------------------------- |
+| + [version](#version )             | No      | string or null  | No         | -                              | Version of regis that generated this report.                              |
+| - [tier](#tier )                   | No      | string or null  | No         | -                              | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions. |
+| - [badges](#badges )               | No      | array of object | No         | -                              | -                                                                         |
+| - [metadata](#metadata )           | No      | object          | No         | -                              | Arbitrary user-provided metadata.                                         |
+| - [links](#links )                 | No      | array of object | No         | -                              | Custom templated links.                                                   |
+| + [request](#request )             | No      | object          | No         | -                              | Metadata describing the analysis request.                                 |
+| + [results](#results )             | No      | object          | No         | -                              | Analyzer results keyed by analyzer name.                                  |
+| - [playbooks](#playbooks )         | No      | array           | No         | -                              | List of evaluated playbook results.                                       |
+| - [playbook](#playbook )           | No      | object          | No         | In playbook_result.schema.json | Primary playbook result (shorthand for playbooks[0]).                     |
+| - [rules](#rules )                 | No      | array of object | No         | -                              | List of unified rule results (promoted from playbooks[0]).                |
+| - [rules_summary](#rules_summary ) | No      | object          | No         | -                              | Summary of rule evaluation results.                                       |
 
 ## <a name="version"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `version`
 
@@ -64,13 +64,13 @@
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                       | Pattern | Type             | Deprecated | Definition | Title/Description |
-| ------------------------------ | ------- | ---------------- | ---------- | ---------- | ----------------- |
-| - [slug](#badges_items_slug)   | No      | string           | No         | -          | -                 |
-| + [scope](#badges_items_scope) | No      | string           | No         | -          | -                 |
-| - [value](#badges_items_value) | No      | string or null   | No         | -          | -                 |
-| + [class](#badges_items_class) | No      | enum (of string) | No         | -          | -                 |
-| - [label](#badges_items_label) | No      | string           | No         | -          | -                 |
+| Property                        | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [slug](#badges_items_slug )   | No      | string           | No         | -          | -                 |
+| + [scope](#badges_items_scope ) | No      | string           | No         | -          | -                 |
+| - [value](#badges_items_value ) | No      | string or null   | No         | -          | -                 |
+| + [class](#badges_items_class ) | No      | enum (of string) | No         | -          | -                 |
+| - [label](#badges_items_label ) | No      | string           | No         | -          | -                 |
 
 #### <a name="badges_items_slug"></a>3.1.1. Property `slug`
 
@@ -97,11 +97,10 @@
 | **Type** | `enum (of string)` |
 
 Must be one of:
-
-- "success"
-- "warning"
-- "error"
-- "information"
+* "success"
+* "warning"
+* "error"
+* "information"
 
 #### <a name="badges_items_label"></a>3.1.5. Property `label`
 
@@ -118,9 +117,9 @@ Must be one of:
 
 **Description:** Arbitrary user-provided metadata.
 
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#metadata_additionalProperties) | No      | object | No         | -          | -                 |
+| Property                              | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#metadata_additionalProperties ) | No      | object | No         | -          | -                 |
 
 ## <a name="links"></a>5. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `links`
 
@@ -149,10 +148,10 @@ Must be one of:
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [label](#links_items_label) | No      | string | No         | -          | -                 |
-| + [url](#links_items_url)     | No      | string | No         | -          | -                 |
+| Property                       | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| + [label](#links_items_label ) | No      | string | No         | -          | -                 |
+| + [url](#links_items_url )     | No      | string | No         | -          | -                 |
 
 #### <a name="links_items_label"></a>5.1.1. Property `label`
 
@@ -175,16 +174,16 @@ Must be one of:
 
 **Description:** Metadata describing the analysis request.
 
-| Property                            | Pattern | Type            | Deprecated | Definition | Title/Description                                               |
-| ----------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------- |
-| + [url](#request_url)               | No      | string          | No         | -          | Original URL or image reference provided by the user.           |
-| + [registry](#request_registry)     | No      | string          | No         | -          | Resolved registry hostname (e.g. registry-1.docker.io).         |
-| + [repository](#request_repository) | No      | string          | No         | -          | Full repository path (e.g. library/nginx).                      |
-| + [tag](#request_tag)               | No      | string          | No         | -          | Image tag that was analyzed.                                    |
-| - [digest](#request_digest)         | No      | string          | No         | -          | Resolved image manifest digest (e.g. sha256-xxx), if available. |
-| + [analyzers](#request_analyzers)   | No      | array of string | No         | -          | List of analyzer names that were executed.                      |
-| + [timestamp](#request_timestamp)   | No      | string          | No         | -          | ISO 8601 UTC timestamp of the analysis.                         |
-| - [metadata](#request_metadata)     | No      | object          | No         | -          | Arbitrary user-provided metadata.                               |
+| Property                             | Pattern | Type            | Deprecated | Definition | Title/Description                                               |
+| ------------------------------------ | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------- |
+| + [url](#request_url )               | No      | string          | No         | -          | Original URL or image reference provided by the user.           |
+| + [registry](#request_registry )     | No      | string          | No         | -          | Resolved registry hostname (e.g. registry-1.docker.io).         |
+| + [repository](#request_repository ) | No      | string          | No         | -          | Full repository path (e.g. library/nginx).                      |
+| + [tag](#request_tag )               | No      | string          | No         | -          | Image tag that was analyzed.                                    |
+| - [digest](#request_digest )         | No      | string          | No         | -          | Resolved image manifest digest (e.g. sha256-xxx), if available. |
+| + [analyzers](#request_analyzers )   | No      | array of string | No         | -          | List of analyzer names that were executed.                      |
+| + [timestamp](#request_timestamp )   | No      | string          | No         | -          | ISO 8601 UTC timestamp of the analysis.                         |
+| - [metadata](#request_metadata )     | No      | object          | No         | -          | Arbitrary user-provided metadata.                               |
 
 ### <a name="request_url"></a>6.1. ![Required](https://img.shields.io/badge/Required-blue) Property `url`
 
@@ -270,9 +269,9 @@ Must be one of:
 
 **Description:** Arbitrary user-provided metadata.
 
-| Property                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#request_metadata_additionalProperties) | No      | object | No         | -          | -                 |
+| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#request_metadata_additionalProperties ) | No      | object | No         | -          | -                 |
 
 ## <a name="results"></a>7. ![Required](https://img.shields.io/badge/Required-blue) Property `results`
 
@@ -283,9 +282,9 @@ Must be one of:
 
 **Description:** Analyzer results keyed by analyzer name.
 
-| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#results_additionalProperties) | No      | object | No         | -          | -                 |
+| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#results_additionalProperties ) | No      | object | No         | -          | -                 |
 
 ### <a name="results_additionalProperties"></a>7.1. Property `additionalProperties`
 
@@ -310,8 +309,8 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                 | Description                                                                                                    |
-| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Each item of this array must be                 | Description                                                                                                   |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | [playbook_result.schema.json](#playbooks_items) | 😅 ERROR in schema generation, a referenced schema could not be loaded, no documentation here unfortunately 🏜️ |
 
 ### <a name="playbooks_items"></a>8.1. playbook_result.schema.json
@@ -361,16 +360,16 @@ Must be one of:
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                              | Pattern | Type             | Deprecated | Definition | Title/Description |
-| ------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
-| + [slug](#rules_items_slug)           | No      | string           | No         | -          | -                 |
-| + [title](#rules_items_title)         | No      | string           | No         | -          | -                 |
-| - [level](#rules_items_level)         | No      | string           | No         | -          | -                 |
-| - [tags](#rules_items_tags)           | No      | array of string  | No         | -          | -                 |
-| + [passed](#rules_items_passed)       | No      | boolean          | No         | -          | -                 |
-| + [status](#rules_items_status)       | No      | enum (of string) | No         | -          | -                 |
-| + [message](#rules_items_message)     | No      | string           | No         | -          | -                 |
-| - [analyzers](#rules_items_analyzers) | No      | array of string  | No         | -          | -                 |
+| Property                               | Pattern | Type             | Deprecated | Definition | Title/Description |
+| -------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| + [slug](#rules_items_slug )           | No      | string           | No         | -          | -                 |
+| + [title](#rules_items_title )         | No      | string           | No         | -          | -                 |
+| - [level](#rules_items_level )         | No      | string           | No         | -          | -                 |
+| - [tags](#rules_items_tags )           | No      | array of string  | No         | -          | -                 |
+| + [passed](#rules_items_passed )       | No      | boolean          | No         | -          | -                 |
+| + [status](#rules_items_status )       | No      | enum (of string) | No         | -          | -                 |
+| + [message](#rules_items_message )     | No      | string           | No         | -          | -                 |
+| - [analyzers](#rules_items_analyzers ) | No      | array of string  | No         | -          | -                 |
 
 #### <a name="rules_items_slug"></a>10.1.1. Property `slug`
 
@@ -427,10 +426,9 @@ Must be one of:
 | **Type** | `enum (of string)` |
 
 Must be one of:
-
-- "passed"
-- "failed"
-- "incomplete"
+* "passed"
+* "failed"
+* "incomplete"
 
 #### <a name="rules_items_message"></a>10.1.7. Property `message`
 
@@ -471,12 +469,12 @@ Must be one of:
 
 **Description:** Summary of rule evaluation results.
 
-| Property                          | Pattern | Type            | Deprecated | Definition | Title/Description |
-| --------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| - [score](#rules_summary_score)   | No      | integer         | No         | -          | -                 |
-| - [total](#rules_summary_total)   | No      | array of string | No         | -          | -                 |
-| - [passed](#rules_summary_passed) | No      | array of string | No         | -          | -                 |
-| - [by_tag](#rules_summary_by_tag) | No      | object          | No         | -          | -                 |
+| Property                           | Pattern | Type            | Deprecated | Definition | Title/Description |
+| ---------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [score](#rules_summary_score )   | No      | integer         | No         | -          | -                 |
+| - [total](#rules_summary_total )   | No      | array of string | No         | -          | -                 |
+| - [passed](#rules_summary_passed ) | No      | array of string | No         | -          | -                 |
+| - [by_tag](#rules_summary_by_tag ) | No      | object          | No         | -          | -                 |
 
 ### <a name="rules_summary_score"></a>11.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `score`
 
@@ -544,9 +542,9 @@ Must be one of:
 | **Type**                  | `object`                                                                                                          |
 | **Additional properties** | [![Should-conform](https://img.shields.io/badge/Should-conform-blue)](#rules_summary_by_tag_additionalProperties) |
 
-| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#rules_summary_by_tag_additionalProperties) | No      | object | No         | -          | -                 |
+| Property                                          | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#rules_summary_by_tag_additionalProperties ) | No      | object | No         | -          | -                 |
 
 #### <a name="rules_summary_by_tag_additionalProperties"></a>11.4.1. Property `additionalProperties`
 
@@ -555,11 +553,11 @@ Must be one of:
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| + [rules](#rules_summary_by_tag_additionalProperties_rules)               | No      | array of string | No         | -          | -                 |
-| + [passed_rules](#rules_summary_by_tag_additionalProperties_passed_rules) | No      | array of string | No         | -          | -                 |
-| + [score](#rules_summary_by_tag_additionalProperties_score)               | No      | integer         | No         | -          | -                 |
+| Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| + [rules](#rules_summary_by_tag_additionalProperties_rules )               | No      | array of string | No         | -          | -                 |
+| + [passed_rules](#rules_summary_by_tag_additionalProperties_passed_rules ) | No      | array of string | No         | -          | -                 |
+| + [score](#rules_summary_by_tag_additionalProperties_score )               | No      | integer         | No         | -          | -                 |
 
 ##### <a name="rules_summary_by_tag_additionalProperties_rules"></a>11.4.1.1. ![Required](https://img.shields.io/badge/Required-blue) Property `rules`
 
@@ -620,6 +618,5 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
----
-
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 07:34:19 +0000
+----------------------------------------------------------------------------------------------------------------------------
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 07:44:16 +0000

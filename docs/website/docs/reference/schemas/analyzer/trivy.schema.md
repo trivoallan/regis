@@ -9,21 +9,21 @@
 
 **Description:** Vulnerability scan results from Trivy.
 
-| Property                                      | Pattern | Type            | Deprecated | Definition | Title/Description                                     |
-| --------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------- |
-| + [analyzer](#analyzer)                       | No      | const           | No         | -          | Unique identifier for the Trivy analyzer.             |
-| + [repository](#repository)                   | No      | string          | No         | -          | The image repository that was analyzed.               |
-| + [tag](#tag)                                 | No      | string          | No         | -          | The image tag that was analyzed.                      |
-| + [trivy_version](#trivy_version)             | No      | string          | No         | -          | Version of the Trivy CLI tool used.                   |
-| + [vulnerability_count](#vulnerability_count) | No      | integer         | No         | -          | Total number of vulnerabilities found.                |
-| + [critical_count](#critical_count)           | No      | integer         | No         | -          | Total number of Critical severity vulnerabilities.    |
-| + [high_count](#high_count)                   | No      | integer         | No         | -          | Total number of High severity vulnerabilities.        |
-| + [medium_count](#medium_count)               | No      | integer         | No         | -          | Total number of Medium severity vulnerabilities.      |
-| + [low_count](#low_count)                     | No      | integer         | No         | -          | Total number of Low severity vulnerabilities.         |
-| + [unknown_count](#unknown_count)             | No      | integer         | No         | -          | Total number of Unknown severity vulnerabilities.     |
-| + [fixed_count](#fixed_count)                 | No      | integer         | No         | -          | Total number of vulnerabilities with available fixes. |
-| + [secrets_count](#secrets_count)             | No      | integer         | No         | -          | Total number of secrets or credentials found.         |
-| + [targets](#targets)                         | No      | array of object | No         | -          | -                                                     |
+| Property                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                     |
+| ---------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------- |
+| + [analyzer](#analyzer )                       | No      | const           | No         | -          | Unique identifier for the Trivy analyzer.             |
+| + [repository](#repository )                   | No      | string          | No         | -          | The image repository that was analyzed.               |
+| + [tag](#tag )                                 | No      | string          | No         | -          | The image tag that was analyzed.                      |
+| + [trivy_version](#trivy_version )             | No      | string          | No         | -          | Version of the Trivy CLI tool used.                   |
+| + [vulnerability_count](#vulnerability_count ) | No      | integer         | No         | -          | Total number of vulnerabilities found.                |
+| + [critical_count](#critical_count )           | No      | integer         | No         | -          | Total number of Critical severity vulnerabilities.    |
+| + [high_count](#high_count )                   | No      | integer         | No         | -          | Total number of High severity vulnerabilities.        |
+| + [medium_count](#medium_count )               | No      | integer         | No         | -          | Total number of Medium severity vulnerabilities.      |
+| + [low_count](#low_count )                     | No      | integer         | No         | -          | Total number of Low severity vulnerabilities.         |
+| + [unknown_count](#unknown_count )             | No      | integer         | No         | -          | Total number of Unknown severity vulnerabilities.     |
+| + [fixed_count](#fixed_count )                 | No      | integer         | No         | -          | Total number of vulnerabilities with available fixes. |
+| + [secrets_count](#secrets_count )             | No      | integer         | No         | -          | Total number of secrets or credentials found.         |
+| + [targets](#targets )                         | No      | array of object | No         | -          | -                                                     |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -180,11 +180,11 @@ Specific value: `"trivy"`
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                            | Pattern | Type                    | Deprecated | Definition | Title/Description                                            |
-| --------------------------------------------------- | ------- | ----------------------- | ---------- | ---------- | ------------------------------------------------------------ |
-| - [Secrets](#targets_items_Secrets)                 | No      | array of object or null | No         | -          | List of secrets discovered in this target.                   |
-| + [Target](#targets_items_Target)                   | No      | string                  | No         | -          | The scan target (e.g., a file path or OS distribution name). |
-| + [Vulnerabilities](#targets_items_Vulnerabilities) | No      | array of object or null | No         | -          | List of vulnerabilities discovered in this target.           |
+| Property                                             | Pattern | Type                    | Deprecated | Definition | Title/Description                                            |
+| ---------------------------------------------------- | ------- | ----------------------- | ---------- | ---------- | ------------------------------------------------------------ |
+| - [Secrets](#targets_items_Secrets )                 | No      | array of object or null | No         | -          | List of secrets discovered in this target.                   |
+| + [Target](#targets_items_Target )                   | No      | string                  | No         | -          | The scan target (e.g., a file path or OS distribution name). |
+| + [Vulnerabilities](#targets_items_Vulnerabilities ) | No      | array of object or null | No         | -          | List of vulnerabilities discovered in this target.           |
 
 #### <a name="targets_items_Secrets"></a>13.1.1. Property `Secrets`
 
@@ -213,12 +213,12 @@ Specific value: `"trivy"`
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [RuleID](#targets_items_Secrets_items_RuleID)     | No      | string | No         | -          | -                 |
-| + [Title](#targets_items_Secrets_items_Title)       | No      | string | No         | -          | -                 |
-| + [Severity](#targets_items_Secrets_items_Severity) | No      | string | No         | -          | -                 |
-| + [Match](#targets_items_Secrets_items_Match)       | No      | string | No         | -          | -                 |
+| Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| + [RuleID](#targets_items_Secrets_items_RuleID )     | No      | string | No         | -          | -                 |
+| + [Title](#targets_items_Secrets_items_Title )       | No      | string | No         | -          | -                 |
+| + [Severity](#targets_items_Secrets_items_Severity ) | No      | string | No         | -          | -                 |
+| + [Match](#targets_items_Secrets_items_Match )       | No      | string | No         | -          | -                 |
 
 ###### <a name="targets_items_Secrets_items_RuleID"></a>13.1.1.1.1. Property `RuleID`
 
@@ -279,15 +279,15 @@ Specific value: `"trivy"`
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description                                         |
-| --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------- |
-| + [VulnerabilityID](#targets_items_Vulnerabilities_items_VulnerabilityID)   | No      | string | No         | -          | CVE ID or tool-specific vulnerability identifier.         |
-| + [PkgName](#targets_items_Vulnerabilities_items_PkgName)                   | No      | string | No         | -          | Name of the affected package.                             |
-| + [InstalledVersion](#targets_items_Vulnerabilities_items_InstalledVersion) | No      | string | No         | -          | Version of the package installed in the image.            |
-| - [FixedVersion](#targets_items_Vulnerabilities_items_FixedVersion)         | No      | string | No         | -          | Version of the package that contains a fix, if available. |
-| + [Severity](#targets_items_Vulnerabilities_items_Severity)                 | No      | string | No         | -          | Severity level assigned by Trivy.                         |
-| - [Title](#targets_items_Vulnerabilities_items_Title)                       | No      | string | No         | -          | Short title describing the vulnerability.                 |
-| - [Description](#targets_items_Vulnerabilities_items_Description)           | No      | string | No         | -          | Full description of the vulnerability.                    |
+| Property                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description                                         |
+| ---------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------- |
+| + [VulnerabilityID](#targets_items_Vulnerabilities_items_VulnerabilityID )   | No      | string | No         | -          | CVE ID or tool-specific vulnerability identifier.         |
+| + [PkgName](#targets_items_Vulnerabilities_items_PkgName )                   | No      | string | No         | -          | Name of the affected package.                             |
+| + [InstalledVersion](#targets_items_Vulnerabilities_items_InstalledVersion ) | No      | string | No         | -          | Version of the package installed in the image.            |
+| - [FixedVersion](#targets_items_Vulnerabilities_items_FixedVersion )         | No      | string | No         | -          | Version of the package that contains a fix, if available. |
+| + [Severity](#targets_items_Vulnerabilities_items_Severity )                 | No      | string | No         | -          | Severity level assigned by Trivy.                         |
+| - [Title](#targets_items_Vulnerabilities_items_Title )                       | No      | string | No         | -          | Short title describing the vulnerability.                 |
+| - [Description](#targets_items_Vulnerabilities_items_Description )           | No      | string | No         | -          | Full description of the vulnerability.                    |
 
 ###### <a name="targets_items_Vulnerabilities_items_VulnerabilityID"></a>13.1.3.1.1. Property `VulnerabilityID`
 
@@ -345,6 +345,5 @@ Specific value: `"trivy"`
 
 **Description:** Full description of the vulnerability.
 
----
-
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 07:34:17 +0000
+----------------------------------------------------------------------------------------------------------------------------
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 07:44:15 +0000
