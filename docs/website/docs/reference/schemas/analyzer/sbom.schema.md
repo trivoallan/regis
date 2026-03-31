@@ -9,20 +9,20 @@
 
 **Description:** Software Bill of Materials extracted from a container image using Trivy (CycloneDX).
 
-| Property                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                    |
-| ------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------ |
-| + [analyzer](#analyzer)                     | No      | const           | No         | -          | Unique identifier for the SBOM analyzer.                                             |
-| + [repository](#repository)                 | No      | string          | No         | -          | The image repository that was analyzed.                                              |
-| + [tag](#tag)                               | No      | string          | No         | -          | The image tag that was analyzed.                                                     |
-| + [has_sbom](#has_sbom)                     | No      | boolean         | No         | -          | True if an SBOM was successfully generated.                                          |
-| + [sbom_format](#sbom_format)               | No      | string          | No         | -          | The format of the generated SBOM (e.g., CycloneDX).                                  |
-| + [sbom_version](#sbom_version)             | No      | string          | No         | -          | Version of the SBOM specification used.                                              |
-| + [total_components](#total_components)     | No      | integer         | No         | -          | Total number of software components found (OS packages, apps, etc.).                 |
-| + [component_types](#component_types)       | No      | object          | No         | -          | Count of components grouped by type (library, application, framework, …).            |
-| + [total_dependencies](#total_dependencies) | No      | integer         | No         | -          | Total number of dependency relationships found.                                      |
-| + [licenses](#licenses)                     | No      | array of string | No         | -          | Sorted unique license identifiers found across all components.                       |
-| + [copyleft_licenses](#copyleft_licenses)   | No      | array of string | No         | -          | Sorted subset of licenses that are known copyleft (GPL, LGPL, AGPL, MPL, EPL, etc.). |
-| + [components](#components)                 | No      | array of object | No         | -          | List of software components identified in the image.                                 |
+| Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description                                                                    |
+| -------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------ |
+| + [analyzer](#analyzer )                     | No      | const           | No         | -          | Unique identifier for the SBOM analyzer.                                             |
+| + [repository](#repository )                 | No      | string          | No         | -          | The image repository that was analyzed.                                              |
+| + [tag](#tag )                               | No      | string          | No         | -          | The image tag that was analyzed.                                                     |
+| + [has_sbom](#has_sbom )                     | No      | boolean         | No         | -          | True if an SBOM was successfully generated.                                          |
+| + [sbom_format](#sbom_format )               | No      | string          | No         | -          | The format of the generated SBOM (e.g., CycloneDX).                                  |
+| + [sbom_version](#sbom_version )             | No      | string          | No         | -          | Version of the SBOM specification used.                                              |
+| + [total_components](#total_components )     | No      | integer         | No         | -          | Total number of software components found (OS packages, apps, etc.).                 |
+| + [component_types](#component_types )       | No      | object          | No         | -          | Count of components grouped by type (library, application, framework, …).            |
+| + [total_dependencies](#total_dependencies ) | No      | integer         | No         | -          | Total number of dependency relationships found.                                      |
+| + [licenses](#licenses )                     | No      | array of string | No         | -          | Sorted unique license identifiers found across all components.                       |
+| + [copyleft_licenses](#copyleft_licenses )   | No      | array of string | No         | -          | Sorted subset of licenses that are known copyleft (GPL, LGPL, AGPL, MPL, EPL, etc.). |
+| + [components](#components )                 | No      | array of object | No         | -          | List of software components identified in the image.                                 |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -95,9 +95,9 @@ Specific value: `"sbom"`
 
 **Description:** Count of components grouped by type (library, application, framework, …).
 
-| Property                                    | Pattern | Type    | Deprecated | Definition | Title/Description |
-| ------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [](#component_types_additionalProperties) | No      | integer | No         | -          | -                 |
+| Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description |
+| -------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [](#component_types_additionalProperties ) | No      | integer | No         | -          | -                 |
 
 ### <a name="component_types_additionalProperties"></a>8.1. Property `additionalProperties`
 
@@ -200,13 +200,13 @@ Specific value: `"sbom"`
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                                 | Pattern | Type            | Deprecated | Definition | Title/Description                                |
-| ---------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------ |
-| + [name](#components_items_name)         | No      | string          | No         | -          | Name of the component.                           |
-| - [version](#components_items_version)   | No      | string or null  | No         | -          | Installed version of the component.              |
-| + [type](#components_items_type)         | No      | string          | No         | -          | Type of component (library, application, etc.).  |
-| - [purl](#components_items_purl)         | No      | string or null  | No         | -          | Package URL (purl) for standard identification.  |
-| - [licenses](#components_items_licenses) | No      | array of string | No         | -          | List of licenses associated with this component. |
+| Property                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                |
+| ----------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------ |
+| + [name](#components_items_name )         | No      | string          | No         | -          | Name of the component.                           |
+| - [version](#components_items_version )   | No      | string or null  | No         | -          | Installed version of the component.              |
+| + [type](#components_items_type )         | No      | string          | No         | -          | Type of component (library, application, etc.).  |
+| - [purl](#components_items_purl )         | No      | string or null  | No         | -          | Package URL (purl) for standard identification.  |
+| - [licenses](#components_items_licenses ) | No      | array of string | No         | -          | List of licenses associated with this component. |
 
 #### <a name="components_items_name"></a>12.1.1. Property `name`
 
@@ -266,6 +266,5 @@ Specific value: `"sbom"`
 | -------- | -------- |
 | **Type** | `string` |
 
----
-
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 07:44:15 +0000
+----------------------------------------------------------------------------------------------------------------------------
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 07:55:14 +0000
