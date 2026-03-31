@@ -7,16 +7,16 @@
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                              | Pattern | Type            | Deprecated | Definition | Title/Description                              |
-| ------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------- |
-| + [analyzer](#analyzer)               | No      | const           | No         | -          | Unique identifier for the Dockle analyzer.     |
-| + [repository](#repository)           | No      | string          | No         | -          | The image repository that was analyzed.        |
-| + [tag](#tag)                         | No      | string          | No         | -          | The image tag that was analyzed.               |
-| - [error](#error)                     | No      | string          | No         | -          | Any error encountered during execution.        |
-| + [passed](#passed)                   | No      | boolean         | No         | -          | True if no issues were found, False otherwise. |
-| + [issues_count](#issues_count)       | No      | integer         | No         | -          | Total number of issues found.                  |
-| + [issues_by_level](#issues_by_level) | No      | object          | No         | -          | Count of issues grouped by severity level.     |
-| + [issues](#issues)                   | No      | array of object | No         | -          | List of issues found by Dockle.                |
+| Property                               | Pattern | Type            | Deprecated | Definition | Title/Description                              |
+| -------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------- |
+| + [analyzer](#analyzer )               | No      | const           | No         | -          | Unique identifier for the Dockle analyzer.     |
+| + [repository](#repository )           | No      | string          | No         | -          | The image repository that was analyzed.        |
+| + [tag](#tag )                         | No      | string          | No         | -          | The image tag that was analyzed.               |
+| - [error](#error )                     | No      | string          | No         | -          | Any error encountered during execution.        |
+| + [passed](#passed )                   | No      | boolean         | No         | -          | True if no issues were found, False otherwise. |
+| + [issues_count](#issues_count )       | No      | integer         | No         | -          | Total number of issues found.                  |
+| + [issues_by_level](#issues_by_level ) | No      | object          | No         | -          | Count of issues grouped by severity level.     |
+| + [issues](#issues )                   | No      | array of object | No         | -          | List of issues found by Dockle.                |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -77,13 +77,13 @@ Specific value: `"dockle"`
 
 **Description:** Count of issues grouped by severity level.
 
-| Property                          | Pattern | Type    | Deprecated | Definition | Title/Description |
-| --------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [FATAL](#issues_by_level_FATAL) | No      | integer | No         | -          | -                 |
-| - [WARN](#issues_by_level_WARN)   | No      | integer | No         | -          | -                 |
-| - [INFO](#issues_by_level_INFO)   | No      | integer | No         | -          | -                 |
-| - [SKIP](#issues_by_level_SKIP)   | No      | integer | No         | -          | -                 |
-| - [PASS](#issues_by_level_PASS)   | No      | integer | No         | -          | -                 |
+| Property                           | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ---------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [FATAL](#issues_by_level_FATAL ) | No      | integer | No         | -          | -                 |
+| - [WARN](#issues_by_level_WARN )   | No      | integer | No         | -          | -                 |
+| - [INFO](#issues_by_level_INFO )   | No      | integer | No         | -          | -                 |
+| - [SKIP](#issues_by_level_SKIP )   | No      | integer | No         | -          | -                 |
+| - [PASS](#issues_by_level_PASS )   | No      | integer | No         | -          | -                 |
 
 ### <a name="issues_by_level_FATAL"></a>7.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `FATAL`
 
@@ -147,12 +147,12 @@ Specific value: `"dockle"`
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                         | Pattern | Type             | Deprecated | Definition | Title/Description                               |
-| -------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------------------------------------- |
-| + [code](#issues_items_code)     | No      | string           | No         | -          | Dockle rule code (e.g., CIS-DI-0001).           |
-| + [title](#issues_items_title)   | No      | string           | No         | -          | Short description of the rule.                  |
-| + [level](#issues_items_level)   | No      | enum (of string) | No         | -          | Severity level of the issue.                    |
-| + [alerts](#issues_items_alerts) | No      | array of string  | No         | -          | Specific details or files related to the issue. |
+| Property                          | Pattern | Type             | Deprecated | Definition | Title/Description                               |
+| --------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------------------------------------- |
+| + [code](#issues_items_code )     | No      | string           | No         | -          | Dockle rule code (e.g., CIS-DI-0001).           |
+| + [title](#issues_items_title )   | No      | string           | No         | -          | Short description of the rule.                  |
+| + [level](#issues_items_level )   | No      | enum (of string) | No         | -          | Severity level of the issue.                    |
+| + [alerts](#issues_items_alerts ) | No      | array of string  | No         | -          | Specific details or files related to the issue. |
 
 #### <a name="issues_items_code"></a>8.1.1. Property `code`
 
@@ -179,12 +179,11 @@ Specific value: `"dockle"`
 **Description:** Severity level of the issue.
 
 Must be one of:
-
-- "FATAL"
-- "WARN"
-- "INFO"
-- "SKIP"
-- "PASS"
+* "FATAL"
+* "WARN"
+* "INFO"
+* "SKIP"
+* "PASS"
 
 #### <a name="issues_items_alerts"></a>8.1.4. Property `alerts`
 
@@ -212,6 +211,5 @@ Must be one of:
 | -------- | -------- |
 | **Type** | `string` |
 
----
-
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 07:14:29 +0000
+----------------------------------------------------------------------------------------------------------------------------
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 07:24:51 +0000
