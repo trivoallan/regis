@@ -3,7 +3,7 @@
   "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-') }}",
   "platform": ["github", "gitlab"],
   "description": "Archive viewer for regis security analysis reports.",
-  "version": "0.25.6",
+  "version": "0.25.7",
   "regis_image_url": "ghcr.io/trivoallan/regis:{{ cookiecutter.version }}",
   "regis_image_base": "ghcr.io/trivoallan/regis",
   "_copy_without_render": ["*.tsx"]
