@@ -7,14 +7,14 @@
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                     | Pattern | Type            | Deprecated | Definition | Title/Description                                 |
-| ---------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------- |
-| + [analyzer](#analyzer )     | No      | const           | No         | -          | Unique identifier for the Skopeo analyzer.        |
-| + [repository](#repository ) | No      | string          | No         | -          | The image repository that was analyzed.           |
-| + [tag](#tag )               | No      | string          | No         | -          | The image tag that was analyzed.                  |
-| - [inspect](#inspect )       | No      | object          | No         | -          | Raw output from primary skopeo inspect            |
-| + [platforms](#platforms )   | No      | array of object | No         | -          | List of platform variants available for this tag. |
-| - [tags](#tags )             | No      | array of string | No         | -          | List of tags associated with the repository.      |
+| Property                    | Pattern | Type            | Deprecated | Definition | Title/Description                                 |
+| --------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------- |
+| + [analyzer](#analyzer)     | No      | const           | No         | -          | Unique identifier for the Skopeo analyzer.        |
+| + [repository](#repository) | No      | string          | No         | -          | The image repository that was analyzed.           |
+| + [tag](#tag)               | No      | string          | No         | -          | The image tag that was analyzed.                  |
+| - [inspect](#inspect)       | No      | object          | No         | -          | Raw output from primary skopeo inspect            |
+| + [platforms](#platforms)   | No      | array of object | No         | -          | List of platform variants available for this tag. |
+| - [tags](#tags)             | No      | array of string | No         | -          | List of tags associated with the repository.      |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -78,16 +78,16 @@ Specific value: `"skopeo"`
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                         | Pattern | Type           | Deprecated | Definition | Title/Description                          |
-| ------------------------------------------------ | ------- | -------------- | ---------- | ---------- | ------------------------------------------ |
-| + [architecture](#platforms_items_architecture ) | No      | string         | No         | -          | Processor architecture (e.g., 'amd64').    |
-| + [os](#platforms_items_os )                     | No      | string         | No         | -          | Operating system (e.g., 'linux').          |
-| - [variant](#platforms_items_variant )           | No      | string or null | No         | -          | Architecture variant (e.g., 'v7').         |
-| - [digest](#platforms_items_digest )             | No      | string         | No         | -          | Manifest digest for this specific variant. |
-| - [created](#platforms_items_created )           | No      | string or null | No         | -          | ISO timestamp of variant creation.         |
-| - [labels](#platforms_items_labels )             | No      | object         | No         | -          | OCI labels associated with this variant.   |
-| - [layers_count](#platforms_items_layers_count ) | No      | integer        | No         | -          | Number of layers in this variant.          |
-| - [user](#platforms_items_user )                 | No      | string or null | No         | -          | Default user from image configuration.     |
+| Property                                        | Pattern | Type           | Deprecated | Definition | Title/Description                          |
+| ----------------------------------------------- | ------- | -------------- | ---------- | ---------- | ------------------------------------------ |
+| + [architecture](#platforms_items_architecture) | No      | string         | No         | -          | Processor architecture (e.g., 'amd64').    |
+| + [os](#platforms_items_os)                     | No      | string         | No         | -          | Operating system (e.g., 'linux').          |
+| - [variant](#platforms_items_variant)           | No      | string or null | No         | -          | Architecture variant (e.g., 'v7').         |
+| - [digest](#platforms_items_digest)             | No      | string         | No         | -          | Manifest digest for this specific variant. |
+| - [created](#platforms_items_created)           | No      | string or null | No         | -          | ISO timestamp of variant creation.         |
+| - [labels](#platforms_items_labels)             | No      | object         | No         | -          | OCI labels associated with this variant.   |
+| - [layers_count](#platforms_items_layers_count) | No      | integer        | No         | -          | Number of layers in this variant.          |
+| - [user](#platforms_items_user)                 | No      | string or null | No         | -          | Default user from image configuration.     |
 
 #### <a name="platforms_items_architecture"></a>5.1.1. Property `architecture`
 
@@ -138,9 +138,9 @@ Specific value: `"skopeo"`
 
 **Description:** OCI labels associated with this variant.
 
-| Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#platforms_items_labels_additionalProperties ) | No      | string | No         | -          | -                 |
+| Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#platforms_items_labels_additionalProperties) | No      | string | No         | -          | -                 |
 
 ##### <a name="platforms_items_labels_additionalProperties"></a>5.1.6.1. Property `additionalProperties`
 
@@ -194,5 +194,6 @@ Specific value: `"skopeo"`
 | -------- | -------- |
 | **Type** | `string` |
 
-----------------------------------------------------------------------------------------------------------------------------
+---
+
 Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 08:53:48 +0000
