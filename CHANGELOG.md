@@ -2,11 +2,10 @@
 
 ## [0.26.2](https://github.com/trivoallan/regis/compare/v0.26.1...v0.26.2) (2026-04-02)
 
-
 ### Bug Fixes
 
-* **ci:** fix cd-docs deploy failures after repo rename ([#237](https://github.com/trivoallan/regis/issues/237)) ([22726a9](https://github.com/trivoallan/regis/commit/22726a9f620e7524d249c1fb5ed914c208b354d2))
-* **ci:** reset release manifest to v0.26.1 and remove spurious v0.27.0 snapshot ([#242](https://github.com/trivoallan/regis/issues/242)) ([cd4cd6a](https://github.com/trivoallan/regis/commit/cd4cd6a3622ef12f002d26ccd7a16ad39c12ee30))
+- **ci:** fix cd-docs deploy failures after repo rename ([#237](https://github.com/trivoallan/regis/issues/237)) ([22726a9](https://github.com/trivoallan/regis/commit/22726a9f620e7524d249c1fb5ed914c208b354d2))
+- **ci:** reset release manifest to v0.26.1 and remove spurious v0.27.0 snapshot ([#242](https://github.com/trivoallan/regis/issues/242)) ([cd4cd6a](https://github.com/trivoallan/regis/commit/cd4cd6a3622ef12f002d26ccd7a16ad39c12ee30))
 
 ## [0.27.0](https://github.com/trivoallan/regis/compare/v0.26.2...v0.27.0) (2026-03-31)
 
