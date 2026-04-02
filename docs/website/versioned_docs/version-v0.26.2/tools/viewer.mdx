@@ -1,0 +1,64 @@
+---
+sidebar_position: 1
+---
+
+# Dashboard
+
+`regis-cli` embeds a dynamic React dashboard (the **Dashboard**) allowing you to visualize your Docker image security analysis reports (JSON) in a highly interactive and visual way.
+
+<div style={{ textAlign: "center", margin: "2rem 0" }}>
+  <a
+    href="https://trivoallan.github.io/regis-cli/tools/main/viewer/"
+    target="_blank"
+    className="button button--primary button--lg"
+  >
+    🚀 Open the Interactive Viewer
+  </a>
+</div>
+
+## Command Line Interface (CLI)
+
+The `dashboard` submodule is directly integrated into the CLI to facilitate daily usage.
+
+### `dashboard serve`
+
+Starts a small local web server, transparently intercepting data calls from the interface to visualize a given report.
+
+```bash
+regis-cli viewer serve [OPTIONS] [REPORT]
+```
+
+**Usage Example:**
+
+```bash
+# First, generate a report for your image
+regis-cli analyze ubuntu:latest -o report.json
+
+# Launch the viewer locally (port 8080)
+regis-cli viewer serve report.json -p 8080
+```
+
+_Your default web browser will automatically open the application._
+
+### `dashboard export`
+
+Exports all the files (HTML, CSS, JS) of the interactive application and (optionally) a target JSON report to the directory of your choice. Designed to generate statically hosted dashboards in your CI/CD pipelines (GitHub Pages, GitLab Pages, Amazon S3, etc).
+
+```bash
+regis-cli viewer export [OPTIONS] [REPORT]
+```
+
+**Usage Example:**
+
+```bash
+# Export the viewer + report.json to ./output-dir
+regis-cli viewer export report.json -o ./output-dir
+
+# The rendered folder is purely static HTML
+python -m http.server -d ./output-dir
+```
+
+## CI/CD Integration
+
+Since the `dashboard export -o <dir>` command is idempotent, it is extremely useful for adding the reporting interface alongside your build logs or security artifacts.
+The development team can then observe Tremor statistics, vulnerability history, and rule failures in a readable format!
