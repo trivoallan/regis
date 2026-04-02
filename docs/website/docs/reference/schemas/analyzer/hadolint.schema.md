@@ -185,4 +185,4 @@ Must be one of:
 **Description:** Line number in the pseudo-Dockerfile.
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 15:25:09 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-04-02 at 09:39:30 +0000
