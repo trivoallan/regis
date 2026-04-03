@@ -1338,7 +1338,6 @@
                 "sha256:df2e89862cd09deabbdba16944cc3f10feb6b3e6f18e902f7cc25609a34775aa",
                 "sha256:e8699adbbf8b5c7de96d8ffa0eb5c158b3beafce084968e2ea8bb08c6794dcd0"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==0.36.2"
         },
@@ -1516,12 +1515,12 @@
         },
         "types-jsonschema": {
             "hashes": [
-                "sha256:032a952fd32d9e06b71bdce5a5b4005dd58a074f6cb2899e96b633cbe1c28f40",
-                "sha256:84c319ba1af5463394d99accd96db543b7cb0eeab0938c652c18129536672002"
+                "sha256:03d0f697a9930970033e29e91da45accf287ee44d5eed6f7a238b99e608b23f4",
+                "sha256:0e8ebd94b257fc978b41b89c7b9bc76232e104e5125ec19009c4f60844c96e0a"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.10'",
-            "version": "==4.26.0.20260325"
+            "version": "==4.26.0.20260402"
         },
         "types-pyyaml": {
             "hashes": [
