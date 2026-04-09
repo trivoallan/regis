@@ -81,7 +81,7 @@ integrations:
       - cve-high
       - freshness
     checklists:
-      - title: "\U0001F4DD Security Review"  # yamllint disable-line rule:quoted-strings
+      - title: "\U0001F4DD Security Review" # yamllint disable-line rule:quoted-strings
         items:
           - label: Security review completed
           - label: No critical vulnerabilities detected
