@@ -18,6 +18,9 @@ def create_app(
     assets_dir: Path,
     report: Path | None = None,
     archives: list[dict[str, str]] | None = None,
+    gitlab_url: str | None = None,
+    gitlab_token: str | None = None,
+    gitlab_project: str | None = None,
 ) -> FastAPI:
     """Create and configure the dashboard FastAPI application.
 
@@ -25,6 +28,9 @@ def create_app(
         assets_dir: Path to the bundled dashboard static assets.
         report: Optional path to a report.json file to serve.
         archives: Optional list of archive dicts (name/path) for archives.json.
+        gitlab_url: GitLab instance URL (e.g. https://gitlab.com).
+        gitlab_token: GitLab private token for API access.
+        gitlab_project: GitLab project ID or path.
     """
     app = FastAPI(title="Regis Dashboard", docs_url=None, redoc_url=None)
 
@@ -47,6 +53,15 @@ def create_app(
     @app.get("/api/health")
     async def health() -> dict[str, str]:
         return {"status": "ok"}
+
+    # Mount GitLab API proxy if configured
+    if gitlab_url and gitlab_token and gitlab_project:
+        from regis.server.routes.gitlab import GitLabConfig, create_gitlab_router
+
+        gitlab_config = GitLabConfig(
+            url=gitlab_url, token=gitlab_token, project_id=gitlab_project
+        )
+        app.include_router(create_gitlab_router(gitlab_config))
 
     # Static files + SPA fallback must be mounted last
     app.mount("/", _SPAStaticFiles(directory=str(assets_dir), html=True), name="spa")
