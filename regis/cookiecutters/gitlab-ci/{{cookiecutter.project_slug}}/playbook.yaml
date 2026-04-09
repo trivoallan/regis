@@ -1,0 +1,97 @@
+# Regis Playbook — {{ cookiecutter.project_name }}
+# Scaffolded by: regis bootstrap gitlab-ci
+# Docs: https://trivoallan.github.io/regis/docs/concepts/playbooks
+
+name: { { cookiecutter.project_name } }
+
+tiers:
+  - name: Gold
+    condition:
+      ">": [{ var: rules_summary.score }, 90]
+  - name: Silver
+    condition:
+      ">": [{ var: rules_summary.score }, 70]
+  - name: Bronze
+    condition:
+      ">": [{ var: rules_summary.score }, 50]
+
+rules:
+  - provider: trivy
+    rule: cve-count
+    slug: cve-critical
+    level: critical
+    options:
+      level: critical
+      max_count: 0
+
+  - provider: trivy
+    rule: cve-count
+    slug: cve-high
+    level: warning
+    options:
+      level: high
+      max_count: 10
+
+  - provider: trivy
+    rule: fix-available
+    slug: cve-fixable
+    level: warning
+
+  - provider: skopeo
+    rule: user-blacklist
+    slug: no-root
+    level: critical
+
+  - provider: freshness
+    rule: age
+    slug: age
+    level: info
+    options:
+      max_days: 90
+
+  - provider: sbom
+    rule: has-sbom
+    slug: has-sbom
+    level: warning
+
+badges:
+  - slug: cve-critical
+    scope: CVE
+    value: Critical
+    condition:
+      "!": [{ var: rules.cve-critical.passed }]
+    class: error
+  - slug: cve-high
+    scope: CVE
+    value: High
+    condition:
+      "!": [{ var: rules.cve-high.passed }]
+    class: warning
+  - slug: freshness
+    scope: Freshness
+    value: Fresh
+    condition:
+      "==": [{ var: rules.age.passed }, true]
+    class: success
+
+integrations:
+  gitlab:
+    badges:
+      - cve-critical
+      - cve-high
+      - freshness
+    checklists:
+      - title: "\U0001F4DD Security Review"  # yamllint disable-line rule:quoted-strings
+        items:
+          - label: Security review completed
+          - label: No critical vulnerabilities detected
+            show_if: { "!!": [{ var: rules.cve-critical }] }
+            check_if: { var: rules.cve-critical.passed }
+          - label: Image does not run as root
+            show_if: { "!!": [{ var: rules.no-root }] }
+            check_if: { var: rules.no-root.passed }
+
+links:
+  - label: Return to Merge Request
+    url: "{% raw %}{{ request.metadata['gitlab.mr_url'] }}{% endraw %}"
+    condition: { "!!": [{ var: request.metadata.gitlab.mr_url }] }
