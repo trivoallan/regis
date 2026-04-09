@@ -55,9 +55,7 @@ export function TriggerAnalysis(): React.JSX.Element {
       <Card>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Image URL
-            </label>
+            <label className="block text-sm font-medium mb-1">Image URL</label>
             <TextInput
               placeholder="e.g. alpine:latest, nginx:1.25, ghcr.io/org/app:v2"
               value={imageUrl}
@@ -68,11 +66,7 @@ export function TriggerAnalysis(): React.JSX.Element {
             <label className="block text-sm font-medium mb-1">
               Branch (ref)
             </label>
-            <TextInput
-              placeholder="main"
-              value={ref}
-              onValueChange={setRef}
-            />
+            <TextInput placeholder="main" value={ref} onValueChange={setRef} />
           </div>
           <Button
             type="submit"
@@ -112,8 +106,8 @@ export function TriggerAnalysis(): React.JSX.Element {
         <Card className="mt-4">
           <Text className="text-red-500">Failed to trigger: {error}</Text>
           <Text className="mt-2">
-            Make sure the server was started with GitLab options and the
-            token has pipeline trigger permissions.
+            Make sure the server was started with GitLab options and the token
+            has pipeline trigger permissions.
           </Text>
         </Card>
       )}

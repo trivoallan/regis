@@ -45,13 +45,15 @@ function MRCard({ mr }: { mr: MRDetail }): React.JSX.Element {
         <div>
           <Text className="text-xs font-medium uppercase">Regis Labels</Text>
           <div className="flex flex-wrap gap-1 mt-1">
-            {mr.regis_labels.length > 0
-              ? mr.regis_labels.map((lb) => (
-                  <Badge key={lb} size="xs">
-                    {lb.replace("regis::", "")}
-                  </Badge>
-                ))
-              : <Text>None</Text>}
+            {mr.regis_labels.length > 0 ? (
+              mr.regis_labels.map((lb) => (
+                <Badge key={lb} size="xs">
+                  {lb.replace("regis::", "")}
+                </Badge>
+              ))
+            ) : (
+              <Text>None</Text>
+            )}
           </div>
         </div>
 
@@ -59,7 +61,9 @@ function MRCard({ mr }: { mr: MRDetail }): React.JSX.Element {
           <Text className="text-xs font-medium uppercase">Report</Text>
           <Text>
             {mr.has_report ? (
-              <Badge color="emerald" size="xs">Available</Badge>
+              <Badge color="emerald" size="xs">
+                Available
+              </Badge>
             ) : (
               "Not available"
             )}

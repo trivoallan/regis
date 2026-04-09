@@ -111,9 +111,7 @@ export function GitLabMRList(): React.JSX.Element {
             ) : mrs.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7}>
-                  <Text className="text-center">
-                    No merge requests found.
-                  </Text>
+                  <Text className="text-center">No merge requests found.</Text>
                 </TableCell>
               </TableRow>
             ) : (
@@ -160,9 +158,7 @@ export function GitLabMRList(): React.JSX.Element {
                     )}
                   </TableCell>
                   <TableCell>
-                    <Text>
-                      {new Date(mr.updated_at).toLocaleDateString()}
-                    </Text>
+                    <Text>{new Date(mr.updated_at).toLocaleDateString()}</Text>
                   </TableCell>
                 </TableRow>
               ))
