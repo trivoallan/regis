@@ -53,6 +53,9 @@ lint:
         - CHANGELOG.md
         - CLAUDE.md
         - report.json
+    - linters: [prettier, yamllint]
+      paths:
+        - regis/cookiecutters/**
     - linters: [prettier]
       paths:
         - docs/website/versions.json

@@ -1,0 +1,6 @@
+{
+  "project_name": "My Regis Pipeline",
+  "project_slug": "{{ cookiecutter.project_name | lower | replace(' ', '-') }}",
+  "default_image_url": "alpine:latest",
+  "regis_version": "latest"
+}

@@ -1,0 +1,93 @@
+# Regis — Request-to-MR Pipeline
+# Scaffolded by: regis bootstrap gitlab-ci
+# Docs: https://trivoallan.github.io/regis/docs/usage/integrations/gitlab
+
+variables:
+  REGIS_IMAGE: "ghcr.io/trivoallan/regis:{{ cookiecutter.regis_version }}"
+  IMAGE_URL: "{{ cookiecutter.default_image_url }}"
+
+stages:
+  - request
+  - analyze
+  - report
+
+# --- Stage 1: Create analysis branch and MR ---
+request_analysis:
+  stage: request
+  image: alpine:latest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" && $IMAGE_URL
+  before_script:
+    - apk add --no-cache git curl
+  script:
+    - |
+      BRANCH="regis/analyze/$(date +%Y%m%d-%H%M%S)"
+      git config user.name "regis-ci"
+      git config user.email "regis-ci@noreply"
+      git checkout -b "$BRANCH"
+      echo "$IMAGE_URL" > .regis-image-url
+      git add .regis-image-url
+      git commit -m "chore(regis): request analysis of $IMAGE_URL"
+      git push \
+        -o merge_request.create \
+        -o merge_request.title="Regis Analysis: $IMAGE_URL" \
+        -o merge_request.description="Automated security analysis requested via pipeline." \
+        -o merge_request.remove_source_branch \
+        "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" \
+        "$BRANCH"
+
+# --- Stage 2: Run regis analysis ---
+analyze_image:
+  stage: analyze
+  image: $REGIS_IMAGE
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - |
+      if [ -f .regis-image-url ]; then
+        IMAGE_URL=$(cat .regis-image-url)
+      fi
+
+      REPORT_BASE_URL="/${CI_PROJECT_PATH}/-/jobs/${CI_JOB_ID}/artifacts/file/reports/${CI_JOB_ID}/"
+
+      regis analyze "$IMAGE_URL" \
+        --playbook playbook.yaml \
+        --site \
+        --base-url "$REPORT_BASE_URL" \
+        --output-dir reports \
+        --meta "trigger.user=$GITLAB_USER_LOGIN" \
+        --meta "trigger.url=$CI_JOB_URL" \
+        --meta "gitlab.mr_url=$CI_MERGE_REQUEST_PROJECT_URL/-/merge_requests/$CI_MERGE_REQUEST_IID"
+  artifacts:
+    paths:
+      - reports/
+    expire_in: 30 days
+
+# --- Stage 3: Push results to MR ---
+push_results:
+  stage: report
+  image: $REGIS_IMAGE
+  needs:
+    - analyze_image
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  before_script:
+    - apk add --no-cache git || true
+  script:
+    - |
+      # Commit reports back to the branch
+      git config user.name "regis-ci"
+      git config user.email "regis-ci@noreply"
+      git add reports/ || true
+      git commit -m "chore(report): analysis complete" || true
+      git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" HEAD:"$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" || true
+
+      # Post results to MR
+      MR_API_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}"
+      REPORT_URL="${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/file/reports/${CI_JOB_ID}/index.html"
+
+      regis gitlab update-mr \
+        --report reports/report.json \
+        --report-url "$REPORT_URL" \
+        --mr-url "$MR_API_URL" \
+        --token "$GITLAB_TOKEN"
