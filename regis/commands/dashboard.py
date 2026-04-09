@@ -144,6 +144,12 @@ def export_cmd(
     default=None,
     help="GitLab project ID or path. Env: GITLAB_PROJECT.",
 )
+@click.option(
+    "--webhook-secret",
+    envvar="REGIS_WEBHOOK_SECRET",
+    default=None,
+    help="Secret token to validate incoming webhooks. Env: REGIS_WEBHOOK_SECRET.",
+)
 def serve_cmd(  # pragma: no cover
     port: int,
     report: Path | None = None,
@@ -151,6 +157,7 @@ def serve_cmd(  # pragma: no cover
     gitlab_url: str | None = None,
     gitlab_token: str | None = None,
     gitlab_project: str | None = None,
+    webhook_secret: str | None = None,
 ) -> None:
     """Serve the interactive dashboard and preview the report locally."""
     import uvicorn
@@ -168,6 +175,7 @@ def serve_cmd(  # pragma: no cover
         gitlab_url=gitlab_url,
         gitlab_token=gitlab_token,
         gitlab_project=gitlab_project,
+        webhook_secret=webhook_secret,
     )
 
     url = f"http://localhost:{port}/"

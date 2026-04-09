@@ -21,6 +21,7 @@ def create_app(
     gitlab_url: str | None = None,
     gitlab_token: str | None = None,
     gitlab_project: str | None = None,
+    webhook_secret: str | None = None,
 ) -> FastAPI:
     """Create and configure the dashboard FastAPI application.
 
@@ -66,6 +67,13 @@ def create_app(
         from regis.server.routes.trigger import create_trigger_router
 
         app.include_router(create_trigger_router(gitlab_config))
+
+    # Webhook receiver (works with or without GitLab config)
+    from regis.server.routes.webhooks import create_webhooks_router
+
+    webhooks_router, event_bus = create_webhooks_router(webhook_secret=webhook_secret)
+    app.include_router(webhooks_router)
+    app.state.event_bus = event_bus
 
     # Static files + SPA fallback must be mounted last
     app.mount("/", _SPAStaticFiles(directory=str(assets_dir), html=True), name="spa")
