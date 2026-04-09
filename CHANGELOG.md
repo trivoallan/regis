@@ -2,11 +2,10 @@
 
 ## [0.27.0](https://github.com/trivoallan/regis/compare/v0.26.2...v0.27.0) (2026-04-09)
 
-
 ### Features
 
-* **cli:** add archive configure command for multi-archive setup ([#253](https://github.com/trivoallan/regis/issues/253)) ([25d0c10](https://github.com/trivoallan/regis/commit/25d0c10cd739cbfd302602224a75095a44e615bc))
-* **cli:** add bootstrap gitlab-ci wizard for Request-to-MR pipeline ([#255](https://github.com/trivoallan/regis/issues/255)) ([5b83a26](https://github.com/trivoallan/regis/commit/5b83a26f7799dec320792c74907925389eab7c93))
+- **cli:** add archive configure command for multi-archive setup ([#253](https://github.com/trivoallan/regis/issues/253)) ([25d0c10](https://github.com/trivoallan/regis/commit/25d0c10cd739cbfd302602224a75095a44e615bc))
+- **cli:** add bootstrap gitlab-ci wizard for Request-to-MR pipeline ([#255](https://github.com/trivoallan/regis/issues/255)) ([5b83a26](https://github.com/trivoallan/regis/commit/5b83a26f7799dec320792c74907925389eab7c93))
 
 ## [0.26.2](https://github.com/trivoallan/regis/compare/v0.26.1...v0.26.2) (2026-04-02)
 
