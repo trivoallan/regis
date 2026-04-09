@@ -14,6 +14,26 @@ This guide explains how to integrate `regis` into your GitLab CI/CD pipelines to
 To quickly bootstrap a new GitLab repository pre-configured with `regis` and GitLab CI, you can use our [Project Bootstrapping](../../reference/cli.md#bootstrap) command.
 :::
 
+## Quick Start with the CLI Wizard
+
+Scaffold the complete Request-to-MR pipeline in one command:
+
+```bash
+regis bootstrap gitlab-ci my-project --no-input
+```
+
+This generates three files in `my-project/`:
+
+- **`.gitlab-ci.yml`** — three-stage pipeline (`request_analysis`, `analyze_image`, `push_results`)
+- **`playbook.yaml`** — security rules with GitLab integration (badges, review checklists)
+- **`CI-VARIABLES.md`** — documents required CI/CD variables (`GITLAB_TOKEN`, `IMAGE_URL`)
+
+Commit these files, configure `GITLAB_TOKEN` in **Settings > CI/CD > Variables**, and run your first analysis from **Build > Pipelines > Run pipeline**.
+
+Drop `--no-input` to customize the project name, default image, and Regis version interactively.
+
+---
+
 ## GitLab CI Configuration
 
 The generated `.gitlab-ci.yml` uses GitLab CI `spec: inputs` to parameterize the image analysis.
