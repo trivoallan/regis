@@ -19,6 +19,7 @@ json-schema-for-humans = "*"
 chardet = ">=5.0.0"
 charset-normalizer = ">=2.0.0"
 urllib3 = ">=1.26.0,<3"
+regis = {extras = ["dev"], file = ".", editable = true}
 
 [dev-packages]
 pytest = ">=7.4"
@@ -30,6 +31,7 @@ jsonschema2md = "*"
 types-PyYAML = "*"
 types-requests = "*"
 types-jsonschema = "*"
+httpx = "*"
 
 [requires]
 python_version = "3.13"
