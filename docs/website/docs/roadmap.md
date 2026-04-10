@@ -72,4 +72,4 @@ The following are considered **stable** and safe to depend on in custom playbook
 
 ## How to give feedback
 
-If your team is building custom playbooks or integrations and needs clarity on stability of a specific field or feature, open a [GitHub Discussion](https://github.com/trivoallan/regis-cli/discussions) or file an issue.
+If your team is building custom playbooks or integrations and needs clarity on stability of a specific field or feature, open a [GitHub Discussion](https://github.com/trivoallan/regis/discussions) or file an issue.
