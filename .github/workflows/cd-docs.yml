@@ -3,6 +3,11 @@ name: CD / Docs
 on:
   release:
     types: [published]
+  push:
+    branches: [main]
+    paths:
+      - docs/website/**
+      - .github/workflows/cd-docs.yml
   workflow_dispatch:
 
 permissions:
