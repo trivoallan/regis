@@ -3,6 +3,8 @@ name: Release / Docs snapshot
 on:
   pull_request_target:
     types: [labeled]
+  release:
+    types: [published]
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -12,7 +14,10 @@ permissions:
 
 jobs:
   snapshot-pending:
-    if: "github.event.label.name == 'autorelease: pending'"
+    # Run on Release Please PR label OR on published release (fallback)
+    if: >-
+      (github.event_name == 'pull_request_target' && github.event.label.name == 'autorelease: pending')
+      || github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Generate GitHub App token
@@ -22,20 +27,34 @@ jobs:
           app-id: ${{ secrets.REGIS_CI_APP_ID }}
           private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
 
-      - name: Checkout PR branch
+      - name: Checkout branch
         uses: actions/checkout@v6
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          ref: ${{ github.event.pull_request.head.ref }}
+          # PR trigger: checkout PR branch; release trigger: checkout main
+          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || 'main' }}
           fetch-depth: 0
 
-      - name: Extract version from PR title
+      - name: Extract version
         id: version
         env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_TITLE: ${{ github.event.pull_request.title || '' }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || '' }}
         run: |
-          VERSION=$(echo "$PR_TITLE" | grep -oP '\d+\.\d+\.\d+')
+          set -euo pipefail
+          if [ -n "$RELEASE_TAG" ]; then
+            # Release trigger: extract from tag (e.g. v1.2.3)
+            VERSION=$(echo "$RELEASE_TAG" | grep -oP '\d+\.\d+\.\d+' || true)
+          else
+            # PR trigger: extract from PR title
+            VERSION=$(echo "$PR_TITLE" | grep -oP '\d+\.\d+\.\d+' || true)
+          fi
+          if [ -z "$VERSION" ]; then
+            echo "::error::Could not extract version from PR title ('$PR_TITLE') or release tag ('$RELEASE_TAG')"
+            exit 1
+          fi
           echo "version=v${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Extracted version: v${VERSION}"
 
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -54,15 +73,31 @@ jobs:
       - name: Create version snapshot
         working-directory: docs/website
         run: |
+          set -euo pipefail
           VERSION="${{ steps.version.outputs.version }}"
-          if [ ! -d "versioned_docs/version-${VERSION}" ]; then
-            pnpm run docusaurus docs:version "$VERSION"
-          else
+          if [ -d "versioned_docs/version-${VERSION}" ]; then
             echo "Snapshot for ${VERSION} already exists, skipping."
+            exit 0
           fi
+          pnpm run docusaurus docs:version "$VERSION"
+          # Validate that all three artifacts were created
+          if [ ! -d "versioned_docs/version-${VERSION}" ]; then
+            echo "::error::versioned_docs/version-${VERSION} was not created"
+            exit 1
+          fi
+          if [ ! -f "versioned_sidebars/version-${VERSION}-sidebars.json" ]; then
+            echo "::error::versioned_sidebars/version-${VERSION}-sidebars.json was not created"
+            exit 1
+          fi
+          if ! grep -q "\"${VERSION}\"" versions.json; then
+            echo "::error::versions.json does not contain ${VERSION}"
+            exit 1
+          fi
+          echo "Snapshot for ${VERSION} created and validated successfully."
 
-      - name: Commit snapshot to release PR branch
+      - name: Commit snapshot
         run: |
+          set -euo pipefail
           git config user.name "regis-ci[bot]"
           git config user.email "regis-ci[bot]@users.noreply.github.com"
           git add \
@@ -71,7 +106,11 @@ jobs:
             docs/website/versions.json
           if git diff --staged --quiet; then
             echo "No snapshot changes to commit."
-          else
-            git commit -m "docs: add Docusaurus version snapshot for ${{ steps.version.outputs.version }}"
-            git push
+            exit 0
           fi
+          git commit -m "docs: add Docusaurus version snapshot for ${{ steps.version.outputs.version }}"
+          if ! git push; then
+            echo "::error::Failed to push snapshot commit. Check branch protection or auth."
+            exit 1
+          fi
+          echo "Snapshot committed and pushed successfully."

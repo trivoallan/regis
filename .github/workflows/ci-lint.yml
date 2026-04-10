@@ -65,3 +65,33 @@ jobs:
 
       - name: Trunk Check
         uses: trunk-io/trunk-action@v1
+
+  docs-links:
+    name: Docs Link Check
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'pull_request'
+      && (
+        contains(join(github.event.pull_request.labels.*.name, ','), 'docs')
+        || true
+      )
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Check markdown links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --exclude-path docs/website/versioned_docs
+            --exclude-path docs/website/node_modules
+            --exclude 'pathname:///'
+            --exclude 'http://localhost'
+            --exclude 'https://example.com'
+            --exclude 'regis\.example\.com'
+            --exclude 'my-private-registry\.example\.com'
+            --exclude 'host\.example\.com'
+            --exclude '\.schema\.md'
+            docs/website/docs/
+          fail: true
