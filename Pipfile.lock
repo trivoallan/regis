@@ -2325,12 +2325,12 @@
         },
         "types-jsonschema": {
             "hashes": [
-                "sha256:03d0f697a9930970033e29e91da45accf287ee44d5eed6f7a238b99e608b23f4",
-                "sha256:0e8ebd94b257fc978b41b89c7b9bc76232e104e5125ec19009c4f60844c96e0a"
+                "sha256:1ab0058c2612b0b81fc4e3c88ec3f9ad9b0af3fd31a176030d78b6d6cefb6e7b",
+                "sha256:82b75a976ed1507c473b8dee2d4841bd65926758c6d672bb93d08bf5e16f1b3f"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.10'",
-            "version": "==4.26.0.20260402"
+            "version": "==4.26.0.20260408"
         },
         "types-pyyaml": {
             "hashes": [
