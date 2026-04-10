@@ -1,0 +1,7 @@
+{
+  "label": "Reference",
+  "link": {
+    "type": "generated-index",
+    "description": "Technical reference for RegiS components, schemas, and CLI commands."
+  }
+}
