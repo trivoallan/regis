@@ -2,7 +2,7 @@
 
 > Generated automatically by `regis`
 
-Analysis performed on **2026-03-21T01:41:20.377688+00:00**.
+Analysis performed on **2026-04-10T07:46:08.339928+00:00**.
 
 ## 📦 Target Details
 
@@ -23,4 +23,4 @@ Analysis performed on **2026-03-21T01:41:20.377688+00:00**.
 
 ## 📅 Image Freshness
 
-- **Age in Days**: `52`
+- **Age in Days**: `72`
