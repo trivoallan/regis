@@ -118,4 +118,4 @@ Specific value: `"scorecarddev"`
 **Description:** Human-readable explanation of the score.
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-04-10 at 05:36:41 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-04-10 at 05:55:30 +0000
