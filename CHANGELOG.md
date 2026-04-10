@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.28.0](https://github.com/trivoallan/regis/compare/v0.27.0...v0.28.0) (2026-04-10)
+
+### Features
+
+- **cli:** add GitLab integration to dashboard (API proxy, trigger, webhooks, UI) ([#261](https://github.com/trivoallan/regis/issues/261)) ([df82e2d](https://github.com/trivoallan/regis/commit/df82e2da5ad51c9c86ec0453a5e9cc821e2d6d78))
+- **cli:** migrate dashboard serve to FastAPI ([#259](https://github.com/trivoallan/regis/issues/259)) ([359572b](https://github.com/trivoallan/regis/commit/359572befd5691c519460cd30a1c3ea488ccfb30))
+
+### Bug Fixes
+
+- **docs:** repair broken rebrand links + rebuild next on push to main ([#263](https://github.com/trivoallan/regis/issues/263)) ([b53d2b8](https://github.com/trivoallan/regis/commit/b53d2b89395023981c8a507dcb8e354f7776aad4))
+
 ## [0.27.0](https://github.com/trivoallan/regis/compare/v0.26.2...v0.27.0) (2026-04-09)
 
 ### Features
