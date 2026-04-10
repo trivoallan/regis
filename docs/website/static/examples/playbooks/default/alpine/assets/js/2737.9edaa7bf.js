@@ -1,1 +1,12 @@
-"use strict";(globalThis.webpackChunk_regis_dashboard=globalThis.webpackChunk_regis_dashboard||[]).push([[2737],{92737(a,s,e){e.d(s,{createGitGraphServices:()=>r.b});var r=e(3887);e(6057)}}]);
+"use strict";
+(globalThis.webpackChunk_regis_dashboard =
+  globalThis.webpackChunk_regis_dashboard || []).push([
+  [2737],
+  {
+    92737(a, s, e) {
+      e.d(s, { createGitGraphServices: () => r.b });
+      var r = e(3887);
+      e(6057);
+    },
+  },
+]);

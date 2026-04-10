@@ -1,1 +1,12 @@
-"use strict";(globalThis.webpackChunk_regis_dashboard=globalThis.webpackChunk_regis_dashboard||[]).push([[5742],{27093(s){s.exports=JSON.parse('{"name":"docusaurus-plugin-content-docs","id":"default"}')}}]);
+"use strict";
+(globalThis.webpackChunk_regis_dashboard =
+  globalThis.webpackChunk_regis_dashboard || []).push([
+  [5742],
+  {
+    27093(s) {
+      s.exports = JSON.parse(
+        '{"name":"docusaurus-plugin-content-docs","id":"default"}',
+      );
+    },
+  },
+]);

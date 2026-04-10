@@ -1,1 +1,53 @@
-"use strict";(globalThis.webpackChunk_regis_dashboard=globalThis.webpackChunk_regis_dashboard||[]).push([[7098],{28500(n,s,e){e.r(s),e.d(s,{default:()=>l});e(10162);var r=e(71167);function o(n,s){return`docs-${n}-${s}`}var i=e(49619),t=e(11490),a=e(61627),c=e(56730);function u(n){const{version:s}=n;return(0,c.jsxs)(c.Fragment,{children:[(0,c.jsx)(a.A,{version:s.version,tag:o(s.pluginId,s.version)}),(0,c.jsx)(r.be,{children:s.noIndex&&(0,c.jsx)("meta",{name:"robots",content:"noindex, nofollow"})})]})}function d(n){const{version:s,route:e}=n;return(0,c.jsx)(r.e3,{className:s.className,children:(0,c.jsx)(i.n,{version:s,children:(0,t.v)(e.routes)})})}function l(n){return(0,c.jsxs)(c.Fragment,{children:[(0,c.jsx)(u,{...n}),(0,c.jsx)(d,{...n})]})}}}]);
+"use strict";
+(globalThis.webpackChunk_regis_dashboard =
+  globalThis.webpackChunk_regis_dashboard || []).push([
+  [7098],
+  {
+    28500(n, s, e) {
+      (e.r(s), e.d(s, { default: () => l }));
+      e(10162);
+      var r = e(71167);
+      function o(n, s) {
+        return `docs-${n}-${s}`;
+      }
+      var i = e(49619),
+        t = e(11490),
+        a = e(61627),
+        c = e(56730);
+      function u(n) {
+        const { version: s } = n;
+        return (0, c.jsxs)(c.Fragment, {
+          children: [
+            (0, c.jsx)(a.A, {
+              version: s.version,
+              tag: o(s.pluginId, s.version),
+            }),
+            (0, c.jsx)(r.be, {
+              children:
+                s.noIndex &&
+                (0, c.jsx)("meta", {
+                  name: "robots",
+                  content: "noindex, nofollow",
+                }),
+            }),
+          ],
+        });
+      }
+      function d(n) {
+        const { version: s, route: e } = n;
+        return (0, c.jsx)(r.e3, {
+          className: s.className,
+          children: (0, c.jsx)(i.n, {
+            version: s,
+            children: (0, t.v)(e.routes),
+          }),
+        });
+      }
+      function l(n) {
+        return (0, c.jsxs)(c.Fragment, {
+          children: [(0, c.jsx)(u, { ...n }), (0, c.jsx)(d, { ...n })],
+        });
+      }
+    },
+  },
+]);
