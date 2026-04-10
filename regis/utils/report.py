@@ -298,6 +298,8 @@ def render_and_save_reports(
                 click.echo("  Press Ctrl+C to stop serving.", err=True)
 
                 class ReportHandler(http.server.SimpleHTTPRequestHandler):
+                    """Serve the generated report directory over HTTP for local preview."""
+
                     def __init__(self, *args, directory=str(out_dir), **kwargs):
                         super().__init__(*args, directory=directory, **kwargs)
 

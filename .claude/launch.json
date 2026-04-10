@@ -4,8 +4,9 @@
     {
       "name": "report-viewer",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@regis/report-viewer", "dev"],
-      "port": 3000
+      "runtimeArgs": ["--filter", "@regis/dashboard", "dev"],
+      "port": 3000,
+      "autoPort": true
     },
     {
       "name": "docs",
