@@ -2,10 +2,9 @@
 
 ## [0.28.2](https://github.com/trivoallan/regis/compare/v0.28.1...v0.28.2) (2026-04-10)
 
-
 ### Bug Fixes
 
-* **deps:** regenerate pnpm lockfile to match bumped dependency specifiers ([#363](https://github.com/trivoallan/regis/issues/363)) ([08d9ec4](https://github.com/trivoallan/regis/commit/08d9ec4f1c90a8143189ec8e3c1e75f8c71fce6e))
+- **deps:** regenerate pnpm lockfile to match bumped dependency specifiers ([#363](https://github.com/trivoallan/regis/issues/363)) ([08d9ec4](https://github.com/trivoallan/regis/commit/08d9ec4f1c90a8143189ec8e3c1e75f8c71fce6e))
 
 ## [0.28.1](https://github.com/trivoallan/regis/compare/v0.28.0...v0.28.1) (2026-04-10)
 
