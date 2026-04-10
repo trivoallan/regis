@@ -1,5 +1,5 @@
 {
-  "version": "0.18.0",
+  "version": "0.28.1",
   "request": {
     "url": "alpine:latest",
     "registry": "registry-1.docker.io",
@@ -20,49 +20,9 @@
       "trivy",
       "versioning"
     ],
-    "timestamp": "2026-03-21T01:41:20.377688+00:00"
+    "timestamp": "2026-04-10T07:46:08.339928+00:00"
   },
   "results": {
-    "dockle": {
-      "analyzer": "dockle",
-      "repository": "library/alpine",
-      "tag": "latest",
-      "passed": true,
-      "issues_count": 4,
-      "issues_by_level": {
-        "FATAL": 0,
-        "WARN": 2,
-        "INFO": 2,
-        "SKIP": 0,
-        "PASS": 0
-      },
-      "issues": [
-        {
-          "code": "CIS-DI-0001",
-          "level": "WARN",
-          "title": "Create a user for the container",
-          "alerts": ["Last user should not be root"]
-        },
-        {
-          "code": "DKL-DI-0006",
-          "level": "WARN",
-          "title": "Avoid latest tag",
-          "alerts": ["Avoid 'latest' tag"]
-        },
-        {
-          "code": "CIS-DI-0005",
-          "level": "INFO",
-          "title": "Enable Content trust for Docker",
-          "alerts": ["export DOCKER_CONTENT_TRUST=1 before docker pull/build"]
-        },
-        {
-          "code": "CIS-DI-0006",
-          "level": "INFO",
-          "title": "Add HEALTHCHECK instruction to the container image",
-          "alerts": ["not found HEALTHCHECK statement"]
-        }
-      ]
-    },
     "endoflife": {
       "analyzer": "endoflife",
       "repository": "library/alpine",
@@ -74,13 +34,24 @@
       "active_cycles_count": 0,
       "eol_cycles_count": 31
     },
+    "popularity": {
+      "analyzer": "popularity",
+      "repository": "library/alpine",
+      "available": true,
+      "pull_count": 11771872657,
+      "star_count": 11491,
+      "description": "A minimal Docker image based on Alpine Linux with a complete package index and only 5 MB in size!",
+      "last_updated": "2026-01-28T04:26:42.651499Z",
+      "date_registered": "2015-03-17T23:16:05.407728Z",
+      "is_official": true
+    },
     "freshness": {
       "analyzer": "freshness",
       "repository": "library/alpine",
       "tag": "latest",
       "tag_created": "2026-01-28T01:18:04.977843834Z",
       "latest_created": null,
-      "age_days": 52,
+      "age_days": 72,
       "behind_latest_days": null,
       "is_latest": true
     },
@@ -106,17 +77,6 @@
       ],
       "dockerfile": "FROM scratch\nRUN ADD alpine-minirootfs-3.23.3-x86_64.tar.gz / # buildkit\nRUN CMD [\"/bin/sh\"]"
     },
-    "popularity": {
-      "analyzer": "popularity",
-      "repository": "library/alpine",
-      "available": true,
-      "pull_count": 11730116901,
-      "star_count": 11482,
-      "description": "A minimal Docker image based on Alpine Linux with a complete package index and only 5 MB in size!",
-      "last_updated": "2026-01-28T04:26:42.651499Z",
-      "date_registered": "2015-03-17T23:16:05.407728Z",
-      "is_official": true
-    },
     "provenance": {
       "analyzer": "provenance",
       "repository": "library/alpine",
@@ -126,6 +86,62 @@
       "source_tracked": false,
       "indicators_count": 0,
       "indicators": []
+    },
+    "dockle": {
+      "analyzer": "dockle",
+      "repository": "library/alpine",
+      "tag": "latest",
+      "passed": true,
+      "issues_count": 4,
+      "issues_by_level": {
+        "FATAL": 0,
+        "WARN": 2,
+        "INFO": 2,
+        "SKIP": 0,
+        "PASS": 0
+      },
+      "issues": [
+        {
+          "code": "CIS-DI-0001",
+          "level": "WARN",
+          "title": "Create a user for the container",
+          "alerts": [
+            "Last user should not be root"
+          ]
+        },
+        {
+          "code": "DKL-DI-0006",
+          "level": "WARN",
+          "title": "Avoid latest tag",
+          "alerts": [
+            "Avoid 'latest' tag"
+          ]
+        },
+        {
+          "code": "CIS-DI-0005",
+          "level": "INFO",
+          "title": "Enable Content trust for Docker",
+          "alerts": [
+            "export DOCKER_CONTENT_TRUST=1 before docker pull/build"
+          ]
+        },
+        {
+          "code": "CIS-DI-0006",
+          "level": "INFO",
+          "title": "Add HEALTHCHECK instruction to the container image",
+          "alerts": [
+            "not found HEALTHCHECK statement"
+          ]
+        }
+      ]
+    },
+    "scorecarddev": {
+      "analyzer": "scorecarddev",
+      "repository": "library/alpine",
+      "source_repo": "https://github.com/alpinelinux/docker-alpine",
+      "scorecard_available": false,
+      "score": null,
+      "checks": []
     },
     "sbom": {
       "analyzer": "sbom",
@@ -149,6 +165,11 @@
         "MPL-2.0",
         "Zlib"
       ],
+      "copyleft_licenses": [
+        "GPL-2.0-only",
+        "GPL-2.0-or-later",
+        "MPL-2.0"
+      ],
       "components": [
         {
           "name": "alpine",
@@ -162,230 +183,464 @@
           "version": "3.7.1-r8",
           "type": "library",
           "purl": "pkg:apk/alpine/alpine-baselayout-data@3.7.1-r8?arch=x86_64&distro=3.23.3",
-          "licenses": ["GPL-2.0-only"]
+          "licenses": [
+            "GPL-2.0-only"
+          ]
         },
         {
           "name": "alpine-baselayout",
           "version": "3.7.1-r8",
           "type": "library",
           "purl": "pkg:apk/alpine/alpine-baselayout@3.7.1-r8?arch=x86_64&distro=3.23.3",
-          "licenses": ["GPL-2.0-only"]
+          "licenses": [
+            "GPL-2.0-only"
+          ]
         },
         {
           "name": "alpine-keys",
           "version": "2.6-r0",
           "type": "library",
           "purl": "pkg:apk/alpine/alpine-keys@2.6-r0?arch=x86_64&distro=3.23.3",
-          "licenses": ["MIT"]
+          "licenses": [
+            "MIT"
+          ]
         },
         {
           "name": "alpine-release",
           "version": "3.23.3-r0",
           "type": "library",
           "purl": "pkg:apk/alpine/alpine-release@3.23.3-r0?arch=x86_64&distro=3.23.3",
-          "licenses": ["MIT"]
+          "licenses": [
+            "MIT"
+          ]
         },
         {
           "name": "apk-tools",
           "version": "3.0.3-r1",
           "type": "library",
           "purl": "pkg:apk/alpine/apk-tools@3.0.3-r1?arch=x86_64&distro=3.23.3",
-          "licenses": ["GPL-2.0-only"]
+          "licenses": [
+            "GPL-2.0-only"
+          ]
         },
         {
           "name": "busybox-binsh",
           "version": "1.37.0-r30",
           "type": "library",
           "purl": "pkg:apk/alpine/busybox-binsh@1.37.0-r30?arch=x86_64&distro=3.23.3",
-          "licenses": ["GPL-2.0-only"]
+          "licenses": [
+            "GPL-2.0-only"
+          ]
         },
         {
           "name": "busybox",
           "version": "1.37.0-r30",
           "type": "library",
           "purl": "pkg:apk/alpine/busybox@1.37.0-r30?arch=x86_64&distro=3.23.3",
-          "licenses": ["GPL-2.0-only"]
+          "licenses": [
+            "GPL-2.0-only"
+          ]
         },
         {
           "name": "ca-certificates-bundle",
           "version": "20251003-r0",
           "type": "library",
           "purl": "pkg:apk/alpine/ca-certificates-bundle@20251003-r0?arch=x86_64&distro=3.23.3",
-          "licenses": ["MPL-2.0", "MIT"]
+          "licenses": [
+            "MPL-2.0",
+            "MIT"
+          ]
         },
         {
           "name": "libapk",
           "version": "3.0.3-r1",
           "type": "library",
           "purl": "pkg:apk/alpine/libapk@3.0.3-r1?arch=x86_64&distro=3.23.3",
-          "licenses": ["GPL-2.0-only"]
+          "licenses": [
+            "GPL-2.0-only"
+          ]
         },
         {
           "name": "libcrypto3",
           "version": "3.5.5-r0",
           "type": "library",
           "purl": "pkg:apk/alpine/libcrypto3@3.5.5-r0?arch=x86_64&distro=3.23.3",
-          "licenses": ["Apache-2.0"]
+          "licenses": [
+            "Apache-2.0"
+          ]
         },
         {
           "name": "libssl3",
           "version": "3.5.5-r0",
           "type": "library",
           "purl": "pkg:apk/alpine/libssl3@3.5.5-r0?arch=x86_64&distro=3.23.3",
-          "licenses": ["Apache-2.0"]
+          "licenses": [
+            "Apache-2.0"
+          ]
         },
         {
           "name": "musl-utils",
           "version": "1.2.5-r21",
           "type": "library",
           "purl": "pkg:apk/alpine/musl-utils@1.2.5-r21?arch=x86_64&distro=3.23.3",
-          "licenses": ["MIT", "BSD-2-Clause", "GPL-2.0-or-later"]
+          "licenses": [
+            "MIT",
+            "BSD-2-Clause",
+            "GPL-2.0-or-later"
+          ]
         },
         {
           "name": "musl",
           "version": "1.2.5-r21",
           "type": "library",
           "purl": "pkg:apk/alpine/musl@1.2.5-r21?arch=x86_64&distro=3.23.3",
-          "licenses": ["MIT"]
+          "licenses": [
+            "MIT"
+          ]
         },
         {
           "name": "scanelf",
           "version": "1.3.8-r2",
           "type": "library",
           "purl": "pkg:apk/alpine/scanelf@1.3.8-r2?arch=x86_64&distro=3.23.3",
-          "licenses": ["GPL-2.0-only"]
+          "licenses": [
+            "GPL-2.0-only"
+          ]
         },
         {
           "name": "ssl_client",
           "version": "1.37.0-r30",
           "type": "library",
           "purl": "pkg:apk/alpine/ssl_client@1.37.0-r30?arch=x86_64&distro=3.23.3",
-          "licenses": ["GPL-2.0-only"]
+          "licenses": [
+            "GPL-2.0-only"
+          ]
         },
         {
           "name": "zlib",
           "version": "1.3.1-r2",
           "type": "library",
           "purl": "pkg:apk/alpine/zlib@1.3.1-r2?arch=x86_64&distro=3.23.3",
-          "licenses": ["Zlib"]
+          "licenses": [
+            "Zlib"
+          ]
         }
       ]
     },
-    "scorecarddev": {
-      "analyzer": "scorecarddev",
-      "repository": "library/alpine",
-      "source_repo": "https://github.com/alpinelinux/docker-alpine",
-      "scorecard_available": false,
-      "score": null,
-      "checks": []
-    },
-    "size": {
-      "analyzer": "size",
+    "trivy": {
+      "analyzer": "trivy",
       "repository": "library/alpine",
       "tag": "latest",
-      "multi_arch": true,
-      "total_compressed_bytes": 3862432,
-      "total_compressed_human": "3.7 MB",
-      "layer_count": 1,
-      "config_size_bytes": 0,
-      "layers": [],
-      "platforms": [
+      "trivy_version": "2",
+      "vulnerability_count": 2,
+      "critical_count": 0,
+      "high_count": 1,
+      "medium_count": 1,
+      "low_count": 0,
+      "unknown_count": 0,
+      "fixed_count": 2,
+      "secrets_count": 0,
+      "targets": [
         {
-          "platform": "linux/amd64",
-          "compressed_bytes": 3862432,
-          "compressed_human": "3.7 MB",
-          "layer_count": 1
-        },
-        {
-          "platform": "unknown/unknown",
-          "compressed_bytes": 85529,
-          "compressed_human": "83.5 KB",
-          "layer_count": 2
-        },
-        {
-          "platform": "linux/arm/v6",
-          "compressed_bytes": 3570444,
-          "compressed_human": "3.4 MB",
-          "layer_count": 1
-        },
-        {
-          "platform": "unknown/unknown",
-          "compressed_bytes": 5632,
-          "compressed_human": "5.5 KB",
-          "layer_count": 1
-        },
-        {
-          "platform": "linux/arm/v7",
-          "compressed_bytes": 3282347,
-          "compressed_human": "3.1 MB",
-          "layer_count": 1
-        },
-        {
-          "platform": "unknown/unknown",
-          "compressed_bytes": 84956,
-          "compressed_human": "83.0 KB",
-          "layer_count": 2
-        },
-        {
-          "platform": "linux/arm64/v8",
-          "compressed_bytes": 4197718,
-          "compressed_human": "4.0 MB",
-          "layer_count": 1
-        },
-        {
-          "platform": "unknown/unknown",
-          "compressed_bytes": 85001,
-          "compressed_human": "83.0 KB",
-          "layer_count": 2
-        },
-        {
-          "platform": "linux/386",
-          "compressed_bytes": 3687601,
-          "compressed_human": "3.5 MB",
-          "layer_count": 1
-        },
-        {
-          "platform": "unknown/unknown",
-          "compressed_bytes": 85465,
-          "compressed_human": "83.5 KB",
-          "layer_count": 2
-        },
-        {
-          "platform": "linux/ppc64le",
-          "compressed_bytes": 3830257,
-          "compressed_human": "3.7 MB",
-          "layer_count": 1
-        },
-        {
-          "platform": "unknown/unknown",
-          "compressed_bytes": 84948,
-          "compressed_human": "83.0 KB",
-          "layer_count": 2
-        },
-        {
-          "platform": "linux/riscv64",
-          "compressed_bytes": 3585901,
-          "compressed_human": "3.4 MB",
-          "layer_count": 1
-        },
-        {
-          "platform": "unknown/unknown",
-          "compressed_bytes": 84944,
-          "compressed_human": "83.0 KB",
-          "layer_count": 2
-        },
-        {
-          "platform": "linux/s390x",
-          "compressed_bytes": 3725943,
-          "compressed_human": "3.6 MB",
-          "layer_count": 1
-        },
-        {
-          "platform": "unknown/unknown",
-          "compressed_bytes": 84873,
-          "compressed_human": "82.9 KB",
-          "layer_count": 2
+          "Target": "library/alpine:latest (alpine 3.23.3)",
+          "Vulnerabilities": [
+            {
+              "VulnerabilityID": "CVE-2026-22184",
+              "PkgName": "zlib",
+              "InstalledVersion": "1.3.1-r2",
+              "FixedVersion": "1.3.2-r0",
+              "Severity": "HIGH",
+              "Title": "zlib: zlib: Arbitrary code execution via buffer overflow in untgz utility",
+              "Description": "zlib versions up to and including 1.3.1.2 include a global buffer overflow in the untgz utility located under contrib/untgz. The vulnerability is limited to the standalone demonstration utility and does not affect the core zlib compression library. The flaw occurs when a user executes the untgz command with an excessively long archive name supplied via the command line, leading to an out-of-bounds write in a fixed-size global buffer."
+            },
+            {
+              "VulnerabilityID": "CVE-2026-27171",
+              "PkgName": "zlib",
+              "InstalledVersion": "1.3.1-r2",
+              "FixedVersion": "1.3.2-r0",
+              "Severity": "MEDIUM",
+              "Title": "zlib: zlib: Denial of Service via infinite loop in CRC32 combine functions",
+              "Description": "zlib before 1.3.2 allows CPU consumption via crc32_combine64 and crc32_combine_gen64 because x2nmodp can do right shifts within a loop that has no termination condition."
+            }
+          ],
+          "Secrets": null
         }
+      ]
+    },
+    "versioning": {
+      "analyzer": "versioning",
+      "repository": "library/alpine",
+      "total_tags": 210,
+      "dominant_pattern": "semver",
+      "semver_compliant_percentage": 98.6,
+      "patterns": [
+        {
+          "pattern": "named",
+          "count": 3,
+          "percentage": 1.4,
+          "examples": [
+            "3.17.0_rc1",
+            "edge",
+            "latest"
+          ]
+        },
+        {
+          "pattern": "numeric",
+          "count": 59,
+          "percentage": 28.1,
+          "examples": [
+            "2.6",
+            "2.7",
+            "20190228",
+            "20190408",
+            "20190508",
+            "20190707",
+            "20190809",
+            "20190925",
+            "20191114",
+            "20191219"
+          ]
+        },
+        {
+          "pattern": "semver",
+          "count": 147,
+          "percentage": 70.0,
+          "examples": [
+            "3.10.0",
+            "3.10.1",
+            "3.10.2",
+            "3.10.3",
+            "3.10.4",
+            "3.10.5",
+            "3.10.6",
+            "3.10.7",
+            "3.10.8",
+            "3.10.9"
+          ]
+        },
+        {
+          "pattern": "semver-prerelease",
+          "count": 1,
+          "percentage": 0.5,
+          "examples": [
+            "3.15.0-rc.4"
+          ]
+        }
+      ],
+      "variants": [],
+      "aliases": [
+        "2.6",
+        "2.7",
+        "20190228",
+        "20190408",
+        "20190508",
+        "20190707",
+        "20190809",
+        "20190925",
+        "20191114",
+        "20191219",
+        "20200122",
+        "20200319",
+        "20200428",
+        "20200626",
+        "20200917",
+        "20201218",
+        "20210212",
+        "20210730",
+        "20210804",
+        "20220316",
+        "20220328",
+        "20220715",
+        "20221110",
+        "20230208",
+        "20230329",
+        "20230901",
+        "20231219",
+        "20240315",
+        "20240329",
+        "20240606",
+        "20240807",
+        "20240923",
+        "20250108",
+        "20251224",
+        "20260127",
+        "3",
+        "3.1",
+        "3.10",
+        "3.10.0",
+        "3.10.1",
+        "3.10.2",
+        "3.10.3",
+        "3.10.4",
+        "3.10.5",
+        "3.10.6",
+        "3.10.7",
+        "3.10.8",
+        "3.10.9",
+        "3.11",
+        "3.11.0",
+        "3.11.10",
+        "3.11.11",
+        "3.11.12",
+        "3.11.13",
+        "3.11.2",
+        "3.11.3",
+        "3.11.5",
+        "3.11.6",
+        "3.11.7",
+        "3.11.8",
+        "3.11.9",
+        "3.12",
+        "3.12.0",
+        "3.12.1",
+        "3.12.10",
+        "3.12.11",
+        "3.12.12",
+        "3.12.2",
+        "3.12.3",
+        "3.12.4",
+        "3.12.5",
+        "3.12.6",
+        "3.12.7",
+        "3.12.8",
+        "3.12.9",
+        "3.13",
+        "3.13.0",
+        "3.13.1",
+        "3.13.10",
+        "3.13.11",
+        "3.13.12",
+        "3.13.2",
+        "3.13.3",
+        "3.13.4",
+        "3.13.5",
+        "3.13.6",
+        "3.13.7",
+        "3.13.8",
+        "3.13.9",
+        "3.14",
+        "3.14.0",
+        "3.14.1",
+        "3.14.10",
+        "3.14.2",
+        "3.14.3",
+        "3.14.4",
+        "3.14.5",
+        "3.14.6",
+        "3.14.7",
+        "3.14.8",
+        "3.14.9",
+        "3.15",
+        "3.15.0",
+        "3.15.0-rc.4",
+        "3.15.1",
+        "3.15.10",
+        "3.15.11",
+        "3.15.2",
+        "3.15.3",
+        "3.15.4",
+        "3.15.5",
+        "3.15.6",
+        "3.15.7",
+        "3.15.8",
+        "3.15.9",
+        "3.16",
+        "3.16.0",
+        "3.16.1",
+        "3.16.2",
+        "3.16.3",
+        "3.16.4",
+        "3.16.5",
+        "3.16.6",
+        "3.16.7",
+        "3.16.8",
+        "3.16.9",
+        "3.17",
+        "3.17.0",
+        "3.17.0_rc1",
+        "3.17.1",
+        "3.17.10",
+        "3.17.2",
+        "3.17.3",
+        "3.17.4",
+        "3.17.5",
+        "3.17.6",
+        "3.17.7",
+        "3.17.8",
+        "3.17.9",
+        "3.18",
+        "3.18.0",
+        "3.18.10",
+        "3.18.11",
+        "3.18.12",
+        "3.18.2",
+        "3.18.3",
+        "3.18.4",
+        "3.18.5",
+        "3.18.6",
+        "3.18.7",
+        "3.18.8",
+        "3.18.9",
+        "3.19",
+        "3.19.0",
+        "3.19.1",
+        "3.19.2",
+        "3.19.3",
+        "3.19.4",
+        "3.19.5",
+        "3.19.6",
+        "3.19.7",
+        "3.19.8",
+        "3.19.9",
+        "3.2",
+        "3.20",
+        "3.20.0",
+        "3.20.1",
+        "3.20.2",
+        "3.20.3",
+        "3.20.4",
+        "3.20.5",
+        "3.20.6",
+        "3.20.7",
+        "3.20.8",
+        "3.20.9",
+        "3.21",
+        "3.21.0",
+        "3.21.1",
+        "3.21.2",
+        "3.21.3",
+        "3.21.4",
+        "3.21.5",
+        "3.21.6",
+        "3.22",
+        "3.22.0",
+        "3.22.1",
+        "3.22.2",
+        "3.22.3",
+        "3.23",
+        "3.23.0",
+        "3.23.2",
+        "3.23.3",
+        "3.3",
+        "3.4",
+        "3.5",
+        "3.6",
+        "3.6.5",
+        "3.7",
+        "3.7.3",
+        "3.8",
+        "3.8.4",
+        "3.8.5",
+        "3.9",
+        "3.9.2",
+        "3.9.3",
+        "3.9.4",
+        "3.9.5",
+        "3.9.6",
+        "edge"
+      ],
+      "release_lines": [
+        "20260127"
       ]
     },
     "skopeo": {
@@ -816,102 +1071,114 @@
         "latest"
       ]
     },
-    "trivy": {
-      "analyzer": "trivy",
+    "size": {
+      "analyzer": "size",
       "repository": "library/alpine",
       "tag": "latest",
-      "trivy_version": "2",
-      "vulnerability_count": 2,
-      "critical_count": 0,
-      "high_count": 1,
-      "medium_count": 1,
-      "low_count": 0,
-      "unknown_count": 0,
-      "fixed_count": 2,
-      "secrets_count": 0,
-      "targets": [
+      "multi_arch": true,
+      "total_compressed_bytes": 3862432,
+      "total_compressed_human": "3.7 MB",
+      "layer_count": 1,
+      "config_size_bytes": 0,
+      "layers": [],
+      "platforms": [
         {
-          "Target": "library/alpine:latest (alpine 3.23.3)",
-          "Vulnerabilities": [
-            {
-              "VulnerabilityID": "CVE-2026-22184",
-              "PkgName": "zlib",
-              "InstalledVersion": "1.3.1-r2",
-              "FixedVersion": "1.3.2-r0",
-              "Severity": "HIGH",
-              "Title": "zlib: zlib: Arbitrary code execution via buffer overflow in untgz utility",
-              "Description": "zlib versions up to and including 1.3.1.2 include a global buffer overflow in the untgz utility located under contrib/untgz. The vulnerability is limited to the standalone demonstration utility and does not affect the core zlib compression library. The flaw occurs when a user executes the untgz command with an excessively long archive name supplied via the command line, leading to an out-of-bounds write in a fixed-size global buffer."
-            },
-            {
-              "VulnerabilityID": "CVE-2026-27171",
-              "PkgName": "zlib",
-              "InstalledVersion": "1.3.1-r2",
-              "FixedVersion": "1.3.2-r0",
-              "Severity": "MEDIUM",
-              "Title": "zlib: zlib: Denial of Service via infinite loop in CRC32 combine functions",
-              "Description": "zlib before 1.3.2 allows CPU consumption via crc32_combine64 and crc32_combine_gen64 because x2nmodp can do right shifts within a loop that has no termination condition."
-            }
-          ],
-          "Secrets": null
+          "platform": "linux/amd64",
+          "compressed_bytes": 3862432,
+          "compressed_human": "3.7 MB",
+          "layer_count": 1
+        },
+        {
+          "platform": "unknown/unknown",
+          "compressed_bytes": 85529,
+          "compressed_human": "83.5 KB",
+          "layer_count": 2
+        },
+        {
+          "platform": "linux/arm/v6",
+          "compressed_bytes": 3570444,
+          "compressed_human": "3.4 MB",
+          "layer_count": 1
+        },
+        {
+          "platform": "unknown/unknown",
+          "compressed_bytes": 5632,
+          "compressed_human": "5.5 KB",
+          "layer_count": 1
+        },
+        {
+          "platform": "linux/arm/v7",
+          "compressed_bytes": 3282347,
+          "compressed_human": "3.1 MB",
+          "layer_count": 1
+        },
+        {
+          "platform": "unknown/unknown",
+          "compressed_bytes": 84956,
+          "compressed_human": "83.0 KB",
+          "layer_count": 2
+        },
+        {
+          "platform": "linux/arm64/v8",
+          "compressed_bytes": 4197718,
+          "compressed_human": "4.0 MB",
+          "layer_count": 1
+        },
+        {
+          "platform": "unknown/unknown",
+          "compressed_bytes": 85001,
+          "compressed_human": "83.0 KB",
+          "layer_count": 2
+        },
+        {
+          "platform": "linux/386",
+          "compressed_bytes": 3687601,
+          "compressed_human": "3.5 MB",
+          "layer_count": 1
+        },
+        {
+          "platform": "unknown/unknown",
+          "compressed_bytes": 85465,
+          "compressed_human": "83.5 KB",
+          "layer_count": 2
+        },
+        {
+          "platform": "linux/ppc64le",
+          "compressed_bytes": 3830257,
+          "compressed_human": "3.7 MB",
+          "layer_count": 1
+        },
+        {
+          "platform": "unknown/unknown",
+          "compressed_bytes": 84948,
+          "compressed_human": "83.0 KB",
+          "layer_count": 2
+        },
+        {
+          "platform": "linux/riscv64",
+          "compressed_bytes": 3585901,
+          "compressed_human": "3.4 MB",
+          "layer_count": 1
+        },
+        {
+          "platform": "unknown/unknown",
+          "compressed_bytes": 84944,
+          "compressed_human": "83.0 KB",
+          "layer_count": 2
+        },
+        {
+          "platform": "linux/s390x",
+          "compressed_bytes": 3725943,
+          "compressed_human": "3.6 MB",
+          "layer_count": 1
+        },
+        {
+          "platform": "unknown/unknown",
+          "compressed_bytes": 84873,
+          "compressed_human": "82.9 KB",
+          "layer_count": 2
         }
       ]
-    },
-    "versioning": {
-      "analyzer": "versioning",
-      "repository": "library/alpine",
-      "total_tags": 210,
-      "dominant_pattern": "semver",
-      "semver_compliant_percentage": 70.5,
-      "patterns": [
-        {
-          "pattern": "named",
-          "count": 3,
-          "percentage": 1.4,
-          "examples": ["3.17.0_rc1", "edge", "latest"]
-        },
-        {
-          "pattern": "numeric",
-          "count": 59,
-          "percentage": 28.1,
-          "examples": [
-            "2.6",
-            "2.7",
-            "20190228",
-            "20190408",
-            "20190508",
-            "20190707",
-            "20190809",
-            "20190925",
-            "20191114",
-            "20191219"
-          ]
-        },
-        {
-          "pattern": "semver",
-          "count": 147,
-          "percentage": 70.0,
-          "examples": [
-            "3.10.0",
-            "3.10.1",
-            "3.10.2",
-            "3.10.3",
-            "3.10.4",
-            "3.10.5",
-            "3.10.6",
-            "3.10.7",
-            "3.10.8",
-            "3.10.9"
-          ]
-        },
-        {
-          "pattern": "semver-prerelease",
-          "count": 1,
-          "percentage": 0.5,
-          "examples": ["3.15.0-rc.4"]
-        }
-      ],
-      "variants": [],
-      "release_lines": ["20260127"]
     }
   },
   "rules": [
@@ -919,37 +1186,51 @@
       "slug": "cve-critical",
       "description": "Max allowed violations for a given severity level.",
       "level": "critical",
-      "tags": ["security"],
+      "tags": [
+        "security"
+      ],
       "passed": true,
       "status": "passed",
       "message": "Number of critical vulnerabilities is within limits.",
-      "analyzers": ["trivy"]
+      "analyzers": [
+        "trivy"
+      ]
     },
     {
       "slug": "env-blacklist",
       "description": "Image must not contain forbidden environment variables.",
       "level": "critical",
-      "tags": ["security"],
+      "tags": [
+        "security"
+      ],
       "passed": true,
       "status": "passed",
       "message": "No forbidden environment variables found.",
-      "analyzers": ["skopeo"]
+      "analyzers": [
+        "skopeo"
+      ]
     },
     {
       "slug": "no-root",
       "description": "Image must not run as root.",
       "level": "critical",
-      "tags": ["security"],
+      "tags": [
+        "security"
+      ],
       "passed": true,
       "status": "passed",
       "message": "Image does not run as 'root'.",
-      "analyzers": ["skopeo"]
+      "analyzers": [
+        "skopeo"
+      ]
     },
     {
       "slug": "registry-domain-whitelist",
       "description": "Checks if requested image registry domain is in the domains list.",
       "level": "critical",
-      "tags": ["security"],
+      "tags": [
+        "security"
+      ],
       "passed": true,
       "status": "passed",
       "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
@@ -959,187 +1240,191 @@
       "slug": "secret-scan",
       "description": "No secrets or credentials should be embedded in the image.",
       "level": "critical",
-      "tags": ["security"],
+      "tags": [
+        "security"
+      ],
       "passed": true,
       "status": "passed",
       "message": "No secrets detected in the image.",
-      "analyzers": ["trivy"]
-    },
-    {
-      "slug": "user-blacklist",
-      "description": "Image must not run as root.",
-      "level": "critical",
-      "tags": ["security"],
-      "passed": true,
-      "status": "passed",
-      "message": "Image does not run as 'root'.",
-      "analyzers": ["skopeo"]
-    },
-    {
-      "slug": "cve-count",
-      "description": "Max allowed violations for a given severity level.",
-      "level": "warning",
-      "tags": ["security"],
-      "passed": true,
-      "status": "passed",
-      "message": "Number of critical vulnerabilities is within limits.",
-      "analyzers": ["trivy"]
+      "analyzers": [
+        "trivy"
+      ]
     },
     {
       "slug": "cve-high",
       "description": "Max allowed violations for a given severity level.",
       "level": "warning",
-      "tags": ["security"],
+      "tags": [
+        "security"
+      ],
       "passed": true,
       "status": "passed",
       "message": "Number of high vulnerabilities is within limits.",
-      "analyzers": ["trivy"]
+      "analyzers": [
+        "trivy"
+      ]
     },
     {
       "slug": "exposed-ports-whitelist",
       "description": "Image exposes permitted ports.",
       "level": "warning",
-      "tags": ["security"],
+      "tags": [
+        "security"
+      ],
       "passed": true,
       "status": "passed",
       "message": "All exposed ports are allowed.",
-      "analyzers": ["skopeo"]
+      "analyzers": [
+        "skopeo"
+      ]
     },
     {
       "slug": "has-sbom",
       "description": "Image must provide a Software Bill of Materials.",
       "level": "warning",
-      "tags": ["compliance"],
+      "tags": [
+        "compliance"
+      ],
       "passed": true,
       "status": "passed",
       "message": "SBOM is available for this image.",
-      "analyzers": ["sbom"]
+      "analyzers": [
+        "sbom"
+      ]
     },
     {
       "slug": "layers-count",
       "description": "Image has an acceptable number of layers.",
       "level": "warning",
-      "tags": ["performance"],
+      "tags": [
+        "performance"
+      ],
       "passed": true,
       "status": "passed",
       "message": "Image has 1 layers.",
-      "analyzers": ["skopeo"]
+      "analyzers": [
+        "skopeo"
+      ]
     },
     {
       "slug": "max-size",
       "description": "Image size is within limits.",
       "level": "warning",
-      "tags": ["hygiene"],
+      "tags": [
+        "hygiene"
+      ],
       "passed": true,
       "status": "passed",
       "message": "Image size is within limits (0 bytes).",
-      "analyzers": ["skopeo"]
+      "analyzers": [
+        "skopeo"
+      ]
     },
     {
       "slug": "severity-count",
       "description": "Max allowed issues for a given severity level.",
       "level": "warning",
-      "tags": ["security"],
+      "tags": [
+        "security"
+      ],
       "passed": true,
       "status": "passed",
       "message": "Dockle FATAL issues are within limits.",
-      "analyzers": ["dockle"]
+      "analyzers": [
+        "dockle"
+      ]
     },
     {
       "slug": "severity-count",
       "description": "Max allowed violations for a given severity level.",
       "level": "warning",
-      "tags": ["best-practices"],
+      "tags": [
+        "best-practices"
+      ],
       "passed": true,
       "status": "passed",
       "message": "Hadolint error issues are within limits.",
-      "analyzers": ["hadolint"]
+      "analyzers": [
+        "hadolint"
+      ]
     },
     {
       "slug": "age",
       "description": "Image should be less than expected days old.",
       "level": "info",
-      "tags": ["freshness"],
+      "tags": [
+        "freshness"
+      ],
       "passed": true,
       "status": "passed",
-      "message": "Image is less than 90 days old (52 days).",
-      "analyzers": ["freshness"]
+      "message": "Image is less than 90 days old (72 days).",
+      "analyzers": [
+        "freshness"
+      ]
     },
     {
       "slug": "platforms-count",
       "description": "Image should support multiple platforms.",
       "level": "info",
-      "tags": ["compatibility"],
+      "tags": [
+        "compatibility"
+      ],
       "passed": true,
       "status": "passed",
       "message": "Image supports 16 platforms.",
-      "analyzers": ["skopeo"]
+      "analyzers": [
+        "skopeo"
+      ]
     },
     {
       "slug": "cve-fixable",
       "description": "All vulnerabilities should be fixed if a patch exists.",
       "level": "warning",
-      "tags": ["security"],
+      "tags": [
+        "security"
+      ],
       "passed": false,
       "status": "failed",
       "message": "Image has 2 vulnerabilities with available fixes.",
-      "analyzers": ["trivy"]
-    },
-    {
-      "slug": "fix-available",
-      "description": "All vulnerabilities should be fixed if a patch exists.",
-      "level": "warning",
-      "tags": ["security"],
-      "passed": false,
-      "status": "failed",
-      "message": "Image has 2 vulnerabilities with available fixes.",
-      "analyzers": ["trivy"]
-    },
-    {
-      "slug": "min-score",
-      "description": "OpenSSF Scorecard score is above the threshold.",
-      "level": "warning",
-      "tags": ["security"],
-      "passed": false,
-      "status": "incomplete",
-      "message": "Scorecard score is too low: None (min required: 5.0).",
-      "analyzers": ["scorecarddev"]
+      "analyzers": [
+        "trivy"
+      ]
     },
     {
       "slug": "required-labels",
       "description": "Image must have required OCI labels.",
       "level": "warning",
-      "tags": ["metadata"],
+      "tags": [
+        "metadata"
+      ],
       "passed": false,
       "status": "failed",
       "message": "Image is missing one or more required labels: ['org.opencontainers.image.source'].",
-      "analyzers": ["skopeo"]
+      "analyzers": [
+        "skopeo"
+      ]
     },
     {
       "slug": "scorecard-min",
       "description": "OpenSSF Scorecard score is above the threshold.",
       "level": "warning",
-      "tags": ["security"],
+      "tags": [
+        "security"
+      ],
       "passed": false,
       "status": "incomplete",
       "message": "Scorecard score is too low: None (min required: 5.0).",
-      "analyzers": ["scorecarddev"]
-    },
-    {
-      "slug": "tag-blacklist",
-      "description": "Image tag should not be 'latest'.",
-      "level": "warning",
-      "tags": ["lifecycle"],
-      "passed": false,
-      "status": "failed",
-      "message": "Image is using the 'latest' tag. Use immutable version tags instead.",
-      "analyzers": []
+      "analyzers": [
+        "scorecarddev"
+      ]
     },
     {
       "slug": "no-latest",
       "description": "Image tag should not be 'latest'.",
       "level": "info",
-      "tags": ["lifecycle"],
+      "tags": [
+        "lifecycle"
+      ],
       "passed": false,
       "status": "failed",
       "message": "Image is using the 'latest' tag. Use immutable version tags instead.",
@@ -1147,15 +1432,13 @@
     }
   ],
   "rules_summary": {
-    "score": 70,
+    "score": 78,
     "total": [
       "cve-critical",
       "env-blacklist",
       "no-root",
       "registry-domain-whitelist",
       "secret-scan",
-      "user-blacklist",
-      "cve-count",
       "cve-high",
       "exposed-ports-whitelist",
       "has-sbom",
@@ -1166,11 +1449,8 @@
       "age",
       "platforms-count",
       "cve-fixable",
-      "fix-available",
-      "min-score",
       "required-labels",
       "scorecard-min",
-      "tag-blacklist",
       "no-latest"
     ],
     "passed": [
@@ -1179,8 +1459,6 @@
       "no-root",
       "registry-domain-whitelist",
       "secret-scan",
-      "user-blacklist",
-      "cve-count",
       "cve-high",
       "exposed-ports-whitelist",
       "has-sbom",
@@ -1199,14 +1477,10 @@
           "no-root",
           "registry-domain-whitelist",
           "secret-scan",
-          "user-blacklist",
-          "cve-count",
           "cve-high",
           "exposed-ports-whitelist",
           "severity-count",
           "cve-fixable",
-          "fix-available",
-          "min-score",
           "scorecard-min"
         ],
         "passed_rules": [
@@ -1215,51 +1489,77 @@
           "no-root",
           "registry-domain-whitelist",
           "secret-scan",
-          "user-blacklist",
-          "cve-count",
           "cve-high",
           "exposed-ports-whitelist",
           "severity-count"
         ],
-        "score": 71
+        "score": 80
       },
       "compliance": {
-        "rules": ["has-sbom"],
-        "passed_rules": ["has-sbom"],
+        "rules": [
+          "has-sbom"
+        ],
+        "passed_rules": [
+          "has-sbom"
+        ],
         "score": 100
       },
       "performance": {
-        "rules": ["layers-count"],
-        "passed_rules": ["layers-count"],
+        "rules": [
+          "layers-count"
+        ],
+        "passed_rules": [
+          "layers-count"
+        ],
         "score": 100
       },
       "hygiene": {
-        "rules": ["max-size"],
-        "passed_rules": ["max-size"],
+        "rules": [
+          "max-size"
+        ],
+        "passed_rules": [
+          "max-size"
+        ],
         "score": 100
       },
       "best-practices": {
-        "rules": ["severity-count"],
-        "passed_rules": ["severity-count"],
+        "rules": [
+          "severity-count"
+        ],
+        "passed_rules": [
+          "severity-count"
+        ],
         "score": 100
       },
       "freshness": {
-        "rules": ["age"],
-        "passed_rules": ["age"],
+        "rules": [
+          "age"
+        ],
+        "passed_rules": [
+          "age"
+        ],
         "score": 100
       },
       "compatibility": {
-        "rules": ["platforms-count"],
-        "passed_rules": ["platforms-count"],
+        "rules": [
+          "platforms-count"
+        ],
+        "passed_rules": [
+          "platforms-count"
+        ],
         "score": 100
       },
       "metadata": {
-        "rules": ["required-labels"],
+        "rules": [
+          "required-labels"
+        ],
         "passed_rules": [],
         "score": 0
       },
       "lifecycle": {
-        "rules": ["tag-blacklist", "no-latest"],
+        "rules": [
+          "no-latest"
+        ],
         "passed_rules": [],
         "score": 0
       }
@@ -1277,37 +1577,51 @@
           "slug": "cve-critical",
           "description": "Max allowed violations for a given severity level.",
           "level": "critical",
-          "tags": ["security"],
+          "tags": [
+            "security"
+          ],
           "passed": true,
           "status": "passed",
           "message": "Number of critical vulnerabilities is within limits.",
-          "analyzers": ["trivy"]
+          "analyzers": [
+            "trivy"
+          ]
         },
         {
           "slug": "env-blacklist",
           "description": "Image must not contain forbidden environment variables.",
           "level": "critical",
-          "tags": ["security"],
+          "tags": [
+            "security"
+          ],
           "passed": true,
           "status": "passed",
           "message": "No forbidden environment variables found.",
-          "analyzers": ["skopeo"]
+          "analyzers": [
+            "skopeo"
+          ]
         },
         {
           "slug": "no-root",
           "description": "Image must not run as root.",
           "level": "critical",
-          "tags": ["security"],
+          "tags": [
+            "security"
+          ],
           "passed": true,
           "status": "passed",
           "message": "Image does not run as 'root'.",
-          "analyzers": ["skopeo"]
+          "analyzers": [
+            "skopeo"
+          ]
         },
         {
           "slug": "registry-domain-whitelist",
           "description": "Checks if requested image registry domain is in the domains list.",
           "level": "critical",
-          "tags": ["security"],
+          "tags": [
+            "security"
+          ],
           "passed": true,
           "status": "passed",
           "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
@@ -1317,187 +1631,191 @@
           "slug": "secret-scan",
           "description": "No secrets or credentials should be embedded in the image.",
           "level": "critical",
-          "tags": ["security"],
+          "tags": [
+            "security"
+          ],
           "passed": true,
           "status": "passed",
           "message": "No secrets detected in the image.",
-          "analyzers": ["trivy"]
-        },
-        {
-          "slug": "user-blacklist",
-          "description": "Image must not run as root.",
-          "level": "critical",
-          "tags": ["security"],
-          "passed": true,
-          "status": "passed",
-          "message": "Image does not run as 'root'.",
-          "analyzers": ["skopeo"]
-        },
-        {
-          "slug": "cve-count",
-          "description": "Max allowed violations for a given severity level.",
-          "level": "warning",
-          "tags": ["security"],
-          "passed": true,
-          "status": "passed",
-          "message": "Number of critical vulnerabilities is within limits.",
-          "analyzers": ["trivy"]
+          "analyzers": [
+            "trivy"
+          ]
         },
         {
           "slug": "cve-high",
           "description": "Max allowed violations for a given severity level.",
           "level": "warning",
-          "tags": ["security"],
+          "tags": [
+            "security"
+          ],
           "passed": true,
           "status": "passed",
           "message": "Number of high vulnerabilities is within limits.",
-          "analyzers": ["trivy"]
+          "analyzers": [
+            "trivy"
+          ]
         },
         {
           "slug": "exposed-ports-whitelist",
           "description": "Image exposes permitted ports.",
           "level": "warning",
-          "tags": ["security"],
+          "tags": [
+            "security"
+          ],
           "passed": true,
           "status": "passed",
           "message": "All exposed ports are allowed.",
-          "analyzers": ["skopeo"]
+          "analyzers": [
+            "skopeo"
+          ]
         },
         {
           "slug": "has-sbom",
           "description": "Image must provide a Software Bill of Materials.",
           "level": "warning",
-          "tags": ["compliance"],
+          "tags": [
+            "compliance"
+          ],
           "passed": true,
           "status": "passed",
           "message": "SBOM is available for this image.",
-          "analyzers": ["sbom"]
+          "analyzers": [
+            "sbom"
+          ]
         },
         {
           "slug": "layers-count",
           "description": "Image has an acceptable number of layers.",
           "level": "warning",
-          "tags": ["performance"],
+          "tags": [
+            "performance"
+          ],
           "passed": true,
           "status": "passed",
           "message": "Image has 1 layers.",
-          "analyzers": ["skopeo"]
+          "analyzers": [
+            "skopeo"
+          ]
         },
         {
           "slug": "max-size",
           "description": "Image size is within limits.",
           "level": "warning",
-          "tags": ["hygiene"],
+          "tags": [
+            "hygiene"
+          ],
           "passed": true,
           "status": "passed",
           "message": "Image size is within limits (0 bytes).",
-          "analyzers": ["skopeo"]
+          "analyzers": [
+            "skopeo"
+          ]
         },
         {
           "slug": "severity-count",
           "description": "Max allowed issues for a given severity level.",
           "level": "warning",
-          "tags": ["security"],
+          "tags": [
+            "security"
+          ],
           "passed": true,
           "status": "passed",
           "message": "Dockle FATAL issues are within limits.",
-          "analyzers": ["dockle"]
+          "analyzers": [
+            "dockle"
+          ]
         },
         {
           "slug": "severity-count",
           "description": "Max allowed violations for a given severity level.",
           "level": "warning",
-          "tags": ["best-practices"],
+          "tags": [
+            "best-practices"
+          ],
           "passed": true,
           "status": "passed",
           "message": "Hadolint error issues are within limits.",
-          "analyzers": ["hadolint"]
+          "analyzers": [
+            "hadolint"
+          ]
         },
         {
           "slug": "age",
           "description": "Image should be less than expected days old.",
           "level": "info",
-          "tags": ["freshness"],
+          "tags": [
+            "freshness"
+          ],
           "passed": true,
           "status": "passed",
-          "message": "Image is less than 90 days old (52 days).",
-          "analyzers": ["freshness"]
+          "message": "Image is less than 90 days old (72 days).",
+          "analyzers": [
+            "freshness"
+          ]
         },
         {
           "slug": "platforms-count",
           "description": "Image should support multiple platforms.",
           "level": "info",
-          "tags": ["compatibility"],
+          "tags": [
+            "compatibility"
+          ],
           "passed": true,
           "status": "passed",
           "message": "Image supports 16 platforms.",
-          "analyzers": ["skopeo"]
+          "analyzers": [
+            "skopeo"
+          ]
         },
         {
           "slug": "cve-fixable",
           "description": "All vulnerabilities should be fixed if a patch exists.",
           "level": "warning",
-          "tags": ["security"],
+          "tags": [
+            "security"
+          ],
           "passed": false,
           "status": "failed",
           "message": "Image has 2 vulnerabilities with available fixes.",
-          "analyzers": ["trivy"]
-        },
-        {
-          "slug": "fix-available",
-          "description": "All vulnerabilities should be fixed if a patch exists.",
-          "level": "warning",
-          "tags": ["security"],
-          "passed": false,
-          "status": "failed",
-          "message": "Image has 2 vulnerabilities with available fixes.",
-          "analyzers": ["trivy"]
-        },
-        {
-          "slug": "min-score",
-          "description": "OpenSSF Scorecard score is above the threshold.",
-          "level": "warning",
-          "tags": ["security"],
-          "passed": false,
-          "status": "incomplete",
-          "message": "Scorecard score is too low: None (min required: 5.0).",
-          "analyzers": ["scorecarddev"]
+          "analyzers": [
+            "trivy"
+          ]
         },
         {
           "slug": "required-labels",
           "description": "Image must have required OCI labels.",
           "level": "warning",
-          "tags": ["metadata"],
+          "tags": [
+            "metadata"
+          ],
           "passed": false,
           "status": "failed",
           "message": "Image is missing one or more required labels: ['org.opencontainers.image.source'].",
-          "analyzers": ["skopeo"]
+          "analyzers": [
+            "skopeo"
+          ]
         },
         {
           "slug": "scorecard-min",
           "description": "OpenSSF Scorecard score is above the threshold.",
           "level": "warning",
-          "tags": ["security"],
+          "tags": [
+            "security"
+          ],
           "passed": false,
           "status": "incomplete",
           "message": "Scorecard score is too low: None (min required: 5.0).",
-          "analyzers": ["scorecarddev"]
-        },
-        {
-          "slug": "tag-blacklist",
-          "description": "Image tag should not be 'latest'.",
-          "level": "warning",
-          "tags": ["lifecycle"],
-          "passed": false,
-          "status": "failed",
-          "message": "Image is using the 'latest' tag. Use immutable version tags instead.",
-          "analyzers": []
+          "analyzers": [
+            "scorecarddev"
+          ]
         },
         {
           "slug": "no-latest",
           "description": "Image tag should not be 'latest'.",
           "level": "info",
-          "tags": ["lifecycle"],
+          "tags": [
+            "lifecycle"
+          ],
           "passed": false,
           "status": "failed",
           "message": "Image is using the 'latest' tag. Use immutable version tags instead.",
@@ -1505,15 +1823,13 @@
         }
       ],
       "rules_summary": {
-        "score": 70,
+        "score": 78,
         "total": [
           "cve-critical",
           "env-blacklist",
           "no-root",
           "registry-domain-whitelist",
           "secret-scan",
-          "user-blacklist",
-          "cve-count",
           "cve-high",
           "exposed-ports-whitelist",
           "has-sbom",
@@ -1524,11 +1840,8 @@
           "age",
           "platforms-count",
           "cve-fixable",
-          "fix-available",
-          "min-score",
           "required-labels",
           "scorecard-min",
-          "tag-blacklist",
           "no-latest"
         ],
         "passed": [
@@ -1537,8 +1850,6 @@
           "no-root",
           "registry-domain-whitelist",
           "secret-scan",
-          "user-blacklist",
-          "cve-count",
           "cve-high",
           "exposed-ports-whitelist",
           "has-sbom",
@@ -1557,14 +1868,10 @@
               "no-root",
               "registry-domain-whitelist",
               "secret-scan",
-              "user-blacklist",
-              "cve-count",
               "cve-high",
               "exposed-ports-whitelist",
               "severity-count",
               "cve-fixable",
-              "fix-available",
-              "min-score",
               "scorecard-min"
             ],
             "passed_rules": [
@@ -1573,58 +1880,84 @@
               "no-root",
               "registry-domain-whitelist",
               "secret-scan",
-              "user-blacklist",
-              "cve-count",
               "cve-high",
               "exposed-ports-whitelist",
               "severity-count"
             ],
-            "score": 71
+            "score": 80
           },
           "compliance": {
-            "rules": ["has-sbom"],
-            "passed_rules": ["has-sbom"],
+            "rules": [
+              "has-sbom"
+            ],
+            "passed_rules": [
+              "has-sbom"
+            ],
             "score": 100
           },
           "performance": {
-            "rules": ["layers-count"],
-            "passed_rules": ["layers-count"],
+            "rules": [
+              "layers-count"
+            ],
+            "passed_rules": [
+              "layers-count"
+            ],
             "score": 100
           },
           "hygiene": {
-            "rules": ["max-size"],
-            "passed_rules": ["max-size"],
+            "rules": [
+              "max-size"
+            ],
+            "passed_rules": [
+              "max-size"
+            ],
             "score": 100
           },
           "best-practices": {
-            "rules": ["severity-count"],
-            "passed_rules": ["severity-count"],
+            "rules": [
+              "severity-count"
+            ],
+            "passed_rules": [
+              "severity-count"
+            ],
             "score": 100
           },
           "freshness": {
-            "rules": ["age"],
-            "passed_rules": ["age"],
+            "rules": [
+              "age"
+            ],
+            "passed_rules": [
+              "age"
+            ],
             "score": 100
           },
           "compatibility": {
-            "rules": ["platforms-count"],
-            "passed_rules": ["platforms-count"],
+            "rules": [
+              "platforms-count"
+            ],
+            "passed_rules": [
+              "platforms-count"
+            ],
             "score": 100
           },
           "metadata": {
-            "rules": ["required-labels"],
+            "rules": [
+              "required-labels"
+            ],
             "passed_rules": [],
             "score": 0
           },
           "lifecycle": {
-            "rules": ["tag-blacklist", "no-latest"],
+            "rules": [
+              "no-latest"
+            ],
             "passed_rules": [],
             "score": 0
           }
         }
       },
       "slug": null,
-      "tier": "Bronze",
+      "tier": "Silver",
       "badges": [
         {
           "slug": "freshness-fresh",
@@ -1679,37 +2012,51 @@
         "slug": "cve-critical",
         "description": "Max allowed violations for a given severity level.",
         "level": "critical",
-        "tags": ["security"],
+        "tags": [
+          "security"
+        ],
         "passed": true,
         "status": "passed",
         "message": "Number of critical vulnerabilities is within limits.",
-        "analyzers": ["trivy"]
+        "analyzers": [
+          "trivy"
+        ]
       },
       {
         "slug": "env-blacklist",
         "description": "Image must not contain forbidden environment variables.",
         "level": "critical",
-        "tags": ["security"],
+        "tags": [
+          "security"
+        ],
         "passed": true,
         "status": "passed",
         "message": "No forbidden environment variables found.",
-        "analyzers": ["skopeo"]
+        "analyzers": [
+          "skopeo"
+        ]
       },
       {
         "slug": "no-root",
         "description": "Image must not run as root.",
         "level": "critical",
-        "tags": ["security"],
+        "tags": [
+          "security"
+        ],
         "passed": true,
         "status": "passed",
         "message": "Image does not run as 'root'.",
-        "analyzers": ["skopeo"]
+        "analyzers": [
+          "skopeo"
+        ]
       },
       {
         "slug": "registry-domain-whitelist",
         "description": "Checks if requested image registry domain is in the domains list.",
         "level": "critical",
-        "tags": ["security"],
+        "tags": [
+          "security"
+        ],
         "passed": true,
         "status": "passed",
         "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
@@ -1719,187 +2066,191 @@
         "slug": "secret-scan",
         "description": "No secrets or credentials should be embedded in the image.",
         "level": "critical",
-        "tags": ["security"],
+        "tags": [
+          "security"
+        ],
         "passed": true,
         "status": "passed",
         "message": "No secrets detected in the image.",
-        "analyzers": ["trivy"]
-      },
-      {
-        "slug": "user-blacklist",
-        "description": "Image must not run as root.",
-        "level": "critical",
-        "tags": ["security"],
-        "passed": true,
-        "status": "passed",
-        "message": "Image does not run as 'root'.",
-        "analyzers": ["skopeo"]
-      },
-      {
-        "slug": "cve-count",
-        "description": "Max allowed violations for a given severity level.",
-        "level": "warning",
-        "tags": ["security"],
-        "passed": true,
-        "status": "passed",
-        "message": "Number of critical vulnerabilities is within limits.",
-        "analyzers": ["trivy"]
+        "analyzers": [
+          "trivy"
+        ]
       },
       {
         "slug": "cve-high",
         "description": "Max allowed violations for a given severity level.",
         "level": "warning",
-        "tags": ["security"],
+        "tags": [
+          "security"
+        ],
         "passed": true,
         "status": "passed",
         "message": "Number of high vulnerabilities is within limits.",
-        "analyzers": ["trivy"]
+        "analyzers": [
+          "trivy"
+        ]
       },
       {
         "slug": "exposed-ports-whitelist",
         "description": "Image exposes permitted ports.",
         "level": "warning",
-        "tags": ["security"],
+        "tags": [
+          "security"
+        ],
         "passed": true,
         "status": "passed",
         "message": "All exposed ports are allowed.",
-        "analyzers": ["skopeo"]
+        "analyzers": [
+          "skopeo"
+        ]
       },
       {
         "slug": "has-sbom",
         "description": "Image must provide a Software Bill of Materials.",
         "level": "warning",
-        "tags": ["compliance"],
+        "tags": [
+          "compliance"
+        ],
         "passed": true,
         "status": "passed",
         "message": "SBOM is available for this image.",
-        "analyzers": ["sbom"]
+        "analyzers": [
+          "sbom"
+        ]
       },
       {
         "slug": "layers-count",
         "description": "Image has an acceptable number of layers.",
         "level": "warning",
-        "tags": ["performance"],
+        "tags": [
+          "performance"
+        ],
         "passed": true,
         "status": "passed",
         "message": "Image has 1 layers.",
-        "analyzers": ["skopeo"]
+        "analyzers": [
+          "skopeo"
+        ]
       },
       {
         "slug": "max-size",
         "description": "Image size is within limits.",
         "level": "warning",
-        "tags": ["hygiene"],
+        "tags": [
+          "hygiene"
+        ],
         "passed": true,
         "status": "passed",
         "message": "Image size is within limits (0 bytes).",
-        "analyzers": ["skopeo"]
+        "analyzers": [
+          "skopeo"
+        ]
       },
       {
         "slug": "severity-count",
         "description": "Max allowed issues for a given severity level.",
         "level": "warning",
-        "tags": ["security"],
+        "tags": [
+          "security"
+        ],
         "passed": true,
         "status": "passed",
         "message": "Dockle FATAL issues are within limits.",
-        "analyzers": ["dockle"]
+        "analyzers": [
+          "dockle"
+        ]
       },
       {
         "slug": "severity-count",
         "description": "Max allowed violations for a given severity level.",
         "level": "warning",
-        "tags": ["best-practices"],
+        "tags": [
+          "best-practices"
+        ],
         "passed": true,
         "status": "passed",
         "message": "Hadolint error issues are within limits.",
-        "analyzers": ["hadolint"]
+        "analyzers": [
+          "hadolint"
+        ]
       },
       {
         "slug": "age",
         "description": "Image should be less than expected days old.",
         "level": "info",
-        "tags": ["freshness"],
+        "tags": [
+          "freshness"
+        ],
         "passed": true,
         "status": "passed",
-        "message": "Image is less than 90 days old (52 days).",
-        "analyzers": ["freshness"]
+        "message": "Image is less than 90 days old (72 days).",
+        "analyzers": [
+          "freshness"
+        ]
       },
       {
         "slug": "platforms-count",
         "description": "Image should support multiple platforms.",
         "level": "info",
-        "tags": ["compatibility"],
+        "tags": [
+          "compatibility"
+        ],
         "passed": true,
         "status": "passed",
         "message": "Image supports 16 platforms.",
-        "analyzers": ["skopeo"]
+        "analyzers": [
+          "skopeo"
+        ]
       },
       {
         "slug": "cve-fixable",
         "description": "All vulnerabilities should be fixed if a patch exists.",
         "level": "warning",
-        "tags": ["security"],
+        "tags": [
+          "security"
+        ],
         "passed": false,
         "status": "failed",
         "message": "Image has 2 vulnerabilities with available fixes.",
-        "analyzers": ["trivy"]
-      },
-      {
-        "slug": "fix-available",
-        "description": "All vulnerabilities should be fixed if a patch exists.",
-        "level": "warning",
-        "tags": ["security"],
-        "passed": false,
-        "status": "failed",
-        "message": "Image has 2 vulnerabilities with available fixes.",
-        "analyzers": ["trivy"]
-      },
-      {
-        "slug": "min-score",
-        "description": "OpenSSF Scorecard score is above the threshold.",
-        "level": "warning",
-        "tags": ["security"],
-        "passed": false,
-        "status": "incomplete",
-        "message": "Scorecard score is too low: None (min required: 5.0).",
-        "analyzers": ["scorecarddev"]
+        "analyzers": [
+          "trivy"
+        ]
       },
       {
         "slug": "required-labels",
         "description": "Image must have required OCI labels.",
         "level": "warning",
-        "tags": ["metadata"],
+        "tags": [
+          "metadata"
+        ],
         "passed": false,
         "status": "failed",
         "message": "Image is missing one or more required labels: ['org.opencontainers.image.source'].",
-        "analyzers": ["skopeo"]
+        "analyzers": [
+          "skopeo"
+        ]
       },
       {
         "slug": "scorecard-min",
         "description": "OpenSSF Scorecard score is above the threshold.",
         "level": "warning",
-        "tags": ["security"],
+        "tags": [
+          "security"
+        ],
         "passed": false,
         "status": "incomplete",
         "message": "Scorecard score is too low: None (min required: 5.0).",
-        "analyzers": ["scorecarddev"]
-      },
-      {
-        "slug": "tag-blacklist",
-        "description": "Image tag should not be 'latest'.",
-        "level": "warning",
-        "tags": ["lifecycle"],
-        "passed": false,
-        "status": "failed",
-        "message": "Image is using the 'latest' tag. Use immutable version tags instead.",
-        "analyzers": []
+        "analyzers": [
+          "scorecarddev"
+        ]
       },
       {
         "slug": "no-latest",
         "description": "Image tag should not be 'latest'.",
         "level": "info",
-        "tags": ["lifecycle"],
+        "tags": [
+          "lifecycle"
+        ],
         "passed": false,
         "status": "failed",
         "message": "Image is using the 'latest' tag. Use immutable version tags instead.",
@@ -1907,15 +2258,13 @@
       }
     ],
     "rules_summary": {
-      "score": 70,
+      "score": 78,
       "total": [
         "cve-critical",
         "env-blacklist",
         "no-root",
         "registry-domain-whitelist",
         "secret-scan",
-        "user-blacklist",
-        "cve-count",
         "cve-high",
         "exposed-ports-whitelist",
         "has-sbom",
@@ -1926,11 +2275,8 @@
         "age",
         "platforms-count",
         "cve-fixable",
-        "fix-available",
-        "min-score",
         "required-labels",
         "scorecard-min",
-        "tag-blacklist",
         "no-latest"
       ],
       "passed": [
@@ -1939,8 +2285,6 @@
         "no-root",
         "registry-domain-whitelist",
         "secret-scan",
-        "user-blacklist",
-        "cve-count",
         "cve-high",
         "exposed-ports-whitelist",
         "has-sbom",
@@ -1959,14 +2303,10 @@
             "no-root",
             "registry-domain-whitelist",
             "secret-scan",
-            "user-blacklist",
-            "cve-count",
             "cve-high",
             "exposed-ports-whitelist",
             "severity-count",
             "cve-fixable",
-            "fix-available",
-            "min-score",
             "scorecard-min"
           ],
           "passed_rules": [
@@ -1975,58 +2315,84 @@
             "no-root",
             "registry-domain-whitelist",
             "secret-scan",
-            "user-blacklist",
-            "cve-count",
             "cve-high",
             "exposed-ports-whitelist",
             "severity-count"
           ],
-          "score": 71
+          "score": 80
         },
         "compliance": {
-          "rules": ["has-sbom"],
-          "passed_rules": ["has-sbom"],
+          "rules": [
+            "has-sbom"
+          ],
+          "passed_rules": [
+            "has-sbom"
+          ],
           "score": 100
         },
         "performance": {
-          "rules": ["layers-count"],
-          "passed_rules": ["layers-count"],
+          "rules": [
+            "layers-count"
+          ],
+          "passed_rules": [
+            "layers-count"
+          ],
           "score": 100
         },
         "hygiene": {
-          "rules": ["max-size"],
-          "passed_rules": ["max-size"],
+          "rules": [
+            "max-size"
+          ],
+          "passed_rules": [
+            "max-size"
+          ],
           "score": 100
         },
         "best-practices": {
-          "rules": ["severity-count"],
-          "passed_rules": ["severity-count"],
+          "rules": [
+            "severity-count"
+          ],
+          "passed_rules": [
+            "severity-count"
+          ],
           "score": 100
         },
         "freshness": {
-          "rules": ["age"],
-          "passed_rules": ["age"],
+          "rules": [
+            "age"
+          ],
+          "passed_rules": [
+            "age"
+          ],
           "score": 100
         },
         "compatibility": {
-          "rules": ["platforms-count"],
-          "passed_rules": ["platforms-count"],
+          "rules": [
+            "platforms-count"
+          ],
+          "passed_rules": [
+            "platforms-count"
+          ],
           "score": 100
         },
         "metadata": {
-          "rules": ["required-labels"],
+          "rules": [
+            "required-labels"
+          ],
           "passed_rules": [],
           "score": 0
         },
         "lifecycle": {
-          "rules": ["tag-blacklist", "no-latest"],
+          "rules": [
+            "no-latest"
+          ],
           "passed_rules": [],
           "score": 0
         }
       }
     },
     "slug": null,
-    "tier": "Bronze",
+    "tier": "Silver",
     "badges": [
       {
         "slug": "freshness-fresh",
@@ -2069,7 +2435,7 @@
       "source_name": "default"
     }
   },
-  "tier": "Bronze",
+  "tier": "Silver",
   "badges": [
     {
       "slug": "freshness-fresh",
