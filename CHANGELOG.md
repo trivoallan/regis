@@ -2,10 +2,9 @@
 
 ## [0.28.1](https://github.com/trivoallan/regis/compare/v0.28.0...v0.28.1) (2026-04-10)
 
-
 ### Bug Fixes
 
-* **ci:** open a PR for docs snapshots instead of pushing to main ([#265](https://github.com/trivoallan/regis/issues/265)) ([3475aeb](https://github.com/trivoallan/regis/commit/3475aebb5cfc523224c6e3c9d076439cb86efb2c))
+- **ci:** open a PR for docs snapshots instead of pushing to main ([#265](https://github.com/trivoallan/regis/issues/265)) ([3475aeb](https://github.com/trivoallan/regis/commit/3475aebb5cfc523224c6e3c9d076439cb86efb2c))
 
 ## [0.28.0](https://github.com/trivoallan/regis/compare/v0.27.0...v0.28.0) (2026-04-10)
 
