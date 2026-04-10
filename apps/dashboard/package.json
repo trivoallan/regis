@@ -18,7 +18,7 @@
     "@remixicon/react": "^4.9.0",
     "@tremor/react": "^3.18.7",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.2.5"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "^3.9.2",
