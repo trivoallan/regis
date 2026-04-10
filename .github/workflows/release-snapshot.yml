@@ -5,19 +5,22 @@ on:
     types: [labeled]
   release:
     types: [published]
+  workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   snapshot-pending:
-    # Run on Release Please PR label OR on published release (fallback)
+    # Run on Release Please PR label, on published release, or manual dispatch.
     if: >-
       (github.event_name == 'pull_request_target' && github.event.label.name == 'autorelease: pending')
       || github.event_name == 'release'
+      || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Generate GitHub App token
@@ -31,26 +34,41 @@ jobs:
         uses: actions/checkout@v6
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          # PR trigger: checkout PR branch; release trigger: checkout main
+          # PR trigger: checkout PR branch; release/dispatch: checkout main
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || 'main' }}
+          # 'main' is the default for release and workflow_dispatch.
           fetch-depth: 0
 
       - name: Extract version
         id: version
         env:
+          EVENT_NAME: ${{ github.event_name }}
           PR_TITLE: ${{ github.event.pull_request.title || '' }}
           RELEASE_TAG: ${{ github.event.release.tag_name || '' }}
         run: |
           set -euo pipefail
-          if [ -n "$RELEASE_TAG" ]; then
-            # Release trigger: extract from tag (e.g. v1.2.3)
-            VERSION=$(echo "$RELEASE_TAG" | grep -oP '\d+\.\d+\.\d+' || true)
-          else
-            # PR trigger: extract from PR title
-            VERSION=$(echo "$PR_TITLE" | grep -oP '\d+\.\d+\.\d+' || true)
-          fi
-          if [ -z "$VERSION" ]; then
-            echo "::error::Could not extract version from PR title ('$PR_TITLE') or release tag ('$RELEASE_TAG')"
+          case "$EVENT_NAME" in
+            release)
+              VERSION=$(echo "$RELEASE_TAG" | grep -oP '\d+\.\d+\.\d+' || true)
+              ;;
+            pull_request_target)
+              VERSION=$(echo "$PR_TITLE" | grep -oP '\d+\.\d+\.\d+' || true)
+              ;;
+            workflow_dispatch)
+              # Auto-detect the latest released git tag that has not yet
+              # been snapshotted in docs/website/versions.json.
+              git fetch --tags --force --quiet
+              LATEST_TAG=$(git tag --list 'v*.*.*' --sort=-v:refname | head -n1)
+              CANDIDATE=$(echo "$LATEST_TAG" | grep -oP '\d+\.\d+\.\d+' || true)
+              if [ -n "$CANDIDATE" ] && grep -q "\"v${CANDIDATE}\"" docs/website/versions.json; then
+                echo "::error::Latest tag v${CANDIDATE} is already in versions.json; nothing to snapshot."
+                exit 1
+              fi
+              VERSION="$CANDIDATE"
+              ;;
+          esac
+          if [ -z "${VERSION:-}" ]; then
+            echo "::error::Could not determine version (event=$EVENT_NAME, tag='$RELEASE_TAG', title='$PR_TITLE')"
             exit 1
           fi
           echo "version=v${VERSION}" >> "$GITHUB_OUTPUT"
@@ -95,7 +113,10 @@ jobs:
           fi
           echo "Snapshot for ${VERSION} created and validated successfully."
 
-      - name: Commit snapshot
+      - name: Commit snapshot to branch and open PR
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
           git config user.name "regis-ci[bot]"
@@ -108,9 +129,27 @@ jobs:
             echo "No snapshot changes to commit."
             exit 0
           fi
-          git commit -m "docs: add Docusaurus version snapshot for ${{ steps.version.outputs.version }}"
-          if ! git push; then
-            echo "::error::Failed to push snapshot commit. Check branch protection or auth."
+
+          BRANCH="docs/snapshot-${VERSION}"
+          git checkout -b "${BRANCH}"
+          git commit -m "docs: create ${VERSION} documentation snapshot"
+
+          # Force-push so that a retried run replaces any stale attempt on the
+          # same branch instead of failing with "non-fast-forward".
+          if ! git push --force-with-lease -u origin "${BRANCH}"; then
+            echo "::error::Failed to push snapshot branch ${BRANCH}"
             exit 1
           fi
-          echo "Snapshot committed and pushed successfully."
+
+          # If a PR is already open for this branch, we're done.
+          if gh pr view "${BRANCH}" --json state --jq '.state' 2>/dev/null | grep -q OPEN; then
+            echo "PR for ${BRANCH} already open, skipping create."
+            exit 0
+          fi
+
+          gh pr create \
+            --base main \
+            --head "${BRANCH}" \
+            --title "docs: create ${VERSION} documentation snapshot" \
+            --body "Automated Docusaurus snapshot for ${VERSION}. Generated by release-snapshot workflow."
+          echo "Snapshot PR opened for ${VERSION}."
