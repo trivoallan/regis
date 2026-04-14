@@ -35,15 +35,24 @@ The following are considered **stable** and safe to depend on in custom playbook
 
 ---
 
-## Near-term (v0.25.0)
+## Recently shipped
 
-| Feature                    | Status      | Description                                                                                                                |
-| -------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- |
-| **Project rebrand**        | In progress | Rename from `regis-cli` to `Regis` (Registry Scores) across package, CLI, docs, and branding                               |
-| **`regis diff` command**   | Planned     | Compare two `report.json` files — score delta, CVE changes, rule regressions. Supports `--fail-on-regression` for CI gates |
-| **Custom analyzer guide**  | Planned     | Step-by-step developer documentation for building analyzer plugins                                                         |
-| **GitHub PR integration**  | Shipped     | `regis github update-pr` command posts analysis results as PR comments                                                     |
-| **Reusable GitHub Action** | Shipped     | Composite action encapsulating analysis, artifact upload, and PR comment                                                   |
+| Feature                          | Version | Description                                                                                   |
+| -------------------------------- | ------- | --------------------------------------------------------------------------------------------- |
+| **Project rebrand**              | v0.26.0 | Renamed from `regis-cli` to `Regis` (Registry Scores) across package, CLI, docs, and branding |
+| **`archive configure` command**  | v0.27.0 | Multi-archive setup: configure multiple archive targets from a single CLI command             |
+| **`bootstrap gitlab-ci` wizard** | v0.27.0 | Interactive wizard to generate a Request-to-MR GitLab CI pipeline                             |
+| **GitLab dashboard integration** | v0.28.0 | Live dashboard with GitLab API proxy, pipeline trigger, webhook support, and embedded UI      |
+| **Dashboard serve → FastAPI**    | v0.28.0 | Local dashboard server migrated to FastAPI for improved performance and extensibility         |
+| **GitHub PR integration**        | v0.25.0 | `regis github update-pr` command posts analysis results as PR comments                        |
+| **Reusable GitHub Action**       | v0.25.0 | Composite action encapsulating analysis, artifact upload, and PR comment                      |
+
+## Near-term (v0.29.0)
+
+| Feature                   | Status  | Description                                                                                                                |
+| ------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **`regis diff` command**  | Planned | Compare two `report.json` files — score delta, CVE changes, rule regressions. Supports `--fail-on-regression` for CI gates |
+| **Custom analyzer guide** | Planned | Step-by-step developer documentation for building analyzer plugins                                                         |
 
 ## Medium-term
 
