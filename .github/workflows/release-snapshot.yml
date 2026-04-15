@@ -1,8 +1,6 @@
 name: Release / Docs snapshot
 
 on:
-  pull_request_target:
-    types: [labeled]
   release:
     types: [published]
   workflow_dispatch:
@@ -16,11 +14,11 @@ permissions:
 
 jobs:
   snapshot-pending:
-    # Run on Release Please PR label, on published release, or manual dispatch.
-    if: >-
-      (github.event_name == 'pull_request_target' && github.event.label.name == 'autorelease: pending')
-      || github.event_name == 'release'
-      || github.event_name == 'workflow_dispatch'
+    # Run on published release or manual dispatch. The snapshot must run off
+    # `main` AFTER the release-please PR is merged and the GitHub release is
+    # cut — never on top of the release-please branch, because squash-merging
+    # such a PR would rewrite the `chore(main): release X.Y.Z` title and
+    # break release-please's boundary detection on the next run.
     runs-on: ubuntu-latest
     steps:
       - name: Generate GitHub App token
@@ -34,25 +32,19 @@ jobs:
         uses: actions/checkout@v6
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          # PR trigger: checkout PR branch; release/dispatch: checkout main
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || 'main' }}
-          # 'main' is the default for release and workflow_dispatch.
+          ref: main
           fetch-depth: 0
 
       - name: Extract version
         id: version
         env:
           EVENT_NAME: ${{ github.event_name }}
-          PR_TITLE: ${{ github.event.pull_request.title || '' }}
           RELEASE_TAG: ${{ github.event.release.tag_name || '' }}
         run: |
           set -euo pipefail
           case "$EVENT_NAME" in
             release)
               VERSION=$(echo "$RELEASE_TAG" | grep -oP '\d+\.\d+\.\d+' || true)
-              ;;
-            pull_request_target)
-              VERSION=$(echo "$PR_TITLE" | grep -oP '\d+\.\d+\.\d+' || true)
               ;;
             workflow_dispatch)
               # Auto-detect the latest released git tag that has not yet
@@ -68,7 +60,7 @@ jobs:
               ;;
           esac
           if [ -z "${VERSION:-}" ]; then
-            echo "::error::Could not determine version (event=$EVENT_NAME, tag='$RELEASE_TAG', title='$PR_TITLE')"
+            echo "::error::Could not determine version (event=$EVENT_NAME, tag='$RELEASE_TAG')"
             exit 1
           fi
           echo "version=v${VERSION}" >> "$GITHUB_OUTPUT"
