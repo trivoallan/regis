@@ -2,12 +2,11 @@
 
 ## [0.28.3](https://github.com/trivoallan/regis/compare/v0.28.2...v0.28.3) (2026-04-15)
 
-
 ### Bug Fixes
 
-* Add fallback to pre-built dashboard assets for bundled mode ([#369](https://github.com/trivoallan/regis/issues/369)) ([1038d44](https://github.com/trivoallan/regis/commit/1038d44f7daf367a099c4f881047bb1d632037d5))
-* **ci:** correct release-please manifest to v0.28.2 (actual last release) ([7125369](https://github.com/trivoallan/regis/commit/71253695361049dec235dcb63cf100b8e3495f8f))
-* **ci:** stop docs snapshot from hijacking release-please PRs ([#373](https://github.com/trivoallan/regis/issues/373)) ([3c05ab1](https://github.com/trivoallan/regis/commit/3c05ab111830cc8f86ec4601b1e5b2a46d8308ac))
+- Add fallback to pre-built dashboard assets for bundled mode ([#369](https://github.com/trivoallan/regis/issues/369)) ([1038d44](https://github.com/trivoallan/regis/commit/1038d44f7daf367a099c4f881047bb1d632037d5))
+- **ci:** correct release-please manifest to v0.28.2 (actual last release) ([7125369](https://github.com/trivoallan/regis/commit/71253695361049dec235dcb63cf100b8e3495f8f))
+- **ci:** stop docs snapshot from hijacking release-please PRs ([#373](https://github.com/trivoallan/regis/issues/373)) ([3c05ab1](https://github.com/trivoallan/regis/commit/3c05ab111830cc8f86ec4601b1e5b2a46d8308ac))
 
 ## [0.28.3](https://github.com/trivoallan/regis/compare/v0.28.2...v0.28.3) (2026-04-15)
 
