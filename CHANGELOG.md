@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.28.3](https://github.com/trivoallan/regis/compare/v0.28.2...v0.28.3) (2026-04-15)
+
+### Bug Fixes
+
+- Add fallback to pre-built dashboard assets for bundled mode ([#369](https://github.com/trivoallan/regis/issues/369)) ([1038d44](https://github.com/trivoallan/regis/commit/1038d44f7daf367a099c4f881047bb1d632037d5))
+
 ## [0.28.2](https://github.com/trivoallan/regis/compare/v0.28.1...v0.28.2) (2026-04-10)
 
 ### Bug Fixes
