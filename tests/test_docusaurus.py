@@ -17,7 +17,9 @@ class TestBuildReportSite:
     def test_neither_source_nor_bundled_assets_raises(self, tmp_path: Path) -> None:
         """Raises when both source and bundled assets are missing."""
         with patch("regis.report.docusaurus._VIEWER_DIR", tmp_path / "nonexistent"):
-            with patch("regis.report.docusaurus._get_bundled_assets_dir", return_value=None):
+            with patch(
+                "regis.report.docusaurus._get_bundled_assets_dir", return_value=None
+            ):
                 with pytest.raises(RuntimeError, match="Dashboard assets not found"):
                     build_report_site({"key": "val"}, tmp_path / "output")
 
