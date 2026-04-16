@@ -40,7 +40,7 @@ jobs:
             analyze "{% raw %}${{ github.event.inputs.image }}{% endraw %}" \
             --evaluate \
             --meta "trigger.user= {% raw %}${{ github.actor }}{% endraw %}" \
-            --meta "trigger.url={% raw %}${{ github.server_url }}${{ github.repository }}/actions/runs/{% raw %}${{ github.run_id }}{% endraw %}" \
+            --meta "trigger.url={% raw %}${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}{% endraw %}" \
             --output-dir {% raw %}${{ github.run_id }}{% endraw %}
             {% raw %}${{ github.event.inputs.playbook && format('--playbook {0}', github.event.inputs.playbook) || '' }}{% endraw %}
 
@@ -61,6 +61,6 @@ jobs:
           body: |
             This PR adds a new security analysis report for **{% raw %}${{ github.event.inputs.image }}{% endraw %}** to the archive.
 
-            Triggered by: @{% raw %}${{ github.actor }}
+            Triggered by: @{% raw %}${{ github.actor }}{% endraw %}
             Run: {% raw %}${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}{% endraw %}
           base: main

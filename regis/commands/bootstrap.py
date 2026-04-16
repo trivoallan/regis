@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import subprocess  # nosec B404
+import sys
 from pathlib import Path
 
 import click
@@ -242,17 +243,29 @@ def bootstrap_archive(
     else:
         extra_context = None
 
+    # When --repo-name is provided, use it as the project directory name so the
+    # scaffolded slug matches the remote repository name without requiring an
+    # extra interactive prompt.
+    if repo_name:
+        extra_context = extra_context or {}
+        extra_context.setdefault("project_slug", repo_name)
+
+    # Automatically skip prompts when stdin has no TTY (Docker without -it,
+    # CI pipelines, etc.).  Explicit --no-input always takes precedence.
+    effective_no_input = no_input or not sys.stdin.isatty()
+
     template_path = resources.files("regis") / "cookiecutters" / "archive"
     click.echo(f"\nScaffolding archive site into {output_dir}...", err=True)
     try:
         project_dir = cookiecutter(
             str(template_path),
-            no_input=no_input,
+            no_input=effective_no_input,
             output_dir=output_dir,
             extra_context=extra_context,
         )
     except Exception as exc:
-        raise click.ClickException(f"Failed to bootstrap archive site: {exc}") from exc
+        detail = str(exc) or repr(exc)
+        raise click.ClickException(f"Failed to bootstrap archive site: {detail}") from exc
 
     project_path = Path(project_dir)
     click.echo(f"  ✓ Site scaffolded at {project_path}.", err=True)
