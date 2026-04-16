@@ -74,6 +74,12 @@ COPY --chown=regis:regis . .
 # Copy built dashboard assets from frontend stage
 COPY --from=frontend-builder --chown=regis:regis /app/apps/dashboard/build ./regis/dashboard_assets
 
+# Copy Node.js runtime and pnpm from the frontend builder stage
+# Required by `regis bootstrap archive --repo` and `--dev` at runtime
+COPY --from=frontend-builder /usr/local/bin/node /usr/local/bin/node
+COPY --from=frontend-builder /usr/local/lib/node_modules/pnpm /usr/local/lib/node_modules/pnpm
+RUN ln -s /usr/local/lib/node_modules/pnpm/bin/pnpm.cjs /usr/local/bin/pnpm
+
 # Install regis
 # Use SETUPTOOLS_SCM_PRETEND_VERSION to avoid git operations inside container
 # Extract version from pyproject.toml (e.g., version = "0.28.3" -> 0.28.3)
