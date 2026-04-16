@@ -267,4 +267,4 @@ Specific value: `"sbom"`
 | **Type** | `string` |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-04-16 at 09:08:24 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-04-16 at 09:21:15 +0000
