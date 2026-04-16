@@ -346,6 +346,34 @@ class TestBootstrapArchiveRepo:
         assert result.exit_code != 0
         assert "permission denied" in result.output.lower()
 
+    @patch("sys.stdin")
+    @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
+    @patch("regis.utils.process.subprocess.run")
+    def test_non_tty_skips_prompts(self, mock_run, _mock_which, mock_stdin):
+        """Without --no-input, non-TTY stdin should auto-enable no_input mode."""
+        mock_stdin.isatty.return_value = False
+        mock_run.side_effect = _make_subprocess_mock(
+            '{"username":"myuser"}\n'
+        ).side_effect
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main,
+                [
+                    "bootstrap",
+                    "archive",
+                    "test-repo",
+                    "--repo",
+                    "--platform",
+                    "gitlab",
+                    "--repo-name",
+                    "my-archive",
+                ],
+            )
+            assert result.exit_code == 0, result.output
+            assert Path("test-repo/my-archive").exists()
+        assert "gitlab.io" in result.output
+
     @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
     @patch("regis.utils.process.subprocess.run")
     def test_org_passed_to_gh(self, mock_run, _mock_which):
