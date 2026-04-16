@@ -195,4 +195,4 @@ Specific value: `"skopeo"`
 | **Type** | `string` |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-04-16 at 13:29:59 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-04-16 at 13:43:48 +0000
