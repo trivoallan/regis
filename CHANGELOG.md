@@ -2,11 +2,10 @@
 
 ## [0.28.4](https://github.com/trivoallan/regis/compare/v0.28.3...v0.28.4) (2026-04-16)
 
-
 ### Bug Fixes
 
-* **ci:** resolve docker build failure by using setuptools-scm version fallback ([#380](https://github.com/trivoallan/regis/issues/380)) ([87b20cc](https://github.com/trivoallan/regis/commit/87b20ccfd10e7c9b21fa16e636e3730a8c7fbe6f))
-* **deps:** align react-dom with react at 19.2.5 in docs/website ([#376](https://github.com/trivoallan/regis/issues/376)) ([0a98171](https://github.com/trivoallan/regis/commit/0a9817111edff39353093f99a457c4d90015b03c))
+- **ci:** resolve docker build failure by using setuptools-scm version fallback ([#380](https://github.com/trivoallan/regis/issues/380)) ([87b20cc](https://github.com/trivoallan/regis/commit/87b20ccfd10e7c9b21fa16e636e3730a8c7fbe6f))
+- **deps:** align react-dom with react at 19.2.5 in docs/website ([#376](https://github.com/trivoallan/regis/issues/376)) ([0a98171](https://github.com/trivoallan/regis/commit/0a9817111edff39353093f99a457c4d90015b03c))
 
 ## [0.28.3](https://github.com/trivoallan/regis/compare/v0.28.2...v0.28.3) (2026-04-15)
 
