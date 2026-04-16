@@ -2,10 +2,9 @@
 
 ## [0.28.5](https://github.com/trivoallan/regis/compare/v0.28.4...v0.28.5) (2026-04-16)
 
-
 ### Bug Fixes
 
-* **ci:** add .dockerignore to fix dubious ownership error in Docker build ([#383](https://github.com/trivoallan/regis/issues/383)) ([d9a5c13](https://github.com/trivoallan/regis/commit/d9a5c1349afdcbb222ac3d6597ed1f477f03c404))
+- **ci:** add .dockerignore to fix dubious ownership error in Docker build ([#383](https://github.com/trivoallan/regis/issues/383)) ([d9a5c13](https://github.com/trivoallan/regis/commit/d9a5c1349afdcbb222ac3d6597ed1f477f03c404))
 
 ## [0.28.4](https://github.com/trivoallan/regis/compare/v0.28.3...v0.28.4) (2026-04-16)
 
