@@ -75,8 +75,10 @@ COPY --chown=regis:regis . .
 COPY --from=frontend-builder --chown=regis:regis /app/apps/dashboard/build ./regis/dashboard_assets
 
 # Install regis
-RUN git config --global --add safe.directory /app && \
-    pip install --no-cache-dir .
+# Use SETUPTOOLS_SCM_PRETEND_VERSION to avoid git operations inside container
+# Extract version from pyproject.toml (e.g., version = "0.28.3" -> 0.28.3)
+RUN VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml) && \
+    SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" pip install --no-cache-dir .
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
