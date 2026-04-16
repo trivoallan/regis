@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.28.6](https://github.com/trivoallan/regis/compare/v0.28.5...v0.28.6) (2026-04-16)
+
+
+### Bug Fixes
+
+* **deps:** add pnpm to Docker image for bootstrap commands ([#401](https://github.com/trivoallan/regis/issues/401)) ([d697cf0](https://github.com/trivoallan/regis/commit/d697cf0a8e80703bc400966f536ebca1fe088b6d))
+
 ## [0.28.5](https://github.com/trivoallan/regis/compare/v0.28.4...v0.28.5) (2026-04-16)
 
 ### Bug Fixes
