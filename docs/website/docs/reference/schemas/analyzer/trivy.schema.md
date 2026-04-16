@@ -346,4 +346,4 @@ Specific value: `"trivy"`
 **Description:** Full description of the vulnerability.
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-04-16 at 10:34:55 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-04-16 at 10:47:30 +0000
