@@ -370,8 +370,8 @@ class TestBootstrapArchiveRepo:
                     "my-archive",
                 ],
             )
-        assert result.exit_code == 0, result.output
-        assert Path("test-repo/my-archive").exists()
+            assert result.exit_code == 0, result.output
+            assert Path("test-repo/my-archive").exists()
         assert "gitlab.io" in result.output
 
     @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
