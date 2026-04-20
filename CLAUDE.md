@@ -102,7 +102,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). A
 - **Auto-rebase + squash merge gotcha**: If a fix branch gets auto-rebased after main already includes the same change, the squash merge becomes a no-op. Always create fix branches from the latest main immediately before committing.
 - **`peaceiris/actions-gh-pages` with App token**: use `personal_token:`, not `github_token:`.
 - **Trunk auto-fmt in CI**: The trunk workflow commits formatting fixes using `stefanzweifel/git-auto-commit-action`. The checkout must use the App token so the auto-commit triggers a new workflow run.
-- **Dependency audit in CI tests**: `ci-test.yml` runs `pip-audit` and fails on HIGH/CRITICAL advisories.
+- **Dependency audit in CI tests**: `ci-test.yml` runs `pip-audit` via `pypa/gh-action-pip-audit` and fails when vulnerabilities are detected.
 - **Supply-chain artifacts in Docker CD**: `cd-docker.yml` publishes CycloneDX/SPDX SBOM files and SLSA provenance attestations for release images.
 - Use **GitHub Actions** and [Release Please](https://github.com/googleapis/release-please).
 - GitHub project configuration as code via the [GitHub Settings App](https://github.com/apps/settings).

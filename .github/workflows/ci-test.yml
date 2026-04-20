@@ -44,105 +44,14 @@ jobs:
           pip install pipenv
           pipenv sync --dev
 
-      - name: Install pip-audit
-        run: pipenv run pip install pip-audit
+      - name: Export lockfile requirements
+        run: pipenv requirements > requirements-ci.txt
 
-      - name: Run pip-audit (fail on HIGH/CRITICAL)
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          pipenv run pip-audit -f json > pip-audit-report.json || true
-
-          python - <<'PY'
-          import json
-          import os
-          import sys
-          import urllib.error
-          import urllib.request
-
-          if not os.path.exists("pip-audit-report.json") or os.path.getsize("pip-audit-report.json") == 0:
-              print("pip-audit report was not generated or is empty.")
-              sys.exit(1)
-
-          with open("pip-audit-report.json", encoding="utf-8") as report_file:
-              report = json.load(report_file)
-
-          dependencies = report.get("dependencies", [])
-          vulnerabilities = []
-          for dependency in dependencies:
-              for vulnerability in dependency.get("vulns", []):
-                  vulnerabilities.append(
-                      {
-                          "package": dependency["name"],
-                          "version": dependency["version"],
-                          "id": vulnerability["id"],
-                          "aliases": vulnerability.get("aliases", []),
-                      }
-                  )
-
-          high_or_critical = []
-          lookup_failures = []
-          token = os.environ.get("GITHUB_TOKEN", "")
-          if not token:
-              print("GITHUB_TOKEN is required for advisory severity lookups.")
-              sys.exit(1)
-          for vulnerability in vulnerabilities:
-              ghsa = next(
-                  (alias for alias in vulnerability["aliases"] if alias.startswith("GHSA-")),
-                  None,
-              )
-              if not ghsa:
-                  continue
-
-              request = urllib.request.Request(
-                  f"https://api.github.com/advisories/{ghsa}",
-                  headers={
-                      "Accept": "application/vnd.github+json",
-                      "X-GitHub-Api-Version": "2022-11-28",
-                      "Authorization": f"Bearer {token}",
-                  },
-              )
-              try:
-                  with urllib.request.urlopen(request) as response:
-                      advisory = json.loads(response.read().decode("utf-8"))
-              except (urllib.error.URLError, urllib.error.HTTPError) as error:
-                  lookup_failures.append(f"{ghsa}: {error}")
-                  continue
-
-              severity = advisory.get("severity", "").lower()
-              if severity in {"high", "critical"}:
-                  high_or_critical.append(
-                      {
-                          **vulnerability,
-                          "ghsa": ghsa,
-                          "severity": severity,
-                          "summary": advisory.get("summary", ""),
-                      }
-                  )
-
-          if high_or_critical:
-              print("pip-audit found HIGH/CRITICAL vulnerabilities:")
-              for vulnerability in high_or_critical:
-                  print(
-                      f"- {vulnerability['package']}=={vulnerability['version']}: "
-                      f"{vulnerability['id']} ({vulnerability['ghsa']}, "
-                      f"severity={vulnerability['severity']}) {vulnerability['summary']}"
-                  )
-              sys.exit(1)
-
-          if lookup_failures:
-              print("Could not retrieve severity for one or more advisories:")
-              for failure in lookup_failures:
-                  print(f"- {failure}")
-              print("Failing pipeline because severity evaluation is incomplete.")
-              sys.exit(1)
-
-          print(
-              "pip-audit completed: no HIGH/CRITICAL vulnerabilities detected "
-              f"(total findings: {len(vulnerabilities)})."
-          )
-          PY
+      - name: Run pip-audit
+        uses: pypa/gh-action-pip-audit@v1.1.0
+        with:
+          inputs: requirements-ci.txt
+          no-deps: true
 
       - name: Diagnostic - check environment
         run: |
