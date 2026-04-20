@@ -20,7 +20,7 @@ chardet = ">=5.0.0"
 charset-normalizer = ">=2.0.0"
 urllib3 = ">=1.26.0,<3"
 regis = {extras = ["dev"], file = ".", editable = true}
-pillow = "*"
+pillow = "==12.2.0"
 
 [dev-packages]
 pytest = ">=7.4"
