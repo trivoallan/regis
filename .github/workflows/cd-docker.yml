@@ -85,7 +85,7 @@ jobs:
       - name: Upload SBOM workflow artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: sbom-${{ github.ref_name }}
+          name: sbom-${{ github.sha }}
           path: |
             sbom.cyclonedx.json
             sbom.spdx.json

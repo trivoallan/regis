@@ -84,6 +84,9 @@ jobs:
           high_or_critical = []
           lookup_failures = []
           token = os.environ.get("GITHUB_TOKEN", "")
+          if not token:
+              print("GITHUB_TOKEN is required for advisory severity lookups.")
+              sys.exit(1)
           for vulnerability in vulnerabilities:
               ghsa = next(
                   (alias for alias in vulnerability["aliases"] if alias.startswith("GHSA-")),
