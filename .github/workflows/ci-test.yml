@@ -25,7 +25,7 @@ jobs:
         continue-on-error: true
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ secrets.REGIS_CI_APP_ID }}
+          client-id: ${{ secrets.REGIS_CI_APP_ID }}
           private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
 
       - name: Checkout repository
@@ -44,14 +44,14 @@ jobs:
           pip install pipenv
           pipenv sync --dev
 
-      - name: Export lockfile requirements
-        run: pipenv requirements > requirements-ci.txt
+      - name: Get pipenv virtualenv path
+        id: pipenv-venv
+        run: echo "path=$(pipenv --venv)" >> "$GITHUB_OUTPUT"
 
       - name: Run pip-audit
         uses: pypa/gh-action-pip-audit@v1.1.0
         with:
-          inputs: requirements-ci.txt
-          no-deps: true
+          virtual-environment: ${{ steps.pipenv-venv.outputs.path }}
 
       - name: Diagnostic - check environment
         run: |
