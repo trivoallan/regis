@@ -39,6 +39,7 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token || github.token }}
           fetch-depth: 0
+          ref: ${{ github.head_ref }}
 
       - name: Trunk Install
         uses: trunk-io/trunk-action/setup@v1
@@ -53,6 +54,7 @@ jobs:
         with:
           branch: ${{ github.head_ref }}
           commit_message: "style: apply automated trunk fmt"
+          commit_options: '--no-verify'
           commit_user_name: regis-ci[bot]
           commit_user_email: regis-ci[bot]@users.noreply.github.com
           commit_author: regis-ci[bot] <regis-ci[bot]@users.noreply.github.com>
