@@ -67,7 +67,7 @@ gh auth refresh --scopes write:org,read:public_key
 
 ## CLI Structure
 
-```
+```text
 gh                          # Root command
 ├── auth                    # Authentication
 │   ├── login
@@ -2181,7 +2181,7 @@ gh help accessibility
 
 ## References
 
-- Official Manual: https://cli.github.com/manual/
-- GitHub Docs: https://docs.github.com/en/github-cli
-- REST API: https://docs.github.com/en/rest
-- GraphQL API: https://docs.github.com/en/graphql
+- Official Manual: <https://cli.github.com/manual/>
+- GitHub Docs: <https://docs.github.com/en/github-cli>
+- REST API: <https://docs.github.com/en/rest>
+- GraphQL API: <https://docs.github.com/en/graphql>

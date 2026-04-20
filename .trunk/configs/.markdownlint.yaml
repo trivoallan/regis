@@ -2,3 +2,6 @@ extends: markdownlint/style/prettier
 
 # MD024 (No duplicate headings) is common in changelogs
 MD024: false
+
+# MD041 (First line heading) - files with YAML frontmatter do not need an H1
+MD041: false
