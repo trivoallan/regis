@@ -4,11 +4,13 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 0
 
   - package-ecosystem: npm
     directory: /apps/dashboard
     schedule:
       interval: weekly
+    open-pull-requests-limit: 0
     ignore:
       # Tailwind v4 is a breaking change (PostCSS plugin split, config format changed)
       # Pin to v3 until a proper migration is done
@@ -19,13 +21,16 @@ updates:
     directory: /docs/website
     schedule:
       interval: weekly
+    open-pull-requests-limit: 0
 
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 0
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 0
