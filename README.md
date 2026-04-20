@@ -18,6 +18,7 @@ Comprehensive documentation, including installation and usage guides, is availab
 - **Policy-as-Code Playbooks** — Define compliance and security rules (e.g., "no critical vulnerabilities", "maximum image age") using flexible `jsonLogic` evaluations.
 - **Hybrid Reporting** — Simultaneously generates machine-readable JSON for automation and rich, interactive HTML dashboards for human review.
 - **CI/CD Native** — Designed to integrate seamlessly into GitHub Actions or GitLab CI pipelines with first-class support for MR/PR reporting.
+- **Supply-Chain Transparency** — Release pipelines publish CycloneDX/SPDX SBOMs and SLSA build provenance attestations alongside container images.
 - **Efficient Caching** — Reuse existing analysis results to speed up repeated evaluations and report regeneration.
 
 ## Built-in Analyzers
