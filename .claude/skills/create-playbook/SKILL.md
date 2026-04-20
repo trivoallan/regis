@@ -287,9 +287,7 @@ Always include this file. If Stage 5 produced no fields, emit the minimal extens
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "allOf": [
-    { "$ref": "https://regis/schemas/meta/well-known.schema.json" }
-  ],
+  "allOf": [{ "$ref": "https://regis/schemas/meta/well-known.schema.json" }],
   "properties": {},
   "required": []
 }
@@ -300,9 +298,7 @@ If Stage 5 produced fields, add them to `properties` and `required`:
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "allOf": [
-    { "$ref": "https://regis/schemas/meta/well-known.schema.json" }
-  ],
+  "allOf": [{ "$ref": "https://regis/schemas/meta/well-known.schema.json" }],
   "properties": {
     "PROJECT_ID": {
       "type": "string",

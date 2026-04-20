@@ -8,8 +8,8 @@ No metadata is required by default. To add project-specific metadata requirement
 
 ### Well-known fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `ci.platform` | `github` \| `gitlab` | CI platform |
-| `ci.job.id` | string | CI job identifier |
-| `ci.job.url` | URI | URL to the CI job run |
+| Field         | Type                 | Description           |
+| ------------- | -------------------- | --------------------- |
+| `ci.platform` | `github` \| `gitlab` | CI platform           |
+| `ci.job.id`   | string               | CI job identifier     |
+| `ci.job.url`  | URI                  | URL to the CI job run |
