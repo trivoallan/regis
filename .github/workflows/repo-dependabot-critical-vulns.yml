@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+      security-events: read
     steps:
       - name: Generate GitHub App token
         id: generate-token
