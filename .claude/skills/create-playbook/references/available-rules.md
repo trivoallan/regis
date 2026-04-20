@@ -231,8 +231,8 @@ Source: `regis/analyzers/skopeo.py`
 
 ## core — Built-in policy rules
 
-| slug                        | options                                                                                        | description                                       |
-| --------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| slug                        | options                                                                          | description                                      |
+| --------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------ |
 | `registry-domain-whitelist` | `domains` (list, default: `[docker.io, registry-1.docker.io, quay.io, ghcr.io]`) | Image must come from an allowed registry domain. |
 
 ### Example — core rules

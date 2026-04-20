@@ -91,8 +91,8 @@ After the user picks a rule, ask for its key options (using the defaults from
 
 ### Group F — Registry policy (`core`)
 
-| Rule                       | What it checks                       | Key options                                                                       |
-| -------------------------- | ------------------------------------ | --------------------------------------------------------------------------------- |
+| Rule                        | What it checks                           | Key options                                                                   |
+| --------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
 | `registry-domain-whitelist` | Image must come from an allowed registry | `domains` (list, defaults: docker.io, registry-1.docker.io, quay.io, ghcr.io) |
 
 Only add if the user wants to enforce source registry policy.
