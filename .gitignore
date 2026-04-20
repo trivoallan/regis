@@ -28,6 +28,9 @@ htmlcov/
 # OMC state
 .omc/
 
+# Claude AI worktrees
+.claude/worktrees/
+
 # Reports
 /reports
 
