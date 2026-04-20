@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://regis/schemas/meta/well-known.schema.json",
+  "title": "Regis Well-Known Metadata",
+  "description": "Standard metadata fields recognized by regis across all playbooks.",
+  "type": "object",
+  "properties": {
+    "ci.platform": {
+      "type": "string",
+      "enum": ["github", "gitlab"],
+      "description": "CI platform running the analysis"
+    },
+    "ci.job.id": {
+      "type": "string",
+      "description": "Unique identifier of the CI job"
+    },
+    "ci.job.url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to the CI job run"
+    }
+  },
+  "additionalProperties": true
+}

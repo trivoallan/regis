@@ -111,21 +111,21 @@ def escape_jinja(obj: Any) -> Any:
     return obj
 
 
-def run_playbooks(
+def evaluate_playbooks(
     playbook_paths: tuple[str, ...],
     analysis_report: dict[str, Any],
     formats: list[str],
     show_rules: bool = False,
-) -> dict[str, Any]:
-    """Load and evaluate playbooks against an analysis report."""
+) -> list[dict[str, Any]]:
+    """Load and evaluate playbooks, returning the list of results."""
     from regis.playbook.engine import evaluate, load_playbook
 
     playbook_results = []
     if not playbook_paths:
         import importlib.resources
 
-        default_pb = importlib.resources.files("regis") / "playbooks" / "default.yaml"
-        if default_pb.is_file():
+        default_pb = importlib.resources.files("regis") / "playbooks" / "default"
+        if default_pb.is_dir():
             playbook_paths = (str(default_pb),)
 
     if playbook_paths:
@@ -177,6 +177,20 @@ def run_playbooks(
                             icon = "⚠️"
                         click.echo(f"      {icon} [{r['slug']}] {r['message']}")
                     click.echo("", err=True)
+
+    return playbook_results
+
+
+def run_playbooks(
+    playbook_paths: tuple[str, ...],
+    analysis_report: dict[str, Any],
+    formats: list[str],
+    show_rules: bool = False,
+) -> dict[str, Any]:
+    """Load and evaluate playbooks against an analysis report."""
+    playbook_results = evaluate_playbooks(
+        playbook_paths, analysis_report, formats, show_rules
+    )
 
     final_report = {**analysis_report}
     if playbook_results:

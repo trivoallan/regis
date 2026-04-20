@@ -53,8 +53,32 @@ def _run_analyzer(
     return analyzer.name, report
 
 
+def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for item in meta:
+        if "=" in item:
+            k, v = item.split("=", 1)
+            set_nested_value(result, k, v)
+        else:
+            set_nested_value(result, item, "true")
+    return result
+
+
 @click.command()
-@click.argument("url")
+@click.argument("url", required=False, default="")
+@click.option(
+    "--rerun",
+    "rerun",
+    default=None,
+    help="Re-run a single analyzer against an existing report (requires --report).",
+)
+@click.option(
+    "--report",
+    "report_dir",
+    type=click.Path(file_okay=False, path_type=Path),
+    default=None,
+    help="Existing report directory to update (requires --rerun).",
+)
 @click.option(
     "-a",
     "--analyzer",
@@ -187,6 +211,8 @@ def analyze(
     open_browser: bool = False,
     archive_dir: Path | None = None,
     max_workers: int = 4,
+    rerun: str | None = None,
+    report_dir: Path | None = None,
 ) -> None:
     """Analyze a Docker image and evaluate playbooks.
 
@@ -195,6 +221,79 @@ def analyze(
 
     Runs analyzers and evaluates one or more playbooks against the results.
     """
+    # --rerun / --report mutual dependency validation
+    if rerun and not report_dir:
+        raise click.UsageError("--rerun requires --report")
+    if report_dir and not rerun:
+        raise click.UsageError("--report requires --rerun")
+
+    # --rerun: patch an existing report and replay playbook evaluation
+    if rerun and report_dir:
+        from regis.analyzers.metadata import MetadataAnalyzer
+
+        if rerun != MetadataAnalyzer.name:
+            all_analyzers = _discover_analyzers()
+            if rerun not in all_analyzers:
+                available = ", ".join(sorted(all_analyzers))
+                raise click.ClickException(
+                    f"Unknown analyzer '{rerun}'. Available: {available}"
+                )
+
+        report_path = (report_dir / "report.json").resolve()
+        if not report_path.exists():
+            raise click.ClickException(f"Report not found: {report_path}")
+
+        existing_report = json.loads(report_path.read_text(encoding="utf-8"))
+
+        metadata_dict = _parse_meta(meta)
+
+        if rerun == MetadataAnalyzer.name:
+            meta_analyzer = MetadataAnalyzer(metadata=metadata_dict)
+            result = meta_analyzer.analyze()
+        else:
+            from regis.registry.auth import resolve_credentials
+
+            ref = parse_image_url(url) if url else None
+            if ref is None:
+                raise click.UsageError(
+                    "--rerun for non-metadata analyzers requires a URL argument"
+                )
+            username, password = resolve_credentials(
+                ref.registry, list(auth) if auth else None
+            )
+            _, result = _run_analyzer(
+                all_analyzers[rerun],
+                ref.registry,
+                ref.repository,
+                ref.tag,
+                username,
+                password,
+                platform,
+            )
+
+        existing_report.setdefault("results", {})[rerun] = result
+        if metadata_dict:
+            existing_report["metadata"] = metadata_dict
+            existing_report.setdefault("request", {})["metadata"] = metadata_dict
+
+        formats = ["json"]
+        rerun_report = run_playbooks(
+            playbook_paths, existing_report, formats, show_rules=evaluate
+        )
+        validate_report(rerun_report)
+
+        indent = 2 if pretty else None
+        report_path.write_text(
+            json.dumps(rerun_report, indent=indent, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        click.echo(f"  Report updated at {report_path}", err=True)
+        return
+
+    # Normal analysis flow requires a URL
+    if not url:
+        raise click.UsageError("URL argument is required")
+
     try:
         ref = parse_image_url(url)
     except ValueError as exc:
@@ -328,13 +427,7 @@ def analyze(
 
         from importlib.metadata import version
 
-        metadata_dict: dict[str, Any] = {}
-        for item in meta:
-            if "=" in item:
-                k, v = item.split("=", 1)
-                set_nested_value(metadata_dict, k, v)
-            else:
-                set_nested_value(metadata_dict, item, "true")
+        metadata_dict = _parse_meta(meta)
 
         analysis_report = {
             "version": version("regis"),

@@ -41,6 +41,7 @@ provenance = "regis.analyzers.provenance:ProvenanceAnalyzer"
 sbom = "regis.analyzers.sbom:SbomAnalyzer"
 hadolint = "regis.analyzers.hadolint:HadolintAnalyzer"
 dockle = "regis.analyzers.dockle:DockleAnalyzer"
+metadata = "regis.analyzers.metadata:MetadataAnalyzer"
 
 [project.optional-dependencies]
 dev = [
@@ -61,6 +62,7 @@ regis = [
   "templates/**/*",
   "cookiecutters/**/*",
   "dashboard_assets/**/*",
+  "playbooks/**/*",
 ]
 
 [tool.setuptools_scm]

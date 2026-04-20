@@ -24,7 +24,7 @@ from regis.playbook.context import (
 from regis.playbook.evaluator import evaluate
 
 # Loader
-from regis.playbook.loader import load_playbook
+from regis.playbook.loader import bundle_meta_schema_path, is_bundle, load_playbook
 
 # Section evaluator (kept for any internal consumers)
 from regis.playbook.sections import _evaluate_section
@@ -55,6 +55,8 @@ __all__ = [
     "_resolve_template",
     # loader
     "load_playbook",
+    "is_bundle",
+    "bundle_meta_schema_path",
     # sections
     "_evaluate_section",
     # evaluator

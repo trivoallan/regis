@@ -2,6 +2,7 @@
 
 Supports loading playbook definitions from:
 - Local YAML or JSON files
+- Local bundle directories (containing playbook.yaml)
 - Remote HTTP/HTTPS URLs
 """
 
@@ -15,7 +16,7 @@ import yaml
 
 
 def load_playbook(path: str | Path) -> dict[str, Any]:
-    """Load a playbook definition from a local file or remote URL."""
+    """Load a playbook definition from a local file, bundle directory, or remote URL."""
     if isinstance(path, str) and (
         path.startswith("http://") or path.startswith("https://")
     ):
@@ -33,7 +34,24 @@ def load_playbook(path: str | Path) -> dict[str, Any]:
             raise ValueError(f"Failed to download playbook from {path}: {exc}") from exc
 
     path = Path(path)
+    if path.is_dir():
+        path = path / "playbook.yaml"
     text = path.read_text(encoding="utf-8")
     if path.suffix in (".yaml", ".yml"):
         return yaml.safe_load(text)
     return json.loads(text)
+
+
+def is_bundle(path: str | Path) -> bool:
+    """Return True if *path* is a local directory (i.e. a playbook bundle)."""
+    if isinstance(path, str) and (
+        path.startswith("http://") or path.startswith("https://")
+    ):
+        return False
+    return Path(path).is_dir()
+
+
+def bundle_meta_schema_path(path: str | Path) -> Path | None:
+    """Return the path to meta.schema.json inside a bundle, or None if absent."""
+    schema = Path(path) / "meta.schema.json"
+    return schema if schema.exists() else None
