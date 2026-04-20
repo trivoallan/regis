@@ -34,11 +34,39 @@ jobs:
           alert-lookup: true
 
       - name: Close non-critical Dependabot PRs
-        if: >-
-          steps.dependabot-metadata.outcome == 'success' &&
-          fromJSON(steps.dependabot-metadata.outputs.cvss) < 9
+        if: steps.dependabot-metadata.outcome == 'success'
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token || github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          CVSS: ${{ steps.dependabot-metadata.outputs.cvss }}
+          CRITICAL_CVSS_THRESHOLD: "9.0"
         run: |
-          gh pr close "$PR_NUMBER" --comment "Closing automatically: only critical vulnerability updates (CVSS >= 9.0) are kept open."
+          cvss_value="${CVSS:-0}"
+          if [ "$cvss_value" = "null" ] || [ -z "$cvss_value" ]; then
+            cvss_value="0"
+          fi
+
+          export CVSS_VALUE="$cvss_value"
+          decision="$(python - <<'PY'
+          import os
+
+          raw_value = os.environ.get("CVSS_VALUE", "0")
+          threshold = float(os.environ["CRITICAL_CVSS_THRESHOLD"])
+          try:
+              score = float(raw_value)
+          except (TypeError, ValueError):
+              print(f"keep: Could not parse CVSS '{raw_value}'.")
+          else:
+              if score < threshold:
+                  print(f"close: CVSS {score} is below critical threshold {threshold}.")
+              else:
+                  print(f"keep: CVSS {score} meets critical threshold {threshold}.")
+          PY
+          )"
+          echo "$decision"
+
+          if [[ "$decision" == close:* ]]; then
+            reason="${decision#close: }"
+            gh pr close "$PR_NUMBER" --repo "$REPO" --comment "Closing automatically: $reason Only critical vulnerability updates (CVSS >= $CRITICAL_CVSS_THRESHOLD) are kept open."
+          fi
