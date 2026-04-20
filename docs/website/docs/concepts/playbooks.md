@@ -221,6 +221,158 @@ Because Cookiecutter ignores extra context variables that aren't defined in the 
 
 During evaluation, templates whose condition passes are aggregated. The CLI then executes these templates with access to the full analysis context (e.g., `cookiecutter.regis.score`), and writes the generated files back to the current working directory so they can be committed to the MR branch.
 
+## Bundle Structure
+
+A playbook is a **directory** (bundle) rather than a single file. The bundle uses fixed filenames by convention:
+
+```text
+my-playbook/
+├── playbook.yaml        # rules, tiers, badges, pages
+├── meta.schema.json     # JSON Schema for --meta validation
+└── README.md
+```
+
+You can pass a bundle directory anywhere a playbook path is accepted:
+
+```bash
+regis analyze myimage:latest --playbook ./my-playbook/
+```
+
+Legacy single-file playbooks (`playbook.yaml`) continue to work.
+
+---
+
+## Metadata
+
+Playbooks can declare required and optional metadata fields that must be supplied by the project using `--meta KEY=VALUE` flags. Typical use cases: internal project identifiers, security validation document URLs, or compliance ticket references.
+
+### Well-known fields
+
+Regis ships with a base schema defining standard CI metadata fields:
+
+| Field         | Type                     | Description           |
+| ------------- | ------------------------ | --------------------- |
+| `ci.platform` | `"github"` \| `"gitlab"` | CI platform           |
+| `ci.job.id`   | `string`                 | CI job identifier     |
+| `ci.job.url`  | `string` (URI)           | URL to the CI job run |
+
+These fields are always recognized — no schema required to use them.
+
+### Extending the schema
+
+To declare project-specific required or optional fields, create a `meta.schema.json` inside the bundle that extends the well-known base via JSON Schema `allOf`:
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [{ "$ref": "https://regis/schemas/meta/well-known.schema.json" }],
+  "properties": {
+    "PROJECT_ID": {
+      "type": "string",
+      "description": "Internal project identifier"
+    },
+    "SEC_DOC_URL": {
+      "type": "string",
+      "format": "uri",
+      "description": "Link to security validation document"
+    }
+  },
+  "required": ["PROJECT_ID"]
+}
+```
+
+Missing required fields cause the `metadata` analyzer to report a validation failure. Optional fields not provided are recorded as `null` but do not fail the analysis.
+
+### Supplying metadata
+
+Pass metadata at analysis time using `--meta`:
+
+```bash
+regis analyze myimage:latest \
+  --playbook ./my-playbook/ \
+  -m PROJECT_ID=PROJ-42 \
+  -m SEC_DOC_URL=https://jira.example.com/browse/SEC-99 \
+  -m ci.platform=github
+```
+
+Metadata is stored in the report under `metadata` and `request.metadata`, making it accessible in all rule conditions, badges, and template expressions.
+
+### Deferred metadata (--rerun)
+
+Metadata is often not available at analysis time — for example, the security validation document URL is only known after a parallel approval process completes. You can re-inject metadata without re-running the full image analysis:
+
+```bash
+# Day 1: full analysis (PROJECT_ID not yet known)
+regis analyze myimage:latest --playbook ./my-playbook/
+
+# Day N: once the project ID is confirmed
+regis analyze --rerun metadata \
+  --report ./reports/registry/repo/digest/ \
+  -m PROJECT_ID=PROJ-42 \
+  -m SEC_DOC_URL=https://jira.example.com/browse/SEC-99
+```
+
+The `--rerun` path updates `report.json` in place and replays the full playbook evaluation (rules → tiers → badges) against the patched data.
+
+### Using metadata in rules, badges, and checklists
+
+Metadata values are accessible under `metadata.*` via JSON Logic `var`:
+
+**Rule — require PROJECT_ID before granting a compliance tier:**
+
+```yaml
+rules:
+  - provider: metadata
+    rule: metadata
+    slug: project-registered
+    level: critical
+    condition:
+      "!!": [{ var: "metadata.PROJECT_ID" }]
+    messages:
+      pass: "Project ID provided: ${metadata.PROJECT_ID}"
+      fail: "PROJECT_ID is required for compliance reporting"
+```
+
+**Badge — display the project ID:**
+
+```yaml
+badges:
+  - slug: project-id
+    scope: Project
+    value: "${metadata.PROJECT_ID}"
+    condition:
+      "!!": [{ var: "metadata.PROJECT_ID" }]
+    class: information
+```
+
+**MR checklist — link to the security document:**
+
+```yaml
+integrations:
+  gitlab:
+    checklists:
+      - title: 📋 Security Evidence
+        items:
+          - label: Security validation document submitted
+            show_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
+            check_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
+          - label: "Review document: ${metadata.SEC_DOC_URL}"
+            show_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
+```
+
+**Tier condition — gate Gold tier on CI platform:**
+
+```yaml
+tiers:
+  - name: Gold
+    condition:
+      and:
+        - { ">": [{ var: rules_summary.score }, 90] }
+        - { "==": [{ var: "metadata.ci.platform" }, "github"] }
+```
+
+---
+
 ## Creating a Custom Playbook
 
 While you can write a playbook from scratch, the easiest way to start is by using the `bootstrap playbook` command. This creates a new directory with a pre-configured playbook template and all necessary files.
