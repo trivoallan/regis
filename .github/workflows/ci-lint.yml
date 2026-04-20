@@ -54,7 +54,7 @@ jobs:
         with:
           branch: ${{ github.head_ref }}
           commit_message: "style: apply automated trunk fmt"
-          commit_options: '--no-verify'
+          commit_options: "--no-verify"
           commit_user_name: regis-ci[bot]
           commit_user_email: regis-ci[bot]@users.noreply.github.com
           commit_author: regis-ci[bot] <regis-ci[bot]@users.noreply.github.com>
