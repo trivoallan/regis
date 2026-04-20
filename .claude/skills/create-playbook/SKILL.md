@@ -3,7 +3,8 @@ name: create-playbook
 description: >
   Create a Regis playbook bundle interactively. Guides the user through naming,
   rule selection (trivy, hadolint, sbom, freshness, scorecarddev, skopeo, dockle),
-  tier configuration, CI integration (GitLab/GitHub), and optional inputs schema.
+  tier configuration, CI integration (GitLab/GitHub), and optional metadata schema
+  (meta.schema.json extending the well-known base schema).
   Use whenever the user says "create a playbook", "new playbook", "setup regis",
   or asks how to configure policy-as-code for their container images.
 argument-hint: "<image-type or use-case>"
@@ -181,20 +182,29 @@ Skip this stage.
 
 ---
 
-## Stage 5 — Inputs schema (optional)
+## Stage 5 — Metadata schema (optional)
 
-Ask: "Do you need to validate non-image inputs passed to Regis (e.g., project IDs,
-security doc URLs, approval ticket numbers)?"
+Ask: "Do you need to validate project metadata passed to Regis via `--meta` flags
+(e.g., project IDs, security doc URLs, approval ticket numbers)?"
 
 - **No** — skip to Stage 6.
-- **Yes** — for each input field, gather:
-  - Field name (e.g., `security_doc_url`)
+- **Yes** — for each metadata field, gather:
+  - Field name (e.g., `PROJECT_ID`, `SEC_DOC_URL`)
   - Type: `string`, `integer`, `boolean`, `array`
   - Description
   - Required or optional
   - Any format constraint (e.g., `uri`, `date`, enum values)
 
-This produces an `inputs.schema.json` file (JSON Schema draft-07).
+This produces a `meta.schema.json` file that extends the well-known metadata schema
+(which already defines `ci.platform`, `ci.job.id`, `ci.job.url`).
+
+Explain that metadata is passed at analysis time with `--meta KEY=VALUE` and can be
+re-injected later without re-running the full analysis:
+
+```bash
+# Re-run metadata validation only, once the project ID is available
+regis analyze --rerun metadata --report ./reports/ -m PROJECT_ID=PROJ-42
+```
 
 ---
 
@@ -270,19 +280,41 @@ Generate automatically with:
   regis analyze --playbook ./<output-dir>
   ```
 
-### File 3: `inputs.schema.json` (only if Stage 5 produced fields)
+### File 3: `meta.schema.json` (always generated — extend if Stage 5 produced fields)
+
+Always include this file. If Stage 5 produced no fields, emit the minimal extension:
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
-  "required": ["<required-fields>"],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    { "$ref": "https://regis/schemas/meta/well-known.schema.json" }
+  ],
+  "properties": {},
+  "required": []
+}
+```
+
+If Stage 5 produced fields, add them to `properties` and `required`:
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    { "$ref": "https://regis/schemas/meta/well-known.schema.json" }
+  ],
   "properties": {
-    "<field>": {
-      "type": "<type>",
-      "description": "<description>"
+    "PROJECT_ID": {
+      "type": "string",
+      "description": "Internal project identifier"
+    },
+    "SEC_DOC_URL": {
+      "type": "string",
+      "format": "uri",
+      "description": "Link to security validation document"
     }
-  }
+  },
+  "required": ["PROJECT_ID"]
 }
 ```
 
@@ -293,18 +325,24 @@ Show the user the file tree:
 ```text
 <output-dir>/
 ├── playbook.yaml
-├── README.md
-└── inputs.schema.json   ← only if generated
+├── meta.schema.json
+└── README.md
 ```
 
-Offer to validate the playbook:
+Offer to run the analysis:
 
 ```bash
-regis analyze --playbook ./<output-dir> --dry-run
+regis analyze <image>:<tag> --playbook ./<output-dir>
 ```
 
-Or if running from the project root with Pipenv:
+Or with metadata:
 
 ```bash
-pipenv run regis analyze --playbook ./<output-dir> --dry-run
+regis analyze <image>:<tag> --playbook ./<output-dir> -m PROJECT_ID=PROJ-42
+```
+
+If the user wants to re-validate metadata later (without re-running the full analysis):
+
+```bash
+regis analyze --rerun metadata --report ./<reports-dir>/ -m PROJECT_ID=PROJ-42
 ```
