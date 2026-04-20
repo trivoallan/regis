@@ -10,11 +10,11 @@ analyzer source files.
 
 Source: `regis/analyzers/trivy.py`
 
-| slug | options | description |
-|------|---------|-------------|
-| `cve-count` | `level` (string: `critical` / `high` / `medium` / `low`), `max_count` (int, default `0`) | Fail if the number of CVEs at the given severity exceeds `max_count`. Use one rule per severity level you want to enforce. |
-| `fix-available` | `max_count` (int, default `0`) | Fail if the number of CVEs that have a fix available exceeds `max_count`. |
-| `secret-scan` | `max_count` (int, default `0`) | Fail if the number of embedded secrets/tokens detected exceeds `max_count`. |
+| slug            | options                                                                                  | description                                                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `cve-count`     | `level` (string: `critical` / `high` / `medium` / `low`), `max_count` (int, default `0`) | Fail if the number of CVEs at the given severity exceeds `max_count`. Use one rule per severity level you want to enforce. |
+| `fix-available` | `max_count` (int, default `0`)                                                           | Fail if the number of CVEs that have a fix available exceeds `max_count`.                                                  |
+| `secret-scan`   | `max_count` (int, default `0`)                                                           | Fail if the number of embedded secrets/tokens detected exceeds `max_count`.                                                |
 
 ### Example — trivy rules
 
@@ -56,8 +56,8 @@ Source: `regis/analyzers/trivy.py`
 
 Source: `regis/analyzers/hadolint.py`
 
-| slug | options | description |
-|------|---------|-------------|
+| slug             | options                                                                        | description                                                                  |
+| ---------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | `severity-count` | `level` (string: `error` / `warning` / `info`), `max_count` (int, default `0`) | Fail if Dockerfile lint violations at the given severity exceed `max_count`. |
 
 ### Example — hadolint rules
@@ -78,8 +78,8 @@ Source: `regis/analyzers/hadolint.py`
 
 Source: `regis/analyzers/dockle.py`
 
-| slug | options | description |
-|------|---------|-------------|
+| slug             | options                                                                     | description                                                                                                                                                  |
+| ---------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `severity-count` | `level` (string: `fatal` / `warn` / `info`), `max_count` (int, default `0`) | Fail if CIS benchmark violations at the given severity exceed `max_count`. Note: dockle severity levels are `fatal`, `warn`, `info` — not `error`/`warning`. |
 
 ### Example — dockle rules
@@ -100,10 +100,10 @@ Source: `regis/analyzers/dockle.py`
 
 Source: `regis/analyzers/sbom.py`
 
-| slug | options | description |
-|------|---------|-------------|
-| `has-sbom` | (none) | Image must provide an SBOM (CycloneDX or SPDX). No options required. |
-| `license-blocklist` | `blocklist` (list of SPDX identifiers, default `[]`) | Fail if any package in the SBOM uses a license from the blocklist. |
+| slug                | options                                              | description                                                          |
+| ------------------- | ---------------------------------------------------- | -------------------------------------------------------------------- |
+| `has-sbom`          | (none)                                               | Image must provide an SBOM (CycloneDX or SPDX). No options required. |
+| `license-blocklist` | `blocklist` (list of SPDX identifiers, default `[]`) | Fail if any package in the SBOM uses a license from the blocklist.   |
 
 ### Example — sbom rules
 
@@ -117,14 +117,18 @@ Source: `regis/analyzers/sbom.py`
   rule: license-blocklist
   slug: no-copyleft
   level: critical
-  enable: false   # opt-in; remove or set true to activate
+  enable: false # opt-in; remove or set true to activate
   options:
     blocklist:
       - GPL-2.0
       - GPL-2.0-only
+      - GPL-2.0-or-later
+      - GPL-3.0
       - GPL-3.0-only
-      - AGPL-3.0-only
-      - SSPL-1.0
+      - GPL-3.0-or-later
+      - AGPL-1.0
+      - LGPL-2.1
+      - LGPL-3.0
 ```
 
 ---
@@ -133,8 +137,8 @@ Source: `regis/analyzers/sbom.py`
 
 Source: `regis/analyzers/freshness.py`
 
-| slug | options | description |
-|------|---------|-------------|
+| slug  | options                        | description                                             |
+| ----- | ------------------------------ | ------------------------------------------------------- |
 | `age` | `max_days` (int, default `30`) | Image must have been built no more than `max_days` ago. |
 
 ### Example — freshness rules
@@ -154,8 +158,8 @@ Source: `regis/analyzers/freshness.py`
 
 Source: `regis/analyzers/scorecarddev.py`
 
-| slug | options | description |
-|------|---------|-------------|
+| slug        | options                            | description                                                                                              |
+| ----------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `min-score` | `min_score` (float, default `5.0`) | The OpenSSF Scorecard score for the image's source repository must be at least `min_score` (0–10 scale). |
 
 ### Example — scorecarddev rules
@@ -175,16 +179,16 @@ Source: `regis/analyzers/scorecarddev.py`
 
 Source: `regis/analyzers/skopeo.py`
 
-| slug | options | description |
-|------|---------|-------------|
-| `user-blacklist` | `blacklist` (list of strings, e.g. `["root", "0"]`) | Fail if the container runs as a blacklisted user. |
-| `max-size` | `max_mb` (float) | Fail if the image exceeds the given size in megabytes. |
-| `layers-count` | `max_count` (int) | Fail if the image has more than `max_count` layers. |
-| `tag-blacklist` | `blacklist` (list of tag pattern strings) | Fail if the image tag matches any pattern in the blacklist (e.g., `["latest"]`). |
-| `platforms-count` | `min_count` (int) | Fail if the image supports fewer than `min_count` platforms (multi-arch enforcement). |
-| `exposed-ports-whitelist` | `whitelist` (list of port strings or numbers) | Fail if any exposed port is not in the whitelist. |
-| `required-labels` | `labels` (list of OCI label name strings) | Fail if any label in the list is absent from the image manifest. |
-| `env-blacklist` | `blacklist` (list of env var name strings) | Fail if any env var in the blacklist is set in the image config. |
+| slug                      | options                                             | description                                                                           |
+| ------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `user-blacklist`          | `blacklist` (list of strings, e.g. `["root", "0"]`) | Fail if the container runs as a blacklisted user.                                     |
+| `max-size`                | `max_mb` (float)                                    | Fail if the image exceeds the given size in megabytes.                                |
+| `layers-count`            | `max_count` (int)                                   | Fail if the image has more than `max_count` layers.                                   |
+| `tag-blacklist`           | `blacklist` (list of tag pattern strings)           | Fail if the image tag matches any pattern in the blacklist (e.g., `["latest"]`).      |
+| `platforms-count`         | `min_count` (int)                                   | Fail if the image supports fewer than `min_count` platforms (multi-arch enforcement). |
+| `exposed-ports-whitelist` | `whitelist` (list of port strings or numbers)       | Fail if any exposed port is not in the whitelist.                                     |
+| `required-labels`         | `labels` (list of OCI label name strings)           | Fail if any label in the list is absent from the image manifest.                      |
+| `env-blacklist`           | `blacklist` (list of env var name strings)          | Fail if any env var in the blacklist is set in the image config.                      |
 
 ### Example — skopeo rules
 
@@ -225,17 +229,40 @@ Source: `regis/analyzers/skopeo.py`
 
 ---
 
+## core — Built-in policy rules
+
+| slug                        | options                                                                                        | description                                       |
+| --------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `registry-domain-whitelist` | `domains` (list, default: `[docker.io, registry-1.docker.io, quay.io, ghcr.io]`) | Image must come from an allowed registry domain. |
+
+### Example — core rules
+
+```yaml
+- provider: core
+  rule: registry-domain-whitelist
+  slug: registry-domain-whitelist
+  level: critical
+  options:
+    domains:
+      - docker.io
+      - registry-1.docker.io
+      - quay.io
+      - ghcr.io
+```
+
+---
+
 ## Providers with no configurable rule templates
 
 These providers run automatically during `regis analyze` and contribute data to the
 report, but they do not expose rule templates you can configure in a playbook:
 
-| Provider | What it measures |
-|----------|----------------|
-| `endoflife` | Whether the base OS / runtime has reached end-of-life |
-| `popularity` | Registry pull counts and stars |
-| `size` | Compressed and uncompressed image size breakdown |
-| `provenance` | Supply chain provenance evidence (Sigstore / SLSA) |
+| Provider     | What it measures                                      |
+| ------------ | ----------------------------------------------------- |
+| `endoflife`  | Whether the base OS / runtime has reached end-of-life |
+| `popularity` | Registry pull counts and stars                        |
+| `size`       | Compressed and uncompressed image size breakdown      |
+| `provenance` | Supply chain provenance evidence (Sigstore / SLSA)    |
 
 To enforce policy on these, use the `skopeo` rules (size) or wait for future rule
 templates to be added to those analyzers.

@@ -48,59 +48,67 @@ After the user picks a rule, ask for its key options (using the defaults from
 
 ### Group A — Vulnerabilities & secrets (`trivy`)
 
-| Rule | What it checks | Key options |
-|------|---------------|-------------|
-| `cve-count` | Max CVEs at a given severity | `level` (critical/high/medium/low), `max_count` (default 0) |
-| `fix-available` | Max fixable CVEs | `max_count` (default 0) |
-| `secret-scan` | Embedded secrets/tokens | `max_count` (default 0) |
+| Rule            | What it checks               | Key options                                                 |
+| --------------- | ---------------------------- | ----------------------------------------------------------- |
+| `cve-count`     | Max CVEs at a given severity | `level` (critical/high/medium/low), `max_count` (default 0) |
+| `fix-available` | Max fixable CVEs             | `max_count` (default 0)                                     |
+| `secret-scan`   | Embedded secrets/tokens      | `max_count` (default 0)                                     |
 
 ### Group B — Dockerfile quality
 
 **`hadolint`**
 
-| Rule | What it checks | Key options |
-|------|---------------|-------------|
+| Rule             | What it checks             | Key options                                           |
+| ---------------- | -------------------------- | ----------------------------------------------------- |
 | `severity-count` | Dockerfile lint violations | `level` (error/warning/info), `max_count` (default 0) |
 
 **`dockle`** (CIS Docker Benchmark)
 
-| Rule | What it checks | Key options |
-|------|---------------|-------------|
+| Rule             | What it checks         | Key options                                        |
+| ---------------- | ---------------------- | -------------------------------------------------- |
 | `severity-count` | CIS benchmark failures | `level` (fatal/warn/info), `max_count` (default 0) |
 
 ### Group C — Supply chain
 
 **`sbom`**
 
-| Rule | What it checks | Key options |
-|------|---------------|-------------|
-| `has-sbom` | Image must provide an SBOM | (none) |
-| `license-blocklist` | Block forbidden licenses | `blocklist` (list of SPDX IDs, default []) |
+| Rule                | What it checks             | Key options                                |
+| ------------------- | -------------------------- | ------------------------------------------ |
+| `has-sbom`          | Image must provide an SBOM | (none)                                     |
+| `license-blocklist` | Block forbidden licenses   | `blocklist` (list of SPDX IDs, default []) |
 
 **`scorecarddev`** (OpenSSF Scorecard)
 
-| Rule | What it checks | Key options |
-|------|---------------|-------------|
+| Rule        | What it checks                  | Key options                      |
+| ----------- | ------------------------------- | -------------------------------- |
 | `min-score` | Minimum OpenSSF Scorecard score | `min_score` (float, default 5.0) |
 
 ### Group D — Freshness (`freshness`)
 
-| Rule | What it checks | Key options |
-|------|---------------|-------------|
+| Rule  | What it checks                  | Key options                  |
+| ----- | ------------------------------- | ---------------------------- |
 | `age` | Image must be newer than N days | `max_days` (int, default 30) |
+
+### Group F — Registry policy (`core`)
+
+| Rule                       | What it checks                       | Key options                                                                       |
+| -------------------------- | ------------------------------------ | --------------------------------------------------------------------------------- |
+| `registry-domain-whitelist` | Image must come from an allowed registry | `domains` (list, defaults: docker.io, registry-1.docker.io, quay.io, ghcr.io) |
+
+Only add if the user wants to enforce source registry policy.
 
 ### Group E — Image configuration (`skopeo`)
 
-| Rule | Key options |
-|------|-------------|
-| `user-blacklist` | `blacklist` (list, e.g. `["root", "0"]`) |
-| `max-size` | `max_mb` (float) |
-| `layers-count` | `max_count` (int) |
-| `tag-blacklist` | `blacklist` (list of tag patterns) |
-| `platforms-count` | `min_count` (int, for multi-arch) |
-| `exposed-ports-whitelist` | `whitelist` (list of port numbers) |
-| `required-labels` | `labels` (list of OCI label names) |
-| `env-blacklist` | `blacklist` (list of env var names) |
+| Rule                      | Key options                              |
+| ------------------------- | ---------------------------------------- |
+| `user-blacklist`          | `blacklist` (list, e.g. `["root", "0"]`) |
+| `max-size`                | `max_mb` (float)                         |
+| `layers-count`            | `max_count` (int)                        |
+| `tag-blacklist`           | `blacklist` (list of tag patterns)       |
+| `platforms-count`         | `min_count` (int, for multi-arch)        |
+| `exposed-ports-whitelist` | `whitelist` (list of port numbers)       |
+| `required-labels`         | `labels` (list of OCI label names)       |
+| `env-blacklist`           | `blacklist` (list of env var names)      |
 
 ### Recommended starting point
 
@@ -128,9 +136,9 @@ which CVE severity to count; the playbook `level` sets the weight of a failure.
 Explain that tiers assign a label (Gold / Silver / Bronze) based on the overall score.
 Present the defaults:
 
-| Tier | Threshold |
-|------|-----------|
-| Gold | score > 90 |
+| Tier   | Threshold  |
+| ------ | ---------- |
+| Gold   | score > 90 |
 | Silver | score > 70 |
 | Bronze | score > 50 |
 
@@ -203,7 +211,7 @@ Construct valid YAML from stages 2–4. Use this structure:
 # Docs: https://trivoallan.github.io/regis/docs/concepts/playbooks
 
 name: "<name>"
-description: "<description>"  # omit if not provided
+description: "<description>" # omit if not provided
 
 tiers:
   - name: Gold
@@ -221,18 +229,18 @@ rules:
     rule: <rule-slug>
     slug: <unique-slug>
     level: <critical|warning|info>
-    options:          # omit if no options
+    options: # omit if no options
       <key>: <value>
 
-badges:               # omit if no CI or no badges requested
+badges: # omit if no CI or no badges requested
   - slug: <rule-slug>
     scope: <Scope>
     value: <Label>
     condition:
       "!": [{ var: rules.<slug>.passed }]
-    class: <error|warning|success>
+    class: <error|warning|success|information>
 
-integrations:         # only if GitLab chosen
+integrations: # only if GitLab chosen
   gitlab:
     badges:
       - <slug>
@@ -243,11 +251,18 @@ integrations:         # only if GitLab chosen
           - label: <item>
             show_if: { "!!": [{ var: rules.<slug> }] }
             check_if: { var: rules.<slug>.passed }
+
+  # links:
+  #   - label: Return to Merge Request
+  #     url: "{{ env.CI_MERGE_REQUEST_PROJECT_URL }}/-/merge_requests/{{ env.CI_MERGE_REQUEST_IID }}"
+  # integrations.gitlab.templates:
+  #   - url: https://example.com/evidence-template
 ```
 
 ### File 2: `README.md`
 
 Generate automatically with:
+
 - Playbook name and description
 - Table of enabled rules: slug, provider, rule template, level, key options
 - How to run:

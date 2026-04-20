@@ -113,10 +113,15 @@ rules:
     enable: false
     options:
       blocklist:
+        - GPL-2.0
         - GPL-2.0-only
+        - GPL-2.0-or-later
+        - GPL-3.0
         - GPL-3.0-only
-        - AGPL-3.0-only
-        - SSPL-1.0
+        - GPL-3.0-or-later
+        - AGPL-1.0
+        - LGPL-2.1
+        - LGPL-3.0
 
   # ── Image age ──────────────────────────────────────────────────────────────
 
