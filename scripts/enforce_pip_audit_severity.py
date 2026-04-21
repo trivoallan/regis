@@ -174,7 +174,8 @@ def main() -> int:
     blocking = [
         finding
         for finding in findings
-        if finding.severity in SEVERITY_RANK and SEVERITY_RANK[finding.severity] >= min_rank
+        if finding.severity in SEVERITY_RANK
+        and SEVERITY_RANK[finding.severity] >= min_rank
     ]
     unknown = [finding for finding in findings if finding.severity == "UNKNOWN"]
 
