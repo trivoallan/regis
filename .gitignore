@@ -28,6 +28,9 @@ htmlcov/
 # OMC state
 .omc/
 
+# Planning & internal notes (not for public repo)
+thoughts/
+
 # Claude AI worktrees
 .claude/worktrees/
 
