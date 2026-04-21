@@ -96,6 +96,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). A
 
 ## CI/CD
 
+- `ci-test.yml` includes `pip-audit` and enforces a HIGH/CRITICAL severity gate via `scripts/enforce_pip_audit_severity.py` (severity is resolved from OSV metadata).
+- `cd-docker.yml` generates CycloneDX/SPDX SBOM artifacts and emits provenance attestations using `actions/attest-build-provenance`.
 - **GitHub App authentication**: All workflows use `actions/create-github-app-token@v1` with secrets `REGIS_CI_APP_ID` + `REGIS_CI_APP_PRIVATE_KEY`. Never use `GITHUB_TOKEN` for checkouts that need to trigger downstream CI runs — it won't.
 - **Dependabot PRs + secrets**: Workflows triggered by Dependabot PRs via `pull_request` run with read-only `GITHUB_TOKEN` and no secret access. Use `pull_request_target` for any workflow that needs to act on Dependabot PRs (safe when no PR code is checked out).
 - **Release Please PRs**: Labelled `autorelease: pending` — exclude from auto-merge with `!contains(github.event.pull_request.labels.*.name, 'autorelease: pending')`.

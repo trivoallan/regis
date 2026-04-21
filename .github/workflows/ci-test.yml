@@ -52,6 +52,32 @@ jobs:
       - name: Run pytest
         run: pipenv run pytest
 
+      - name: Run pip-audit (HIGH/CRITICAL gate)
+        run: |
+          pipenv requirements > requirements-ci.txt
+          pipenv run pip install pip-audit
+          set +e
+          pipenv run pip-audit -r requirements-ci.txt --format=json --output pip-audit-report.json
+          audit_exit_code=$?
+          set -e
+          if [ ! -s pip-audit-report.json ]; then
+            echo "pip-audit did not produce JSON output"
+            exit 1
+          fi
+          python scripts/enforce_pip_audit_severity.py pip-audit-report.json --min-severity HIGH
+          if [ "$audit_exit_code" -ne 0 ]; then
+            echo "pip-audit reported vulnerabilities; severity gate applied above"
+          fi
+
+      - name: Upload pip-audit report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pip-audit-report
+          path: pip-audit-report.json
+          retention-days: 14
+          if-no-files-found: warn
+
       - name: Generate coverage badge
         if: always()
         continue-on-error: true

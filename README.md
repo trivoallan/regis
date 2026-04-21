@@ -86,6 +86,18 @@ Below is a preview of the different sections available in a standard report.
 
 ---
 
+## CI/CD Security & Supply Chain Integrity
+
+The GitHub Actions pipelines enforce layered security controls:
+
+- **Dependency auditing gate (`pip-audit`)** in CI with a fail threshold at **HIGH/CRITICAL** severity.
+- **Release SBOM generation** in both **CycloneDX JSON** and **SPDX JSON** formats (via `syft`/Anchore action).
+- **Provenance attestation** for published container images using GitHub Artifact Attestations (`actions/attest-build-provenance`).
+
+These artifacts are uploaded by the release workflow so consumers can inspect composition and verify origin before deployment.
+
+---
+
 ## License
 
 MIT
