@@ -29,6 +29,8 @@ def _extract_cvss_score(severity_entries: list[dict]) -> float | None:
         score = severity.get("score", "")
         if isinstance(score, str):
             try:
+                if score.startswith("CVSS:"):
+                    return float(score.rsplit("/", 1)[-1])
                 return float(score)
             except ValueError:
                 continue
@@ -100,6 +102,18 @@ def _fetch_severities(vuln_ids: Iterable[str], cache: dict[str, str | None]) -> 
 def _iter_findings(report: dict) -> list[Finding]:
     findings: list[Finding] = []
     cache: dict[str, str | None] = {}
+    candidate_ids: set[str] = set()
+
+    for dependency in report.get("dependencies", []):
+        for vuln in dependency.get("vulns", []):
+            vuln_id = vuln.get("id", "")
+            if vuln_id:
+                candidate_ids.add(vuln_id)
+            for alias in vuln.get("aliases", []):
+                if alias:
+                    candidate_ids.add(alias)
+
+    _fetch_severities(candidate_ids, cache)
 
     for dependency in report.get("dependencies", []):
         package = dependency.get("name", "unknown")
@@ -108,10 +122,9 @@ def _iter_findings(report: dict) -> list[Finding]:
         for vuln in dependency.get("vulns", []):
             candidate_ids = [vuln.get("id", "")]
             candidate_ids.extend(vuln.get("aliases", []))
-            _fetch_severities(candidate_ids, cache)
 
             severity: str | None = None
-            resolved_id = vuln.get("id", "unknown")
+            resolved_id = vuln.get("id") or "UNKNOWN_ID"
             for candidate_id in candidate_ids:
                 if not candidate_id:
                     continue
