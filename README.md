@@ -94,7 +94,7 @@ The GitHub Actions pipelines enforce layered security controls:
 - **Release SBOM generation** in both **CycloneDX JSON** and **SPDX JSON** formats (via `syft`/Anchore action).
 - **Provenance attestation** for published container images using GitHub Artifact Attestations (`actions/attest-build-provenance`).
 
-These artifacts are uploaded by the release workflow so consumers can inspect composition and verify origin before deployment.
+These artifacts are uploaded by the release/CD workflow as GitHub Actions workflow artifacts so consumers can inspect composition and verify origin before deployment.
 
 ---
 
