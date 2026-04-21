@@ -22,7 +22,6 @@ env:
 
 permissions:
   contents: read
-  pull-requests: write
 
 concurrency:
   group: docs-publish-main
@@ -31,8 +30,10 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: docs-production
     permissions:
       contents: write
+      pages: write
       pull-requests: write
     steps:
       - name: Generate GitHub App token
@@ -148,6 +149,27 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Audit Node dependencies (HIGH/CRITICAL gate)
+        run: |
+          set +e
+          pnpm audit --audit-level=high --json > npm-audit-report.json 2>&1
+          audit_exit_code=$?
+          set -e
+          if [ "$audit_exit_code" -ne 0 ]; then
+            echo "pnpm audit found HIGH or CRITICAL vulnerabilities — failing build"
+            cat npm-audit-report.json
+            exit 1
+          fi
+
+      - name: Upload npm-audit report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: npm-audit-report
+          path: npm-audit-report.json
+          retention-days: 14
+          if-no-files-found: warn
+
       - name: Generate Schema Docs
         if: steps.changes.outputs.generate_reference == 'true'
         run: |
@@ -210,6 +232,14 @@ jobs:
       - name: Docusaurus build
         run: pnpm run build
         working-directory: docs/website
+
+      - name: Upload Docusaurus build artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: docs-build-${{ github.sha }}
+          path: docs/website/build
+          retention-days: 30
+          if-no-files-found: error
 
       - name: Create Pull Request for documentation updates
         if: steps.changes.outputs.generate_reference == 'true' || steps.changes.outputs.refresh_badge == 'true'
