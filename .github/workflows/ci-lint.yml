@@ -67,7 +67,7 @@ jobs:
         run: git fetch origin main:refs/remotes/origin/main
 
       - name: Trunk Check (robuste PR)
-        run: ${{ env.TRUNK_PATH }} check --base origin/main
+        run: ${{ env.TRUNK_PATH }} check
 
   docs-links:
     name: Docs Link Check
