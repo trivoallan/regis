@@ -98,6 +98,27 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 
 ## Current Objective
 
+**Pre-v1 Architecture Reflection: Monorepo Structure**
+
+Taking time to seriously consider whether to keep the current monorepo structure (regis CLI + dashboard + docs) vs. split before v1.
+
+This is NOT a decision to make now — it's a structured reflection for later. Key considerations:
+
+- **Current state**: Polyglot monorepo (Python + JavaScript/TypeScript, pnpm workspace, Release Please)
+- **Coupling**: Dashboard and docs tightly bound to regis version; shared schemas, rules, analyzers
+- **Unknowns**: Future contributor patterns, post-v1 release cadence, governance at scale
+- **Trade-offs**: Atomicity vs. flexibility; shared tooling vs. polyglot overhead
+
+**To explore before deciding**:
+1. Test contributor workflows (naive PR on dashboard/docs)
+2. Project post-v1 evolution (dashboard vs. CLI cadence)
+3. Consult with potential multi-team contributors
+4. Document constraints (Harbor integration, JSON schemas, regis-specific rules)
+
+**Next step**: Create a spike document under `docs/memory-bank/plans/` if deep analysis is needed, but no rush.
+
+## Current Objective
+
 GitHub Actions authentication centralization complete.
 
 ## Recent Changes (main branch)
