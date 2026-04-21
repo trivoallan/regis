@@ -54,10 +54,9 @@ jobs:
 
       - name: Run pip-audit (HIGH/CRITICAL gate)
         run: |
-          pipenv requirements > requirements-ci.txt
-          pipenv run pip install pip-audit
+          pipenv run pip install pip-audit==2.10.0
           set +e
-          pipenv run pip-audit -r requirements-ci.txt --format=json --output pip-audit-report.json
+          pipenv run pip-audit --local --format=json --output pip-audit-report.json
           audit_exit_code=$?
           set -e
           if [ ! -s pip-audit-report.json ]; then
