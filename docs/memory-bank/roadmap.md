@@ -126,13 +126,13 @@ _Objectif : polish v1 + préparation pilote._
 
 ## Post-v1 / Backlog
 
-| Item                              | Description                                                                                                                            | Notes                                     |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Policy versioning**             | Versionner les playbooks indépendamment avec ranges de compatibilité.                                                                  | Design spike requis                       |
-| **SARIF export**                  | Export SARIF pour GitLab/GitHub Advanced Security.                                                                                     | À confirmer selon usage                   |
-| **Custom analyzer guide**         | Docs développeur pour créer des analyzers custom.                                                                                      | v1.x                                      |
-| **Multi-image comparison**        | Comparer la posture sécurité d'une flotte d'images.                                                                                    | Builds on `regis diff`                    |
-| **Import mise à jour de version** | Playbook allégé pour importer une nouvelle version d'une image déjà au catalogue — checklist réduite, focus sur le delta CVE/licences. | Après `regis diff`                        |
-| **Fusion catalogue existant**     | Intégrer le catalogue d'images existant dans Regis — migration/import des images déjà référencées sous gouvernance Regis.              | Design spike requis                       |
-| **Self-scan CI**                  | `regis analyze ghcr.io/trivoallan/regis:latest` dans la CI GitHub — Regis s'analyse lui-même à chaque release. Gate bloquant ou rapport d'information. | Signal de maturité — post-v1 |
-| **Tailwind v4 migration**         | Migration dashboard vers Tailwind v4.                                                                                                  | **Bloqué** — `@headlessui/tailwindcss` v4 |
+| Item                              | Description                                                                                                                                            | Notes                                     |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- |
+| **Policy versioning**             | Versionner les playbooks indépendamment avec ranges de compatibilité.                                                                                  | Design spike requis                       |
+| **SARIF export**                  | Export SARIF pour GitLab/GitHub Advanced Security.                                                                                                     | À confirmer selon usage                   |
+| **Custom analyzer guide**         | Docs développeur pour créer des analyzers custom.                                                                                                      | v1.x                                      |
+| **Multi-image comparison**        | Comparer la posture sécurité d'une flotte d'images.                                                                                                    | Builds on `regis diff`                    |
+| **Import mise à jour de version** | Playbook allégé pour importer une nouvelle version d'une image déjà au catalogue — checklist réduite, focus sur le delta CVE/licences.                 | Après `regis diff`                        |
+| **Fusion catalogue existant**     | Intégrer le catalogue d'images existant dans Regis — migration/import des images déjà référencées sous gouvernance Regis.                              | Design spike requis                       |
+| **Self-scan CI**                  | `regis analyze ghcr.io/trivoallan/regis:latest` dans la CI GitHub — Regis s'analyse lui-même à chaque release. Gate bloquant ou rapport d'information. | Signal de maturité — post-v1              |
+| **Tailwind v4 migration**         | Migration dashboard vers Tailwind v4.                                                                                                                  | **Bloqué** — `@headlessui/tailwindcss` v4 |
