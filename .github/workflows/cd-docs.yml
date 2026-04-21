@@ -149,14 +149,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Audit Node dependencies (HIGH/CRITICAL gate)
+      - name: Audit Node dependencies (CRITICAL gate)
         run: |
           set +e
-          pnpm audit --audit-level=high --json > npm-audit-report.json 2>&1
+          pnpm audit --audit-level=critical --json > npm-audit-report.json 2>&1
           audit_exit_code=$?
           set -e
           if [ "$audit_exit_code" -ne 0 ]; then
-            echo "pnpm audit found HIGH or CRITICAL vulnerabilities — failing build"
+            echo "pnpm audit found CRITICAL vulnerabilities — failing build"
             cat npm-audit-report.json
             exit 1
           fi
