@@ -24,7 +24,9 @@ def _run_injection(files_mock, version_str: str) -> dict:
             from importlib.resources import files as _res_files
 
             _dates_text = (
-                _res_files("regis").joinpath("data/snapshot_dates.json").read_text(encoding="utf-8")
+                _res_files("regis")
+                .joinpath("data/snapshot_dates.json")
+                .read_text(encoding="utf-8")
             )
             _dates = json.loads(_dates_text)
             from importlib.metadata import version as _version
@@ -47,8 +49,8 @@ def test_snapshot_date_injected():
 
 def test_snapshot_date_absent_when_no_file():
     files_mock = MagicMock()
-    files_mock.return_value.joinpath.return_value.read_text.side_effect = FileNotFoundError(
-        "snapshot_dates.json not found"
+    files_mock.return_value.joinpath.return_value.read_text.side_effect = (
+        FileNotFoundError("snapshot_dates.json not found")
     )
     report = _run_injection(files_mock, "1.2.3")
     assert "snapshot_date" not in report

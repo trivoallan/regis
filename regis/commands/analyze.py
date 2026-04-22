@@ -462,7 +462,9 @@ def analyze(
             from importlib.resources import files as _res_files
 
             _dates_text = (
-                _res_files("regis").joinpath("data/snapshot_dates.json").read_text(encoding="utf-8")
+                _res_files("regis")
+                .joinpath("data/snapshot_dates.json")
+                .read_text(encoding="utf-8")
             )
             _dates = json.loads(_dates_text)
             _pkg_version = version("regis")
