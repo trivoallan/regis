@@ -5,6 +5,7 @@
 **Tech stack**: Python (pipenv), Ruff (lint/format), pytest, Trunk (CI linter orchestrator), Docusaurus (docs), GitHub Actions (CI/CD), Release Please (releases).
 
 **Key architecture**:
+
 - `regis/cli.py` — main entrypoint
 - `regis/analyzers/` — pluggable analyzers (entry-points in pyproject.toml)
 - `regis/commands/` — CLI commands (analyze, archive, bootstrap, check, rules)
