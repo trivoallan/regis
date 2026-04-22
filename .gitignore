@@ -50,3 +50,25 @@ docs/website/docs/whats-new.md.worktrees/
 
 .worktrees
 .claude/worktrees
+
+# ── GSD baseline (auto-generated) ──
+.gsd
+.gsd-id
+.mcp.json
+.bg-shell/
+Thumbs.db
+*.swo
+*~
+*.code-workspace
+.env
+.env.*
+!.env.example
+.next/
+*.pyc
+venv/
+target/
+vendor/
+*.log
+coverage/
+.cache/
+tmp/

@@ -19,7 +19,7 @@ dependencies = [
   "pyyaml>=6.0",
   "jinja2>=3.1",
   "cookiecutter>=2.5",
-  "referencing<0.37.0",
+  "referencing>=0.28.4",
   "python-gitlab>=4.4.0",
   "fastapi>=0.115.0",
   "uvicorn[standard]>=0.34",
@@ -63,6 +63,7 @@ regis = [
   "cookiecutters/**/*",
   "dashboard_assets/**/*",
   "playbooks/**/*",
+  "data/*.json",
 ]
 
 [tool.setuptools_scm]

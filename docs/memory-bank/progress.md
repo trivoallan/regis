@@ -49,7 +49,15 @@
 
 ## Completed (Recent)
 
-- **Claude Workflows CI/CD Fixes (2026-04-22)**: 
+- **M002/S02 — Snapshot publication date (2026-04-22)**:
+  - Backfilled snapshot dates for v0.27.0 (→ 2026-04-09) and v0.26.2 (→ 2026-04-03) in both `regis/data/snapshot_dates.json` and `docs/website/snapshot-dates.json`.
+  - Added `--markdown` flag to `regis analyze` (no `-m` shorthand — conflicts with existing `-m`/`--meta`).
+  - Added `_render_markdown()` helper and `elif fmt == 'md':` branch in `regis/utils/report.py`.
+  - Markdown output: image-ref header, analysis timestamp, optional `snapshot_date` line (guarded on truthiness), playbook results table.
+  - 8 unit tests in `tests/commands/test_analyze_markdown.py` + structural acceptance script `scripts/verify_s02.py` (7/7 checks pass).
+  - 460 total tests pass, no regressions.
+
+- **Claude Workflows CI/CD Fixes (2026-04-22)**:
   - SHA-pinned GitHub Actions to commit SHAs (`actions/checkout` and `anthropics/claude-code-action`)
   - Added workflow-level permissions block to satisfy security checks
   - Fixed YAML linting issues

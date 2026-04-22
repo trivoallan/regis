@@ -13,5 +13,10 @@
       "serialize-javascript": "^7.0.5",
       "webpack": "<5.106.0"
     }
+  },
+  "dependencies": {
+    "gsd-pi": "^2.77.0",
+    "node-addon-api": "^8.7.0",
+    "node-gyp": "^12.3.0"
   }
 }

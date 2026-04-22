@@ -191,6 +191,13 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     type=click.IntRange(1, 20),
     help="Maximum number of analyzers to run in parallel. Use 1 for serial execution.",
 )
+@click.option(
+    "--markdown",
+    "markdown",
+    is_flag=True,
+    default=False,
+    help="Also emit a Markdown summary report (report.md).",
+)
 def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
@@ -213,6 +220,7 @@ def analyze(
     max_workers: int = 4,
     rerun: str | None = None,
     report_dir: Path | None = None,
+    markdown: bool = False,
 ) -> None:
     """Analyze a Docker image and evaluate playbooks.
 
@@ -277,6 +285,8 @@ def analyze(
             existing_report.setdefault("request", {})["metadata"] = metadata_dict
 
         formats = ["json"]
+        if markdown:
+            formats.append("md")
         rerun_report = run_playbooks(
             playbook_paths, existing_report, formats, show_rules=evaluate
         )
@@ -329,6 +339,8 @@ def analyze(
         formats.append("json")
     if site:
         formats.append("html")
+    if markdown:
+        formats.append("md")
 
     dir_tmpl = output_dir_template or "reports/{registry}/{repository}/{digest}"
     file_tmpl = output_template or "report.{format}"
@@ -446,6 +458,22 @@ def analyze(
             analysis_report["metadata"] = metadata_dict
             analysis_report["request"]["metadata"] = metadata_dict
 
+        try:
+            from importlib.resources import files as _res_files
+
+            _dates_text = (
+                _res_files("regis")
+                .joinpath("data/snapshot_dates.json")
+                .read_text(encoding="utf-8")
+            )
+            _dates = json.loads(_dates_text)
+            _pkg_version = version("regis")
+            _entry = _dates.get(f"v{_pkg_version}") or _dates.get(_pkg_version)
+            if _entry and _entry.get("date"):
+                analysis_report["snapshot_date"] = _entry["date"]
+        except Exception:
+            pass
+
     if not final_report or evaluate or playbook_paths:
         final_report = run_playbooks(
             playbook_paths, analysis_report, formats, show_rules=evaluate
@@ -459,6 +487,9 @@ def analyze(
         final_report["badges"] = pb0.get("badges", [])
 
     validate_report(final_report)
+
+    if final_report.get("snapshot_date"):
+        click.echo(f"  Snapshot date: {final_report['snapshot_date']}", err=True)
 
     if archive_dir:
         from regis.archive.store import add_to_archive

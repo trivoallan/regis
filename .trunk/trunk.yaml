@@ -59,6 +59,9 @@ lint:
     - linters: [prettier]
       paths:
         - docs/website/versions.json
+    - linters: [checkov]
+      paths:
+        - .github/workflows/ci-action-dogfood.yml
 
 actions:
   definitions:

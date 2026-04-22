@@ -35,6 +35,7 @@ export interface ReportData {
   links?: Array<{ label: string; url: string }>;
   playbooks?: PlaybookResult[];
   playbook?: PlaybookResult;
+  snapshot_date?: string;
 }
 
 export interface RuleResult {

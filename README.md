@@ -98,6 +98,73 @@ These artifacts are uploaded by the release/CD workflow as GitHub Actions workfl
 
 ---
 
+## GitHub Action
+
+The [**regis-security-analysis**](https://github.com/marketplace/actions/regis-security-analysis) GitHub Action runs a full Regis security analysis on any OCI image, uploads the HTML report as a workflow artifact, and optionally posts a summary comment on pull requests.
+
+### Inputs
+
+| Input             | Required | Default                 | Description                                                        |
+| ----------------- | -------- | ----------------------- | ------------------------------------------------------------------ |
+| `image-url`       | Yes      | —                       | Container image URL to analyze                                     |
+| `auth`            | No       | `""`                    | Registry credentials as `registry=user:pass`                       |
+| `playbook`        | No       | `""`                    | URL or path to a custom playbook YAML                              |
+| `report-url`      | No       | `""`                    | URL to the hosted report (used in the PR comment link)             |
+| `github-token`    | No       | `${{ github.token }}`   | Token for posting PR comments; requires `pull-requests: write`     |
+| `pr-url`          | No       | `""`                    | PR URL to comment on; auto-detected in `pull_request` context      |
+| `upload-artifact` | No       | `true`                  | Whether to upload the HTML report as a workflow artifact           |
+| `artifact-name`   | No       | `regis-security-report` | Name for the uploaded artifact                                     |
+| `version`         | No       | `latest`                | Regis Docker image tag to run (pin to a release tag in production) |
+
+### Outputs
+
+| Output        | Description                                         |
+| ------------- | --------------------------------------------------- |
+| `report-path` | Absolute path to the report directory on the runner |
+
+### Basic usage
+
+```yaml
+- uses: trivoallan/regis@main
+  with:
+    image-url: ghcr.io/your-org/your-image:latest
+```
+
+### PR comment usage
+
+To post a comment with the analysis summary on a pull request, add `pull-requests: write` to your job permissions and supply `pr-url`:
+
+```yaml
+jobs:
+  security-scan:
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: trivoallan/regis@main
+        with:
+          image-url: ghcr.io/your-org/your-image:latest
+          pr-url: ${{ github.event.pull_request.html_url }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+The PR comment fires only when `pr-url` is set. The `github-token` always defaults to `GITHUB_TOKEN`; supplying it explicitly is optional.
+
+### Version pinning
+
+`@main` always uses the latest action code, which may be unstable. For production workflows, pin to a release tag:
+
+```yaml
+- uses: trivoallan/regis@v0.28.0
+  with:
+    image-url: ghcr.io/your-org/your-image:latest
+    version: "0.28.0" # Docker image tag — independent from the action ref above
+```
+
+The `uses:` ref (action code) and the `version:` input (Docker image tag) are independent; pin both for a fully reproducible run.
+
+---
+
 ## License
 
 MIT

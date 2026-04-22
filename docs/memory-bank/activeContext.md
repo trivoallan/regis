@@ -104,7 +104,13 @@
   - **`trunk.yml`**: Uses App token so auto-committed formatting fixes trigger downstream CI runs (GITHUB_TOKEN commits don't trigger).
   - **Motivation**: Centralized auth mechanism ensures bot-created PRs and auto-commits trigger proper CI/CD workflows.
 - [2026-04-21] Migrated Memory Bank protocol to point at `docs/memory-bank/` and deprecated the root-level duplicate.
-- [2026-04-22] **Claude Workflows CI/CD Fixes**: 
+- [2026-04-22] **M002/S02 completed — Snapshot publication date**:
+  - Backfilled v0.27.0/v0.26.2 snapshot dates in both JSON data files.
+  - Added `--markdown` flag to `regis analyze` (no `-m` shorthand; conflicts with `--meta`).
+  - New `_render_markdown()` in `report.py` follows the `elif fmt == '<ext>':` pattern.
+  - 12 slice tests pass, 460 total pass. `scripts/verify_s02.py` exits 0 (7/7 checks).
+  - Key decision: `-m` shorthand dropped; `_render_markdown` guards `snapshot_date` on truthiness.
+- [2026-04-22] **Claude Workflows CI/CD Fixes**:
   - SHA-pinned all GitHub Actions in `claude-code-review.yml` and `claude.yml` workflows to comply with lint pipeline requirements.
   - Resolved Checkov CKV2_GHA_1 security check by adding workflow-level default permissions.
   - Fixed YAML linting issues (redundantly quoted strings).

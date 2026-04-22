@@ -22,7 +22,7 @@ jobs:
       - name: Generate GitHub App token
         id: generate-token
         continue-on-error: true
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ secrets.REGIS_CI_APP_ID }}
           private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
@@ -30,13 +30,13 @@ jobs:
       - name: Fetch Dependabot metadata
         id: dependabot-metadata
         continue-on-error: true
-        uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a # v2
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
         with:
           github-token: ${{ steps.generate-token.outputs.token || github.token }}
           alert-lookup: true
 
       - name: Setup Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: 3.x
 

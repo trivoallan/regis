@@ -27,13 +27,13 @@ jobs:
       - name: Generate GitHub App token
         id: generate-token
         continue-on-error: true
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ secrets.REGIS_CI_APP_ID }}
           private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
 
       - name: Checkout Code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           token: ${{ steps.generate-token.outputs.token || github.token }}
           fetch-depth: 0
@@ -77,11 +77,11 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Detect docs changes
         id: docs_changes
-        uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3.0.3
+        uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
         with:
           filters: |
             docs:
@@ -112,13 +112,15 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Ensure actions are pinned by SHA
         run: |
           set -euo pipefail
 
-          if grep -RInE 'uses:\s*[^[:space:]]+@(v[0-9]+|main|master|latest)\b' .github/workflows/*.yml; then
+          # Exclude trivoallan/regis — self-referencing action cannot be SHA-pinned
+          if grep -RInE 'uses:\s*[^[:space:]]+@(v[0-9]+|main|master|latest)\b' .github/workflows/*.yml \
+            | grep -v 'trivoallan/regis@'; then
             echo "::error::Found non-pinned action reference in top-level workflows. Pin all actions to full commit SHA."
             exit 1
           fi

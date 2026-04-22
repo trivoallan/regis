@@ -10,6 +10,10 @@
       "type": ["string", "null"],
       "description": "Version of regis that generated this report."
     },
+    "snapshot_date": {
+      "type": "string",
+      "description": "ISO 8601 date when this version was snapshotted in the doc site."
+    },
     "tier": {
       "type": ["string", "null"],
       "description": "The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions."

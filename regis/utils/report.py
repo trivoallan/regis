@@ -258,6 +258,38 @@ def validate_report(report: dict[str, Any]) -> None:
             ) from exc
 
 
+def _render_markdown(report: dict[str, Any]) -> str:
+    """Render a Markdown summary from a regis report dict."""
+    request = report.get("request", {})
+    image_ref = request.get("image_ref") or (
+        f"{request.get('registry', '')}/{request.get('repository', '')}:{request.get('tag', '')}"
+    )
+    lines: list[str] = [f"# {image_ref}", ""]
+
+    timestamp = request.get("timestamp") or report.get("timestamp")
+    if timestamp:
+        lines += [f"**Analysis date:** {timestamp}", ""]
+
+    snapshot_date = report.get("snapshot_date") or report.get("request", {}).get(
+        "snapshot_date"
+    )
+    if snapshot_date:
+        lines += [f"**Snapshot date:** {snapshot_date}", ""]
+
+    playbooks = report.get("playbooks", [])
+    if playbooks:
+        lines += ["## Playbook results", ""]
+        lines += ["| Playbook | Verdict | Failing rules |", "| --- | --- | --- |"]
+        for pb in playbooks:
+            name = pb.get("name", "")
+            verdict = pb.get("verdict", "")
+            failing = sum(1 for r in pb.get("rules", []) if r.get("result") is False)
+            lines.append(f"| {name} | {verdict} | {failing} |")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
 def render_and_save_reports(
     report: dict[str, Any],
     formats: list[str],
@@ -324,6 +356,16 @@ def render_and_save_reports(
                     except KeyboardInterrupt:
                         click.echo("\n  Stopping server...", err=True)
                         httpd.shutdown()
+        elif fmt == "md":
+            rendered = _render_markdown(report)
+            file_tmpl = output_template or "report.md"
+            write_report(
+                dir_tmpl=output_dir_template or ".",
+                file_tmpl=file_tmpl,
+                report=report,
+                fmt=fmt,
+                rendered=rendered,
+            )
         else:
             indent = 2 if pretty else None
             rendered = json.dumps(report, indent=indent, ensure_ascii=False)

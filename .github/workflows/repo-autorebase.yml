@@ -19,13 +19,13 @@ jobs:
     steps:
       - name: Generate GitHub App token
         id: generate-token
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ secrets.REGIS_CI_APP_ID }}
           private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
 
       - name: Rebase open PRs
-        uses: peter-evans/rebase@e4945786f7ca41fe6e101cead4395f5489593943 # v4
+        uses: peter-evans/rebase@e4945786f7ca41fe6e101cead4395f5489593943 # v4.0.0
         with:
           token: ${{ steps.generate-token.outputs.token }}
           exclude-drafts: true
