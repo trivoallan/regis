@@ -19,6 +19,7 @@ export function RequestTable(): React.JSX.Element {
         : undefined,
     },
     { label: "Platform", value: req.platform },
+    { label: "Snapshot date", value: report.snapshot_date },
   ].filter((f) => f.value);
 
   return (
