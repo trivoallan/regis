@@ -16,7 +16,52 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      is_minor: ${{ steps.version.outputs.is_minor }}
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Extract version and check patch component
+        id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || '' }}
+        run: |
+          set -euo pipefail
+          case "$EVENT_NAME" in
+            release)
+              VERSION=$(echo "$RELEASE_TAG" | grep -oP '\d+\.\d+\.\d+' || true)
+              ;;
+            workflow_dispatch)
+              git fetch --tags --force --quiet
+              LATEST_TAG=$(git tag --list 'v*.*.*' --sort=-v:refname | head -n1)
+              VERSION=$(echo "$LATEST_TAG" | grep -oP '\d+\.\d+\.\d+' || true)
+              ;;
+          esac
+          if [ -z "${VERSION:-}" ]; then
+            echo "::error::Could not determine version (event=$EVENT_NAME, tag='$RELEASE_TAG')"
+            exit 1
+          fi
+          PATCH=$(echo "$VERSION" | cut -d. -f3)
+          if [ "$PATCH" -eq 0 ]; then
+            IS_MINOR=true
+          else
+            IS_MINOR=false
+          fi
+          echo "version=v${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "is_minor=${IS_MINOR}" >> "$GITHUB_OUTPUT"
+          echo "Version: v${VERSION}, patch=${PATCH}, is_minor=${IS_MINOR}"
+
   snapshot-pending:
+    needs: [check-version]
+    if: needs.check-version.outputs.is_minor == 'true'
     # Run on published release or manual dispatch. The snapshot must run off
     # `main` AFTER the release-please PR is merged and the GitHub release is
     # cut — never on top of the release-please branch, because squash-merging
@@ -120,6 +165,32 @@ jobs:
             exit 1
           fi
           echo "Snapshot for ${VERSION} created and validated successfully."
+
+      - name: Prune old version snapshots
+        working-directory: docs/website
+        run: |
+          set -euo pipefail
+          python3 - <<'EOF'
+          import json, shutil, pathlib, sys
+
+          versions_file = pathlib.Path("versions.json")
+          versions = json.loads(versions_file.read_text())
+
+          while len(versions) > 3:
+              oldest = versions.pop()
+              print(f"Pruning old snapshot: {oldest}")
+              doc_dir = pathlib.Path(f"versioned_docs/version-{oldest}")
+              sidebar_file = pathlib.Path(f"versioned_sidebars/version-{oldest}-sidebars.json")
+              if doc_dir.exists():
+                  shutil.rmtree(doc_dir)
+                  print(f"  Deleted {doc_dir}")
+              if sidebar_file.exists():
+                  sidebar_file.unlink()
+                  print(f"  Deleted {sidebar_file}")
+
+          versions_file.write_text(json.dumps(versions, indent=2) + "\n")
+          print(f"versions.json now contains {len(versions)} entries: {versions}")
+          EOF
 
       - name: Commit snapshot to branch and open PR
         env:
