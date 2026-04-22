@@ -8,22 +8,22 @@ tags:
 
 Max allowed violations for a given severity level.
 
-| Provider | Level   | Tags           |
-| :------- | :------ | :------------- |
+| Provider | Level | Tags |
+| :--- | :--- | :--- |
 | hadolint | Warning | best-practices |
 
 ## Parameters
 
-| Name        | Default Value | Description |
-| :---------- | :------------ | :---------- |
-| `level`     | `error`       | n/a         |
-| `max_count` | `0`           | n/a         |
+| Name | Default Value | Description |
+| :--- | :--- | :--- |
+| `level` | `error` | n/a |
+| `max_count` | `0` | n/a |
 
 ## Messages
 
-| Type     | Message                                                                                                                                      |
-| :------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Pass** | Hadolint ${rule.params.level} issues are within limits.                                                                                      |
+| Type | Message |
+| :--- | :--- |
+| **Pass** | Hadolint ${rule.params.level} issues are within limits. |
 | **Fail** | Hadolint found ${results.hadolint.issues_by_level.${rule.params.level}} ${rule.params.level} issues (max allowed: ${rule.params.max_count}). |
 
 ## Playbook Example

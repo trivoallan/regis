@@ -8,21 +8,21 @@ tags:
 
 Image must not contain forbidden environment variables.
 
-| Provider | Level    | Tags     |
-| :------- | :------- | :------- |
-| skopeo   | Critical | security |
+| Provider | Level | Tags |
+| :--- | :--- | :--- |
+| skopeo | Critical | security |
 
 ## Parameters
 
-| Name   | Default Value             | Description |
-| :----- | :------------------------ | :---------- |
-| `keys` | `['DEBUG', 'SECRET_KEY']` | n/a         |
+| Name | Default Value | Description |
+| :--- | :--- | :--- |
+| `keys` | `['DEBUG', 'SECRET_KEY']` | n/a |
 
 ## Messages
 
-| Type     | Message                                                     |
-| :------- | :---------------------------------------------------------- |
-| **Pass** | No forbidden environment variables found.                   |
+| Type | Message |
+| :--- | :--- |
+| **Pass** | No forbidden environment variables found. |
 | **Fail** | Image contains one or more forbidden environment variables. |
 
 ## Playbook Example
@@ -33,8 +33,8 @@ rules:
     rule: env-blacklist
     options:
       keys:
-        - DEBUG
-        - SECRET_KEY
+      - DEBUG
+      - SECRET_KEY
 ```
 
 ## Condition
