@@ -57,6 +57,7 @@
   - 8 unit tests in `tests/commands/test_analyze_markdown.py` + structural acceptance script `scripts/verify_s02.py` (7/7 checks pass).
   - 460 total tests pass, no regressions.
 
+
 - **Claude Workflows CI/CD Fixes (2026-04-22)**:
   - SHA-pinned GitHub Actions to commit SHAs (`actions/checkout` and `anthropics/claude-code-action`)
   - Added workflow-level permissions block to satisfy security checks
