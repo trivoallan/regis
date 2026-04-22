@@ -6,7 +6,7 @@
     "gitlab"
   ],
   "description": "Archive viewer for regis security analysis reports.",
-  "version": "0.28.6",
+  "version": "0.29.0",
   "regis_image_url": "ghcr.io/trivoallan/regis:{{ cookiecutter.version }}",
   "regis_image_base": "ghcr.io/trivoallan/regis",
   "_copy_without_render": [
