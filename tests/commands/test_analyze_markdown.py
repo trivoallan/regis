@@ -1,6 +1,5 @@
 """Unit tests for --markdown flag and Markdown rendering in regis analyze."""
 
-import pytest
 from click.testing import CliRunner
 
 from regis.commands.analyze import analyze
