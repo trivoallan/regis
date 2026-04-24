@@ -8,15 +8,15 @@ tags:
 
 Image tag should not be 'latest'.
 
-| Provider | Level   | Tags      |
-| :------- | :------ | :-------- |
-| skopeo   | Warning | lifecycle |
+| Provider | Level | Tags |
+| :--- | :--- | :--- |
+| skopeo | Warning | lifecycle |
 
 ## Messages
 
-| Type     | Message                                                              |
-| :------- | :------------------------------------------------------------------- |
-| **Pass** | Image tag is not 'latest'.                                           |
+| Type | Message |
+| :--- | :--- |
+| **Pass** | Image tag is not 'latest'. |
 | **Fail** | Image is using the 'latest' tag. Use immutable version tags instead. |
 
 ## Playbook Example
