@@ -1,0 +1,97 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# regis-cli
+
+**Container Security & Policy-as-Code Orchestration.**
+Analyze container images, enforce compliance policies, and generate interactive security reports — all from a single CLI.
+
+[Get Started →](./usage/getting-started.md)&nbsp;&nbsp;·&nbsp;&nbsp;[Live Example →](pathname:///regis/docs/examples/playbooks/default/alpine/)
+
+---
+
+## Features
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', margin: '1.5rem 0 2rem'}}>
+
+<div style={{border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: '8px', padding: '1rem'}}>
+
+**🔌 Pluggable Analyzers**
+
+Orchestrates Trivy, Skopeo, Hadolint, Dockle and more via a unified plugin system. Run all analyzers in parallel in a single command.
+
+</div>
+
+<div style={{border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: '8px', padding: '1rem'}}>
+
+**📋 Policy-as-Code Playbooks**
+
+Define compliance and security rules in YAML using JSON Logic. Enforce image age, CVE thresholds, allowed registries, and more — no code required.
+
+</div>
+
+<div style={{border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: '8px', padding: '1rem'}}>
+
+**📊 Interactive HTML Reports**
+
+Rich, navigable dashboards with drill-down views per analyzer, generated alongside machine-readable JSON for automation.
+
+</div>
+
+<div style={{border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: '8px', padding: '1rem'}}>
+
+**🏗️ Multi-arch Support**
+
+Inspect any OCI-compliant registry across all architectures and platforms. Supports Docker Hub, GHCR, ECR, and private registries.
+
+</div>
+
+<div style={{border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: '8px', padding: '1rem'}}>
+
+**⚙️ CI/CD Native**
+
+First-class GitHub Actions and GitLab CI integration. Attach HTML reports as artifacts and annotate PRs with policy results.
+
+</div>
+
+<div style={{border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: '8px', padding: '1rem'}}>
+
+**⚖️ License Compliance**
+
+Detect copyleft licenses (GPL, AGPL, LGPL…) across all SBOM components. Block non-compliant images before they reach production.
+
+</div>
+
+</div>
+
+---
+
+## Report Preview
+
+<Tabs>
+  <TabItem value="overview" label="Dashboard">
+    ![Dashboard Overview](/img/screenshots/report-overview.png)
+  </TabItem>
+  <TabItem value="compliance" label="Compliance">
+    ![Compliance Analysis](/img/screenshots/report-compliance.png)
+  </TabItem>
+  <TabItem value="security" label="Security">
+    ![Vulnerability & Security](/img/screenshots/report-security.png)
+  </TabItem>
+  <TabItem value="supply-chain" label="Supply Chain">
+    ![Supply Chain & Quality](/img/screenshots/report-supply-chain.png)
+  </TabItem>
+  <TabItem value="best-practices" label="Best Practices">
+    ![Best Practices](/img/screenshots/report-best-practices.png)
+  </TabItem>
+  <TabItem value="insights" label="Insights">
+    ![Insights & Lifecycle](/img/screenshots/report-insights.png)
+  </TabItem>
+  <TabItem value="technical" label="Technical">
+    ![Technical Details](/img/screenshots/report-technical-details.png)
+  </TabItem>
+</Tabs>
