@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.30.0](https://github.com/trivoallan/regis/compare/v0.29.0...v0.30.0) (2026-04-24)
+
+### Features
+
+- **cli:** add --print-path to archive add and --merge-meta to analyze ([#500](https://github.com/trivoallan/regis/issues/500)) ([33f60b9](https://github.com/trivoallan/regis/commit/33f60b927cc40e0d2e59e4282dd999bbe403068c))
+
 ## [0.29.0](https://github.com/trivoallan/regis/compare/v0.28.6...v0.29.0) (2026-04-22)
 
 ### Features
