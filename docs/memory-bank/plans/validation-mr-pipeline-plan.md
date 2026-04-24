@@ -18,7 +18,7 @@ version we ship is clean.
 1. **`apk` on a Debian image (apply_validation)** — the regis Docker image is
    `python:3.14-slim` (`Dockerfile:13`), not Alpine. The line
 
-   ```
+   ```sh
    apk add --no-cache jq curl 2>/dev/null || true
    ```
 
