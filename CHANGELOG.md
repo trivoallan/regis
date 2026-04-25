@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.31.0](https://github.com/trivoallan/regis/compare/v0.30.0...v0.31.0) (2026-04-25)
+
+### Features
+
+- **report:** add --html single-file report format ([1194c45](https://github.com/trivoallan/regis/commit/1194c4537cbcf91acfa471363981f506d4a8073f))
+- **report:** add --html single-file report format ([#506](https://github.com/trivoallan/regis/issues/506)) ([af528e1](https://github.com/trivoallan/regis/commit/af528e1ebece9529f3febace88a4c51b4772dfd3))
+
 ## [0.30.0](https://github.com/trivoallan/regis/compare/v0.29.0...v0.30.0) (2026-04-24)
 
 ### Features
