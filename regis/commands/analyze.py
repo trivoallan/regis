@@ -360,8 +360,8 @@ def analyze(
         logger.debug("Failed to fetch digest: %s", exc)
         digest = ref.tag
 
-    if site and archive_dir:
-        raise click.UsageError("--site and --archive are mutually exclusive.")
+    if (site or html_single) and archive_dir:
+        raise click.UsageError("--site/--html and --archive are mutually exclusive.")
 
     formats = []
     if not archive_dir:
@@ -637,11 +637,11 @@ def evaluate_cmd(
     output_dir_template: str | None,
     pretty: bool,
     site: bool,
-    html_single: bool = False,
-    sections: str = "all",
-    theme: str = "default",
+    theme: str,
     base_url: str = "/",
     open_browser: bool = False,
+    html_single: bool = False,
+    sections: str = "all",
 ) -> None:
     """Evaluate playbooks against an existing analysis report (dry-run).
 
