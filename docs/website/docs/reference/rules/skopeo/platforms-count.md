@@ -8,21 +8,21 @@ tags:
 
 Image should support multiple platforms.
 
-| Provider | Level | Tags          |
-| :------- | :---- | :------------ |
-| skopeo   | Info  | compatibility |
+| Provider | Level | Tags |
+| :--- | :--- | :--- |
+| skopeo | Info | compatibility |
 
 ## Parameters
 
-| Name            | Default Value | Description |
-| :-------------- | :------------ | :---------- |
-| `min_platforms` | `2`           | n/a         |
+| Name | Default Value | Description |
+| :--- | :--- | :--- |
+| `min_platforms` | `2` | n/a |
 
 ## Messages
 
-| Type     | Message                                                                                                        |
-| :------- | :------------------------------------------------------------------------------------------------------------- |
-| **Pass** | Image supports ${results.skopeo.platforms.length} platforms.                                                   |
+| Type | Message |
+| :--- | :--- |
+| **Pass** | Image supports ${results.skopeo.platforms.length} platforms. |
 | **Fail** | Image only supports ${results.skopeo.platforms.length} platforms (min required: ${rule.params.min_platforms}). |
 
 ## Playbook Example

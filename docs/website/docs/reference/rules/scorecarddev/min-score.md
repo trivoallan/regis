@@ -8,21 +8,21 @@ tags:
 
 OpenSSF Scorecard score is above the threshold.
 
-| Provider     | Level   | Tags     |
-| :----------- | :------ | :------- |
+| Provider | Level | Tags |
+| :--- | :--- | :--- |
 | scorecarddev | Warning | security |
 
 ## Parameters
 
-| Name        | Default Value | Description |
-| :---------- | :------------ | :---------- |
-| `min_score` | `5.0`         | n/a         |
+| Name | Default Value | Description |
+| :--- | :--- | :--- |
+| `min_score` | `5.0` | n/a |
 
 ## Messages
 
-| Type     | Message                                                                                             |
-| :------- | :-------------------------------------------------------------------------------------------------- |
-| **Pass** | Scorecard score is ${results.scorecarddev.score} (min required: ${rule.params.min_score}).          |
+| Type | Message |
+| :--- | :--- |
+| **Pass** | Scorecard score is ${results.scorecarddev.score} (min required: ${rule.params.min_score}). |
 | **Fail** | Scorecard score is too low: ${results.scorecarddev.score} (min required: ${rule.params.min_score}). |
 
 ## Playbook Example
