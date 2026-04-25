@@ -141,7 +141,7 @@ def evaluate_playbooks(
             )
             playbook_results.append(pb_result)
 
-            if "html-site" not in formats or len(formats) > 1:
+            if "html" not in formats or len(formats) > 1:
                 summary_parts = []
                 for section in pb_result.get("sections", []):
                     for lv_name, stats in section.get("levels_summary", {}).items():
@@ -299,11 +299,10 @@ def render_and_save_reports(
     pretty: bool,
     base_url: str = "/",
     open_browser: bool = False,
-    sections: str = "all",
 ) -> None:
     """Render and save reports in requested formats."""
     for fmt in formats:
-        if fmt == "html-site":
+        if fmt == "html":
             from regis.report.docusaurus import build_report_site
 
             out_dir = format_output_path(output_dir_template or ".", report, "json")
@@ -357,18 +356,6 @@ def render_and_save_reports(
                     except KeyboardInterrupt:
                         click.echo("\n  Stopping server...", err=True)
                         httpd.shutdown()
-        elif fmt == "html":
-            from regis.report.html import render_html_single
-
-            rendered = render_html_single(report, sections=sections)
-            file_tmpl = output_template or "report.html"
-            write_report(
-                dir_tmpl=output_dir_template or ".",
-                file_tmpl=file_tmpl,
-                report=report,
-                fmt=fmt,
-                rendered=rendered,
-            )
         elif fmt == "md":
             rendered = _render_markdown(report)
             file_tmpl = output_template or "report.md"
