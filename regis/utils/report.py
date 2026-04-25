@@ -299,6 +299,7 @@ def render_and_save_reports(
     pretty: bool,
     base_url: str = "/",
     open_browser: bool = False,
+    sections: str = "all",
 ) -> None:
     """Render and save reports in requested formats."""
     for fmt in formats:
@@ -356,6 +357,18 @@ def render_and_save_reports(
                     except KeyboardInterrupt:
                         click.echo("\n  Stopping server...", err=True)
                         httpd.shutdown()
+        elif fmt == "html":
+            from regis.report.html import render_html_single
+
+            rendered = render_html_single(report, sections=sections)
+            file_tmpl = output_template or "report.html"
+            write_report(
+                dir_tmpl=output_dir_template or ".",
+                file_tmpl=file_tmpl,
+                report=report,
+                fmt=fmt,
+                rendered=rendered,
+            )
         elif fmt == "md":
             rendered = _render_markdown(report)
             file_tmpl = output_template or "report.md"
