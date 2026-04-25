@@ -1,5 +1,4 @@
 """Tests for render_html_single in regis.report.html."""
-import pytest
 
 from regis.report.html import render_html_single
 
