@@ -102,9 +102,14 @@ class TestRenderHtmlSingle:
 
     def test_unknown_slug_does_not_raise(self):
         report = _minimal_report(results={"trivy": {"score": 80}})
-        # Should not raise even with unknown slug
         html = render_html_single(report, sections="unknown_analyzer")
         assert isinstance(html, str)
+
+    def test_unknown_slug_warns_to_stderr(self, capsys):
+        report = _minimal_report(results={"trivy": {"score": 80}})
+        render_html_single(report, sections="unknown_analyzer")
+        captured = capsys.readouterr()
+        assert "unknown_analyzer" in captured.err
 
     def test_sections_defaults_to_all(self):
         report = _minimal_report(results={"trivy": {"score": 80}})

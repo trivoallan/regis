@@ -126,6 +126,23 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     help="Generate HTML report site.",
 )
 @click.option(
+    "--html",
+    "html_single",
+    is_flag=True,
+    default=False,
+    help="Generate a self-contained single-file HTML report (report.html).",
+)
+@click.option(
+    "--sections",
+    "sections",
+    default="all",
+    help=(
+        "Sections to include in the HTML report: 'all' (default), 'summary', "
+        "or comma-separated analyzer slugs (e.g. 'trivy,hadolint'). "
+        "Only applies to --html."
+    ),
+)
+@click.option(
     "--theme",
     default="default",
     type=click.Choice(["default"], case_sensitive=False),
@@ -213,6 +230,8 @@ def analyze(
     output_dir_template: str | None,
     pretty: bool,
     site: bool,
+    html_single: bool,
+    sections: str,
     theme: str,
     meta: tuple[str, ...],
     auth: tuple[str, ...],
@@ -341,16 +360,21 @@ def analyze(
         logger.debug("Failed to fetch digest: %s", exc)
         digest = ref.tag
 
-    if site and archive_dir:
-        raise click.UsageError("--site and --archive are mutually exclusive.")
+    if (site or html_single) and archive_dir:
+        raise click.UsageError("--site/--html and --archive are mutually exclusive.")
 
     formats = []
     if not archive_dir:
         formats.append("json")
     if site:
+        formats.append("html-site")
+    if html_single:
         formats.append("html")
     if markdown:
         formats.append("md")
+
+    if sections != "all" and not html_single:
+        click.echo("  Warning: --sections has no effect without --html.", err=True)
 
     dir_tmpl = output_dir_template or "reports/{registry}/{repository}/{digest}"
     file_tmpl = output_template or "report.{format}"
@@ -515,6 +539,7 @@ def analyze(
             pretty,
             base_url=base_url,
             open_browser=open_browser,
+            sections=sections,
         )
 
     if not archive_dir:
@@ -574,6 +599,23 @@ def analyze(
     help="Generate HTML report site.",
 )
 @click.option(
+    "--html",
+    "html_single",
+    is_flag=True,
+    default=False,
+    help="Generate a self-contained single-file HTML report (report.html).",
+)
+@click.option(
+    "--sections",
+    "sections",
+    default="all",
+    help=(
+        "Sections to include in the HTML report: 'all' (default), 'summary', "
+        "or comma-separated analyzer slugs (e.g. 'trivy,hadolint'). "
+        "Only applies to --html."
+    ),
+)
+@click.option(
     "--theme",
     default="default",
     type=click.Choice(["default"], case_sensitive=False),
@@ -601,6 +643,8 @@ def evaluate_cmd(
     theme: str,
     base_url: str = "/",
     open_browser: bool = False,
+    html_single: bool = False,
+    sections: str = "all",
 ) -> None:
     """Evaluate playbooks against an existing analysis report (dry-run).
 
@@ -621,7 +665,12 @@ def evaluate_cmd(
 
     formats = ["json"]
     if site:
+        formats.append("html-site")
+    if html_single:
         formats.append("html")
+
+    if sections != "all" and not html_single:
+        click.echo("  Warning: --sections has no effect without --html.", err=True)
 
     final_report = run_playbooks(playbook_paths, analysis_report, formats)
     validate_report(final_report)
@@ -635,6 +684,7 @@ def evaluate_cmd(
         pretty,
         base_url=base_url,
         open_browser=open_browser,
+        sections=sections,
     )
 
     render_mr_templates(final_report, output_dir_template)

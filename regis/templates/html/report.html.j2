@@ -1,0 +1,158 @@
+{%- macro render_scalar(val) -%}
+  {%- if val is none -%}<em>—</em>
+  {%- elif val is sameas true -%}<span class="badge badge-pass">yes</span>
+  {%- elif val is sameas false -%}<span class="badge badge-fail">no</span>
+  {%- else -%}{{ val }}{%- endif -%}
+{%- endmacro -%}
+
+{%- macro render_list_of_dicts(items) -%}
+  {%- set cols = items[0].keys() | list -%}
+  <table>
+    <thead><tr>{% for c in cols %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+    <tbody>
+      {% for row in items %}
+      <tr>{% for c in cols %}<td>{{ render_scalar(row[c] if c in row else none) }}</td>{% endfor %}</tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{%- endmacro -%}
+
+{%- macro render_detail(val) -%}
+  {%- if val is none -%}
+    <em>—</em>
+  {%- elif val is mapping -%}
+    <table>
+      <tbody>
+        {% for k, v in val.items() %}
+        <tr><th>{{ k }}</th><td>{{ render_detail(v) }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {%- elif val is iterable and val is not string -%}
+    {%- set items = val | list -%}
+    {%- if items | length == 0 -%}
+      <em>none</em>
+    {%- elif items[0] is mapping -%}
+      {{ render_list_of_dicts(items) }}
+    {%- else -%}
+      <ul>{% for item in items %}<li>{{ item }}</li>{% endfor %}</ul>
+    {%- endif -%}
+  {%- elif val is sameas true -%}
+    <span class="badge badge-pass">yes</span>
+  {%- elif val is sameas false -%}
+    <span class="badge badge-fail">no</span>
+  {%- else -%}
+    {{ val }}
+  {%- endif -%}
+{%- endmacro -%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ image_ref }} — regis report</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; font-size: 14px; line-height: 1.5; color: #1a1a1a; max-width: 1200px; margin: 0 auto; padding: 1rem 2rem; }
+    header { border-bottom: 2px solid #2563eb; padding-bottom: 1rem; margin-bottom: 2rem; }
+    h1 { font-size: 1.3rem; color: #1d4ed8; word-break: break-all; margin-bottom: .5rem; }
+    h2 { font-size: 1rem; margin: 2rem 0 .5rem; background: #f1f5f9; padding: .4rem .75rem; border-left: 3px solid #2563eb; }
+    section { margin-bottom: 1.5rem; }
+    dl.meta { display: grid; grid-template-columns: max-content 1fr; gap: .15rem .75rem; font-size: 13px; }
+    dt { font-weight: 600; color: #64748b; }
+    dd { color: #334155; word-break: break-all; }
+    table { border-collapse: collapse; width: 100%; margin: .5rem 0 1rem; font-size: 13px; }
+    th { background: #f8fafc; text-align: left; padding: .4rem .75rem; border: 1px solid #e2e8f0; font-weight: 600; color: #475569; }
+    td { padding: .35rem .75rem; border: 1px solid #e2e8f0; vertical-align: top; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    ul { padding-left: 1.2rem; }
+    li { margin: .1rem 0; }
+    .badge { display: inline-block; padding: .1rem .4rem; border-radius: 3px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; }
+    .badge-critical { background: #fee2e2; color: #991b1b; }
+    .badge-high { background: #fef3c7; color: #92400e; }
+    .badge-medium { background: #fef9c3; color: #854d0e; }
+    .badge-low { background: #dcfce7; color: #166534; }
+    .badge-pass, .badge-passed { background: #dcfce7; color: #166534; }
+    .badge-fail, .badge-failed { background: #fee2e2; color: #991b1b; }
+    .badge-warn, .badge-warning, .badge-incomplete { background: #fef3c7; color: #92400e; }
+    .badge-none { background: #f1f5f9; color: #64748b; }
+    em { color: #94a3b8; font-style: normal; }
+    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>{{ image_ref }}</h1>
+  <dl class="meta">
+    <dt>Registry</dt><dd>{{ report.request.registry }}</dd>
+    <dt>Repository</dt><dd>{{ report.request.repository }}</dd>
+    <dt>Tag</dt><dd>{{ report.request.tag }}</dd>
+    {% if report.request.digest %}
+    <dt>Digest</dt><dd>{{ report.request.digest }}</dd>
+    {% endif %}
+    {% if report.request.timestamp %}
+    <dt>Analysis date</dt><dd>{{ report.request.timestamp }}</dd>
+    {% endif %}
+    {% if report.snapshot_date %}
+    <dt>Snapshot date</dt><dd>{{ report.snapshot_date }}</dd>
+    {% endif %}
+  </dl>
+</header>
+
+{% if report.playbooks %}
+<section id="playbooks">
+  <h2>Playbook results</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Playbook</th>
+        <th>Verdict</th>
+        <th>Score</th>
+        <th>Failing rules</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pb in report.playbooks %}
+      <tr>
+        <td>{{ pb.name | default('—') }}</td>
+        <td>
+          {% set verdict = pb.verdict | default('') | lower %}
+          <span class="badge badge-{{ verdict }}">{{ pb.verdict | default('—') }}</span>
+        </td>
+        <td>{{ pb.score | default('—') }}{% if pb.score is not none %}%{% endif %}</td>
+        <td>{{ pb.rules | default([]) | selectattr('passed', 'equalto', false) | list | length }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
+{% for analyzer_name, result in report.results.items() %}
+{% if filter_slugs is none or analyzer_name in filter_slugs %}
+<section id="{{ analyzer_name }}">
+  <h2>{{ analyzer_name }}</h2>
+  {% if not show_details %}
+    {# Summary mode: render only top-level scalar fields #}
+    <dl class="meta">
+      {% for k, v in result.items() %}
+      {% if v is not mapping and (v is not iterable or v is string) %}
+      <dt>{{ k }}</dt>
+      <dd>{{ render_scalar(v) }}</dd>
+      {% endif %}
+      {% endfor %}
+    </dl>
+  {% else %}
+    {# Detail mode: render all fields #}
+    {{ render_detail(result) }}
+  {% endif %}
+</section>
+{% endif %}
+{% endfor %}
+
+<footer>Generated by regis {{ regis_version }} on {{ generated_at }}</footer>
+
+</body>
+</html>
