@@ -49,6 +49,13 @@
 
 ## Completed (Recent)
 
+- **Single-file HTML report (2026-04-25)**:
+  - Added `--html` flag to `regis analyze` and `regis evaluate` generating a self-contained `report.html` (HTML+CSS, no JS, no external dependencies).
+  - Added `--sections` option: `all` (default), `summary`, or comma-separated analyzer slugs.
+  - Renamed internal `"html"` format string to `"html-site"` (user-facing `--site` flag unchanged).
+  - New files: `regis/report/html.py`, `regis/templates/html/report.html.j2`.
+  - 23 new tests (16 unit + 7 integration), 91% total coverage.
+
 - **M002/S02 — Snapshot publication date (2026-04-22)**:
   - Backfilled snapshot dates for v0.27.0 (→ 2026-04-09) and v0.26.2 (→ 2026-04-03) in both `regis/data/snapshot_dates.json` and `docs/website/snapshot-dates.json`.
   - Added `--markdown` flag to `regis analyze` (no `-m` shorthand — conflicts with existing `-m`/`--meta`).

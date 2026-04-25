@@ -373,6 +373,9 @@ def analyze(
     if markdown:
         formats.append("md")
 
+    if sections != "all" and not html_single:
+        click.echo("  Warning: --sections has no effect without --html.", err=True)
+
     dir_tmpl = output_dir_template or "reports/{registry}/{repository}/{digest}"
     file_tmpl = output_template or "report.{format}"
 
@@ -527,7 +530,7 @@ def analyze(
 
         add_to_archive(final_report, archive_dir)
     else:
-        render_and_save_reports(  # type: ignore[call-arg]
+        render_and_save_reports(
             final_report,
             formats,
             output_template,
@@ -666,10 +669,13 @@ def evaluate_cmd(
     if html_single:
         formats.append("html")
 
+    if sections != "all" and not html_single:
+        click.echo("  Warning: --sections has no effect without --html.", err=True)
+
     final_report = run_playbooks(playbook_paths, analysis_report, formats)
     validate_report(final_report)
 
-    render_and_save_reports(  # type: ignore[call-arg]
+    render_and_save_reports(
         final_report,
         formats,
         output_template,
