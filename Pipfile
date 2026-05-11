@@ -17,7 +17,7 @@ python-gitlab = ">=4.4.0"
 json-schema-for-humans = "*"
 chardet = ">=5.0.0"
 charset-normalizer = ">=2.0.0"
-urllib3 = ">=1.26.0,<3"
+urllib3 = ">=2.7.0,<3"
 regis = {extras = ["dev"], file = ".", editable = true}
 pillow = ">=12.2.0"
 referencing = "*"
