@@ -11,6 +11,25 @@ import click
 
 from regis.utils.process import require_tool, run_cmd
 
+_NODE_INSTALL_HINT = """\
+This command requires Node.js on the host. The published Regis image
+no longer bundles Node.js to keep container size minimal.
+
+Install Node 20+ on the host:
+  • nvm:  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && nvm install --lts
+  • fnm:  curl -fsSL https://fnm.vercel.app/install | bash && fnm install --lts
+  • brew: brew install node
+
+Then re-run this command from the host (not from inside a container).\
+"""
+
+_PNPM_INSTALL_HINT = """\
+This command requires pnpm. Install via one of:
+  • corepack:  corepack enable && corepack prepare pnpm@latest --activate
+  • npm:       npm install -g pnpm
+  • brew:      brew install pnpm\
+"""
+
 
 def _run_initial_analyze(project_path: Path) -> None:
     """Run a first regis analysis on the regis image itself.
@@ -230,11 +249,13 @@ def bootstrap_archive(
             f"cookiecutter not found or failed to import: {exc}. Please install it with 'pip install cookiecutter'."
         ) from None
 
-    if repo:
+    if repo or dev:
         click.echo("Checking required tools...", err=True)
-        require_tool("pnpm")
-        require_tool("git")
-        click.echo("  ✓ pnpm and git found.", err=True)
+        require_tool("node", install_hint=_NODE_INSTALL_HINT)
+        require_tool("pnpm", install_hint=_PNPM_INSTALL_HINT)
+        if repo:
+            require_tool("git")
+        click.echo("  ✓ Node.js, pnpm, and git found.", err=True)
 
     if platform:
         extra_context: dict[str, str] | None = {"platform": platform}
@@ -282,7 +303,6 @@ def bootstrap_archive(
         notes_file.unlink()
 
     if dev:
-        require_tool("pnpm")
         click.echo("\nInstalling Node dependencies (pnpm install)...", err=True)
         run_cmd(["pnpm", "install"], cwd=project_path, step_label="pnpm install")
         click.echo("  ✓ Dependencies installed.", err=True)

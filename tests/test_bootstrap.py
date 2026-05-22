@@ -405,3 +405,43 @@ class TestBootstrapArchiveRepo:
             )
         assert result.exit_code == 0, result.output
         assert any("myorg/regis-archive" in arg for arg in gh_create_args)
+
+
+class TestBootstrapArchiveNodeChecks:
+    """Verify --dev/--repo emit a helpful error when Node/pnpm are missing."""
+
+    @patch("regis.utils.process.shutil.which", return_value=None)
+    def test_dev_without_node_raises_with_install_hint(self, _mock_which, tmp_path):
+        runner = CliRunner()
+        result = runner.invoke(
+            main,
+            ["bootstrap", "archive", "--dev", "--no-input", str(tmp_path)],
+        )
+        assert result.exit_code != 0
+        assert "not found in PATH" in result.output
+        assert "nvm" in result.output or "fnm" in result.output
+        assert "host" in result.output.lower()
+
+    @patch("regis.utils.process.shutil.which", return_value=None)
+    def test_repo_without_node_raises_with_install_hint(self, _mock_which, tmp_path):
+        runner = CliRunner()
+        result = runner.invoke(
+            main,
+            ["bootstrap", "archive", "--repo", "--no-input", str(tmp_path)],
+        )
+        assert result.exit_code != 0
+        assert "not found in PATH" in result.output
+        assert "nvm" in result.output or "fnm" in result.output
+
+    @patch("regis.utils.process.shutil.which")
+    def test_dev_with_node_but_no_pnpm_raises(self, mock_which, tmp_path):
+        # node present, pnpm absent
+        mock_which.side_effect = lambda name: "/usr/bin/node" if name == "node" else None
+        runner = CliRunner()
+        result = runner.invoke(
+            main,
+            ["bootstrap", "archive", "--dev", "--no-input", str(tmp_path)],
+        )
+        assert result.exit_code != 0
+        assert "pnpm" in result.output
+        assert "corepack" in result.output.lower() or "npm install -g" in result.output
