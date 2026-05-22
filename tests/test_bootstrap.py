@@ -195,8 +195,10 @@ class TestBootstrapArchiveRepo:
         assert result.exit_code == 0, result.output
         assert "gitlab.io" in result.output
 
-    @patch("regis.utils.process.shutil.which", return_value=None)
-    def test_missing_pnpm_fails(self, _mock_which):
+    @patch("regis.utils.process.shutil.which")
+    def test_missing_pnpm_fails(self, mock_which):
+        # Node present, pnpm absent — verifies pnpm is checked after node.
+        mock_which.side_effect = lambda name: "/usr/bin/node" if name == "node" else None
         runner = CliRunner()
         result = runner.invoke(main, ["bootstrap", "archive", "--repo", "--no-input"])
         assert result.exit_code != 0
@@ -436,7 +438,9 @@ class TestBootstrapArchiveNodeChecks:
     @patch("regis.utils.process.shutil.which")
     def test_dev_with_node_but_no_pnpm_raises(self, mock_which, tmp_path):
         # node present, pnpm absent
-        mock_which.side_effect = lambda name: "/usr/bin/node" if name == "node" else None
+        mock_which.side_effect = lambda name: (
+            "/usr/bin/node" if name == "node" else None
+        )
         runner = CliRunner()
         result = runner.invoke(
             main,
