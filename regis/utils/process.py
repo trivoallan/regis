@@ -37,9 +37,18 @@ def run_cmd(
     return result
 
 
-def require_tool(name: str) -> str:
-    """Ensure a CLI tool is available in PATH or raise ClickException."""
+def require_tool(name: str, install_hint: str | None = None) -> str:
+    """Ensure a CLI tool is available in PATH or raise ClickException.
+
+    Args:
+        name: Tool binary name to look up in PATH.
+        install_hint: Optional multi-line guidance appended to the error
+            message when the tool is missing.
+    """
     path = shutil.which(name)
     if not path:
-        raise click.ClickException(f"'{name}' not found in PATH. Please install it.")
+        message = f"'{name}' not found in PATH. Please install it."
+        if install_hint:
+            message = f"{message}\n\n{install_hint}"
+        raise click.ClickException(message)
     return path
