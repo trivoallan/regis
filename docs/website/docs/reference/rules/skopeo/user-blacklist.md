@@ -8,21 +8,21 @@ tags:
 
 Image must not run as root.
 
-| Provider | Level | Tags |
-| :--- | :--- | :--- |
-| skopeo | Critical | security |
+| Provider | Level    | Tags     |
+| :------- | :------- | :------- |
+| skopeo   | Critical | security |
 
 ## Parameters
 
-| Name | Default Value | Description |
-| :--- | :--- | :--- |
-| `forbidden_user` | `root` | n/a |
+| Name             | Default Value | Description |
+| :--------------- | :------------ | :---------- |
+| `forbidden_user` | `root`        | n/a         |
 
 ## Messages
 
-| Type | Message |
-| :--- | :--- |
-| **Pass** | Image does not run as '${rule.params.forbidden_user}'. |
+| Type     | Message                                                     |
+| :------- | :---------------------------------------------------------- |
+| **Pass** | Image does not run as '${rule.params.forbidden_user}'.      |
 | **Fail** | Image configured to run as '${rule.params.forbidden_user}'. |
 
 ## Playbook Example
