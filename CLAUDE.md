@@ -71,6 +71,7 @@ apps/dashboard/       # Docusaurus + Tremor report viewer (pnpm workspace)
 
 - Feature/bug branches → PR → `main`. `main` is protected.
 - For **notable user-facing features**, add the `whats-new` GitHub label on the PR. The `## Summary` section is harvested into the What's New page by `scripts/generate_whats_new.py` during CI.
+- **Always rebase** feature branches on the latest `main` (never merge `main` back into them) — keeps history linear.
 - Branch from the latest `main` immediately before committing (avoids the auto-rebase + squash no-op trap).
 
 ## Commit messages
