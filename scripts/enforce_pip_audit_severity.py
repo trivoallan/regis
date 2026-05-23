@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Fail CI when pip-audit findings include HIGH/CRITICAL vulnerabilities."""
+"""Fail CI when pip-audit findings include HIGH/CRITICAL vulnerabilities.
+
+UNKNOWN severity is split:
+  - UNKNOWN + fix_versions non-empty  → blocking (patch exists, no excuse)
+  - UNKNOWN + fix_versions empty      → warning only (genuinely unclear, no patch)
+"""
 
 from __future__ import annotations
 
@@ -22,6 +27,7 @@ class Finding:
     version: str
     vuln_id: str
     severity: str
+    fix_versions: list[str]
 
 
 def _extract_cvss_score(severity_entries: list[dict]) -> float | None:
@@ -133,6 +139,10 @@ def _iter_findings(report: dict) -> list[Finding]:
                     resolved_id = candidate_id
                     break
 
+            fix_versions: list[str] = [
+                v for v in vuln.get("fix_versions", []) if isinstance(v, str) and v
+            ]
+
             if severity is None:
                 findings.append(
                     Finding(
@@ -140,6 +150,7 @@ def _iter_findings(report: dict) -> list[Finding]:
                         version=version,
                         vuln_id=resolved_id,
                         severity="UNKNOWN",
+                        fix_versions=fix_versions,
                     )
                 )
                 continue
@@ -150,6 +161,7 @@ def _iter_findings(report: dict) -> list[Finding]:
                     version=version,
                     vuln_id=resolved_id,
                     severity=severity,
+                    fix_versions=fix_versions,
                 )
             )
 
@@ -177,30 +189,54 @@ def main() -> int:
         if finding.severity in SEVERITY_RANK
         and SEVERITY_RANK[finding.severity] >= min_rank
     ]
-    unknown = [finding for finding in findings if finding.severity == "UNKNOWN"]
+    # UNKNOWN + fix available → block (patch exists, no excuse to skip)
+    unknown_fixable = [
+        finding
+        for finding in findings
+        if finding.severity == "UNKNOWN" and finding.fix_versions
+    ]
+    # UNKNOWN + no fix → warn only (severity genuinely unclear, no patch exists)
+    unknown_unfixable = [
+        finding
+        for finding in findings
+        if finding.severity == "UNKNOWN" and not finding.fix_versions
+    ]
 
-    if not blocking and not unknown:
+    if not blocking and not unknown_fixable and not unknown_unfixable:
         print("No pip-audit findings met the configured severity threshold.")
         return 0
 
     if blocking:
         print(f"Found {len(blocking)} vulnerabilities at or above {args.min_severity}:")
-    for finding in blocking:
-        print(
-            f"- {finding.package}=={finding.version}: {finding.vuln_id} ({finding.severity})"
-        )
-
-    if unknown:
-        print(
-            f"Found {len(unknown)} vulnerabilities with unknown severity; "
-            "failing closed to avoid bypassing the security gate:"
-        )
-        for finding in unknown:
+        for finding in blocking:
             print(
-                f"- {finding.package}=={finding.version}: {finding.vuln_id} (UNKNOWN)"
+                f"- {finding.package}=={finding.version}: {finding.vuln_id} ({finding.severity})"
             )
 
-    return 1
+    if unknown_fixable:
+        print(
+            f"Found {len(unknown_fixable)} vulnerabilities with unknown severity but available fixes; "
+            "treating as blocking:"
+        )
+        for finding in unknown_fixable:
+            fix_str = ", ".join(finding.fix_versions)
+            print(
+                f"- {finding.package}=={finding.version}: {finding.vuln_id} (UNKNOWN, fix: {fix_str})"
+            )
+
+    if unknown_unfixable:
+        print(
+            f"Found {len(unknown_unfixable)} vulnerabilities with unknown severity and no fix available; "
+            "warning only:"
+        )
+        for finding in unknown_unfixable:
+            print(
+                f"- {finding.package}=={finding.version}: {finding.vuln_id} (UNKNOWN, no fix)"
+            )
+
+    if blocking or unknown_fixable:
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
