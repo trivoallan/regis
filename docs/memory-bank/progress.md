@@ -49,6 +49,13 @@
 
 ## Completed (Recent)
 
+- **CLAUDE.md restructure (2026-05-23, PR #592)**:
+  - File reduced from ~180 → ~90 lines; split into agent essentials + project policy.
+  - Added _spec-based programming with stacked skills_ craftsmanship principle (Superpowers methodology + project skills + declarative-spec architecture).
+  - Made the rebase-only feature-branch workflow explicit.
+  - Added pnpm commands for `apps/dashboard`; dropped stale devcontainer reference; fixed broken whats-new.md link.
+  - Reference material (CI/CD gotchas, full commit scopes list) moved to `docs/memory-bank/systemPatterns.md`.
+
 - **Single-file HTML report (2026-04-25)**:
   - Added `--html` flag to `regis analyze` and `regis evaluate` generating a self-contained `report.html` (HTML+CSS, no JS, no external dependencies).
   - Added `--sections` option: `all` (default), `summary`, or comma-separated analyzer slugs.
