@@ -45,5 +45,5 @@ Provide a single orchestration layer for container security, supply-chain eviden
 
 ## Key Stakeholders
 
-- TTC
+- Tristan Rivoallan
 - Maintainers and contributors working on security and CI/CD workflows
