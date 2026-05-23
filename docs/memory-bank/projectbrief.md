@@ -41,9 +41,13 @@ Provide a single orchestration layer for container security, supply-chain eviden
 
 ### Out of Scope
 
-- Not enough evidence to define project-wide product exclusions
+- General-purpose container runtime management (not a replacement for Docker/Podman)
+- Real-time image scanning daemon (batch/CI-oriented only)
+- Multi-tenant SaaS hosting — self-hosted CI/CD integration only
+- Custom analyzer authoring guide (deferred post-v1)
 
 ## Key Stakeholders
 
 - Tristan Rivoallan
-- Maintainers and contributors working on security and CI/CD workflows
+- Direction Expertise Applicative (architectes et experts sécurité) — cible pilote v1
+- Équipes projet — utilisateurs playbook "progression projet"
