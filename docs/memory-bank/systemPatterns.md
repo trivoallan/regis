@@ -48,14 +48,14 @@ Adding a format requires:
 
 Extrapolate the scope from the architectural component modified.
 
-**Core & Logic**
+### Core & Logic
 
 - `cli` — CLI, argument parsing, main console output
 - `playbook` — rule evaluation engine, section parsing, `jsonLogic`, context management
 - `schema` — data interfaces, structure definitions, JSON validation files
 - `registry` — registry communication (HTTP, auth, manifest fetching)
 
-**Analyzers**
+### Analyzers
 
 - `analyzer` — base analyzer class or shared analyzer interfaces
 - `analyzer/trivy` — vulnerability scanning and SBOM generation via Trivy
@@ -69,12 +69,12 @@ Extrapolate the scope from the architectural component modified.
 - `analyzer/scorecarddev` — OpenSSF Scorecard checks
 - `analyzer/provenance` — provenance and supply chain evidence
 
-**Rendering & Reporting**
+### Rendering & Reporting
 
 - `report` — high-level report generation (folder creation, file writing)
 - `templates` / `theme` — visual aspects, HTML, CSS, React/Docusaurus SPA
 
-**Tooling & CI**
+### Tooling & CI
 
 - `ci` — GitHub Actions workflows
 - `deps` / `build` — environment management (Pipenv, pyproject.toml, Dockerfiles)
