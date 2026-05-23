@@ -1,60 +1,41 @@
-# Memory Bank Protocol (Required)
-
-This project uses a Memory Bank system in `docs/memory-bank/` for cross-session context continuity.
-
-### At Session Start - ALWAYS:
-
-1. Read `docs/memory-bank/RULES.md` - all rules are there
-2. Read `docs/memory-bank/activeContext.md` - current work and decisions
-3. Read `docs/memory-bank/progress.md` - current status
-4. Read other files as needed (`systemPatterns.md`, `techContext.md`, `productContext.md`, `projectbrief.md`)
-
-### During Work - Update When:
-
-- Feature completed -> update `docs/memory-bank/activeContext.md` + `docs/memory-bank/progress.md`
-- Architecture decision made -> update `docs/memory-bank/systemPatterns.md`
-- New dependency added -> update `docs/memory-bank/techContext.md`
-- User preference learned -> update `docs/memory-bank/activeContext.md`
-
-### Special Commands:
-
-- `memory bank update` / `memory bank güncelle` -> Review and update ALL memory bank files
-- `memory bank status` / `memory bank durumu` -> Show current status summary
-- `memory bank read` / `memory bank oku` -> Read all files and present context
-
-### Plans
-
-All implementation plans live in `docs/memory-bank/plans/`. This overrides any global skill default (`plans/` at project root). When creating a plan file, always use `docs/memory-bank/plans/<task-slug>-plan.md`.
-
-### NEVER:
-
-- Modify `docs/memory-bank/RULES.md` (it's immutable)
-- Write secrets (API keys, tokens, passwords) to memory bank files
-- Skip reading memory bank at session start
-- Create plan files outside `docs/memory-bank/plans/`
-
 # CLAUDE.md
+
+## Memory Bank (required)
+
+This project uses a Memory Bank in `docs/memory-bank/`. At every session start:
+
+1. Read `docs/memory-bank/RULES.md` — protocol rules (immutable).
+2. Read `docs/memory-bank/activeContext.md` and `docs/memory-bank/progress.md`.
+3. Read others as needed (`systemPatterns.md`, `techContext.md`, `productContext.md`, `projectbrief.md`).
+
+Plans live in `docs/memory-bank/plans/<task-slug>-plan.md` — never at repo root.
+Never modify `RULES.md` or write secrets into any memory bank file.
 
 ## Commands
 
 ```bash
-pipenv install --dev        # Install all dependencies
-pipenv run pytest           # Run tests with coverage (fails if < 90%)
-pipenv run pytest --no-cov  # Run tests without coverage check
-pipenv run ruff check .     # Lint
-pipenv run ruff format .    # Format
-pipenv run regis --help # Run CLI locally
-trunk check                   # Run trunk check
-trunk check --fix             # Fix issues
-trunk check --fix --all       # Fix issues in all files
+pipenv install --dev          # Install all dependencies
+pipenv run pytest             # Full run with coverage (fails if < 90%)
+pipenv run pytest --no-cov    # Fast loop — no coverage check
+pipenv run ruff check .       # Lint
+pipenv run ruff format .      # Format
+pipenv run regis --help       # Run CLI locally
+trunk check                   # Run all linters
+trunk check --fix             # Auto-fix
+pnpm --filter @regis/dashboard start   # Launch report viewer (UI work)
+pnpm --filter @regis/dashboard build   # Build viewer SPA
 ```
+
+Required external binaries (must be on `PATH`): `trivy`, `skopeo`, `hadolint`, `dockle`.
+
+Use `--no-cov` for fast iteration; run the full suite before opening a PR.
 
 ## Architecture
 
 ```
 regis/
-  cli.py              # Main entry point — `regis` console script
-  analyzers/          # Pluggable analyzers (registered via pyproject.toml entry points)
+  cli.py              # `regis` console script entry point
+  analyzers/          # Pluggable analyzers (entry points in pyproject.toml)
   analyzers/discovery.py  # discover_analyzers() — entry point loader
   commands/           # CLI commands (analyze, archive, bootstrap, check, rules)
   utils/process.py    # run_cmd(), require_tool() — subprocess helpers
@@ -63,118 +44,54 @@ regis/
   rules/              # JSON Logic rule evaluation and merging
   registry/           # Registry client, auth, URL parser
   report/             # Report generation (Docusaurus SPA builder)
-  schemas/            # JSON Schema files for analyzer outputs and playbook definitions
+  schemas/            # JSON Schema files for analyzer outputs and playbooks
   playbooks/          # Built-in default playbook (default.yaml)
+apps/dashboard/       # Docusaurus + Tremor report viewer (pnpm workspace)
 ```
 
-## Key Patterns
+## Agent patterns (Regis-specific)
 
-- **Analyzer plugins**: Discovered via `project.entry-points."regis.analyzers"` in `pyproject.toml`. Each must subclass `BaseAnalyzer` and implement `analyze()`, `validate()`, and `default_rules()`.
-- **Rule templates**: `default_rules()` can return both concrete rules and reusable templates (identified by `slug`). Playbooks instantiate templates via `rule: <slug>` + `options:`.
-- **JSON Logic operators**: Custom operators (`intersects`, `contains_all`, `subset`, `keys`, `get`, `env_contains`) are registered in `rules/evaluator.py`.
-- **Parallel analysis**: Analyzers run concurrently via `ThreadPoolExecutor` (default 4 workers, `--max-workers` to override). Each thread gets its own `RegistryClient` instance.
-- **Test patch targets**: After the CLI split, patch at the new module locations — not `regis.cli.*`. Key targets: `regis.commands.analyze.{RegistryClient,_discover_analyzers}`, `regis.commands.check.{RegistryClient,version}`, `regis.utils.process.{shutil,subprocess}`, `regis.utils.report.jsonschema`.
-- **Lazy imports in functions**: `from module import X` inside a function body — patch at the source (`module.X`), not at the importing module.
+- **Analyzer plugins**: subclass `BaseAnalyzer`, implement `analyze()`, `validate()`, `default_rules()`. Register via `project.entry-points."regis.analyzers"` in `pyproject.toml`.
+- **Rule templates**: `default_rules()` can return both concrete rules and slug-identified templates; playbooks instantiate them via `rule: <slug>` + `options:`.
+- **JSON Logic operators**: custom ops (`intersects`, `contains_all`, `subset`, `keys`, `get`, `env_contains`) registered in `rules/evaluator.py`.
+- **Parallel analysis**: `ThreadPoolExecutor`, default 4 workers (`--max-workers` overrides). Each thread gets its own `RegistryClient`.
+- **Test patch targets**: patch at the _new_ module location after the CLI split — `regis.commands.analyze.{RegistryClient,_discover_analyzers}`, `regis.commands.check.{RegistryClient,version}`, `regis.utils.process.{shutil,subprocess}`, `regis.utils.report.jsonschema`. **Not** `regis.cli.*`.
+- **Lazy imports**: `from module import X` inside a function body — patch at the source (`module.X`), not the importing module.
 
 ## Craftsmanship
 
-- Prefer existing, established, state-of-the-art libraries over starting from scratch.
+- **Spec-based programming with stacked skills.** This project favors composable, spec-driven workflows on two levels:
+  - **Methodology**: use Claude Code skills as stacked building blocks — [Superpowers](https://claude.com/plugins/superpowers) for engineering discipline (`/brainstorming`, `/execute-plan`, TDD, systematic debugging) composed with project skills (`/create-playbook`, `/verify`, `/code-review`, `/init`). Each skill encodes a reviewed spec; chaining them produces predictable, auditable workflows. When a recurring task has no skill, author one (`/skill-authoring`) rather than re-improvising.
+  - **Architecture**: prefer declarative specs (JSON Schemas, playbook YAML, JSON Logic rules) over imperative code paths. Extend existing schemas before adding ad-hoc Python logic.
+- Prefer established, state-of-the-art libraries over starting from scratch.
 - Prefer Python over ECMAScript languages when possible.
+- Type hints required for all new functions and classes.
 
-## Git Workflow
+## Git workflow
 
-- Simple workflow for a small team based on feature/bug branches merged to `main` before release.
-- `main` branch is protected — PRs are mandatory.
-- When creating a PR for a **notable user-facing feature**, add the `whats-new` GitHub label. The PR's `## Summary` section will be surfaced as a highlight in the [What's New](docs/website/docs/whats-new.md) documentation page (auto-generated by `scripts/generate_whats_new.py` at CI time).
+- Feature/bug branches → PR → `main`. `main` is protected.
+- For **notable user-facing features**, add the `whats-new` GitHub label on the PR. The `## Summary` section is harvested into the What's New page by `scripts/generate_whats_new.py` during CI.
+- **Always rebase** feature branches on the latest `main` (never merge `main` back into them) — keeps history linear.
+- Branch from the latest `main` immediately before committing (avoids the auto-rebase + squash no-op trap).
 
-## Commit Messages
+## Commit messages
 
-Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). Allowed types follow the [Angular convention](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#type).
+Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) with the [Angular type list](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#type).
 
-- **Scopes are mandatory** — extrapolate them from the architectural component modified (see list below).
-- Commit description style: [Google Blockly guide](https://developers.google.com/blockly/guides/contribute/get-started/commits).
-- The description should be written to be easily readable in the changelog and link to documentation when possible. Favor the functional aspect. Reserve technical details for the commit body.
+- **Scopes are mandatory.** Full scope list in `docs/memory-bank/systemPatterns.md`.
+- Description style: [Google Blockly commit guide](https://developers.google.com/blockly/guides/contribute/get-started/commits). Favor the functional aspect; reserve technical details for the body.
 
-### Allowed Scopes
+## Style guides
 
-**Core & Logic**
-
-- `cli` — CLI, argument parsing, main console output
-- `playbook` — rule evaluation engine, section parsing, `jsonLogic`, context management
-- `schema` — data interfaces, structure definitions, JSON validation files
-- `registry` — registry communication (HTTP, auth, manifest fetching)
-
-**Analyzers**
-
-- `analyzer` — base analyzer class or shared analyzer interfaces
-- `analyzer/trivy` — vulnerability scanning and SBOM generation via Trivy
-- `analyzer/sbom` — SBOM analysis and CycloneDX/SPDX generation
-- `analyzer/hadolint` — Dockerfile linting
-- `analyzer/skopeo` — base metadata extraction
-- `analyzer/freshness` — image age and freshness score
-- `analyzer/size` — size and layer calculations
-- `analyzer/popularity` — registry popularity metrics
-- `analyzer/endoflife` — version support status
-- `analyzer/scorecarddev` — OpenSSF Scorecard checks
-- `analyzer/provenance` — provenance and supply chain evidence
-
-**Rendering & Reporting**
-
-- `report` — high-level report generation (folder creation, file writing)
-- `templates` / `theme` — visual aspects, HTML, CSS, React/Docusaurus SPA
-
-**Tooling & CI**
-
-- `ci` — GitHub Actions workflows
-- `deps` / `build` — environment management (Pipenv, pyproject.toml, Dockerfiles)
-- `docs` — Docusaurus documentation, READMEs, Memory Bank updates
+- [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
+- [Google HTML/CSS Style Guide](https://google.github.io/styleguide/htmlcssguide.html)
+- [Google developer documentation style guide](https://developers.google.com/style)
+- Diagrams in **Mermaid**; architecture diagrams in **C4**.
 
 ## CI/CD
 
-- `ci-test.yml` includes `pip-audit` and enforces a HIGH/CRITICAL severity gate via `scripts/enforce_pip_audit_severity.py` (severity is resolved from OSV metadata).
-- `cd-docker.yml` generates CycloneDX/SPDX SBOM artifacts and emits provenance attestations using `actions/attest-build-provenance`.
-- **GitHub App authentication**: All workflows use `actions/create-github-app-token@v1` with secrets `REGIS_CI_APP_ID` + `REGIS_CI_APP_PRIVATE_KEY`. Never use `GITHUB_TOKEN` for checkouts that need to trigger downstream CI runs — it won't.
-- **Dependabot PRs + secrets**: Workflows triggered by Dependabot PRs via `pull_request` run with read-only `GITHUB_TOKEN` and no secret access. Use `pull_request_target` for any workflow that needs to act on Dependabot PRs (safe when no PR code is checked out).
-- **Release Please PRs**: Labelled `autorelease: pending` — exclude from auto-merge with `!contains(github.event.pull_request.labels.*.name, 'autorelease: pending')`.
-- **Auto-rebase + squash merge gotcha**: If a fix branch gets auto-rebased after main already includes the same change, the squash merge becomes a no-op. Always create fix branches from the latest main immediately before committing.
-- **`peaceiris/actions-gh-pages` with App token**: use `personal_token:`, not `github_token:`.
-- **Trunk auto-fmt in CI**: The trunk workflow commits formatting fixes using `stefanzweifel/git-auto-commit-action`. The checkout must use the App token so the auto-commit triggers a new workflow run.
-- Use **GitHub Actions** and [Release Please](https://github.com/googleapis/release-please).
-- GitHub project configuration as code via the [GitHub Settings App](https://github.com/apps/settings).
-- [Semantic Versioning](https://semver.org/).
-- [Trunk](https://trunk.io) — linter/formatter orchestrator used in CI. Always check results in PRs.
-- Trunk runs `trunk check --fix` automatically on `git commit` (pre-commit hook `trunk-check-fix-pre-commit`). Commit the auto-fixed files it produces.
-- mypy is excluded for `tests/**` (crashes on Linux CI with stale cache on `http.server`).
-- Do not manually edit Release Please PRs unless necessary.
+GitHub Actions + [Release Please](https://github.com/googleapis/release-please) + [Trunk](https://trunk.io). [Semantic Versioning](https://semver.org/). GitHub project config via the [Settings App](https://github.com/apps/settings).
 
-## Python & External Tools
+Workflow gotchas (App token wiring, Dependabot secret access, Release Please labels, gh-pages, Trunk auto-fmt, mypy/tests, rebase + squash) → `docs/memory-bank/systemPatterns.md`.
 
-**Required external binaries** (must be in `PATH` for the relevant analyzers to work):
-`trivy`, `skopeo`, `hadolint`, `dockle`
-
-- Styleguide: [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
-- Use [pipenv](https://pipenv.pypa.io/en/latest) for dependency management.
-- Use and maintain unit tests with `pytest`.
-- Use [ruff](https://github.com/astral-sh/ruff) for linting and formatting (replaces black, flake8, isort).
-- Enforce type hinting for all new functions and classes.
-
-## HTML / CSS
-
-- Styleguide: [Google HTML/CSS Style Guide](https://google.github.io/styleguide/htmlcssguide.html)
-
-## Diagrams
-
-- Draw diagrams using **Mermaid**.
-- Preferred format for architecture diagrams: **C4**.
-
-## Dev Containers
-
-- Use devcontainers where possible.
-
-## Documentation
-
-- Documentation as code using **Docusaurus** in the `docs/` directory.
-- Short project presentation in `/README.md` with links to dive in.
-- Keep documentation up to date at the root of the repository or inside `docs/`.
-- Maintain the **memory bank** up to date in `docs/memory-bank/` after any significant change.
-- Writing styleguide: [Google developer documentation style guide](https://developers.google.com/style)
+Locally, Trunk's pre-commit hook auto-fixes on `git commit` — commit the produced changes.
