@@ -98,6 +98,14 @@
 
 ## Recent Changes (main branch)
 
+- [2026-05-23] **CLAUDE.md restructure** (PR #592, merged): file dropped from ~180 → ~90 lines.
+  - Split into agent essentials (top) and project policy (bottom). Memory Bank section condensed to a 3-line pointer (no longer duplicates `RULES.md`).
+  - New **Craftsmanship** principle: _spec-based programming with stacked skills_ — covers both methodology (composing [Superpowers](https://claude.com/plugins/superpowers) skills with project skills like `/create-playbook`, `/verify`, `/code-review`) and architecture (declarative JSON Schemas / playbook YAML / JSON Logic over imperative code).
+  - **Git workflow**: made the rebase requirement explicit — always rebase feature branches on the latest `main` (never merge `main` back in).
+  - Added `pnpm --filter @regis/dashboard start|build` commands for the report viewer.
+  - Dropped the stale "Use devcontainers where possible" line (no `.devcontainer/` exists).
+  - Replaced the broken `whats-new.md` link with a reference to `scripts/generate_whats_new.py`.
+  - Reference material relocated to `systemPatterns.md`: full **CI/CD Gotchas** section (App token wiring, Dependabot secret access, Release Please labels, gh-pages, Trunk auto-fmt, mypy/tests, rebase + squash no-op) and full **Commit Scopes** list.
 - **GitHub Actions Auth Unification**: All 6 workflows migrated to use `actions/create-github-app-token@v1` with `REGIS_CI_APP_ID` + `REGIS_CI_APP_PRIVATE_KEY` secrets.
   - **`release-please.yml`**: Replaced `secrets.RELEASE_TOKEN` (PAT) with GitHub App token.
   - **`viewer-publish.yml`** and **`docs-publish.yml`**: Changed `github_token:` to `personal_token:` for `peaceiris/actions-gh-pages` (required for non-GITHUB_TOKEN).
