@@ -9,7 +9,7 @@ description = "Container Security & Policy-as-Code Orchestration. Unified analys
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-authors = [{ name = "TTC" }]
+authors = [{ name = "Tristan Rivoallan" }]
 dependencies = [
   "click>=8.1",
   "requests>=2.32.2",
