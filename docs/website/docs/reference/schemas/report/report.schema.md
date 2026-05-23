@@ -1760,4 +1760,4 @@ Must be one of:
 | **Maximum**  | &le; 100 |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-04-27 at 12:23:23 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-23 at 11:10:15 +0000
