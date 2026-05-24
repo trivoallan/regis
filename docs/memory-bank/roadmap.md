@@ -76,12 +76,12 @@ La v1 est la première version déployée auprès d'équipes pilotes réelles :
 
 _Objectif : fondations — nettoyer, stabiliser, poser la base playbook._
 
-| Item                        | Description                                                                                                                                               | Status      |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| **Moratoire snapshots doc** | Arrêter la génération de snapshots versionnés. Purger les versions anciennes (garder 3 dernières). Désactiver `release-snapshot.yml`.                     | Not Started |
-| **Playbook bundle format**  | Playbooks sous forme de répertoire : `playbook.yaml` + `README.md` + `inputs.schema.json`. Nouveau `InputsAnalyzer`.                                      | Not Started |
+| Item                        | Description                                                                                                                                                | Status      |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **Moratoire snapshots doc** | Arrêter la génération de snapshots versionnés. Purger les versions anciennes (garder 3 dernières). Désactiver `release-snapshot.yml`.                      | Not Started |
+| **Playbook bundle format**  | Playbooks sous forme de répertoire : `playbook.yaml` + `README.md` + `inputs.schema.json`. Nouveau `InputsAnalyzer`.                                       | Not Started |
 | **Finitions site de doc**   | Branding, CI hardening (Trivy pinning, archives résilientes), navigation sidebar, SEO baseline. Plan : `docs/memory-bank/plans/finitions-doc-site-plan.md` | Not Started |
-| **Guide GitLab CI**         | Process d'intégration regis dans un pipeline GitLab, multi-archives, déploiement rapport sur GitLab Pages / K8s.                                          | Not Started |
+| **Guide GitLab CI**         | Process d'intégration regis dans un pipeline GitLab, multi-archives, déploiement rapport sur GitLab Pages / K8s.                                           | Not Started |
 
 ---
 
