@@ -460,8 +460,6 @@ class TestAnalyzeCacheAndFail:
         assert "rule breaches" in result.output
 
 
-
-
 class TestAnalyzerTiming:
     """Per-analyzer timing in DEBUG logs (issue #588)."""
 
@@ -873,8 +871,18 @@ class TestAnalyzeSummary:
                         {
                             "playbook_name": "demo",
                             "rules": [
-                                {"slug": "a", "passed": True, "level": "info", "message": ""},
-                                {"slug": "b", "passed": True, "level": "info", "message": ""},
+                                {
+                                    "slug": "a",
+                                    "passed": True,
+                                    "level": "info",
+                                    "message": "",
+                                },
+                                {
+                                    "slug": "b",
+                                    "passed": True,
+                                    "level": "info",
+                                    "message": "",
+                                },
                             ],
                         }
                     ]
@@ -899,7 +907,12 @@ class TestAnalyzeSummary:
                         {
                             "playbook_name": "validation-import",
                             "rules": [
-                                {"slug": "a", "passed": True, "level": "info", "message": ""},
+                                {
+                                    "slug": "a",
+                                    "passed": True,
+                                    "level": "info",
+                                    "message": "",
+                                },
                                 {
                                     "slug": "trivy.no-critical-cves",
                                     "passed": False,
