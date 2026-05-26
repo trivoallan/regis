@@ -52,14 +52,30 @@ _render_mr_templates = render_mr_templates
     default=False,
     help="Enable verbose (DEBUG) logging.",
 )
-def main(verbose: bool) -> None:
+@click.option(
+    "-q",
+    "--quiet",
+    is_flag=True,
+    default=False,
+    help="Suppress non-essential output. Errors and explicit results still print.",
+)
+@click.pass_context
+def main(ctx: click.Context, verbose: bool, quiet: bool) -> None:
     """Regis — Registry Scores CLI."""
-    level = logging.DEBUG if verbose else logging.WARNING
+    if quiet:
+        level = logging.ERROR
+    elif verbose:
+        level = logging.DEBUG
+    else:
+        level = logging.WARNING
     logging.basicConfig(
         level=level,
         format="%(levelname)s %(name)s: %(message)s",
         stream=sys.stderr,
     )
+    ctx.ensure_object(dict)
+    ctx.obj["quiet"] = quiet
+    ctx.obj["verbose"] = verbose
 
 
 main.add_command(github_cmd, name="github")

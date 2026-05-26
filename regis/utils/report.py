@@ -51,6 +51,18 @@ def format_output_path(template: str, report: dict[str, Any], fmt: str) -> Path:
     return Path(resolved)
 
 
+def _quiet() -> bool:
+    """Return True when --quiet was set on the current Click context."""
+    ctx = click.get_current_context(silent=True)
+    return bool(ctx and ctx.obj and ctx.obj.get("quiet"))
+
+
+def _echo_info(msg: str, **kwargs) -> None:
+    """click.echo wrapper that respects the active --quiet flag."""
+    if not _quiet():
+        click.echo(msg, **kwargs)
+
+
 def write_report(
     dir_tmpl: str,
     file_tmpl: str,
@@ -66,16 +78,17 @@ def write_report(
     try:
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(rendered, encoding="utf-8")
-        click.echo(f"  Report ({fmt}) written to {out_path}", err=True)
+        _echo_info(f"  Report ({fmt}) written to {out_path}", err=True)
     except PermissionError as exc:
         fallback_path = Path.cwd() / f"report.{fmt}"
+        # Permission warning is non-fatal but actionable — keep it visible.
         click.echo(
             f"  Warning: Failed to write to {out_path} ({exc}). Trying fallback to {fallback_path}",
             err=True,
         )
         try:
             fallback_path.write_text(rendered, encoding="utf-8")
-            click.echo(f"  Report ({fmt}) written to {fallback_path}", err=True)
+            _echo_info(f"  Report ({fmt}) written to {fallback_path}", err=True)
         except PermissionError as inner_exc:
             raise click.ClickException(
                 f"Failed to write report: Permission denied for both {out_path} and fallback."
@@ -134,7 +147,7 @@ def evaluate_playbooks(
                 pb_path.startswith("http://") or pb_path.startswith("https://")
             )
             action = "Downloading" if is_remote else "Evaluating"
-            click.echo(f"  {action} playbook: {pb_path}...", err=True)
+            _echo_info(f"  {action} playbook: {pb_path}...", err=True)
             pb_def = load_playbook(pb_path)
             pb_result = evaluate(
                 pb_def, analysis_report, source_name=Path(pb_path).stem
@@ -162,7 +175,7 @@ def evaluate_playbooks(
                     len(total_rules) if isinstance(total_rules, list) else total_rules
                 )
                 rules_score = rs.get("score", pb_result["score"])
-                click.echo(
+                _echo_info(
                     f"    {summary_str} "
                     f"({passed_count}/{total_count} rules passed, "
                     f"{rules_score}%)\n",
@@ -170,13 +183,13 @@ def evaluate_playbooks(
                 )
 
                 if show_rules and pb_result.get("rules"):
-                    click.echo("    Rules Evaluation Summary:", err=True)
+                    _echo_info("    Rules Evaluation Summary:", err=True)
                     for r in pb_result["rules"]:
                         icon = "✅" if r["passed"] else "❌"
                         if r["status"] == "incomplete":
                             icon = "⚠️"
-                        click.echo(f"      {icon} [{r['slug']}] {r['message']}")
-                    click.echo("", err=True)
+                        _echo_info(f"      {icon} [{r['slug']}] {r['message']}")
+                    _echo_info("", err=True)
 
     return playbook_results
 
@@ -318,7 +331,7 @@ def render_and_save_reports(
             except RuntimeError as exc:
                 raise click.ClickException(str(exc)) from exc
 
-            click.echo(
+            _echo_info(
                 f"  Report site generated at {out_dir}",
                 err=True,
             )
