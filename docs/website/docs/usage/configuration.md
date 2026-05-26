@@ -36,8 +36,8 @@ The most frequently repeated `regis analyze` flags can be set via the environmen
 | `REGIS_PLAYBOOK`    | `-p, --playbook` — path or URL to a custom playbook.                       |
 | `REGIS_PLATFORM`    | `--platform` — target platform for multi-arch images (e.g. `linux/amd64`). |
 | `REGIS_OUTPUT`      | `-o, --output` — output filename template.                                 |
-| `REGIS_OUTPUT_DIR`  | `-D, --output-dir` — base directory template for output files.            |
-| `REGIS_MAX_WORKERS` | `--max-workers` — maximum number of analyzers to run in parallel.         |
+| `REGIS_OUTPUT_DIR`  | `-D, --output-dir` — base directory template for output files.             |
+| `REGIS_MAX_WORKERS` | `--max-workers` — maximum number of analyzers to run in parallel.          |
 
 ## Managing the Cache
 

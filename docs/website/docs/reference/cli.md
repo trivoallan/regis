@@ -4,11 +4,11 @@ This page provides a reference for all commands available in the `regis` tool.
 
 ## Global Options
 
-| Option          | Description                                                                                                  |
-| :-------------- | :----------------------------------------------------------------------------------------------------------- |
-| `-v, --verbose` | Enable verbose (DEBUG) logging for troubleshooting. Also surfaces per-analyzer timing (`analyzer X finished in 1.42s`). |
+| Option          | Description                                                                                                                                                 |
+| :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-v, --verbose` | Enable verbose (DEBUG) logging for troubleshooting. Also surfaces per-analyzer timing (`analyzer X finished in 1.42s`).                                     |
 | `-q, --quiet`   | Suppress non-essential output (progress banners, per-analyzer ticks, report-written confirmations). Errors and analyzer failures still print. Useful in CI. |
-| `--help`        | Show the help message and exit.                                                                              |
+| `--help`        | Show the help message and exit.                                                                                                                             |
 
 `--verbose` and `--quiet` are mutually exclusive in effect: `--quiet` clamps the log level to `ERROR` regardless of `--verbose`.
 
