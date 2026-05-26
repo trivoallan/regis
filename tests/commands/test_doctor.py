@@ -52,7 +52,7 @@ def test_missing_tool_exits_nonzero():
         patch("regis.commands.doctor._get_version", return_value=None),
     ):
         result = runner.invoke(doctor)
-    assert result.exit_code != 0
+    assert result.exit_code == 1
 
 
 def test_missing_tool_shows_cross():
@@ -78,7 +78,7 @@ def test_partial_tools_missing_exits_nonzero():
         ),
     ):
         result = runner.invoke(doctor)
-    assert result.exit_code != 0
+    assert result.exit_code == 1
     assert "✓" in result.output
     assert "✗" in result.output
 

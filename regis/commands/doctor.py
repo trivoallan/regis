@@ -16,11 +16,11 @@ _REQUIRED_TOOLS: list[tuple[str, str]] = [
 ]
 
 
-def _get_version(tool: str, version_flag: str) -> str | None:
-    """Return the first line of `tool <version_flag>` output, or None on failure."""
+def _get_version(path: str, version_flag: str) -> str | None:
+    """Return the first line of `path <version_flag>` output, or None on failure."""
     try:
         result = subprocess.run(  # nosec B603
-            [tool, version_flag],
+            [path, version_flag],
             capture_output=True,
             text=True,
             check=False,
@@ -28,7 +28,7 @@ def _get_version(tool: str, version_flag: str) -> str | None:
         )
         output = (result.stdout or result.stderr).strip()
         return output.splitlines()[0] if output else None
-    except Exception:
+    except (FileNotFoundError, OSError, subprocess.TimeoutExpired):
         return None
 
 
@@ -40,7 +40,7 @@ def doctor() -> None:
     for tool, version_flag in _REQUIRED_TOOLS:
         path = shutil.which(tool)
         if path:
-            version_line = _get_version(tool, version_flag) or "(version unknown)"
+            version_line = _get_version(path, version_flag) or "(version unknown)"
             click.echo(f"  ✓ {tool:<12} {version_line}")
         else:
             click.echo(f"  ✗ {tool:<12} not found in PATH", err=False)
