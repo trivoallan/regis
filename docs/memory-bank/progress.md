@@ -11,6 +11,17 @@
 
 ## Completed (Recent)
 
+- **CLI quality-of-life batch (2026-05-26, PRs #595–#603)** — one PR per issue #581–#589:
+  - `regis playbook validate <path>` (#600) — offline schema validation of a playbook bundle/file.
+  - `regis analyze --skip NAME` (#598) — exclude named analyzers (repeatable).
+  - Env vars `REGIS_PLAYBOOK`, `REGIS_PLATFORM`, `REGIS_OUTPUT`, `REGIS_OUTPUT_DIR`, `REGIS_MAX_WORKERS` (#599).
+  - Top-level `-q` / `--quiet` (#601) — gates progress/info; failures and errors still print. Wired through `ctx.obj["quiet"]` so `regis.utils.report` helpers consult it via `click.get_current_context`.
+  - Per-analyzer progress + timing line with red-styled failures (#602). Timing captured inside the worker thread (excludes ThreadPool queue wait).
+  - One-line `Playbook · <name>  N rules · P passed · F failed (<level>)` summary printed when `--playbook` is explicitly provided (#603). Reads `playbook_name` (schema field), tolerates `level: null`, treats `status: "incomplete"` as a separate `⚠` bucket.
+  - `regis rules list --filter-level/--filter-provider` (#597), `regis rules show --format yaml` (#595).
+  - DEBUG-level per-analyzer timing log `analyzer X finished in N.NNs` (#596).
+  - CLI reference doc (`docs/website/docs/reference/cli.md`) and env vars table in `usage/configuration.md` brought in sync.
+
 - **CLAUDE.md restructure (2026-05-23, PR #592)**:
   - File reduced from ~180 → ~90 lines; split into agent essentials + project policy.
   - Added _spec-based programming with stacked skills_ craftsmanship principle (Superpowers methodology + project skills + declarative-spec architecture).
