@@ -198,7 +198,9 @@ class TestBootstrapArchiveRepo:
     @patch("regis.utils.process.shutil.which")
     def test_missing_pnpm_fails(self, mock_which):
         # Node present, pnpm absent — verifies pnpm is checked after node.
-        mock_which.side_effect = lambda name: "/usr/bin/node" if name == "node" else None
+        mock_which.side_effect = lambda name: (
+            "/usr/bin/node" if name == "node" else None
+        )
         runner = CliRunner()
         result = runner.invoke(main, ["bootstrap", "archive", "--repo", "--no-input"])
         assert result.exit_code != 0
