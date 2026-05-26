@@ -181,7 +181,7 @@ Validate a playbook YAML/JSON file (or bundle directory) against the playbook JS
 regis playbook validate <PATH>
 ```
 
-Exit code `0` on success, `1` on validation failure. Each violation is rendered as `<json-path>: <message>` on stderr (no raw `jsonschema` tracebacks).
+Exit code `0` on success, `1` on validation failure. Each violation is rendered as `<location>: <message>` on stderr (no raw `jsonschema` tracebacks). The location is the dot-joined `absolute_path` reported by `jsonschema` (e.g. `rules.2.level`), or `<root>` when the error is at the document root.
 
 ```text
 $ regis playbook validate my-playbook.yaml
@@ -189,7 +189,7 @@ $ regis playbook validate my-playbook.yaml
 
 $ regis playbook validate broken-playbook.yaml
   ✗ broken-playbook.yaml is invalid:
-    - rules[2].level: 'high' is not one of ['info', 'warning', 'critical']
+    - rules.2.level: 'high' is not one of ['info', 'warning', 'critical']
 ```
 
 ## Viewer Commands
@@ -306,12 +306,14 @@ List all available analyzers (e.g., `skopeo`, `trivy`, `hadolint`).
 
 Check whether all required external binaries (`trivy`, `skopeo`, `hadolint`, `dockle`) are available on `PATH` and print their versions. Useful when onboarding or diagnosing CI failures.
 
+For each tool, the command prints the first line of `tool --version` verbatim — exact prefix/format depends on the tool. Missing tools are reported as `not found in PATH`.
+
 ```text
 $ regis doctor
-  ✓ trivy       0.50.1
-  ✓ skopeo      1.14.0
-  ✓ hadolint    2.12.0
-  ✗ dockle      not found — install from https://github.com/goodwithtech/dockle
+  ✓ trivy        Version: 0.50.1
+  ✓ skopeo       skopeo version 1.14.0
+  ✓ hadolint     Haskell Dockerfile Linter 2.12.0
+  ✗ dockle       not found in PATH
 ```
 
 Exit code `0` if every tool is found, `1` if any is missing.

@@ -67,6 +67,11 @@ def _info(msg: str, *, quiet: bool, err: bool = True) -> None:
 
 def _print_playbook_summary(final_report: dict[str, Any]) -> None:
     """Print a one-line summary per playbook + a list of failed rules."""
+    # Respect the --quiet flag set on the root group.
+    ctx = click.get_current_context(silent=True)
+    if ctx and ctx.obj and ctx.obj.get("quiet"):
+        return
+
     playbooks = final_report.get("playbooks") or []
     if not playbooks:
         return

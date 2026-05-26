@@ -720,12 +720,20 @@ class TestQuietFlag:
 
         runner = CliRunner()
         with runner.isolated_filesystem():
-            result = runner.invoke(main, ["-q", "analyze", "nginx:latest"])
+            import importlib.resources
+
+            pb = importlib.resources.files("regis") / "playbooks" / "default"
+            result = runner.invoke(
+                main,
+                ["-q", "analyze", "nginx:latest", "--playbook", str(pb)],
+            )
         assert result.exit_code == 0
         assert "Running" not in result.output
         assert "✓ dummy" not in result.output
         assert "Analyzing" not in result.output
         assert "Report (json) written to" not in result.output
+        # --quiet also suppresses the post-run playbook summary
+        assert "Playbook · " not in result.output
 
     @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze._discover_analyzers")
