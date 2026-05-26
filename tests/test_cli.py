@@ -560,7 +560,9 @@ class TestAnalyzeSkip:
         completed = [
             line for line in result.output.splitlines() if line.startswith("  ✓ ")
         ]
-        completed_names = [line.split()[-1] for line in completed]
+        # Each line is "  ✓ <name>  (<elapsed>s)" — the analyzer name is the
+        # second whitespace-separated token.
+        completed_names = [line.split()[1] for line in completed]
         assert "b" not in completed_names
         assert "a" in completed_names and "c" in completed_names
 
