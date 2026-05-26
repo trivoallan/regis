@@ -2,11 +2,11 @@
 
 > Supplemental file: this is a planning artifact that complements the core Memory Bank files.
 
-> Last updated: 2026-04-21 · Current version: v0.28.6
+> Last updated: 2026-05-23 · Current version: v0.28.6
 
 ## Status Overview
 
-v0.28.6 shipped · Chemin v1.0.0-alpha défini · Cible : pilote équipes internes
+v0.28.6 shipped · Sprint 1 en cours (19 mai → 2 juin) · Cible : v1.0.0-alpha pilote équipes internes
 
 ## Memory Bank Alignment
 
@@ -61,29 +61,27 @@ La v1 est la première version déployée auprès d'équipes pilotes réelles :
 
 ---
 
-## Pré-sprint — 21 avr → 29 avr _(7j ouvrés)_
+## Pré-sprint — 21 avr → 29 avr _(archivé)_
 
-_Objectif : un livrable concret avant les congés._
-
-| Item                                | Description                                                                                                         | Status      |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------- |
-| **One-pager Regis**                 | Une page claire expliquant ce que fait Regis, pour qui, et comment — à destination des architectes et stakeholders. | Not Started |
-| **Playbook "validation import" v1** | Premier playbook métier : règles + README. Go/no-go binaire pour valider une image avant import dans le catalogue.  | Not Started |
+| Item                                | Description                                                                                                         | Status  |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------- |
+| **One-pager Regis**                 | Une page claire expliquant ce que fait Regis, pour qui, et comment — à destination des architectes et stakeholders. | Skipped |
+| **Playbook "validation import" v1** | Premier playbook métier : règles + README. Go/no-go binaire pour valider une image avant import dans le catalogue.  | Skipped |
 
 > Congés : 30 avr → 17 mai
 
 ---
 
-## Sprint 1 — 19 mai → 2 juin
+## Sprint 1 — 19 mai → 2 juin _(en cours)_
 
 _Objectif : fondations — nettoyer, stabiliser, poser la base playbook._
 
-| Item                        | Description                                                                                                                                               | Status      |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| **Moratoire snapshots doc** | Arrêter la génération de snapshots versionnés. Purger les versions anciennes (garder 3 dernières). Désactiver `release-snapshot.yml`.                     | Not Started |
-| **Playbook bundle format**  | Playbooks sous forme de répertoire : `playbook.yaml` + `README.md` + `inputs.schema.json`. Nouveau `InputsAnalyzer`.                                      | Not Started |
-| **Finitions site de doc**   | Branding, CI hardening (Trivy pinning, archives résilientes), navigation sidebar, SEO baseline. Plan : `thoughts/shared/plans/PLAN-finitions-doc-site.md` | Not Started |
-| **Guide GitLab CI**         | Process d'intégration regis dans un pipeline GitLab, multi-archives, déploiement rapport sur GitLab Pages / K8s.                                          | Not Started |
+| Item                        | Description                                                                                                                           | Status      |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **Moratoire snapshots doc** | Arrêter la génération de snapshots versionnés. Purger les versions anciennes (garder 3 dernières). Désactiver `release-snapshot.yml`. | Not Started |
+| **Playbook bundle format**  | Playbooks sous forme de répertoire : `playbook.yaml` + `README.md` + `inputs.schema.json`. Nouveau `InputsAnalyzer`.                  | Not Started |
+| **Finitions site de doc**   | Branding, CI hardening (Trivy pinning, archives résilientes), navigation sidebar, SEO baseline.                                       | Not Started |
+| **Guide GitLab CI**         | Process d'intégration regis dans un pipeline GitLab, multi-archives, déploiement rapport sur GitLab Pages / K8s.                      | Not Started |
 
 ---
 
@@ -91,11 +89,11 @@ _Objectif : fondations — nettoyer, stabiliser, poser la base playbook._
 
 _Objectif : enablement Harbor + playbooks._
 
-| Item                              | Description                                                                                                                                                                     | Status      |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| **Intégration Harbor native**     | `RegistryProvider` abstrait, Harbor-first via OCI Distribution v2. Coexistence skopeo (opt-in `--native-registry`). Plan : `thoughts/shared/plans/PLAN-registry-integration.md` | Not Started |
-| **Playbook "contrôle catalogue"** | Playbook architectes : surveillance continue + preuve de qualité pour audit.                                                                                                    | Not Started |
-| **Playbook "progression projet"** | Playbook équipes projet : amélioration progressive par tiers (bronze → argent → or).                                                                                            | Not Started |
+| Item                              | Description                                                                                                         | Status      |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **Intégration Harbor native**     | `RegistryProvider` abstrait, Harbor-first via OCI Distribution v2. Coexistence skopeo (opt-in `--native-registry`). | Not Started |
+| **Playbook "contrôle catalogue"** | Playbook architectes : surveillance continue + preuve de qualité pour audit.                                        | Not Started |
+| **Playbook "progression projet"** | Playbook équipes projet : amélioration progressive par tiers (bronze → argent → or).                                | Not Started |
 
 ---
 
@@ -103,11 +101,11 @@ _Objectif : enablement Harbor + playbooks._
 
 _Objectif : traduction + design._
 
-| Item                                    | Description                                                                                    | Status      |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------- | ----------- |
-| **Traduction française (pipeline LLM)** | CI auto-translate via OpenAI/GPT interne. Plan : `thoughts/shared/plans/PLAN-traduction-fr.md` | Not Started |
-| **Design system**                       | Identité visuelle Regis générée avec Claude (couleurs, logo, typographie, custom CSS).         | Not Started |
-| **Playbook creation skill**             | Skill OMC guidant la création interactive d'un playbook bundle.                                | Not Started |
+| Item                                    | Description                                                                            | Status      |
+| --------------------------------------- | -------------------------------------------------------------------------------------- | ----------- |
+| **Traduction française (pipeline LLM)** | CI auto-translate via OpenAI/GPT interne.                                              | Not Started |
+| **Design system**                       | Identité visuelle Regis générée avec Claude (couleurs, logo, typographie, custom CSS). | Not Started |
+| **Playbook creation skill**             | Skill OMC guidant la création interactive d'un playbook bundle.                        | Not Started |
 
 ---
 
