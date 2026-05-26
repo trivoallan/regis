@@ -686,3 +686,79 @@ class TestAnalyzeEnvVars:
             )
         assert result.exit_code == 0
         assert "1 worker(s)" in result.output
+
+
+class TestQuietFlag:
+    """Top-level --quiet / -q flag (issue #584)."""
+
+    def _make_dummy_analyzer(self, name: str):
+        from regis.analyzers.base import BaseAnalyzer
+
+        class DummyAnalyzer(BaseAnalyzer):
+            analyzer_name = name
+
+            def analyze(self, client, repo, tag, platform=None):
+                return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
+
+            def validate(self, report):
+                pass
+
+        DummyAnalyzer.name = name
+        return DummyAnalyzer
+
+    def test_help_advertises_quiet(self):
+        runner = CliRunner()
+        result = runner.invoke(main, ["--help"])
+        assert result.exit_code == 0
+        assert "--quiet" in result.output
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_quiet_suppresses_progress_lines(self, mock_discover, mock_client):
+        mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["-q", "analyze", "nginx:latest"])
+        assert result.exit_code == 0
+        assert "Running" not in result.output
+        assert "✓ dummy" not in result.output
+        assert "Analyzing" not in result.output
+        assert "Report (json) written to" not in result.output
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_default_keeps_progress_lines(self, mock_discover, mock_client):
+        mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["analyze", "nginx:latest"])
+        assert result.exit_code == 0
+        assert "Analyzing" in result.output or "Running" in result.output
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_quiet_still_emits_analyzer_failure(self, mock_discover, mock_client):
+        from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+
+        class FailingAnalyzer(BaseAnalyzer):
+            name = "failing"
+
+            def analyze(self, client, repo, tag, platform=None):
+                raise AnalyzerError("boom")
+
+            def validate(self, report):
+                pass
+
+        mock_discover.return_value = {"failing": FailingAnalyzer}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["-q", "analyze", "nginx:latest"])
+        assert "✗ failing" in result.output
+        assert "Running" not in result.output
+        assert "Analyzing" not in result.output

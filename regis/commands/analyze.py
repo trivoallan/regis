@@ -59,6 +59,12 @@ def _run_analyzer(
         logger.debug("analyzer %s finished in %.2fs", name, time.monotonic() - start)
 
 
+def _info(msg: str, *, quiet: bool, err: bool = True) -> None:
+    """Print informational output to stderr unless quiet mode is active."""
+    if not quiet:
+        click.echo(msg, err=err)
+
+
 def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for item in meta:
@@ -247,7 +253,9 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     default=False,
     help="Merge --meta values into existing metadata instead of replacing (only with --rerun).",
 )
+@click.pass_context
 def analyze(
+    ctx: click.Context,
     url: str,
     analyzer_names: tuple[str, ...],
     skip_analyzers: tuple[str, ...],
@@ -282,6 +290,7 @@ def analyze(
 
     Runs analyzers and evaluates one or more playbooks against the results.
     """
+    quiet = bool(ctx.obj and ctx.obj.get("quiet"))
     # --rerun / --report mutual dependency validation
     if rerun and not report_dir:
         raise click.UsageError("--rerun requires --report")
@@ -352,7 +361,7 @@ def analyze(
             json.dumps(rerun_report, indent=indent, ensure_ascii=False),
             encoding="utf-8",
         )
-        click.echo(f"  Report updated at {report_path}", err=True)
+        _info(f"  Report updated at {report_path}", quiet=quiet)
         return
 
     # Normal analysis flow requires a URL
@@ -364,9 +373,9 @@ def analyze(
     except ValueError as exc:
         raise click.ClickException(str(exc)) from exc
 
-    click.echo(
+    _info(
         f"Analyzing {ref.repository}:{ref.tag} on {ref.registry}",
-        err=True,
+        quiet=quiet,
     )
 
     from regis.registry.auth import resolve_credentials
@@ -400,7 +409,7 @@ def analyze(
         formats.append("md")
 
     if sections != "all" and not html_single:
-        click.echo("  Warning: --sections has no effect without --html.", err=True)
+        _info("  Warning: --sections has no effect without --html.", quiet=quiet)
 
     dir_tmpl = output_dir_template or "reports/{registry}/{repository}/{digest}"
     file_tmpl = output_template or "report.{format}"
@@ -423,7 +432,7 @@ def analyze(
             cache_path = cache_dir / cache_file
 
             if cache_path.exists():
-                click.echo(f"  Using cached report from {cache_path}", err=True)
+                _info(f"  Using cached report from {cache_path}", quiet=quiet)
                 final_report = json.loads(cache_path.read_text(encoding="utf-8"))
         except Exception as exc:
             logger.debug("Cache lookup failed: %s", exc)
@@ -464,9 +473,9 @@ def analyze(
             )
 
         effective_workers = min(max_workers, len(selected))
-        click.echo(
+        _info(
             f"  Running {len(selected)} analyzer(s) with {effective_workers} worker(s)...",
-            err=True,
+            quiet=quiet,
         )
         reports: dict[str, Any] = {}
         with ThreadPoolExecutor(max_workers=effective_workers) as executor:
@@ -488,7 +497,7 @@ def analyze(
                 try:
                     _, report = future.result()
                     reports[name] = report
-                    click.echo(f"  ✓ {name}", err=True)
+                    _info(f"  ✓ {name}", quiet=quiet)
                 except RegistryError as exc:
                     click.echo(f"  ✗ {name}: registry error — {exc}", err=True)
                     reports[name] = {
@@ -563,7 +572,7 @@ def analyze(
     validate_report(final_report)
 
     if final_report.get("snapshot_date"):
-        click.echo(f"  Snapshot date: {final_report['snapshot_date']}", err=True)
+        _info(f"  Snapshot date: {final_report['snapshot_date']}", quiet=quiet)
 
     if archive_dir:
         from regis.archive.store import add_to_archive
