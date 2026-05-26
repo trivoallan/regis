@@ -93,6 +93,15 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     help="Run only the specified analyzer(s). Can be repeated. Default: all.",
 )
 @click.option(
+    "--skip",
+    "skip_analyzers",
+    multiple=True,
+    help=(
+        "Exclude the specified analyzer(s) from the run. Can be repeated. "
+        "Run `regis list` to see available analyzer names."
+    ),
+)
+@click.option(
     "-p",
     "--playbook",
     "playbook_paths",
@@ -231,6 +240,7 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
 def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
+    skip_analyzers: tuple[str, ...],
     playbook_paths: tuple[str, ...],
     output_template: str | None,
     output_dir_template: str | None,
@@ -427,7 +437,21 @@ def analyze(
                     )
                 selected[name] = all_analyzers[name]
         else:
-            selected = all_analyzers
+            selected = dict(all_analyzers)
+
+        for skip_name in skip_analyzers:
+            if skip_name not in all_analyzers:
+                click.echo(
+                    f"  Warning: --skip references unknown analyzer '{skip_name}'",
+                    err=True,
+                )
+                continue
+            selected.pop(skip_name, None)
+
+        if not selected:
+            raise click.ClickException(
+                "All analyzers were skipped — nothing to run."
+            )
 
         effective_workers = min(max_workers, len(selected))
         click.echo(
