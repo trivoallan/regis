@@ -1,9 +1,10 @@
 """Tests for the CLI."""
 
 import json
+import logging
 import re
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
@@ -457,3 +458,62 @@ class TestAnalyzeCacheAndFail:
 
         assert result.exit_code == 1
         assert "rule breaches" in result.output
+
+
+class TestAnalyzerTiming:
+    """Per-analyzer timing in DEBUG logs (issue #588)."""
+
+    @patch("regis.commands.analyze.RegistryClient")
+    def test_run_analyzer_logs_debug_timing(self, mock_client, caplog):
+        from regis.analyzers.base import BaseAnalyzer
+        from regis.commands.analyze import _run_analyzer
+
+        class DummyAnalyzer(BaseAnalyzer):
+            name = "dummy-timed"
+
+            def analyze(self, client, repo, tag, platform=None):
+                return {"ok": True}
+
+            def validate(self, report):
+                pass
+
+        with caplog.at_level(logging.DEBUG, logger="regis.commands.analyze"):
+            name, _ = _run_analyzer(
+                DummyAnalyzer, "docker.io", "library/x", "latest", None, None, None
+            )
+
+        assert name == "dummy-timed"
+        timing_records = [
+            r for r in caplog.records if "dummy-timed" in r.getMessage() and "finished in" in r.getMessage()
+        ]
+        assert len(timing_records) == 1
+        assert timing_records[0].levelno == logging.DEBUG
+        assert re.search(r"finished in \d+\.\d{2}s", timing_records[0].getMessage())
+
+    @patch("regis.commands.analyze.RegistryClient")
+    def test_run_analyzer_logs_timing_on_failure(self, mock_client, caplog):
+        """Timing must be logged even when the analyzer raises."""
+        from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+        from regis.commands.analyze import _run_analyzer
+
+        class BoomAnalyzer(BaseAnalyzer):
+            name = "boom"
+
+            def analyze(self, client, repo, tag, platform=None):
+                raise AnalyzerError("kaboom")
+
+            def validate(self, report):
+                pass
+
+        with caplog.at_level(logging.DEBUG, logger="regis.commands.analyze"):
+            try:
+                _run_analyzer(
+                    BoomAnalyzer, "docker.io", "library/x", "latest", None, None, None
+                )
+            except AnalyzerError:
+                pass
+
+        timing_records = [
+            r for r in caplog.records if "boom" in r.getMessage() and "finished in" in r.getMessage()
+        ]
+        assert len(timing_records) == 1
