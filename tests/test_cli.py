@@ -460,6 +460,8 @@ class TestAnalyzeCacheAndFail:
         assert "rule breaches" in result.output
 
 
+
+
 class TestAnalyzerTiming:
     """Per-analyzer timing in DEBUG logs (issue #588)."""
 
@@ -521,3 +523,85 @@ class TestAnalyzerTiming:
             if "boom" in r.getMessage() and "finished in" in r.getMessage()
         ]
         assert len(timing_records) == 1
+
+
+class TestAnalyzeSkip:
+    """--skip option on regis analyze (issue #582)."""
+
+    def _make_dummy_analyzer(self, name: str):
+        from regis.analyzers.base import BaseAnalyzer
+
+        class DummyAnalyzer(BaseAnalyzer):
+            analyzer_name = name
+
+            def analyze(self, client, repo, tag, platform=None):
+                return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
+
+            def validate(self, report):
+                pass
+
+        DummyAnalyzer.name = name
+        return DummyAnalyzer
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_skip_excludes_named_analyzer(self, mock_discover, mock_client):
+        mock_discover.return_value = {
+            "a": self._make_dummy_analyzer("a"),
+            "b": self._make_dummy_analyzer("b"),
+            "c": self._make_dummy_analyzer("c"),
+        }
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["analyze", "nginx:latest", "--skip", "b"])
+        assert result.exit_code == 0
+        completed = [
+            line for line in result.output.splitlines() if line.startswith("  ✓ ")
+        ]
+        completed_names = [line.split()[-1] for line in completed]
+        assert "b" not in completed_names
+        assert "a" in completed_names and "c" in completed_names
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_skip_repeatable(self, mock_discover, mock_client):
+        mock_discover.return_value = {
+            "a": self._make_dummy_analyzer("a"),
+            "b": self._make_dummy_analyzer("b"),
+            "c": self._make_dummy_analyzer("c"),
+        }
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main, ["analyze", "nginx:latest", "--skip", "a", "--skip", "c"]
+            )
+        assert result.exit_code == 0
+        assert "Running 1 analyzer(s)" in result.output
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_skip_unknown_warns_but_succeeds(self, mock_discover, mock_client):
+        mock_discover.return_value = {"a": self._make_dummy_analyzer("a")}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["analyze", "nginx:latest", "--skip", "nope"])
+        assert result.exit_code == 0
+        assert "unknown analyzer 'nope'" in result.output
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_skip_all_fails(self, mock_discover, mock_client):
+        mock_discover.return_value = {"a": self._make_dummy_analyzer("a")}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["analyze", "nginx:latest", "--skip", "a"])
+        assert result.exit_code != 0
+        assert "All analyzers were skipped" in result.output
