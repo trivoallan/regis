@@ -605,3 +605,84 @@ class TestAnalyzeSkip:
             result = runner.invoke(main, ["analyze", "nginx:latest", "--skip", "a"])
         assert result.exit_code != 0
         assert "All analyzers were skipped" in result.output
+
+
+class TestAnalyzeEnvVars:
+    """Environment variable support on regis analyze (issue #583)."""
+
+    def _make_dummy_analyzer(self, name: str):
+        from regis.analyzers.base import BaseAnalyzer
+
+        class DummyAnalyzer(BaseAnalyzer):
+            analyzer_name = name
+
+            def analyze(self, client, repo, tag, platform=None):
+                DummyAnalyzer.last_platform = platform
+                return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
+
+            def validate(self, report):
+                pass
+
+        DummyAnalyzer.name = name
+        DummyAnalyzer.last_platform = None
+        return DummyAnalyzer
+
+    def test_help_advertises_env_vars(self):
+        runner = CliRunner()
+        result = runner.invoke(main, ["analyze", "--help"])
+        assert result.exit_code == 0
+        assert "REGIS_PLAYBOOK" in result.output
+        assert "REGIS_PLATFORM" in result.output
+        assert "REGIS_OUTPUT_DIR" in result.output
+        assert "REGIS_MAX_WORKERS" in result.output
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_regis_platform_env(self, mock_discover, mock_client):
+        cls = self._make_dummy_analyzer("dummy")
+        mock_discover.return_value = {"dummy": cls}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main,
+                ["analyze", "nginx:latest"],
+                env={"REGIS_PLATFORM": "linux/arm64"},
+            )
+        assert result.exit_code == 0
+        assert cls.last_platform == "linux/arm64"
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_cli_flag_overrides_env(self, mock_discover, mock_client):
+        cls = self._make_dummy_analyzer("dummy")
+        mock_discover.return_value = {"dummy": cls}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main,
+                ["analyze", "nginx:latest", "--platform", "linux/amd64"],
+                env={"REGIS_PLATFORM": "linux/arm64"},
+            )
+        assert result.exit_code == 0
+        assert cls.last_platform == "linux/amd64"
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_regis_max_workers_env(self, mock_discover, mock_client):
+        cls = self._make_dummy_analyzer("dummy")
+        mock_discover.return_value = {"dummy": cls}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main,
+                ["analyze", "nginx:latest"],
+                env={"REGIS_MAX_WORKERS": "2"},
+            )
+        assert result.exit_code == 0
+        assert "1 worker(s)" in result.output
