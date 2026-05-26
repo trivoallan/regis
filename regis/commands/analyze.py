@@ -480,24 +480,31 @@ def analyze(
         name_width = max((len(n) for n in selected), default=12)
         start_times: dict[str, float] = {}
         reports: dict[str, Any] = {}
+
+        def _timed_run(name: str, cls: type[BaseAnalyzer]) -> tuple[str, dict[str, Any]]:
+            # Capture start time *inside* the worker thread so queued analyzers
+            # don't inherit the wait-in-pool delay.
+            start_times[name] = time.monotonic()
+            return _run_analyzer(
+                cls,
+                ref.registry,
+                ref.repository,
+                ref.tag,
+                username,
+                password,
+                platform,
+            )
+
         with ThreadPoolExecutor(max_workers=effective_workers) as executor:
-            futures = {}
-            for name, cls in selected.items():
-                start_times[name] = time.monotonic()
-                fut = executor.submit(
-                    _run_analyzer,
-                    cls,
-                    ref.registry,
-                    ref.repository,
-                    ref.tag,
-                    username,
-                    password,
-                    platform,
-                )
-                futures[fut] = name
+            futures = {
+                executor.submit(_timed_run, name, cls): name
+                for name, cls in selected.items()
+            }
             for future in as_completed(futures):
                 name = futures[future]
-                elapsed = time.monotonic() - start_times[name]
+                # start_times may be missing if the worker raised before the
+                # first statement — fall back to "0.0s" rather than crashing.
+                elapsed = time.monotonic() - start_times.get(name, time.monotonic())
                 timing = f"({elapsed:.1f}s)"
                 try:
                     _, report = future.result()
