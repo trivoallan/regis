@@ -837,3 +837,132 @@ class TestAnalyzerProgressFeedback:
         ]
         assert len(failing_lines) == 1
         assert re.search(r"\(\d+\.\d+s\)", failing_lines[0])
+
+
+class TestAnalyzeSummary:
+    """One-line analysis summary printed after run (issue #585)."""
+
+    def _make_dummy_analyzer(self, name: str):
+        from regis.analyzers.base import BaseAnalyzer
+
+        class DummyAnalyzer(BaseAnalyzer):
+            analyzer_name = name
+
+            def analyze(self, client, repo, tag, platform=None):
+                return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
+
+            def validate(self, report):
+                pass
+
+        DummyAnalyzer.name = name
+        return DummyAnalyzer
+
+    def test_print_playbook_summary_passed_only(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        from regis.commands.analyze import _print_playbook_summary
+
+        buf = StringIO()
+        with redirect_stdout(buf):
+            _print_playbook_summary(
+                {
+                    "playbooks": [
+                        {
+                            "playbook_name": "demo",
+                            "rules": [
+                                {"slug": "a", "passed": True, "level": "info", "message": ""},
+                                {"slug": "b", "passed": True, "level": "info", "message": ""},
+                            ],
+                        }
+                    ]
+                }
+            )
+        out = buf.getvalue()
+        assert "Playbook · demo" in out
+        assert "2 rules · 2 passed · 0 failed" in out
+        assert "✗" not in out
+
+    def test_print_playbook_summary_failed_rules_listed(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        from regis.commands.analyze import _print_playbook_summary
+
+        buf = StringIO()
+        with redirect_stdout(buf):
+            _print_playbook_summary(
+                {
+                    "playbooks": [
+                        {
+                            "playbook_name": "validation-import",
+                            "rules": [
+                                {"slug": "a", "passed": True, "level": "info", "message": ""},
+                                {
+                                    "slug": "trivy.no-critical-cves",
+                                    "passed": False,
+                                    "level": "critical",
+                                    "message": "2 critical CVEs found",
+                                },
+                                {
+                                    "slug": "freshness.max-age-days",
+                                    "passed": False,
+                                    "level": "warning",
+                                    "message": "Image is 120 days old (max: 90)",
+                                },
+                            ],
+                        }
+                    ]
+                }
+            )
+        out = buf.getvalue()
+        assert "Playbook · validation-import" in out
+        assert "3 rules · 1 passed · 2 failed" in out
+        assert "(critical)" in out
+        assert "✗ [trivy.no-critical-cves]" in out
+        assert "2 critical CVEs found" in out
+        assert "✗ [freshness.max-age-days]" in out
+
+    def test_print_playbook_summary_no_playbooks_silent(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        from regis.commands.analyze import _print_playbook_summary
+
+        buf = StringIO()
+        with redirect_stdout(buf):
+            _print_playbook_summary({})
+            _print_playbook_summary({"playbooks": []})
+        assert buf.getvalue() == ""
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_analyze_prints_summary_when_playbook_given(
+        self, mock_discover, mock_client
+    ):
+        import importlib.resources
+
+        mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
+        mock_client.return_value.get_digest.return_value = None
+
+        pb = importlib.resources.files("regis") / "playbooks" / "default"
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main,
+                ["analyze", "nginx:latest", "--playbook", str(pb)],
+            )
+        assert result.exit_code == 0
+        assert "Playbook · " in result.output
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_analyze_silent_without_playbook(self, mock_discover, mock_client):
+        mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["analyze", "nginx:latest"])
+        assert result.exit_code == 0
+        assert "Playbook · " not in result.output
