@@ -98,6 +98,11 @@ These artifacts are uploaded by the release/CD workflow as GitHub Actions workfl
 
 ---
 
+> **Breaking change in v0.32.0** — The published image no longer bundles
+> Node.js. `regis bootstrap archive --dev` and `--repo` must now be run
+> from a host that has Node 20+ and pnpm installed (install via `nvm`,
+> `fnm`, or `brew install node`). All other commands work unchanged.
+
 ## GitHub Action
 
 The [**regis-security-analysis**](https://github.com/marketplace/actions/regis-security-analysis) GitHub Action runs a full Regis security analysis on any OCI image, uploads the HTML report as a workflow artifact, and optionally posts a summary comment on pull requests.
