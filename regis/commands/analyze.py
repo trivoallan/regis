@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
@@ -41,16 +42,21 @@ def _run_analyzer(
     platform: str | None,
 ) -> tuple[str, dict[str, Any]]:
     """Run a single analyzer with its own registry client."""
-    client = RegistryClient(
-        registry=registry,
-        repository=repository,
-        username=username,
-        password=password,
-    )
     analyzer = analyzer_cls()
-    report = analyzer.analyze(client, repository, tag, platform=platform)
-    analyzer.validate(report)
-    return analyzer.name, report
+    name = analyzer.name
+    start = time.monotonic()
+    try:
+        client = RegistryClient(
+            registry=registry,
+            repository=repository,
+            username=username,
+            password=password,
+        )
+        report = analyzer.analyze(client, repository, tag, platform=platform)
+        analyzer.validate(report)
+        return name, report
+    finally:
+        logger.debug("analyzer %s finished in %.2fs", name, time.monotonic() - start)
 
 
 def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
