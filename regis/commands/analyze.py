@@ -106,18 +106,24 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     "--playbook",
     "playbook_paths",
     multiple=True,
+    envvar="REGIS_PLAYBOOK",
+    show_envvar=True,
     help="Path or URL to custom playbook YAML/JSON file(s). Can be repeated. Default: built-in playbook.",
 )
 @click.option(
     "-o",
     "--output",
     "output_template",
+    envvar="REGIS_OUTPUT",
+    show_envvar=True,
     help="Output filename template (e.g. 'report.{format}'). If not provided and one format requested, outputs to stdout.",
 )
 @click.option(
     "-D",
     "--output-dir",
     "output_dir_template",
+    envvar="REGIS_OUTPUT_DIR",
+    show_envvar=True,
     help="Base directory template for output files (e.g. 'reports/{repository}').",
     default="reports/{registry}/{repository}/{digest}",
 )
@@ -171,6 +177,8 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
 )
 @click.option(
     "--platform",
+    envvar="REGIS_PLATFORM",
+    show_envvar=True,
     help="Target platform for multi-arch images (e.g. linux/amd64).",
 )
 @click.option(
@@ -221,6 +229,8 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     default=4,
     show_default=True,
     type=click.IntRange(1, 20),
+    envvar="REGIS_MAX_WORKERS",
+    show_envvar=True,
     help="Maximum number of analyzers to run in parallel. Use 1 for serial execution.",
 )
 @click.option(
