@@ -68,7 +68,7 @@ _Output style:_
 
 While running, `analyze` prints one line per analyzer with elapsed time:
 
-```
+```text
   Running 8 analyzer(s) with 4 worker(s)...
   ✓ skopeo        (0.8s)
   ✓ metadata      (0.9s)
@@ -77,7 +77,7 @@ While running, `analyze` prints one line per analyzer with elapsed time:
 
 When `--playbook` is explicitly provided, a one-line summary is printed at the end:
 
-```
+```text
   Playbook · validation-import  12 rules · 10 passed · 2 failed (critical)
   ✗ [trivy.no-critical-cves]   2 critical CVEs found
   ✗ [freshness.max-age-days]   Image is 120 days old (max: 90)
