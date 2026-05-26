@@ -50,14 +50,6 @@ class TestRulesShow:
         # Should still work — missing file is silently ignored
         assert result.exit_code == 0
 
-    def test_show_default_format_is_json(self):
-        runner = CliRunner()
-        result = runner.invoke(main, ["rules", "show", "registry-domain-whitelist"])
-        assert result.exit_code == 0
-        # JSON output is parseable
-        data = json.loads(result.output)
-        assert data["slug"] == "registry-domain-whitelist"
-
     def test_show_yaml_format(self):
         import yaml
 

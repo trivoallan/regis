@@ -287,7 +287,7 @@ def show_rule(slug: str, rules_path: str | None, output_format: str) -> None:
 
     if output_format.lower() == "yaml":
         click.echo(
-            yaml.dump(matching_rule, default_flow_style=False, allow_unicode=True),
+            yaml.safe_dump(matching_rule, default_flow_style=False, allow_unicode=True),
             nl=False,
         )
     else:
