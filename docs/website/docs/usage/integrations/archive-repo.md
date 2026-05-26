@@ -33,6 +33,15 @@ gh auth login
 glab auth login
 ```
 
+:::note Prerequisite
+
+`--dev` and `--repo` require Node.js 20+ and pnpm on the host. These commands
+no longer work from inside the official Regis Docker image (since v0.32.0).
+Install Node via `nvm`, `fnm`, or `brew install node`, then enable pnpm with
+`corepack enable && corepack prepare pnpm@latest --activate`.
+
+:::
+
 ## Usage
 
 ```bash
