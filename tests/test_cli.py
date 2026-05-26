@@ -965,4 +965,6 @@ class TestAnalyzeSummary:
         with runner.isolated_filesystem():
             result = runner.invoke(main, ["analyze", "nginx:latest"])
         assert result.exit_code == 0
+        # No --playbook → no summary printed (default-playbook auto-load
+        # shouldn't change the stdout contract).
         assert "Playbook · " not in result.output
