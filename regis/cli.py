@@ -14,6 +14,7 @@ from regis.commands.bootstrap import bootstrap
 from regis.commands.check import check, version_cmd
 from regis.commands.dashboard import dashboard_group
 from regis.commands.doctor import doctor
+from regis.commands.playbook import playbook_group
 from regis.commands.rules import rules_group
 from regis.github_cli import github_cmd
 from regis.gitlab_cli import gitlab_cmd
@@ -73,6 +74,7 @@ main.add_command(version_cmd, name="version")
 main.add_command(rules_group, name="rules")
 main.add_command(dashboard_group, name="dashboard")
 main.add_command(doctor)
+main.add_command(playbook_group, name="playbook")
 
 
 if __name__ == "__main__":
