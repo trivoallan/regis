@@ -4,7 +4,7 @@ import json
 import logging
 import re
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from click.testing import CliRunner
 
@@ -484,7 +484,9 @@ class TestAnalyzerTiming:
 
         assert name == "dummy-timed"
         timing_records = [
-            r for r in caplog.records if "dummy-timed" in r.getMessage() and "finished in" in r.getMessage()
+            r
+            for r in caplog.records
+            if "dummy-timed" in r.getMessage() and "finished in" in r.getMessage()
         ]
         assert len(timing_records) == 1
         assert timing_records[0].levelno == logging.DEBUG
@@ -514,6 +516,8 @@ class TestAnalyzerTiming:
                 pass
 
         timing_records = [
-            r for r in caplog.records if "boom" in r.getMessage() and "finished in" in r.getMessage()
+            r
+            for r in caplog.records
+            if "boom" in r.getMessage() and "finished in" in r.getMessage()
         ]
         assert len(timing_records) == 1
