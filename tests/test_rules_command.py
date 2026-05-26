@@ -50,6 +50,41 @@ class TestRulesShow:
         # Should still work — missing file is silently ignored
         assert result.exit_code == 0
 
+    def test_show_yaml_format(self):
+        import yaml
+
+        runner = CliRunner()
+        result = runner.invoke(
+            main,
+            ["rules", "show", "registry-domain-whitelist", "--format", "yaml"],
+        )
+        assert result.exit_code == 0
+        data = yaml.safe_load(result.output)
+        assert data["slug"] == "registry-domain-whitelist"
+        assert data["level"] == "critical"
+        # YAML formatting hints: no JSON braces around the top-level
+        assert not result.output.lstrip().startswith("{")
+
+    def test_show_yaml_format_short_flag(self):
+        import yaml
+
+        runner = CliRunner()
+        result = runner.invoke(
+            main,
+            ["rules", "show", "registry-domain-whitelist", "-f", "yaml"],
+        )
+        assert result.exit_code == 0
+        data = yaml.safe_load(result.output)
+        assert data["slug"] == "registry-domain-whitelist"
+
+    def test_show_invalid_format_rejected(self):
+        runner = CliRunner()
+        result = runner.invoke(
+            main,
+            ["rules", "show", "registry-domain-whitelist", "--format", "toml"],
+        )
+        assert result.exit_code != 0
+
 
 class TestRulesList:
     def test_markdown_with_params_shows_options(self):
