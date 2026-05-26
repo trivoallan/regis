@@ -3,6 +3,7 @@
 > **Registry Scores** — Container Security & Policy-as-Code Orchestration
 
 ![Coverage](./coverage-badge.svg)
+[![Docker Image Size](https://ghcr-badge.egpl.dev/trivoallan/regis/size?color=blue&trim=label&label=image%20size)](https://github.com/trivoallan/regis/pkgs/container/regis)
 
 Regis provides unified container analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.
 
