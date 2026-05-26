@@ -22,6 +22,7 @@ Cette structure pèse sur trois axes simultanément :
 ## Objectifs
 
 - Réduire la taille décompressée de l'image d'au moins **50 %**.
+  - **Résultat mesuré (2026-05-22)** : taille tar (compressed registry artifact) 244 MB → 186 MB pour la nouvelle image, soit ~24 % de réduction. En deçà du target. La couche apt qui amène `skopeo` (208 MB décompressé / ~80 MB compressé) domine ce qui reste — voir Hors scope pour pistes v2.
 - Éliminer tout outil de build de l'image finale (`gcc`, `curl`, `npm`, `pnpm`, `node`, `gnupg`).
 - Empêcher les régressions futures via une gate CI de taille hardcodée.
 - Préserver la compatibilité multi-arch (amd64 + arm64).
