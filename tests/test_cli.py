@@ -762,3 +762,78 @@ class TestQuietFlag:
         assert "✗ failing" in result.output
         assert "Running" not in result.output
         assert "Analyzing" not in result.output
+
+
+class TestAnalyzerProgressFeedback:
+    """Per-analyzer progress with timing (issue #581)."""
+
+    def _make_dummy_analyzer(self, name: str):
+        from regis.analyzers.base import BaseAnalyzer
+
+        class DummyAnalyzer(BaseAnalyzer):
+            analyzer_name = name
+
+            def analyze(self, client, repo, tag, platform=None):
+                return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
+
+            def validate(self, report):
+                pass
+
+        DummyAnalyzer.name = name
+        return DummyAnalyzer
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_success_lines_include_timing(self, mock_discover, mock_client):
+        mock_discover.return_value = {
+            "alpha": self._make_dummy_analyzer("alpha"),
+            "bravo": self._make_dummy_analyzer("bravo"),
+        }
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["analyze", "nginx:latest"])
+        assert result.exit_code == 0
+        success_lines = [line for line in result.output.splitlines() if "✓" in line]
+        assert len(success_lines) == 2
+        for line in success_lines:
+            assert re.search(r"\(\d+\.\d+s\)", line)
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_running_banner_present(self, mock_discover, mock_client):
+        mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["analyze", "nginx:latest"])
+        assert result.exit_code == 0
+        assert "Running 1 analyzer(s)" in result.output
+
+    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_failure_line_also_shows_timing(self, mock_discover, mock_client):
+        from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+
+        class FailingAnalyzer(BaseAnalyzer):
+            name = "failing"
+
+            def analyze(self, client, repo, tag, platform=None):
+                raise AnalyzerError("boom")
+
+            def validate(self, report):
+                pass
+
+        mock_discover.return_value = {"failing": FailingAnalyzer}
+        mock_client.return_value.get_digest.return_value = None
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["analyze", "nginx:latest"])
+        failing_lines = [
+            line for line in result.output.splitlines() if "✗ failing" in line
+        ]
+        assert len(failing_lines) == 1
+        assert re.search(r"\(\d+\.\d+s\)", failing_lines[0])

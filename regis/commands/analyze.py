@@ -477,41 +477,74 @@ def analyze(
             f"  Running {len(selected)} analyzer(s) with {effective_workers} worker(s)...",
             quiet=quiet,
         )
+        name_width = max((len(n) for n in selected), default=12)
+        start_times: dict[str, float] = {}
         reports: dict[str, Any] = {}
+
+        def _timed_run(name: str, cls: type[BaseAnalyzer]) -> tuple[str, dict[str, Any]]:
+            # Capture start time *inside* the worker thread so queued analyzers
+            # don't inherit the wait-in-pool delay.
+            start_times[name] = time.monotonic()
+            return _run_analyzer(
+                cls,
+                ref.registry,
+                ref.repository,
+                ref.tag,
+                username,
+                password,
+                platform,
+            )
+
         with ThreadPoolExecutor(max_workers=effective_workers) as executor:
             futures = {
-                executor.submit(
-                    _run_analyzer,
-                    cls,
-                    ref.registry,
-                    ref.repository,
-                    ref.tag,
-                    username,
-                    password,
-                    platform,
-                ): name
+                executor.submit(_timed_run, name, cls): name
                 for name, cls in selected.items()
             }
             for future in as_completed(futures):
                 name = futures[future]
+                # start_times may be missing if the worker raised before the
+                # first statement — fall back to "0.0s" rather than crashing.
+                elapsed = time.monotonic() - start_times.get(name, time.monotonic())
+                timing = f"({elapsed:.1f}s)"
                 try:
                     _, report = future.result()
                     reports[name] = report
-                    _info(f"  ✓ {name}", quiet=quiet)
+                    _info(
+                        f"  ✓ {name:<{name_width}}  {timing}",
+                        quiet=quiet,
+                    )
                 except RegistryError as exc:
-                    click.echo(f"  ✗ {name}: registry error — {exc}", err=True)
+                    click.echo(
+                        click.style(
+                            f"  ✗ {name:<{name_width}}  {timing}  registry error — {exc}",
+                            fg="red",
+                        ),
+                        err=True,
+                    )
                     reports[name] = {
                         "analyzer": name,
                         "error": {"type": "registry", "message": str(exc)},
                     }
                 except AnalyzerError as exc:
-                    click.echo(f"  ✗ {name}: analysis error — {exc}", err=True)
+                    click.echo(
+                        click.style(
+                            f"  ✗ {name:<{name_width}}  {timing}  analysis error — {exc}",
+                            fg="red",
+                        ),
+                        err=True,
+                    )
                     reports[name] = {
                         "analyzer": name,
                         "error": {"type": "analysis", "message": str(exc)},
                     }
                 except Exception as exc:
-                    click.echo(f"  ✗ {name}: unexpected error — {exc}", err=True)
+                    click.echo(
+                        click.style(
+                            f"  ✗ {name:<{name_width}}  {timing}  unexpected error — {exc}",
+                            fg="red",
+                        ),
+                        err=True,
+                    )
                     reports[name] = {
                         "analyzer": name,
                         "error": {"type": "unexpected", "message": str(exc)},
