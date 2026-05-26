@@ -76,12 +76,12 @@ La v1 est la première version déployée auprès d'équipes pilotes réelles :
 
 _Objectif : fondations — nettoyer, stabiliser, poser la base playbook._
 
-| Item                        | Description                                                                                                                                                | Status      |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| **Moratoire snapshots doc** | Arrêter la génération de snapshots versionnés. Purger les versions anciennes (garder 3 dernières). Désactiver `release-snapshot.yml`.                      | Not Started |
-| **Playbook bundle format**  | Playbooks sous forme de répertoire : `playbook.yaml` + `README.md` + `inputs.schema.json`. Nouveau `InputsAnalyzer`.                                       | Not Started |
-| **Finitions site de doc**   | Branding, CI hardening (Trivy pinning, archives résilientes), navigation sidebar, SEO baseline. Plan : `docs/memory-bank/plans/finitions-doc-site-plan.md` | Not Started |
-| **Guide GitLab CI**         | Process d'intégration regis dans un pipeline GitLab, multi-archives, déploiement rapport sur GitLab Pages / K8s.                                           | Not Started |
+| Item                        | Description                                                                                                                           | Status      |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **Moratoire snapshots doc** | Arrêter la génération de snapshots versionnés. Purger les versions anciennes (garder 3 dernières). Désactiver `release-snapshot.yml`. | Not Started |
+| **Playbook bundle format**  | Playbooks sous forme de répertoire : `playbook.yaml` + `README.md` + `inputs.schema.json`. Nouveau `InputsAnalyzer`.                  | Not Started |
+| **Finitions site de doc**   | Branding, CI hardening (Trivy pinning, archives résilientes), navigation sidebar, SEO baseline.                                       | Not Started |
+| **Guide GitLab CI**         | Process d'intégration regis dans un pipeline GitLab, multi-archives, déploiement rapport sur GitLab Pages / K8s.                      | Not Started |
 
 ---
 
@@ -89,11 +89,11 @@ _Objectif : fondations — nettoyer, stabiliser, poser la base playbook._
 
 _Objectif : enablement Harbor + playbooks._
 
-| Item                              | Description                                                                                                                                                                      | Status      |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| **Intégration Harbor native**     | `RegistryProvider` abstrait, Harbor-first via OCI Distribution v2. Coexistence skopeo (opt-in `--native-registry`). Plan : `docs/memory-bank/plans/registry-integration-plan.md` | Not Started |
-| **Playbook "contrôle catalogue"** | Playbook architectes : surveillance continue + preuve de qualité pour audit.                                                                                                     | Not Started |
-| **Playbook "progression projet"** | Playbook équipes projet : amélioration progressive par tiers (bronze → argent → or).                                                                                             | Not Started |
+| Item                              | Description                                                                                                         | Status      |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **Intégration Harbor native**     | `RegistryProvider` abstrait, Harbor-first via OCI Distribution v2. Coexistence skopeo (opt-in `--native-registry`). | Not Started |
+| **Playbook "contrôle catalogue"** | Playbook architectes : surveillance continue + preuve de qualité pour audit.                                        | Not Started |
+| **Playbook "progression projet"** | Playbook équipes projet : amélioration progressive par tiers (bronze → argent → or).                                | Not Started |
 
 ---
 
@@ -101,11 +101,11 @@ _Objectif : enablement Harbor + playbooks._
 
 _Objectif : traduction + design._
 
-| Item                                    | Description                                                                                     | Status      |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------- |
-| **Traduction française (pipeline LLM)** | CI auto-translate via OpenAI/GPT interne. Plan : `docs/memory-bank/plans/traduction-fr-plan.md` | Not Started |
-| **Design system**                       | Identité visuelle Regis générée avec Claude (couleurs, logo, typographie, custom CSS).          | Not Started |
-| **Playbook creation skill**             | Skill OMC guidant la création interactive d'un playbook bundle.                                 | Not Started |
+| Item                                    | Description                                                                            | Status      |
+| --------------------------------------- | -------------------------------------------------------------------------------------- | ----------- |
+| **Traduction française (pipeline LLM)** | CI auto-translate via OpenAI/GPT interne.                                              | Not Started |
+| **Design system**                       | Identité visuelle Regis générée avec Claude (couleurs, logo, typographie, custom CSS). | Not Started |
+| **Playbook creation skill**             | Skill OMC guidant la création interactive d'un playbook bundle.                        | Not Started |
 
 ---
 

@@ -45,12 +45,12 @@
 
 These must be in `PATH` for the relevant analyzers to work:
 
-| Binary     | Analyzer              |
-| ---------- | --------------------- |
-| `trivy`    | `analyzer/trivy`      |
-| `skopeo`   | `analyzer/skopeo`     |
-| `hadolint` | `analyzer/hadolint`   |
-| `dockle`   | (image best-practice) |
+| Binary     | Analyzer slug | Module                        |
+| ---------- | ------------- | ----------------------------- |
+| `trivy`    | `trivy`       | `regis/analyzers/trivy.py`    |
+| `skopeo`   | `skopeo`      | `regis/analyzers/skopeo.py`   |
+| `hadolint` | `hadolint`    | `regis/analyzers/hadolint.py` |
+| `dockle`   | `dockle`      | `regis/analyzers/dockle.py`   |
 
 ## Development Environment
 
@@ -115,4 +115,4 @@ project-root/
 - Release Please — automated changelog and releases
 - `cd-docker.yml` — CycloneDX/SPDX SBOM generation + provenance attestation
 - Docusaurus docs + dashboard deployed to GitHub Pages
-- All workflows use GitHub App token (`REGIS_CI_APP_ID` + `REGIS_CI_APP_PRIVATE_KEY`) — never bare `GITHUB_TOKEN` for checkouts that must trigger downstream CI
+- Workflows that push or trigger downstream CI use the GitHub App token (`REGIS_CI_APP_ID` + `REGIS_CI_APP_PRIVATE_KEY`); read-only jobs may use the default `GITHUB_TOKEN`
