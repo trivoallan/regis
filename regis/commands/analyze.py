@@ -96,7 +96,10 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     "--skip",
     "skip_analyzers",
     multiple=True,
-    help="Exclude the specified analyzer(s) from the run. Can be repeated.",
+    help=(
+        "Exclude the specified analyzer(s) from the run. Can be repeated. "
+        "Run `regis list` to see available analyzer names."
+    ),
 )
 @click.option(
     "-p",
@@ -439,7 +442,7 @@ def analyze(
         for skip_name in skip_analyzers:
             if skip_name not in all_analyzers:
                 click.echo(
-                    f"  ! warning: --skip references unknown analyzer '{skip_name}'",
+                    f"  Warning: --skip references unknown analyzer '{skip_name}'",
                     err=True,
                 )
                 continue
