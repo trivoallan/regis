@@ -477,10 +477,14 @@ def analyze(
             f"  Running {len(selected)} analyzer(s) with {effective_workers} worker(s)...",
             quiet=quiet,
         )
+        name_width = max((len(n) for n in selected), default=12)
+        start_times: dict[str, float] = {}
         reports: dict[str, Any] = {}
         with ThreadPoolExecutor(max_workers=effective_workers) as executor:
-            futures = {
-                executor.submit(
+            futures = {}
+            for name, cls in selected.items():
+                start_times[name] = time.monotonic()
+                fut = executor.submit(
                     _run_analyzer,
                     cls,
                     ref.registry,
@@ -489,29 +493,51 @@ def analyze(
                     username,
                     password,
                     platform,
-                ): name
-                for name, cls in selected.items()
-            }
+                )
+                futures[fut] = name
             for future in as_completed(futures):
                 name = futures[future]
+                elapsed = time.monotonic() - start_times[name]
+                timing = f"({elapsed:.1f}s)"
                 try:
                     _, report = future.result()
                     reports[name] = report
-                    _info(f"  ✓ {name}", quiet=quiet)
+                    _info(
+                        f"  ✓ {name:<{name_width}}  {timing}",
+                        quiet=quiet,
+                    )
                 except RegistryError as exc:
-                    click.echo(f"  ✗ {name}: registry error — {exc}", err=True)
+                    click.echo(
+                        click.style(
+                            f"  ✗ {name:<{name_width}}  {timing}  registry error — {exc}",
+                            fg="red",
+                        ),
+                        err=True,
+                    )
                     reports[name] = {
                         "analyzer": name,
                         "error": {"type": "registry", "message": str(exc)},
                     }
                 except AnalyzerError as exc:
-                    click.echo(f"  ✗ {name}: analysis error — {exc}", err=True)
+                    click.echo(
+                        click.style(
+                            f"  ✗ {name:<{name_width}}  {timing}  analysis error — {exc}",
+                            fg="red",
+                        ),
+                        err=True,
+                    )
                     reports[name] = {
                         "analyzer": name,
                         "error": {"type": "analysis", "message": str(exc)},
                     }
                 except Exception as exc:
-                    click.echo(f"  ✗ {name}: unexpected error — {exc}", err=True)
+                    click.echo(
+                        click.style(
+                            f"  ✗ {name:<{name_width}}  {timing}  unexpected error — {exc}",
+                            fg="red",
+                        ),
+                        err=True,
+                    )
                     reports[name] = {
                         "analyzer": name,
                         "error": {"type": "unexpected", "message": str(exc)},
