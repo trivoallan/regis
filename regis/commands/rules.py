@@ -255,7 +255,15 @@ def list_rules(
     "rules_path",
     help="Path to an optional rules.yaml file to merge overrides.",
 )
-def show_rule(slug: str, rules_path: str | None) -> None:
+@click.option(
+    "-f",
+    "--format",
+    "output_format",
+    type=click.Choice(["json", "yaml"], case_sensitive=False),
+    default="json",
+    help="Output format (default: json).",
+)
+def show_rule(slug: str, rules_path: str | None, output_format: str) -> None:
     """Display the full definition of a specific rule."""
     import yaml
 
@@ -277,7 +285,13 @@ def show_rule(slug: str, rules_path: str | None) -> None:
     if not matching_rule:
         raise click.ClickException(f"Rule '{slug}' not found.")
 
-    click.echo(json.dumps(matching_rule, indent=2))
+    if output_format.lower() == "yaml":
+        click.echo(
+            yaml.dump(matching_rule, default_flow_style=False, allow_unicode=True),
+            nl=False,
+        )
+    else:
+        click.echo(json.dumps(matching_rule, indent=2))
 
 
 @rules_group.command(name="evaluate")
