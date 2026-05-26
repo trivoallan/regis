@@ -136,12 +136,27 @@ def rules_group():
     default=False,
     help="Generate an index.md file in the output directory (default: off).",
 )
+@click.option(
+    "--filter-level",
+    "filter_level",
+    type=click.Choice(["info", "warning", "critical"], case_sensitive=False),
+    default=None,
+    help="Keep only rules at this level.",
+)
+@click.option(
+    "--filter-provider",
+    "filter_provider",
+    default=None,
+    help="Keep only rules whose provider matches (e.g. trivy, hadolint).",
+)
 def list_rules(
     rules_path: str | None,
     output_format: str,
     output_file: str | None,
     output_dir: str | None = None,
     generate_index: bool = False,
+    filter_level: str | None = None,
+    filter_provider: str | None = None,
 ) -> None:
     """List all available default rules and any overrides."""
     import yaml
@@ -159,6 +174,17 @@ def list_rules(
             custom = data.get("rules", [])
 
     final_rules = merge_rules(defaults, custom)
+
+    if filter_level:
+        wanted_level = filter_level.lower()
+        final_rules = [
+            r for r in final_rules if r.get("level", "info").lower() == wanted_level
+        ]
+    if filter_provider:
+        final_rules = [
+            r for r in final_rules if r.get("provider") == filter_provider
+        ]
+
     final_rules.sort(key=lambda r: r.get("slug", ""))
 
     if not final_rules:

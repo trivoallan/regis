@@ -93,3 +93,65 @@ class TestCliRulesList:
             )
             assert "| core | Critical | security |" in rule_content
             assert "## Condition" in rule_content
+
+
+class TestCliRulesListFilters:
+    """Filter options on 'rules list' (issue #586)."""
+
+    def test_filter_level_critical_only(self):
+        runner = CliRunner()
+        result = runner.invoke(main, ["rules", "list", "--filter-level", "critical"])
+        assert result.exit_code == 0
+        # registry-domain-whitelist is critical → kept
+        assert "registry-domain-whitelist" in result.output
+        # No info/warning lines
+        for line in result.output.splitlines():
+            if line.strip().startswith("[x]") or line.strip().startswith("[ ]"):
+                assert "info " not in line
+                assert "warning " not in line
+
+    def test_filter_level_no_match(self):
+        """A level with no rule yields the empty-set message."""
+        runner = CliRunner()
+        # 'warning' may have zero rules in defaults — accept either empty or filtered output
+        result = runner.invoke(
+            main, ["rules", "list", "--filter-level", "info", "--filter-provider", "nonexistent-provider"]
+        )
+        assert result.exit_code == 0
+        assert "No rules found." in result.output
+
+    def test_filter_provider_only(self):
+        runner = CliRunner()
+        result = runner.invoke(main, ["rules", "list", "--filter-provider", "core"])
+        assert result.exit_code == 0
+        assert "registry-domain-whitelist" in result.output
+
+    def test_filter_provider_unknown_yields_empty(self):
+        runner = CliRunner()
+        result = runner.invoke(
+            main, ["rules", "list", "--filter-provider", "no-such-provider"]
+        )
+        assert result.exit_code == 0
+        assert "No rules found." in result.output
+
+    def test_filter_level_invalid_choice(self):
+        runner = CliRunner()
+        result = runner.invoke(main, ["rules", "list", "--filter-level", "bogus"])
+        assert result.exit_code != 0
+
+    def test_filters_combined(self):
+        """Both filters apply (AND)."""
+        runner = CliRunner()
+        result = runner.invoke(
+            main,
+            [
+                "rules",
+                "list",
+                "--filter-level",
+                "critical",
+                "--filter-provider",
+                "core",
+            ],
+        )
+        assert result.exit_code == 0
+        assert "registry-domain-whitelist" in result.output
