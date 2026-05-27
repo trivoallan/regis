@@ -17,6 +17,16 @@ Voir `docs/memory-bank/roadmap.md` pour le détail complet.
 
 ## Recent Changes
 
+- [2026-05-26] **CLI quality-of-life batch** (PRs #595–#603, all merged): nine one-issue-per-PR features landed on `main` from issues #581–#589.
+  - `regis doctor` (#590, prior) checks external binary availability.
+  - `regis playbook validate` (#600) validates a playbook bundle/file offline against the JSON Schema.
+  - `regis analyze --skip NAME` (#598) excludes named analyzers from a run.
+  - `REGIS_PLAYBOOK` / `REGIS_PLATFORM` / `REGIS_OUTPUT` / `REGIS_OUTPUT_DIR` / `REGIS_MAX_WORKERS` env vars (#599) shorten CI invocations.
+  - Top-level `-q` / `--quiet` (#601) clamps logs to ERROR and silences progress/info, keeping analyzer failures visible.
+  - Per-analyzer progress line with `(s)` timing (#602) + analyzer-failure lines in red. Timing measured inside the worker so queue-wait isn't counted.
+  - One-line `Playbook · <name>  N rules · P passed · F failed (<level>)` summary printed when `--playbook` is explicitly provided (#603).
+  - `regis rules list --filter-level/--filter-provider` (#597), `regis rules show --format yaml` (#595), DEBUG `analyzer X finished in Ns` log (#596).
+  - Documentation refreshed in `docs/website/docs/reference/cli.md` and `usage/configuration.md`.
 - [2026-05-23] **CLAUDE.md restructure** (PR #592, merged): file dropped from ~180 → ~90 lines.
   - Split into agent essentials (top) and project policy (bottom). Memory Bank section condensed to a 3-line pointer (no longer duplicates `RULES.md`).
   - New **Craftsmanship** principle: _spec-based programming with stacked skills_ — methodology (composing Superpowers skills with project skills like `/create-playbook`, `/verify`, `/code-review`) and architecture (declarative JSON Schemas / playbook YAML / JSON Logic over imperative code).

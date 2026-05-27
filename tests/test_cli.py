@@ -460,8 +460,6 @@ class TestAnalyzeCacheAndFail:
         assert "rule breaches" in result.output
 
 
-
-
 class TestAnalyzerTiming:
     """Per-analyzer timing in DEBUG logs (issue #588)."""
 
@@ -560,7 +558,9 @@ class TestAnalyzeSkip:
         completed = [
             line for line in result.output.splitlines() if line.startswith("  ✓ ")
         ]
-        completed_names = [line.split()[-1] for line in completed]
+        # Each line is "  ✓ <name>  (<elapsed>s)" — the analyzer name is the
+        # second whitespace-separated token.
+        completed_names = [line.split()[1] for line in completed]
         assert "b" not in completed_names
         assert "a" in completed_names and "c" in completed_names
 
@@ -720,12 +720,20 @@ class TestQuietFlag:
 
         runner = CliRunner()
         with runner.isolated_filesystem():
-            result = runner.invoke(main, ["-q", "analyze", "nginx:latest"])
+            import importlib.resources
+
+            pb = importlib.resources.files("regis") / "playbooks" / "default"
+            result = runner.invoke(
+                main,
+                ["-q", "analyze", "nginx:latest", "--playbook", str(pb)],
+            )
         assert result.exit_code == 0
         assert "Running" not in result.output
         assert "✓ dummy" not in result.output
         assert "Analyzing" not in result.output
         assert "Report (json) written to" not in result.output
+        # --quiet also suppresses the post-run playbook summary
+        assert "Playbook · " not in result.output
 
     @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze._discover_analyzers")
@@ -871,8 +879,18 @@ class TestAnalyzeSummary:
                         {
                             "playbook_name": "demo",
                             "rules": [
-                                {"slug": "a", "passed": True, "level": "info", "message": ""},
-                                {"slug": "b", "passed": True, "level": "info", "message": ""},
+                                {
+                                    "slug": "a",
+                                    "passed": True,
+                                    "level": "info",
+                                    "message": "",
+                                },
+                                {
+                                    "slug": "b",
+                                    "passed": True,
+                                    "level": "info",
+                                    "message": "",
+                                },
                             ],
                         }
                     ]
@@ -897,7 +915,12 @@ class TestAnalyzeSummary:
                         {
                             "playbook_name": "validation-import",
                             "rules": [
-                                {"slug": "a", "passed": True, "level": "info", "message": ""},
+                                {
+                                    "slug": "a",
+                                    "passed": True,
+                                    "level": "info",
+                                    "message": "",
+                                },
                                 {
                                     "slug": "trivy.no-critical-cves",
                                     "passed": False,

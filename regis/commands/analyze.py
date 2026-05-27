@@ -67,6 +67,11 @@ def _info(msg: str, *, quiet: bool, err: bool = True) -> None:
 
 def _print_playbook_summary(final_report: dict[str, Any]) -> None:
     """Print a one-line summary per playbook + a list of failed rules."""
+    # Respect the --quiet flag set on the root group.
+    ctx = click.get_current_context(silent=True)
+    if ctx and ctx.obj and ctx.obj.get("quiet"):
+        return
+
     playbooks = final_report.get("playbooks") or []
     if not playbooks:
         return
@@ -77,18 +82,13 @@ def _print_playbook_summary(final_report: dict[str, Any]) -> None:
         if not rules:
             continue
         name = (
-            pb.get("playbook_name")
-            or pb.get("name")
-            or pb.get("source")
-            or "playbook"
+            pb.get("playbook_name") or pb.get("name") or pb.get("source") or "playbook"
         )
         # Rules with status == "incomplete" did not evaluate cleanly; surface
         # them separately rather than counting them as hard failures.
         passed = [r for r in rules if r.get("passed")]
         failed = [
-            r
-            for r in rules
-            if not r.get("passed") and r.get("status") != "incomplete"
+            r for r in rules if not r.get("passed") and r.get("status") != "incomplete"
         ]
         incomplete = [r for r in rules if r.get("status") == "incomplete"]
         worst = None
@@ -519,9 +519,7 @@ def analyze(
             selected.pop(skip_name, None)
 
         if not selected:
-            raise click.ClickException(
-                "All analyzers were skipped — nothing to run."
-            )
+            raise click.ClickException("All analyzers were skipped — nothing to run.")
 
         effective_workers = min(max_workers, len(selected))
         _info(
@@ -532,7 +530,9 @@ def analyze(
         start_times: dict[str, float] = {}
         reports: dict[str, Any] = {}
 
-        def _timed_run(name: str, cls: type[BaseAnalyzer]) -> tuple[str, dict[str, Any]]:
+        def _timed_run(
+            name: str, cls: type[BaseAnalyzer]
+        ) -> tuple[str, dict[str, Any]]:
             # Capture start time *inside* the worker thread so queued analyzers
             # don't inherit the wait-in-pool delay.
             start_times[name] = time.monotonic()

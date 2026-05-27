@@ -4,10 +4,13 @@ This page provides a reference for all commands available in the `regis` tool.
 
 ## Global Options
 
-| Option          | Description                                         |
-| :-------------- | :-------------------------------------------------- |
-| `-v, --verbose` | Enable verbose (DEBUG) logging for troubleshooting. |
-| `--help`        | Show the help message and exit.                     |
+| Option          | Description                                                                                                                                                 |
+| :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-v, --verbose` | Enable verbose (DEBUG) logging for troubleshooting. Also surfaces per-analyzer timing (`analyzer X finished in 1.42s`).                                     |
+| `-q, --quiet`   | Suppress non-essential output (progress banners, per-analyzer ticks, report-written confirmations). Errors and analyzer failures still print. Useful in CI. |
+| `--help`        | Show the help message and exit.                                                                                                                             |
+
+`--verbose` and `--quiet` are mutually exclusive in effect: `--quiet` clamps the log level to `ERROR` regardless of `--verbose`.
 
 ## Core Commands
 
@@ -19,20 +22,80 @@ Analyze a Docker image and evaluate playbooks.
 regis analyze [OPTIONS] URL
 ```
 
-_Options:_
+_Selection options:_
 
-- `-p, --playbook PATH`: Path or URL to custom playbook YAML/JSON file(s).
-- `-s, --site`: Generate HTML report site.
-- `--auth REGISTRY=USER:PASS`: Provide registry credentials.
-- `--cache`: Use existing report.json as cache if available.
-- `-o, --output TEMPLATE`: Output filename template.
-- `-D, --output-dir TEMPLATE`: Base directory template for output files.
+- `-a, --analyzer NAME`: Run only the specified analyzer(s). Repeatable. Default: all.
+- `--skip NAME`: Exclude the specified analyzer(s) from the run. Repeatable. Run `regis list` to see available names.
+- `-p, --playbook PATH`: Path or URL to custom playbook YAML/JSON file(s). Repeatable. Falls back to the built-in default playbook when omitted.
+- `--auth REGISTRY=USER:PASS`: Provide registry credentials. Repeatable.
+- `--platform PLATFORM`: Target platform for multi-arch images (e.g. `linux/amd64`).
+
+_Output options:_
+
+- `-o, --output TEMPLATE`: Output filename template (e.g. `report.{format}`).
+- `-D, --output-dir TEMPLATE`: Base directory template for output files (default: `reports/{registry}/{repository}/{digest}`).
+- `-s, --site`: Generate the HTML report site.
+- `--html`: Generate a self-contained single-file `report.html`.
+- `--sections all|summary|<slugs>`: Sections to include in the HTML report. Only applies to `--html`.
+- `--markdown`: Also emit a Markdown summary report (`report.md`).
+- `--base-url PATH`: Base URL for the HTML report site (useful for GitHub/GitLab Pages or artifacts).
+- `--open`: Open the HTML report in the default browser automatically.
+- `--pretty/--no-pretty`: Pretty-print the JSON output (default: on).
+
+_Evaluation options:_
+
 - `--evaluate`: Run rules evaluation after analysis and add results to report.
 - `--fail`: Fail command execution if any rule is breached.
 - `--fail-level [info|warning|critical]`: Minimum rule level that triggers a command failure (default: critical).
-- `--base-url PATH`: Base URL for the HTML report site (useful for GitHub/GitLab Pages or artifacts).
-- `--open`: Open the HTML report in the default browser automatically.
+
+_Performance / caching:_
+
+- `--cache`: Use existing `report.json` as cache if available.
+- `--max-workers INTEGER`: Maximum number of analyzers to run in parallel (default: 4).
 - `-A, --archive DIR`: Append the report to an archive directory (writes `manifest.json` and `data.json`).
+
+_Metadata:_
+
+- `-m, --meta KEY=VALUE`: Arbitrary metadata. Supports dot notation (`ci.job_id=123`). Repeatable.
+- `--merge-meta`: Merge `--meta` into existing metadata instead of replacing (only with `--rerun`).
+
+_Re-running a single analyzer:_
+
+- `--rerun NAME`: Re-run a single analyzer against an existing report (requires `--report`).
+- `--report DIR`: Existing report directory to update (requires `--rerun`).
+
+_Output style:_
+
+While running, `analyze` prints one line per analyzer with elapsed time:
+
+```text
+  Running 8 analyzer(s) with 4 worker(s)...
+  ✓ skopeo        (0.8s)
+  ✓ metadata      (0.9s)
+  ✓ trivy         (18.3s)
+```
+
+When `--playbook` is explicitly provided, a one-line summary is printed at the end:
+
+```text
+  Playbook · validation-import  12 rules · 10 passed · 2 failed (critical)
+  ✗ [trivy.no-critical-cves]   2 critical CVEs found
+  ✗ [freshness.max-age-days]   Image is 120 days old (max: 90)
+```
+
+All of this is silenced under `-q`/`--quiet`.
+
+_Environment variables:_
+
+The most frequently repeated `analyze` flags can be set via the environment. CLI flags always take precedence.
+
+| Variable            | Equivalent flag    |
+| :------------------ | :----------------- |
+| `REGIS_PLAYBOOK`    | `-p, --playbook`   |
+| `REGIS_PLATFORM`    | `--platform`       |
+| `REGIS_OUTPUT`      | `-o, --output`     |
+| `REGIS_OUTPUT_DIR`  | `-D, --output-dir` |
+| `REGIS_MAX_WORKERS` | `--max-workers`    |
 
 ### `archive add`
 
@@ -74,16 +137,31 @@ Manage and evaluate rules against reports.
 List all available default rules provided by analyzers, and optionally merge with overrides.
 
 ```bash
-regis rules list [--rules playbook.yaml]
+regis rules list [OPTIONS]
 ```
+
+_Options:_
+
+- `-r, --rules PATH`: Path to an optional `rules.yaml` file to merge overrides.
+- `-f, --format [text|markdown]`: Output format (default: `text`).
+- `-o, --output FILE`: Write the rules list to a file instead of stdout.
+- `-D, --output-dir DIR`: Write one Markdown file per rule into this directory (markdown format only).
+- `--index / --no-index`: Generate an `index.md` in the output directory (default: off).
+- `--filter-level [info|warning|critical]`: Keep only rules at this level.
+- `--filter-provider NAME`: Keep only rules whose provider matches (e.g. `trivy`, `hadolint`). Combine with `--filter-level` to AND the filters.
 
 ### `rules show`
 
-Show the full JSON definition of a specific rule.
+Show the full definition of a specific rule.
 
 ```bash
-regis rules show <slug> [--rules rules.yaml]
+regis rules show <slug> [OPTIONS]
 ```
+
+_Options:_
+
+- `-r, --rules PATH`: Path to an optional `rules.yaml` file to merge overrides.
+- `-f, --format [json|yaml]`: Output format (default: `json`). YAML is rendered via `yaml.safe_dump` and is significantly easier to read for nested JSON Logic conditions.
 
 ### `rules evaluate`
 
@@ -91,6 +169,27 @@ Evaluate a regis JSON report against rules.
 
 ```bash
 regis rules evaluate <report.json> [--rules playbook.yaml] [--fail] [--fail-level critical] [-o output.json]
+```
+
+## Playbook Commands
+
+### `playbook validate`
+
+Validate a playbook YAML/JSON file (or bundle directory) against the playbook JSON Schema without running a full image analysis. Closes the feedback loop when authoring playbooks.
+
+```bash
+regis playbook validate <PATH>
+```
+
+Exit code `0` on success, `1` on validation failure. Each violation is rendered as `<location>: <message>` on stderr (no raw `jsonschema` tracebacks). The location is the dot-joined `absolute_path` reported by `jsonschema` (e.g. `rules.2.level`), or `<root>` when the error is at the document root.
+
+```text
+$ regis playbook validate my-playbook.yaml
+  ✓ my-playbook.yaml is valid.
+
+$ regis playbook validate broken-playbook.yaml
+  ✗ broken-playbook.yaml is invalid:
+    - rules.2.level: 'high' is not one of ['info', 'warning', 'critical']
 ```
 
 ## Viewer Commands
@@ -202,6 +301,22 @@ Commands for seamless integration with GitLab CI/CD.
 ### `list`
 
 List all available analyzers (e.g., `skopeo`, `trivy`, `hadolint`).
+
+### `doctor`
+
+Check whether all required external binaries (`trivy`, `skopeo`, `hadolint`, `dockle`) are available on `PATH` and print their versions. Useful when onboarding or diagnosing CI failures.
+
+For each tool, the command prints the first line of `tool --version` verbatim — exact prefix/format depends on the tool. Missing tools are reported as `not found in PATH`.
+
+```text
+$ regis doctor
+  ✓ trivy        Version: 0.50.1
+  ✓ skopeo       skopeo version 1.14.0
+  ✓ hadolint     Haskell Dockerfile Linter 2.12.0
+  ✗ dockle       not found in PATH
+```
+
+Exit code `0` if every tool is found, `1` if any is missing.
 
 ### `version`
 

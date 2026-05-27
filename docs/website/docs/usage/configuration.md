@@ -29,11 +29,15 @@ analyzers:
 
 ## Environment Variables
 
-All configuration options can be overridden using environment variables prefixed with `REGIS_`.
+The most frequently repeated `regis analyze` flags can be set via the environment. CLI flags always take precedence over environment variables.
 
-- `REGIS_PLAYBOOK`: Path to the default playbook.
-- `REGIS_OUTPUT_DIR`: Where to save reports.
-- `REGIS_LOG_LEVEL`: Set to `DEBUG` for troubleshooting.
+| Variable            | Equivalent flag                                                            |
+| :------------------ | :------------------------------------------------------------------------- |
+| `REGIS_PLAYBOOK`    | `-p, --playbook` — path or URL to a custom playbook.                       |
+| `REGIS_PLATFORM`    | `--platform` — target platform for multi-arch images (e.g. `linux/amd64`). |
+| `REGIS_OUTPUT`      | `-o, --output` — output filename template.                                 |
+| `REGIS_OUTPUT_DIR`  | `-D, --output-dir` — base directory template for output files.             |
+| `REGIS_MAX_WORKERS` | `--max-workers` — maximum number of analyzers to run in parallel.          |
 
 ## Managing the Cache
 
