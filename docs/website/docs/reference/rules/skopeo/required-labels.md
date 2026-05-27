@@ -8,21 +8,21 @@ tags:
 
 Image must have required OCI labels.
 
-| Provider | Level   | Tags     |
-| :------- | :------ | :------- |
-| skopeo   | Warning | metadata |
+| Provider | Level | Tags |
+| :--- | :--- | :--- |
+| skopeo | Warning | metadata |
 
 ## Parameters
 
-| Name     | Default Value                         | Description |
-| :------- | :------------------------------------ | :---------- |
-| `labels` | `['org.opencontainers.image.source']` | n/a         |
+| Name | Default Value | Description |
+| :--- | :--- | :--- |
+| `labels` | `['org.opencontainers.image.source']` | n/a |
 
 ## Messages
 
-| Type     | Message                                                              |
-| :------- | :------------------------------------------------------------------- |
-| **Pass** | All required labels are present.                                     |
+| Type | Message |
+| :--- | :--- |
+| **Pass** | All required labels are present. |
 | **Fail** | Image is missing one or more required labels: ${rule.params.labels}. |
 
 ## Playbook Example
@@ -33,7 +33,7 @@ rules:
     rule: required-labels
     options:
       labels:
-        - org.opencontainers.image.source
+      - org.opencontainers.image.source
 ```
 
 ## Condition
