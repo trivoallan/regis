@@ -8,21 +8,21 @@ tags:
 
 Image size is within limits.
 
-| Provider | Level | Tags |
-| :--- | :--- | :--- |
-| skopeo | Warning | hygiene |
+| Provider | Level   | Tags    |
+| :------- | :------ | :------ |
+| skopeo   | Warning | hygiene |
 
 ## Parameters
 
-| Name | Default Value | Description |
-| :--- | :--- | :--- |
-| `max_mb` | `1000` | n/a |
+| Name     | Default Value | Description |
+| :------- | :------------ | :---------- |
+| `max_mb` | `1000`        | n/a         |
 
 ## Messages
 
-| Type | Message |
-| :--- | :--- |
-| **Pass** | Image size is within limits (${results.skopeo.platforms.0.size} bytes). |
+| Type     | Message                                                                                 |
+| :------- | :-------------------------------------------------------------------------------------- |
+| **Pass** | Image size is within limits (${results.skopeo.platforms.0.size} bytes).                 |
 | **Fail** | Image size exceeds ${rule.params.max_mb} MB (${results.skopeo.platforms.0.size} bytes). |
 
 ## Playbook Example
