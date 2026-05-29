@@ -41,4 +41,8 @@ jobs:
         uses: wemake-services/docker-image-size-limit@f5970eb0c2180ac296475bfd22c5a58955370051 # 2.2.0
         with:
           image: regis:size-check
-          size: 250MB
+          # Round-2 trims (git/jq removal, optional [server] extra, --no-compile
+          # venv) bring the arm64 image to ~138 MB. Ceiling set conservatively at
+          # 220 MB because amd64 (the CI arch) wasn't measured locally; the first
+          # CI run reveals the true amd64 size for a future tighten.
+          size: 220MB

@@ -34,8 +34,15 @@ COPY pyproject.toml Pipfile Pipfile.lock ./
 COPY regis/ regis/
 COPY --from=frontend-builder /app/apps/dashboard/build regis/dashboard_assets
 
+# Core install only — the optional [server] extra (FastAPI/Uvicorn) is
+# intentionally excluded to keep the runtime image small. Use a host with
+# `pip install 'regis[server]'` for `regis dashboard serve`.
+# --no-compile skips .pyc generation (PYTHONDONTWRITEBYTECODE keeps runtime
+# from regenerating them); prune any residual bytecode caches afterwards.
 RUN VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml) && \
-    SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" pip install .
+    SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" pip install --no-compile . && \
+    find /opt/venv -type d -name __pycache__ -prune -exec rm -rf {} + && \
+    find /opt/venv -type f -name '*.pyc' -delete
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 3: tools-fetcher — downloads external analyzer binaries
@@ -96,13 +103,14 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     DEBIAN_FRONTEND=noninteractive \
     PATH="/opt/venv/bin:$PATH"
 
-# Minimal runtime dependencies only — no curl, no gnupg, no build-essential
+# Minimal runtime dependencies only — no curl, no gnupg, no build-essential.
+# git is intentionally absent: it is only used by the host-only
+# `bootstrap archive --repo` flow (guarded by require_tool). jq has no
+# runtime caller (the only --jq usage is gh's built-in flag).
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
       skopeo \
-      git \
-      jq \
       ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
