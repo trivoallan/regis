@@ -96,13 +96,14 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     DEBIAN_FRONTEND=noninteractive \
     PATH="/opt/venv/bin:$PATH"
 
-# Minimal runtime dependencies only — no curl, no gnupg, no build-essential
+# Minimal runtime dependencies only — no curl, no gnupg, no build-essential.
+# git is intentionally absent: it is only used by the host-only
+# `bootstrap archive --repo` flow (guarded by require_tool). jq has no
+# runtime caller (the only --jq usage is gh's built-in flag).
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
       skopeo \
-      git \
-      jq \
       ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
