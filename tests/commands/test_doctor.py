@@ -41,7 +41,7 @@ def test_all_tools_present_shows_each_tool():
         ),
     ):
         result = runner.invoke(doctor)
-    for tool in ("trivy", "skopeo", "hadolint", "dockle"):
+    for tool in ("trivy", "regctl", "hadolint", "dockle"):
         assert tool in result.output
 
 
@@ -67,7 +67,7 @@ def test_missing_tool_shows_cross():
 
 def test_partial_tools_missing_exits_nonzero():
     def which_partial(name: str) -> str | None:
-        return f"/usr/bin/{name}" if name in ("trivy", "skopeo") else None
+        return f"/usr/bin/{name}" if name in ("trivy", "regctl") else None
 
     runner = CliRunner()
     with (

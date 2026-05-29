@@ -14,7 +14,7 @@ import { EndOfLifeSection } from "./EndOfLifeSection";
 import { ProvenanceSection } from "./ProvenanceSection";
 import { ScorecardSection } from "./ScorecardSection";
 import { VersioningSection } from "./VersioningSection";
-import { SkopeoSection } from "./SkopeoSection";
+import { OciSection } from "./OciSection";
 import { SbomSection } from "./SbomSection";
 import { DockleSection } from "./DockleSection";
 
@@ -62,8 +62,8 @@ function renderAnalyzer(
       return <ScorecardSection data={data as never} />;
     case "versioning":
       return <VersioningSection data={data as never} />;
-    case "skopeo":
-      return <SkopeoSection data={data as never} />;
+    case "oci":
+      return <OciSection data={data as never} />;
     case "sbom":
       return <SbomSection data={data as never} />;
     case "dockle":

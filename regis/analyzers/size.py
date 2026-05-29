@@ -9,6 +9,7 @@ from typing import Any
 
 from regis.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis.registry.client import RegistryClient
+from regis.utils.regctl import image_ref, run_regctl
 
 logger = logging.getLogger(__name__)
 
@@ -28,16 +29,6 @@ class SizeAnalyzer(BaseAnalyzer):
     name = "size"
     schema_file = "analyzer/size.schema.json"
 
-    @staticmethod
-    def _run_skopeo(client: RegistryClient, args: list[str]) -> str:
-        """Run skopeo with the given arguments, injecting credentials if present."""
-        cmd = ["skopeo"] + args
-        if client.username and client.password:
-            cmd.extend(["--creds", f"{client.username}:{client.password}"])
-
-        res = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        return res.stdout
-
     def analyze(
         self,
         client: RegistryClient,
@@ -46,20 +37,19 @@ class SizeAnalyzer(BaseAnalyzer):
         platform: str | None = None,
     ) -> dict[str, Any]:
         registry = client.registry
-        if registry == "registry-1.docker.io":
-            registry = "docker.io"
-
-        target = f"docker://{registry}/{repository}:{tag}"
+        ref = image_ref(registry, repository, tag)
 
         try:
-            raw_stdout = self._run_skopeo(client, ["inspect", "--raw", target])
+            raw_stdout = run_regctl(
+                client, ["manifest", "get", ref, "--format", "raw-body"]
+            )
             manifest = json.loads(raw_stdout)
         except subprocess.CalledProcessError as e:
-            msg = f"Skopeo inspect failed for {target}: {e.stderr}"
+            msg = f"regctl manifest get failed for {ref}: {e.stderr}"
             logger.error(msg)
             raise AnalyzerError(msg) from e
         except Exception as e:
-            msg = f"Failed to parse skopeo output for {target}: {e}"
+            msg = f"Failed to parse regctl output for {ref}: {e}"
             logger.error(msg)
             raise AnalyzerError(msg) from e
 
@@ -116,6 +106,17 @@ class SizeAnalyzer(BaseAnalyzer):
         platform: str | None = None,
     ) -> dict[str, Any]:
         entries = manifest_list.get("manifests", [])
+
+        # Skip buildkit attestation manifests (platform os/arch == "unknown");
+        # consistent with the oci analyzer.
+        entries = [
+            e
+            for e in entries
+            if isinstance(e, dict)
+            and e.get("platform", {}).get("architecture") not in (None, "unknown")
+            and e.get("platform", {}).get("os") not in (None, "unknown")
+        ]
+
         platforms = []
 
         # Filter platforms if override is provided
@@ -154,10 +155,17 @@ class SizeAnalyzer(BaseAnalyzer):
             if not digest:
                 continue
 
-            target = f"docker://{registry}/{repository}@{digest}"
-
             try:
-                raw_stdout = self._run_skopeo(client, ["inspect", "--raw", target])
+                raw_stdout = run_regctl(
+                    client,
+                    [
+                        "manifest",
+                        "get",
+                        image_ref(registry, repository, digest),
+                        "--format",
+                        "raw-body",
+                    ],
+                )
                 plat_manifest = json.loads(raw_stdout)
 
                 plat_layers = plat_manifest.get("layers", [])

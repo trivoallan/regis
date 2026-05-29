@@ -70,7 +70,7 @@ class DockleAnalyzer(BaseAnalyzer):
             env["DOCKER_PASSWORD"] = client.password
 
         # Not all analyzers support platform properly with dockle, but we can pass it if we want
-        # Dockle does not have a native --platform flag out of the box like trivy or skopeo in the
+        # Dockle does not have a native --platform flag out of the box like trivy or regctl in the
         # same easy way in old versions, but it usually inspects what docker/containerd pulls.
         # Generally, it pulls the manifest. It doesn't strictly have a --platform.
         # We'll omit platform for Dockle to avoid breaking if the CLI flags don't match.

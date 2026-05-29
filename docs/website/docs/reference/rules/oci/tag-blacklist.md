@@ -10,7 +10,7 @@ Image tag should not be 'latest'.
 
 | Provider | Level   | Tags      |
 | :------- | :------ | :-------- |
-| skopeo   | Warning | lifecycle |
+| oci      | Warning | lifecycle |
 
 ## Messages
 
@@ -23,7 +23,7 @@ Image tag should not be 'latest'.
 
 ```yaml
 rules:
-  - provider: skopeo
+  - provider: oci
     rule: tag-blacklist
 ```
 

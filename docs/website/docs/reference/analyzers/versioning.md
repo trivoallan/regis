@@ -11,7 +11,7 @@ The `versioning` analyzer detects and classifies the tag naming patterns used by
 ## Overview
 
 - **Analyzer Name**: `versioning`
-- **Tool Dependency**: `skopeo`
+- **Tool Dependency**: `regctl`
 - **Output Schema**: [`versioning.schema.json`](pathname:///regis/schemas/analyzer/versioning.schema.json)
 
 ## Functionality

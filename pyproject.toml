@@ -29,7 +29,7 @@ regis = "regis.cli:main"
 [project.entry-points."regis.analyzers"]
 versioning = "regis.analyzers.versioning:VersioningAnalyzer"
 scorecarddev = "regis.analyzers.scorecarddev:ScorecardDevAnalyzer"
-skopeo = "regis.analyzers.skopeo:SkopeoAnalyzer"
+oci = "regis.analyzers.oci:OciAnalyzer"
 trivy = "regis.analyzers.trivy:TrivyAnalyzer"
 endoflife = "regis.analyzers.endoflife:EndOfLifeAnalyzer"
 popularity = "regis.analyzers.popularity:PopularityAnalyzer"

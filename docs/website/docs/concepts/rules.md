@@ -13,7 +13,7 @@ Rules are the evaluation heart of RegiS. Each rule defines a specific condition 
 ```mermaid
 flowchart TD
     A(["`**Analyzers**
-    trivy · skopeo · dockle …`"]) -->|produce| B[(Analysis Report)]
+    trivy · oci · dockle …`"]) -->|produce| B[(Analysis Report)]
     B --> C{Rules Engine}
     D(["`**Default Rules**
     built-in per analyzer`"]) --> C
@@ -71,7 +71,7 @@ rules:
       fail: "${results.trivy.fixed_count} patchable vulnerabilities found — please fix soon."
 
   # Disable a rule entirely
-  - provider: skopeo
+  - provider: oci
     rule: platforms-count
     enable: false
 
@@ -124,7 +124,7 @@ rules:
       "in":
         [
           "my-company.owner",
-          { "keys": [{ "var": "results.skopeo.platforms.0.labels" }] },
+          { "keys": [{ "var": "results.oci.platforms.0.labels" }] },
         ]
     messages:
       pass: "Company label is present."

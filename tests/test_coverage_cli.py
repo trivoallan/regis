@@ -66,11 +66,11 @@ def test_analyze_schema_validation_error(mock_discover, mock_client):
                 # Analyzer should return VALID data so it passes its own validation
                 class ValidDummy(BaseAnalyzer):
                     name = "dummy"
-                    schema_file = "skopeo.schema.json"  # Use an existing schema
+                    schema_file = "analyzer/oci.schema.json"  # Use an existing schema
 
                     def analyze(self, *args, **kwargs):
                         return {
-                            "analyzer": "skopeo",
+                            "analyzer": "oci",
                             "repository": "r",
                             "tag": "t",
                             "platforms": [],

@@ -11,7 +11,7 @@ The `hadolint` analyzer lints a "pseudo-Dockerfile" reverse-engineered from the 
 ## Overview
 
 - **Analyzer Name**: `hadolint`
-- **Tool Dependencies**: `hadolint`, `skopeo`
+- **Tool Dependencies**: `hadolint`, `regctl`
 - **Output Schema**: [`hadolint.schema.json`](pathname:///regis/schemas/analyzer/hadolint.schema.json)
 
 ## Functionality

@@ -1,9 +1,9 @@
 import json
-import subprocess
 from unittest.mock import MagicMock, patch
 
 import pytest
 
+from regis.analyzers.base import AnalyzerError
 from regis.analyzers.freshness import FreshnessAnalyzer, _get_created_date
 
 
@@ -16,23 +16,22 @@ class TestFreshnessAnalyzer:
         m.password = "pass"
         return m
 
-    @patch("regis.analyzers.freshness.subprocess.run")
-    def test_get_created_date_creds(self, mock_run, client):
-        mock_run.return_value = MagicMock(
-            stdout=json.dumps({"created": "2024-01-01T00:00:00Z"}),
-            check_returncode=lambda: None,
-        )
+    @patch("regis.analyzers.freshness.run_regctl")
+    def test_get_created_date_creds(self, mock_regctl, client):
+        mock_regctl.return_value = json.dumps({"created": "2024-01-01T00:00:00Z"})
         date = _get_created_date(client, "repo", "tag")
         assert date == "2024-01-01T00:00:00Z"
-        # Verify creds were used (hit line 34)
-        args = mock_run.call_args[0][0]
-        assert "--creds" in args
-        assert "user:pass" in args
+        # Verify run_regctl was called with the expected args
+        call_args = mock_regctl.call_args[0]
+        regctl_args = call_args[1]
+        assert regctl_args[0] == "image"
+        assert regctl_args[1] == "inspect"
+        assert "--platform" in regctl_args
 
-    @patch("regis.analyzers.freshness.subprocess.run")
-    def test_get_created_date_failure(self, mock_run, client):
-        # Hit exception block (line 45-47)
-        mock_run.side_effect = subprocess.CalledProcessError(1, "cmd")
+    @patch("regis.analyzers.freshness.run_regctl")
+    def test_get_created_date_failure(self, mock_regctl, client):
+        # Hit exception block
+        mock_regctl.side_effect = AnalyzerError("boom")
         date = _get_created_date(client, "repo", "tag")
         assert date is None
 

@@ -10,7 +10,7 @@ Image should support multiple platforms.
 
 | Provider | Level | Tags          |
 | :------- | :---- | :------------ |
-| skopeo   | Info  | compatibility |
+| oci      | Info  | compatibility |
 
 ## Parameters
 
@@ -20,16 +20,16 @@ Image should support multiple platforms.
 
 ## Messages
 
-| Type     | Message                                                                                                        |
-| :------- | :------------------------------------------------------------------------------------------------------------- |
-| **Pass** | Image supports ${results.skopeo.platforms.length} platforms.                                                   |
-| **Fail** | Image only supports ${results.skopeo.platforms.length} platforms (min required: ${rule.params.min_platforms}). |
+| Type     | Message                                                                                                     |
+| :------- | :---------------------------------------------------------------------------------------------------------- |
+| **Pass** | Image supports ${results.oci.platforms.length} platforms.                                                   |
+| **Fail** | Image only supports ${results.oci.platforms.length} platforms (min required: ${rule.params.min_platforms}). |
 
 ## Playbook Example
 
 ```yaml
 rules:
-  - provider: skopeo
+  - provider: oci
     rule: platforms-count
     options:
       min_platforms: 2
@@ -43,7 +43,7 @@ rules:
     {
       "reduce": [
         {
-          "var": "results.skopeo.platforms"
+          "var": "results.oci.platforms"
         },
         {
           "+": [

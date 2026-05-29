@@ -10,7 +10,7 @@ Image must have required OCI labels.
 
 | Provider | Level   | Tags     |
 | :------- | :------ | :------- |
-| skopeo   | Warning | metadata |
+| oci      | Warning | metadata |
 
 ## Parameters
 
@@ -29,7 +29,7 @@ Image must have required OCI labels.
 
 ```yaml
 rules:
-  - provider: skopeo
+  - provider: oci
     rule: required-labels
     options:
       labels:
@@ -44,7 +44,7 @@ rules:
     {
       "keys": [
         {
-          "var": "results.skopeo.platforms.0.labels"
+          "var": "results.oci.platforms.0.labels"
         }
       ]
     },

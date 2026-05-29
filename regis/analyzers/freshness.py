@@ -4,46 +4,27 @@ from __future__ import annotations
 
 import json
 import logging
-import subprocess
 from datetime import datetime, timezone
 from typing import Any
 
 from regis.analyzers.base import BaseAnalyzer
 from regis.registry.client import RegistryClient
+from regis.utils.regctl import image_ref, run_regctl
 
 logger = logging.getLogger(__name__)
 
 
 def _get_created_date(client: RegistryClient, repository: str, tag: str) -> str | None:
-    """Extract the creation date from an image config using skopeo."""
-    registry = client.registry
-    target = f"docker://{registry}/{repository}:{tag}"
-
-    cmd = [
-        "skopeo",
-        "inspect",
-        "--config",
-        "--override-os",
-        "linux",
-        "--override-arch",
-        "amd64",
-        target,
-    ]
-
-    if client.username and client.password:
-        cmd.extend(["--creds", f"{client.username}:{client.password}"])
-
+    """Extract the creation date from an image config using regctl."""
+    ref = image_ref(client.registry, repository, tag)
     try:
-        res = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            check=True,
+        out = run_regctl(
+            client,
+            ["image", "inspect", ref, "--platform", "linux/amd64"],
         )
-        data = json.loads(res.stdout)
-        return data.get("created")  # type: ignore[no-any-return]
+        return json.loads(out).get("created")  # type: ignore[no-any-return]
     except Exception:
-        logger.debug("Skopeo inspect --config failed for %s", target, exc_info=True)
+        logger.debug("regctl image inspect failed for %s", ref, exc_info=True)
         return None
 
 

@@ -10,7 +10,7 @@ Image exposes permitted ports.
 
 | Provider | Level   | Tags     |
 | :------- | :------ | :------- |
-| skopeo   | Warning | security |
+| oci      | Warning | security |
 
 ## Parameters
 
@@ -20,16 +20,16 @@ Image exposes permitted ports.
 
 ## Messages
 
-| Type     | Message                                                                        |
-| :------- | :----------------------------------------------------------------------------- |
-| **Pass** | All exposed ports are allowed.                                                 |
-| **Fail** | Image exposes unauthorized ports: ${results.skopeo.platforms.0.exposed_ports}. |
+| Type     | Message                                                                     |
+| :------- | :-------------------------------------------------------------------------- |
+| **Pass** | All exposed ports are allowed.                                              |
+| **Fail** | Image exposes unauthorized ports: ${results.oci.platforms.0.exposed_ports}. |
 
 ## Playbook Example
 
 ```yaml
 rules:
-  - provider: skopeo
+  - provider: oci
     rule: exposed-ports-whitelist
     options:
       allowed_ports:
@@ -43,7 +43,7 @@ rules:
 {
   "subset": [
     {
-      "var": "results.skopeo.platforms.0.exposed_ports"
+      "var": "results.oci.platforms.0.exposed_ports"
     },
     {
       "var": "rule.params.allowed_ports"

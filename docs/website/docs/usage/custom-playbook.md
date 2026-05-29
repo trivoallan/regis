@@ -53,14 +53,14 @@ Dockerfile linting, and GitLab CI integration.
 
 The assistant guides you through six interactive stages:
 
-| Stage             | What it covers                                                                                           |
-| ----------------- | -------------------------------------------------------------------------------------------------------- |
-| 1. Context        | Playbook name, description, target CI system (GitLab / GitHub / standalone)                              |
-| 2. Rules          | Provider selection (trivy, hadolint, sbom, freshness, scorecarddev, skopeo…) and threshold configuration |
-| 3. Tiers          | Gold / Silver / Bronze scoring thresholds                                                                |
-| 4. CI integration | GitLab badges and checklists, or GitHub Actions                                                          |
-| 5. Inputs schema  | _(Optional)_ Validate non-image inputs such as project IDs or security document URLs                     |
-| 6. Output         | Writes the playbook bundle to your chosen directory                                                      |
+| Stage             | What it covers                                                                                        |
+| ----------------- | ----------------------------------------------------------------------------------------------------- |
+| 1. Context        | Playbook name, description, target CI system (GitLab / GitHub / standalone)                           |
+| 2. Rules          | Provider selection (trivy, hadolint, sbom, freshness, scorecarddev, oci…) and threshold configuration |
+| 3. Tiers          | Gold / Silver / Bronze scoring thresholds                                                             |
+| 4. CI integration | GitLab badges and checklists, or GitHub Actions                                                       |
+| 5. Inputs schema  | _(Optional)_ Validate non-image inputs such as project IDs or security document URLs                  |
+| 6. Output         | Writes the playbook bundle to your chosen directory                                                   |
 
 ### Output
 

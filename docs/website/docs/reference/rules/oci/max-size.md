@@ -10,7 +10,7 @@ Image size is within limits.
 
 | Provider | Level   | Tags    |
 | :------- | :------ | :------ |
-| skopeo   | Warning | hygiene |
+| oci      | Warning | hygiene |
 
 ## Parameters
 
@@ -20,16 +20,16 @@ Image size is within limits.
 
 ## Messages
 
-| Type     | Message                                                                                 |
-| :------- | :-------------------------------------------------------------------------------------- |
-| **Pass** | Image size is within limits (${results.skopeo.platforms.0.size} bytes).                 |
-| **Fail** | Image size exceeds ${rule.params.max_mb} MB (${results.skopeo.platforms.0.size} bytes). |
+| Type     | Message                                                                              |
+| :------- | :----------------------------------------------------------------------------------- |
+| **Pass** | Image size is within limits (${results.oci.platforms.0.size} bytes).                 |
+| **Fail** | Image size exceeds ${rule.params.max_mb} MB (${results.oci.platforms.0.size} bytes). |
 
 ## Playbook Example
 
 ```yaml
 rules:
-  - provider: skopeo
+  - provider: oci
     rule: max-size
     options:
       max_mb: 1000
@@ -41,7 +41,7 @@ rules:
 {
   "<=": [
     {
-      "var": "results.skopeo.platforms.0.size"
+      "var": "results.oci.platforms.0.size"
     },
     {
       "*": [

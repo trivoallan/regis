@@ -50,7 +50,8 @@ RUN VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml) && \
 FROM curlimages/curl:8.10.1 AS tools-fetcher
 ARG TARGETARCH
 ENV HADOLINT_VERSION=2.12.0 \
-    DOCKLE_VERSION=0.4.15
+    DOCKLE_VERSION=0.4.15 \
+    REGCTL_VERSION=0.11.5
 
 USER root
 WORKDIR /tools
@@ -82,6 +83,15 @@ RUN case "$TARGETARCH" in \
     chmod +x /tools/dockle && \
     rm /tmp/dockle.tar.gz
 
+# regctl (static binary; replaces skopeo for registry inspection)
+RUN case "$TARGETARCH" in \
+      amd64|arm64) regctl_arch="$TARGETARCH" ;; \
+      *) echo "Unsupported TARGETARCH: $TARGETARCH" >&2; exit 1 ;; \
+    esac && \
+    curl -sSfL "https://github.com/regclient/regclient/releases/download/v${REGCTL_VERSION}/regctl-linux-${regctl_arch}" \
+      -o /tools/regctl && \
+    chmod +x /tools/regctl
+
 USER curl_user
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -104,13 +114,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PATH="/opt/venv/bin:$PATH"
 
 # Minimal runtime dependencies only — no curl, no gnupg, no build-essential.
+# skopeo is intentionally absent: registry inspection now uses the regctl
+# static binary (copied from the tools-fetcher stage below), which removes the
+# skopeo apt layer and its transitive dependencies.
 # git is intentionally absent: it is only used by the host-only
 # `bootstrap archive --repo` flow (guarded by require_tool). jq has no
 # runtime caller (the only --jq usage is gh's built-in flag).
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
-      skopeo \
       ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
@@ -124,6 +136,7 @@ COPY --from=python-builder /opt/venv /opt/venv
 COPY --from=tools-fetcher /tools/trivy /usr/local/bin/trivy
 COPY --from=tools-fetcher /tools/hadolint /usr/local/bin/hadolint
 COPY --from=tools-fetcher /tools/dockle /usr/local/bin/dockle
+COPY --from=tools-fetcher /tools/regctl /usr/local/bin/regctl
 
 WORKDIR /home/regis
 USER regis

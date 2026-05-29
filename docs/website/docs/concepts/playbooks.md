@@ -15,7 +15,7 @@ A playbook serves two primary functions:
 1.  **Policy Enforcement**: It defines a set of "scorecards" (rules) that an image must pass to be considered compliant.
 2.  **Report Structuring**: It defines the layout and content of the generated HTML report, including pages, sections, and widgets.
 
-By using playbooks, you can decouple the raw data extraction (performed by analyzers like Skopeo or Trivy) from the business logic used to evaluate that data. This allow you to apply different compliance standards to different environments or projects without changing the underlying analysis code.
+By using playbooks, you can decouple the raw data extraction (performed by analyzers like OCI or Trivy) from the business logic used to evaluate that data. This allow you to apply different compliance standards to different environments or projects without changing the underlying analysis code.
 
 ## Core Concepts
 
@@ -399,7 +399,7 @@ pages:
           - name: no-root
             title: Image must not run as root
             condition:
-              "!=": [{ var: results.skopeo.platforms.0.user }, root]
+              "!=": [{ var: results.oci.platforms.0.user }, root]
         widgets:
           - label: Compliance Level
             value: "{{ playbooks.0.score }}%"

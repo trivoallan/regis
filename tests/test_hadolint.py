@@ -15,28 +15,19 @@ class MockRegistryClient:
 
 class TestHadolintAnalyzer:
     @patch("regis.analyzers.hadolint.subprocess.run")
-    def test_hadolint_passes(self, mock_run):
-        # We need two mock returns for the two subprocess.run calls
-        # 1. skopeo inspect
-        # 2. hadolint
-
-        def side_effect(cmd, **kwargs):
-            if cmd[0] == "skopeo":
-                return MagicMock(
-                    stdout=json.dumps(
-                        {
-                            "history": [
-                                {"created_by": '/bin/sh -c #(nop)  CMD ["python3"]'},
-                                {"created_by": "bazel build //common:rootfs"},
-                            ]
-                        }
-                    )
-                )
-            elif cmd[0] == "hadolint":
-                # Returns empty array for no violations
-                return MagicMock(stdout="[]")
-
-        mock_run.side_effect = side_effect
+    @patch("regis.analyzers.hadolint.run_regctl")
+    def test_hadolint_passes(self, mock_regctl, mock_run):
+        # The config fetch goes through regctl; the linter stays on subprocess.run.
+        mock_regctl.return_value = json.dumps(
+            {
+                "history": [
+                    {"created_by": '/bin/sh -c #(nop)  CMD ["python3"]'},
+                    {"created_by": "bazel build //common:rootfs"},
+                ]
+            }
+        )
+        # Hadolint linter returns an empty array for no violations.
+        mock_run.return_value = MagicMock(stdout="[]")
 
         client = MockRegistryClient()
         analyzer = HadolintAnalyzer()
@@ -49,37 +40,30 @@ class TestHadolintAnalyzer:
         assert report["issues_by_level"]["warning"] == 0
 
     @patch("regis.analyzers.hadolint.subprocess.run")
-    def test_hadolint_fails(self, mock_run):
-        def side_effect(cmd, **kwargs):
-            if cmd[0] == "skopeo":
-                return MagicMock(
-                    stdout=json.dumps(
-                        {
-                            "history": [
-                                {"created_by": "apt-get install curl"},
-                            ]
-                        }
-                    )
-                )
-            elif cmd[0] == "hadolint":
-                # Returns 1 violation (DL3008 for apt-get)
-                # Note: `kwargs.get('input')` can be checked if we want to assert the drafted Dockerfile
-                return MagicMock(
-                    stdout=json.dumps(
-                        [
-                            {
-                                "code": "DL3008",
-                                "column": 1,
-                                "file": "-",
-                                "level": "warning",
-                                "line": 2,
-                                "message": "Pin versions in apt get install.",
-                            }
-                        ]
-                    )
-                )
-
-        mock_run.side_effect = side_effect
+    @patch("regis.analyzers.hadolint.run_regctl")
+    def test_hadolint_fails(self, mock_regctl, mock_run):
+        mock_regctl.return_value = json.dumps(
+            {
+                "history": [
+                    {"created_by": "apt-get install curl"},
+                ]
+            }
+        )
+        # Hadolint linter returns 1 violation (DL3008 for apt-get).
+        mock_run.return_value = MagicMock(
+            stdout=json.dumps(
+                [
+                    {
+                        "code": "DL3008",
+                        "column": 1,
+                        "file": "-",
+                        "level": "warning",
+                        "line": 2,
+                        "message": "Pin versions in apt get install.",
+                    }
+                ]
+            )
+        )
 
         client = MockRegistryClient()
         analyzer = HadolintAnalyzer()

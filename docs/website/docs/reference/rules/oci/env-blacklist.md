@@ -10,7 +10,7 @@ Image must not contain forbidden environment variables.
 
 | Provider | Level    | Tags     |
 | :------- | :------- | :------- |
-| skopeo   | Critical | security |
+| oci      | Critical | security |
 
 ## Parameters
 
@@ -29,7 +29,7 @@ Image must not contain forbidden environment variables.
 
 ```yaml
 rules:
-  - provider: skopeo
+  - provider: oci
     rule: env-blacklist
     options:
       keys:
@@ -44,7 +44,7 @@ rules:
   "!": {
     "env_contains": [
       {
-        "var": "results.skopeo.platforms.0.env"
+        "var": "results.oci.platforms.0.env"
       },
       {
         "var": "rule.params.keys"

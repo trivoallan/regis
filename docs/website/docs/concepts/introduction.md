@@ -28,7 +28,7 @@ C4Context
     Person(user, "User / CI Bot", "Developer or automated CI/CD pipeline.")
     System(regis, "regis", "Analyzes container images, evaluates security playbooks, and generates HTML and JSON reports.")
     System_Ext(registry, "Container Registry", "OCI-compliant registry: GHCR, Docker Hub, etc.")
-    System_Ext(tools, "Security Tools", "External binaries: Trivy, Skopeo, Hadolint.")
+    System_Ext(tools, "Security Tools", "External binaries: Trivy, regctl, Hadolint.")
 
     Rel(user, regis, "Invokes", "CLI / GitHub Actions")
     Rel(regis, tools, "Orchestrates", "Subprocess")
@@ -61,7 +61,7 @@ C4Container
     }
 
     System_Ext(registry, "Container Registry", "OCI-compliant registry: GHCR, Docker Hub, etc.")
-    System_Ext(tools, "Security Tools", "Trivy, Skopeo, Hadolint, Dockle.")
+    System_Ext(tools, "Security Tools", "Trivy, regctl, Hadolint, Dockle.")
 
     Rel(user, cli, "Invokes", "CLI / GitHub Actions")
     Rel(cli, engine, "Triggers analysis", "Function call")
@@ -107,7 +107,7 @@ The analysis engine orchestrates the execution of pluggable analyzers. It manage
 
 Analyzers are modular components responsible for gathering data from registries or local files. Current built-in analyzers include:
 
-- **Skopeo**: Extracts multi-architecture metadata, labels, and layer information. ([Schema](../reference/schemas/analyzer/skopeo.schema.md))
+- **OCI**: Extracts multi-architecture metadata, labels, and layer information via `regctl`. ([Schema](../reference/schemas/analyzer/oci.schema.md))
 - **Trivy**: Generates Software Bill of Materials (SBOM) and performs vulnerability scanning. ([Schema](../reference/schemas/analyzer/trivy.schema.md))
 - **Hadolint**: Lints Dockerfiles for best practices. ([Schema](../reference/schemas/analyzer/hadolint.schema.md))
 - **Dockle**: Container image linter for security and best practices. ([Schema](../reference/schemas/analyzer/dockle.schema.md))
@@ -138,6 +138,6 @@ The project uses the following technologies:
 - **CLI Framework**: Click
 - **Templating**: Jinja2 (Data) & Docusaurus/React (UI)
 - **Linting/Formatting**: Ruff
-- **External Tools**: Skopeo, Trivy, Hadolint, Dockle
+- **External Tools**: regctl, Trivy, Hadolint, Dockle
 - **Testing**: Pytest
 - **CI/CD**: GitHub Actions, Release Please, Trunk

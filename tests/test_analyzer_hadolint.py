@@ -26,17 +26,23 @@ class TestHadolintAnalyzer:
         )
         hadolint = json.dumps([{"level": "warning", "message": "m"}])
 
-        with patch(
-            "subprocess.run",
-            side_effect=[MagicMock(stdout=inspect), MagicMock(stdout=hadolint)],
+        with (
+            patch("regis.analyzers.hadolint.run_regctl", return_value=inspect),
+            patch(
+                "regis.analyzers.hadolint.subprocess.run",
+                return_value=MagicMock(stdout=hadolint),
+            ),
         ):
             res = analyzer.analyze(cl, "repo", "tag", platform="linux/amd64")
             assert 'CMD ["python3"]' in res["dockerfile"]
             assert "RUN echo 1" in res["dockerfile"]
 
-        with patch(
-            "subprocess.run",
-            side_effect=[MagicMock(stdout=inspect), MagicMock(stdout=hadolint)],
+        with (
+            patch("regis.analyzers.hadolint.run_regctl", return_value=inspect),
+            patch(
+                "regis.analyzers.hadolint.subprocess.run",
+                return_value=MagicMock(stdout=hadolint),
+            ),
         ):
             res = analyzer.analyze(cl, "repo", "tag", platform="amd64")
             assert res["issues_count"] == 1
@@ -45,45 +51,57 @@ class TestHadolintAnalyzer:
         cl = MagicMock(registry="reg")
         inspect = json.dumps({"history": [{"created_by": "RUN echo 1"}]})
 
-        # 70 parse fail
-        with patch("subprocess.run", return_value=MagicMock(stdout="{invalid}")):
+        # Config parse failure: regctl returns invalid JSON.
+        with patch("regis.analyzers.hadolint.run_regctl", return_value="{invalid}"):
             with pytest.raises(AnalyzerError):
                 analyzer.analyze(cl, "r", "t")
 
-        # 114-116 hadolint binary missing
-        with patch(
-            "subprocess.run", side_effect=[MagicMock(stdout=inspect), FileNotFoundError]
+        # Hadolint binary missing.
+        with (
+            patch("regis.analyzers.hadolint.run_regctl", return_value=inspect),
+            patch(
+                "regis.analyzers.hadolint.subprocess.run", side_effect=FileNotFoundError
+            ),
         ):
             with pytest.raises(AnalyzerError):
                 analyzer.analyze(cl, "r", "t")
 
-        # 123-126 hadolint output parsing error
-        with patch(
-            "subprocess.run",
-            side_effect=[MagicMock(stdout=inspect), MagicMock(stdout="invalid json")],
+        # Hadolint output parsing error.
+        with (
+            patch("regis.analyzers.hadolint.run_regctl", return_value=inspect),
+            patch(
+                "regis.analyzers.hadolint.subprocess.run",
+                return_value=MagicMock(stdout="invalid json"),
+            ),
         ):
             with pytest.raises(AnalyzerError):
                 analyzer.analyze(cl, "r", "t")
 
-        # Command failure but valid output (123-126 check=False)
+        # Hadolint command failure but valid output (check=False).
         m_run = MagicMock(returncode=1, stderr="err", stdout="[]")
-        with patch("subprocess.run", side_effect=[MagicMock(stdout=inspect), m_run]):
+        with (
+            patch("regis.analyzers.hadolint.run_regctl", return_value=inspect),
+            patch("regis.analyzers.hadolint.subprocess.run", return_value=m_run),
+        ):
             res = analyzer.analyze(cl, "r", "t")
             assert res["issues_count"] == 0
 
-        # Subprocess failure (66)
+        # Config fetch failure: regctl exits non-zero.
         with patch(
-            "subprocess.run",
+            "regis.analyzers.hadolint.run_regctl",
             side_effect=subprocess.CalledProcessError(1, "s", stderr="e"),
         ):
             with pytest.raises(AnalyzerError):
                 analyzer.analyze(cl, "r", "t")
 
-        # Empty history (80)
+        # Empty history.
         inspect_empty = json.dumps({"history": [{"created_by": ""}]})
-        with patch(
-            "subprocess.run",
-            side_effect=[MagicMock(stdout=inspect_empty), MagicMock(stdout="[]")],
+        with (
+            patch("regis.analyzers.hadolint.run_regctl", return_value=inspect_empty),
+            patch(
+                "regis.analyzers.hadolint.subprocess.run",
+                return_value=MagicMock(stdout="[]"),
+            ),
         ):
             res = analyzer.analyze(cl, "r", "t")
             assert "FROM scratch" in res["dockerfile"]

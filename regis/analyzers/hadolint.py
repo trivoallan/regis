@@ -9,6 +9,7 @@ from typing import Any
 
 from regis.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis.registry.client import RegistryClient
+from regis.utils.regctl import image_ref, run_regctl
 
 logger = logging.getLogger(__name__)
 
@@ -58,9 +59,7 @@ class HadolintAnalyzer(BaseAnalyzer):
         if registry == "registry-1.docker.io":
             registry = "docker.io"
 
-        target = f"docker://{registry}/{repository}:{tag}"
-
-        # 1. Fetch image configuration using Skopeo
+        # 1. Fetch image configuration using regctl
         if platform:
             if "/" in platform:
                 os_name, arch = platform.split("/", 1)
@@ -70,30 +69,16 @@ class HadolintAnalyzer(BaseAnalyzer):
             # Fallback for Hadolint to ensure we get something coherent if not specified
             os_name, arch = "linux", "amd64"
 
-        cmd_skopeo = [
-            "skopeo",
-            "inspect",
-            "--config",
-            "--override-os",
-            os_name,
-            "--override-arch",
-            arch,
-            target,
-        ]
-        if client.username and client.password:
-            cmd_skopeo.extend(["--creds", f"{client.username}:{client.password}"])
-
+        ref = image_ref(registry, repository, tag)
         try:
-            res_skopeo = subprocess.run(
-                cmd_skopeo, capture_output=True, text=True, check=True
+            out = run_regctl(
+                client, ["image", "inspect", ref, "--platform", f"{os_name}/{arch}"]
             )
-            config = json.loads(res_skopeo.stdout)
-        except subprocess.CalledProcessError as e:
-            msg = f"Failed to fetch config for {target}: {e.stderr}"
-            logger.error(msg)
-            raise AnalyzerError(msg) from e
+            config = json.loads(out)
+        except AnalyzerError:
+            raise
         except Exception as e:
-            msg = f"Failed to parse skopeo output for {target}: {e}"
+            msg = f"Failed to fetch config for {ref}: {e}"
             logger.error(msg)
             raise AnalyzerError(msg) from e
 
@@ -125,7 +110,7 @@ class HadolintAnalyzer(BaseAnalyzer):
                     dockerfile_lines.append(f"RUN {cmd}")
 
         pseudo_dockerfile = "\n".join(dockerfile_lines)
-        logger.debug("Pseudo-Dockerfile for %s:\n%s", target, pseudo_dockerfile)
+        logger.debug("Pseudo-Dockerfile for %s:\n%s", ref, pseudo_dockerfile)
 
         # 3. Pipe to Hadolint
         cmd_hadolint = ["hadolint", "-f", "json", "-"]

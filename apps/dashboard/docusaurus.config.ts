@@ -70,7 +70,7 @@ const config: Config = {
                     label: "Freshness",
                   },
                   { type: "doc", id: "analyzers/hadolint", label: "Hadolint" },
-                  { type: "doc", id: "analyzers/skopeo", label: "Metadata" },
+                  { type: "doc", id: "analyzers/oci", label: "Metadata" },
                   {
                     type: "doc",
                     id: "analyzers/popularity",

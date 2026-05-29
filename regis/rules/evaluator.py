@@ -296,7 +296,7 @@ def _add_custom_operations():
     )
 
     # env_contains: any string in b is a substring of any string in a
-    # Usage: {"env_contains": [{"var": "results.skopeo.platforms.0.env"}, ["DEBUG", "SECRET"]]}
+    # Usage: {"env_contains": [{"var": "results.oci.platforms.0.env"}, ["DEBUG", "SECRET"]]}
     json_logic.add_operation(
         "env_contains",
         lambda a, b: (

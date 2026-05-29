@@ -4,7 +4,7 @@ from regis.rules.evaluator import evaluate_rules, get_default_rules, merge_rules
 
 
 def test_get_default_rules():
-    rules = get_default_rules(["skopeo", "freshness"])
+    rules = get_default_rules(["oci", "freshness"])
     slugs = [r.get("slug") for r in rules]
     assert "registry-domain-whitelist" in slugs
     assert "user-blacklist" in slugs

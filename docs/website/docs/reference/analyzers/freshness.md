@@ -11,7 +11,7 @@ The `freshness` analyzer tracks the age of a container image and compares it to 
 ## Overview
 
 - **Analyzer Name**: `freshness`
-- **Tool Dependency**: `skopeo` (to fetch creation dates)
+- **Tool Dependency**: `regctl` (to fetch creation dates)
 - **Output Schema**: [`freshness.schema.json`](pathname:///regis/schemas/analyzer/freshness.schema.json)
 
 ## Functionality

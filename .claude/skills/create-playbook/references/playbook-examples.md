@@ -192,7 +192,7 @@ rules:
   # ── Runtime configuration ──────────────────────────────────────────────────
 
   # Image must not run as root.
-  - provider: skopeo
+  - provider: oci
     rule: user-blacklist
     slug: no-root
     level: critical

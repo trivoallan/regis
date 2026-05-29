@@ -48,10 +48,10 @@ size:
   description: Related to the Size analyzer.
   permalink: /analyzers/size
 
-skopeo:
-  label: skopeo
-  description: Related to the Skopeo analyzer.
-  permalink: /analyzers/skopeo
+oci:
+  label: oci
+  description: Related to the OCI analyzer.
+  permalink: /analyzers/oci
 
 trivy:
   label: trivy

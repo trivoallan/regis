@@ -19,7 +19,7 @@ rules:
     slug: registry-domain-whitelist
     level: critical
 
-  - provider: skopeo
+  - provider: oci
     rule: user-blacklist
     slug: no-root
     level: critical
@@ -113,7 +113,7 @@ rules:
     options:
       max_days: 90
 
-  - provider: skopeo
+  - provider: oci
     rule: tag-blacklist
     slug: no-latest
     level: info

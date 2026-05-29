@@ -10,7 +10,7 @@ Image must not run as root.
 
 | Provider | Level    | Tags     |
 | :------- | :------- | :------- |
-| skopeo   | Critical | security |
+| oci      | Critical | security |
 
 ## Parameters
 
@@ -29,7 +29,7 @@ Image must not run as root.
 
 ```yaml
 rules:
-  - provider: skopeo
+  - provider: oci
     rule: user-blacklist
     options:
       forbidden_user: root
@@ -41,7 +41,7 @@ rules:
 {
   "!=": [
     {
-      "var": "results.skopeo.platforms.0.user"
+      "var": "results.oci.platforms.0.user"
     },
     {
       "var": "rule.params.forbidden_user"

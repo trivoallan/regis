@@ -6,6 +6,7 @@ import pytest
 
 from regis.analyzers.base import AnalyzerError
 from regis.analyzers.hadolint import HadolintAnalyzer
+from regis.analyzers.oci import OciAnalyzer
 from regis.analyzers.provenance import ProvenanceAnalyzer
 from regis.analyzers.scorecarddev import (
     _fetch_scorecard,
@@ -13,42 +14,57 @@ from regis.analyzers.scorecarddev import (
     _source_repo_from_dockerhub,
 )
 from regis.analyzers.size import SizeAnalyzer, _human_size
-from regis.analyzers.skopeo import SkopeoAnalyzer
+from regis.utils.regctl import run_regctl
 
 
-class TestSkopeoCoverage:
+class TestOciCoverage:
     @pytest.fixture
     def analyzer(self):
-        return SkopeoAnalyzer()
+        return OciAnalyzer()
 
-    def test_skopeo_all(self, analyzer):
+    def test_oci_all(self, analyzer):
+        """Single-arch analyze() happy path: tags parsed from regctl output."""
         cl = MagicMock(registry="registry-1.docker.io", username="u", password="p")
-        raw = json.dumps({"mediaType": "manifest", "layers": [1]})
-        ins = json.dumps(
-            {"Os": "linux", "Architecture": "amd64", "Created": "c", "Layers": [1]}
+        single_manifest = json.dumps(
+            {
+                "mediaType": "application/vnd.oci.image.manifest.v1+json",
+                "config": {"size": 5},
+                "layers": [{"size": 10}],
+            }
         )
-        tags = json.dumps({"Tags": ["v1"]})
+        inspect = json.dumps(
+            {
+                "architecture": "amd64",
+                "os": "linux",
+                "created": "c",
+                "config": {},
+            }
+        )
 
-        def run_mock(cmd, **k):
-            s = " ".join(cmd)
-            if "--raw" in s:
-                return MagicMock(stdout=raw)
-            if "list-tags" in s:
-                return MagicMock(stdout=tags)
-            return MagicMock(stdout=ins)
+        def regctl_mock(client, args, **k):
+            sub = args[0:2]
+            if sub == ["manifest", "get"]:
+                return single_manifest
+            if sub == ["manifest", "head"]:
+                return "sha256:abc\n"
+            if sub == ["image", "inspect"]:
+                return inspect
+            if sub == ["tag", "ls"]:
+                return "v1\nv2\n"
+            raise AssertionError(f"Unexpected regctl call: {args}")
 
-        with patch("subprocess.run", side_effect=run_mock):
+        with patch("regis.analyzers.oci.run_regctl", side_effect=regctl_mock):
             r = analyzer.analyze(cl, "r", "t")
-            assert r["tags"] == ["v1"]
-        with patch("subprocess.run", side_effect=FileNotFoundError):
-            with pytest.raises(AnalyzerError):
-                analyzer._run_skopeo(cl, ["v"])
+        assert r["tags"] == ["v1", "v2"]
+        assert r["platforms"][0]["size"] == 15
+        assert r["platforms"][0]["digest"] == "sha256:abc"
 
     def test_multiarch(self, analyzer):
+        """Multi-arch index: per-platform config blob exposes the User."""
         cl = MagicMock(registry="r", username=None)
-        m_list = json.dumps(
+        index = json.dumps(
             {
-                "mediaType": "index",
+                "mediaType": "application/vnd.oci.image.index.v1+json",
                 "manifests": [
                     {
                         "digest": "sha256:1",
@@ -57,24 +73,38 @@ class TestSkopeoCoverage:
                 ],
             }
         )
-        ins = json.dumps(
-            {"Os": "linux", "Architecture": "amd64", "Created": "c", "Layers": [1]}
+        per_platform_manifest = json.dumps(
+            {"config": {"size": 5}, "layers": [{"size": 10}]}
         )
-        cfg = json.dumps({"config": {"User": "root"}})
+        inspect = json.dumps(
+            {
+                "architecture": "amd64",
+                "os": "linux",
+                "created": "c",
+                "config": {"User": "root"},
+            }
+        )
 
-        def run_mock(cmd, **k):
-            s = " ".join(cmd)
-            if "--raw" in s:
-                return MagicMock(stdout=m_list)
-            if "list-tags" in s:
-                return MagicMock(stdout='{"Tags":[]}')
-            if "--config" in s:
-                return MagicMock(stdout=cfg)
-            return MagicMock(stdout=ins)
+        def regctl_mock(client, args, **k):
+            sub = args[0:2]
+            if sub == ["manifest", "get"]:
+                return per_platform_manifest if "--platform" in args else index
+            if sub == ["image", "inspect"]:
+                return inspect
+            if sub == ["tag", "ls"]:
+                return ""
+            raise AssertionError(f"Unexpected regctl call: {args}")
 
-        with patch("subprocess.run", side_effect=run_mock):
+        with patch("regis.analyzers.oci.run_regctl", side_effect=regctl_mock):
             r = analyzer.analyze(cl, "r", "t")
-            assert r["platforms"][0]["user"] == "root"
+        assert r["platforms"][0]["user"] == "root"
+
+    def test_run_regctl_missing_binary_raises(self):
+        """run_regctl raises AnalyzerError when regctl is not on PATH."""
+        cl = MagicMock(registry="r", username=None, password=None)
+        with patch("regis.utils.regctl.subprocess.run", side_effect=FileNotFoundError):
+            with pytest.raises(AnalyzerError):
+                run_regctl(cl, ["v"])
 
 
 class TestHadolintCoverage:

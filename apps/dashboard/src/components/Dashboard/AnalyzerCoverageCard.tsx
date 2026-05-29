@@ -7,7 +7,7 @@ interface AnalyzerCoverageCardProps {
 }
 
 const ANALYZER_LABELS: Record<string, string> = {
-  skopeo: "Skopeo",
+  oci: "OCI",
   trivy: "Trivy",
   hadolint: "Hadolint",
   sbom: "SBOM",

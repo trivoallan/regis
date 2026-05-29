@@ -37,7 +37,7 @@ rules:
     slug: cve-fixable
     level: warning
 
-  - provider: skopeo
+  - provider: oci
     rule: user-blacklist
     slug: no-root
     level: critical

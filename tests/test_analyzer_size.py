@@ -25,7 +25,7 @@ class TestSizeAnalyzer:
         raw_s = json.dumps(
             {"mediaType": "manifest", "layers": [{"size": 100}], "config": {"size": 50}}
         )
-        with patch("subprocess.run", return_value=MagicMock(stdout=raw_s)):
+        with patch("regis.analyzers.size.run_regctl", return_value=raw_s):
             res = analyzer.analyze(cl, "r", "t")
             assert res["total_compressed_bytes"] == 150
 
@@ -51,8 +51,8 @@ class TestSizeAnalyzer:
         )
         ins = json.dumps({"layers": [{"size": 50}], "config": {"size": 10}})
         with patch(
-            "subprocess.run",
-            side_effect=[MagicMock(stdout=m_list), MagicMock(stdout=ins)],
+            "regis.analyzers.size.run_regctl",
+            side_effect=[m_list, ins],
         ):
             res = analyzer.analyze(cl, "r", "t", platform="linux/arm64")
             assert res["platforms"][0]["platform"] == "linux/arm64/v8"
@@ -76,8 +76,8 @@ class TestSizeAnalyzer:
             }
         )
         with patch(
-            "subprocess.run",
-            side_effect=[MagicMock(stdout=m_list_err), Exception("fail")],
+            "regis.analyzers.size.run_regctl",
+            side_effect=[m_list_err, Exception("fail")],
         ):
             res = analyzer.analyze(cl, "r", "t")
             assert res["platforms"][0]["compressed_bytes"] == 100
@@ -85,7 +85,9 @@ class TestSizeAnalyzer:
     def test_size_errors_exhaustive(self, analyzer):
         cl = MagicMock(registry="r")
         # 61-64 exc
-        with patch("subprocess.run", side_effect=Exception("parse fail")):
+        with patch(
+            "regis.analyzers.size.run_regctl", side_effect=Exception("parse fail")
+        ):
             with pytest.raises(AnalyzerError):
                 analyzer.analyze(cl, "r", "t")
         # 192 _empty
@@ -98,6 +100,6 @@ class TestSizeAnalyzer:
                 "manifests": [{"platform": {"os": "l", "architecture": "a"}}],
             }
         )
-        with patch("subprocess.run", return_value=MagicMock(stdout=m_list)):
+        with patch("regis.analyzers.size.run_regctl", return_value=m_list):
             res = analyzer.analyze(cl, "r", "t", platform="w/x")
             assert len(res["platforms"]) == 0

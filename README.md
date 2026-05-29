@@ -14,8 +14,8 @@ Comprehensive documentation, including installation and usage guides, is availab
 
 ## Key Features
 
-- **Unified Registry Inspection** — Fast, multi-arch metadata extraction from any OCI-compliant registry using `skopeo`.
-- **Pluggable Analyzer Ecosystem** — Orchestrates industry-standard tools like `Trivy`, `Skopeo`, `Hadolint`, and `Dockle` to gather comprehensive security insights.
+- **Unified Registry Inspection** — Fast, multi-arch metadata extraction from any OCI-compliant registry using `regctl`.
+- **Pluggable Analyzer Ecosystem** — Orchestrates industry-standard tools like `Trivy`, `regctl`, `Hadolint`, and `Dockle` to gather comprehensive security insights.
 - **Policy-as-Code Playbooks** — Define compliance and security rules (e.g., "no critical vulnerabilities", "maximum image age") using flexible `jsonLogic` evaluations.
 - **Hybrid Reporting** — Simultaneously generates machine-readable JSON for automation and rich, interactive HTML dashboards for human review.
 - **CI/CD Native** — Designed to integrate seamlessly into GitHub Actions or GitLab CI pipelines with first-class support for MR/PR reporting.
@@ -25,7 +25,7 @@ Comprehensive documentation, including installation and usage guides, is availab
 
 | Analyzer     | Description                                                                            |
 | ------------ | -------------------------------------------------------------------------------------- |
-| `skopeo`     | Extracts multi-arch metadata, OS/Architecture labels, layers, and root user detection. |
+| `oci`        | Extracts multi-arch metadata, OS/Architecture labels, layers, and root user detection. |
 | `trivy`      | Performs vulnerability scanning and generates Software Bill of Materials (SBOM).       |
 | `provenance` | Verifies image build provenance and SLSA metadata.                                     |
 | `endoflife`  | Checks for End-Of-Life (EOL) status of base images using `endoflife.date`.             |

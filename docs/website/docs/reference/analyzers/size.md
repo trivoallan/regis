@@ -11,7 +11,7 @@ The `size` analyzer provides a detailed breakdown of an image's compressed size.
 ## Overview
 
 - **Analyzer Name**: `size`
-- **Tool Dependency**: `skopeo`
+- **Tool Dependency**: `regctl`
 - **Output Schema**: [`size.schema.json`](pathname:///regis/schemas/analyzer/size.schema.json)
 
 ## Functionality

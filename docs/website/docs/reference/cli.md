@@ -70,7 +70,7 @@ While running, `analyze` prints one line per analyzer with elapsed time:
 
 ```text
   Running 8 analyzer(s) with 4 worker(s)...
-  ✓ skopeo        (0.8s)
+  ✓ oci           (0.8s)
   ✓ metadata      (0.9s)
   ✓ trivy         (18.3s)
 ```
@@ -309,18 +309,18 @@ Commands for seamless integration with GitLab CI/CD.
 
 ### `list`
 
-List all available analyzers (e.g., `skopeo`, `trivy`, `hadolint`).
+List all available analyzers (e.g., `oci`, `trivy`, `hadolint`).
 
 ### `doctor`
 
-Check whether all required external binaries (`trivy`, `skopeo`, `hadolint`, `dockle`) are available on `PATH` and print their versions. Useful when onboarding or diagnosing CI failures.
+Check whether all required external binaries (`trivy`, `regctl`, `hadolint`, `dockle`) are available on `PATH` and print their versions. Useful when onboarding or diagnosing CI failures.
 
 For each tool, the command prints the first line of `tool --version` verbatim — exact prefix/format depends on the tool. Missing tools are reported as `not found in PATH`.
 
 ```text
 $ regis doctor
   ✓ trivy        Version: 0.50.1
-  ✓ skopeo       skopeo version 1.14.0
+  ✓ regctl       regctl version v0.7.1
   ✓ hadolint     Haskell Dockerfile Linter 2.12.0
   ✗ dockle       not found in PATH
 ```
