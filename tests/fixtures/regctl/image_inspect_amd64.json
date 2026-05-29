@@ -4,9 +4,7 @@
     "Env": [
       "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     ],
-    "Cmd": [
-      "/bin/sh"
-    ],
+    "Cmd": ["/bin/sh"],
     "WorkingDir": "/"
   },
   "created": "2026-04-16T23:53:26.803599608Z",

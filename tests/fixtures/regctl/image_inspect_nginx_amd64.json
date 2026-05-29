@@ -12,14 +12,8 @@
       "PKG_RELEASE=1~bookworm",
       "DYNPKG_RELEASE=1~bookworm"
     ],
-    "Entrypoint": [
-      "/docker-entrypoint.sh"
-    ],
-    "Cmd": [
-      "nginx",
-      "-g",
-      "daemon off;"
-    ],
+    "Entrypoint": ["/docker-entrypoint.sh"],
+    "Cmd": ["nginx", "-g", "daemon off;"],
     "Labels": {
       "maintainer": "NGINX Docker Maintainers \u003cdocker-maint@nginx.com\u003e"
     },

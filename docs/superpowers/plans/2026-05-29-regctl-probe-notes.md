@@ -78,6 +78,7 @@ rewritten and the schema redesigned, the rewrite **filters out entries whose
 fan-out. Filter confirmed to isolate exactly the 8 real platforms.
 
 **Plan impact:** Task 4 `analyze()` multi-arch branch adds:
+
 ```python
 entries = [
     e for e in manifest.get("manifests", [])
@@ -88,13 +89,13 @@ entries = [
 
 ## Confirmed command strings (final)
 
-| Purpose | Command (args after `regctl [--host …]`) |
-| --- | --- |
-| raw index / raw manifest | `manifest get <ref> --format raw-body` |
+| Purpose                               | Command (args after `regctl [--host …]`)                    |
+| ------------------------------------- | ----------------------------------------------------------- |
+| raw index / raw manifest              | `manifest get <ref> --format raw-body`                      |
 | per-platform manifest (layers, sizes) | `manifest get <ref> --platform <os/arch> --format raw-body` |
-| per-platform config blob | `image inspect <ref> --platform <os/arch>` (no `--format`) |
-| tag list | `tag ls <registry>/<repo>` (newline text) |
-| version (doctor) | `version` |
+| per-platform config blob              | `image inspect <ref> --platform <os/arch>` (no `--format`)  |
+| tag list                              | `tag ls <registry>/<repo>` (newline text)                   |
+| version (doctor)                      | `version`                                                   |
 
 Digest refs work for both `image inspect` and `manifest get`
 (`<registry>/<repo>@sha256:…`); adding `--platform` alongside a digest ref is
