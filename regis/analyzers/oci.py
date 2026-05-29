@@ -320,15 +320,31 @@ class OciAnalyzer(BaseAnalyzer):
             result["layers_count"] = len(layers)
             config_size = (manifest.get("config", {}) or {}).get("size", 0)
             result["size"] = config_size + sum(layer.get("size", 0) for layer in layers)
-            if not result.get("digest"):
-                result["digest"] = (
-                    ref if ref.startswith("sha256:") else manifest.get("digest", "")
-                )
         except Exception:
             logger.debug(
                 "regctl manifest get failed for %s", image_reference, exc_info=True
             )
             result.setdefault("layers_count", 0)
             result.setdefault("size", 0)
+
+        # 3. Digest: use the ref directly when it is already a digest; otherwise
+        #    fetch it via `manifest head` so single-arch images are not left with
+        #    an empty digest (raw manifest body has no top-level "digest" field).
+        if not result.get("digest"):
+            if ref.startswith("sha256:"):
+                result["digest"] = ref
+            else:
+                try:
+                    head_args = ["manifest", "head", image_reference]
+                    if plat:
+                        head_args += ["--platform", plat]
+                    result["digest"] = run_regctl(client, head_args).strip()
+                except Exception:
+                    logger.debug(
+                        "regctl manifest head failed for %s",
+                        image_reference,
+                        exc_info=True,
+                    )
+                    result["digest"] = ""
 
         return result

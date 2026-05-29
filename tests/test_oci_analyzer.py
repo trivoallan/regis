@@ -59,6 +59,9 @@ def _single_platform_dispatcher(_client_arg: object, args: list[str]) -> str:
     if sub == ["manifest", "get"]:
         # Single manifest (no index) for layers/size.
         return _fixture("manifest_amd64_raw.json")
+    if sub == ["manifest", "head"]:
+        # Digest lookup for single-arch images whose ref is a tag, not a digest.
+        return "sha256:aabbccdd\n"
     if sub == ["image", "inspect"]:
         return _fixture("image_inspect_nginx_amd64.json")
     if sub == ["tag", "ls"]:
@@ -97,6 +100,28 @@ def test_oci_single_platform_report_validates():
     assert report["tags"] == [t for t in report["tags"] if t.strip()]
 
 
+def test_oci_single_arch_digest_populated_via_manifest_head():
+    """Single-arch images (tag ref) must have digest populated via manifest head."""
+    manifest_head_called: list[list[str]] = []
+
+    def dispatcher(_client_arg: object, args: list[str]) -> str:
+        sub = args[0:2]
+        if sub == ["manifest", "head"]:
+            manifest_head_called.append(args)
+            return "sha256:deadbeef\n"
+        return _single_platform_dispatcher(_client_arg, args)
+
+    with patch("regis.analyzers.oci.run_regctl", side_effect=dispatcher):
+        analyzer = OciAnalyzer()
+        report = analyzer.analyze(_client(), "library/nginx", "1.27")
+
+    platform = report["platforms"][0]
+    # Digest must be the stripped value returned by manifest head.
+    assert platform["digest"] == "sha256:deadbeef"
+    # manifest head was called exactly once (for the single-arch platform).
+    assert len(manifest_head_called) == 1
+
+
 def _multiarch_dispatcher(_client_arg: object, args: list[str]) -> str:
     """Route regctl calls for a multi-arch index."""
     sub = args[0:2]
@@ -110,6 +135,8 @@ def _multiarch_dispatcher(_client_arg: object, args: list[str]) -> str:
         return _fixture("image_inspect_amd64.json")
     if sub == ["tag", "ls"]:
         return _fixture("tag_ls.txt")
+    # Multi-arch per-platform refs are already digests, so manifest head must
+    # never be called here.
     raise AssertionError(f"Unexpected regctl call: {args}")
 
 
