@@ -2,16 +2,15 @@
 
 from __future__ import annotations
 
-import json
 import logging
 import re
-import subprocess
 from typing import Any
 
 import semver
 
 from regis.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis.registry.client import RegistryClient
+from regis.utils.regctl import run_regctl
 
 logger = logging.getLogger(__name__)
 
@@ -190,26 +189,17 @@ class VersioningAnalyzer(BaseAnalyzer):
         tag: str,
         platform: str | None = None,
     ) -> dict[str, Any]:
-        """Classify all tags and summarize versioning patterns using skopeo."""
+        """Classify all tags and summarize versioning patterns using regctl."""
         registry = client.registry
-        target = f"docker://{registry}/{repository}"
-
-        cmd = ["skopeo", "list-tags", target]
-
-        if client.username and client.password:
-            cmd.extend(["--creds", f"{client.username}:{client.password}"])
-
+        repo_ref = (
+            f"{'docker.io' if registry == 'registry-1.docker.io' else registry}"
+            f"/{repository}"
+        )
         try:
-            res = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-            data = json.loads(res.stdout)
-            tags = data.get("Tags", [])
+            tags_out = run_regctl(client, ["tag", "ls", repo_ref])
+            tags = [t for t in tags_out.splitlines() if t.strip()]
         except Exception as e:
-            msg = f"Failed to list tags via skopeo for {target}: {e}"
+            msg = f"Failed to list tags via regctl for {repo_ref}: {e}"
             logger.error(msg)
             raise AnalyzerError(msg) from e
 
@@ -264,38 +254,9 @@ class VersioningAnalyzer(BaseAnalyzer):
 
         current_pattern = _classify_tag(tag)
 
-        # Always inspect to find all tags sharing the same digest (aliases).
-        inspect_target = f"docker://{registry}/{repository}:{tag}"
-        inspect_cmd = ["skopeo", "inspect", inspect_target]
-        if platform:
-            try:
-                os_str, arch = platform.split("/", 1)
-                inspect_cmd.extend(["--override-os", os_str, "--override-arch", arch])
-            except ValueError:
-                logger.debug(
-                    "Invalid platform format %s, ignoring for inspect", platform
-                )
-        else:
-            # Default to linux/amd64 to avoid host architecture mismatch for multi-arch images
-            inspect_cmd.extend(["--override-os", "linux", "--override-arch", "amd64"])
-
-        if client.username and client.password:
-            inspect_cmd.extend(["--creds", f"{client.username}:{client.password}"])
-
-        aliases: list[str] = []
-        repo_tags: list[str] = []
-        try:
-            res_inspect = subprocess.run(  # nosec B603
-                inspect_cmd,
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-            inspect_data = json.loads(res_inspect.stdout)
-            repo_tags = inspect_data.get("RepoTags", [])
-            aliases = sorted(t for t in repo_tags if t != tag)
-        except Exception as e:
-            logger.debug("Failed to inspect %s to find aliases: %s", tag, e)
+        # skopeo's RepoTags == the full repository tag list, which we already have.
+        repo_tags = tags
+        aliases = sorted(t for t in repo_tags if t != tag)
 
         # Release lines: only meaningful for floating/alias tags.
         release_lines: list[str] = []

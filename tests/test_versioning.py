@@ -1,5 +1,4 @@
-import json
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -141,10 +140,10 @@ class MockRegistryClient:
 class TestVersioningAnalyzer:
     """Test the versioning analyzer end-to-end."""
 
-    @patch("regis.analyzers.versioning.subprocess.run")
-    def test_semver_dominant(self, mock_run):
+    @patch("regis.analyzers.versioning.run_regctl")
+    def test_semver_dominant(self, mock_regctl):
         tags = ["1.0.0", "1.1.0", "1.2.0", "2.0.0", "2.0.0-rc.1", "latest"]
-        mock_run.return_value.stdout = json.dumps({"Tags": tags})
+        mock_regctl.return_value = "\n".join(tags)
         client = MockRegistryClient()
         analyzer = VersioningAnalyzer()
         report = analyzer.analyze(client, "library/myapp", "latest")
@@ -155,10 +154,10 @@ class TestVersioningAnalyzer:
         # 4 semver + 1 prerelease = 5/6 ≈ 83.3%
         assert report["semver_compliant_percentage"] == pytest.approx(83.3, abs=0.1)
 
-    @patch("regis.analyzers.versioning.subprocess.run")
-    def test_named_dominant(self, mock_run):
+    @patch("regis.analyzers.versioning.run_regctl")
+    def test_named_dominant(self, mock_regctl):
         tags = ["latest", "alpine", "bookworm", "slim"]
-        mock_run.return_value.stdout = json.dumps({"Tags": tags})
+        mock_regctl.return_value = "\n".join(tags)
         client = MockRegistryClient()
         analyzer = VersioningAnalyzer()
         report = analyzer.analyze(client, "library/python", "latest")
@@ -167,10 +166,10 @@ class TestVersioningAnalyzer:
         assert report["dominant_pattern"] == "named"
         assert report["semver_compliant_percentage"] == 0
 
-    @patch("regis.analyzers.versioning.subprocess.run")
-    def test_mixed_patterns(self, mock_run):
+    @patch("regis.analyzers.versioning.run_regctl")
+    def test_mixed_patterns(self, mock_regctl):
         tags = ["1.0.0", "1.1.0", "latest", "alpine", "2024.01", "abc1234"]
-        mock_run.return_value.stdout = json.dumps({"Tags": tags})
+        mock_regctl.return_value = "\n".join(tags)
         client = MockRegistryClient()
         analyzer = VersioningAnalyzer()
         report = analyzer.analyze(client, "test/app", "latest")
@@ -182,9 +181,9 @@ class TestVersioningAnalyzer:
         assert "calver" in pattern_names
         assert "hash" in pattern_names
 
-    @patch("regis.analyzers.versioning.subprocess.run")
-    def test_empty_tags(self, mock_run):
-        mock_run.return_value.stdout = json.dumps({"Tags": []})
+    @patch("regis.analyzers.versioning.run_regctl")
+    def test_empty_tags(self, mock_regctl):
+        mock_regctl.return_value = ""
         client = MockRegistryClient()
         analyzer = VersioningAnalyzer()
         report = analyzer.analyze(client, "test/empty", "latest")
@@ -194,8 +193,8 @@ class TestVersioningAnalyzer:
         assert report["dominant_pattern"] == "unknown"
         assert report["patterns"] == []
 
-    @patch("regis.analyzers.versioning.subprocess.run")
-    def test_variant_detection(self, mock_run):
+    @patch("regis.analyzers.versioning.run_regctl")
+    def test_variant_detection(self, mock_regctl):
         """Test detection and counting of variants."""
         tags = [
             "1.0.0-alpine",
@@ -205,7 +204,7 @@ class TestVersioningAnalyzer:
             "1.0.3-slim-bookworm",
             "latest",
         ]
-        mock_run.return_value.stdout = json.dumps({"Tags": tags})
+        mock_regctl.return_value = "\n".join(tags)
         client = MockRegistryClient()
         analyzer = VersioningAnalyzer()
         report = analyzer.analyze(client, "library/test", "latest")
@@ -224,8 +223,8 @@ class TestVersioningAnalyzer:
         alpine_entry = next(v for v in variants if v["name"] == "alpine")
         assert "1.0.0-alpine" in alpine_entry["examples"]
 
-    @patch("regis.analyzers.versioning.subprocess.run")
-    def test_subvariant_detection(self, mock_run):
+    @patch("regis.analyzers.versioning.run_regctl")
+    def test_subvariant_detection(self, mock_regctl):
         """Test detection of subvariants like cli, fpm, apache."""
         tags = [
             "8.1-fpm-alpine",
@@ -234,7 +233,7 @@ class TestVersioningAnalyzer:
             "8.1-zts-bullseye",
             "latest",
         ]
-        mock_run.return_value.stdout = json.dumps({"Tags": tags})
+        mock_regctl.return_value = "\n".join(tags)
         client = MockRegistryClient()
         analyzer = VersioningAnalyzer()
         report = analyzer.analyze(client, "library/php", "latest")
@@ -251,8 +250,8 @@ class TestVersioningAnalyzer:
         assert v_map["buster"] == 1
         assert v_map["bullseye"] == 1
 
-    @patch("regis.analyzers.versioning.subprocess.run")
-    def test_ubi_detection(self, mock_run):
+    @patch("regis.analyzers.versioning.run_regctl")
+    def test_ubi_detection(self, mock_regctl):
         """Test detection of RedHat UBI images."""
         tags = [
             "8.5-ubi8",
@@ -262,7 +261,7 @@ class TestVersioningAnalyzer:
             "7-rhel",
             "8-ubi-init",
         ]
-        mock_run.return_value.stdout = json.dumps({"Tags": tags})
+        mock_regctl.return_value = "\n".join(tags)
         client = MockRegistryClient()
         analyzer = VersioningAnalyzer()
         report = analyzer.analyze(client, "library/redhat", "latest")
@@ -279,19 +278,11 @@ class TestVersioningAnalyzer:
         assert v_map["init"] == 1
         assert v_map["rhel"] == 1
 
-    @patch("regis.analyzers.versioning.subprocess.run")
-    def test_release_line_detection_for_alias(self, mock_run):
+    @patch("regis.analyzers.versioning.run_regctl")
+    def test_release_line_detection_for_alias(self, mock_regctl):
         """Test detection of release_lines and aliases for alias tags."""
-        # mock_run will be called twice: 1. skopeo list-tags  2. skopeo inspect
-        mock_list_tags = MagicMock()
-        mock_list_tags.stdout = json.dumps({"Tags": ["1", "1.10", "1.10.4", "latest"]})
-
-        mock_inspect = MagicMock()
-        mock_inspect.stdout = json.dumps(
-            {"RepoTags": ["1", "1.10", "1.10.4", "latest"]}
-        )
-
-        mock_run.side_effect = [mock_list_tags, mock_inspect]
+        # A single regctl call lists the full repo tag set; RepoTags == tags.
+        mock_regctl.return_value = "\n".join(["1", "1.10", "1.10.4", "latest"])
 
         client = MockRegistryClient()
         analyzer = VersioningAnalyzer()
@@ -300,20 +291,12 @@ class TestVersioningAnalyzer:
 
         assert report["release_lines"] == ["1", "1.10", "1.10.4"]
         assert report["aliases"] == ["1.10", "1.10.4", "latest"]
-        assert mock_run.call_count == 2
+        assert mock_regctl.call_count == 1
 
-    @patch("regis.analyzers.versioning.subprocess.run")
-    def test_aliases_for_semver_tag(self, mock_run):
+    @patch("regis.analyzers.versioning.run_regctl")
+    def test_aliases_for_semver_tag(self, mock_regctl):
         """Aliases are detected even when the analyzed tag is a strict semver."""
-        mock_list_tags = MagicMock()
-        mock_list_tags.stdout = json.dumps({"Tags": ["1", "1.10", "1.10.4", "latest"]})
-
-        mock_inspect = MagicMock()
-        mock_inspect.stdout = json.dumps(
-            {"RepoTags": ["1", "1.10", "1.10.4", "latest"]}
-        )
-
-        mock_run.side_effect = [mock_list_tags, mock_inspect]
+        mock_regctl.return_value = "\n".join(["1", "1.10", "1.10.4", "latest"])
 
         client = MockRegistryClient()
         analyzer = VersioningAnalyzer()
@@ -323,4 +306,4 @@ class TestVersioningAnalyzer:
         assert report["aliases"] == ["1", "1.10", "latest"]
         # release_lines must be empty: 1.10.4 is semver, not a floating alias
         assert report["release_lines"] == []
-        assert mock_run.call_count == 2
+        assert mock_regctl.call_count == 1
