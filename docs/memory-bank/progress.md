@@ -11,6 +11,11 @@
 
 ## Completed (Recent)
 
+- **Docker image size reduction — round 2 (2026-05-29)**:
+  - Removed git/jq from runtime; FastAPI/Uvicorn → optional `[server]` extra; `--no-compile` venv + cache prune.
+  - Measured arm64 tar 186 MB → 138 MB (round 2); 244 MB → 138 MB cumulative (~43 %). CI ceiling tightened 250 → 220 MB.
+  - Deferred (own brainstorm): crane-for-skopeo (biggest remaining win), alpine/wolfi base, UPX on Go binaries.
+
 - **Docker image size reduction (2026-05-29, v0.32.0)**:
   - 4-stage Dockerfile; runtime image strips Node.js, pnpm, curl, gnupg, build-essential.
   - Breaking change: `bootstrap archive --dev/--repo` is host-only (structured error message guides install).
