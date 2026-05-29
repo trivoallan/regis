@@ -2,7 +2,7 @@
 name: create-playbook
 description: >
   Create a Regis playbook bundle interactively. Guides the user through naming,
-  rule selection (trivy, hadolint, sbom, freshness, scorecarddev, skopeo, dockle),
+  rule selection (trivy, hadolint, sbom, freshness, scorecarddev, oci, dockle),
   tier configuration, CI integration (GitLab/GitHub), and optional metadata schema
   (meta.schema.json extending the well-known base schema).
   Use whenever the user says "create a playbook", "new playbook", "setup regis",
@@ -98,7 +98,7 @@ After the user picks a rule, ask for its key options (using the defaults from
 
 Only add if the user wants to enforce source registry policy.
 
-### Group E — Image configuration (`skopeo`)
+### Group E — Image configuration (`oci`)
 
 | Rule                      | Key options                              |
 | ------------------------- | ---------------------------------------- |

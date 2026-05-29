@@ -175,9 +175,9 @@ Source: `regis/analyzers/scorecarddev.py`
 
 ---
 
-## skopeo — Image configuration
+## oci — Image configuration
 
-Source: `regis/analyzers/skopeo.py`
+Source: `regis/analyzers/oci.py`
 
 | slug                      | options                                             | description                                                                           |
 | ------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -190,10 +190,10 @@ Source: `regis/analyzers/skopeo.py`
 | `required-labels`         | `labels` (list of OCI label name strings)           | Fail if any label in the list is absent from the image manifest.                      |
 | `env-blacklist`           | `blacklist` (list of env var name strings)          | Fail if any env var in the blacklist is set in the image config.                      |
 
-### Example — skopeo rules
+### Example — oci rules
 
 ```yaml
-- provider: skopeo
+- provider: oci
   rule: user-blacklist
   slug: no-root
   level: critical
@@ -202,14 +202,14 @@ Source: `regis/analyzers/skopeo.py`
       - root
       - "0"
 
-- provider: skopeo
+- provider: oci
   rule: max-size
   slug: image-size
   level: warning
   options:
     max_mb: 500
 
-- provider: skopeo
+- provider: oci
   rule: tag-blacklist
   slug: no-latest-tag
   level: warning
@@ -217,7 +217,7 @@ Source: `regis/analyzers/skopeo.py`
     blacklist:
       - latest
 
-- provider: skopeo
+- provider: oci
   rule: required-labels
   slug: required-labels
   level: warning
@@ -264,5 +264,5 @@ report, but they do not expose rule templates you can configure in a playbook:
 | `size`       | Compressed and uncompressed image size breakdown      |
 | `provenance` | Supply chain provenance evidence (Sigstore / SLSA)    |
 
-To enforce policy on these, use the `skopeo` rules (size) or wait for future rule
+To enforce policy on these, use the `oci` rules (size) or wait for future rule
 templates to be added to those analyzers.

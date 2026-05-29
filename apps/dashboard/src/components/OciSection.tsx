@@ -26,17 +26,13 @@ interface PlatformDetail {
   env: string[];
   labels: Record<string, string>;
 }
-interface SkopeoData {
+interface OciData {
   platforms: PlatformDetail[];
   inspect: Record<string, unknown>;
   tags: string[];
 }
 
-export function SkopeoSection({
-  data,
-}: {
-  data: SkopeoData;
-}): React.JSX.Element {
+export function OciSection({ data }: { data: OciData }): React.JSX.Element {
   const platforms = (data?.platforms || []).filter(
     (p) => !(p.os === "unknown" && p.architecture === "unknown"),
   );

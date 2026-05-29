@@ -31,7 +31,7 @@ class TestCliBasics:
         result = runner.invoke(main, ["list"])
         assert result.exit_code == 0
         # The built-in analyzers should appear.
-        assert "skopeo" in result.output
+        assert "oci" in result.output
         assert "versioning" in result.output
 
     def test_version_command(self):

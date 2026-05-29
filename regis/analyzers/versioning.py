@@ -254,7 +254,7 @@ class VersioningAnalyzer(BaseAnalyzer):
 
         current_pattern = _classify_tag(tag)
 
-        # skopeo's RepoTags == the full repository tag list, which we already have.
+        # RepoTags == the full repository tag list (we already have it from tag ls).
         repo_tags = tags
         aliases = sorted(t for t in repo_tags if t != tag)
 

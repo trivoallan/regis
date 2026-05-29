@@ -1,8 +1,8 @@
 """Subprocess wrapper for the regctl OCI registry client.
 
 Centralizes regctl invocation, credential injection, and reference building for
-every analyzer that inspects remote images. Replaces the per-analyzer skopeo
-wrappers.
+every analyzer that inspects remote images. Replaces the per-analyzer
+registry-CLI wrappers.
 """
 
 from __future__ import annotations

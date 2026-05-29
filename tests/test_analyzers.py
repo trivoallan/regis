@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from regis.analyzers.base import AnalyzerError
-from regis.analyzers.skopeo import SkopeoAnalyzer
+from regis.analyzers.oci import OciAnalyzer
 
 # ---------------------------------------------------------------------------
 # Fixtures — mock RegistryClient
@@ -51,8 +51,8 @@ class TestRunCmd:
 class TestSchemaValidation:
     """Verify that invalid reports are rejected by schema validation."""
 
-    def test_skopeo_report_wrong_analyzer_name(self):
-        analyzer = SkopeoAnalyzer()
+    def test_oci_report_wrong_analyzer_name(self):
+        analyzer = OciAnalyzer()
         bad_report = {
             "analyzer": "wrong",
             "repository": "test",

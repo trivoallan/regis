@@ -17,7 +17,7 @@ RegiS includes several built-in analyzers.
 For a complete list and technical details for each, see the [Analyzers Reference](../reference/analyzers/).
 :::
 
-- **Skopeo**: Fetches low-level image metadata (labels, architecture, layers, creation date) directly from the registry.
+- **OCI**: Fetches low-level image metadata (labels, architecture, layers, creation date) directly from the registry via `regctl`.
 - **Trivy**: Performs vulnerability scanning (CVEs) and generates Software Bill of Materials (SBOM).
 - **Hadolint**: Lints Dockerfiles to ensure best practices and security standards are met.
 - **Freshness**: Calculates the "age" of an image relative to its base image and updates.
@@ -30,11 +30,11 @@ Below is the step-by-step process `regis` follows when analyzing an image:
 
 ```mermaid
 graph TD
-    A[Start: regis analyze] --> B[Fetch Metadata via Skopeo]
+    A[Start: regis analyze] --> B[Fetch Metadata via regctl]
     B --> C{Run Analyzers}
     C --> D[Trivy: Vulns/SBOM]
     C --> E[Hadolint: Linter]
-    C --> F[Skopeo: Metadata]
+    C --> F[OCI: Metadata]
     C --> G[...]
 
     D --> H[Aggregate Results]

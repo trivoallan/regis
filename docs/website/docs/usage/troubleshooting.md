@@ -12,7 +12,7 @@ When you run `regis`, it requires certain external binaries depending on which a
 
 **Error symptoms:**
 
-- `Command 'skopeo' not found`
+- `Command 'regctl' not found`
 - `Command 'trivy' not found`
 - `Command 'hadolint' not found`
 - `Command 'dockle' not found`
@@ -44,7 +44,7 @@ When analyzing private container images, you may encounter authentication failur
 
 **Solution:**
 
-`regis` uses the same authentication mechanisms as Skopeo and Docker:
+`regis` uses the same authentication mechanisms as regctl and Docker:
 
 1. **Docker login** (most common):
 
@@ -61,7 +61,7 @@ When analyzing private container images, you may encounter authentication failur
    ```
 
 3. **Environment variables** (for CI/CD):
-   - Set `SKOPEO_CREDS` if available, or configure Docker credentials before running `regis`.
+   - Configure Docker credentials (`docker login`) before running `regis`; `regctl` reads the same credential store.
 
 If you're using a custom authentication mechanism, consult [Registries](./registries.md) for advanced configuration options.
 
@@ -192,8 +192,8 @@ For local images, use the full reference: `docker.io/library/nginx:latest` or `l
 Use the `-a` or `--analyzer` flag to limit which analyzers run:
 
 ```bash
-# Run only Trivy and Skopeo
-regis analyze myimage:latest -a trivy -a skopeo
+# Run only Trivy and OCI metadata
+regis analyze myimage:latest -a trivy -a oci
 ```
 
 This is useful when you only care about specific security checks or want to speed up analysis.
