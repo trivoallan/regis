@@ -21,8 +21,6 @@ dependencies = [
   "cookiecutter>=2.5",
   "referencing>=0.28.4",
   "python-gitlab>=4.4.0",
-  "fastapi>=0.115.0",
-  "uvicorn[standard]>=0.34",
 ]
 
 [project.scripts]
@@ -44,12 +42,18 @@ dockle = "regis.analyzers.dockle:DockleAnalyzer"
 metadata = "regis.analyzers.metadata:MetadataAnalyzer"
 
 [project.optional-dependencies]
+server = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.34",
+]
 dev = [
   "pytest>=7.4",
   "pytest-cov>=4.1",
   "responses>=0.24",
   "genbadge[coverage]>=1.1",
   "httpx>=0.28",
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.34",
 ]
 
 [tool.setuptools.packages.find]

@@ -11,6 +11,15 @@ import click
 
 logger = logging.getLogger(__name__)
 
+_SERVER_EXTRA_HINT = (
+    "The 'regis dashboard serve' command requires the optional server "
+    "dependencies (FastAPI + Uvicorn), which are not bundled in the "
+    "published Docker image to keep it small.\n\n"
+    "Install them with:\n"
+    "  pip install 'regis[server]'\n\n"
+    "Then run 'regis dashboard serve' from that environment."
+)
+
 
 def get_dashboard_assets_dir() -> Path:
     """Returns the path to the bundled dashboard assets."""
@@ -160,9 +169,12 @@ def serve_cmd(  # pragma: no cover
     webhook_secret: str | None = None,
 ) -> None:
     """Serve the interactive dashboard and preview the report locally."""
-    import uvicorn
+    try:
+        import uvicorn
 
-    from regis.server.app import create_app
+        from regis.server.app import create_app
+    except ImportError as exc:
+        raise click.ClickException(_SERVER_EXTRA_HINT) from exc
 
     assets_dir = get_dashboard_assets_dir()
 
