@@ -11,7 +11,6 @@ import base64
 import json
 import logging
 import os
-import re
 import shutil
 import subprocess  # nosec B404
 import tempfile
@@ -101,8 +100,9 @@ def run_regctl(
             ]
 
     cmd += args
-    safe_cmd = [re.sub(r"(pass=)[^,]+", r"\1***", c) for c in cmd]
-    logger.debug("Running regctl: %s", " ".join(safe_cmd))
+    # Log only the subcommand, never the --host credential string, so the
+    # password never reaches the logs.
+    logger.debug("Running regctl %s", " ".join(args))
     try:
         result = subprocess.run(  # nosec B603
             cmd,

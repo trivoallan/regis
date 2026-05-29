@@ -36,8 +36,9 @@ def test_image_ref_digest_uses_at_separator():
 
 
 def test_image_ref_normalizes_dockerhub():
-    assert image_ref("registry-1.docker.io", "library/alpine", "3.20").startswith(
-        "docker.io/"
+    assert (
+        image_ref("registry-1.docker.io", "library/alpine", "3.20")
+        == "docker.io/library/alpine:3.20"
     )
 
 
