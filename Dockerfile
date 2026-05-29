@@ -34,6 +34,9 @@ COPY pyproject.toml Pipfile Pipfile.lock ./
 COPY regis/ regis/
 COPY --from=frontend-builder /app/apps/dashboard/build regis/dashboard_assets
 
+# Core install only — the optional [server] extra (FastAPI/Uvicorn) is
+# intentionally excluded to keep the runtime image small. Use a host with
+# `pip install 'regis[server]'` for `regis dashboard serve`.
 RUN VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml) && \
     SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" pip install .
 

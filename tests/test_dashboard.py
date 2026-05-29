@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from unittest.mock import patch
 
 import pytest
 from click.testing import CliRunner
 
+from regis.cli import main
 from regis.commands.dashboard import (
     _parse_archives,
     dashboard_group,
@@ -198,3 +200,16 @@ class TestViewerExportCmd:
         assert result.exit_code == 0
         assert "export" in result.output
         assert "serve" in result.output
+
+
+class TestServeWithoutServerExtra:
+    """`regis dashboard serve` must fail helpfully when server deps are absent."""
+
+    def test_serve_without_server_extra_raises_hint(self, monkeypatch):
+        # Simulate the optional server extra not being installed: mapping
+        # `uvicorn` to None in sys.modules makes `import uvicorn` raise ImportError.
+        monkeypatch.setitem(sys.modules, "uvicorn", None)
+        runner = CliRunner()
+        result = runner.invoke(main, ["dashboard", "serve"])
+        assert result.exit_code != 0
+        assert "regis[server]" in result.output
