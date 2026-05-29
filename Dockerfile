@@ -37,8 +37,12 @@ COPY --from=frontend-builder /app/apps/dashboard/build regis/dashboard_assets
 # Core install only — the optional [server] extra (FastAPI/Uvicorn) is
 # intentionally excluded to keep the runtime image small. Use a host with
 # `pip install 'regis[server]'` for `regis dashboard serve`.
+# --no-compile skips .pyc generation (PYTHONDONTWRITEBYTECODE keeps runtime
+# from regenerating them); prune any residual bytecode caches afterwards.
 RUN VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml) && \
-    SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" pip install .
+    SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" pip install --no-compile . && \
+    find /opt/venv -type d -name __pycache__ -prune -exec rm -rf {} + && \
+    find /opt/venv -type f -name '*.pyc' -delete
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 3: tools-fetcher — downloads external analyzer binaries
