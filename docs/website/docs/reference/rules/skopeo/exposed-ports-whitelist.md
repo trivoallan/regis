@@ -8,21 +8,21 @@ tags:
 
 Image exposes permitted ports.
 
-| Provider | Level | Tags |
-| :--- | :--- | :--- |
-| skopeo | Warning | security |
+| Provider | Level   | Tags     |
+| :------- | :------ | :------- |
+| skopeo   | Warning | security |
 
 ## Parameters
 
-| Name | Default Value | Description |
-| :--- | :--- | :--- |
-| `allowed_ports` | `['80', '443']` | n/a |
+| Name            | Default Value   | Description |
+| :-------------- | :-------------- | :---------- |
+| `allowed_ports` | `['80', '443']` | n/a         |
 
 ## Messages
 
-| Type | Message |
-| :--- | :--- |
-| **Pass** | All exposed ports are allowed. |
+| Type     | Message                                                                        |
+| :------- | :----------------------------------------------------------------------------- |
+| **Pass** | All exposed ports are allowed.                                                 |
 | **Fail** | Image exposes unauthorized ports: ${results.skopeo.platforms.0.exposed_ports}. |
 
 ## Playbook Example
@@ -33,8 +33,8 @@ rules:
     rule: exposed-ports-whitelist
     options:
       allowed_ports:
-      - '80'
-      - '443'
+        - "80"
+        - "443"
 ```
 
 ## Condition
