@@ -35,34 +35,60 @@ Verified versions at design time: regctl `v0.11.5`, crane `v0.21.6`.
 
 ## 2. Scope
 
-Two call sites use skopeo today; both are rewritten:
+**Five** analyzer call sites shell out to skopeo today. **All five must be
+migrated** — this is a correctness requirement, not optional breadth: skopeo
+cannot be removed from the Docker image (the primary goal) while any analyzer
+still invokes it.
 
-- `regis/analyzers/skopeo.py` → renamed to `regis/analyzers/oci.py`
-  (`SkopeoAnalyzer` → `OciAnalyzer`). Uses `inspect --raw` (index detection),
-  `inspect` (+ `--override-os/--override-arch`), `inspect --config` (the `User`
-  field), and `list-tags`.
-- `regis/analyzers/freshness.py` — uses `inspect --config --override-os linux
---override-arch amd64` to read `created`. Rewritten to call regctl; **kept as
-  a separate analyzer** (the chosen scope was "evaluate the tools honestly", not
-  "consolidate freshness into the inspect analyzer").
+| # | File | skopeo calls today | Consumes |
+| --- | --- | --- | --- |
+| 1 | `regis/analyzers/skopeo.py` → renamed `regis/analyzers/oci.py` (`SkopeoAnalyzer`→`OciAnalyzer`) | `inspect --raw`, `inspect` (+overrides), `inspect --config`, `list-tags`; own `_run_skopeo` | per-platform metadata, tags |
+| 2 | `regis/analyzers/freshness.py` | `inspect --config --override-os linux --override-arch amd64` (inline) | `created` |
+| 3 | `regis/analyzers/versioning.py` | `list-tags`, `inspect` (+overrides) (inline) | `Tags`, `RepoTags` (aliases) |
+| 4 | `regis/analyzers/size.py` | `inspect --raw` ×2 (single + multiarch); own `_run_skopeo` | manifest layer sizes |
+| 5 | `regis/analyzers/hadolint.py` | `inspect --config` (+overrides) (inline) | config `history` (Dockerfile reconstruction) |
 
-A shared subprocess wrapper is introduced so the credential injection and
-`FileNotFoundError` handling live in exactly one place:
+(`regis/analyzers/dockle.py` mentions skopeo only in a comment — no call site.
+`regis/rules/evaluator.py` references `results.skopeo.*` only in a doc-comment.)
+
+Only `skopeo.py` is **renamed** to `oci.py`; analyzers 2–5 keep their names and
+slugs — only their internal tool invocations change.
+
+A shared subprocess wrapper is introduced so credential injection and
+`FileNotFoundError` handling live in exactly one place, replacing the two
+duplicated `_run_skopeo` helpers (in `skopeo.py` and `size.py`) and the three
+inline `subprocess.run(["skopeo", …])` blocks:
 
 - **New module `regis/utils/regctl.py`** exposing
   `run_regctl(client: RegistryClient, args: list[str]) -> str`.
-  Both analyzers call it. This factors only the process invocation — it does not
-  merge the analyzers.
+  All five analyzers call it. This factors only the process invocation — it does
+  not merge the analyzers.
 
 ## 3. Command mapping
 
-| skopeo call today                            | regctl replacement                                                                                                                                                                   |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `skopeo inspect --raw <ref>`                 | `regctl manifest get <ref> --format raw-body`                                                                                                                                        |
-| `skopeo inspect <ref>` (+ os/arch overrides) | `regctl image inspect <ref> --platform <os/arch>` → OCI config blob: `created`, `config.Labels`, `config.User`, `config.Env`, `config.ExposedPorts`, `architecture`, `os`, `variant` |
-| `skopeo inspect --config` (User field)       | absorbed by `image inspect` above — the separate `--config` call is no longer needed                                                                                                 |
-| layer count + size                           | `regctl manifest get <ref> --platform <os/arch>` → `layers[]` (count + `size`) and `config.size`                                                                                     |
-| `skopeo list-tags docker://<repo>`           | `regctl tag ls <repo>` → default newline-per-tag output, parsed with `splitlines()`                                                                                                  |
+| skopeo call today                            | regctl replacement                                                                                                                                                                   | Used by |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --- |
+| `skopeo inspect --raw <ref>`                 | `regctl manifest get <ref> --format raw-body`                                                                                                                                        | oci, size |
+| `skopeo inspect <ref>` (+ os/arch overrides) | `regctl image inspect <ref> --platform <os/arch>` → OCI config blob: `created`, `config.Labels`, `config.User`, `config.Env`, `config.ExposedPorts`, `history`, `architecture`, `os` | oci, hadolint, freshness |
+| `skopeo inspect --config` (User field)       | absorbed by `image inspect` above — the separate `--config` call is no longer needed                                                                                                 | oci, hadolint, freshness |
+| layer count + size                           | `regctl manifest get <ref> --platform <os/arch>` → `layers[]` (count + `size`) and `config.size`                                                                                     | oci, size |
+| `skopeo list-tags docker://<repo>`           | `regctl tag ls <repo>` → default newline-per-tag output, parsed with `splitlines()`                                                                                                  | oci, versioning |
+
+Per-analyzer notes for the four non-`oci` call sites:
+
+- **freshness** — `created` comes from `image inspect --platform linux/amd64`
+  (top-level `created` of the config blob). Single call.
+- **hadolint** — the `history` array (used to reconstruct a pseudo-Dockerfile)
+  comes from `image inspect --platform <os/arch>` (config blob `history`).
+- **size** — `inspect --raw` → `manifest get … --format raw-body`; the existing
+  single-vs-index branching on `mediaType` is preserved (regctl `manifest get`
+  on an index returns the index JSON unchanged).
+- **versioning** — `list-tags` → `tag ls`. The separate `inspect` call that read
+  skopeo's `RepoTags` is **replaced by reusing the `tag ls` result**: skopeo's
+  `RepoTags` is the full repository tag list (the same data `tag ls` returns), so
+  versioning derives `repo_tags`/`aliases` from the tags it already lists and
+  drops the second subprocess call. (Confirm `RepoTags` semantics during
+  implementation — see Open Questions.)
 
 ### Per-platform call count
 
@@ -172,9 +198,13 @@ rename. Touch points:
 - **Final stage:** `COPY --from=tools-fetcher /tools/regctl /usr/local/bin/regctl`.
 - **Remove `skopeo`** from the runtime apt install (`Dockerfile:113`); keep
   `ca-certificates`. This is the size win.
-- Define `ARG REGCTL_VERSION` (pinned) alongside the existing
-  `HADOLINT_VERSION`/`DOCKLE_VERSION` args; wire it into the build args / CI as
-  those are.
+- Pin the version by adding `REGCTL_VERSION=0.11.5` to the existing
+  `ENV HADOLINT_VERSION=… DOCKLE_VERSION=…` line in the `tools-fetcher` stage
+  (the versions are baked as `ENV`, not passed as CI build args — no CI wiring
+  needed).
+- The CI image-size gate (`ci-image-size.yml`, ceiling 220 MB) should drop
+  meaningfully; consider tightening the ceiling once a measurement exists
+  (out of scope for the functional change — note only).
 
 ## 8. Doctor & install docs
 
@@ -187,26 +217,35 @@ rename. Touch points:
 
 ## 9. Tests
 
-Rewrite the subprocess mocks from skopeo CLI shapes to regctl outputs:
+Rewrite the subprocess mocks from skopeo CLI shapes to regctl outputs. All five
+migrated analyzers have test files:
 
 - `tests/test_skopeo_analyzer.py` + `tests/test_analyzer_skopeo.py` → renamed to
   `test_oci_analyzer.py` (consolidate if they overlap); mock `run_regctl` /
   regctl JSON outputs.
-- `tests/test_versioning.py`, `tests/test_size.py` — update any skopeo-output
-  fixtures they depend on.
+- `tests/test_versioning.py` — `tag ls` output + `RepoTags`-from-tags logic.
+- `tests/test_size.py` — `manifest get` raw-body fixtures (single + index).
+- `tests/test_hadolint.py` — `image inspect` config-blob `history` fixtures.
+- Freshness tests (in `tests/test_analyzers.py` or `tests/test_coverage_analyzers.py`)
+  — `image inspect` `created` fixtures.
 - `tests/commands/test_doctor.py` — expect `regctl` instead of `skopeo`.
-- `tests/test_analyzers.py`, `tests/test_coverage_*` — update analyzer-name
-  references (`skopeo` → `oci`) and patch targets.
-- Patch targets follow the project rule: patch at the new module location
-  (`regis.utils.regctl.subprocess`, `regis.analyzers.oci.*`,
-  `regis.analyzers.freshness.*`), not `regis.cli.*`.
+- `tests/test_analyzers.py`, `tests/test_coverage_*`, `tests/test_cli.py`,
+  `tests/test_rules_evaluator.py` — update analyzer-name references
+  (`skopeo` → `oci`), `results.skopeo.*` → `results.oci.*`, and patch targets.
+- **Single shared mock point:** because all analyzers now route through
+  `regis.utils.regctl.run_regctl`, most tests can patch that one function (or
+  `regis.utils.regctl.subprocess`) instead of per-analyzer subprocess. Patch at
+  the source module per the project rule, not `regis.cli.*`.
 - Maintain ≥ 90 % coverage (full-suite gate).
 
 ## 10. Versioning & rollout
 
-- **Breaking change.** Conventional commit `feat(analyzers)!:` (or
-  `build(deps)!` for the Dockerfile portion if split). `bump-minor-pre-major`
-  keeps it at 0.32.x → **0.33.0** (not 1.0.0).
+- **Breaking change.** The work spans multiple commits, each with its own
+  mandatory scope (`analyzer/skopeo`, `analyzer/freshness`, `analyzer/size`,
+  `analyzer/hadolint`, `analyzer/versioning`, `build` for the Dockerfile,
+  `cli` for doctor, `docs`). The breaking marker (`!`) goes on the commit that
+  renames the slug / redesigns the schema (`feat(analyzer/skopeo)!:`).
+  `bump-minor-pre-major` keeps the release at 0.32.x → **0.33.0** (not 1.0.0).
 - **No backward-compat alias** for `results.skopeo.*` or `provider: skopeo`
   (consistent with "free to redesign" + pre-v1). Migration is documented: users
   with custom playbooks change `provider: skopeo` → `provider: oci` and any
@@ -228,3 +267,7 @@ Rewrite the subprocess mocks from skopeo CLI shapes to regctl outputs:
 4. **`regctl version` exit code/format** — confirm the doctor invocation.
 5. **`tag ls` pagination** — confirm regctl returns the full tag list (or how to
    page) for large repositories.
+6. **`RepoTags` semantics (versioning)** — confirm skopeo's `inspect.RepoTags`
+   equals the full repository tag list (so `tag ls` can replace it). If it
+   instead means digest-shared aliases, versioning needs a different derivation
+   (e.g. compare per-tag digests via `manifest head`).
