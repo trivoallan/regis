@@ -1,0 +1,44 @@
+name: CI / Image Size
+
+on:
+  pull_request:
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - pyproject.toml
+      - Pipfile
+      - Pipfile.lock
+      - apps/dashboard/**
+      - .github/workflows/ci-image-size.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  image-size:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+
+      - name: Build image
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
+        with:
+          context: .
+          load: true
+          tags: regis:size-check
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Enforce size limit
+        uses: wemake-services/docker-image-size-limit@f5970eb0c2180ac296475bfd22c5a58955370051 # 2.2.0
+        with:
+          image: regis:size-check
+          size: 250MB

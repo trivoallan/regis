@@ -3,6 +3,7 @@
 > **Registry Scores** — Container Security & Policy-as-Code Orchestration
 
 ![Coverage](./coverage-badge.svg)
+[![Docker Image Size](https://ghcr-badge.egpl.dev/trivoallan/regis/size?color=blue&trim=label&label=image%20size)](https://github.com/trivoallan/regis/pkgs/container/regis)
 
 Regis provides unified container analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.
 
@@ -97,6 +98,11 @@ The GitHub Actions pipelines enforce layered security controls:
 These artifacts are uploaded by the release/CD workflow as GitHub Actions workflow artifacts so consumers can inspect composition and verify origin before deployment.
 
 ---
+
+> **Breaking change in v0.32.0** — The published image no longer bundles
+> Node.js. `regis bootstrap archive --dev` and `--repo` must now be run
+> from a host that has Node 20+ and pnpm installed (install via `nvm`,
+> `fnm`, or `brew install node`). All other commands work unchanged.
 
 ## GitHub Action
 

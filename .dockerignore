@@ -1,14 +1,41 @@
+# VCS / build / lockfiles
 .git
 .github
+.gitignore
+.gitlab-ci.yml
+.serena
+.agent
 .claude
 .omc
 .trunk
+
+# Python build artifacts
 .venv
 __pycache__
 *.pyc
+*.pyo
 *.egg-info
 dist
 build
-node_modules
 .pytest_cache
 .ruff_cache
+.coverage
+coverage-badge.svg
+
+# Node artifacts
+node_modules
+package-lock.json
+apps/dashboard/build
+apps/dashboard/.docusaurus
+
+# Docs and tests (not needed at runtime)
+docs
+tests
+CHANGELOG.md
+*.md
+!README.md
+
+# Editor / OS
+.DS_Store
+.vscode
+.idea

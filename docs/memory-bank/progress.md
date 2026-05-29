@@ -11,6 +11,13 @@
 
 ## Completed (Recent)
 
+- **Docker image size reduction (2026-05-29, v0.32.0)**:
+  - 4-stage Dockerfile; runtime image strips Node.js, pnpm, curl, gnupg, build-essential.
+  - Breaking change: `bootstrap archive --dev/--repo` is host-only (structured error message guides install).
+  - Measured tar size 244 MB → 186 MB (~24%); below the 50% target — skopeo apt layer dominates the remainder.
+  - Hardcoded 250 MB ceiling enforced in CI via `wemake-services/docker-image-size-limit`.
+  - `release-please-config.json`: `bump-minor-pre-major: true` so the break bumps to 0.32.0, not 1.0.0.
+
 - **CLI quality-of-life batch (2026-05-26, PRs #595–#603)** — one PR per issue #581–#589:
   - `regis playbook validate <path>` (#600) — offline schema validation of a playbook bundle/file.
   - `regis analyze --skip NAME` (#598) — exclude named analyzers (repeatable).

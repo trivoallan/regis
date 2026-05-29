@@ -252,6 +252,15 @@ _Options:_
 | `--org TEXT`                  | _(current user)_                   | Organisation or GitLab group (only with `--repo`).                                                                                                   |
 | `--sync-from PATH`            | —                                  | Sync UI changes from a working copy back to the cookiecutter template. See [Customizing the Archive UI](../usage/integrations/archive-customize.md). |
 
+:::note Prerequisite
+
+`--dev` and `--repo` require Node.js 20+ and pnpm on the host. These commands
+no longer work from inside the official Regis Docker image (since v0.32.0).
+Install Node via `nvm`, `fnm`, or `brew install node`, then enable pnpm with
+`corepack enable && corepack prepare pnpm@latest --activate`.
+
+:::
+
 `--dev` and `--repo` are mutually exclusive.
 
 **`--dev` mode** — local iteration without a remote repository:
