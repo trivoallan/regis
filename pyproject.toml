@@ -42,10 +42,7 @@ dockle = "regis.analyzers.dockle:DockleAnalyzer"
 metadata = "regis.analyzers.metadata:MetadataAnalyzer"
 
 [project.optional-dependencies]
-server = [
-  "fastapi>=0.115.0",
-  "uvicorn[standard]>=0.34",
-]
+server = ["fastapi>=0.115.0", "uvicorn[standard]>=0.34"]
 dev = [
   "pytest>=7.4",
   "pytest-cov>=4.1",

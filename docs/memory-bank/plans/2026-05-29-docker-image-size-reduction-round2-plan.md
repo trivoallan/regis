@@ -14,15 +14,15 @@
 
 ## Current size breakdown (arm64, decompressed layers via `docker history`)
 
-| Layer | Size | Notes |
-|---|---|---|
-| debian base | 109 MB | `python:3.14-slim` rootfs — out of scope (base change deferred) |
-| **apt: skopeo + git + jq + ca-certificates** | **208 MB** | skopeo is core; **git + jq are removable** (Task 1) |
-| trivy binary | 150 MB | Go binary; UPX deferred (risky) |
-| venv (`/opt/venv`) | 95.6 MB | includes server stack (fastapi/uvicorn/pydantic) — **Task 2** |
-| dockle binary | 24.9 MB | core analyzer |
-| hadolint binary | 24.0 MB | core analyzer |
-| python build/symlink layers | ~50 MB | base python tooling |
+| Layer                                        | Size       | Notes                                                           |
+| -------------------------------------------- | ---------- | --------------------------------------------------------------- |
+| debian base                                  | 109 MB     | `python:3.14-slim` rootfs — out of scope (base change deferred) |
+| **apt: skopeo + git + jq + ca-certificates** | **208 MB** | skopeo is core; **git + jq are removable** (Task 1)             |
+| trivy binary                                 | 150 MB     | Go binary; UPX deferred (risky)                                 |
+| venv (`/opt/venv`)                           | 95.6 MB    | includes server stack (fastapi/uvicorn/pydantic) — **Task 2**   |
+| dockle binary                                | 24.9 MB    | core analyzer                                                   |
+| hadolint binary                              | 24.0 MB    | core analyzer                                                   |
+| python build/symlink layers                  | ~50 MB     | base python tooling                                             |
 
 Compressed tar (`docker save`): **186 MB**. CI ceiling currently **250 MB**.
 
@@ -36,15 +36,15 @@ Compressed tar (`docker save`): **186 MB**. CI ceiling currently **250 MB**.
 
 ## File Structure
 
-| File | Responsibility | Tasks |
-|---|---|---|
-| `Dockerfile` | Build definition — apt line, pip install flags, venv prune | 1, 2, 3 |
-| `pyproject.toml` | Move server deps to `[project.optional-dependencies].server` | 2 |
-| `regis/commands/dashboard.py` | Guard `serve` with helpful error when server extra absent | 2 |
-| `tests/test_dashboard.py` | Test the missing-server-extra guard | 2 |
-| `.github/workflows/ci-image-size.yml` | Tighten the size ceiling | 4 |
-| `README.md` | Update size badge / note | 4 |
-| `docs/memory-bank/{activeContext,progress}.md` | Record round-2 results | 4 |
+| File                                           | Responsibility                                               | Tasks   |
+| ---------------------------------------------- | ------------------------------------------------------------ | ------- |
+| `Dockerfile`                                   | Build definition — apt line, pip install flags, venv prune   | 1, 2, 3 |
+| `pyproject.toml`                               | Move server deps to `[project.optional-dependencies].server` | 2       |
+| `regis/commands/dashboard.py`                  | Guard `serve` with helpful error when server extra absent    | 2       |
+| `tests/test_dashboard.py`                      | Test the missing-server-extra guard                          | 2       |
+| `.github/workflows/ci-image-size.yml`          | Tighten the size ceiling                                     | 4       |
+| `README.md`                                    | Update size badge / note                                     | 4       |
+| `docs/memory-bank/{activeContext,progress}.md` | Record round-2 results                                       | 4       |
 
 ---
 
@@ -55,16 +55,19 @@ Compressed tar (`docker save`): **186 MB**. CI ceiling currently **250 MB**.
 **Rationale:** `git` is used only by `regis bootstrap archive --repo` (git init/add/commit/push at `regis/commands/bootstrap.py:350-427`), a flow that is already host-only (requires Node.js, absent from the image) and already guarded by `require_tool("git")`. `jq` has no runtime caller — the only `--jq` reference is `gh api --jq` (gh's built-in flag; gh isn't in the image). Removing both from the apt install also drops git's transitive deps (perl-modules, liberror-perl, git-man, less).
 
 **Files:**
+
 - Modify: `Dockerfile` (final-stage apt block)
 
 - [ ] **Step 1: Verify `git` and `jq` have no runtime caller**
 
 Run:
+
 ```bash
 cd /Users/tristan/Documents/Workspaces/trivoallan/regis/.claude/worktrees/brave-hertz-928168
 grep -rn '"git"\|run_cmd(\["git\|subprocess.*git' regis/ --include="*.py" | grep -v test
 grep -rn '"jq"\|run_cmd(\["jq\|subprocess.*\bjq\b' regis/ --include="*.py" | grep -v test
 ```
+
 Expected: `git` appears only in `regis/commands/bootstrap.py` (the `--repo` flow). `jq` returns no `run_cmd`/`subprocess` hits (only the `gh api --jq` flag string). If either appears in an analyzer or the analyze path, STOP and report — this task's premise is wrong.
 
 - [ ] **Step 2: Edit the final-stage apt block in `Dockerfile`**
@@ -101,15 +104,18 @@ Expected: No new errors vs. the pre-existing DL3008 hint.
 - [ ] **Step 4: Build and capture size**
 
 Run:
+
 ```bash
 docker build -t regis:r2-task1 . && \
 docker save regis:r2-task1 | wc -c | awk '{ printf "tar: %.1f MB\n", $1/1024/1024 }'
 ```
+
 Expected: build succeeds; tar size noticeably below 186 MB (record the value).
 
 - [ ] **Step 5: Smoke test — core path unaffected, git/jq gone**
 
 Run:
+
 ```bash
 docker run --rm regis:r2-task1 list >/dev/null && echo "list OK"
 docker run --rm --entrypoint sh regis:r2-task1 -c 'command -v git || echo git_GONE'
@@ -117,6 +123,7 @@ docker run --rm --entrypoint sh regis:r2-task1 -c 'command -v jq || echo jq_GONE
 docker run --rm --entrypoint sh regis:r2-task1 -c 'command -v skopeo'
 docker run --rm regis:r2-task1 analyze docker.io/library/alpine:3.19 >/dev/null 2>&1; echo "analyze exit=$?"
 ```
+
 Expected: `list OK`; `git_GONE`; `jq_GONE`; skopeo path printed; analyze exits 0 (or a non-zero playbook gate, but no traceback).
 
 - [ ] **Step 6: Commit**
@@ -148,6 +155,7 @@ If the trunk pre-commit hook auto-formats, re-stage and re-commit. Never `--no-v
 > This is a product-capability call. Confirm the positioning before executing this task.
 
 **Files:**
+
 - Modify: `pyproject.toml` (move 2 deps from `dependencies` to `[project.optional-dependencies].server`)
 - Modify: `regis/commands/dashboard.py` (guard the lazy import in `serve_cmd`)
 - Modify: `tests/test_dashboard.py` (test the guard)
@@ -257,10 +265,12 @@ The `dev` extra must pull the server deps so the existing server tests keep runn
 - [ ] **Step 7: Re-sync the dev environment and run the full suite**
 
 Run:
+
 ```bash
 pipenv run pip install -e '.[dev]'
 pipenv run pytest
 ```
+
 Expected: All tests pass, coverage ≥ 90 %. The server route tests (`tests/test_server_*.py`) still run because `dev` includes the server deps.
 
 - [ ] **Step 8: Add a clarifying comment to the Dockerfile**
@@ -285,6 +295,7 @@ RUN VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml) && \
 - [ ] **Step 9: Build and verify the image is core-only and still imports**
 
 Run:
+
 ```bash
 docker build -t regis:r2-task2 . && \
 docker save regis:r2-task2 | wc -c | awk '{ printf "tar: %.1f MB\n", $1/1024/1024 }'
@@ -293,6 +304,7 @@ docker run --rm --entrypoint python regis:r2-task2 -c "import importlib.util as 
 docker run --rm regis:r2-task2 dashboard serve 2>&1 | head -5; echo "serve exit=${PIPESTATUS[0]}"
 docker run --rm regis:r2-task2 list >/dev/null && echo "list OK"
 ```
+
 Expected: tar size below the Task 1 value; `cli import OK`; `fastapi present: False`; `dashboard serve` prints the `regis[server]` hint and exits non-zero; `list OK`.
 
 - [ ] **Step 10: Commit**
@@ -320,6 +332,7 @@ If the trunk pre-commit hook auto-formats, re-stage and re-commit. Never `--no-v
 **Rationale:** `PYTHONDONTWRITEBYTECODE=1` is already set, but `pip install` compiles `.pyc` by default during install. `--no-compile` skips that. Any residual `__pycache__` directories are pruned before the venv is copied to the final stage.
 
 **Files:**
+
 - Modify: `Dockerfile` (`python-builder` stage)
 
 - [ ] **Step 1: Edit the `pip install` line and add a prune step in `python-builder`**
@@ -345,21 +358,25 @@ RUN VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml) && \
 - [ ] **Step 2: Lint and build**
 
 Run:
+
 ```bash
 hadolint Dockerfile
 docker build -t regis:r2-task3 . && \
 docker save regis:r2-task3 | wc -c | awk '{ printf "tar: %.1f MB\n", $1/1024/1024 }'
 ```
+
 Expected: no new hadolint errors; tar size at or below the Task 2 value.
 
 - [ ] **Step 3: Smoke test — CLI still works without bytecode cache**
 
 Run:
+
 ```bash
 docker run --rm regis:r2-task3 list >/dev/null && echo "list OK"
 docker run --rm regis:r2-task3 --help >/dev/null && echo "help OK"
 docker run --rm --entrypoint sh regis:r2-task3 -c 'find /opt/venv -name "__pycache__" | head -1 | grep -q . && echo "pycache PRESENT" || echo "pycache CLEAN"'
 ```
+
 Expected: `list OK`; `help OK`; `pycache CLEAN`.
 
 - [ ] **Step 4: Commit**
@@ -377,6 +394,7 @@ layer. PYTHONDONTWRITEBYTECODE=1 keeps runtime from regenerating .pyc."
 ## Task 4: Re-measure, tighten the CI ceiling, update badge and memory bank
 
 **Files:**
+
 - Modify: `.github/workflows/ci-image-size.yml`
 - Modify: `README.md`
 - Modify: `docs/memory-bank/activeContext.md`
@@ -385,11 +403,13 @@ layer. PYTHONDONTWRITEBYTECODE=1 keeps runtime from regenerating .pyc."
 - [ ] **Step 1: Measure the final image after the applied tasks**
 
 Run (against whichever of the Task 1/2/3 images is the latest applied — rebuild the real `Dockerfile`):
+
 ```bash
 docker build -t regis:r2-final . && \
 echo "decompressed: $(docker image inspect regis:r2-final --format='{{.Size}}' | awk '{printf "%.1f MB", $1/1024/1024}')" && \
 echo "tar: $(docker save regis:r2-final | wc -c | awk '{printf "%.1f MB", $1/1024/1024}')"
 ```
+
 Record the tar size as `<R2_TAR_MB>`.
 
 - [ ] **Step 2: Tighten the CI ceiling**
@@ -397,17 +417,17 @@ Record the tar size as `<R2_TAR_MB>`.
 In `.github/workflows/ci-image-size.yml`, find:
 
 ```yaml
-        with:
-          image: "regis:size-check"
-          size: "250MB"
+with:
+  image: "regis:size-check"
+  size: "250MB"
 ```
 
 Replace `250MB` with a new ceiling = `ceil(<R2_TAR_MB>) + 30` MB (≈10–15 % headroom). For example, if `<R2_TAR_MB>` is 158, use `190MB`:
 
 ```yaml
-        with:
-          image: "regis:size-check"
-          size: "190MB"
+with:
+  image: "regis:size-check"
+  size: "190MB"
 ```
 
 Use your actual measured value, not the example.
@@ -448,10 +468,12 @@ Replace `<R2_TAR_MB>` and `<R2_CEILING>` with the real values from Steps 1–2.
 - [ ] **Step 5: Run lint + full suite one more time**
 
 Run:
+
 ```bash
 pipenv run pytest
 trunk check Dockerfile pyproject.toml .github/workflows/ci-image-size.yml README.md docs/memory-bank/activeContext.md docs/memory-bank/progress.md
 ```
+
 Expected: tests pass (≥ 90 % coverage); no new trunk issues.
 
 - [ ] **Step 6: Commit**
@@ -470,6 +492,7 @@ baseline in the memory bank."
 ## Self-Review
 
 **Spec coverage** (against the "options to reduce further" goal):
+
 - git/jq removal → Task 1 ✓
 - Python footprint reduction (server stack) → Task 2 ✓
 - venv trim → Task 3 ✓
@@ -477,10 +500,12 @@ baseline in the memory bank."
 - skopeo/crane, alpine, UPX → explicitly documented as deferred (out of scope, need own brainstorm) ✓
 
 **Placeholder scan:**
+
 - `<R2_TAR_MB>` and `<R2_CEILING>` are measured values resolved in Task 4 from real builds — documented inputs, not invented placeholders. The CI-ceiling example (`190MB`) is explicitly flagged as an example to replace.
 - No "TBD", "add error handling", or "similar to Task N" patterns. Every code/edit step shows the actual content.
 
 **Type / name consistency:**
+
 - `_SERVER_EXTRA_HINT` defined and used consistently in Task 2.
 - The guard test invokes `["dashboard", "serve"]` — matches the actual command (`dashboard_group.command(name="serve")` at `regis/commands/dashboard.py:109`).
 - `[project.optional-dependencies].server` name is consistent across pyproject edit (Task 2 Step 5), the commit message, and the `pip install 'regis[server]'` hint.
