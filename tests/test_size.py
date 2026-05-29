@@ -110,7 +110,10 @@ class TestSizeAnalyzer:
                 return json.dumps({"config": {"size": 500}, "layers": [{"size": 1000}]})
             if "sha256:arm64digest" in ref:
                 return json.dumps(
-                    {"config": {"size": 500}, "layers": [{"size": 1000}, {"size": 2000}]}
+                    {
+                        "config": {"size": 500},
+                        "layers": [{"size": 1000}, {"size": 2000}],
+                    }
                 )
             # Default: return index with two real platforms + one attestation entry
             return json.dumps(
