@@ -118,9 +118,7 @@ def run_regctl(
             "regctl not found. Ensure it is installed and in PATH."
         ) from None
     except subprocess.TimeoutExpired:
-        raise AnalyzerError(
-            f"regctl timed out after {timeout}s."
-        ) from None
+        raise AnalyzerError(f"regctl timed out after {timeout}s.") from None
     finally:
         if docker_config_dir is not None:
             shutil.rmtree(docker_config_dir, ignore_errors=True)
