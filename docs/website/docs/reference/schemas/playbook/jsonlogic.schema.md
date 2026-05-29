@@ -9,4 +9,4 @@
 **Description:** Simplified schema for JSON Logic expressions used in regis playbooks.
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-29 at 13:22:11 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-29 at 17:25:27 +0000
