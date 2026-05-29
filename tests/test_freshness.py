@@ -14,20 +14,16 @@ class MockRegistryClient:
 
 
 class TestFreshnessAnalyzer:
-    @patch("regis.analyzers.freshness.subprocess.run")
-    def test_with_created_date(self, mock_run):
-        def side_effect(cmd, **kwargs):
-            class MockResponse:
-                def __init__(self, stdout):
-                    self.stdout = stdout
-
-            target = cmd[-1]
-            if "latest" in target:
-                return MockResponse(json.dumps({"created": "2025-01-02T00:00:00Z"}))
+    @patch("regis.analyzers.freshness.run_regctl")
+    def test_with_created_date(self, mock_regctl):
+        def side_effect(client, args, *a, **k):
+            ref = args[2]  # ["image", "inspect", ref, "--platform", "linux/amd64"]
+            if "latest" in ref:
+                return json.dumps({"created": "2025-01-02T00:00:00Z"})
             else:
-                return MockResponse(json.dumps({"created": "2025-01-01T00:00:00Z"}))
+                return json.dumps({"created": "2025-01-01T00:00:00Z"})
 
-        mock_run.side_effect = side_effect
+        mock_regctl.side_effect = side_effect
         client = MockRegistryClient()
         analyzer = FreshnessAnalyzer()
         report = analyzer.analyze(client, "library/test", "1.0.0")
