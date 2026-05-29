@@ -20,6 +20,7 @@ Docker multi-stage build, Trunk (lint/format), regctl `v0.11.5`.
 **Spec:** `docs/superpowers/specs/2026-05-29-skopeo-to-regctl-design.md`
 
 **Conventions for every task below:**
+
 - Fast test loop: `pipenv run pytest <path> --no-cov`. Full gate before PR:
   `pipenv run pytest` (fails under 90 % coverage).
 - Commit messages: Conventional Commits with mandatory scope (see spec §10).
@@ -31,13 +32,21 @@ Docker multi-stage build, Trunk (lint/format), regctl `v0.11.5`.
 
 ---
 
-## Task 1: Verify regctl behavior and capture fixtures (spike)
+## Task 1: Verify regctl behavior and capture fixtures (spike) — ✅ DONE
+
+> **Completed during planning (2026-05-29).** Fixtures are in
+> `tests/fixtures/regctl/`; findings in
+> `docs/superpowers/plans/2026-05-29-regctl-probe-notes.md`. Open Questions
+> 1, 2, 4, 5, 6 resolved; the attestation-manifest filter and the dropped
+> `--format` flag are already folded into Tasks 2–8 below. The executor can skip
+> this task (steps retained for the record) and start at Task 2.
 
 This resolves spec Open Questions 1, 2, 4, 6 empirically so later TDD uses real
 output shapes, not guesses. No production code changes — this produces a
 reference note and saved fixtures.
 
 **Files:**
+
 - Create: `tests/fixtures/regctl/` (captured JSON outputs)
 - Create: `docs/superpowers/plans/2026-05-29-regctl-probe-notes.md` (findings)
 
@@ -50,6 +59,7 @@ brew install regclient   # provides `regctl`
 #   curl -sSfL https://github.com/regclient/regclient/releases/download/v0.11.5/regctl-darwin-arm64 -o /usr/local/bin/regctl && chmod +x /usr/local/bin/regctl
 regctl version
 ```
+
 Expected: prints a version (note the exact invocation — `version` vs `--version`).
 
 - [ ] **Step 2: Probe a multi-arch public image and capture outputs**
@@ -70,6 +80,7 @@ regctl tag ls docker.io/library/alpine                   > tests/fixtures/regctl
 - [ ] **Step 3: Confirm the field shapes and record them**
 
 In `2026-05-29-regctl-probe-notes.md`, record concrete answers:
+
 - Default vs `--format '{{jsonPretty .}}'` output of `image inspect` — which is
   valid JSON? Where are `created`, `config.User`, `config.Env`,
   `config.ExposedPorts`, `config.Labels`, `history`, `architecture`, `os`?
@@ -99,6 +110,7 @@ git commit -m "test(analyzer/skopeo): capture regctl output fixtures for migrati
 ## Task 2: regctl subprocess wrapper
 
 **Files:**
+
 - Create: `regis/utils/regctl.py`
 - Test: `tests/utils/test_regctl.py`
 
@@ -315,6 +327,7 @@ git commit -m "feat(analyzer): add shared regctl subprocess wrapper"
 ## Task 3: New `oci` analyzer output schema
 
 **Files:**
+
 - Create: `regis/schemas/analyzer/oci.schema.json`
 - Delete (in Task 4): `regis/schemas/analyzer/skopeo.schema.json`
 - Test: `tests/test_oci_analyzer.py` (schema-validity check; analyzer tests added in Task 4)
@@ -333,8 +346,14 @@ git commit -m "feat(analyzer): add shared regctl subprocess wrapper"
       "const": "oci",
       "description": "Unique identifier for the OCI metadata analyzer."
     },
-    "repository": { "type": "string", "description": "The image repository that was analyzed." },
-    "tag": { "type": "string", "description": "The image tag that was analyzed." },
+    "repository": {
+      "type": "string",
+      "description": "The image repository that was analyzed."
+    },
+    "tag": {
+      "type": "string",
+      "description": "The image tag that was analyzed."
+    },
     "platforms": {
       "type": "array",
       "description": "List of platform variants available for this tag.",
@@ -342,25 +361,63 @@ git commit -m "feat(analyzer): add shared regctl subprocess wrapper"
         "type": "object",
         "required": ["architecture", "os"],
         "properties": {
-          "architecture": { "type": "string", "description": "Processor architecture (e.g. 'amd64')." },
-          "os": { "type": "string", "description": "Operating system (e.g. 'linux')." },
-          "variant": { "type": ["string", "null"], "description": "Architecture variant (e.g. 'v7')." },
-          "digest": { "type": "string", "description": "Manifest digest for this variant." },
-          "created": { "type": ["string", "null"], "description": "ISO timestamp of variant creation." },
+          "architecture": {
+            "type": "string",
+            "description": "Processor architecture (e.g. 'amd64')."
+          },
+          "os": {
+            "type": "string",
+            "description": "Operating system (e.g. 'linux')."
+          },
+          "variant": {
+            "type": ["string", "null"],
+            "description": "Architecture variant (e.g. 'v7')."
+          },
+          "digest": {
+            "type": "string",
+            "description": "Manifest digest for this variant."
+          },
+          "created": {
+            "type": ["string", "null"],
+            "description": "ISO timestamp of variant creation."
+          },
           "labels": {
             "type": "object",
             "description": "OCI labels for this variant.",
             "additionalProperties": { "type": "string" }
           },
-          "layers_count": { "type": "integer", "minimum": 0, "description": "Number of layers." },
-          "size": { "type": "integer", "minimum": 0, "description": "Total image size in bytes (config + layers)." },
-          "user": { "type": ["string", "null"], "description": "Default user from image config." },
-          "exposed_ports": { "type": "array", "items": { "type": "string" }, "description": "Exposed ports (e.g. '80/tcp')." },
-          "env": { "type": "array", "items": { "type": "string" }, "description": "Environment variables (KEY=VALUE)." }
+          "layers_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of layers."
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total image size in bytes (config + layers)."
+          },
+          "user": {
+            "type": ["string", "null"],
+            "description": "Default user from image config."
+          },
+          "exposed_ports": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Exposed ports (e.g. '80/tcp')."
+          },
+          "env": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Environment variables (KEY=VALUE)."
+          }
         }
       }
     },
-    "tags": { "type": "array", "items": { "type": "string" }, "description": "Tags in the repository." }
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Tags in the repository."
+    }
   },
   "additionalProperties": false,
   "$id": "https://trivoallan.github.io/regis/schemas/analyzer/oci.schema.json"
@@ -414,6 +471,7 @@ This is the breaking commit (slug rename + schema change). Use the captured
 fixtures (Task 1) to build accurate mocks.
 
 **Files:**
+
 - Create: `regis/analyzers/oci.py` (rewrite of `skopeo.py`)
 - Delete: `regis/analyzers/skopeo.py`, `regis/schemas/analyzer/skopeo.schema.json`
 - Modify: `pyproject.toml` (entry point), `regis/playbooks/default/playbook.yaml`
@@ -488,10 +546,11 @@ Expected: FAIL — `ModuleNotFoundError: regis.analyzers.oci`.
 - [ ] **Step 3: Create `regis/analyzers/oci.py`**
 
 Start from `regis/analyzers/skopeo.py` and apply these transforms:
+
 1. Module docstring + class: `SkopeoAnalyzer` → `OciAnalyzer`; `name = "oci"`;
    `schema_file = "analyzer/oci.schema.json"`.
 2. Remove the local `_run_skopeo`; import `from regis.utils.regctl import
-   run_regctl, image_ref`.
+run_regctl, image_ref`.
 3. In `default_rules()`, replace every `results.skopeo.` with `results.oci.`
    (8 rules — paths only; slugs and messages otherwise unchanged).
 4. Rewrite the regctl-calling methods. `analyze()` becomes:
@@ -512,7 +571,13 @@ def analyze(self, client, repository, tag, platform=None):
         platforms.append(self._inspect_platform(client, registry, repository, tag,
                                                  {"os": os_name, "architecture": arch}))
     elif media_type in _INDEX_TYPES:
-        entries = manifest.get("manifests", [])
+        # Skip buildkit attestation manifests (platform os/arch == "unknown");
+        # see regctl-probe-notes.md. Without this, platforms-count over-counts.
+        entries = [
+            e for e in manifest.get("manifests", [])
+            if e.get("platform", {}).get("architecture") not in (None, "unknown")
+            and e.get("platform", {}).get("os") not in (None, "unknown")
+        ]
         max_workers = min(10, len(entries) or 1)
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = [
@@ -566,7 +631,7 @@ def _inspect_platform(self, client, registry, repository, ref, platform_info):
 
     # 1. Config blob: created, labels, user, env, exposed_ports, arch, os.
     try:
-        args = ["image", "inspect", image_reference, "--format", "{{jsonPretty .}}"]
+        args = ["image", "inspect", image_reference]  # default output is JSON
         if plat:
             args += ["--platform", plat]
         config = json.loads(run_regctl(client, args))
@@ -627,9 +692,11 @@ git rm regis/analyzers/skopeo.py regis/schemas/analyzer/skopeo.schema.json \
 ```
 
 In `pyproject.toml`, change line 32:
+
 ```toml
 oci = "regis.analyzers.oci:OciAnalyzer"
 ```
+
 (was `skopeo = "regis.analyzers.skopeo:SkopeoAnalyzer"`). Reinstall so the entry
 point is picked up: `pipenv run pip install -e . --no-deps -q`.
 
@@ -658,6 +725,7 @@ env now declared)."
 ## Task 5: Migrate `freshness` analyzer
 
 **Files:**
+
 - Modify: `regis/analyzers/freshness.py` (`_get_created_date`)
 - Test: `tests/test_freshness.py` (create if absent; otherwise extend the file
   that currently tests freshness — confirm with `grep -rl Freshness tests/`)
@@ -692,7 +760,7 @@ def _get_created_date(client: RegistryClient, repository: str, tag: str) -> str 
     try:
         out = run_regctl(
             client,
-            ["image", "inspect", ref, "--platform", "linux/amd64", "--format", "{{jsonPretty .}}"],
+            ["image", "inspect", ref, "--platform", "linux/amd64"],  # default output is JSON
         )
         return json.loads(out).get("created")  # type: ignore[no-any-return]
     except Exception:
@@ -720,6 +788,7 @@ git commit -m "feat(analyzer/freshness): read image created date via regctl"
 ## Task 6: Migrate `versioning` analyzer
 
 **Files:**
+
 - Modify: `regis/analyzers/versioning.py` (`analyze`)
 - Test: `tests/test_versioning.py`
 
@@ -794,6 +863,7 @@ git commit -m "feat(analyzer/versioning): list tags and derive aliases via regct
 ## Task 7: Migrate `size` analyzer
 
 **Files:**
+
 - Modify: `regis/analyzers/size.py` (remove `_run_skopeo`, both `inspect --raw`)
 - Test: `tests/test_size.py`
 
@@ -856,6 +926,7 @@ git commit -m "feat(analyzer/size): fetch manifests via regctl"
 ## Task 8: Migrate `hadolint` analyzer
 
 **Files:**
+
 - Modify: `regis/analyzers/hadolint.py` (the `cmd_skopeo` config fetch block)
 - Test: `tests/test_hadolint.py`
 
@@ -897,7 +968,7 @@ ref = image_ref(registry, repository, tag)
 try:
     out = run_regctl(
         client,
-        ["image", "inspect", ref, "--platform", f"{os_name}/{arch}", "--format", "{{jsonPretty .}}"],
+        ["image", "inspect", ref, "--platform", f"{os_name}/{arch}"],  # default output is JSON
     )
     config = json.loads(out)
 except AnalyzerError:
@@ -931,6 +1002,7 @@ git commit -m "feat(analyzer/hadolint): fetch image config history via regctl"
 ## Task 9: Update the `doctor` command
 
 **Files:**
+
 - Modify: `regis/commands/doctor.py:13`
 - Test: `tests/commands/test_doctor.py`
 
@@ -960,6 +1032,7 @@ _REQUIRED_TOOLS: list[tuple[str, str]] = [
     ("dockle", "--version"),
 ]
 ```
+
 (Use `version`, not `--version`, per the Task-1 probe. If the probe showed
 `regctl version` writes to stderr or needs `--version`, use what the probe
 recorded.)
@@ -983,6 +1056,7 @@ BREAKING CHANGE: regis now requires the 'regctl' binary on PATH instead of 'skop
 ## Task 10: Dockerfile — fetch regctl, drop skopeo apt layer
 
 **Files:**
+
 - Modify: `Dockerfile`
 
 No unit test; verified by image build (Task 12 full check).
@@ -1023,6 +1097,7 @@ RUN apt-get update && \
       ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 ```
+
 (Drop the `skopeo \` line; update the preceding comment that explains the apt
 layer.)
 
@@ -1033,6 +1108,7 @@ docker build -t regis:regctl-test .
 docker run --rm regis:regctl-test regctl version
 docker run --rm regis:regctl-test regis doctor
 ```
+
 Expected: `regctl version` prints; `regis doctor` shows `✓ regctl` and no
 `skopeo`. (If skopeo still appears as required, a call site was missed.)
 
@@ -1050,6 +1126,7 @@ BREAKING CHANGE: the runtime image no longer ships skopeo; regctl replaces it."
 ## Task 11: Docs, dashboard, and project instructions
 
 **Files:**
+
 - Modify (rename dir): `docs/website/docs/reference/rules/skopeo/` → `.../rules/oci/`
 - Modify: `docs/website/docs/concepts/playbooks.md`, `concepts/rules.md`,
   `reference/analyzers/skopeo.md` (→ `oci.md`),
@@ -1072,8 +1149,10 @@ grep -rl "results\.skopeo\|provider: skopeo\|analyzer/skopeo\|skopeo analyzer" \
   --include='*.md' --include='*.mdx' --include='*.tsx' --include='*.py' --include='*.yaml' \
   docs/website/docs apps/dashboard regis .claude CLAUDE.md README* 2>/dev/null
 ```
+
 Replace `results.skopeo.` → `results.oci.`, `provider: skopeo` → `provider: oci`,
 and rename the rules doc directory:
+
 ```bash
 git mv docs/website/docs/reference/rules/skopeo docs/website/docs/reference/rules/oci
 git mv docs/website/docs/reference/analyzers/skopeo.md docs/website/docs/reference/analyzers/oci.md
@@ -1090,11 +1169,14 @@ In `CLAUDE.md`, project `README`, the docs install/usage pages, and the
 ```bash
 pnpm --filter @regis/dashboard build
 ```
+
 Expected: build succeeds with no `skopeo` symbol errors. Manually grep to
 confirm no stray `results.skopeo` remain outside `versioned_docs`:
+
 ```bash
 grep -rn "results\.skopeo" docs/website/docs apps/dashboard regis && echo "LEFTOVERS" || echo "clean"
 ```
+
 Expected: `clean`.
 
 - [ ] **Step 4: Commit**
@@ -1130,6 +1212,7 @@ Expected: clean (let `trunk check --fix` auto-fix, then re-stage).
 ```bash
 grep -rn "skopeo" regis/ | grep -v "versioned_docs" || echo "no skopeo references remain"
 ```
+
 Expected: only intentional historical mentions (e.g. a CHANGELOG entry, or none).
 There must be **zero** `subprocess`/`["skopeo"` call sites and no `skopeo` in
 `doctor.py` or the `Dockerfile` apt install.
@@ -1139,6 +1222,7 @@ There must be **zero** `subprocess`/`["skopeo"` call sites and no `skopeo` in
 ```bash
 pipenv run regis analyze docker.io/library/alpine:3.20 --skip trivy --skip dockle --skip hadolint
 ```
+
 Expected: the `oci` analyzer produces a valid report (platforms with `size`,
 `layers_count`, `env`, `exposed_ports`); freshness/versioning/size succeed.
 
@@ -1148,6 +1232,7 @@ Expected: the `oci` analyzer produces a valid report (platforms with `size`,
 git push -u origin <branch>
 gh pr create --fill --label whats-new
 ```
+
 PR `## Summary` should describe the user-facing breaking change (skopeo → oci,
 new required binary `regctl`, migration note for custom playbooks/rules). The
 `whats-new` label harvests the Summary into the What's New page.
@@ -1160,7 +1245,7 @@ new required binary `regctl`, migration note for custom playbooks/rules). The
   Tasks 4–8; §3 mapping → Tasks 4–8; §4 auth → Task 2; §5 schema → Task 3;
   §6 rename → Tasks 4, 11; §7 Dockerfile → Task 10; §8 doctor/docs → Tasks 9, 11;
   §9 tests → embedded per task + Task 12; §10 versioning/rollout → commit messages
-  + Task 12 Step 5; §11 open questions → Task 1.
+  - Task 12 Step 5; §11 open questions → Task 1.
 - **Order dependency:** Task 2 (wrapper) must land before Tasks 4–8. Task 1
   (probe) must land before Task 2 so fixtures/output shapes are real. Tasks 5–9
   are independent of each other and may be parallelized across subagents.
