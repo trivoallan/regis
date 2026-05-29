@@ -17,6 +17,11 @@ Voir `docs/memory-bank/roadmap.md` pour le détail complet.
 
 ## Recent Changes
 
+- [2026-05-29] **Docker image size — round 2**:
+  - Dropped `git` + `jq` from the runtime apt layer (git is host-only via the bootstrap `--repo` flow; jq has no runtime caller).
+  - Moved `fastapi` + `uvicorn[standard]` to a `[server]` optional extra; in-container `dashboard serve` now errors with a `pip install regis[server]` hint (breaking, consistent with the round-1 bootstrap decision). `dev` extra still pulls them so tests are unchanged.
+  - `pip install --no-compile` + venv `__pycache__`/`*.pyc` prune.
+  - Tightened CI ceiling 250 → 220 MB (conservative; amd64 not measured locally). Measured arm64 tar: 186 → 138 MB (round 2); 244 → 138 MB cumulative (~43 %).
 - [2026-05-29] **Docker image refactor (breaking, v0.32.0)**:
   - Rewrote `Dockerfile` as 4-stage build (`frontend-builder`, `python-builder`, `tools-fetcher`, `final`).
   - Removed Node.js, pnpm, curl, gnupg, build-essential from runtime image.
