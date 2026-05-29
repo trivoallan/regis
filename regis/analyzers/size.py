@@ -106,6 +106,17 @@ class SizeAnalyzer(BaseAnalyzer):
         platform: str | None = None,
     ) -> dict[str, Any]:
         entries = manifest_list.get("manifests", [])
+
+        # Skip buildkit attestation manifests (platform os/arch == "unknown");
+        # consistent with the oci analyzer.
+        entries = [
+            e
+            for e in entries
+            if isinstance(e, dict)
+            and e.get("platform", {}).get("architecture") not in (None, "unknown")
+            and e.get("platform", {}).get("os") not in (None, "unknown")
+        ]
+
         platforms = []
 
         # Filter platforms if override is provided

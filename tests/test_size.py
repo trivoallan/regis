@@ -99,6 +99,52 @@ class TestSizeAnalyzer:
         assert len(report["platforms"]) == 2
 
     @patch("regis.analyzers.size.run_regctl")
+    def test_multi_arch_filters_attestation_manifests(self, mock_run):
+        def side_effect(client, args, *a, **k):
+            ref = " ".join(args)
+            if "sha256:attestdigest" in ref:
+                raise AssertionError(
+                    "SizeAnalyzer must not fetch attestation manifest digest"
+                )
+            if "sha256:amd64digest" in ref:
+                return json.dumps({"config": {"size": 500}, "layers": [{"size": 1000}]})
+            if "sha256:arm64digest" in ref:
+                return json.dumps(
+                    {"config": {"size": 500}, "layers": [{"size": 1000}, {"size": 2000}]}
+                )
+            # Default: return index with two real platforms + one attestation entry
+            return json.dumps(
+                {
+                    "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
+                    "manifests": [
+                        {
+                            "digest": "sha256:amd64digest",
+                            "platform": {"architecture": "amd64", "os": "linux"},
+                        },
+                        {
+                            "digest": "sha256:arm64digest",
+                            "platform": {"architecture": "arm64", "os": "linux"},
+                        },
+                        {
+                            "digest": "sha256:attestdigest",
+                            "platform": {"architecture": "unknown", "os": "unknown"},
+                        },
+                    ],
+                }
+            )
+
+        mock_run.side_effect = side_effect
+        client = MockRegistryClient()
+        analyzer = SizeAnalyzer()
+        report = analyzer.analyze(client, "library/nginx", "latest")
+        analyzer.validate(report)
+
+        assert report["multi_arch"] is True
+        assert len(report["platforms"]) == 2
+        for plat in report["platforms"]:
+            assert "unknown" not in plat["platform"]
+
+    @patch("regis.analyzers.size.run_regctl")
     def test_empty_manifest(self, mock_run):
         def side_effect(client, args, *a, **k):
             return "{}"
