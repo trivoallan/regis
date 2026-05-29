@@ -11,6 +11,8 @@ import base64
 import json
 import logging
 import os
+import re
+import shutil
 import subprocess  # nosec B404
 import tempfile
 from typing import TYPE_CHECKING
@@ -44,12 +46,18 @@ def _temp_docker_config(client: RegistryClient) -> str:
     Used when credentials contain a comma, which would break regctl's
     ``--host`` comma-separated ``key=val`` parsing. Returns the config dir to
     pass via ``DOCKER_CONFIG``.
+
+    Cleans up the temp directory if the file write fails.
     """
     auth = base64.b64encode(f"{client.username}:{client.password}".encode()).decode()
     config = {"auths": {client.registry: {"auth": auth}}}
     tmpdir = tempfile.mkdtemp(prefix="regis-regctl-")
-    with open(os.path.join(tmpdir, "config.json"), "w", encoding="utf-8") as handle:
-        json.dump(config, handle)
+    try:
+        with open(os.path.join(tmpdir, "config.json"), "w", encoding="utf-8") as handle:
+            json.dump(config, handle)
+    except Exception:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+        raise
     return tmpdir
 
 
@@ -63,7 +71,8 @@ def run_regctl(
     Credentials are passed inline via the global ``--host`` flag. If a
     credential contains a comma, they are written to a per-call temporary Docker
     config and passed via ``DOCKER_CONFIG`` instead (thread-safe: a fresh
-    tempdir per call).
+    tempdir per call). The temp directory is always removed after the subprocess
+    finishes.
 
     Args:
         client: Registry client carrying the host and optional credentials.
@@ -74,15 +83,17 @@ def run_regctl(
         The command's stdout.
 
     Raises:
-        AnalyzerError: if regctl is not installed.
+        AnalyzerError: if regctl is not installed or the call times out.
         subprocess.CalledProcessError: if regctl exits non-zero.
     """
     cmd = ["regctl"]
     env = dict(os.environ)
+    docker_config_dir: str | None = None
 
     if client.username and client.password:
         if "," in client.username or "," in client.password:
-            env["DOCKER_CONFIG"] = _temp_docker_config(client)
+            docker_config_dir = _temp_docker_config(client)
+            env["DOCKER_CONFIG"] = docker_config_dir
         else:
             cmd += [
                 "--host",
@@ -90,7 +101,8 @@ def run_regctl(
             ]
 
     cmd += args
-    logger.debug("Running regctl: %s", " ".join(c for c in cmd if "pass=" not in c))
+    safe_cmd = [re.sub(r"(pass=)[^,]+", r"\1***", c) for c in cmd]
+    logger.debug("Running regctl: %s", " ".join(safe_cmd))
     try:
         result = subprocess.run(  # nosec B603
             cmd,
@@ -105,3 +117,10 @@ def run_regctl(
         raise AnalyzerError(
             "regctl not found. Ensure it is installed and in PATH."
         ) from None
+    except subprocess.TimeoutExpired:
+        raise AnalyzerError(
+            f"regctl timed out after {timeout}s."
+        ) from None
+    finally:
+        if docker_config_dir is not None:
+            shutil.rmtree(docker_config_dir, ignore_errors=True)
