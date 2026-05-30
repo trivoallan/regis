@@ -1,19 +1,17 @@
 """Tests for the SBOM analyzer."""
 
-import json
-import subprocess
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from regis.analyzers.base import AnalyzerError
-from regis.analyzers.sbom import COPYLEFT_LICENSES, SbomAnalyzer, _run_trivy_sbom
+from regis.analyzers.sbom import COPYLEFT_LICENSES, SbomAnalyzer
 
 # -- CycloneDX fixtures -------------------------------------------------------
 
 CYCLONEDX_COPYLEFT_SAMPLE = {
     "bomFormat": "CycloneDX",
     "specVersion": "1.5",
+    "metadata": {"tools": {"components": [{"name": "syft", "version": "1.44.0"}]}},
     "components": [
         {
             "type": "library",
@@ -43,6 +41,7 @@ CYCLONEDX_COPYLEFT_SAMPLE = {
 CYCLONEDX_SAMPLE = {
     "bomFormat": "CycloneDX",
     "specVersion": "1.5",
+    "metadata": {"tools": {"components": [{"name": "syft", "version": "1.44.0"}]}},
     "components": [
         {
             "type": "library",
@@ -71,40 +70,6 @@ CYCLONEDX_SAMPLE = {
 }
 
 
-# -- _run_trivy_sbom tests ----------------------------------------------------
-
-
-class TestRunTrivySbom:
-    @patch("regis.analyzers.sbom.shutil.which")
-    def test_trivy_not_found(self, mock_which):
-        mock_which.return_value = None
-        with pytest.raises(AnalyzerError, match="trivy executable not found"):
-            _run_trivy_sbom("alpine:latest")
-
-    @patch("regis.analyzers.sbom.shutil.which")
-    @patch("regis.analyzers.sbom.subprocess.run")
-    def test_success(self, mock_run, mock_which):
-        mock_which.return_value = "/usr/local/bin/trivy"
-        mock_run.return_value.stdout = json.dumps(CYCLONEDX_SAMPLE)
-
-        result = _run_trivy_sbom("alpine:latest")
-        assert result["bomFormat"] == "CycloneDX"
-
-        args = mock_run.call_args[0][0]
-        assert "cyclonedx" in args
-        assert "alpine:latest" in args
-
-    @patch("regis.analyzers.sbom.shutil.which")
-    @patch("regis.analyzers.sbom.subprocess.run")
-    def test_failure(self, mock_run, mock_which):
-        mock_which.return_value = "/usr/local/bin/trivy"
-        mock_run.side_effect = subprocess.CalledProcessError(
-            1, ["trivy"], stderr="scan error"
-        )
-        with pytest.raises(AnalyzerError, match="trivy sbom failed"):
-            _run_trivy_sbom("alpine:latest")
-
-
 # -- SbomAnalyzer tests --------------------------------------------------------
 
 
@@ -119,15 +84,16 @@ class TestSbomAnalyzer:
         client.registry = "registry-1.docker.io"
         return client
 
-    @patch("regis.analyzers.sbom._run_trivy_sbom")
-    def test_analyze_success(self, mock_run, analyzer, mock_client):
-        mock_run.return_value = CYCLONEDX_SAMPLE
+    @patch("regis.analyzers.sbom.run_syft")
+    def test_analyze_success(self, mock_run_syft, analyzer, mock_client):
+        mock_run_syft.return_value = CYCLONEDX_SAMPLE
 
         report = analyzer.analyze(mock_client, "library/alpine", "latest")
         analyzer.validate(report)
 
         assert report["analyzer"] == "sbom"
         assert report["has_sbom"] is True
+        assert report["scanner_version"] == "1.44.0"
         assert report["sbom_format"] == "CycloneDX"
         assert report["sbom_version"] == "1.5"
         assert report["total_components"] == 3
@@ -138,9 +104,9 @@ class TestSbomAnalyzer:
         assert "Zlib" in report["licenses"]
         assert len(report["components"]) == 3
 
-    @patch("regis.analyzers.sbom._run_trivy_sbom")
-    def test_copyleft_licenses_detected(self, mock_run, analyzer, mock_client):
-        mock_run.return_value = CYCLONEDX_COPYLEFT_SAMPLE
+    @patch("regis.analyzers.sbom.run_syft")
+    def test_copyleft_licenses_detected(self, mock_run_syft, analyzer, mock_client):
+        mock_run_syft.return_value = CYCLONEDX_COPYLEFT_SAMPLE
 
         report = analyzer.analyze(mock_client, "library/alpine", "latest")
         analyzer.validate(report)
@@ -150,9 +116,11 @@ class TestSbomAnalyzer:
         assert "Apache-2.0" not in report["copyleft_licenses"]
         assert report["copyleft_licenses"] == sorted(report["copyleft_licenses"])
 
-    @patch("regis.analyzers.sbom._run_trivy_sbom")
-    def test_copyleft_licenses_empty_when_none(self, mock_run, analyzer, mock_client):
-        mock_run.return_value = CYCLONEDX_SAMPLE
+    @patch("regis.analyzers.sbom.run_syft")
+    def test_copyleft_licenses_empty_when_none(
+        self, mock_run_syft, analyzer, mock_client
+    ):
+        mock_run_syft.return_value = CYCLONEDX_SAMPLE
 
         report = analyzer.analyze(mock_client, "library/alpine", "latest")
 
@@ -177,11 +145,14 @@ class TestSbomAnalyzer:
         assert "condition" in rule
         assert "messages" in rule
 
-    @patch("regis.analyzers.sbom._run_trivy_sbom")
-    def test_analyze_empty(self, mock_run, analyzer, mock_client):
-        mock_run.return_value = {
+    @patch("regis.analyzers.sbom.run_syft")
+    def test_analyze_empty(self, mock_run_syft, analyzer, mock_client):
+        mock_run_syft.return_value = {
             "bomFormat": "CycloneDX",
             "specVersion": "1.5",
+            "metadata": {
+                "tools": {"components": [{"name": "syft", "version": "1.44.0"}]}
+            },
             "components": [],
             "dependencies": [],
         }
@@ -193,31 +164,37 @@ class TestSbomAnalyzer:
         assert report["total_components"] == 0
         assert report["licenses"] == []
 
-    @patch("regis.analyzers.sbom._run_trivy_sbom")
-    def test_analyze_custom_registry(self, mock_run, analyzer):
+    @patch("regis.analyzers.sbom.run_syft")
+    def test_analyze_custom_registry(self, mock_run_syft, analyzer):
         client = MagicMock()
         client.registry = "my.registry.com"
-        mock_run.return_value = {
+        mock_run_syft.return_value = {
             "bomFormat": "CycloneDX",
             "specVersion": "1.5",
+            "metadata": {
+                "tools": {"components": [{"name": "syft", "version": "1.44.0"}]}
+            },
             "components": [],
             "dependencies": [],
         }
 
         analyzer.analyze(client, "my-repo", "v1")
 
-        mock_run.assert_called_with(
+        mock_run_syft.assert_called_with(
             "my.registry.com/my-repo:v1",
             username=client.username,
             password=client.password,
             platform=None,
         )
 
-    @patch("regis.analyzers.sbom._run_trivy_sbom")
-    def test_docker_hub_image_ref(self, mock_run, analyzer, mock_client):
-        mock_run.return_value = {
+    @patch("regis.analyzers.sbom.run_syft")
+    def test_docker_hub_image_ref(self, mock_run_syft, analyzer, mock_client):
+        mock_run_syft.return_value = {
             "bomFormat": "CycloneDX",
             "specVersion": "1.5",
+            "metadata": {
+                "tools": {"components": [{"name": "syft", "version": "1.44.0"}]}
+            },
             "components": [],
             "dependencies": [],
         }
@@ -225,7 +202,7 @@ class TestSbomAnalyzer:
         analyzer.analyze(mock_client, "library/nginx", "1.25")
 
         # Docker Hub should NOT include registry prefix.
-        mock_run.assert_called_with(
+        mock_run_syft.assert_called_with(
             "library/nginx:1.25",
             username=mock_client.username,
             password=mock_client.password,

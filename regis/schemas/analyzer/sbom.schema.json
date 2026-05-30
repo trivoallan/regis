@@ -2,13 +2,14 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://trivoallan.github.io/regis/schemas/analyzer/sbom.schema.json",
   "title": "sbom.output",
-  "description": "Software Bill of Materials extracted from a container image using Trivy (CycloneDX).",
+  "description": "Software Bill of Materials extracted from a container image using Syft (CycloneDX).",
   "type": "object",
   "required": [
     "analyzer",
     "repository",
     "tag",
     "has_sbom",
+    "scanner_version",
     "sbom_format",
     "sbom_version",
     "total_components",
@@ -35,6 +36,10 @@
     "has_sbom": {
       "type": "boolean",
       "description": "True if an SBOM was successfully generated."
+    },
+    "scanner_version": {
+      "type": "string",
+      "description": "Version of the syft CLI used."
     },
     "sbom_format": {
       "type": "string",

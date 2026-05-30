@@ -1,16 +1,13 @@
-"""SBOM analyzer — generates a CycloneDX Software Bill of Materials using Trivy."""
+"""SBOM analyzer — generates a CycloneDX Software Bill of Materials using Syft."""
 
 from __future__ import annotations
 
-import json
 import logging
-import os
-import shutil
-import subprocess
 from typing import Any
 
-from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+from regis.analyzers.base import BaseAnalyzer
 from regis.registry.client import RegistryClient
+from regis.utils.syft import run_syft
 
 logger = logging.getLogger(__name__)
 
@@ -56,55 +53,15 @@ COPYLEFT_LICENSES: frozenset[str] = frozenset(
 )
 
 
-def _run_trivy_sbom(
-    image: str,
-    username: str | None = None,
-    password: str | None = None,
-    platform: str | None = None,
-) -> dict[str, Any]:
-    """Run ``trivy image --format cyclonedx`` and return parsed CycloneDX JSON."""
-    trivy_path = shutil.which("trivy")
-    if not trivy_path:
-        raise AnalyzerError("trivy executable not found in PATH")
-
-    # Forward registry credentials to Trivy when available.
-    env = os.environ.copy()
-
-    # Priority: passed credentials > environment variables
-    user = username or env.get("REGIS_USERNAME")
-    pwd = password or env.get("REGIS_PASSWORD")
-
-    if user and pwd:
-        env["TRIVY_USERNAME"] = user
-        env["TRIVY_PASSWORD"] = pwd
-
-    cmd = [
-        trivy_path,
-        "image",
-        "--format",
-        "cyclonedx",
-        "--quiet",
-        "--no-progress",
-    ]
-    if platform:
-        cmd.extend(["--platform", platform])
-
-    cmd.append(image)
-
-    logger.debug("Running trivy SBOM: %s", " ".join(cmd))
-    try:
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            env=env,
-            check=True,
-        )
-        return json.loads(result.stdout)  # type: ignore[no-any-return]
-    except subprocess.CalledProcessError as exc:
-        raise AnalyzerError(f"trivy sbom failed: {exc.stderr}") from exc
-    except json.JSONDecodeError as exc:
-        raise AnalyzerError(f"trivy produced invalid JSON: {exc}") from exc
+def _syft_version(data: dict[str, Any]) -> str:
+    """Best-effort extraction of the syft version from CycloneDX metadata.tools."""
+    tools = data.get("metadata", {}).get("tools", {})
+    # CycloneDX 1.5+: metadata.tools.components[]; older: metadata.tools[] (array).
+    candidates = tools.get("components", []) if isinstance(tools, dict) else tools
+    for tool in candidates:
+        if tool.get("name") == "syft" and tool.get("version"):
+            return str(tool["version"])
+    return "unknown"
 
 
 def _extract_licenses(component: dict[str, Any]) -> list[str]:
@@ -120,7 +77,7 @@ def _extract_licenses(component: dict[str, Any]) -> list[str]:
 
 
 class SbomAnalyzer(BaseAnalyzer):
-    """Generate a Software Bill of Materials using Trivy (CycloneDX)."""
+    """Generate a Software Bill of Materials using Syft (CycloneDX)."""
 
     name = "sbom"
     schema_file = "analyzer/sbom.schema.json"
@@ -172,13 +129,13 @@ class SbomAnalyzer(BaseAnalyzer):
         tag: str,
         platform: str | None = None,
     ) -> dict[str, Any]:
-        # Build full image reference — same logic as TrivyAnalyzer.
+        # Build full image reference — same logic as the vulnerability analyzer.
         if client.registry in ("docker.io", "registry-1.docker.io"):
             full_image = f"{repository}:{tag}"
         else:
             full_image = f"{client.registry}/{repository}:{tag}"
 
-        data = _run_trivy_sbom(
+        data = run_syft(
             full_image,
             username=client.username,
             password=client.password,
@@ -212,6 +169,7 @@ class SbomAnalyzer(BaseAnalyzer):
 
         return {
             "analyzer": self.name,
+            "scanner_version": _syft_version(data),
             "repository": repository,
             "tag": tag,
             "has_sbom": len(raw_components) > 0,
