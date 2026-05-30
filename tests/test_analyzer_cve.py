@@ -66,6 +66,10 @@ class TestCveAnalyzer:
         assert apk_vuln["VulnerabilityID"] == "CVE-2024-0001"
         assert apk_vuln["PkgName"] == "libfoo"
         assert apk_vuln["FixedVersion"] == "1.2.3"
+        # Per-vuln Severity is emitted upper-case (matches dashboard filter).
+        assert apk_vuln["Severity"] == "CRITICAL"
+        py_vuln = targets["python"]["Vulnerabilities"][0]
+        assert py_vuln["Severity"] == "NEGLIGIBLE"
         # Report must validate against the schema.
         analyzer.validate(report)
 

@@ -164,8 +164,12 @@ export function CveSection({ data }: { data: CveData }): React.JSX.Element {
     ) ?? []
   ).sort(byDate);
 
-  const criticalVulns = allVulns.filter((v) => v.Severity === "CRITICAL");
-  const highVulns = allVulns.filter((v) => v.Severity === "HIGH");
+  const criticalVulns = allVulns.filter(
+    (v) => (v.Severity ?? "").toUpperCase() === "CRITICAL",
+  );
+  const highVulns = allVulns.filter(
+    (v) => (v.Severity ?? "").toUpperCase() === "HIGH",
+  );
 
   return (
     <div className="space-y-6">

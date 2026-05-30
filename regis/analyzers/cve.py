@@ -114,7 +114,7 @@ class CveAnalyzer(BaseAnalyzer):
                     "PkgName": artifact.get("name", ""),
                     "InstalledVersion": artifact.get("version", ""),
                     "FixedVersion": fixed_versions[0] if fixed_versions else "",
-                    "Severity": severity,
+                    "Severity": severity.upper(),
                     "Title": vuln.get("id", ""),
                     "Description": vuln.get("description", ""),
                 }
