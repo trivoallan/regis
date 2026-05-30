@@ -6,7 +6,15 @@
 
 **Architecture:** One thin subprocess wrapper per tool under `regis/utils/` (mirroring `regis/utils/regctl.py`), each consumed by a `BaseAnalyzer` subclass. Analyzers stay independent and run in the existing `ThreadPoolExecutor` — no cross-analyzer chaining. Report field names stay stable; only the provider prefix changes (`results.trivy.*` → `results.cve.*` / `results.secrets.*`).
 
-**Tech Stack:** Python 3.14, Click, pytest (≥ 90 % coverage gate), JSON Schema (draft 2020-12), JSON Logic, Docker multi-stage build, Trunk (lint/format), Docusaurus + Tremor (dashboard, pnpm). Pinned tool versions: grype `v0.80.2`, syft `v1.14.1`, trufflehog `v3.82.7` (confirm/adjust in Task 1).
+**Tech Stack:** Python 3.14, Click, pytest (≥ 90 % coverage gate), JSON Schema (draft 2020-12), JSON Logic, Docker multi-stage build, Trunk (lint/format), Docusaurus + Tremor (dashboard, pnpm). Pinned tool versions (confirmed in Task 1 spike): grype `v0.112.0`, syft `v1.44.0`, trufflehog `v3.95.3`.
+
+**Spike corrections (Task 1 findings — these override the originally-drafted code below where they conflict):**
+
+1. **Registry auth env vars:** grype has **no** `GRYPE_REGISTRY_AUTH_*` variable. Both grype **and** syft honor `SYFT_REGISTRY_AUTH_USERNAME` / `SYFT_REGISTRY_AUTH_PASSWORD`. The grype wrapper (Task 2) uses the `SYFT_REGISTRY_AUTH_*` names.
+2. **syft version** lives at `metadata.tools.components[]` (a dict with a `components` array), not a flat array — the `_syft_version` helper in Task 5 already handles both shapes.
+3. **grype `fix.state`** emits `""` (empty string) for the unknown case alongside `fixed`/`not-fixed`/`wont-fix`. `fixed_count` only counts `state == "fixed"`, so no code change is needed, but tests should not assume `"unknown"`.
+4. **trufflehog exit code** is `0` even when secrets are found (non-zero `183` only with `--fail`). The wrapper uses `check=False` and counts NDJSON lines, so this is already correct. A failed remote pull also yields exit 0 + empty stdout — documented as a known limitation in a wrapper comment.
+5. **trufflehog has no basic user/pass env pair.** Credentials, when present, are forwarded via a temporary `DOCKER_CONFIG` (same pattern as `regis/utils/regctl.py::_temp_docker_config`); see Task 6.
 
 **Spec:** `docs/superpowers/specs/2026-05-30-trivy-to-grype-design.md`
 
@@ -167,8 +175,9 @@ class TestRunGrype:
         args = mock_run.call_args[0][0]
         env = mock_run.call_args[1]["env"]
         assert "--platform" in args and "linux/arm64" in args
-        assert env["GRYPE_REGISTRY_AUTH_USERNAME"] == "u"
-        assert env["GRYPE_REGISTRY_AUTH_PASSWORD"] == "p"
+        # grype has no GRYPE_REGISTRY_AUTH_*; it honors the syft auth env vars.
+        assert env["SYFT_REGISTRY_AUTH_USERNAME"] == "u"
+        assert env["SYFT_REGISTRY_AUTH_PASSWORD"] == "p"
 
     @patch("regis.utils.grype.shutil.which")
     @patch("regis.utils.grype.subprocess.run")
@@ -248,8 +257,10 @@ def run_grype(
     user = username or env.get("REGIS_USERNAME")
     pwd = password or env.get("REGIS_PASSWORD")
     if user and pwd:
-        env["GRYPE_REGISTRY_AUTH_USERNAME"] = user
-        env["GRYPE_REGISTRY_AUTH_PASSWORD"] = pwd
+        # grype vendors syft's image loader and honors the SYFT_* auth env vars;
+        # there is no GRYPE_REGISTRY_AUTH_* equivalent (confirmed in the spike).
+        env["SYFT_REGISTRY_AUTH_USERNAME"] = user
+        env["SYFT_REGISTRY_AUTH_PASSWORD"] = pwd
 
     cmd = [grype_path, image, "-o", "json"]
     if platform:
@@ -984,6 +995,26 @@ class TestRunTrufflehog:
         mock_run.return_value = MagicMock(stdout="not-json\n", returncode=0)
         with pytest.raises(AnalyzerError, match="trufflehog produced invalid"):
             run_trufflehog("alpine:3.20")
+
+    @patch("regis.utils.trufflehog.shutil.which")
+    @patch("regis.utils.trufflehog.subprocess.run")
+    def test_credentials_written_to_temp_docker_config(self, mock_run, mock_which):
+        mock_which.return_value = "/usr/local/bin/trufflehog"
+        captured = {}
+
+        def _capture(*args, **kwargs):
+            # Read the temp config the wrapper created before it is cleaned up.
+            cfg_dir = kwargs["env"]["DOCKER_CONFIG"]
+            with open(f"{cfg_dir}/config.json", encoding="utf-8") as fh:
+                captured["config"] = fh.read()
+            return MagicMock(stdout="", returncode=0)
+
+        mock_run.side_effect = _capture
+        run_trufflehog("ghcr.io/acme/app:1.0", username="u", password="p")
+
+        assert "ghcr.io" in captured["config"]
+        # base64("u:p") == "dTpw"
+        assert "dTpw" in captured["config"]
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -999,18 +1030,25 @@ Expected: FAIL — `ModuleNotFoundError: regis.utils.trufflehog`.
 """Subprocess wrapper for the trufflehog secret scanner.
 
 Runs ``trufflehog docker --image <ref> --json`` and parses the NDJSON output.
-A non-zero exit code is expected when secrets are found, so the exit code is
-not used to detect failure; an unparseable line is the failure signal instead.
-Mirrors regis/utils/grype.py.
+The exit code is not used to detect failure (trufflehog exits 0 even with
+findings unless ``--fail`` is passed); an unparseable line is the failure
+signal instead. Credentials, when present, are forwarded via a temporary
+``DOCKER_CONFIG`` (trufflehog has no basic-auth env pair) — same pattern as
+regis/utils/regctl.py.
+
+Known limitation: a failed remote-registry pull also yields exit 0 + empty
+stdout, which is indistinguishable from "no secrets found".
 """
 
 from __future__ import annotations
 
+import base64
 import json
 import logging
 import os
 import shutil
 import subprocess  # nosec B404
+import tempfile
 from typing import Any
 
 from regis.analyzers.base import AnalyzerError
@@ -1019,6 +1057,32 @@ logger = logging.getLogger(__name__)
 
 #: Default timeout for trufflehog calls (seconds).
 DEFAULT_TIMEOUT = 300
+
+
+def _registry_host(image: str) -> str:
+    """Derive the docker-config auths key (registry host) from an image ref."""
+    first = image.split("/", 1)[0]
+    if "." in first or ":" in first or first == "localhost":
+        return first
+    return "https://index.docker.io/v1/"  # Docker Hub default auths key
+
+
+def _write_docker_config(host: str, user: str, pwd: str) -> str:
+    """Write a temp Docker config.json with credentials; return its dir.
+
+    Cleans up the temp directory if the write fails. The caller is responsible
+    for removing the directory after the subprocess finishes.
+    """
+    auth = base64.b64encode(f"{user}:{pwd}".encode()).decode()
+    config = {"auths": {host: {"auth": auth}}}
+    tmpdir = tempfile.mkdtemp(prefix="regis-trufflehog-")
+    try:
+        with open(os.path.join(tmpdir, "config.json"), "w", encoding="utf-8") as handle:
+            json.dump(config, handle)
+    except Exception:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+        raise
+    return tmpdir
 
 
 def run_trufflehog(
@@ -1049,10 +1113,10 @@ def run_trufflehog(
     env = os.environ.copy()
     user = username or env.get("REGIS_USERNAME")
     pwd = password or env.get("REGIS_PASSWORD")
+    docker_config_dir: str | None = None
     if user and pwd:
-        # trufflehog reads docker credentials from the environment / docker config.
-        env["DOCKER_USERNAME"] = user
-        env["DOCKER_PASSWORD"] = pwd
+        docker_config_dir = _write_docker_config(_registry_host(image), user, pwd)
+        env["DOCKER_CONFIG"] = docker_config_dir
 
     cmd = [th_path, "docker", "--image", image, "--json", "--no-update"]
 
@@ -1062,12 +1126,15 @@ def run_trufflehog(
             cmd,
             capture_output=True,
             text=True,
-            check=False,  # non-zero exit is expected when secrets are found
+            check=False,  # trufflehog exits 0 even with findings (no --fail)
             timeout=timeout,
             env=env,
         )
     except subprocess.TimeoutExpired as exc:
         raise AnalyzerError(f"trufflehog timed out after {timeout}s") from exc
+    finally:
+        if docker_config_dir:
+            shutil.rmtree(docker_config_dir, ignore_errors=True)
 
     findings: list[dict[str, Any]] = []
     for line in result.stdout.splitlines():
@@ -1555,9 +1622,9 @@ In the `tools-fetcher` stage, add the pinned versions to the `ENV` line:
 ENV HADOLINT_VERSION=2.12.0 \
     DOCKLE_VERSION=0.4.15 \
     REGCTL_VERSION=0.11.5 \
-    GRYPE_VERSION=0.80.2 \
-    SYFT_VERSION=1.14.1 \
-    TRUFFLEHOG_VERSION=3.82.7
+    GRYPE_VERSION=0.112.0 \
+    SYFT_VERSION=1.44.0 \
+    TRUFFLEHOG_VERSION=3.95.3
 ```
 
 Replace the trivy install block (the `curl … trivy … install.sh` lines) with three fetches that mirror the dockle/regctl pattern:
