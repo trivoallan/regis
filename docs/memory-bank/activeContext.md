@@ -17,6 +17,11 @@ Voir `docs/memory-bank/roadmap.md` pour le détail complet.
 
 ## Recent Changes
 
+- [2026-05-30] **v0.32.0 cut + image-size badge fix + SBOM release fix**:
+  - Released **v0.32.0** (Release Please PR #576 squash-merged) — ships round-2 trims + the skopeo→regctl rename. `ghcr.io/trivoallan/regis:0.32.0` + `:latest` published.
+  - **Docker image-size badge** (PR #613, merged): the third-party `ghcr-badge.egpl.dev` service was **suspended** (HTTP 503), breaking the README badge. Replaced with a committed `image-size-badge.svg` regenerated on every `cd-docker.yml` publish via shields.io and surfaced back through an auto-PR on `docs/image-size-badge` (same pattern as `coverage-badge.svg`, app-token-driven so it ignores the job's `contents` perm). Badge now shows the **extracted on-disk size (~337 MB amd64)** — the real post-pull footprint — not the compressed transfer size (~108 MB) the old badge advertised.
+  - **Size-measurement gotcha**: `docker image ls` under the local containerd snapshotter reports **484 MB** for this image — a display quirk, NOT a regression. Authoritative breakdown (gunzip per layer): trivy 160 MB, debian-slim base 81 MB, python build 38 MB, venv 29 MB, dockle 25 MB, regctl 12 MB. CI gate (`ci-image-size.yml`, overlay2) measures ~337 MB against a 360 MB ceiling; added `show_current_size: true` so the value shows in PR logs.
+  - **SBOM-to-release fix** (PR #618, pending auto-merge): `cd-docker` ran with `contents: read`, so `anchore/sbom-action` failed at "Attaching SBOMs to release" (`Resource not accessible by integration`). Image still published (build step runs first), but **every tagged release since v0.30.0 silently shipped without CycloneDX/SPDX SBOM assets**. Fixed by elevating the job to `contents: write`.
 - [2026-05-29] **Docker image size — round 2**:
   - Dropped `git` + `jq` from the runtime apt layer (git is host-only via the bootstrap `--repo` flow; jq has no runtime caller).
   - Moved `fastapi` + `uvicorn[standard]` to a `[server]` optional extra; in-container `dashboard serve` now errors with a `pip install regis[server]` hint (breaking, consistent with the round-1 bootstrap decision). `dev` extra still pulls them so tests are unchanged.
