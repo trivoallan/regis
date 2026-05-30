@@ -16,6 +16,12 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+# Coalesce rapid main pushes into a single build (cancel the in-flight one).
+# Tag/release builds get a per-ref group and are never cancelled.
+concurrency:
+  group: cd-docker-${{ github.ref_type == 'tag' && github.ref_name || 'main' }}
+  cancel-in-progress: ${{ github.ref_type == 'branch' }}
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
