@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from regis.analyzers.base import AnalyzerError
-from regis.analyzers.secrets import SecretsAnalyzer
+from regis.analyzers.secrets import SecretsAnalyzer, _scanner_version
 
 _FINDINGS = [
     {
@@ -73,3 +73,35 @@ class TestSecretsAnalyzer:
         client.registry = "example.com"
         with pytest.raises(AnalyzerError, match="boom"):
             analyzer.analyze(client, "repo", "tag")
+
+
+class TestScannerVersion:
+    @patch("regis.analyzers.secrets.shutil.which", return_value=None)
+    def test_missing_binary_returns_unknown(self, _mock_which):
+        assert _scanner_version() == "unknown"
+
+    @patch("regis.analyzers.secrets.shutil.which", return_value="/usr/local/bin/trufflehog")
+    @patch("regis.analyzers.secrets.subprocess.run")
+    def test_parses_first_line_from_stderr(self, mock_run, _mock_which):
+        mock_run.return_value = MagicMock(stderr="trufflehog 3.95.3\n", stdout="")
+        assert _scanner_version() == "trufflehog 3.95.3"
+
+    @patch("regis.analyzers.secrets.shutil.which", return_value="/usr/local/bin/trufflehog")
+    @patch("regis.analyzers.secrets.subprocess.run")
+    def test_falls_back_to_stdout_when_no_stderr(self, mock_run, _mock_which):
+        mock_run.return_value = MagicMock(stderr="", stdout="trufflehog 3.95.3\n")
+        assert _scanner_version() == "trufflehog 3.95.3"
+
+    @patch("regis.analyzers.secrets.shutil.which", return_value="/usr/local/bin/trufflehog")
+    @patch("regis.analyzers.secrets.subprocess.run")
+    def test_empty_output_returns_unknown(self, mock_run, _mock_which):
+        mock_run.return_value = MagicMock(stderr="", stdout="")
+        assert _scanner_version() == "unknown"
+
+    @patch("regis.analyzers.secrets.shutil.which", return_value="/usr/local/bin/trufflehog")
+    @patch(
+        "regis.analyzers.secrets.subprocess.run",
+        side_effect=__import__("subprocess").TimeoutExpired("trufflehog", 5),
+    )
+    def test_timeout_returns_unknown(self, _mock_run, _mock_which):
+        assert _scanner_version() == "unknown"
