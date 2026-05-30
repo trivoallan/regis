@@ -32,6 +32,10 @@ class TestRunGrype:
         assert args[1] == "alpine:3.20"
         assert "json" in args  # -o json
 
+        kwargs = mock_run.call_args[1]
+        assert kwargs["check"] is True
+        assert kwargs["env"] is not None
+
     @patch("regis.utils.grype.shutil.which")
     @patch("regis.utils.grype.subprocess.run")
     def test_creds_and_platform(self, mock_run, mock_which):
@@ -46,6 +50,20 @@ class TestRunGrype:
         # grype has no GRYPE_REGISTRY_AUTH_*; it honors the syft auth env vars.
         assert env["SYFT_REGISTRY_AUTH_USERNAME"] == "u"
         assert env["SYFT_REGISTRY_AUTH_PASSWORD"] == "p"
+
+    @patch("regis.utils.grype.shutil.which")
+    @patch("regis.utils.grype.subprocess.run")
+    def test_creds_from_regis_env_fallback(self, mock_run, mock_which, monkeypatch):
+        mock_which.return_value = "/usr/local/bin/grype"
+        mock_run.return_value = MagicMock(stdout=_SAMPLE)
+        monkeypatch.setenv("REGIS_USERNAME", "envuser")
+        monkeypatch.setenv("REGIS_PASSWORD", "envpass")
+
+        run_grype("alpine:3.20")
+
+        env = mock_run.call_args[1]["env"]
+        assert env["SYFT_REGISTRY_AUTH_USERNAME"] == "envuser"
+        assert env["SYFT_REGISTRY_AUTH_PASSWORD"] == "envpass"
 
     @patch("regis.utils.grype.shutil.which")
     @patch("regis.utils.grype.subprocess.run")
