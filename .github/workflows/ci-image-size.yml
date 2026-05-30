@@ -42,11 +42,12 @@ jobs:
         with:
           image: regis:size-check
           # Measured amd64 size (the CI arch, overlay2): ~337 MB extracted
-          # on-disk. Bulk is trivy (~160 MB) + python:3.14-slim base (~80 MB)
-          # + python build (~38 MB) + venv (~29 MB) + dockle (~25 MB) +
-          # regctl (~12 MB). Ceiling set to 360 MB (~7 % headroom) to absorb
-          # trivy-version drift. Further reduction (alpine/wolfi base,
-          # pinning/trimming trivy, UPX) is tracked separately.
+          # on-disk. Bulk is grype + syft + trufflehog (~120 MB combined) +
+          # python:3.14-slim base (~80 MB) + python build (~38 MB) +
+          # venv (~29 MB) + dockle (~25 MB) + regctl (~12 MB). Ceiling set to
+          # 360 MB (~7 % headroom) to absorb tool-version drift. Further
+          # reduction (alpine/wolfi base, trimming the scanner binaries, UPX)
+          # is tracked separately.
           # NOTE: the compressed manifest sum (what gets pulled over the wire)
           # is ~108 MB; the badge published from cd-docker.yml shows the
           # extracted on-disk number (what users actually pay for after pull).

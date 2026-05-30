@@ -51,15 +51,46 @@ FROM curlimages/curl:8.10.1 AS tools-fetcher
 ARG TARGETARCH
 ENV HADOLINT_VERSION=2.12.0 \
     DOCKLE_VERSION=0.4.15 \
-    REGCTL_VERSION=0.11.5
+    REGCTL_VERSION=0.11.5 \
+    GRYPE_VERSION=0.112.0 \
+    SYFT_VERSION=1.44.0 \
+    TRUFFLEHOG_VERSION=3.95.3
 
 USER root
 WORKDIR /tools
 
-# Trivy via the official install script
-# hadolint ignore=DL4006
-RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
-    | sh -s -- -b /tools
+# grype (static binary)
+RUN case "$TARGETARCH" in \
+      amd64) arch="amd64" ;; \
+      arm64) arch="arm64" ;; \
+      *) echo "Unsupported TARGETARCH: $TARGETARCH" >&2; exit 1 ;; \
+    esac && \
+    curl -sSfL "https://github.com/anchore/grype/releases/download/v${GRYPE_VERSION}/grype_${GRYPE_VERSION}_linux_${arch}.tar.gz" \
+      -o /tmp/grype.tar.gz && \
+    tar -xzf /tmp/grype.tar.gz -C /tools grype && \
+    chmod +x /tools/grype && rm /tmp/grype.tar.gz
+
+# syft (static binary)
+RUN case "$TARGETARCH" in \
+      amd64) arch="amd64" ;; \
+      arm64) arch="arm64" ;; \
+      *) echo "Unsupported TARGETARCH: $TARGETARCH" >&2; exit 1 ;; \
+    esac && \
+    curl -sSfL "https://github.com/anchore/syft/releases/download/v${SYFT_VERSION}/syft_${SYFT_VERSION}_linux_${arch}.tar.gz" \
+      -o /tmp/syft.tar.gz && \
+    tar -xzf /tmp/syft.tar.gz -C /tools syft && \
+    chmod +x /tools/syft && rm /tmp/syft.tar.gz
+
+# trufflehog (static binary)
+RUN case "$TARGETARCH" in \
+      amd64) arch="amd64" ;; \
+      arm64) arch="arm64" ;; \
+      *) echo "Unsupported TARGETARCH: $TARGETARCH" >&2; exit 1 ;; \
+    esac && \
+    curl -sSfL "https://github.com/trufflesecurity/trufflehog/releases/download/v${TRUFFLEHOG_VERSION}/trufflehog_${TRUFFLEHOG_VERSION}_linux_${arch}.tar.gz" \
+      -o /tmp/trufflehog.tar.gz && \
+    tar -xzf /tmp/trufflehog.tar.gz -C /tools trufflehog && \
+    chmod +x /tools/trufflehog && rm /tmp/trufflehog.tar.gz
 
 # Hadolint
 RUN case "$TARGETARCH" in \
@@ -133,7 +164,9 @@ ENV HOME=/home/regis
 
 # Copy artifacts from build stages
 COPY --from=python-builder /opt/venv /opt/venv
-COPY --from=tools-fetcher /tools/trivy /usr/local/bin/trivy
+COPY --from=tools-fetcher /tools/grype /usr/local/bin/grype
+COPY --from=tools-fetcher /tools/syft /usr/local/bin/syft
+COPY --from=tools-fetcher /tools/trufflehog /usr/local/bin/trufflehog
 COPY --from=tools-fetcher /tools/hadolint /usr/local/bin/hadolint
 COPY --from=tools-fetcher /tools/dockle /usr/local/bin/dockle
 COPY --from=tools-fetcher /tools/regctl /usr/local/bin/regctl
