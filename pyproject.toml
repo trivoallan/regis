@@ -40,6 +40,7 @@ sbom = "regis.analyzers.sbom:SbomAnalyzer"
 hadolint = "regis.analyzers.hadolint:HadolintAnalyzer"
 dockle = "regis.analyzers.dockle:DockleAnalyzer"
 metadata = "regis.analyzers.metadata:MetadataAnalyzer"
+secrets = "regis.analyzers.secrets:SecretsAnalyzer"
 
 [project.optional-dependencies]
 server = ["fastapi>=0.115.0", "uvicorn[standard]>=0.34"]
