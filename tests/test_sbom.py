@@ -165,6 +165,21 @@ class TestSbomAnalyzer:
         assert report["licenses"] == []
 
     @patch("regis.analyzers.sbom.run_syft")
+    def test_analyze_scanner_version_unknown_when_metadata_absent(
+        self, mock_run_syft, analyzer, mock_client
+    ):
+        mock_run_syft.return_value = {
+            "bomFormat": "CycloneDX",
+            "specVersion": "1.6",
+            "components": [],
+        }
+
+        report = analyzer.analyze(mock_client, "library/alpine", "3.20")
+        analyzer.validate(report)
+
+        assert report["scanner_version"] == "unknown"
+
+    @patch("regis.analyzers.sbom.run_syft")
     def test_analyze_custom_registry(self, mock_run_syft, analyzer):
         client = MagicMock()
         client.registry = "my.registry.com"

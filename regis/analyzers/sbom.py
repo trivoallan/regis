@@ -57,9 +57,15 @@ def _syft_version(data: dict[str, Any]) -> str:
     """Best-effort extraction of the syft version from CycloneDX metadata.tools."""
     tools = data.get("metadata", {}).get("tools", {})
     # CycloneDX 1.5+: metadata.tools.components[]; older: metadata.tools[] (array).
-    candidates = tools.get("components", []) if isinstance(tools, dict) else tools
+    candidates = (
+        tools.get("components", []) if isinstance(tools, dict) else (tools or [])
+    )
     for tool in candidates:
-        if tool.get("name") == "syft" and tool.get("version"):
+        if (
+            isinstance(tool, dict)
+            and tool.get("name") == "syft"
+            and tool.get("version")
+        ):
             return str(tool["version"])
     return "unknown"
 
