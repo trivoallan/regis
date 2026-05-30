@@ -41,8 +41,8 @@ def _build_comment_body(report_data: dict, report_url: str) -> str:
     passed = summary.get("passed", 0)
     tier = playbook.get("tier") or "N/A"
 
-    trivy = report_data.get("analyzers", {}).get("trivy", {})
-    vuln_summary = trivy.get("vulnerabilities", {}).get("summary", {})
+    cve = report_data.get("analyzers", {}).get("cve", {})
+    vuln_summary = cve.get("vulnerabilities", {}).get("summary", {})
 
     lines = [
         _COMMENT_MARKER,
