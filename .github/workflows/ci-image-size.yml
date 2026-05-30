@@ -41,12 +41,14 @@ jobs:
         uses: wemake-services/docker-image-size-limit@f5970eb0c2180ac296475bfd22c5a58955370051 # 2.2.0
         with:
           image: regis:size-check
-          # First measured amd64 size (the CI arch): ~331 MiB — substantially
-          # larger than the arm64 image (~138 MB) because the amd64 trivy/base
-          # layers are bigger, and trivy is installed as `latest` (size drifts
-          # upward over time). The bulk is trivy (~150 MB) + the python-slim
-          # base; dropping skopeo for the regctl static binary reduced this.
-          # Ceiling set to 360 MB (~9% headroom over the measured baseline) to
-          # absorb trivy-version drift. Further reduction (alpine/wolfi base,
+          # Measured amd64 size (the CI arch, overlay2): ~337 MB extracted
+          # on-disk. Bulk is trivy (~160 MB) + python:3.14-slim base (~80 MB)
+          # + python build (~38 MB) + venv (~29 MB) + dockle (~25 MB) +
+          # regctl (~12 MB). Ceiling set to 360 MB (~7 % headroom) to absorb
+          # trivy-version drift. Further reduction (alpine/wolfi base,
           # pinning/trimming trivy, UPX) is tracked separately.
+          # NOTE: the compressed manifest sum (what gets pulled over the wire)
+          # is ~108 MB; the badge published from cd-docker.yml shows the
+          # extracted on-disk number (what users actually pay for after pull).
           size: 360MB
+          show_current_size: true
