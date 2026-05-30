@@ -26,7 +26,11 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      # contents: write is required so anchore/sbom-action can attach the
+      # generated SBOMs to the GitHub Release on tag builds. With contents:read
+      # that attach step fails ("Resource not accessible by integration") and
+      # releases ship without SBOM assets (regressed silently since v0.30.0).
+      contents: write
       packages: write
       attestations: write
       id-token: write
