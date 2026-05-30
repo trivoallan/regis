@@ -5,7 +5,7 @@ def test_parameterized_rules():
     # Mock report
     report = {
         "request": {
-            "analyzers": ["trivy"],
+            "analyzers": ["cve"],
             "url": "nginx:latest",
             "registry": "docker.io",
             "repository": "library/nginx",
@@ -13,8 +13,8 @@ def test_parameterized_rules():
             "timestamp": "2024-03-20T10:00:00Z",
         },
         "results": {
-            "trivy": {
-                "analyzer": "trivy",
+            "cve": {
+                "analyzer": "cve",
                 "critical_count": 2,
                 "high_count": 5,
                 "medium_count": 10,
@@ -26,12 +26,12 @@ def test_parameterized_rules():
     playbook = {
         "rules": [
             {
-                "provider": "trivy",
+                "provider": "cve",
                 "rule": "cve-count",
                 "options": {"level": "critical", "max_count": 0},
             },
             {
-                "provider": "trivy",
+                "provider": "cve",
                 "rule": "cve-count",
                 "options": {"level": "high", "max_count": 10},
             },
@@ -55,14 +55,14 @@ def test_parameterized_rules():
 
 def test_parameterized_rule_custom_slug():
     report = {
-        "request": {"analyzers": ["trivy"]},
-        "results": {"trivy": {"critical_count": 0}},
+        "request": {"analyzers": ["cve"]},
+        "results": {"cve": {"critical_count": 0}},
     }
     playbook = {
         "rules": [
             {
-                "slug": "custom-trivy-rule",
-                "provider": "trivy",
+                "slug": "custom-cve-rule",
+                "provider": "cve",
                 "rule": "cve-count",
                 "options": {"level": "critical", "max_count": 0},
             }
@@ -70,8 +70,8 @@ def test_parameterized_rule_custom_slug():
     }
     results = evaluate_rules(report, playbook)
     rules = {r["slug"]: r for r in results["rules"]}
-    assert "custom-trivy-rule" in rules
-    assert rules["custom-trivy-rule"]["passed"] is True
+    assert "custom-cve-rule" in rules
+    assert rules["custom-cve-rule"]["passed"] is True
 
 
 def test_hadolint_dockle_parameterized():

@@ -24,7 +24,7 @@ rules:
     slug: no-root
     level: critical
 
-  - provider: trivy
+  - provider: cve
     rule: cve-count
     slug: cve-critical
     level: critical
@@ -33,7 +33,7 @@ rules:
       max_count: 0
 
   # --- Security (Warning) ---
-  - provider: trivy
+  - provider: cve
     rule: cve-count
     slug: cve-high
     level: warning
@@ -41,7 +41,7 @@ rules:
       level: high
       max_count: 10
 
-  - provider: trivy
+  - provider: cve
     rule: fix-available
     slug: cve-fixable
     level: warning
