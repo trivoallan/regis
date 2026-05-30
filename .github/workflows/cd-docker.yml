@@ -76,6 +76,43 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Measure published image size
+        id: size
+        run: |
+          ref="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}"
+          docker pull --quiet "$ref"
+          bytes=$(docker image inspect "$ref" --format='{{.Size}}')
+          mb=$(( (bytes + 1048575) / 1048576 ))
+          echo "Measured ${mb} MB (${bytes} bytes) for ${ref}"
+          echo "mb=${mb}" >> "$GITHUB_OUTPUT"
+
+      - name: Regenerate image-size badge
+        run: |
+          mb=${{ steps.size.outputs.mb }}
+          if   [ "$mb" -lt 250 ]; then color=brightgreen
+          elif [ "$mb" -lt 350 ]; then color=green
+          elif [ "$mb" -lt 450 ]; then color=yellow
+          else                         color=red
+          fi
+          curl -sSL --fail "https://img.shields.io/badge/image%20size-${mb}%20MB-${color}.svg" \
+            -o image-size-badge.svg
+
+      - name: Create pull request for image-size badge update
+        continue-on-error: true
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          commit-message: "docs: refresh published image-size badge"
+          author: regis-ci[bot] <regis-ci[bot]@users.noreply.github.com>
+          branch: docs/image-size-badge
+          delete-branch: true
+          title: "docs: refresh published image-size badge"
+          body: |
+            Automated update of `image-size-badge.svg` after publishing a new Docker image.
+
+            Measured size: **${{ steps.size.outputs.mb }} MB** (extracted on-disk on overlay2).
+          add-paths: image-size-badge.svg
+
       - name: Generate CycloneDX SBOM
         if: github.ref_type == 'tag'
         uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0.24.0
