@@ -46,4 +46,4 @@ Must be one of:
 **Description:** URL to the CI job run
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-29 at 17:25:26 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-30 at 14:08:20 +0000

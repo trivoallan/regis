@@ -161,4 +161,4 @@ Specific value: `"endoflife"`
 | **Minimum**  | &ge; 0 |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-29 at 17:25:25 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-30 at 14:08:19 +0000

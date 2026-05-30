@@ -1102,4 +1102,4 @@ Must be one of:
 | **Type** | `string` |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-29 at 17:25:27 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-30 at 14:08:21 +0000
