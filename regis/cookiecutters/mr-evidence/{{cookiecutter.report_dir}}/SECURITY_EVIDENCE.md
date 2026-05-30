@@ -15,14 +15,16 @@ Analysis performed on **{{ cookiecutter.regis.request.timestamp }}**.
 - **Score**: `{{ cookiecutter.regis.playbook.score }}%`
 - **Passed Scorecards**: `{{ cookiecutter.regis.playbook.passed_scorecards }}/{{ cookiecutter.regis.playbook.total_scorecards }}`
 
-{% set trivy = cookiecutter.regis.results.trivy | default({}) %}
-{% if trivy %}
+{% set cve = cookiecutter.regis.results.cve | default({}) %}
+{% if cve %}
 
-## 🐛 Vulnerability Summary (Trivy)
+## 🐛 Vulnerability Summary (grype)
 
-- **Critical**: `{{ trivy.critical_count | default(0) }}`
-- **High**: `{{ trivy.high_count | default(0) }}`
-- **Total**: `{{ trivy.vulnerability_count | default(0) }}`
+- **Critical**: `{{ cve.critical_count | default(0) }}`
+- **High**: `{{ cve.high_count | default(0) }}`
+- **Medium**: `{{ cve.medium_count | default(0) }}`
+- **Low**: `{{ cve.low_count | default(0) }}`
+- **Total**: `{{ cve.vulnerability_count | default(0) }}`
   {% endif %}
 
 {% set freshness = cookiecutter.regis.results.freshness | default({}) %}

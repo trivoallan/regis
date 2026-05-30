@@ -35,7 +35,7 @@ No `rules:` block — add rules incrementally as you tighten policy.
 
 ---
 
-## Example 2 — Security-focused (trivy + hadolint + sbom)
+## Example 2 — Security-focused (cve + hadolint + sbom)
 
 A Gold/Silver/Bronze policy that enforces vulnerability limits, Dockerfile quality,
 and SBOM presence. Adapted from the Regis default playbook.
@@ -60,7 +60,7 @@ rules:
   # ── Vulnerabilities ────────────────────────────────────────────────────────
 
   # Zero tolerance for critical CVEs.
-  - provider: trivy
+  - provider: cve
     rule: cve-count
     slug: cve-critical
     level: critical
@@ -69,7 +69,7 @@ rules:
       max_count: 0
 
   # Allow up to 10 high CVEs before flagging.
-  - provider: trivy
+  - provider: cve
     rule: cve-count
     slug: cve-high
     level: warning
@@ -78,7 +78,7 @@ rules:
       max_count: 10
 
   # Warn if fixable CVEs exist — no excuse for unpatched known issues.
-  - provider: trivy
+  - provider: cve
     rule: fix-available
     slug: cve-fixable
     level: warning
@@ -168,7 +168,7 @@ tiers:
 rules:
   # ── Vulnerabilities ────────────────────────────────────────────────────────
 
-  - provider: trivy
+  - provider: cve
     rule: cve-count
     slug: cve-critical
     level: critical
@@ -176,7 +176,7 @@ rules:
       level: critical
       max_count: 0
 
-  - provider: trivy
+  - provider: cve
     rule: cve-count
     slug: cve-high
     level: warning
@@ -184,7 +184,7 @@ rules:
       level: high
       max_count: 10
 
-  - provider: trivy
+  - provider: cve
     rule: fix-available
     slug: cve-fixable
     level: warning

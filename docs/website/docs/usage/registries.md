@@ -4,7 +4,7 @@ sidebar_position: 7
 
 # Registry Authentication
 
-To analyze private images, `regis` needs to authenticate with your container registry. It typically leverages the authentication mechanisms of its underlying [Analyzers](../concepts/analyzers.md), such as **regctl** and **Trivy**.
+To analyze private images, `regis` needs to authenticate with your container registry. It typically leverages the authentication mechanisms of its underlying [Analyzers](../concepts/analyzers.md), such as **regctl** and **grype**.
 
 ## Using Docker Credentials
 

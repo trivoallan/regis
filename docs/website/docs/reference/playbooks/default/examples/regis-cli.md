@@ -12,7 +12,7 @@ This example uses the [default Regis playbook](../index.md), which evaluates sec
 
 ## What to expect
 
-The Regis CLI image is a multi-tool container bundling regctl, Trivy, Hadolint, and Dockle. Unlike minimal base images, this is a feature-rich image with comprehensive tooling. It is larger in size but comes with well-defined metadata labels and built-in supply chain provenance evidence.
+The Regis CLI image is a multi-tool container bundling regctl, grype, syft, trufflehog, Hadolint, and Dockle. Unlike minimal base images, this is a feature-rich image with comprehensive tooling. It is larger in size but comes with well-defined metadata labels and built-in supply chain provenance evidence.
 
 ## Key findings
 

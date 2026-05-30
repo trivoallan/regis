@@ -2,7 +2,7 @@
 name: create-playbook
 description: >
   Create a Regis playbook bundle interactively. Guides the user through naming,
-  rule selection (trivy, hadolint, sbom, freshness, scorecarddev, oci, dockle),
+  rule selection (cve, secrets, hadolint, sbom, freshness, scorecarddev, oci, dockle),
   tier configuration, CI integration (GitLab/GitHub), and optional metadata schema
   (meta.schema.json extending the well-known base schema).
   Use whenever the user says "create a playbook", "new playbook", "setup regis",
@@ -47,13 +47,18 @@ checks, then ask which rules the user wants to enable.
 After the user picks a rule, ask for its key options (using the defaults from
 `references/available-rules.md` as suggestions).
 
-### Group A — Vulnerabilities & secrets (`trivy`)
+### Group A — Vulnerabilities (`cve`, grype)
 
 | Rule            | What it checks               | Key options                                                 |
 | --------------- | ---------------------------- | ----------------------------------------------------------- |
 | `cve-count`     | Max CVEs at a given severity | `level` (critical/high/medium/low), `max_count` (default 0) |
 | `fix-available` | Max fixable CVEs             | `max_count` (default 0)                                     |
-| `secret-scan`   | Embedded secrets/tokens      | `max_count` (default 0)                                     |
+
+### Group A bis — Secrets (`secrets`, trufflehog)
+
+| Rule          | What it checks          | Key options             |
+| ------------- | ----------------------- | ----------------------- |
+| `secret-scan` | Embedded secrets/tokens | `max_count` (default 0) |
 
 ### Group B — Dockerfile quality
 
@@ -117,9 +122,9 @@ For a typical production policy, suggest these defaults (and ask if the user wan
 to adjust):
 
 ```yaml
-trivy / cve-count (critical, max 0)   — level: critical
-trivy / cve-count (high, max 10)      — level: warning
-trivy / fix-available (max 0)         — level: warning
+cve / cve-count (critical, max 0)     — level: critical
+cve / cve-count (high, max 10)        — level: warning
+cve / fix-available (max 0)           — level: warning
 hadolint / severity-count (error, 0)  — level: warning
 sbom / has-sbom                       — level: warning
 freshness / age (max_days: 90)        — level: info

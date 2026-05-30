@@ -6,12 +6,12 @@ tags:
 
 # sbom
 
-The `sbom` analyzer generates a Software Bill of Materials (SBOM) for container images using [Trivy](https://github.com/aquasecurity/trivy).
+The `sbom` analyzer generates a Software Bill of Materials (SBOM) for container images using [syft](https://github.com/anchore/syft).
 
 ## Overview
 
 - **Analyzer Name**: `sbom`
-- **Tool Dependency**: `trivy`
+- **Tool Dependency**: `syft`
 - **Output Schema**: [`sbom.schema.json`](pathname:///regis/schemas/analyzer/sbom.schema.json)
 
 ## Functionality

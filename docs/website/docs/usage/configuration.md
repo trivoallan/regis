@@ -20,7 +20,7 @@ template: ./custom-theme.html.j2
 playbook: ./security-policies.yaml
 
 analyzers:
-  trivy:
+  cve:
     enabled: true
     severity: CRITICAL,HIGH
   hadolint:

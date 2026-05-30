@@ -45,7 +45,7 @@ Type the following in Claude Code:
 Alternatively, describe what you need and Claude will offer to use the skill:
 
 ```text
-Create a security playbook for my production images — trivy CVE checks,
+Create a security playbook for my production images — cve checks,
 Dockerfile linting, and GitLab CI integration.
 ```
 
@@ -53,14 +53,14 @@ Dockerfile linting, and GitLab CI integration.
 
 The assistant guides you through six interactive stages:
 
-| Stage             | What it covers                                                                                        |
-| ----------------- | ----------------------------------------------------------------------------------------------------- |
-| 1. Context        | Playbook name, description, target CI system (GitLab / GitHub / standalone)                           |
-| 2. Rules          | Provider selection (trivy, hadolint, sbom, freshness, scorecarddev, oci…) and threshold configuration |
-| 3. Tiers          | Gold / Silver / Bronze scoring thresholds                                                             |
-| 4. CI integration | GitLab badges and checklists, or GitHub Actions                                                       |
-| 5. Inputs schema  | _(Optional)_ Validate non-image inputs such as project IDs or security document URLs                  |
-| 6. Output         | Writes the playbook bundle to your chosen directory                                                   |
+| Stage             | What it covers                                                                                               |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ |
+| 1. Context        | Playbook name, description, target CI system (GitLab / GitHub / standalone)                                  |
+| 2. Rules          | Provider selection (cve, secrets, hadolint, sbom, freshness, scorecarddev, oci…) and threshold configuration |
+| 3. Tiers          | Gold / Silver / Bronze scoring thresholds                                                                    |
+| 4. CI integration | GitLab badges and checklists, or GitHub Actions                                                              |
+| 5. Inputs schema  | _(Optional)_ Validate non-image inputs such as project IDs or security document URLs                         |
+| 6. Output         | Writes the playbook bundle to your chosen directory                                                          |
 
 ### Output
 
@@ -111,7 +111,7 @@ tiers:
     condition: { ">": [{ var: rules_summary.score }, 70] }
 
 rules:
-  - provider: trivy
+  - provider: cve
     rule: cve-count
     slug: cve-critical
     level: critical
@@ -135,7 +135,7 @@ Key concepts:
 - **Tiers**: Named compliance levels resolved from `rules_summary.score` using JSON Logic
   conditions.
 - **Results path**: Raw analyser data is accessible via dot-notation
-  (for example, `results.trivy.critical_count`).
+  (for example, `results.cve.critical_count`).
 
 ---
 

@@ -16,7 +16,7 @@ For a deep dive into the architecture and core philosophy of our reporting engin
 ## Features
 
 - **Dashboard Overview**: Get a high-level summary of your image's security posture and compliance status at a glance.
-- **Interactive Vulnerability Explorer**: Filter, sort, and search through findings from analyzers like Trivy and Hadolint.
+- **Interactive Vulnerability Explorer**: Filter, sort, and search through findings from analyzers like grype and Hadolint.
 - **Compliance Tracking**: Visualize how your image stacks up against your custom playbooks and industry best practices.
 - **Deep Technical Insights**: Drills down into layer distribution, SBOM details, and registry metadata.
 - **Self-Contained**: The report is fully portable and can be served from any static web server (GitHub Pages, GitLab Pages) or viewed as a CI/CD artifact.

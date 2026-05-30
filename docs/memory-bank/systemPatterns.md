@@ -8,7 +8,7 @@
 
 - **CLI (Click)**: Entry point for user interaction.
 - **Engine**: Orchestrates analysis and playbook evaluation.
-- **Analyzers**: Pluggable modules that extract specific data (e.g., Skopeo, Trivy, Hadolint).
+- **Analyzers**: Pluggable modules that extract specific data (e.g., regctl, grype, Hadolint).
 - **Playbook Engine**: Evaluates JSON logic rules against analyzer results.
 - **Report Generators**: Produces interactive SPA dashboards and machine-readable JSON.
 
@@ -58,8 +58,9 @@ Extrapolate the scope from the architectural component modified.
 ### Analyzers
 
 - `analyzer` — base analyzer class or shared analyzer interfaces
-- `analyzer/trivy` — vulnerability scanning and SBOM generation via Trivy
-- `analyzer/sbom` — SBOM analysis and CycloneDX/SPDX generation
+- `analyzer/cve` — vulnerability (CVE) scanning via grype
+- `analyzer/secrets` — embedded secret detection via trufflehog
+- `analyzer/sbom` — SBOM analysis and CycloneDX/SPDX generation via syft
 - `analyzer/hadolint` — Dockerfile linting
 - `analyzer/skopeo` — base metadata extraction
 - `analyzer/freshness` — image age and freshness score

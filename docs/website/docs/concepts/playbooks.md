@@ -15,7 +15,7 @@ A playbook serves two primary functions:
 1.  **Policy Enforcement**: It defines a set of "scorecards" (rules) that an image must pass to be considered compliant.
 2.  **Report Structuring**: It defines the layout and content of the generated HTML report, including pages, sections, and widgets.
 
-By using playbooks, you can decouple the raw data extraction (performed by analyzers like OCI or Trivy) from the business logic used to evaluate that data. This allow you to apply different compliance standards to different environments or projects without changing the underlying analysis code.
+By using playbooks, you can decouple the raw data extraction (performed by analyzers like OCI or CVE) from the business logic used to evaluate that data. This allow you to apply different compliance standards to different environments or projects without changing the underlying analysis code.
 
 ## Core Concepts
 
@@ -87,7 +87,7 @@ Scorecard conditions and widget display preferences use **JSON Logic**. This is 
 You use JSON Logic to access analysis results and perform comparisons. For example, to check if an image has no critical vulnerabilities, you would use:
 
 ```json
-{ "==": [{ "var": "results.trivy.critical_count" }, 0] }
+{ "==": [{ "var": "results.cve.critical_count" }, 0] }
 ```
 
 Or, to check the score of a specific section using its normalized name:
@@ -160,8 +160,8 @@ integrations:
         items:
           - label: Security review completed # <1>
           - label: No critical vulnerabilities found
-            show_if: { "==": [{ var: results.trivy.critical_count }, 0] } # <2>
-            check_if: { "==": [{ var: results.trivy.critical_count }, 0] } # <3>
+            show_if: { "==": [{ var: results.cve.critical_count }, 0] } # <2>
+            check_if: { "==": [{ var: results.cve.critical_count }, 0] } # <3>
       - title: 🚀 Compliance checks
         items:
           - label: Image from a trusted registry
@@ -205,7 +205,7 @@ integrations:
     templates:
       - url: "https://github.com/my-org/security-evidence-template"
         directory: "templates/my-evidence" # optional
-        condition: { ">": [{ var: results.trivy.critical_count }, 0] }
+        condition: { ">": [{ var: results.cve.critical_count }, 0] }
 ```
 
 :::warning

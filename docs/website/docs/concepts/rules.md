@@ -13,7 +13,7 @@ Rules are the evaluation heart of RegiS. Each rule defines a specific condition 
 ```mermaid
 flowchart TD
     A(["`**Analyzers**
-    trivy · oci · dockle …`"]) -->|produce| B[(Analysis Report)]
+    cve · oci · dockle …`"]) -->|produce| B[(Analysis Report)]
     B --> C{Rules Engine}
     D(["`**Default Rules**
     built-in per analyzer`"]) --> C
@@ -50,7 +50,7 @@ You can inspect them at any time from the CLI:
 regis rules list
 
 # Show the full definition of a specific rule
-regis rules show trivy cve-count
+regis rules show cve cve-count
 ```
 
 ## Customizing Rules in a Playbook
@@ -64,11 +64,11 @@ Match a default rule by its `provider` and `rule` (slug) to change its level, pa
 ```yaml
 rules:
   # Demote critical CVE rule to a warning
-  - provider: trivy
+  - provider: cve
     rule: fix-available
     level: warning
     messages:
-      fail: "${results.trivy.fixed_count} patchable vulnerabilities found — please fix soon."
+      fail: "${results.cve.fixed_count} patchable vulnerabilities found — please fix soon."
 
   # Disable a rule entirely
   - provider: oci
@@ -89,16 +89,16 @@ Some rules are **templates**: they are designed to be instantiated multiple time
 ```yaml
 rules:
   # Block any critical CVEs
-  - provider: trivy
+  - provider: cve
     rule: cve-count
     options:
       level: critical
       max_count: 0
 
   # Allow up to 10 high-severity CVEs
-  - provider: trivy
+  - provider: cve
     rule: cve-count
-    slug: trivy-high-tolerance # optional: give your instance a custom slug
+    slug: cve-high-tolerance # optional: give your instance a custom slug
     options:
       level: high
       max_count: 10
@@ -107,7 +107,7 @@ rules:
 When no `slug` is provided, the engine generates one automatically from the template name and the `level` option (e.g. `cve-count.critical`).
 
 :::note
-Template rules — such as `trivy/cve-count`, `hadolint/severity-count`, or `dockle/severity-count` — are multi-purpose. Rather than shipping one hard-coded rule per severity, a single template can be instantiated as many times as you need.
+Template rules — such as `cve/cve-count`, `hadolint/severity-count`, or `dockle/severity-count` — are multi-purpose. Rather than shipping one hard-coded rule per severity, a single template can be instantiated as many times as you need.
 :::
 
 ### Adding a Fully Custom Rule

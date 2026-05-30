@@ -16,7 +16,7 @@ tiers:
       ">": [{ var: rules_summary.score }, 50]
 
 rules:
-  - provider: trivy
+  - provider: cve
     rule: cve-count
     slug: cve-critical
     level: critical
@@ -24,7 +24,7 @@ rules:
       level: critical
       max_count: 0
 
-  - provider: trivy
+  - provider: cve
     rule: cve-count
     slug: cve-high
     level: warning
@@ -32,7 +32,7 @@ rules:
       level: high
       max_count: 10
 
-  - provider: trivy
+  - provider: cve
     rule: fix-available
     slug: cve-fixable
     level: warning

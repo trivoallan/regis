@@ -7,7 +7,7 @@
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-**Description:** Software Bill of Materials extracted from a container image using Trivy (CycloneDX).
+**Description:** Software Bill of Materials extracted from a container image using Syft (CycloneDX).
 
 | Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description                                                                    |
 | -------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------ |
@@ -15,6 +15,7 @@
 | + [repository](#repository )                 | No      | string          | No         | -          | The image repository that was analyzed.                                              |
 | + [tag](#tag )                               | No      | string          | No         | -          | The image tag that was analyzed.                                                     |
 | + [has_sbom](#has_sbom )                     | No      | boolean         | No         | -          | True if an SBOM was successfully generated.                                          |
+| + [scanner_version](#scanner_version )       | No      | string          | No         | -          | Version of the syft CLI used.                                                        |
 | + [sbom_format](#sbom_format )               | No      | string          | No         | -          | The format of the generated SBOM (e.g., CycloneDX).                                  |
 | + [sbom_version](#sbom_version )             | No      | string          | No         | -          | Version of the SBOM specification used.                                              |
 | + [total_components](#total_components )     | No      | integer         | No         | -          | Total number of software components found (OS packages, apps, etc.).                 |
@@ -58,7 +59,15 @@ Specific value: `"sbom"`
 
 **Description:** True if an SBOM was successfully generated.
 
-## <a name="sbom_format"></a>5. ![Required](https://img.shields.io/badge/Required-blue) Property `sbom_format`
+## <a name="scanner_version"></a>5. ![Required](https://img.shields.io/badge/Required-blue) Property `scanner_version`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+**Description:** Version of the syft CLI used.
+
+## <a name="sbom_format"></a>6. ![Required](https://img.shields.io/badge/Required-blue) Property `sbom_format`
 
 |          |          |
 | -------- | -------- |
@@ -66,7 +75,7 @@ Specific value: `"sbom"`
 
 **Description:** The format of the generated SBOM (e.g., CycloneDX).
 
-## <a name="sbom_version"></a>6. ![Required](https://img.shields.io/badge/Required-blue) Property `sbom_version`
+## <a name="sbom_version"></a>7. ![Required](https://img.shields.io/badge/Required-blue) Property `sbom_version`
 
 |          |          |
 | -------- | -------- |
@@ -74,7 +83,7 @@ Specific value: `"sbom"`
 
 **Description:** Version of the SBOM specification used.
 
-## <a name="total_components"></a>7. ![Required](https://img.shields.io/badge/Required-blue) Property `total_components`
+## <a name="total_components"></a>8. ![Required](https://img.shields.io/badge/Required-blue) Property `total_components`
 
 |          |           |
 | -------- | --------- |
@@ -86,7 +95,7 @@ Specific value: `"sbom"`
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-## <a name="component_types"></a>8. ![Required](https://img.shields.io/badge/Required-blue) Property `component_types`
+## <a name="component_types"></a>9. ![Required](https://img.shields.io/badge/Required-blue) Property `component_types`
 
 |                           |                                                                                                              |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -99,7 +108,7 @@ Specific value: `"sbom"`
 | -------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
 | - [](#component_types_additionalProperties ) | No      | integer | No         | -          | -                 |
 
-### <a name="component_types_additionalProperties"></a>8.1. Property `additionalProperties`
+### <a name="component_types_additionalProperties"></a>9.1. Property `additionalProperties`
 
 |          |           |
 | -------- | --------- |
@@ -109,7 +118,7 @@ Specific value: `"sbom"`
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-## <a name="total_dependencies"></a>9. ![Required](https://img.shields.io/badge/Required-blue) Property `total_dependencies`
+## <a name="total_dependencies"></a>10. ![Required](https://img.shields.io/badge/Required-blue) Property `total_dependencies`
 
 |          |           |
 | -------- | --------- |
@@ -121,7 +130,7 @@ Specific value: `"sbom"`
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-## <a name="licenses"></a>10. ![Required](https://img.shields.io/badge/Required-blue) Property `licenses`
+## <a name="licenses"></a>11. ![Required](https://img.shields.io/badge/Required-blue) Property `licenses`
 
 |          |                   |
 | -------- | ----------------- |
@@ -141,13 +150,13 @@ Specific value: `"sbom"`
 | --------------------------------- | ----------- |
 | [licenses items](#licenses_items) | -           |
 
-### <a name="licenses_items"></a>10.1. licenses items
+### <a name="licenses_items"></a>11.1. licenses items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-## <a name="copyleft_licenses"></a>11. ![Required](https://img.shields.io/badge/Required-blue) Property `copyleft_licenses`
+## <a name="copyleft_licenses"></a>12. ![Required](https://img.shields.io/badge/Required-blue) Property `copyleft_licenses`
 
 |          |                   |
 | -------- | ----------------- |
@@ -167,13 +176,13 @@ Specific value: `"sbom"`
 | --------------------------------------------------- | ----------- |
 | [copyleft_licenses items](#copyleft_licenses_items) | -           |
 
-### <a name="copyleft_licenses_items"></a>11.1. copyleft_licenses items
+### <a name="copyleft_licenses_items"></a>12.1. copyleft_licenses items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-## <a name="components"></a>12. ![Required](https://img.shields.io/badge/Required-blue) Property `components`
+## <a name="components"></a>13. ![Required](https://img.shields.io/badge/Required-blue) Property `components`
 
 |          |                   |
 | -------- | ----------------- |
@@ -193,7 +202,7 @@ Specific value: `"sbom"`
 | ------------------------------------- | ----------- |
 | [components items](#components_items) | -           |
 
-### <a name="components_items"></a>12.1. components items
+### <a name="components_items"></a>13.1. components items
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -208,7 +217,7 @@ Specific value: `"sbom"`
 | - [purl](#components_items_purl )         | No      | string or null  | No         | -          | Package URL (purl) for standard identification.  |
 | - [licenses](#components_items_licenses ) | No      | array of string | No         | -          | List of licenses associated with this component. |
 
-#### <a name="components_items_name"></a>12.1.1. Property `name`
+#### <a name="components_items_name"></a>13.1.1. Property `name`
 
 |          |          |
 | -------- | -------- |
@@ -216,7 +225,7 @@ Specific value: `"sbom"`
 
 **Description:** Name of the component.
 
-#### <a name="components_items_version"></a>12.1.2. Property `version`
+#### <a name="components_items_version"></a>13.1.2. Property `version`
 
 |          |                  |
 | -------- | ---------------- |
@@ -224,7 +233,7 @@ Specific value: `"sbom"`
 
 **Description:** Installed version of the component.
 
-#### <a name="components_items_type"></a>12.1.3. Property `type`
+#### <a name="components_items_type"></a>13.1.3. Property `type`
 
 |          |          |
 | -------- | -------- |
@@ -232,7 +241,7 @@ Specific value: `"sbom"`
 
 **Description:** Type of component (library, application, etc.).
 
-#### <a name="components_items_purl"></a>12.1.4. Property `purl`
+#### <a name="components_items_purl"></a>13.1.4. Property `purl`
 
 |          |                  |
 | -------- | ---------------- |
@@ -240,7 +249,7 @@ Specific value: `"sbom"`
 
 **Description:** Package URL (purl) for standard identification.
 
-#### <a name="components_items_licenses"></a>12.1.5. Property `licenses`
+#### <a name="components_items_licenses"></a>13.1.5. Property `licenses`
 
 |          |                   |
 | -------- | ----------------- |
@@ -260,11 +269,11 @@ Specific value: `"sbom"`
 | -------------------------------------------------- | ----------- |
 | [licenses items](#components_items_licenses_items) | -           |
 
-##### <a name="components_items_licenses_items"></a>12.1.5.1. licenses items
+##### <a name="components_items_licenses_items"></a>13.1.5.1. licenses items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-30 at 14:08:19 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-30 at 17:57:20 +0200

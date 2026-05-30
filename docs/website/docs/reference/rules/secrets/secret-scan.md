@@ -10,7 +10,7 @@ No secrets or credentials should be embedded in the image.
 
 | Provider | Level    | Tags     |
 | :------- | :------- | :------- |
-| trivy    | Critical | security |
+| secrets  | Critical | security |
 
 ## Parameters
 
@@ -20,16 +20,16 @@ No secrets or credentials should be embedded in the image.
 
 ## Messages
 
-| Type     | Message                                                                            |
-| :------- | :--------------------------------------------------------------------------------- |
-| **Pass** | No secrets detected in the image.                                                  |
-| **Fail** | Trivy detected ${results.trivy.secrets_count} secrets or credentials in the image. |
+| Type     | Message                                                                    |
+| :------- | :------------------------------------------------------------------------- |
+| **Pass** | No secrets detected in the image.                                          |
+| **Fail** | TruffleHog detected ${results.secrets.secrets_count} secrets in the image. |
 
 ## Playbook Example
 
 ```yaml
 rules:
-  - provider: trivy
+  - provider: secrets
     rule: secret-scan
     options:
       max_count: 0
@@ -41,7 +41,7 @@ rules:
 {
   "<=": [
     {
-      "var": "results.trivy.secrets_count"
+      "var": "results.secrets.secrets_count"
     },
     {
       "var": "rule.params.max_count"

@@ -10,7 +10,7 @@ sidebar_position: 1
 
 ### Docker (Recommended)
 
-The easiest way to use `regis` without managing local dependencies is to use the official Docker image. It comes pre-packaged with regctl, Trivy, Hadolint, and Dockle.
+The easiest way to use `regis` without managing local dependencies is to use the official Docker image. It comes pre-packaged with regctl, grype, syft, trufflehog, Hadolint, and Dockle.
 
 ```bash
 docker run --rm trivoallan/regis --help
@@ -25,7 +25,9 @@ The requirements depend on whether you use the Docker image or install the tool 
 - **Core Requirement**:
   - **regctl**: Essential for multi-architecture registry inspection and metadata extraction.
 - **Optional [Analyzers](../concepts/analyzers.md)**:
-  - **Trivy**: Required for vulnerability scanning and SBOM generation.
+  - **grype**: Required for vulnerability (CVE) scanning.
+  - **syft**: Required for SBOM generation.
+  - **trufflehog**: Required for embedded secret detection.
   - **Hadolint**: Required for Dockerfile linting.
   - **Dockle**: Required for container image security linting.
 
