@@ -4,15 +4,16 @@
   "title": "playbook.definition",
   "description": "Schema for regis playbook definition files (YAML or JSON).",
   "type": "object",
-  "required": ["name"],
+  "required": ["schemaVersion", "version", "name"],
   "additionalProperties": false,
   "properties": {
     "schemaVersion": {
-      "type": "integer",
+      "const": 1,
       "description": "Schema version of the playbook format. Must equal 1 for this schema."
     },
     "version": {
       "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
       "description": "SemVer of the playbook bundle (e.g. \"1.2.3\")."
     },
     "name": {
