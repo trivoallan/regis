@@ -351,6 +351,8 @@ Must be one of:
 | Property                                                   | Pattern | Type            | Deprecated | Definition | Title/Description                                                         |
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------- |
 | + [playbook_name](#playbooks_items_playbook_name )         | No      | string          | No         | -          | Identifier of the playbook that was executed.                             |
+| - [playbook_version](#playbooks_items_playbook_version )   | No      | string or null  | No         | -          | SemVer of the playbook that produced this report.                         |
+| - [schema_version](#playbooks_items_schema_version )       | No      | integer or null | No         | -          | schemaVersion of the playbook format that produced this report.           |
 | - [sidebar](#playbooks_items_sidebar )                     | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                            |
 | - [version](#playbooks_items_version )                     | No      | string or null  | No         | -          | Version of regis that generated this report.                              |
 | - [tier](#playbooks_items_tier )                           | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions. |
@@ -372,7 +374,23 @@ Must be one of:
 
 **Description:** Identifier of the playbook that was executed.
 
-#### <a name="playbooks_items_sidebar"></a>9.1.2. Property `sidebar`
+#### <a name="playbooks_items_playbook_version"></a>9.1.2. Property `playbook_version`
+
+|          |                  |
+| -------- | ---------------- |
+| **Type** | `string or null` |
+
+**Description:** SemVer of the playbook that produced this report.
+
+#### <a name="playbooks_items_schema_version"></a>9.1.3. Property `schema_version`
+
+|          |                   |
+| -------- | ----------------- |
+| **Type** | `integer or null` |
+
+**Description:** schemaVersion of the playbook format that produced this report.
+
+#### <a name="playbooks_items_sidebar"></a>9.1.4. Property `sidebar`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -381,7 +399,7 @@ Must be one of:
 
 **Description:** Sidebar navigation metadata for the report UI.
 
-#### <a name="playbooks_items_version"></a>9.1.3. Property `version`
+#### <a name="playbooks_items_version"></a>9.1.5. Property `version`
 
 |          |                  |
 | -------- | ---------------- |
@@ -389,7 +407,7 @@ Must be one of:
 
 **Description:** Version of regis that generated this report.
 
-#### <a name="playbooks_items_tier"></a>9.1.4. Property `tier`
+#### <a name="playbooks_items_tier"></a>9.1.6. Property `tier`
 
 |          |                  |
 | -------- | ---------------- |
@@ -397,7 +415,7 @@ Must be one of:
 
 **Description:** The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.
 
-#### <a name="playbooks_items_badges"></a>9.1.5. Property `badges`
+#### <a name="playbooks_items_badges"></a>9.1.7. Property `badges`
 
 |          |                   |
 | -------- | ----------------- |
@@ -415,7 +433,7 @@ Must be one of:
 | --------------------------------------------- | ----------- |
 | [badges items](#playbooks_items_badges_items) | -           |
 
-##### <a name="playbooks_items_badges_items"></a>9.1.5.1. badges items
+##### <a name="playbooks_items_badges_items"></a>9.1.7.1. badges items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -430,7 +448,7 @@ Must be one of:
 | + [class](#playbooks_items_badges_items_class ) | No      | enum (of string) | No         | -          | Visual style indicator.                            |
 | - [label](#playbooks_items_badges_items_label ) | No      | string           | No         | -          | The full label string (scope or scope: value).     |
 
-###### <a name="playbooks_items_badges_items_slug"></a>9.1.5.1.1. Property `slug`
+###### <a name="playbooks_items_badges_items_slug"></a>9.1.7.1.1. Property `slug`
 
 |          |          |
 | -------- | -------- |
@@ -438,7 +456,7 @@ Must be one of:
 
 **Description:** Unique identifier for the badge.
 
-###### <a name="playbooks_items_badges_items_scope"></a>9.1.5.1.2. Property `scope`
+###### <a name="playbooks_items_badges_items_scope"></a>9.1.7.1.2. Property `scope`
 
 |          |          |
 | -------- | -------- |
@@ -446,7 +464,7 @@ Must be one of:
 
 **Description:** Domain of the badge (e.g., 'security', 'hygiene').
 
-###### <a name="playbooks_items_badges_items_value"></a>9.1.5.1.3. Property `value`
+###### <a name="playbooks_items_badges_items_value"></a>9.1.7.1.3. Property `value`
 
 |          |                  |
 | -------- | ---------------- |
@@ -454,7 +472,7 @@ Must be one of:
 
 **Description:** Display value or grade (e.g., 'A', '95%').
 
-###### <a name="playbooks_items_badges_items_class"></a>9.1.5.1.4. Property `class`
+###### <a name="playbooks_items_badges_items_class"></a>9.1.7.1.4. Property `class`
 
 |          |                    |
 | -------- | ------------------ |
@@ -468,7 +486,7 @@ Must be one of:
 * "error"
 * "information"
 
-###### <a name="playbooks_items_badges_items_label"></a>9.1.5.1.5. Property `label`
+###### <a name="playbooks_items_badges_items_label"></a>9.1.7.1.5. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -476,7 +494,7 @@ Must be one of:
 
 **Description:** The full label string (scope or scope: value).
 
-#### <a name="playbooks_items_rules"></a>9.1.6. Property `rules`
+#### <a name="playbooks_items_rules"></a>9.1.8. Property `rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -494,7 +512,7 @@ Must be one of:
 | ------------------------------------------- | ----------- |
 | [rules items](#playbooks_items_rules_items) | -           |
 
-##### <a name="playbooks_items_rules_items"></a>9.1.6.1. rules items
+##### <a name="playbooks_items_rules_items"></a>9.1.8.1. rules items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -512,7 +530,7 @@ Must be one of:
 | + [message](#playbooks_items_rules_items_message )         | No      | string           | No         | -          | Reasoning or details for the rule result.             |
 | - [analyzers](#playbooks_items_rules_items_analyzers )     | No      | array of string  | No         | -          | List of analyzers that contributed data to this rule. |
 
-###### <a name="playbooks_items_rules_items_slug"></a>9.1.6.1.1. Property `slug`
+###### <a name="playbooks_items_rules_items_slug"></a>9.1.8.1.1. Property `slug`
 
 |          |          |
 | -------- | -------- |
@@ -520,7 +538,7 @@ Must be one of:
 
 **Description:** Unique identifier for the rule.
 
-###### <a name="playbooks_items_rules_items_description"></a>9.1.6.1.2. Property `description`
+###### <a name="playbooks_items_rules_items_description"></a>9.1.8.1.2. Property `description`
 
 |          |          |
 | -------- | -------- |
@@ -528,7 +546,7 @@ Must be one of:
 
 **Description:** Human-readable name of the rule.
 
-###### <a name="playbooks_items_rules_items_level"></a>9.1.6.1.3. Property `level`
+###### <a name="playbooks_items_rules_items_level"></a>9.1.8.1.3. Property `level`
 
 |          |          |
 | -------- | -------- |
@@ -536,7 +554,7 @@ Must be one of:
 
 **Description:** Priority level (Gold, Silver, Bronze).
 
-###### <a name="playbooks_items_rules_items_tags"></a>9.1.6.1.4. Property `tags`
+###### <a name="playbooks_items_rules_items_tags"></a>9.1.8.1.4. Property `tags`
 
 |          |                   |
 | -------- | ----------------- |
@@ -556,13 +574,13 @@ Must be one of:
 | ----------------------------------------------------- | ----------- |
 | [tags items](#playbooks_items_rules_items_tags_items) | -           |
 
-###### <a name="playbooks_items_rules_items_tags_items"></a>9.1.6.1.4.1. tags items
+###### <a name="playbooks_items_rules_items_tags_items"></a>9.1.8.1.4.1. tags items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_rules_items_passed"></a>9.1.6.1.5. Property `passed`
+###### <a name="playbooks_items_rules_items_passed"></a>9.1.8.1.5. Property `passed`
 
 |          |           |
 | -------- | --------- |
@@ -570,7 +588,7 @@ Must be one of:
 
 **Description:** Whether the rule criteria were met.
 
-###### <a name="playbooks_items_rules_items_status"></a>9.1.6.1.6. Property `status`
+###### <a name="playbooks_items_rules_items_status"></a>9.1.8.1.6. Property `status`
 
 |          |                    |
 | -------- | ------------------ |
@@ -583,7 +601,7 @@ Must be one of:
 * "failed"
 * "incomplete"
 
-###### <a name="playbooks_items_rules_items_message"></a>9.1.6.1.7. Property `message`
+###### <a name="playbooks_items_rules_items_message"></a>9.1.8.1.7. Property `message`
 
 |          |          |
 | -------- | -------- |
@@ -591,7 +609,7 @@ Must be one of:
 
 **Description:** Reasoning or details for the rule result.
 
-###### <a name="playbooks_items_rules_items_analyzers"></a>9.1.6.1.8. Property `analyzers`
+###### <a name="playbooks_items_rules_items_analyzers"></a>9.1.8.1.8. Property `analyzers`
 
 |          |                   |
 | -------- | ----------------- |
@@ -611,13 +629,13 @@ Must be one of:
 | --------------------------------------------------------------- | ----------- |
 | [analyzers items](#playbooks_items_rules_items_analyzers_items) | -           |
 
-###### <a name="playbooks_items_rules_items_analyzers_items"></a>9.1.6.1.8.1. analyzers items
+###### <a name="playbooks_items_rules_items_analyzers_items"></a>9.1.8.1.8.1. analyzers items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-#### <a name="playbooks_items_rules_summary"></a>9.1.7. Property `rules_summary`
+#### <a name="playbooks_items_rules_summary"></a>9.1.9. Property `rules_summary`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -631,7 +649,7 @@ Must be one of:
 | + [passed](#playbooks_items_rules_summary_passed ) | No      | array of string | No         | -          | -                 |
 | - [by_tag](#playbooks_items_rules_summary_by_tag ) | No      | object          | No         | -          | -                 |
 
-##### <a name="playbooks_items_rules_summary_score"></a>9.1.7.1. Property `score`
+##### <a name="playbooks_items_rules_summary_score"></a>9.1.9.1. Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -642,7 +660,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-##### <a name="playbooks_items_rules_summary_total"></a>9.1.7.2. Property `total`
+##### <a name="playbooks_items_rules_summary_total"></a>9.1.9.2. Property `total`
 
 |          |                   |
 | -------- | ----------------- |
@@ -660,13 +678,13 @@ Must be one of:
 | --------------------------------------------------------- | ----------- |
 | [total items](#playbooks_items_rules_summary_total_items) | -           |
 
-###### <a name="playbooks_items_rules_summary_total_items"></a>9.1.7.2.1. total items
+###### <a name="playbooks_items_rules_summary_total_items"></a>9.1.9.2.1. total items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-##### <a name="playbooks_items_rules_summary_passed"></a>9.1.7.3. Property `passed`
+##### <a name="playbooks_items_rules_summary_passed"></a>9.1.9.3. Property `passed`
 
 |          |                   |
 | -------- | ----------------- |
@@ -684,13 +702,13 @@ Must be one of:
 | ----------------------------------------------------------- | ----------- |
 | [passed items](#playbooks_items_rules_summary_passed_items) | -           |
 
-###### <a name="playbooks_items_rules_summary_passed_items"></a>9.1.7.3.1. passed items
+###### <a name="playbooks_items_rules_summary_passed_items"></a>9.1.9.3.1. passed items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-##### <a name="playbooks_items_rules_summary_by_tag"></a>9.1.7.4. Property `by_tag`
+##### <a name="playbooks_items_rules_summary_by_tag"></a>9.1.9.4. Property `by_tag`
 
 |                           |                                                                                                                                   |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
@@ -701,7 +719,7 @@ Must be one of:
 | ----------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#playbooks_items_rules_summary_by_tag_additionalProperties ) | No      | object | No         | -          | -                 |
 
-###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties"></a>9.1.7.4.1. Property `additionalProperties`
+###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties"></a>9.1.9.4.1. Property `additionalProperties`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -714,7 +732,7 @@ Must be one of:
 | + [passed_rules](#playbooks_items_rules_summary_by_tag_additionalProperties_passed_rules ) | No      | array of string | No         | -          | -                 |
 | + [score](#playbooks_items_rules_summary_by_tag_additionalProperties_score )               | No      | integer         | No         | -          | -                 |
 
-###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_rules"></a>9.1.7.4.1.1. Property `rules`
+###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_rules"></a>9.1.9.4.1.1. Property `rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -732,13 +750,13 @@ Must be one of:
 | ------------------------------------------------------------------------------------- | ----------- |
 | [rules items](#playbooks_items_rules_summary_by_tag_additionalProperties_rules_items) | -           |
 
-###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_rules_items"></a>9.1.7.4.1.1.1. rules items
+###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_rules_items"></a>9.1.9.4.1.1.1. rules items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_passed_rules"></a>9.1.7.4.1.2. Property `passed_rules`
+###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_passed_rules"></a>9.1.9.4.1.2. Property `passed_rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -756,13 +774,13 @@ Must be one of:
 | --------------------------------------------------------------------------------------------------- | ----------- |
 | [passed_rules items](#playbooks_items_rules_summary_by_tag_additionalProperties_passed_rules_items) | -           |
 
-###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_passed_rules_items"></a>9.1.7.4.1.2.1. passed_rules items
+###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_passed_rules_items"></a>9.1.9.4.1.2.1. passed_rules items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_score"></a>9.1.7.4.1.3. Property `score`
+###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_score"></a>9.1.9.4.1.3. Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -773,7 +791,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-#### <a name="playbooks_items_score"></a>9.1.8. Property `score`
+#### <a name="playbooks_items_score"></a>9.1.10. Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -786,7 +804,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-#### <a name="playbooks_items_total_scorecards"></a>9.1.9. Property `total_scorecards`
+#### <a name="playbooks_items_total_scorecards"></a>9.1.11. Property `total_scorecards`
 
 |          |           |
 | -------- | --------- |
@@ -798,7 +816,7 @@ Must be one of:
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-#### <a name="playbooks_items_passed_scorecards"></a>9.1.10. Property `passed_scorecards`
+#### <a name="playbooks_items_passed_scorecards"></a>9.1.12. Property `passed_scorecards`
 
 |          |           |
 | -------- | --------- |
@@ -810,7 +828,7 @@ Must be one of:
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-#### <a name="playbooks_items_links"></a>9.1.11. Property `links`
+#### <a name="playbooks_items_links"></a>9.1.13. Property `links`
 
 |          |                   |
 | -------- | ----------------- |
@@ -830,7 +848,7 @@ Must be one of:
 | ------------------------------------------- | ----------- |
 | [links items](#playbooks_items_links_items) | -           |
 
-##### <a name="playbooks_items_links_items"></a>9.1.11.1. links items
+##### <a name="playbooks_items_links_items"></a>9.1.13.1. links items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -842,7 +860,7 @@ Must be one of:
 | + [label](#playbooks_items_links_items_label ) | No      | string | No         | -          | Display label for the link. |
 | + [url](#playbooks_items_links_items_url )     | No      | string | No         | -          | Target URL.                 |
 
-###### <a name="playbooks_items_links_items_label"></a>9.1.11.1.1. Property `label`
+###### <a name="playbooks_items_links_items_label"></a>9.1.13.1.1. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -850,7 +868,7 @@ Must be one of:
 
 **Description:** Display label for the link.
 
-###### <a name="playbooks_items_links_items_url"></a>9.1.11.1.2. Property `url`
+###### <a name="playbooks_items_links_items_url"></a>9.1.13.1.2. Property `url`
 
 |          |          |
 | -------- | -------- |
@@ -858,7 +876,7 @@ Must be one of:
 
 **Description:** Target URL.
 
-#### <a name="playbooks_items_pages"></a>9.1.12. Property `pages`
+#### <a name="playbooks_items_pages"></a>9.1.14. Property `pages`
 
 |          |                   |
 | -------- | ----------------- |
@@ -876,7 +894,7 @@ Must be one of:
 | ------------------------------------------- | ----------- |
 | [pages items](#playbooks_items_pages_items) | -           |
 
-##### <a name="playbooks_items_pages_items"></a>9.1.12.1. pages items
+##### <a name="playbooks_items_pages_items"></a>9.1.14.1. pages items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -892,7 +910,7 @@ Must be one of:
 | + [passed_scorecards](#playbooks_items_pages_items_passed_scorecards ) | No      | integer         | No         | -          | Passed scorecards on this page.       |
 | + [sections](#playbooks_items_pages_items_sections )                   | No      | array of object | No         | -          | -                                     |
 
-###### <a name="playbooks_items_pages_items_title"></a>9.1.12.1.1. Property `title`
+###### <a name="playbooks_items_pages_items_title"></a>9.1.14.1.1. Property `title`
 
 |          |          |
 | -------- | -------- |
@@ -900,7 +918,7 @@ Must be one of:
 
 **Description:** Page title.
 
-###### <a name="playbooks_items_pages_items_slug"></a>9.1.12.1.2. Property `slug`
+###### <a name="playbooks_items_pages_items_slug"></a>9.1.14.1.2. Property `slug`
 
 |          |                  |
 | -------- | ---------------- |
@@ -908,7 +926,7 @@ Must be one of:
 
 **Description:** URL-friendly identifier for the page.
 
-###### <a name="playbooks_items_pages_items_score"></a>9.1.12.1.3. Property `score`
+###### <a name="playbooks_items_pages_items_score"></a>9.1.14.1.3. Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -921,7 +939,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-###### <a name="playbooks_items_pages_items_total_scorecards"></a>9.1.12.1.4. Property `total_scorecards`
+###### <a name="playbooks_items_pages_items_total_scorecards"></a>9.1.14.1.4. Property `total_scorecards`
 
 |          |           |
 | -------- | --------- |
@@ -933,7 +951,7 @@ Must be one of:
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-###### <a name="playbooks_items_pages_items_passed_scorecards"></a>9.1.12.1.5. Property `passed_scorecards`
+###### <a name="playbooks_items_pages_items_passed_scorecards"></a>9.1.14.1.5. Property `passed_scorecards`
 
 |          |           |
 | -------- | --------- |
@@ -945,7 +963,7 @@ Must be one of:
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-###### <a name="playbooks_items_pages_items_sections"></a>9.1.12.1.6. Property `sections`
+###### <a name="playbooks_items_pages_items_sections"></a>9.1.14.1.6. Property `sections`
 
 |          |                   |
 | -------- | ----------------- |
@@ -963,7 +981,7 @@ Must be one of:
 | ------------------------------------------------------------- | ----------- |
 | [sections items](#playbooks_items_pages_items_sections_items) | -           |
 
-###### <a name="playbooks_items_pages_items_sections_items"></a>9.1.12.1.6.1. sections items
+###### <a name="playbooks_items_pages_items_sections_items"></a>9.1.14.1.6.1. sections items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -982,7 +1000,7 @@ Must be one of:
 | + [scorecards](#playbooks_items_pages_items_sections_items_scorecards )               | No      | array of object | No         | -          | -                                  |
 | - [display](#playbooks_items_pages_items_sections_items_display )                     | No      | object          | No         | -          | -                                  |
 
-###### <a name="playbooks_items_pages_items_sections_items_name"></a>9.1.12.1.6.1.1. Property `name`
+###### <a name="playbooks_items_pages_items_sections_items_name"></a>9.1.14.1.6.1.1. Property `name`
 
 |          |          |
 | -------- | -------- |
@@ -990,7 +1008,7 @@ Must be one of:
 
 **Description:** Section name.
 
-###### <a name="playbooks_items_pages_items_sections_items_hint"></a>9.1.12.1.6.1.2. Property `hint`
+###### <a name="playbooks_items_pages_items_sections_items_hint"></a>9.1.14.1.6.1.2. Property `hint`
 
 |          |          |
 | -------- | -------- |
@@ -998,7 +1016,7 @@ Must be one of:
 
 **Description:** Informative text for the section.
 
-###### <a name="playbooks_items_pages_items_sections_items_score"></a>9.1.12.1.6.1.3. Property `score`
+###### <a name="playbooks_items_pages_items_sections_items_score"></a>9.1.14.1.6.1.3. Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -1011,7 +1029,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-###### <a name="playbooks_items_pages_items_sections_items_total_scorecards"></a>9.1.12.1.6.1.4. Property `total_scorecards`
+###### <a name="playbooks_items_pages_items_sections_items_total_scorecards"></a>9.1.14.1.6.1.4. Property `total_scorecards`
 
 |          |           |
 | -------- | --------- |
@@ -1023,7 +1041,7 @@ Must be one of:
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-###### <a name="playbooks_items_pages_items_sections_items_passed_scorecards"></a>9.1.12.1.6.1.5. Property `passed_scorecards`
+###### <a name="playbooks_items_pages_items_sections_items_passed_scorecards"></a>9.1.14.1.6.1.5. Property `passed_scorecards`
 
 |          |           |
 | -------- | --------- |
@@ -1035,7 +1053,7 @@ Must be one of:
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-###### <a name="playbooks_items_pages_items_sections_items_levels_summary"></a>9.1.12.1.6.1.6. Property `levels_summary`
+###### <a name="playbooks_items_pages_items_sections_items_levels_summary"></a>9.1.14.1.6.1.6. Property `levels_summary`
 
 |                           |                                                                                                                                                        |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -1046,7 +1064,7 @@ Must be one of:
 | -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#playbooks_items_pages_items_sections_items_levels_summary_additionalProperties ) | No      | object | No         | -          | -                 |
 
-###### <a name="playbooks_items_pages_items_sections_items_levels_summary_additionalProperties"></a>9.1.12.1.6.1.6.1. Property `additionalProperties`
+###### <a name="playbooks_items_pages_items_sections_items_levels_summary_additionalProperties"></a>9.1.14.1.6.1.6.1. Property `additionalProperties`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -1059,7 +1077,7 @@ Must be one of:
 | + [passed](#playbooks_items_pages_items_sections_items_levels_summary_additionalProperties_passed )         | No      | integer | No         | -          | -                 |
 | + [percentage](#playbooks_items_pages_items_sections_items_levels_summary_additionalProperties_percentage ) | No      | integer | No         | -          | -                 |
 
-###### <a name="playbooks_items_pages_items_sections_items_levels_summary_additionalProperties_total"></a>9.1.12.1.6.1.6.1.1. Property `total`
+###### <a name="playbooks_items_pages_items_sections_items_levels_summary_additionalProperties_total"></a>9.1.14.1.6.1.6.1.1. Property `total`
 
 |          |           |
 | -------- | --------- |
@@ -1069,7 +1087,7 @@ Must be one of:
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-###### <a name="playbooks_items_pages_items_sections_items_levels_summary_additionalProperties_passed"></a>9.1.12.1.6.1.6.1.2. Property `passed`
+###### <a name="playbooks_items_pages_items_sections_items_levels_summary_additionalProperties_passed"></a>9.1.14.1.6.1.6.1.2. Property `passed`
 
 |          |           |
 | -------- | --------- |
@@ -1079,7 +1097,7 @@ Must be one of:
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-###### <a name="playbooks_items_pages_items_sections_items_levels_summary_additionalProperties_percentage"></a>9.1.12.1.6.1.6.1.3. Property `percentage`
+###### <a name="playbooks_items_pages_items_sections_items_levels_summary_additionalProperties_percentage"></a>9.1.14.1.6.1.6.1.3. Property `percentage`
 
 |          |           |
 | -------- | --------- |
@@ -1090,7 +1108,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-###### <a name="playbooks_items_pages_items_sections_items_tags_summary"></a>9.1.12.1.6.1.7. Property `tags_summary`
+###### <a name="playbooks_items_pages_items_sections_items_tags_summary"></a>9.1.14.1.6.1.7. Property `tags_summary`
 
 |                           |                                                                                                                                                      |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1101,7 +1119,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#playbooks_items_pages_items_sections_items_tags_summary_additionalProperties ) | No      | object | No         | -          | -                 |
 
-###### <a name="playbooks_items_pages_items_sections_items_tags_summary_additionalProperties"></a>9.1.12.1.6.1.7.1. Property `additionalProperties`
+###### <a name="playbooks_items_pages_items_sections_items_tags_summary_additionalProperties"></a>9.1.14.1.6.1.7.1. Property `additionalProperties`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -1114,7 +1132,7 @@ Must be one of:
 | + [passed](#playbooks_items_pages_items_sections_items_tags_summary_additionalProperties_passed )         | No      | integer | No         | -          | -                 |
 | + [percentage](#playbooks_items_pages_items_sections_items_tags_summary_additionalProperties_percentage ) | No      | integer | No         | -          | -                 |
 
-###### <a name="playbooks_items_pages_items_sections_items_tags_summary_additionalProperties_total"></a>9.1.12.1.6.1.7.1.1. Property `total`
+###### <a name="playbooks_items_pages_items_sections_items_tags_summary_additionalProperties_total"></a>9.1.14.1.6.1.7.1.1. Property `total`
 
 |          |           |
 | -------- | --------- |
@@ -1124,7 +1142,7 @@ Must be one of:
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-###### <a name="playbooks_items_pages_items_sections_items_tags_summary_additionalProperties_passed"></a>9.1.12.1.6.1.7.1.2. Property `passed`
+###### <a name="playbooks_items_pages_items_sections_items_tags_summary_additionalProperties_passed"></a>9.1.14.1.6.1.7.1.2. Property `passed`
 
 |          |           |
 | -------- | --------- |
@@ -1134,7 +1152,7 @@ Must be one of:
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
-###### <a name="playbooks_items_pages_items_sections_items_tags_summary_additionalProperties_percentage"></a>9.1.12.1.6.1.7.1.3. Property `percentage`
+###### <a name="playbooks_items_pages_items_sections_items_tags_summary_additionalProperties_percentage"></a>9.1.14.1.6.1.7.1.3. Property `percentage`
 
 |          |           |
 | -------- | --------- |
@@ -1145,7 +1163,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards"></a>9.1.12.1.6.1.8. Property `scorecards`
+###### <a name="playbooks_items_pages_items_sections_items_scorecards"></a>9.1.14.1.6.1.8. Property `scorecards`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1163,7 +1181,7 @@ Must be one of:
 | -------------------------------------------------------------------------------- | ----------- |
 | [scorecards items](#playbooks_items_pages_items_sections_items_scorecards_items) | -           |
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards_items"></a>9.1.12.1.6.1.8.1. scorecards items
+###### <a name="playbooks_items_pages_items_sections_items_scorecards_items"></a>9.1.14.1.6.1.8.1. scorecards items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -1182,7 +1200,7 @@ Must be one of:
 | - [condition](#playbooks_items_pages_items_sections_items_scorecards_items_condition )     | No      | string           | No         | -          | The JsonLogic expression evaluated.        |
 | - [details](#playbooks_items_pages_items_sections_items_scorecards_items_details )         | No      | string           | No         | -          | Detailed explanation of calculated result. |
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_name"></a>9.1.12.1.6.1.8.1.1. Property `name`
+###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_name"></a>9.1.14.1.6.1.8.1.1. Property `name`
 
 |          |          |
 | -------- | -------- |
@@ -1190,7 +1208,7 @@ Must be one of:
 
 **Description:** Unique scorecard identifier.
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_description"></a>9.1.12.1.6.1.8.1.2. Property `description`
+###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_description"></a>9.1.14.1.6.1.8.1.2. Property `description`
 
 |          |          |
 | -------- | -------- |
@@ -1198,7 +1216,7 @@ Must be one of:
 
 **Description:** Display description.
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_level"></a>9.1.12.1.6.1.8.1.3. Property `level`
+###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_level"></a>9.1.14.1.6.1.8.1.3. Property `level`
 
 |          |                  |
 | -------- | ---------------- |
@@ -1206,7 +1224,7 @@ Must be one of:
 
 **Description:** Assigned severity level name.
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_tags"></a>9.1.12.1.6.1.8.1.4. Property `tags`
+###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_tags"></a>9.1.14.1.6.1.8.1.4. Property `tags`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1226,13 +1244,13 @@ Must be one of:
 | ------------------------------------------------------------------------------------- | ----------- |
 | [tags items](#playbooks_items_pages_items_sections_items_scorecards_items_tags_items) | -           |
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_tags_items"></a>9.1.12.1.6.1.8.1.4.1. tags items
+###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_tags_items"></a>9.1.14.1.6.1.8.1.4.1. tags items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_analyzers"></a>9.1.12.1.6.1.8.1.5. Property `analyzers`
+###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_analyzers"></a>9.1.14.1.6.1.8.1.5. Property `analyzers`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1252,13 +1270,13 @@ Must be one of:
 | ----------------------------------------------------------------------------------------------- | ----------- |
 | [analyzers items](#playbooks_items_pages_items_sections_items_scorecards_items_analyzers_items) | -           |
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_analyzers_items"></a>9.1.12.1.6.1.8.1.5.1. analyzers items
+###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_analyzers_items"></a>9.1.14.1.6.1.8.1.5.1. analyzers items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_passed"></a>9.1.12.1.6.1.8.1.6. Property `passed`
+###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_passed"></a>9.1.14.1.6.1.8.1.6. Property `passed`
 
 |          |           |
 | -------- | --------- |
@@ -1266,7 +1284,7 @@ Must be one of:
 
 **Description:** True if condition was met.
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_status"></a>9.1.12.1.6.1.8.1.7. Property `status`
+###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_status"></a>9.1.14.1.6.1.8.1.7. Property `status`
 
 |          |                    |
 | -------- | ------------------ |
@@ -1279,7 +1297,7 @@ Must be one of:
 * "failed"
 * "incomplete"
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_condition"></a>9.1.12.1.6.1.8.1.8. Property `condition`
+###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_condition"></a>9.1.14.1.6.1.8.1.8. Property `condition`
 
 |          |          |
 | -------- | -------- |
@@ -1287,7 +1305,7 @@ Must be one of:
 
 **Description:** The JsonLogic expression evaluated.
 
-###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_details"></a>9.1.12.1.6.1.8.1.9. Property `details`
+###### <a name="playbooks_items_pages_items_sections_items_scorecards_items_details"></a>9.1.14.1.6.1.8.1.9. Property `details`
 
 |          |          |
 | -------- | -------- |
@@ -1295,7 +1313,7 @@ Must be one of:
 
 **Description:** Detailed explanation of calculated result.
 
-###### <a name="playbooks_items_pages_items_sections_items_display"></a>9.1.12.1.6.1.9. Property `display`
+###### <a name="playbooks_items_pages_items_sections_items_display"></a>9.1.14.1.6.1.9. Property `display`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -1307,7 +1325,7 @@ Must be one of:
 | - [analyzers](#playbooks_items_pages_items_sections_items_display_analyzers ) | No      | array of string | No         | -          | -                 |
 | - [widgets](#playbooks_items_pages_items_sections_items_display_widgets )     | No      | array of object | No         | -          | -                 |
 
-###### <a name="playbooks_items_pages_items_sections_items_display_analyzers"></a>9.1.12.1.6.1.9.1. Property `analyzers`
+###### <a name="playbooks_items_pages_items_sections_items_display_analyzers"></a>9.1.14.1.6.1.9.1. Property `analyzers`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1325,13 +1343,13 @@ Must be one of:
 | -------------------------------------------------------------------------------------- | ----------- |
 | [analyzers items](#playbooks_items_pages_items_sections_items_display_analyzers_items) | -           |
 
-###### <a name="playbooks_items_pages_items_sections_items_display_analyzers_items"></a>9.1.12.1.6.1.9.1.1. analyzers items
+###### <a name="playbooks_items_pages_items_sections_items_display_analyzers_items"></a>9.1.14.1.6.1.9.1.1. analyzers items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_pages_items_sections_items_display_widgets"></a>9.1.12.1.6.1.9.2. Property `widgets`
+###### <a name="playbooks_items_pages_items_sections_items_display_widgets"></a>9.1.14.1.6.1.9.2. Property `widgets`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1349,7 +1367,7 @@ Must be one of:
 | ---------------------------------------------------------------------------------- | ----------- |
 | [widgets items](#playbooks_items_pages_items_sections_items_display_widgets_items) | -           |
 
-###### <a name="playbooks_items_pages_items_sections_items_display_widgets_items"></a>9.1.12.1.6.1.9.2.1. widgets items
+###### <a name="playbooks_items_pages_items_sections_items_display_widgets_items"></a>9.1.14.1.6.1.9.2.1. widgets items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -1363,7 +1381,7 @@ Must be one of:
 | - [icon](#playbooks_items_pages_items_sections_items_display_widgets_items_icon )                     | No      | string | No         | -          | Icon identifier or emoji.                  |
 | - [resolved_value](#playbooks_items_pages_items_sections_items_display_widgets_items_resolved_value ) | No      | object | No         | -          | The actual value fetched after resolution. |
 
-###### <a name="playbooks_items_pages_items_sections_items_display_widgets_items_label"></a>9.1.12.1.6.1.9.2.1.1. Property `label`
+###### <a name="playbooks_items_pages_items_sections_items_display_widgets_items_label"></a>9.1.14.1.6.1.9.2.1.1. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -1371,7 +1389,7 @@ Must be one of:
 
 **Description:** Widget display label.
 
-###### <a name="playbooks_items_pages_items_sections_items_display_widgets_items_value"></a>9.1.12.1.6.1.9.2.1.2. Property `value`
+###### <a name="playbooks_items_pages_items_sections_items_display_widgets_items_value"></a>9.1.14.1.6.1.9.2.1.2. Property `value`
 
 |          |          |
 | -------- | -------- |
@@ -1379,7 +1397,7 @@ Must be one of:
 
 **Description:** Data resolution path.
 
-###### <a name="playbooks_items_pages_items_sections_items_display_widgets_items_icon"></a>9.1.12.1.6.1.9.2.1.3. Property `icon`
+###### <a name="playbooks_items_pages_items_sections_items_display_widgets_items_icon"></a>9.1.14.1.6.1.9.2.1.3. Property `icon`
 
 |          |          |
 | -------- | -------- |
@@ -1387,7 +1405,7 @@ Must be one of:
 
 **Description:** Icon identifier or emoji.
 
-###### <a name="playbooks_items_pages_items_sections_items_display_widgets_items_resolved_value"></a>9.1.12.1.6.1.9.2.1.4. Property `resolved_value`
+###### <a name="playbooks_items_pages_items_sections_items_display_widgets_items_resolved_value"></a>9.1.14.1.6.1.9.2.1.4. Property `resolved_value`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -1396,7 +1414,7 @@ Must be one of:
 
 **Description:** The actual value fetched after resolution.
 
-#### <a name="playbooks_items_mr_templates"></a>9.1.13. Property `mr_templates`
+#### <a name="playbooks_items_mr_templates"></a>9.1.15. Property `mr_templates`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1416,7 +1434,7 @@ Must be one of:
 | --------------------------------------------------------- | ----------- |
 | [mr_templates items](#playbooks_items_mr_templates_items) | -           |
 
-##### <a name="playbooks_items_mr_templates_items"></a>9.1.13.1. mr_templates items
+##### <a name="playbooks_items_mr_templates_items"></a>9.1.15.1. mr_templates items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -1428,13 +1446,13 @@ Must be one of:
 | + [url](#playbooks_items_mr_templates_items_url )             | No      | string | No         | -          | -                 |
 | - [directory](#playbooks_items_mr_templates_items_directory ) | No      | string | No         | -          | -                 |
 
-###### <a name="playbooks_items_mr_templates_items_url"></a>9.1.13.1.1. Property `url`
+###### <a name="playbooks_items_mr_templates_items_url"></a>9.1.15.1.1. Property `url`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_mr_templates_items_directory"></a>9.1.13.1.2. Property `directory`
+###### <a name="playbooks_items_mr_templates_items_directory"></a>9.1.15.1.2. Property `directory`
 
 |          |          |
 | -------- | -------- |
@@ -1760,4 +1778,4 @@ Must be one of:
 | **Maximum**  | &le; 100 |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-31 at 13:32:29 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-31 at 15:05:13 +0000
