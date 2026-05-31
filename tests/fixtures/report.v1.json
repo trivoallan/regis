@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "version": "0.33.0",
+  "snapshot_date": "2026-05-31",
+  "tier": "Gold",
+  "request": {
+    "url": "registry-1.docker.io/library/nginx:1.27",
+    "registry": "registry-1.docker.io",
+    "repository": "library/nginx",
+    "tag": "1.27",
+    "digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "analyzers": ["cve", "oci"],
+    "timestamp": "2026-05-31T12:00:00+00:00"
+  },
+  "results": {
+    "oci": {
+      "analyzer": "oci",
+      "repository": "library/nginx",
+      "tag": "1.27",
+      "platforms": [{ "architecture": "amd64", "os": "linux" }]
+    },
+    "cve": {
+      "analyzer": "cve",
+      "repository": "library/nginx",
+      "tag": "1.27",
+      "scanner_version": "0.74.1",
+      "vulnerability_count": 17,
+      "critical_count": 0,
+      "high_count": 1,
+      "medium_count": 4,
+      "low_count": 12,
+      "negligible_count": 0,
+      "unknown_count": 0,
+      "fixed_count": 5,
+      "targets": []
+    }
+  },
+  "rules": [
+    {
+      "slug": "no-critical-cve",
+      "description": "No critical CVEs",
+      "level": "Gold",
+      "tags": ["security"],
+      "passed": true,
+      "status": "passed",
+      "message": "0 critical vulnerabilities found",
+      "analyzers": ["cve"]
+    }
+  ],
+  "rules_summary": {
+    "score": 100,
+    "total": ["no-critical-cve"],
+    "passed": ["no-critical-cve"],
+    "by_tag": {
+      "security": {
+        "rules": ["no-critical-cve"],
+        "passed_rules": ["no-critical-cve"],
+        "score": 100
+      }
+    }
+  }
+}

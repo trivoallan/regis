@@ -83,3 +83,33 @@ class TestEnsureSchemaVersion:
 
         assert result is report
         assert report["schemaVersion"] == 7
+
+
+class TestContractFixture:
+    def test_fixture_validates_against_real_validator(self):
+        import json
+        from pathlib import Path
+
+        from regis.utils.report import validate_report
+
+        fixture = Path(__file__).parent / "fixtures" / "report.v1.json"
+        report = json.loads(fixture.read_text(encoding="utf-8"))
+
+        assert report["schemaVersion"] == 1
+        validate_report(report)  # must not raise
+
+    def test_analyzer_blobs_match_their_schemas(self):
+        import json
+        from pathlib import Path
+
+        import jsonschema
+
+        fixtures = Path(__file__).parent / "fixtures" / "report.v1.json"
+        report = json.loads(fixtures.read_text(encoding="utf-8"))
+
+        schema_dir = importlib.resources.files("regis.schemas.analyzer")
+        for slug in ("cve", "oci"):
+            schema = json.loads(
+                schema_dir.joinpath(f"{slug}.schema.json").read_text(encoding="utf-8")
+            )
+            jsonschema.validate(instance=report["results"][slug], schema=schema)
