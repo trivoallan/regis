@@ -1,0 +1,64 @@
+name: CI / Tools Manifest
+
+on:
+  pull_request:
+    paths:
+      - regis/tools/manifest.yaml
+      - regis/schemas/tools-manifest.schema.json
+      - .github/workflows/ci-tools-manifest.yml
+  schedule:
+    - cron: 0 6 * * 1 # Monday 06:00 UTC — weekly drift check
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - run: pip install pyyaml jsonschema
+
+      - name: Validate manifest against schema
+        run: |
+          python - <<'PY'
+          import json, yaml, jsonschema
+          from pathlib import Path
+          s = json.loads(Path('regis/schemas/tools-manifest.schema.json').read_text())
+          d = yaml.safe_load(Path('regis/tools/manifest.yaml').read_text())
+          jsonschema.validate(d, s)
+          print('schema OK')
+          PY
+
+      - name: Recompute and verify sha256s
+        run: |
+          python - <<'PY'
+          import hashlib, urllib.request, yaml, sys
+          from pathlib import Path
+          tools = yaml.safe_load(Path('regis/tools/manifest.yaml').read_text())['tools']
+          bad = []
+          for name, t in tools.items():
+              for arch in ('amd64', 'arm64'):
+                  arch_alt = (t.get('arch_alt') or {}).get(arch, arch)
+                  url = (t['url_template']
+                         .replace('{version}', t['version'])
+                         .replace('{arch_alt}', arch_alt)
+                         .replace('{arch}', arch))
+                  print('GET', url)
+                  data = urllib.request.urlopen(url, timeout=120).read()
+                  got = hashlib.sha256(data).hexdigest()
+                  want = t['sha256'][arch]
+                  if got != want:
+                      bad.append((name, arch, want, got))
+          if bad:
+              for n, a, w, g in bad:
+                  print(f'MISMATCH {n}/{a}: manifest={w} actual={g}', file=sys.stderr)
+              sys.exit(1)
+          print('All sha256s OK')
+          PY
