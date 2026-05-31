@@ -8,6 +8,16 @@ from regis.analyzers.base import AnalyzerError
 from regis.analyzers.hadolint import HadolintAnalyzer
 
 
+@pytest.fixture(autouse=True)
+def _stub_ensure_tool(monkeypatch):
+    """Pin ensure_tool to the bare 'hadolint' name so analyzer tests don't trigger
+    real fetcher downloads on CI hosts where the binary is not on PATH."""
+    monkeypatch.setattr(
+        "regis.analyzers.hadolint.ensure_tool",
+        lambda _name: "hadolint",
+    )
+
+
 class TestHadolintAnalyzer:
     @pytest.fixture
     def analyzer(self):

@@ -1,0 +1,60 @@
+name: CI / Tools Fetch Smoke
+
+on:
+  pull_request:
+    paths:
+      - regis/tools/**
+      - regis/utils/process.py
+      - regis/utils/grype.py
+      - regis/utils/syft.py
+      - regis/utils/trufflehog.py
+      - regis/utils/regctl.py
+      - regis/analyzers/hadolint.py
+      - regis/analyzers/dockle.py
+      - Dockerfile
+      - .github/workflows/ci-tools-fetch-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+
+      - name: Build slim image
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
+        with:
+          context: .
+          load: true
+          tags: regis:slim-smoke
+          build-args: |
+            VARIANT=slim
+          cache-from: type=gha,scope=slim-smoke
+          cache-to: type=gha,mode=max,scope=slim-smoke
+
+      - name: Cache empty -> check
+        run: |
+          docker run --rm -e REGIS_OFFLINE=1 regis:slim-smoke bootstrap tools --check
+
+      - name: Cold fetch all tools
+        id: fetch
+        run: |
+          mkdir -p "$PWD/.regis-cache"
+          chmod 777 "$PWD/.regis-cache"   # container uid 1001 needs write access on bind mount
+          start=$(date +%s)
+          docker run --rm -v "$PWD/.regis-cache:/home/regis/.cache/regis" \
+            regis:slim-smoke bootstrap tools
+          echo "duration=$(( $(date +%s) - start ))" >> "$GITHUB_OUTPUT"
+
+      - name: Annotate cold-fetch duration
+        run: echo "::notice::Cold fetch took ${{ steps.fetch.outputs.duration }}s"
+
+      - name: Analyze alpine:3.20 with warm cache
+        run: |
+          docker run --rm -v "$PWD/.regis-cache:/home/regis/.cache/regis" \
+            regis:slim-smoke analyze docker.io/library/alpine:3.20

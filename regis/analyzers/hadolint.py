@@ -7,8 +7,11 @@ import logging
 import subprocess
 from typing import Any
 
+import click
+
 from regis.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis.registry.client import RegistryClient
+from regis.utils.process import ensure_tool
 from regis.utils.regctl import image_ref, run_regctl
 
 logger = logging.getLogger(__name__)
@@ -113,7 +116,11 @@ class HadolintAnalyzer(BaseAnalyzer):
         logger.debug("Pseudo-Dockerfile for %s:\n%s", ref, pseudo_dockerfile)
 
         # 3. Pipe to Hadolint
-        cmd_hadolint = ["hadolint", "-f", "json", "-"]
+        try:
+            hadolint_bin = ensure_tool("hadolint")
+        except click.ClickException as exc:
+            raise AnalyzerError(str(exc)) from exc
+        cmd_hadolint = [hadolint_bin, "-f", "json", "-"]
         try:
             res_hadolint = subprocess.run(
                 cmd_hadolint,

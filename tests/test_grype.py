@@ -3,25 +3,30 @@
 import subprocess
 from unittest.mock import MagicMock, patch
 
+import click
 import pytest
 
 from regis.analyzers.base import AnalyzerError
 from regis.utils.grype import run_grype
 
+
+def _missing(_name):
+    raise click.ClickException("grype not found")
+
+
 _SAMPLE = '{"descriptor": {"name": "grype", "version": "0.112.0"}, "matches": []}'
 
 
 class TestRunGrype:
-    @patch("regis.utils.grype.shutil.which")
-    def test_not_found(self, mock_which):
-        mock_which.return_value = None
-        with pytest.raises(AnalyzerError, match="grype executable not found"):
-            run_grype("alpine:3.20")
+    def test_not_found(self):
+        with patch("regis.utils.grype.ensure_tool", _missing):
+            with pytest.raises(AnalyzerError, match="not found"):
+                run_grype("alpine:3.20")
 
-    @patch("regis.utils.grype.shutil.which")
+    @patch("regis.utils.grype.ensure_tool")
     @patch("regis.utils.grype.subprocess.run")
-    def test_success_and_args(self, mock_run, mock_which):
-        mock_which.return_value = "/usr/local/bin/grype"
+    def test_success_and_args(self, mock_run, mock_ensure):
+        mock_ensure.return_value = "/usr/local/bin/grype"
         mock_run.return_value = MagicMock(stdout=_SAMPLE)
 
         result = run_grype("alpine:3.20")
@@ -36,10 +41,10 @@ class TestRunGrype:
         assert kwargs["check"] is True
         assert kwargs["env"] is not None
 
-    @patch("regis.utils.grype.shutil.which")
+    @patch("regis.utils.grype.ensure_tool")
     @patch("regis.utils.grype.subprocess.run")
-    def test_creds_and_platform(self, mock_run, mock_which):
-        mock_which.return_value = "/usr/local/bin/grype"
+    def test_creds_and_platform(self, mock_run, mock_ensure):
+        mock_ensure.return_value = "/usr/local/bin/grype"
         mock_run.return_value = MagicMock(stdout=_SAMPLE)
 
         run_grype("alpine:3.20", username="u", password="p", platform="linux/arm64")
@@ -51,10 +56,10 @@ class TestRunGrype:
         assert env["SYFT_REGISTRY_AUTH_USERNAME"] == "u"
         assert env["SYFT_REGISTRY_AUTH_PASSWORD"] == "p"
 
-    @patch("regis.utils.grype.shutil.which")
+    @patch("regis.utils.grype.ensure_tool")
     @patch("regis.utils.grype.subprocess.run")
-    def test_creds_from_regis_env_fallback(self, mock_run, mock_which, monkeypatch):
-        mock_which.return_value = "/usr/local/bin/grype"
+    def test_creds_from_regis_env_fallback(self, mock_run, mock_ensure, monkeypatch):
+        mock_ensure.return_value = "/usr/local/bin/grype"
         mock_run.return_value = MagicMock(stdout=_SAMPLE)
         monkeypatch.setenv("REGIS_USERNAME", "envuser")
         monkeypatch.setenv("REGIS_PASSWORD", "envpass")
@@ -65,20 +70,20 @@ class TestRunGrype:
         assert env["SYFT_REGISTRY_AUTH_USERNAME"] == "envuser"
         assert env["SYFT_REGISTRY_AUTH_PASSWORD"] == "envpass"
 
-    @patch("regis.utils.grype.shutil.which")
+    @patch("regis.utils.grype.ensure_tool")
     @patch("regis.utils.grype.subprocess.run")
-    def test_called_process_error(self, mock_run, mock_which):
-        mock_which.return_value = "/usr/local/bin/grype"
+    def test_called_process_error(self, mock_run, mock_ensure):
+        mock_ensure.return_value = "/usr/local/bin/grype"
         mock_run.side_effect = subprocess.CalledProcessError(
             1, ["grype"], stderr="boom"
         )
         with pytest.raises(AnalyzerError, match="grype failed: boom"):
             run_grype("alpine:3.20")
 
-    @patch("regis.utils.grype.shutil.which")
+    @patch("regis.utils.grype.ensure_tool")
     @patch("regis.utils.grype.subprocess.run")
-    def test_invalid_json(self, mock_run, mock_which):
-        mock_which.return_value = "/usr/local/bin/grype"
+    def test_invalid_json(self, mock_run, mock_ensure):
+        mock_ensure.return_value = "/usr/local/bin/grype"
         mock_run.return_value = MagicMock(stdout="not-json")
         with pytest.raises(AnalyzerError, match="grype produced invalid"):
             run_grype("alpine:3.20")

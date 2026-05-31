@@ -35,6 +35,11 @@ jobs:
       attestations: write
       id-token: write
 
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [slim, full]
+
     steps:
       - name: Generate GitHub App token
         id: generate-token
@@ -63,11 +68,17 @@ jobs:
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # For the full variant, suffix every tag (including :latest) with
+          # -full so :latest stays bound to the slim image. Slim publishes the
+          # plain tags plus a :latest-slim alias on tag pushes.
+          flavor: |
+            suffix=${{ matrix.variant == 'full' && '-full' || '' }},onlatest=true
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha,format=short
+            type=raw,value=latest-slim,enable=${{ matrix.variant == 'slim' && github.ref_type == 'tag' }}
 
       - name: Build and push Docker image
         id: build
@@ -77,11 +88,14 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          build-args: |
+            VARIANT=${{ matrix.variant }}
+          cache-from: type=gha,scope=${{ matrix.variant }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.variant }}
 
       - name: Measure published image size
         id: size
+        if: matrix.variant == 'slim'
         run: |
           ref="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}"
           docker pull --quiet "$ref"
@@ -91,6 +105,7 @@ jobs:
           echo "mb=${mb}" >> "$GITHUB_OUTPUT"
 
       - name: Regenerate image-size badge
+        if: matrix.variant == 'slim'
         run: |
           mb=${{ steps.size.outputs.mb }}
           if   [ "$mb" -lt 250 ]; then color=brightgreen
@@ -102,6 +117,7 @@ jobs:
             -o image-size-badge.svg
 
       - name: Create pull request for image-size badge update
+        if: matrix.variant == 'slim'
         continue-on-error: true
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
@@ -137,7 +153,7 @@ jobs:
         if: github.ref_type == 'tag'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: sbom-${{ github.ref_name }}
+          name: sbom-${{ github.ref_name }}-${{ matrix.variant }}
           path: |
             sbom.cyclonedx.json
             sbom.spdx.json

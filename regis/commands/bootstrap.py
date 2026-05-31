@@ -9,6 +9,7 @@ from pathlib import Path
 
 import click
 
+from regis.tools.fetcher import ToolFetcher, ToolFetchError
 from regis.utils.process import require_tool, run_cmd
 
 _NODE_INSTALL_HINT = """\
@@ -457,3 +458,29 @@ def bootstrap_archive(
     click.echo(
         f"  Add reports: regis analyze <IMAGE> --archive {project_path}/static/archive"
     )
+
+
+@bootstrap.command(name="tools")
+@click.option("--tool", "tool_name", default=None, help="Fetch a single tool.")
+@click.option("--check", is_flag=True, help="Show status without downloading.")
+def bootstrap_tools(tool_name: str | None, check: bool) -> None:
+    """Fetch (or check) tool binaries declared in the manifest."""
+    fetcher = ToolFetcher()
+    if check:
+        for status in fetcher.status():
+            if status.cached and status.sha256_ok:
+                mark = "✓"
+            elif status.cached and status.sha256_ok is False:
+                mark = "✗"
+            else:
+                mark = "⏩"
+            path = str(status.path) if status.path else "(not cached)"
+            click.echo(f"  {mark} {status.name:<12} {status.version:<10} {path}")
+        return
+    names = [tool_name] if tool_name else None
+    try:
+        result = fetcher.fetch_all(names=names)
+    except ToolFetchError as exc:
+        raise click.ClickException(str(exc)) from exc
+    for name, fetched_path in result.items():
+        click.echo(f"  ✓ {name:<12} -> {fetched_path}")

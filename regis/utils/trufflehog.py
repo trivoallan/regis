@@ -22,7 +22,10 @@ import subprocess  # nosec B404
 import tempfile
 from typing import Any
 
+import click
+
 from regis.analyzers.base import AnalyzerError
+from regis.utils.process import ensure_tool
 
 logger = logging.getLogger(__name__)
 
@@ -77,9 +80,10 @@ def run_trufflehog(
         AnalyzerError: if trufflehog is missing, times out, or emits a line
             that is not valid JSON.
     """
-    th_path = shutil.which("trufflehog")
-    if not th_path:
-        raise AnalyzerError("trufflehog executable not found in PATH")
+    try:
+        th_path = ensure_tool("trufflehog")
+    except click.ClickException as exc:
+        raise AnalyzerError(str(exc)) from exc
 
     env = os.environ.copy()
     user = username or env.get("REGIS_USERNAME")

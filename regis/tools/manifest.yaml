@@ -1,0 +1,71 @@
+schema_version: 1
+tools:
+  grype:
+    version: 0.112.0
+    url_template: "https://github.com/anchore/grype/releases/download/v{version}/grype_{version}_linux_{arch}.tar.gz"
+    archive: tar.gz
+    member: grype
+    cosign:
+      issuer: https://token.actions.githubusercontent.com
+      identity_regex: ^https://github.com/anchore/grype/.+
+    sha256:
+      amd64: d515f53bd5ee4930e144c6ea14a2659084763c336a1833b723db0b05080fcaf5
+      arm64: f74a68dcaefe1fdc0f2c0f25fe1a474c4104024730ebf6a238d0e189632dd3a5
+
+  syft:
+    version: 1.44.0
+    url_template: "https://github.com/anchore/syft/releases/download/v{version}/syft_{version}_linux_{arch}.tar.gz"
+    archive: tar.gz
+    member: syft
+    cosign:
+      issuer: https://token.actions.githubusercontent.com
+      identity_regex: ^https://github.com/anchore/syft/.+
+    sha256:
+      amd64: 23d4e25a32026ab27351c3c044a40bcc51311c00b8bb990aa204bec4b0bb19cd
+      arm64: ce828dc43bc44271f77c5e3fbc35efce71890cd83ba8dd39d6cfc8e2a031b2f2
+
+  trufflehog:
+    version: 3.95.3
+    url_template: "https://github.com/trufflesecurity/trufflehog/releases/download/v{version}/trufflehog_{version}_linux_{arch}.tar.gz"
+    archive: tar.gz
+    member: trufflehog
+    cosign:
+      issuer: https://token.actions.githubusercontent.com
+      identity_regex: ^https://github.com/trufflesecurity/trufflehog/.+
+    sha256:
+      amd64: 5979fee05660b7c0e75000bcbc147212f516f51bb6869dfde09740df5c4121eb
+      arm64: be1ed8580be050dd0a7be5615ca5361e82478ba0843b9ca2204c74a694f43a90
+
+  regctl:
+    version: 0.11.5
+    url_template: "https://github.com/regclient/regclient/releases/download/v{version}/regctl-linux-{arch}"
+    archive: none
+    cosign: null
+    sha256:
+      amd64: c93aa7638749f5aaac1a8e01787321889c78f0101809bb2880343478d0ba0467
+      arm64: c4cf231e74cda685f1599f3d866b02b03c572e54b79ec8b062f32070b0ba4587
+
+  dockle:
+    version: 0.4.15
+    url_template: "https://github.com/goodwithtech/dockle/releases/download/v{version}/dockle_{version}_Linux-{arch_alt}.tar.gz"
+    archive: tar.gz
+    member: dockle
+    arch_alt:
+      amd64: 64bit
+      arm64: ARM64
+    cosign: null
+    sha256:
+      amd64: 28d20c2f148781f7320802624a0decc46826f19cdd1d6756893a85042a2ab68e
+      arm64: 2f035cf78cdd8c5ecca06c53a25551bb8dd8698f7774adcfb2fd2f8b45300a14
+
+  hadolint:
+    version: 2.12.0
+    url_template: "https://github.com/hadolint/hadolint/releases/download/v{version}/hadolint-Linux-{arch_alt}"
+    archive: none
+    arch_alt:
+      amd64: x86_64
+      arm64: arm64
+    cosign: null
+    sha256:
+      amd64: 56de6d5e5ec427e17b74fa48d51271c7fc0d61244bf5c90e828aab8362d55010
+      arm64: 5798551bf19f33951881f15eb238f90aef023f11e7ec7e9f4c37961cb87c5df6

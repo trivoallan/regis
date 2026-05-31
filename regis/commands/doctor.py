@@ -7,6 +7,8 @@ import subprocess  # nosec B404
 
 import click
 
+from regis.tools.fetcher import ToolFetcher
+
 # Tools required by regis analyzers, in display order.
 _REQUIRED_TOOLS: list[tuple[str, str]] = [
     ("grype", "version"),
@@ -16,6 +18,26 @@ _REQUIRED_TOOLS: list[tuple[str, str]] = [
     ("hadolint", "--version"),
     ("dockle", "--version"),
 ]
+
+
+def _print_tools_section() -> bool:
+    """Print a manifest-backed Tools section. Returns False on sha256 mismatch."""
+    click.echo("Tools (manifest):")
+    fetcher = ToolFetcher()
+    all_ok = True
+    for status in fetcher.status():
+        if status.cached and status.sha256_ok:
+            mark = "✓"
+            detail = f"cached @ {status.path}"
+        elif status.cached and status.sha256_ok is False:
+            mark = "✗"
+            detail = f"cache present but sha256 MISMATCH @ {status.path}"
+            all_ok = False
+        else:
+            mark = "⏩"
+            detail = "not cached (will fetch on first use)"
+        click.echo(f"  {mark} {status.name:<12} {status.version:<10} {detail}")
+    return all_ok
 
 
 def _get_version(path: str, version_flag: str) -> str | None:
@@ -48,5 +70,7 @@ def doctor() -> None:
             click.echo(f"  ✗ {tool:<12} not found in PATH", err=False)
             all_ok = False
 
-    if not all_ok:
+    tools_ok = _print_tools_section()
+
+    if not all_ok or not tools_ok:
         raise SystemExit(1)

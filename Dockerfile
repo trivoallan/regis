@@ -1,9 +1,10 @@
 # syntax=docker/dockerfile:1.7
+ARG VARIANT=slim
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 1: frontend-builder — builds the Docusaurus dashboard
 # ──────────────────────────────────────────────────────────────────────────────
-FROM node:25-slim AS frontend-builder
+FROM node:25-alpine AS frontend-builder
 RUN npm install -g pnpm@10.10.0
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
@@ -15,18 +16,22 @@ RUN pnpm run build
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 2: python-builder — compiles Python deps into a venv
 # ──────────────────────────────────────────────────────────────────────────────
-FROM python:3.14-slim AS python-builder
+# Alpine 3.11 builder paired with Alpine 3.11 runtime — matching musl libc and
+# CPython ABIs so the venv's symlinked interpreter resolves cleanly at runtime.
+# regis requires python>=3.10 per pyproject.toml.
+FROM python:3.11-alpine AS python-builder
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DEBIAN_FRONTEND=noninteractive \
     PIP_NO_CACHE_DIR=1
 
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN python -m venv /opt/venv
+# build-base: gcc/musl-dev for any source-wheel fallback
+# linux-headers, libffi-dev, openssl-dev: required by cffi/cryptography-style
+# C extensions if PyPI has no musl wheel for the version we resolve.
+# Symlinked venv (no --copies): runtime base ships the matching python3.11
+# interpreter, so the symlink resolves and we save ~10 MB vs copying.
+# hadolint ignore=DL3018
+RUN apk add --no-cache build-base linux-headers libffi-dev openssl-dev && \
+    python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /src
@@ -39,7 +44,8 @@ COPY --from=frontend-builder /app/apps/dashboard/build regis/dashboard_assets
 # `pip install 'regis[server]'` for `regis dashboard serve`.
 # --no-compile skips .pyc generation (PYTHONDONTWRITEBYTECODE keeps runtime
 # from regenerating them); prune any residual bytecode caches afterwards.
-RUN VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml) && \
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
+RUN VERSION=$(awk -F'"' '/^version = / { print $2; exit }' pyproject.toml) && \
     SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" pip install --no-compile . && \
     find /opt/venv -type d -name __pycache__ -prune -exec rm -rf {} + && \
     find /opt/venv -type f -name '*.pyc' -delete
@@ -126,12 +132,18 @@ RUN case "$TARGETARCH" in \
 USER curl_user
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Stage 4: final — minimal runtime image
+# Stage 4a: final-slim — minimal runtime with only regctl baked
 # ──────────────────────────────────────────────────────────────────────────────
-FROM python:3.14-slim AS final
+# Runtime base: python:3.11-alpine (round-3 task 14 — Alpine pivot).
+# Alpine's ~50 MB base + musl libc beats both python:3.11-slim (~165 MB) and
+# distroless (~80 MB but with libpython copy overhead) for this use case.
+# PyYAML, MarkupSafe, and other C-extension deps have musl wheels on PyPI;
+# the Anchore Go scanners are CGO-free and run cleanly on musl; hadolint
+# (Haskell) needs Alpine's gcompat glibc shim in the full variant.
+FROM python:3.11-alpine AS final-slim
 
 LABEL org.opencontainers.image.title="regis" \
-      org.opencontainers.image.description="Regis — Registry Scores. Container Security & Policy-as-Code Orchestration." \
+      org.opencontainers.image.description="Regis — Slim variant (scanners lazy-loaded at first use)." \
       org.opencontainers.image.url="https://github.com/trivoallan" \
       org.opencontainers.image.source="https://github.com/trivoallan/regis" \
       org.opencontainers.image.documentation="https://trivoallan.github.io/regis/" \
@@ -141,41 +153,85 @@ LABEL org.opencontainers.image.title="regis" \
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DEBIAN_FRONTEND=noninteractive \
-    PATH="/opt/venv/bin:$PATH"
+    PATH="/opt/venv/bin:/usr/local/bin:$PATH" \
+    PYTHONPATH=/opt/venv/lib/python3.11/site-packages \
+    REGIS_VARIANT=slim \
+    HOME=/home/regis
 
-# Minimal runtime dependencies only — no curl, no gnupg, no build-essential.
-# skopeo is intentionally absent: registry inspection now uses the regctl
-# static binary (copied from the tools-fetcher stage below), which removes the
-# skopeo apt layer and its transitive dependencies.
-# git is intentionally absent: it is only used by the host-only
-# `bootstrap archive --repo` flow (guarded by require_tool). jq has no
-# runtime caller (the only --jq usage is gh's built-in flag).
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-      ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+# ca-certificates for HTTPS to registries / GitHub releases (regis bootstrap
+# tools / lazy ensure_tool fetcher uses urllib from stdlib, which honours
+# /etc/ssl/certs).
+# hadolint ignore=DL3018
+RUN apk add --no-cache ca-certificates
 
-# Non-root user
-RUN groupadd -g 1001 regis && \
-    useradd -u 1001 -g regis -m -d /home/regis regis
-ENV HOME=/home/regis
+# Non-root user (uid 1001) — matches the previous image's runtime identity so
+# bind-mounts and CI cache permissions don't break.
+RUN addgroup -g 1001 regis && \
+    adduser -D -u 1001 -G regis -h /home/regis regis
 
-# Copy artifacts from build stages
 COPY --from=python-builder /opt/venv /opt/venv
-COPY --from=tools-fetcher /tools/grype /usr/local/bin/grype
-COPY --from=tools-fetcher /tools/syft /usr/local/bin/syft
-COPY --from=tools-fetcher /tools/trufflehog /usr/local/bin/trufflehog
-COPY --from=tools-fetcher /tools/hadolint /usr/local/bin/hadolint
-COPY --from=tools-fetcher /tools/dockle /usr/local/bin/dockle
 COPY --from=tools-fetcher /tools/regctl /usr/local/bin/regctl
 
 WORKDIR /home/regis
 USER regis
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD regis list || exit 1
-
+    CMD ["regis", "list"]
 ENTRYPOINT ["regis"]
 CMD ["--help"]
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Stage 4b: final-full — minimal runtime with all scanners baked
+# ──────────────────────────────────────────────────────────────────────────────
+FROM python:3.11-alpine AS final-full
+
+LABEL org.opencontainers.image.title="regis" \
+      org.opencontainers.image.description="Regis — Full variant (all scanners baked)." \
+      org.opencontainers.image.url="https://github.com/trivoallan" \
+      org.opencontainers.image.source="https://github.com/trivoallan/regis" \
+      org.opencontainers.image.documentation="https://trivoallan.github.io/regis/" \
+      org.opencontainers.image.vendor="trivoallan" \
+      org.opencontainers.image.authors="trivoallan" \
+      org.opencontainers.image.licenses="MIT"
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/opt/venv/bin:/usr/local/bin:$PATH" \
+    PYTHONPATH=/opt/venv/lib/python3.11/site-packages \
+    REGIS_VARIANT=full \
+    HOME=/home/regis
+
+# ca-certificates: HTTPS to registries.
+# gcompat: glibc shim for Alpine — hadolint is a Haskell-compiled binary
+# that depends on glibc's dynamic loader; gcompat provides the shim so it
+# can run on musl. Adds ~500 KB but is required for hadolint to start.
+# hadolint ignore=DL3018
+RUN apk add --no-cache ca-certificates gcompat
+
+RUN addgroup -g 1001 regis && \
+    adduser -D -u 1001 -G regis -h /home/regis regis
+
+COPY --from=python-builder /opt/venv /opt/venv
+COPY --from=tools-fetcher /tools/grype      /usr/local/bin/grype
+COPY --from=tools-fetcher /tools/syft       /usr/local/bin/syft
+COPY --from=tools-fetcher /tools/trufflehog /usr/local/bin/trufflehog
+COPY --from=tools-fetcher /tools/hadolint   /usr/local/bin/hadolint
+COPY --from=tools-fetcher /tools/dockle     /usr/local/bin/dockle
+COPY --from=tools-fetcher /tools/regctl     /usr/local/bin/regctl
+
+WORKDIR /home/regis
+USER regis
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD ["regis", "list"]
+ENTRYPOINT ["regis"]
+CMD ["--help"]
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Final selector — picks final-slim or final-full based on VARIANT build-arg.
+# DL3006/CKV_DOCKER_7 are suppressed: `final-${VARIANT}` resolves to a local
+# build stage (final-slim or final-full above), not an external image, so the
+# "pin the tag" advice does not apply.
+# ──────────────────────────────────────────────────────────────────────────────
+# trunk-ignore(checkov/CKV_DOCKER_7,hadolint/DL3006)
+FROM final-${VARIANT} AS final

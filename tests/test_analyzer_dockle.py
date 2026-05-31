@@ -7,6 +7,16 @@ from regis.analyzers.base import AnalyzerError
 from regis.analyzers.dockle import DockleAnalyzer
 
 
+@pytest.fixture(autouse=True)
+def _stub_ensure_tool(monkeypatch):
+    """Pin ensure_tool to the bare 'dockle' name so analyzer tests don't trigger
+    real fetcher downloads on CI hosts where the binary is not on PATH."""
+    monkeypatch.setattr(
+        "regis.analyzers.dockle.ensure_tool",
+        lambda _name: "dockle",
+    )
+
+
 class TestDockleAnalyzer:
     @pytest.fixture
     def analyzer(self):
