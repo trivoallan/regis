@@ -9,21 +9,45 @@
 
 **Description:** Schema for regis playbook definition files (YAML or JSON).
 
-| Property                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                        |
-| -------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| + [name](#name )                 | No      | string          | No         | -          | Display name of the playbook.                                                                                                            |
-| - [description](#description )   | No      | string          | No         | -          | Human-readable description of what this playbook evaluates.                                                                              |
-| - [slug](#slug )                 | No      | string          | No         | -          | Short identifier used for HTML report filename generation.                                                                               |
-| - [links](#links )               | No      | array of object | No         | -          | Optional custom links to display as actions for this playbook.                                                                           |
-| - [pages](#pages )               | No      | array           | No         | -          | Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus report viewer. Use \`rules\` instead. |
-| - [sections](#sections )         | No      | array           | No         | -          | Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus report viewer. Use \`rules\` instead.          |
-| - [sidebar](#sidebar )           | No      | object          | No         | -          | Deprecated: Sidebar navigation for the legacy Jinja2 renderer.                                                                           |
-| - [integrations](#integrations ) | No      | object          | No         | -          | Optional third-party platform integrations (e.g. GitLab, GitHub).                                                                        |
-| - [rules](#rules )               | No      | array of object | No         | -          | Custom rule overrides or template instantiations.                                                                                        |
-| - [tiers](#tiers )               | No      | array of object | No         | -          | Compliance tier thresholds. Each tier is awarded when its JsonLogic condition evaluates to true, evaluated in order.                     |
-| - [badges](#badges )             | No      | array of object | No         | -          | Dynamic status badges displayed in the report header. Each badge is conditionally rendered based on a JsonLogic expression.              |
+| Property                           | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                        |
+| ---------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| + [schemaVersion](#schemaVersion ) | No      | const           | No         | -          | Schema version of the playbook format. Must equal 1 for this schema.                                                                     |
+| + [version](#version )             | No      | string          | No         | -          | SemVer of the playbook bundle (e.g. "1.2.3").                                                                                            |
+| + [name](#name )                   | No      | string          | No         | -          | Display name of the playbook.                                                                                                            |
+| - [description](#description )     | No      | string          | No         | -          | Human-readable description of what this playbook evaluates.                                                                              |
+| - [slug](#slug )                   | No      | string          | No         | -          | Short identifier used for HTML report filename generation.                                                                               |
+| - [links](#links )                 | No      | array of object | No         | -          | Optional custom links to display as actions for this playbook.                                                                           |
+| - [pages](#pages )                 | No      | array           | No         | -          | Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus report viewer. Use \`rules\` instead. |
+| - [sections](#sections )           | No      | array           | No         | -          | Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus report viewer. Use \`rules\` instead.          |
+| - [sidebar](#sidebar )             | No      | object          | No         | -          | Deprecated: Sidebar navigation for the legacy Jinja2 renderer.                                                                           |
+| - [integrations](#integrations )   | No      | object          | No         | -          | Optional third-party platform integrations (e.g. GitLab, GitHub).                                                                        |
+| - [rules](#rules )                 | No      | array of object | No         | -          | Custom rule overrides or template instantiations.                                                                                        |
+| - [tiers](#tiers )                 | No      | array of object | No         | -          | Compliance tier thresholds. Each tier is awarded when its JsonLogic condition evaluates to true, evaluated in order.                     |
+| - [badges](#badges )               | No      | array of object | No         | -          | Dynamic status badges displayed in the report header. Each badge is conditionally rendered based on a JsonLogic expression.              |
 
-## <a name="name"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `name`
+## <a name="schemaVersion"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `schemaVersion`
+
+|          |         |
+| -------- | ------- |
+| **Type** | `const` |
+
+**Description:** Schema version of the playbook format. Must equal 1 for this schema.
+
+Specific value: `1`
+
+## <a name="version"></a>2. ![Required](https://img.shields.io/badge/Required-blue) Property `version`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+**Description:** SemVer of the playbook bundle (e.g. "1.2.3").
+
+| Restrictions                      |                                                                                                                                                                                      |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Must match regular expression** | ```^(0\|[1-9]\d*)\.(0\|[1-9]\d*)\.(0\|[1-9]\d*)$``` [Test](https://regex101.com/?regex=%5E%280%7C%5B1-9%5D%5Cd%2A%29%5C.%280%7C%5B1-9%5D%5Cd%2A%29%5C.%280%7C%5B1-9%5D%5Cd%2A%29%24) |
+
+## <a name="name"></a>3. ![Required](https://img.shields.io/badge/Required-blue) Property `name`
 
 |          |          |
 | -------- | -------- |
@@ -31,7 +55,7 @@
 
 **Description:** Display name of the playbook.
 
-## <a name="description"></a>2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `description`
+## <a name="description"></a>4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `description`
 
 |          |          |
 | -------- | -------- |
@@ -39,7 +63,7 @@
 
 **Description:** Human-readable description of what this playbook evaluates.
 
-## <a name="slug"></a>3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `slug`
+## <a name="slug"></a>5. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `slug`
 
 |          |          |
 | -------- | -------- |
@@ -47,7 +71,7 @@
 
 **Description:** Short identifier used for HTML report filename generation.
 
-## <a name="links"></a>4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `links`
+## <a name="links"></a>6. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `links`
 
 |          |                   |
 | -------- | ----------------- |
@@ -67,20 +91,20 @@
 | ------------------------------- | ----------- |
 | [links items](#links_items)     | -           |
 
-### <a name="links_items"></a>4.1. links items
+### <a name="links_items"></a>6.1. links items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                               | Pattern | Type                                           | Deprecated | Definition               | Title/Description                                                         |
-| -------------------------------------- | ------- | ---------------------------------------------- | ---------- | ------------------------ | ------------------------------------------------------------------------- |
-| + [label](#links_items_label )         | No      | string                                         | No         | -                        | Display label for the link.                                               |
-| + [url](#links_items_url )             | No      | string                                         | No         | -                        | URL template which can use {metadata[key]} placeholders or Jinja2 syntax. |
-| - [condition](#links_items_condition ) | No      | object, array, string, number, boolean or null | No         | In jsonlogic.schema.json | jsonlogic                                                                 |
+| Property                               | Pattern | Type                                           | Deprecated | Definition                  | Title/Description                                                         |
+| -------------------------------------- | ------- | ---------------------------------------------- | ---------- | --------------------------- | ------------------------------------------------------------------------- |
+| + [label](#links_items_label )         | No      | string                                         | No         | -                           | Display label for the link.                                               |
+| + [url](#links_items_url )             | No      | string                                         | No         | -                           | URL template which can use {metadata[key]} placeholders or Jinja2 syntax. |
+| - [condition](#links_items_condition ) | No      | object, array, string, number, boolean or null | No         | In ../jsonlogic.schema.json | jsonlogic                                                                 |
 
-#### <a name="links_items_label"></a>4.1.1. Property `label`
+#### <a name="links_items_label"></a>6.1.1. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -88,7 +112,7 @@
 
 **Description:** Display label for the link.
 
-#### <a name="links_items_url"></a>4.1.2. Property `url`
+#### <a name="links_items_url"></a>6.1.2. Property `url`
 
 |          |          |
 | -------- | -------- |
@@ -96,18 +120,18 @@
 
 **Description:** URL template which can use {metadata[key]} placeholders or Jinja2 syntax.
 
-#### <a name="links_items_condition"></a>4.1.3. Property `condition`
+#### <a name="links_items_condition"></a>6.1.3. Property `condition`
 
 **Title:** jsonlogic
 
 |                |                                                  |
 | -------------- | ------------------------------------------------ |
 | **Type**       | `object, array, string, number, boolean or null` |
-| **Defined in** | jsonlogic.schema.json                            |
+| **Defined in** | ../jsonlogic.schema.json                         |
 
 **Description:** Optional JsonLogic expression to determine if the link should be displayed.
 
-## <a name="pages"></a>5. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `pages`
+## <a name="pages"></a>7. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `pages`
 
 |          |         |
 | -------- | ------- |
@@ -127,7 +151,7 @@
 | ------------------------------- | ------------------------------------ |
 | [page](#pages_items)            | A playbook page containing sections. |
 
-### <a name="pages_items"></a>5.1. page
+### <a name="pages_items"></a>7.1. page
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -143,7 +167,7 @@
 | - [slug](#pages_items_slug )         | No      | string | No         | -          | Short identifier used for HTML report filename generation. If not provided, it falls back to the playbook slug. |
 | + [sections](#pages_items_sections ) | No      | array  | No         | -          | List of playbook sections.                                                                                      |
 
-#### <a name="pages_items_title"></a>5.1.1. Property `title`
+#### <a name="pages_items_title"></a>7.1.1. Property `title`
 
 |          |          |
 | -------- | -------- |
@@ -151,7 +175,7 @@
 
 **Description:** Display name of the page.
 
-#### <a name="pages_items_slug"></a>5.1.2. Property `slug`
+#### <a name="pages_items_slug"></a>7.1.2. Property `slug`
 
 |          |          |
 | -------- | -------- |
@@ -159,7 +183,7 @@
 
 **Description:** Short identifier used for HTML report filename generation. If not provided, it falls back to the playbook slug.
 
-#### <a name="pages_items_sections"></a>5.1.3. Property `sections`
+#### <a name="pages_items_sections"></a>7.1.3. Property `sections`
 
 |          |         |
 | -------- | ------- |
@@ -179,7 +203,7 @@
 | -------------------------------------- | ----------------------------------------------------------------------------------- |
 | [section](#pages_items_sections_items) | A playbook section containing scorecards, optional levels, and display preferences. |
 
-##### <a name="pages_items_sections_items"></a>5.1.3.1. section
+##### <a name="pages_items_sections_items"></a>7.1.3.1. section
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -199,7 +223,7 @@
 | - [widgets](#pages_items_sections_items_widgets )       | No      | array  | No         | -                  | KPI and Template widgets displayed in the section.                                                                    |
 | - [condition](#pages_items_sections_items_condition )   | No      | object | No         | -                  | Optional jsonLogic expression to conditionally display this section. If it evaluates to falsy, the section is hidden. |
 
-###### <a name="pages_items_sections_items_name"></a>5.1.3.1.1. Property `name`
+###### <a name="pages_items_sections_items_name"></a>7.1.3.1.1. Property `name`
 
 |          |          |
 | -------- | -------- |
@@ -207,7 +231,7 @@
 
 **Description:** Display name of the section.
 
-###### <a name="pages_items_sections_items_hint"></a>5.1.3.1.2. Property `hint`
+###### <a name="pages_items_sections_items_hint"></a>7.1.3.1.2. Property `hint`
 
 |          |          |
 | -------- | -------- |
@@ -215,7 +239,7 @@
 
 **Description:** Optional informative text displayed below the section name.
 
-###### <a name="pages_items_sections_items_display"></a>5.1.3.1.3. Property `display`
+###### <a name="pages_items_sections_items_display"></a>7.1.3.1.3. Property `display`
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -230,7 +254,7 @@
 | - [analyzers](#pages_items_sections_items_display_analyzers ) | No      | array of string | No         | -          | List of analyzer names whose output should be embedded in this section. |
 | - [widgets](#pages_items_sections_items_display_widgets )     | No      | array           | No         | -          | KPI widgets displayed in the section header.                            |
 
-###### <a name="pages_items_sections_items_display_analyzers"></a>5.1.3.1.3.1. Property `analyzers`
+###### <a name="pages_items_sections_items_display_analyzers"></a>7.1.3.1.3.1. Property `analyzers`
 
 |          |                   |
 | -------- | ----------------- |
@@ -250,13 +274,13 @@
 | ---------------------------------------------------------------------- | ----------- |
 | [analyzers items](#pages_items_sections_items_display_analyzers_items) | -           |
 
-###### <a name="pages_items_sections_items_display_analyzers_items"></a>5.1.3.1.3.1.1. analyzers items
+###### <a name="pages_items_sections_items_display_analyzers_items"></a>7.1.3.1.3.1.1. analyzers items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="pages_items_sections_items_display_widgets"></a>5.1.3.1.3.2. Property `widgets`
+###### <a name="pages_items_sections_items_display_widgets"></a>7.1.3.1.3.2. Property `widgets`
 
 |          |         |
 | -------- | ------- |
@@ -276,7 +300,7 @@
 | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | [widget](#pages_items_sections_items_display_widgets_items) | A key-value widget displaying a metric from the analysis report, or a custom HTML template widget. |
 
-###### <a name="pages_items_sections_items_display_widgets_items"></a>5.1.3.1.3.2.1. widget
+###### <a name="pages_items_sections_items_display_widgets_items"></a>7.1.3.1.3.2.1. widget
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -296,7 +320,7 @@
 | - [options](#pages_items_sections_items_display_widgets_items_options )     | No      | object | No         | -          | Arbitrary options passed directly to the Jinja2 template.                                                           |
 | - [condition](#pages_items_sections_items_display_widgets_items_condition ) | No      | object | No         | -          | Optional jsonLogic expression to conditionally display this widget. If it evaluates to falsy, the widget is hidden. |
 
-###### <a name="pages_items_sections_items_display_widgets_items_label"></a>5.1.3.1.3.2.1.1. Property `label`
+###### <a name="pages_items_sections_items_display_widgets_items_label"></a>7.1.3.1.3.2.1.1. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -304,7 +328,7 @@
 
 **Description:** Display label for the widget.
 
-###### <a name="pages_items_sections_items_display_widgets_items_value"></a>5.1.3.1.3.2.1.2. Property `value`
+###### <a name="pages_items_sections_items_display_widgets_items_value"></a>7.1.3.1.3.2.1.2. Property `value`
 
 |          |          |
 | -------- | -------- |
@@ -312,7 +336,7 @@
 
 **Description:** Dot-separated path into the report data, e.g. 'results.cve.critical_count'.
 
-###### <a name="pages_items_sections_items_display_widgets_items_url"></a>5.1.3.1.3.2.1.3. Property `url`
+###### <a name="pages_items_sections_items_display_widgets_items_url"></a>7.1.3.1.3.2.1.3. Property `url`
 
 |          |          |
 | -------- | -------- |
@@ -320,7 +344,7 @@
 
 **Description:** Optional URL for the widget. Supports Jinja2 templates.
 
-###### <a name="pages_items_sections_items_display_widgets_items_icon"></a>5.1.3.1.3.2.1.4. Property `icon`
+###### <a name="pages_items_sections_items_display_widgets_items_icon"></a>7.1.3.1.3.2.1.4. Property `icon`
 
 |          |          |
 | -------- | -------- |
@@ -328,7 +352,7 @@
 
 **Description:** Emoji or icon displayed alongside the widget.
 
-###### <a name="pages_items_sections_items_display_widgets_items_template"></a>5.1.3.1.3.2.1.5. Property `template`
+###### <a name="pages_items_sections_items_display_widgets_items_template"></a>7.1.3.1.3.2.1.5. Property `template`
 
 |          |          |
 | -------- | -------- |
@@ -336,7 +360,7 @@
 
 **Description:** Path to a Jinja2 HTML template within the theme, e.g. analyzers/cve/table.html.
 
-###### <a name="pages_items_sections_items_display_widgets_items_options"></a>5.1.3.1.3.2.1.6. Property `options`
+###### <a name="pages_items_sections_items_display_widgets_items_options"></a>7.1.3.1.3.2.1.6. Property `options`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -353,7 +377,7 @@
 | - [subvalue](#pages_items_sections_items_display_widgets_items_options_subvalue )   | No      | string           | No         | -          | Additional text/value to display below the main value. Follows identical resolution logic as value. |
 | - [class](#pages_items_sections_items_display_widgets_items_options_class )         | No      | string           | No         | -          | Additional CSS class(es) to apply to the widget container.                                          |
 
-###### <a name="pages_items_sections_items_display_widgets_items_options_title"></a>5.1.3.1.3.2.1.6.1. Property `title`
+###### <a name="pages_items_sections_items_display_widgets_items_options_title"></a>7.1.3.1.3.2.1.6.1. Property `title`
 
 |          |          |
 | -------- | -------- |
@@ -361,7 +385,7 @@
 
 **Description:** Optional title for the widget. If provided, the widget will be displayed with a header.
 
-###### <a name="pages_items_sections_items_display_widgets_items_options_collapsed"></a>5.1.3.1.3.2.1.6.2. Property `collapsed`
+###### <a name="pages_items_sections_items_display_widgets_items_options_collapsed"></a>7.1.3.1.3.2.1.6.2. Property `collapsed`
 
 |             |           |
 | ----------- | --------- |
@@ -370,7 +394,7 @@
 
 **Description:** If true, the widget will be collapsible and closed by default.
 
-###### <a name="pages_items_sections_items_display_widgets_items_options_align"></a>5.1.3.1.3.2.1.6.3. Property `align`
+###### <a name="pages_items_sections_items_display_widgets_items_options_align"></a>7.1.3.1.3.2.1.6.3. Property `align`
 
 |             |                    |
 | ----------- | ------------------ |
@@ -384,7 +408,7 @@ Must be one of:
 * "center"
 * "right"
 
-###### <a name="pages_items_sections_items_display_widgets_items_options_subvalue"></a>5.1.3.1.3.2.1.6.4. Property `subvalue`
+###### <a name="pages_items_sections_items_display_widgets_items_options_subvalue"></a>7.1.3.1.3.2.1.6.4. Property `subvalue`
 
 |          |          |
 | -------- | -------- |
@@ -392,7 +416,7 @@ Must be one of:
 
 **Description:** Additional text/value to display below the main value. Follows identical resolution logic as value.
 
-###### <a name="pages_items_sections_items_display_widgets_items_options_class"></a>5.1.3.1.3.2.1.6.5. Property `class`
+###### <a name="pages_items_sections_items_display_widgets_items_options_class"></a>7.1.3.1.3.2.1.6.5. Property `class`
 
 |             |          |
 | ----------- | -------- |
@@ -401,7 +425,7 @@ Must be one of:
 
 **Description:** Additional CSS class(es) to apply to the widget container.
 
-###### <a name="pages_items_sections_items_display_widgets_items_condition"></a>5.1.3.1.3.2.1.7. Property `condition`
+###### <a name="pages_items_sections_items_display_widgets_items_condition"></a>7.1.3.1.3.2.1.7. Property `condition`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -410,7 +434,7 @@ Must be one of:
 
 **Description:** Optional jsonLogic expression to conditionally display this widget. If it evaluates to falsy, the widget is hidden.
 
-###### <a name="pages_items_sections_items_levels"></a>5.1.3.1.4. Property `levels`
+###### <a name="pages_items_sections_items_levels"></a>7.1.3.1.4. Property `levels`
 
 |          |         |
 | -------- | ------- |
@@ -430,7 +454,7 @@ Must be one of:
 | ------------------------------------------------- | ----------------------------------------------------------------- |
 | [level](#pages_items_sections_items_levels_items) | A priority/severity level used to group and summarise scorecards. |
 
-###### <a name="pages_items_sections_items_levels_items"></a>5.1.3.1.4.1. level
+###### <a name="pages_items_sections_items_levels_items"></a>7.1.3.1.4.1. level
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -446,7 +470,7 @@ Must be one of:
 | - [label](#pages_items_sections_items_levels_items_label ) | No      | string  | No         | -          | Human-readable display label.                                                              |
 | - [order](#pages_items_sections_items_levels_items_order ) | No      | integer | No         | -          | Sort order (lower value = higher priority). Built-in defaults: bronze=1, silver=2, gold=3. |
 
-###### <a name="pages_items_sections_items_levels_items_name"></a>5.1.3.1.4.1.1. Property `name`
+###### <a name="pages_items_sections_items_levels_items_name"></a>7.1.3.1.4.1.1. Property `name`
 
 |          |          |
 | -------- | -------- |
@@ -454,7 +478,7 @@ Must be one of:
 
 **Description:** Level identifier referenced by scorecards.
 
-###### <a name="pages_items_sections_items_levels_items_label"></a>5.1.3.1.4.1.2. Property `label`
+###### <a name="pages_items_sections_items_levels_items_label"></a>7.1.3.1.4.1.2. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -462,7 +486,7 @@ Must be one of:
 
 **Description:** Human-readable display label.
 
-###### <a name="pages_items_sections_items_levels_items_order"></a>5.1.3.1.4.1.3. Property `order`
+###### <a name="pages_items_sections_items_levels_items_order"></a>7.1.3.1.4.1.3. Property `order`
 
 |          |           |
 | -------- | --------- |
@@ -470,7 +494,7 @@ Must be one of:
 
 **Description:** Sort order (lower value = higher priority). Built-in defaults: bronze=1, silver=2, gold=3.
 
-###### <a name="pages_items_sections_items_scorecards"></a>5.1.3.1.5. Property `scorecards`
+###### <a name="pages_items_sections_items_scorecards"></a>7.1.3.1.5. Property `scorecards`
 
 |          |         |
 | -------- | ------- |
@@ -490,7 +514,7 @@ Must be one of:
 | --------------------------------------------------------- | --------------------------------------------------- |
 | [scorecard](#pages_items_sections_items_scorecards_items) | An evaluation scorecard with a JsonLogic condition. |
 
-###### <a name="pages_items_sections_items_scorecards_items"></a>5.1.3.1.5.1. scorecard
+###### <a name="pages_items_sections_items_scorecards_items"></a>7.1.3.1.5.1. scorecard
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -508,7 +532,7 @@ Must be one of:
 | - [tags](#pages_items_sections_items_scorecards_items_tags )               | No      | array of string | No         | -          | Arbitrary tags for filtering or grouping.                                                                                                                                                             |
 | + [condition](#pages_items_sections_items_scorecards_items_condition )     | No      | object          | No         | -          | JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {"var": "results.cve.critical_count"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or. |
 
-###### <a name="pages_items_sections_items_scorecards_items_name"></a>5.1.3.1.5.1.1. Property `name`
+###### <a name="pages_items_sections_items_scorecards_items_name"></a>7.1.3.1.5.1.1. Property `name`
 
 |          |          |
 | -------- | -------- |
@@ -516,7 +540,7 @@ Must be one of:
 
 **Description:** Unique identifier for the scorecard.
 
-###### <a name="pages_items_sections_items_scorecards_items_description"></a>5.1.3.1.5.1.2. Property `description`
+###### <a name="pages_items_sections_items_scorecards_items_description"></a>7.1.3.1.5.1.2. Property `description`
 
 |          |          |
 | -------- | -------- |
@@ -524,7 +548,7 @@ Must be one of:
 
 **Description:** Human-readable description. Defaults to name if omitted.
 
-###### <a name="pages_items_sections_items_scorecards_items_level"></a>5.1.3.1.5.1.3. Property `level`
+###### <a name="pages_items_sections_items_scorecards_items_level"></a>7.1.3.1.5.1.3. Property `level`
 
 |          |          |
 | -------- | -------- |
@@ -532,7 +556,7 @@ Must be one of:
 
 **Description:** Level this scorecard belongs to. Must match a level name defined in the section.
 
-###### <a name="pages_items_sections_items_scorecards_items_tags"></a>5.1.3.1.5.1.4. Property `tags`
+###### <a name="pages_items_sections_items_scorecards_items_tags"></a>7.1.3.1.5.1.4. Property `tags`
 
 |          |                   |
 | -------- | ----------------- |
@@ -552,13 +576,13 @@ Must be one of:
 | --------------------------------------------------------------------- | ----------- |
 | [tags items](#pages_items_sections_items_scorecards_items_tags_items) | -           |
 
-###### <a name="pages_items_sections_items_scorecards_items_tags_items"></a>5.1.3.1.5.1.4.1. tags items
+###### <a name="pages_items_sections_items_scorecards_items_tags_items"></a>7.1.3.1.5.1.4.1. tags items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="pages_items_sections_items_scorecards_items_condition"></a>5.1.3.1.5.1.5. Property `condition`
+###### <a name="pages_items_sections_items_scorecards_items_condition"></a>7.1.3.1.5.1.5. Property `condition`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -567,7 +591,7 @@ Must be one of:
 
 **Description:** JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {"var": "results.cve.critical_count"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or.
 
-###### <a name="pages_items_sections_items_widgets"></a>5.1.3.1.6. Property `widgets`
+###### <a name="pages_items_sections_items_widgets"></a>7.1.3.1.6. Property `widgets`
 
 |          |         |
 | -------- | ------- |
@@ -587,7 +611,7 @@ Must be one of:
 | --------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | [widget](#pages_items_sections_items_widgets_items) | A key-value widget displaying a metric from the analysis report, or a custom HTML template widget. |
 
-###### <a name="pages_items_sections_items_widgets_items"></a>5.1.3.1.6.1. widget
+###### <a name="pages_items_sections_items_widgets_items"></a>7.1.3.1.6.1. widget
 
 |                           |                                                                                                       |
 | ------------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -597,7 +621,7 @@ Must be one of:
 
 **Description:** A key-value widget displaying a metric from the analysis report, or a custom HTML template widget.
 
-###### <a name="pages_items_sections_items_condition"></a>5.1.3.1.7. Property `condition`
+###### <a name="pages_items_sections_items_condition"></a>7.1.3.1.7. Property `condition`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -606,7 +630,7 @@ Must be one of:
 
 **Description:** Optional jsonLogic expression to conditionally display this section. If it evaluates to falsy, the section is hidden.
 
-## <a name="sections"></a>6. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `sections`
+## <a name="sections"></a>8. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `sections`
 
 |          |         |
 | -------- | ------- |
@@ -626,7 +650,7 @@ Must be one of:
 | ------------------------------- | ----------------------------------------------------------------------------------- |
 | [section](#sections_items)      | A playbook section containing scorecards, optional levels, and display preferences. |
 
-### <a name="sections_items"></a>6.1. section
+### <a name="sections_items"></a>8.1. section
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -636,7 +660,7 @@ Must be one of:
 
 **Description:** A playbook section containing scorecards, optional levels, and display preferences.
 
-## <a name="sidebar"></a>7. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `sidebar`
+## <a name="sidebar"></a>9. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `sidebar`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -650,7 +674,7 @@ Must be one of:
 | - [sections](#sidebar_sections ) | No      | array of object | No         | -          | -                 |
 | - [links](#sidebar_links )       | No      | array of object | No         | -          | -                 |
 
-### <a name="sidebar_sections"></a>7.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `sections`
+### <a name="sidebar_sections"></a>9.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `sections`
 
 |          |                   |
 | -------- | ----------------- |
@@ -668,7 +692,7 @@ Must be one of:
 | ----------------------------------------- | ----------- |
 | [sections items](#sidebar_sections_items) | -           |
 
-#### <a name="sidebar_sections_items"></a>7.1.1. sections items
+#### <a name="sidebar_sections_items"></a>9.1.1. sections items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -680,7 +704,7 @@ Must be one of:
 | - [title](#sidebar_sections_items_title ) | No      | string          | No         | -          | Title of the sidebar section.  |
 | + [links](#sidebar_sections_items_links ) | No      | array of object | No         | -          | List of links in this section. |
 
-##### <a name="sidebar_sections_items_title"></a>7.1.1.1. Property `title`
+##### <a name="sidebar_sections_items_title"></a>9.1.1.1. Property `title`
 
 |          |          |
 | -------- | -------- |
@@ -688,7 +712,7 @@ Must be one of:
 
 **Description:** Title of the sidebar section.
 
-##### <a name="sidebar_sections_items_links"></a>7.1.1.2. Property `links`
+##### <a name="sidebar_sections_items_links"></a>9.1.1.2. Property `links`
 
 |          |                   |
 | -------- | ----------------- |
@@ -708,7 +732,7 @@ Must be one of:
 | -------------------------------------------------- | ----------- |
 | [links items](#sidebar_sections_items_links_items) | -           |
 
-###### <a name="sidebar_sections_items_links_items"></a>7.1.1.2.1. links items
+###### <a name="sidebar_sections_items_links_items"></a>9.1.1.2.1. links items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -721,7 +745,7 @@ Must be one of:
 | + [url](#sidebar_sections_items_links_items_url )     | No      | string | No         | -          | Target URL.         |
 | - [icon](#sidebar_sections_items_links_items_icon )   | No      | string | No         | -          | Icon name or emoji. |
 
-###### <a name="sidebar_sections_items_links_items_label"></a>7.1.1.2.1.1. Property `label`
+###### <a name="sidebar_sections_items_links_items_label"></a>9.1.1.2.1.1. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -729,7 +753,7 @@ Must be one of:
 
 **Description:** Display label.
 
-###### <a name="sidebar_sections_items_links_items_url"></a>7.1.1.2.1.2. Property `url`
+###### <a name="sidebar_sections_items_links_items_url"></a>9.1.1.2.1.2. Property `url`
 
 |          |          |
 | -------- | -------- |
@@ -737,7 +761,7 @@ Must be one of:
 
 **Description:** Target URL.
 
-###### <a name="sidebar_sections_items_links_items_icon"></a>7.1.1.2.1.3. Property `icon`
+###### <a name="sidebar_sections_items_links_items_icon"></a>9.1.1.2.1.3. Property `icon`
 
 |          |          |
 | -------- | -------- |
@@ -745,7 +769,7 @@ Must be one of:
 
 **Description:** Icon name or emoji.
 
-### <a name="sidebar_links"></a>7.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `links`
+### <a name="sidebar_links"></a>9.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `links`
 
 |          |                   |
 | -------- | ----------------- |
@@ -763,7 +787,7 @@ Must be one of:
 | ----------------------------------- | ----------- |
 | [links items](#sidebar_links_items) | -           |
 
-#### <a name="sidebar_links_items"></a>7.2.1. links items
+#### <a name="sidebar_links_items"></a>9.2.1. links items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -776,7 +800,7 @@ Must be one of:
 | + [url](#sidebar_links_items_url )     | No      | string | No         | -          | Target URL.         |
 | - [icon](#sidebar_links_items_icon )   | No      | string | No         | -          | Icon name or emoji. |
 
-##### <a name="sidebar_links_items_label"></a>7.2.1.1. Property `label`
+##### <a name="sidebar_links_items_label"></a>9.2.1.1. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -784,7 +808,7 @@ Must be one of:
 
 **Description:** Display label.
 
-##### <a name="sidebar_links_items_url"></a>7.2.1.2. Property `url`
+##### <a name="sidebar_links_items_url"></a>9.2.1.2. Property `url`
 
 |          |          |
 | -------- | -------- |
@@ -792,7 +816,7 @@ Must be one of:
 
 **Description:** Target URL.
 
-##### <a name="sidebar_links_items_icon"></a>7.2.1.3. Property `icon`
+##### <a name="sidebar_links_items_icon"></a>9.2.1.3. Property `icon`
 
 |          |          |
 | -------- | -------- |
@@ -800,7 +824,7 @@ Must be one of:
 
 **Description:** Icon name or emoji.
 
-## <a name="integrations"></a>8. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `integrations`
+## <a name="integrations"></a>10. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `integrations`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -813,7 +837,7 @@ Must be one of:
 | --------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [gitlab](#integrations_gitlab ) | No      | object | No         | -          | -                 |
 
-### <a name="integrations_gitlab"></a>8.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `gitlab`
+### <a name="integrations_gitlab"></a>10.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `gitlab`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -827,7 +851,7 @@ Must be one of:
 | - [checklists](#integrations_gitlab_checklists ) | No      | array of object | No         | -          | Configurable checklists added as checkboxes to the Merge Request description.               |
 | - [templates](#integrations_gitlab_templates )   | No      | array of object | No         | -          | URLs to Cookiecutter templates that will be rendered and added to the Merge Request branch. |
 
-#### <a name="integrations_gitlab_badges"></a>8.1.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `badges`
+#### <a name="integrations_gitlab_badges"></a>10.1.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `badges`
 
 |          |                   |
 | -------- | ----------------- |
@@ -847,13 +871,13 @@ Must be one of:
 | ------------------------------------------------- | ----------- |
 | [badges items](#integrations_gitlab_badges_items) | -           |
 
-##### <a name="integrations_gitlab_badges_items"></a>8.1.1.1. badges items
+##### <a name="integrations_gitlab_badges_items"></a>10.1.1.1. badges items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-#### <a name="integrations_gitlab_checklist"></a>8.1.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checklist`
+#### <a name="integrations_gitlab_checklist"></a>10.1.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checklist`
 
 |          |         |
 | -------- | ------- |
@@ -873,7 +897,7 @@ Must be one of:
 | ------------------------------------------------------ | ----------- |
 | [checklist_item](#integrations_gitlab_checklist_items) | -           |
 
-##### <a name="integrations_gitlab_checklist_items"></a>8.1.2.1. checklist_item
+##### <a name="integrations_gitlab_checklist_items"></a>10.1.2.1. checklist_item
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -887,7 +911,7 @@ Must be one of:
 | - [show_if](#integrations_gitlab_checklist_items_show_if )   | No      | object | No         | -          | Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy.                                        |
 | - [check_if](#integrations_gitlab_checklist_items_check_if ) | No      | object | No         | -          | Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ]). |
 
-###### <a name="integrations_gitlab_checklist_items_label"></a>8.1.2.1.1. Property `label`
+###### <a name="integrations_gitlab_checklist_items_label"></a>10.1.2.1.1. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -895,7 +919,7 @@ Must be one of:
 
 **Description:** Text of the checkbox item.
 
-###### <a name="integrations_gitlab_checklist_items_show_if"></a>8.1.2.1.2. Property `show_if`
+###### <a name="integrations_gitlab_checklist_items_show_if"></a>10.1.2.1.2. Property `show_if`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -904,7 +928,7 @@ Must be one of:
 
 **Description:** Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy.
 
-###### <a name="integrations_gitlab_checklist_items_check_if"></a>8.1.2.1.3. Property `check_if`
+###### <a name="integrations_gitlab_checklist_items_check_if"></a>10.1.2.1.3. Property `check_if`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -913,7 +937,7 @@ Must be one of:
 
 **Description:** Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ]).
 
-#### <a name="integrations_gitlab_checklists"></a>8.1.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checklists`
+#### <a name="integrations_gitlab_checklists"></a>10.1.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checklists`
 
 |          |                   |
 | -------- | ----------------- |
@@ -933,7 +957,7 @@ Must be one of:
 | --------------------------------------------------------- | ----------- |
 | [checklists items](#integrations_gitlab_checklists_items) | -           |
 
-##### <a name="integrations_gitlab_checklists_items"></a>8.1.3.1. checklists items
+##### <a name="integrations_gitlab_checklists_items"></a>10.1.3.1. checklists items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -945,7 +969,7 @@ Must be one of:
 | - [title](#integrations_gitlab_checklists_items_title ) | No      | string | No         | -          | Display title for the checklist. |
 | + [items](#integrations_gitlab_checklists_items_items ) | No      | array  | No         | -          | Items in this checklist.         |
 
-###### <a name="integrations_gitlab_checklists_items_title"></a>8.1.3.1.1. Property `title`
+###### <a name="integrations_gitlab_checklists_items_title"></a>10.1.3.1.1. Property `title`
 
 |          |          |
 | -------- | -------- |
@@ -953,7 +977,7 @@ Must be one of:
 
 **Description:** Display title for the checklist.
 
-###### <a name="integrations_gitlab_checklists_items_items"></a>8.1.3.1.2. Property `items`
+###### <a name="integrations_gitlab_checklists_items_items"></a>10.1.3.1.2. Property `items`
 
 |          |         |
 | -------- | ------- |
@@ -973,7 +997,7 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [checklist_item](#integrations_gitlab_checklists_items_items_items) | -           |
 
-###### <a name="integrations_gitlab_checklists_items_items_items"></a>8.1.3.1.2.1. checklist_item
+###### <a name="integrations_gitlab_checklists_items_items_items"></a>10.1.3.1.2.1. checklist_item
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -981,7 +1005,7 @@ Must be one of:
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red)              |
 | **Same definition as**    | [integrations_gitlab_checklist_items](#integrations_gitlab_checklist_items) |
 
-#### <a name="integrations_gitlab_templates"></a>8.1.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `templates`
+#### <a name="integrations_gitlab_templates"></a>10.1.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `templates`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1001,7 +1025,7 @@ Must be one of:
 | ------------------------------------------------------- | ----------- |
 | [templates items](#integrations_gitlab_templates_items) | -           |
 
-##### <a name="integrations_gitlab_templates_items"></a>8.1.4.1. templates items
+##### <a name="integrations_gitlab_templates_items"></a>10.1.4.1. templates items
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -1014,7 +1038,7 @@ Must be one of:
 | - [directory](#integrations_gitlab_templates_items_directory ) | No      | string                                         | No         | -                                            | Optional subdirectory within the repository containing the template. |
 | - [condition](#integrations_gitlab_templates_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#links_items_condition ) | jsonlogic                                                            |
 
-###### <a name="integrations_gitlab_templates_items_url"></a>8.1.4.1.1. Property `url`
+###### <a name="integrations_gitlab_templates_items_url"></a>10.1.4.1.1. Property `url`
 
 |          |          |
 | -------- | -------- |
@@ -1022,7 +1046,7 @@ Must be one of:
 
 **Description:** Cookiecutter template URL or path.
 
-###### <a name="integrations_gitlab_templates_items_directory"></a>8.1.4.1.2. Property `directory`
+###### <a name="integrations_gitlab_templates_items_directory"></a>10.1.4.1.2. Property `directory`
 
 |          |          |
 | -------- | -------- |
@@ -1030,7 +1054,7 @@ Must be one of:
 
 **Description:** Optional subdirectory within the repository containing the template.
 
-###### <a name="integrations_gitlab_templates_items_condition"></a>8.1.4.1.3. Property `condition`
+###### <a name="integrations_gitlab_templates_items_condition"></a>10.1.4.1.3. Property `condition`
 
 **Title:** jsonlogic
 
@@ -1041,7 +1065,7 @@ Must be one of:
 
 **Description:** JSON Logic expression to conditionally render the template.
 
-## <a name="rules"></a>9. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `rules`
+## <a name="rules"></a>11. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1061,7 +1085,7 @@ Must be one of:
 | ------------------------------- | ----------- |
 | [rules items](#rules_items)     | -           |
 
-### <a name="rules_items"></a>9.1. rules items
+### <a name="rules_items"></a>11.1. rules items
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -1079,7 +1103,7 @@ Must be one of:
 | - [tags](#rules_items_tags )         | No      | array of string  | No         | -          | Arbitrary tags.                                     |
 | - [messages](#rules_items_messages ) | No      | object           | No         | -          | -                                                   |
 
-#### <a name="rules_items_slug"></a>9.1.1. Property `slug`
+#### <a name="rules_items_slug"></a>11.1.1. Property `slug`
 
 |          |          |
 | -------- | -------- |
@@ -1087,7 +1111,7 @@ Must be one of:
 
 **Description:** Unique identifier for the rule instance.
 
-#### <a name="rules_items_provider"></a>9.1.2. Property `provider`
+#### <a name="rules_items_provider"></a>11.1.2. Property `provider`
 
 |          |          |
 | -------- | -------- |
@@ -1095,7 +1119,7 @@ Must be one of:
 
 **Description:** Analyzer name (e.g. 'cve').
 
-#### <a name="rules_items_rule"></a>9.1.3. Property `rule`
+#### <a name="rules_items_rule"></a>11.1.3. Property `rule`
 
 |          |          |
 | -------- | -------- |
@@ -1103,7 +1127,7 @@ Must be one of:
 
 **Description:** Template name within the provider (e.g. 'cve-max').
 
-#### <a name="rules_items_options"></a>9.1.4. Property `options`
+#### <a name="rules_items_options"></a>11.1.4. Property `options`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -1116,7 +1140,7 @@ Must be one of:
 | ------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#rules_items_options_additionalProperties ) | No      | object | No         | -          | -                 |
 
-#### <a name="rules_items_enable"></a>9.1.5. Property `enable`
+#### <a name="rules_items_enable"></a>11.1.5. Property `enable`
 
 |             |           |
 | ----------- | --------- |
@@ -1125,7 +1149,7 @@ Must be one of:
 
 **Description:** Whether to enable this rule.
 
-#### <a name="rules_items_level"></a>9.1.6. Property `level`
+#### <a name="rules_items_level"></a>11.1.6. Property `level`
 
 |          |                    |
 | -------- | ------------------ |
@@ -1139,7 +1163,7 @@ Must be one of:
 * "critical"
 * "none"
 
-#### <a name="rules_items_tags"></a>9.1.7. Property `tags`
+#### <a name="rules_items_tags"></a>11.1.7. Property `tags`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1159,13 +1183,13 @@ Must be one of:
 | ------------------------------------- | ----------- |
 | [tags items](#rules_items_tags_items) | -           |
 
-##### <a name="rules_items_tags_items"></a>9.1.7.1. tags items
+##### <a name="rules_items_tags_items"></a>11.1.7.1. tags items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-#### <a name="rules_items_messages"></a>9.1.8. Property `messages`
+#### <a name="rules_items_messages"></a>11.1.8. Property `messages`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -1177,19 +1201,19 @@ Must be one of:
 | - [pass](#rules_items_messages_pass ) | No      | string | No         | -          | -                 |
 | - [fail](#rules_items_messages_fail ) | No      | string | No         | -          | -                 |
 
-##### <a name="rules_items_messages_pass"></a>9.1.8.1. Property `pass`
+##### <a name="rules_items_messages_pass"></a>11.1.8.1. Property `pass`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-##### <a name="rules_items_messages_fail"></a>9.1.8.2. Property `fail`
+##### <a name="rules_items_messages_fail"></a>11.1.8.2. Property `fail`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-## <a name="tiers"></a>10. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `tiers`
+## <a name="tiers"></a>12. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `tiers`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1209,7 +1233,7 @@ Must be one of:
 | ------------------------------- | ----------- |
 | [tiers items](#tiers_items)     | -           |
 
-### <a name="tiers_items"></a>10.1. tiers items
+### <a name="tiers_items"></a>12.1. tiers items
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -1221,7 +1245,7 @@ Must be one of:
 | + [name](#tiers_items_name )           | No      | string                                         | No         | -                                            | Tier name (e.g. Gold, Silver, Bronze). |
 | + [condition](#tiers_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#links_items_condition ) | jsonlogic                              |
 
-#### <a name="tiers_items_name"></a>10.1.1. Property `name`
+#### <a name="tiers_items_name"></a>12.1.1. Property `name`
 
 |          |          |
 | -------- | -------- |
@@ -1229,7 +1253,7 @@ Must be one of:
 
 **Description:** Tier name (e.g. Gold, Silver, Bronze).
 
-#### <a name="tiers_items_condition"></a>10.1.2. Property `condition`
+#### <a name="tiers_items_condition"></a>12.1.2. Property `condition`
 
 **Title:** jsonlogic
 
@@ -1240,7 +1264,7 @@ Must be one of:
 
 **Description:** JsonLogic expression evaluated against the report context.
 
-## <a name="badges"></a>11. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `badges`
+## <a name="badges"></a>13. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `badges`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1260,7 +1284,7 @@ Must be one of:
 | ------------------------------- | ----------- |
 | [badges items](#badges_items)   | -           |
 
-### <a name="badges_items"></a>11.1. badges items
+### <a name="badges_items"></a>13.1. badges items
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -1275,7 +1299,7 @@ Must be one of:
 | + [condition](#badges_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#links_items_condition ) | jsonlogic                                                                     |
 | + [class](#badges_items_class )         | No      | enum (of string)                               | No         | -                                            | Visual style class for the badge.                                             |
 
-#### <a name="badges_items_slug"></a>11.1.1. Property `slug`
+#### <a name="badges_items_slug"></a>13.1.1. Property `slug`
 
 |          |          |
 | -------- | -------- |
@@ -1283,7 +1307,7 @@ Must be one of:
 
 **Description:** Unique identifier for the badge.
 
-#### <a name="badges_items_scope"></a>11.1.2. Property `scope`
+#### <a name="badges_items_scope"></a>13.1.2. Property `scope`
 
 |          |          |
 | -------- | -------- |
@@ -1291,7 +1315,7 @@ Must be one of:
 
 **Description:** Category label displayed on the left part of the badge (e.g. CVE, Freshness).
 
-#### <a name="badges_items_value"></a>11.1.3. Property `value`
+#### <a name="badges_items_value"></a>13.1.3. Property `value`
 
 |          |          |
 | -------- | -------- |
@@ -1299,7 +1323,7 @@ Must be one of:
 
 **Description:** Value displayed on the right part of the badge.
 
-#### <a name="badges_items_condition"></a>11.1.4. Property `condition`
+#### <a name="badges_items_condition"></a>13.1.4. Property `condition`
 
 **Title:** jsonlogic
 
@@ -1310,7 +1334,7 @@ Must be one of:
 
 **Description:** JsonLogic expression. The badge is shown when this evaluates to truthy.
 
-#### <a name="badges_items_class"></a>11.1.5. Property `class`
+#### <a name="badges_items_class"></a>13.1.5. Property `class`
 
 |          |                    |
 | -------- | ------------------ |
@@ -1325,4 +1349,4 @@ Must be one of:
 * "information"
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-31 at 13:32:29 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-31 at 15:05:12 +0000
