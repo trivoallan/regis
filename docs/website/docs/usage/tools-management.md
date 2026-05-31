@@ -84,3 +84,21 @@ Both run as `regis:1001`. To debug the slim image, use Alpine's bundled BusyBox 
 ```bash
 docker run --rm -it --entrypoint /bin/sh ghcr.io/trivoallan/regis:latest
 ```
+
+## For maintainers
+
+### Updating tool pins
+
+Tool versions and sha256s live in `regis/tools/manifest.yaml`. Renovate / Dependabot do not auto-update this file (Dependabot lacks regex-manager support). The bump workflow is manual:
+
+1. Edit `regis/tools/manifest.yaml`, bump the `version:` field for the tool.
+2. Recompute its sha256 for amd64 and arm64. Either re-run `scripts/compute_tool_hashes.sh` for the full set, or manually:
+
+   ```bash
+   curl -sSfL "<URL with new version>" | sha256sum
+   ```
+
+3. Update the `sha256.amd64` and `sha256.arm64` fields with the new values.
+4. Open a PR. The `CI / Tools Manifest` workflow re-verifies every sha256 against the live URL — it will fail if you miscopied a digest, mistyped a version, or the release was retracted.
+
+The same workflow runs weekly on a cron to detect upstream drift (a release republished with different bytes, a 301 to a renamed asset, etc.).

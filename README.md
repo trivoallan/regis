@@ -12,6 +12,15 @@ Regis provides unified container analysis, custom playbooks, and highly customiz
 Comprehensive documentation, including installation and usage guides, is available at:
 **[https://trivoallan.github.io/regis/](https://trivoallan.github.io/regis/)**
 
+## Image variants
+
+| Tag                             | Base               | Size     | Use case                                                       |
+| ------------------------------- | ------------------ | -------- | -------------------------------------------------------------- |
+| `:latest`, `:VERSION`           | python:3.11-alpine | ≈ 156 MB | Default — slim image, scanner binaries downloaded on first use |
+| `:latest-full`, `:VERSION-full` | python:3.11-alpine | ≈ 484 MB | Air-gapped or rate-limited — all scanners baked in             |
+
+The slim image lazy-loads scanner binaries (`grype`, `syft`, `trufflehog`, `hadolint`, `dockle`) to `~/.cache/regis/tools/` on first use, verified against pinned sha256s. See [Managing analyzer tools](https://trivoallan.github.io/regis/docs/usage/tools-management) for the cache pattern and air-gapped guidance.
+
 ## Key Features
 
 - **Unified Registry Inspection** — Fast, multi-arch metadata extraction from any OCI-compliant registry using `regctl`.
