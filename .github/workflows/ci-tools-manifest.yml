@@ -39,7 +39,7 @@ jobs:
       - name: Recompute and verify sha256s
         run: |
           python - <<'PY'
-          import hashlib, urllib.request, yaml, sys
+          import hashlib, io, sys, tarfile, urllib.request, yaml, zipfile
           from pathlib import Path
           tools = yaml.safe_load(Path('regis/tools/manifest.yaml').read_text())['tools']
           bad = []
@@ -52,7 +52,18 @@ jobs:
                          .replace('{arch}', arch))
                   print('GET', url)
                   data = urllib.request.urlopen(url, timeout=120).read()
-                  got = hashlib.sha256(data).hexdigest()
+                  # Match ToolFetcher: for archives, hash the extracted member;
+                  # for archive=none, hash the downloaded bytes directly.
+                  if t['archive'] == 'tar.gz':
+                      with tarfile.open(fileobj=io.BytesIO(data), mode='r:gz') as tar:
+                          extracted = tar.extractfile(t['member']).read()
+                      got = hashlib.sha256(extracted).hexdigest()
+                  elif t['archive'] == 'zip':
+                      with zipfile.ZipFile(io.BytesIO(data)) as zf:
+                          extracted = zf.read(t['member'])
+                      got = hashlib.sha256(extracted).hexdigest()
+                  else:
+                      got = hashlib.sha256(data).hexdigest()
                   want = t['sha256'][arch]
                   if got != want:
                       bad.append((name, arch, want, got))
