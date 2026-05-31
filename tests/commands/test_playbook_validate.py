@@ -60,7 +60,9 @@ class TestPlaybookValidate:
 
     def test_validate_minimal_valid_playbook(self, tmp_path: Path):
         ok = tmp_path / "min.yaml"
-        ok.write_text("name: minimal\n", encoding="utf-8")
+        ok.write_text(
+            'schemaVersion: 1\nversion: "1.0.0"\nname: minimal\n', encoding="utf-8"
+        )
         runner = CliRunner()
         result = runner.invoke(main, ["playbook", "validate", str(ok)])
         assert result.exit_code == 0
