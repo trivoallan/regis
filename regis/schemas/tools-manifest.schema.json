@@ -22,7 +22,10 @@
       "required": ["version", "url_template", "archive", "sha256"],
       "additionalProperties": false,
       "properties": {
-        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
         "url_template": { "type": "string", "format": "uri-reference" },
         "archive": { "enum": ["none", "tar.gz", "zip"] },
         "member": { "type": "string" },
