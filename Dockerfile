@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1.7
+ARG VARIANT=slim
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 1: frontend-builder — builds the Docusaurus dashboard
@@ -15,7 +16,10 @@ RUN pnpm run build
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 2: python-builder — compiles Python deps into a venv
 # ──────────────────────────────────────────────────────────────────────────────
-FROM python:3.14-slim AS python-builder
+# Was python:3.14-slim. Pinned to 3.11 because the runtime base
+# (gcr.io/distroless/python3-debian12) ships Python 3.11; aligning ABIs.
+# regis requires python>=3.10 per pyproject.toml.
+FROM python:3.11-slim AS python-builder
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DEBIAN_FRONTEND=noninteractive \
@@ -26,7 +30,10 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends build-essential && \
     rm -rf /var/lib/apt/lists/*
 
-RUN python -m venv /opt/venv
+# --copies (not symlinks): distroless has no /usr/local/bin/python to satisfy
+# the venv's default interpreter symlink. Real binary lets the regis console
+# script shebang resolve at runtime.
+RUN python -m venv --copies /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /src
@@ -126,12 +133,19 @@ RUN case "$TARGETARCH" in \
 USER curl_user
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Stage 4: final — minimal runtime image
+# Stage 4a: final-slim — minimal runtime with only regctl baked
 # ──────────────────────────────────────────────────────────────────────────────
-FROM python:3.14-slim AS final
+# Runtime base: python:3.11-slim (Fallback 3 from the round-3 plan).
+# Distroless (gcr.io/distroless/python3-debian12) was the original target but
+# does not ship libpython3.11.so.1.0 as a usable shared library, so a venv's
+# `--copies` Python interpreter cannot dynamically link against it at runtime
+# (it fails with "libpython3.11.so.1.0: cannot open shared object file").
+# python:3.11-slim adds ~30-40 MB vs distroless but lifts the size ceiling
+# from <100 MB to ~120-140 MB, still well under the 150 MB target.
+FROM python:3.11-slim AS final-slim
 
 LABEL org.opencontainers.image.title="regis" \
-      org.opencontainers.image.description="Regis — Registry Scores. Container Security & Policy-as-Code Orchestration." \
+      org.opencontainers.image.description="Regis — Slim variant (scanners lazy-loaded at first use)." \
       org.opencontainers.image.url="https://github.com/trivoallan" \
       org.opencontainers.image.source="https://github.com/trivoallan/regis" \
       org.opencontainers.image.documentation="https://trivoallan.github.io/regis/" \
@@ -142,40 +156,91 @@ LABEL org.opencontainers.image.title="regis" \
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DEBIAN_FRONTEND=noninteractive \
-    PATH="/opt/venv/bin:$PATH"
+    PATH="/opt/venv/bin:/usr/local/bin:$PATH" \
+    PYTHONPATH=/opt/venv/lib/python3.11/site-packages \
+    REGIS_VARIANT=slim \
+    HOME=/home/regis
 
-# Minimal runtime dependencies only — no curl, no gnupg, no build-essential.
-# skopeo is intentionally absent: registry inspection now uses the regctl
-# static binary (copied from the tools-fetcher stage below), which removes the
-# skopeo apt layer and its transitive dependencies.
-# git is intentionally absent: it is only used by the host-only
-# `bootstrap archive --repo` flow (guarded by require_tool). jq has no
-# runtime caller (the only --jq usage is gh's built-in flag).
+# Minimal runtime dependencies — ca-certificates for HTTPS, plus the tools
+# fetcher (regis bootstrap tools / lazy ensure_tool) needs curl-style network
+# access; the regis.tools.fetcher module uses urllib from the stdlib so no
+# extra apt deps are required here.
+# hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
       ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
-# Non-root user
+# Non-root user (uid 1001) — matches the previous image's runtime identity so
+# bind-mounts and CI cache permissions don't break.
 RUN groupadd -g 1001 regis && \
     useradd -u 1001 -g regis -m -d /home/regis regis
-ENV HOME=/home/regis
 
-# Copy artifacts from build stages
 COPY --from=python-builder /opt/venv /opt/venv
-COPY --from=tools-fetcher /tools/grype /usr/local/bin/grype
-COPY --from=tools-fetcher /tools/syft /usr/local/bin/syft
-COPY --from=tools-fetcher /tools/trufflehog /usr/local/bin/trufflehog
-COPY --from=tools-fetcher /tools/hadolint /usr/local/bin/hadolint
-COPY --from=tools-fetcher /tools/dockle /usr/local/bin/dockle
 COPY --from=tools-fetcher /tools/regctl /usr/local/bin/regctl
 
 WORKDIR /home/regis
 USER regis
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD regis list || exit 1
-
+    CMD ["regis", "list"]
 ENTRYPOINT ["regis"]
 CMD ["--help"]
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Stage 4b: final-full — minimal runtime with all scanners baked
+# ──────────────────────────────────────────────────────────────────────────────
+FROM python:3.11-slim AS final-full
+
+LABEL org.opencontainers.image.title="regis" \
+      org.opencontainers.image.description="Regis — Full variant (all scanners baked)." \
+      org.opencontainers.image.url="https://github.com/trivoallan" \
+      org.opencontainers.image.source="https://github.com/trivoallan/regis" \
+      org.opencontainers.image.documentation="https://trivoallan.github.io/regis/" \
+      org.opencontainers.image.vendor="trivoallan" \
+      org.opencontainers.image.authors="trivoallan" \
+      org.opencontainers.image.licenses="MIT"
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    PATH="/opt/venv/bin:/usr/local/bin:$PATH" \
+    PYTHONPATH=/opt/venv/lib/python3.11/site-packages \
+    REGIS_VARIANT=full \
+    HOME=/home/regis
+
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+      ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN groupadd -g 1001 regis && \
+    useradd -u 1001 -g regis -m -d /home/regis regis
+
+COPY --from=python-builder /opt/venv /opt/venv
+COPY --from=tools-fetcher /tools/grype      /usr/local/bin/grype
+COPY --from=tools-fetcher /tools/syft       /usr/local/bin/syft
+COPY --from=tools-fetcher /tools/trufflehog /usr/local/bin/trufflehog
+COPY --from=tools-fetcher /tools/hadolint   /usr/local/bin/hadolint
+COPY --from=tools-fetcher /tools/dockle     /usr/local/bin/dockle
+COPY --from=tools-fetcher /tools/regctl     /usr/local/bin/regctl
+
+WORKDIR /home/regis
+USER regis
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD ["regis", "list"]
+ENTRYPOINT ["regis"]
+CMD ["--help"]
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Final selector — picks final-slim or final-full based on VARIANT build-arg.
+# DL3006/CKV_DOCKER_7 are suppressed: `final-${VARIANT}` resolves to a local
+# build stage (final-slim or final-full above), not an external image, so the
+# "pin the tag" advice does not apply.
+# ──────────────────────────────────────────────────────────────────────────────
+# trunk-ignore(checkov/CKV_DOCKER_7,hadolint/DL3006)
+FROM final-${VARIANT} AS final
