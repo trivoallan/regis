@@ -58,3 +58,28 @@ class TestReportSchemaVersion:
                 instance=_minimal_report(schemaVersion=0),
                 schema=_report_schema(),
             )
+
+
+class TestEnsureSchemaVersion:
+    def test_constant_is_one(self):
+        from regis.utils.report import REPORT_SCHEMA_VERSION
+
+        assert REPORT_SCHEMA_VERSION == 1
+
+    def test_sets_when_missing(self):
+        from regis.utils.report import REPORT_SCHEMA_VERSION, ensure_schema_version
+
+        report = {"request": {}, "results": {}}
+        result = ensure_schema_version(report)
+
+        assert result is report  # mutates in place and returns it
+        assert report["schemaVersion"] == REPORT_SCHEMA_VERSION
+
+    def test_preserves_existing_value(self):
+        from regis.utils.report import ensure_schema_version
+
+        report = {"schemaVersion": 7, "request": {}, "results": {}}
+        result = ensure_schema_version(report)
+
+        assert result is report
+        assert report["schemaVersion"] == 7
