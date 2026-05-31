@@ -15,6 +15,7 @@
 ## File Structure
 
 **Created:**
+
 - `regis/schemas/playbook/v1/__init__.py` — empty (package marker)
 - `regis/schemas/playbook/v1/definition.schema.json` — moved from parent dir, with new required fields
 - `regis/playbook/schema_registry.py` — version → schema dispatch
@@ -22,6 +23,7 @@
 - `docs/website/docs/reference/playbook-schema.md` — public reference doc
 
 **Modified:**
+
 - `regis/playbook/loader.py` — adds `PlaybookVersionError`, version extraction, registry dispatch, JSON Schema validation
 - `regis/schemas/playbook/result.schema.json` — declare `playbook_version` and `schema_version` properties
 - `regis/playbook/evaluator.py` — inject `playbook_version` and `schema_version` into the result
@@ -37,6 +39,7 @@
 - Docs YAML snippets in `docs/website/docs/usage/custom-playbook.md`, `configuration.md`, etc.
 
 **Deleted:**
+
 - `regis/schemas/playbook/definition.schema.json` — moved into `v1/`
 
 ---
@@ -46,6 +49,7 @@
 **Goal:** Establish the registry layout without changing semantics yet. After this task, the schema still validates the same playbook shape, just from a new path.
 
 **Files:**
+
 - Create: `regis/schemas/playbook/v1/__init__.py` (empty)
 - Move: `regis/schemas/playbook/definition.schema.json` → `regis/schemas/playbook/v1/definition.schema.json`
 - Modify: `regis/commands/playbook.py` — update path lookup
@@ -136,6 +140,7 @@ Prepare for multi-version dispatch: \`$id\` and \`$ref\` paths updated,
 **Goal:** Add `schemaVersion: 1` and `version: "1.0.0"` to the default playbook. Done BEFORE the fields become required so the test suite never sees a transient invalid state.
 
 **Files:**
+
 - Modify: `regis/playbooks/default/playbook.yaml`
 
 ### Steps
@@ -235,6 +240,7 @@ Expected: list of files containing inline playbook YAML or dict literals. Likely
 For each playbook fixture (Python dict literal or YAML string), add at the top:
 
 For dict literals:
+
 ```python
 playbook = {
     "schemaVersion": 1,
@@ -245,6 +251,7 @@ playbook = {
 ```
 
 For YAML strings:
+
 ```python
 playbook_yaml = """
 schemaVersion: 1
@@ -282,6 +289,7 @@ Prepares the test suite for the upcoming enforcement of these fields as required
 **Goal:** Introduce `regis/playbook/schema_registry.py` with a versioned dispatch table.
 
 **Files:**
+
 - Create: `regis/playbook/schema_registry.py`
 - Create: `tests/test_schema_registry.py`
 
@@ -397,6 +405,7 @@ Currently exposes v1; future versions plug in by adding a sibling loader."
 **Goal:** Tighten the v1 schema so both fields are required, `schemaVersion` is a `const: 1`, and `version` matches the SemVer pattern.
 
 **Files:**
+
 - Modify: `regis/schemas/playbook/v1/definition.schema.json`
 
 ### Steps
@@ -453,6 +462,7 @@ upgrade guide."
 **Goal:** `load_playbook()` now extracts `schemaVersion`, dispatches via the registry, and validates against the right schema — with guiding error messages.
 
 **Files:**
+
 - Modify: `regis/playbook/loader.py`
 - Modify: `tests/test_playbook_loader.py` (or create new tests if file is sparse)
 
@@ -745,6 +755,7 @@ is performed at load time."
 **Goal:** Inject `playbook_version` and `schema_version` into the playbook result dict so `result.schema.json` consumers (dashboard, markdown rendering) can attribute reports to a specific playbook revision.
 
 **Files:**
+
 - Modify: `regis/playbook/evaluator.py`
 - Modify: `tests/test_playbook_engine.py` (add assertion) OR `tests/test_utils_report.py`
 
@@ -855,6 +866,7 @@ top-level analysis_report['version']."
 **Goal:** Document the new fields in the report schema and add a validation test.
 
 **Files:**
+
 - Modify: `regis/schemas/playbook/result.schema.json`
 - Modify: `tests/test_utils_report.py`
 
@@ -938,6 +950,7 @@ git commit -m "feat(report): declare playbook_version and schema_version in resu
 **Goal:** The `validate` CLI subcommand reports the detected `schemaVersion` on success and gives the user a useful diagnostic on failure.
 
 **Files:**
+
 - Modify: `regis/commands/playbook.py`
 - Modify: `tests/test_cli.py` (or equivalent CLI test file)
 
@@ -1052,6 +1065,7 @@ git commit -m "feat(cli): \`regis playbook validate\` reports detected schemaVer
 **Goal:** The `/create-playbook` skill emits `schemaVersion: 1` + `version: 1.0.0` by default in any new playbook it scaffolds.
 
 **Files:**
+
 - Modify: `.claude/skills/create-playbook/SKILL.md` and any template files it references
 
 ### Steps
@@ -1072,7 +1086,7 @@ Wherever the skill's template renders the playbook, ensure it produces:
 ```yaml
 schemaVersion: 1
 version: "1.0.0"
-name: {{ name }}
+name: { { name } }
 # … rest of the scaffold …
 ```
 
@@ -1101,6 +1115,7 @@ New playbooks created via the skill ship with \`schemaVersion: 1\` and
 **Decision:** include in this plan, but if scope pressure mounts, drop and re-file as a follow-up. The migration guide must still work without it (manual edits documented).
 
 **Files:**
+
 - Modify: `regis/commands/playbook.py` (add `upgrade` subcommand)
 - Modify: `Pipfile` / `pyproject.toml` (add `ruamel.yaml` dependency)
 - Create: `tests/test_playbook_upgrade.py`
@@ -1253,6 +1268,7 @@ absent, preserves comments and formatting via ruamel.yaml."
 **Goal:** Reference doc for the new schema fields, plus an upgrade guide entry.
 
 **Files:**
+
 - Create: `docs/website/docs/reference/playbook-schema.md`
 - Create or modify: `docs/website/docs/upgrade/playbook-schema-v1.md`
 
@@ -1271,10 +1287,10 @@ sidebar_position: 5
 
 Every Regis playbook declares two version-related fields at its root:
 
-| Field           | Type    | Required | Purpose                                                     |
-| --------------- | ------- | -------- | ----------------------------------------------------------- |
-| `schemaVersion` | integer | yes      | Identifies the format version of the playbook.              |
-| `version`       | string  | yes      | SemVer of the playbook bundle (`MAJOR.MINOR.PATCH`).        |
+| Field           | Type    | Required | Purpose                                              |
+| --------------- | ------- | -------- | ---------------------------------------------------- |
+| `schemaVersion` | integer | yes      | Identifies the format version of the playbook.       |
+| `version`       | string  | yes      | SemVer of the playbook bundle (`MAJOR.MINOR.PATCH`). |
 
 ## Example
 
@@ -1470,21 +1486,21 @@ The PR URL is the deliverable for this plan.
 
 This plan was written against [`docs/superpowers/specs/2026-05-31-playbook-versioning-design.md`](../specs/2026-05-31-playbook-versioning-design.md). Each spec requirement is covered:
 
-| Spec requirement                                                | Covered by    |
-| --------------------------------------------------------------- | ------------- |
-| Two required top-level fields (`schemaVersion`, `version`)      | Task 5        |
-| Top-level placement                                             | Task 5        |
-| Integer `schemaVersion`, SemVer `version`                       | Task 5        |
-| Hard fail on missing/unknown `schemaVersion`                    | Task 6        |
-| Schema registry under `v1/`                                     | Tasks 1, 4    |
-| Loader dispatches via registry                                  | Task 6        |
-| Migration without grace period (in-tree fixtures pre-migrated)  | Tasks 2, 3    |
-| Report propagation (`playbook_version`, `schema_version`)       | Tasks 7, 8    |
-| CLI `validate` reports `schemaVersion`                          | Task 9        |
-| `regis playbook upgrade` helper                                 | Task 11       |
-| Default playbook ships with new fields                          | Task 2        |
-| `create-playbook` skill scaffolds new fields                    | Task 10       |
-| Reference doc + migration guide                                 | Task 12       |
-| PR with `feat(playbook)!:` + BREAKING CHANGE                    | Task 13       |
+| Spec requirement                                               | Covered by |
+| -------------------------------------------------------------- | ---------- |
+| Two required top-level fields (`schemaVersion`, `version`)     | Task 5     |
+| Top-level placement                                            | Task 5     |
+| Integer `schemaVersion`, SemVer `version`                      | Task 5     |
+| Hard fail on missing/unknown `schemaVersion`                   | Task 6     |
+| Schema registry under `v1/`                                    | Tasks 1, 4 |
+| Loader dispatches via registry                                 | Task 6     |
+| Migration without grace period (in-tree fixtures pre-migrated) | Tasks 2, 3 |
+| Report propagation (`playbook_version`, `schema_version`)      | Tasks 7, 8 |
+| CLI `validate` reports `schemaVersion`                         | Task 9     |
+| `regis playbook upgrade` helper                                | Task 11    |
+| Default playbook ships with new fields                         | Task 2     |
+| `create-playbook` skill scaffolds new fields                   | Task 10    |
+| Reference doc + migration guide                                | Task 12    |
+| PR with `feat(playbook)!:` + BREAKING CHANGE                   | Task 13    |
 
 **Note on regis binary version in the report:** the spec called for `metadata.regis.version`. Investigation in Task 0 (pre-plan) confirmed that the existing top-level `version` field in `analysis_report` (set in `regis/commands/analyze.py:612`) already carries the regis binary version. This plan therefore preserves that field as-is and does not introduce a nested `metadata.regis` structure, avoiding a breaking change for dashboard consumers. The playbook-level fields (`playbook_version`, `schema_version`) live alongside `playbook_name` in the playbook result, matching the existing flat shape.

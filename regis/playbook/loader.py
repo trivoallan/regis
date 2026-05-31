@@ -112,7 +112,10 @@ def _build_validator_registry(schema: dict[str, Any]) -> Registry:
         _registry_cache[schema_id] = Registry().with_resources(
             [
                 (schema_id, Resource.from_contents(schema)),
-                (jsonlogic_schema.get("$id", ""), Resource.from_contents(jsonlogic_schema)),
+                (
+                    jsonlogic_schema.get("$id", ""),
+                    Resource.from_contents(jsonlogic_schema),
+                ),
                 # v1 schema references jsonlogic.schema.json as "../jsonlogic.schema.json".
                 # Provide both forms so the ref resolves regardless of base URI used by the validator.
                 ("../jsonlogic.schema.json", Resource.from_contents(jsonlogic_schema)),

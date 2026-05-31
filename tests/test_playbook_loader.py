@@ -142,11 +142,7 @@ def _write(tmp_path, content: str) -> str:
 
 
 def test_loads_valid_v1_playbook(tmp_path) -> None:
-    content = (
-        "schemaVersion: 1\n"
-        'version: "1.0.0"\n'
-        "name: Valid Playbook\n"
-    )
+    content = "schemaVersion: 1\n" 'version: "1.0.0"\n' "name: Valid Playbook\n"
     pb = load_playbook(_write(tmp_path, content))
     assert pb["schemaVersion"] == 1
     assert pb["version"] == "1.0.0"
@@ -165,9 +161,7 @@ def test_missing_schema_version_raises(tmp_path) -> None:
 
 def test_schema_version_not_integer_raises(tmp_path) -> None:
     content = (
-        'schemaVersion: "1"\n'
-        'version: "1.0.0"\n'
-        "name: String Schema Version\n"
+        'schemaVersion: "1"\n' 'version: "1.0.0"\n' "name: String Schema Version\n"
     )
     with pytest.raises(PlaybookVersionError) as exc:
         load_playbook(_write(tmp_path, content))
@@ -176,9 +170,7 @@ def test_schema_version_not_integer_raises(tmp_path) -> None:
 
 def test_schema_version_boolean_raises(tmp_path) -> None:
     content = (
-        "schemaVersion: true\n"
-        'version: "1.0.0"\n'
-        "name: Boolean Schema Version\n"
+        "schemaVersion: true\n" 'version: "1.0.0"\n' "name: Boolean Schema Version\n"
     )
     with pytest.raises(PlaybookVersionError) as exc:
         load_playbook(_write(tmp_path, content))
@@ -186,11 +178,7 @@ def test_schema_version_boolean_raises(tmp_path) -> None:
 
 
 def test_unknown_schema_version_raises(tmp_path) -> None:
-    content = (
-        "schemaVersion: 99\n"
-        'version: "1.0.0"\n'
-        "name: Future Playbook\n"
-    )
+    content = "schemaVersion: 99\n" 'version: "1.0.0"\n' "name: Future Playbook\n"
     with pytest.raises(PlaybookVersionError) as exc:
         load_playbook(_write(tmp_path, content))
     msg = str(exc.value)
@@ -209,10 +197,6 @@ def test_missing_version_field_fails_schema_validation(tmp_path) -> None:
 def test_invalid_semver_fails_schema_validation(tmp_path) -> None:
     import jsonschema
 
-    content = (
-        "schemaVersion: 1\n"
-        'version: "1.2"\n'
-        "name: Invalid SemVer\n"
-    )
+    content = "schemaVersion: 1\n" 'version: "1.2"\n' "name: Invalid SemVer\n"
     with pytest.raises(jsonschema.ValidationError):
         load_playbook(_write(tmp_path, content))

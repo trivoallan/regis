@@ -19,17 +19,17 @@ The current loader (`regis/playbook/loader.py:18`) is a thin YAML/JSON read; the
 
 ## Decisions
 
-| Axis | Decision |
-| --- | --- |
-| Versioning axes modeled | **Schema version** (format identifier) **and bundle version** (SemVer of the playbook itself). Regis app compat range and per-rule/analyzer fine-grained compat are explicitly out of scope. |
-| Field placement | **Top-level keys** in `playbook.yaml`. No separate manifest file. |
-| `schemaVersion` format | **Integer** (`1`, `2`, …). Each bump is breaking. |
-| `version` format | **SemVer strict**, validated by a regex pattern (see "Schema fields" below for the exact pattern). |
-| Both fields | **Required.** |
-| Behavior on missing or unknown `schemaVersion` | **Hard fail** with an explicit, guiding error message. |
-| Migration policy | **Hard fail on day 1** — no grace period. Pre-migrate every in-tree playbook (default, examples, fixtures) in the same PR that flips the field to required. Pre-v1 stage of Regis legitimizes the bold cut. |
-| Report propagation | Inject `playbook.{name, version, schemaVersion}` and `regis.version` into the report metadata. |
-| Architecture | **Schema registry** under `regis/schemas/playbook/v1/` with a dispatch table in a new `regis/playbook/schema_registry.py`. Each future bump = a new sibling directory + a new entry in the table, zero displacement of existing files. |
+| Axis                                           | Decision                                                                                                                                                                                                                               |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Versioning axes modeled                        | **Schema version** (format identifier) **and bundle version** (SemVer of the playbook itself). Regis app compat range and per-rule/analyzer fine-grained compat are explicitly out of scope.                                           |
+| Field placement                                | **Top-level keys** in `playbook.yaml`. No separate manifest file.                                                                                                                                                                      |
+| `schemaVersion` format                         | **Integer** (`1`, `2`, …). Each bump is breaking.                                                                                                                                                                                      |
+| `version` format                               | **SemVer strict**, validated by a regex pattern (see "Schema fields" below for the exact pattern).                                                                                                                                     |
+| Both fields                                    | **Required.**                                                                                                                                                                                                                          |
+| Behavior on missing or unknown `schemaVersion` | **Hard fail** with an explicit, guiding error message.                                                                                                                                                                                 |
+| Migration policy                               | **Hard fail on day 1** — no grace period. Pre-migrate every in-tree playbook (default, examples, fixtures) in the same PR that flips the field to required. Pre-v1 stage of Regis legitimizes the bold cut.                            |
+| Report propagation                             | Inject `playbook.{name, version, schemaVersion}` and `regis.version` into the report metadata.                                                                                                                                         |
+| Architecture                                   | **Schema registry** under `regis/schemas/playbook/v1/` with a dispatch table in a new `regis/playbook/schema_registry.py`. Each future bump = a new sibling directory + a new entry in the table, zero displacement of existing files. |
 
 ## Architecture
 
