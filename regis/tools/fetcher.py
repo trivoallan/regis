@@ -216,6 +216,13 @@ class ToolFetcher:
         archive_path.unlink()
         return out
 
+    def fetch_all(self, names: list[str] | None = None) -> dict[str, Path]:
+        targets = list(names) if names else list(self._tools)
+        out: dict[str, Path] = {}
+        for name in targets:
+            out[name] = self.ensure(name)
+        return out
+
     def status(self) -> list[ToolStatus]:
         out: list[ToolStatus] = []
         for name, tool in self._tools.items():

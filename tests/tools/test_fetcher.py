@@ -350,3 +350,61 @@ def test_cosign_missing_is_silently_skipped_by_default(monkeypatch, tmp_path, ca
         with caplog.at_level("INFO"):
             fetcher.ensure("grype")
         assert any("cosign verification skipped" in r.message for r in caplog.records)
+
+
+def test_fetch_all_downloads_each_tool(monkeypatch, tmp_path):
+    payloads = {n: f"bin-{n}".encode() for n in ("grype", "syft")}
+    shas = {n: hashlib.sha256(p).hexdigest() for n, p in payloads.items()}
+    pub = tmp_path / "pub"
+    pub.mkdir()
+    for n, p in payloads.items():
+        (pub / f"{n}.bin").write_bytes(p)
+    with _serve(pub) as base_url:
+        from regis.tools.manifest import Tool
+
+        tools = {
+            n: Tool(
+                name=n,
+                version="0.0.1",
+                url_template=f"{base_url}/{n}.bin",
+                archive="none",
+                sha256={"amd64": shas[n], "arm64": shas[n]},
+            )
+            for n in ("grype", "syft")
+        }
+        _patch_manifest(monkeypatch, tools)
+        fetcher = ToolFetcher(cache_dir=tmp_path / "cache", arch="amd64")
+        result = fetcher.fetch_all()
+        assert set(result) == {"grype", "syft"}
+        assert all(result[n].read_bytes() == payloads[n] for n in payloads)
+
+
+def test_fetch_all_subset(monkeypatch, tmp_path):
+    payload = b"only-grype"
+    sha = hashlib.sha256(payload).hexdigest()
+    pub = tmp_path / "pub"
+    pub.mkdir()
+    (pub / "grype.bin").write_bytes(payload)
+    with _serve(pub) as base_url:
+        from regis.tools.manifest import Tool
+
+        tools = {
+            "grype": Tool(
+                name="grype",
+                version="0.0.1",
+                url_template=f"{base_url}/grype.bin",
+                archive="none",
+                sha256={"amd64": sha, "arm64": sha},
+            ),
+            "syft": Tool(
+                name="syft",
+                version="0.0.1",
+                url_template="https://offline.invalid",
+                archive="none",
+                sha256={"amd64": "0" * 64, "arm64": "0" * 64},
+            ),
+        }
+        _patch_manifest(monkeypatch, tools)
+        fetcher = ToolFetcher(cache_dir=tmp_path / "cache", arch="amd64")
+        result = fetcher.fetch_all(names=["grype"])
+        assert list(result) == ["grype"]
