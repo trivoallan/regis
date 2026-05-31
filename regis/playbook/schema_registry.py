@@ -5,10 +5,11 @@ from __future__ import annotations
 import functools
 import importlib.resources
 import json
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 
-@functools.lru_cache(maxsize=None)
+@functools.cache
 def _load_schema_v1() -> dict[str, Any]:
     pkg = importlib.resources.files("regis.schemas.playbook.v1")
     text = pkg.joinpath("definition.schema.json").read_text(encoding="utf-8")
