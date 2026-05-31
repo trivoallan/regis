@@ -71,3 +71,26 @@ class TestPlaybookValidate:
         result = runner.invoke(main, ["playbook", "validate", str(ok)])
         assert result.exit_code == 0
         assert "is valid" in result.output
+
+    def test_validate_reports_schema_version_and_version(self, tmp_path: Path):
+        playbook = tmp_path / "playbook.yaml"
+        playbook.write_text(
+            'schemaVersion: 1\nversion: "1.2.3"\nname: SchemaVersionTest\n',
+            encoding="utf-8",
+        )
+        runner = CliRunner()
+        result = runner.invoke(main, ["playbook", "validate", str(playbook)])
+        assert result.exit_code == 0, result.output
+        assert "schemaVersion=1" in result.output
+        assert "version=1.2.3" in result.output
+
+    def test_validate_fails_on_missing_schema_version(self, tmp_path: Path):
+        playbook = tmp_path / "playbook.yaml"
+        playbook.write_text(
+            'version: "1.0.0"\nname: NoSchemaVersion\n',
+            encoding="utf-8",
+        )
+        runner = CliRunner()
+        result = runner.invoke(main, ["playbook", "validate", str(playbook)])
+        assert result.exit_code == 1
+        assert "schemaVersion" in result.output

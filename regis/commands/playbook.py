@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import json
-from importlib.resources import files
 from pathlib import Path
 
 import click
@@ -29,41 +27,24 @@ def validate_playbook(path: Path) -> None:
     """Validate a playbook YAML/JSON file (or bundle directory) against the schema."""
     import jsonschema
 
-    from regis.playbook.loader import load_playbook
+    from regis.playbook.loader import PlaybookVersionError, load_playbook
 
     try:
         playbook = load_playbook(path)
+    except PlaybookVersionError as exc:
+        click.echo(f"  ✗ {path} is invalid:", err=True)
+        for line in str(exc).splitlines():
+            click.echo(f"    {line}", err=True)
+        raise click.exceptions.Exit(1) from exc
+    except jsonschema.ValidationError as exc:
+        click.echo(f"  ✗ {path} is invalid:", err=True)
+        click.echo(f"    - {_format_validation_error(exc)}", err=True)
+        raise click.exceptions.Exit(1) from exc
     except Exception as exc:
+        # YAML/JSON parse errors, missing file, etc.
         raise click.ClickException(f"Failed to load playbook: {exc}") from exc
 
-    schema_pkg = files("regis.schemas.playbook")
-    schema = json.loads(
-        schema_pkg.joinpath("v1").joinpath("definition.schema.json").read_text(encoding="utf-8")
+    click.echo(
+        f"  ✓ {path} is valid (schemaVersion={playbook['schemaVersion']}, "
+        f"version={playbook['version']})."
     )
-    jsonlogic_schema = json.loads(
-        schema_pkg.joinpath("jsonlogic.schema.json").read_text(encoding="utf-8")
-    )
-
-    from referencing import Registry, Resource
-
-    registry = Registry().with_resources(
-        [
-            (schema.get("$id", ""), Resource.from_contents(schema)),
-            (jsonlogic_schema.get("$id", ""), Resource.from_contents(jsonlogic_schema)),
-            # Allow $ref to bare filename for backwards compatibility
-            ("jsonlogic.schema.json", Resource.from_contents(jsonlogic_schema)),
-        ]
-    )
-
-    validator = jsonschema.Draft202012Validator(schema, registry=registry)
-    errors = sorted(
-        validator.iter_errors(playbook), key=lambda e: list(e.absolute_path)
-    )
-
-    if errors:
-        click.echo(f"  ✗ {path} is invalid:", err=True)
-        for err in errors:
-            click.echo(f"    - {_format_validation_error(err)}", err=True)
-        raise click.exceptions.Exit(1)
-
-    click.echo(f"  ✓ {path} is valid.")
