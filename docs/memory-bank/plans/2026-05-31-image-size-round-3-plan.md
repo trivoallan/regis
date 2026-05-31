@@ -1978,6 +1978,10 @@ WORKDIR /src
 COPY pyproject.toml Pipfile Pipfile.lock ./
 COPY regis/ regis/
 COPY --from=frontend-builder /app/apps/dashboard/build regis/dashboard_assets
+# `--copies` (not symlinks) so the venv's python3.11 is a real binary copied
+# from the slim base — distroless runtime has no /usr/local/bin/python to
+# satisfy a symlink. See plan Task 0 POC for the rationale.
+RUN rm -rf /opt/venv && python -m venv --copies /opt/venv
 RUN VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml) && \
     SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" pip install --no-compile . && \
     find /opt/venv -type d -name __pycache__ -prune -exec rm -rf {} + && \
@@ -1994,6 +1998,7 @@ LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.source="https://github.com/trivoallan/regis" \
       org.opencontainers.image.licenses="MIT"
 ENV PATH="/opt/venv/bin:/usr/local/bin:$PATH" \
+    PYTHONPATH=/opt/venv/lib/python3.11/site-packages \
     REGIS_VARIANT=slim \
     HOME=/home/nonroot
 COPY --from=python-builder /opt/venv /opt/venv
@@ -2011,6 +2016,7 @@ LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.source="https://github.com/trivoallan/regis" \
       org.opencontainers.image.licenses="MIT"
 ENV PATH="/opt/venv/bin:/usr/local/bin:$PATH" \
+    PYTHONPATH=/opt/venv/lib/python3.11/site-packages \
     REGIS_VARIANT=full \
     HOME=/home/nonroot
 COPY --from=python-builder /opt/venv /opt/venv
@@ -2031,6 +2037,8 @@ FROM final-${VARIANT} AS final
 ```
 
 (Keep the existing `tools-fetcher` stage body verbatim; only the two final stages and the selector are new.)
+
+**Why `--copies` + `PYTHONPATH`?** The POC in Task 0 found that distroless cannot follow the venv's default symlinks (which point to `/usr/local/bin/python`, absent in distroless). `--copies` makes `/opt/venv/bin/python3.11` a real binary so the `regis` console-script shebang resolves; `PYTHONPATH` is a belt-and-suspenders safety net in case the shebang dispatch is bypassed. If `docker run regis:slim --help` errors with `ModuleNotFoundError` or `OSError: cannot open`, drop the `PYTHONPATH` and try `python -m regis` form of ENTRYPOINT instead.
 
 - [ ] **Step 3: Build slim locally and smoke**
 
@@ -2383,7 +2391,7 @@ cache:
   paths: [.regis-cache/]
 script:
   - docker run -v "$PWD/.regis-cache:/home/nonroot/.cache/regis" \
-      ghcr.io/trivoallan/regis:latest analyze $IMAGE
+    ghcr.io/trivoallan/regis:latest analyze $IMAGE
 ```
 
 - [ ] **Step 2: Add the 4 env vars to `configuration.md`**
@@ -2404,7 +2412,7 @@ $ regis bootstrap tools
   ✓ grype        -> /home/user/.cache/regis/tools/grype/0.112.0/linux-amd64/grype
   ...
 
-````
+```
 
 And document the new "Tools" section in `regis doctor`.
 
@@ -2413,7 +2421,7 @@ And document the new "Tools" section in `regis doctor`.
 ```bash
 git add docs/website/docs/usage/tools-management.md docs/website/docs/usage/configuration.md docs/website/docs/reference/cli.md
 git commit -m "docs(tools): document lazy fetch, env vars, CI cache patterns"
-````
+```
 
 ---
 
