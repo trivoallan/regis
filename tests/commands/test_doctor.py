@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import shutil
 from unittest.mock import patch
 
 from click.testing import CliRunner
 
+from regis.cli import main
 from regis.commands.doctor import doctor
 
 
@@ -92,3 +94,16 @@ def test_version_unknown_when_subprocess_returns_nothing():
         result = runner.invoke(doctor)
     assert result.exit_code == 0
     assert "version unknown" in result.output
+
+
+def test_doctor_lists_tools_section(monkeypatch, tmp_path):
+    """`regis doctor` prints a Tools (manifest) section listing each entry."""
+    monkeypatch.setenv("REGIS_CACHE_DIR", str(tmp_path))
+    monkeypatch.setattr(shutil, "which", lambda _n: None)
+    runner = CliRunner()
+    result = runner.invoke(main, ["doctor"])
+    # doctor may exit non-zero because no required tools are on PATH,
+    # but the new Tools section must still print.
+    assert "Tools" in result.output or "grype" in result.output
+    assert "grype" in result.output
+    assert "not cached" in result.output  # all 6 tools are missing under tmp_path cache
