@@ -248,3 +248,50 @@ def test_concurrent_ensure_downloads_only_once(monkeypatch, tmp_path):
     finally:
         server.shutdown()
         thread.join(timeout=2)
+
+
+def test_mirror_overrides_manifest_url(monkeypatch, tmp_path):
+    payload = b"mirror-payload"
+    sha = hashlib.sha256(payload).hexdigest()
+    pub = tmp_path / "mirror"
+    pub.mkdir()
+    # Mirror layout: {mirror}/{tool}/{version}/{tool}_{version}_linux_{arch}{ext}
+    target_dir = pub / "grype" / "0.0.1"
+    target_dir.mkdir(parents=True)
+    (target_dir / "grype_0.0.1_linux_amd64").write_bytes(payload)
+
+    with _serve(pub) as base_url:
+        from regis.tools.manifest import Tool
+
+        tools = {
+            "grype": Tool(
+                name="grype",
+                version="0.0.1",
+                url_template="https://example.invalid/will-not-be-hit",
+                archive="none",
+                sha256={"amd64": sha, "arm64": sha},
+            )
+        }
+        _patch_manifest(monkeypatch, tools)
+        cache = tmp_path / "cache"
+        fetcher = ToolFetcher(cache_dir=cache, mirror=base_url, arch="amd64")
+        path = fetcher.ensure("grype")
+        assert path.read_bytes() == payload
+
+
+def test_mirror_env_var_is_picked_up(monkeypatch, tmp_path):
+    monkeypatch.setenv("REGIS_TOOLS_MIRROR", "https://nope.invalid")
+    from regis.tools.manifest import Tool
+
+    tools = {
+        "grype": Tool(
+            name="grype",
+            version="0.0.1",
+            url_template="https://orig.invalid",
+            archive="none",
+            sha256={"amd64": "a" * 64, "arm64": "b" * 64},
+        )
+    }
+    _patch_manifest(monkeypatch, tools)
+    fetcher = ToolFetcher(cache_dir=tmp_path / "cache", arch="amd64")
+    assert fetcher.mirror == "https://nope.invalid"
