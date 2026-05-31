@@ -6,6 +6,11 @@ import hashlib
 import logging
 import os
 import platform
+import shutil
+import tarfile
+import tempfile
+import urllib.request
+import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -13,6 +18,8 @@ from regis.tools import manifest as _manifest
 from regis.tools.manifest import Tool
 
 logger = logging.getLogger(__name__)
+
+DOWNLOAD_TIMEOUT_S = 120
 
 
 class ToolFetchError(RuntimeError):
@@ -80,15 +87,90 @@ class ToolFetcher:
     def ensure(self, name: str) -> Path:
         tool = self._tools[name]  # KeyError on unknown name (test expects this)
         target = self._path_for(tool)
-        if target.exists() and _sha256_file(target) == tool.sha_for(self.arch):
+        expected_sha = tool.sha_for(self.arch)
+        if target.exists() and _sha256_file(target) == expected_sha:
             return target
         if self.offline:
             raise ToolFetchError(
                 f"{name} not in cache and offline mode is enabled "
                 f"(REGIS_OFFLINE=1). Expected at {target}."
             )
-        # download path implemented in Task 5
-        raise NotImplementedError("download path implemented in next task")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        self._download_and_install(tool, target, expected_sha)
+        return target
+
+    def _resolve_url(self, tool: Tool) -> str:
+        """Compute the download URL, honoring an optional mirror override."""
+        if self.mirror:
+            ext = {"none": "", "tar.gz": ".tar.gz", "zip": ".zip"}[tool.archive]
+            return (
+                f"{self.mirror.rstrip('/')}/{tool.name}/{tool.version}/"
+                f"{tool.name}_{tool.version}_linux_{self.arch}{ext}"
+            )
+        return tool.url(arch=self.arch)
+
+    def _download_and_install(
+        self, tool: Tool, target: Path, expected_sha: str
+    ) -> None:
+        """Download ``tool`` to ``target`` after sha256 verification."""
+        url = self._resolve_url(tool)
+        logger.info("Fetching %s %s from %s", tool.name, tool.version, url)
+        with tempfile.NamedTemporaryFile(
+            dir=target.parent,
+            prefix=f"{tool.name}.",
+            suffix=".partial",
+            delete=False,
+        ) as tmpf:
+            partial = Path(tmpf.name)
+        try:
+            with urllib.request.urlopen(  # nosec B310 — http(s) only, verified by sha256
+                url, timeout=DOWNLOAD_TIMEOUT_S
+            ) as resp:
+                with partial.open("wb") as out:
+                    shutil.copyfileobj(resp, out)
+
+            extracted = self._maybe_extract(tool, partial)
+            actual = _sha256_file(extracted)
+            if actual != expected_sha:
+                raise ToolFetchError(
+                    f"{tool.name} sha256 mismatch: expected {expected_sha}, got {actual}"
+                )
+            extracted.replace(target)
+            os.chmod(target, 0o755)  # nosec B103 — tool binaries must be executable
+        finally:
+            if partial.exists():
+                partial.unlink()
+            # extracted may equal partial; cleanup any sibling
+            for stray in target.parent.glob(f"{tool.name}.*.partial*"):
+                stray.unlink(missing_ok=True)
+            for stray in target.parent.glob(f"{tool.name}.*.partial.extracted"):
+                stray.unlink(missing_ok=True)
+
+    def _maybe_extract(self, tool: Tool, archive_path: Path) -> Path:
+        """Extract ``tool.member`` from the archive, or return the input as-is."""
+        if tool.archive == "none":
+            return archive_path
+        if tool.member is None:
+            raise ToolFetchError(f"{tool.name}: archive set but no member to extract")
+        out = archive_path.with_suffix(".extracted")
+        if tool.archive == "tar.gz":
+            with tarfile.open(archive_path, "r:gz") as tar:
+                m = tar.getmember(tool.member)
+                src = tar.extractfile(m)
+                if src is None:
+                    raise ToolFetchError(
+                        f"{tool.name}: member {tool.member!r} is not a regular file"
+                    )
+                with src, out.open("wb") as dst:
+                    shutil.copyfileobj(src, dst)
+        elif tool.archive == "zip":
+            with zipfile.ZipFile(archive_path) as zf:
+                with zf.open(tool.member) as src, out.open("wb") as dst:
+                    shutil.copyfileobj(src, dst)
+        else:
+            raise ToolFetchError(f"unsupported archive type: {tool.archive}")
+        archive_path.unlink()
+        return out
 
     def status(self) -> list[ToolStatus]:
         out: list[ToolStatus] = []
