@@ -74,11 +74,7 @@ class ToolFetcher:
 
     def _path_for(self, tool: Tool) -> Path:
         return (
-            self.cache_dir
-            / tool.name
-            / tool.version
-            / f"linux-{self.arch}"
-            / tool.name
+            self.cache_dir / tool.name / tool.version / f"linux-{self.arch}" / tool.name
         )
 
     def ensure(self, name: str) -> Path:

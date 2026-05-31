@@ -19,6 +19,7 @@ def _write_binary(path: Path, content: bytes) -> str:
 def _patch_manifest(monkeypatch, tools: dict) -> None:
     """Replace the loader with a controlled in-memory manifest."""
     from regis.tools import manifest as m
+
     monkeypatch.setattr(m, "load_manifest", lambda path=None: tools)
 
 
@@ -28,6 +29,7 @@ def fake_tool(monkeypatch, tmp_path):
     payload = b"hello-grype"
     sha = hashlib.sha256(payload).hexdigest()
     from regis.tools.manifest import Tool
+
     tools = {
         "grype": Tool(
             name="grype",
