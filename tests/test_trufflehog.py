@@ -1,5 +1,7 @@
 """Tests for the trufflehog subprocess wrapper."""
 
+import base64
+import json
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -72,6 +74,9 @@ class TestRunTrufflehog:
         mock_run.side_effect = _capture
         run_trufflehog("ghcr.io/acme/app:1.0", username="u", password="p")
 
-        assert "ghcr.io" in captured["config"]
-        # base64("u:p") == "dTpw"
-        assert "dTpw" in captured["config"]
+        # Assert on the parsed structure (exact auths key + round-tripped
+        # credentials), not a substring of the raw config text.
+        config = json.loads(captured["config"])
+        assert set(config["auths"]) == {"ghcr.io"}
+        auth = config["auths"]["ghcr.io"]["auth"]
+        assert base64.b64decode(auth).decode() == "u:p"
