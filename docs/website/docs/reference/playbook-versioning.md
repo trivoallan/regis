@@ -53,10 +53,13 @@ above is yours to follow.
 
 ## Validation errors
 
+The underlying exception class is `regis.playbook.loader.PlaybookVersionError` for
+programmatic catchers. `regis playbook validate` surfaces just the message body:
+
 When `schemaVersion` is missing:
 
 ```text
-PlaybookVersionError: playbook 'path/to/playbook.yaml' is missing required field 'schemaVersion'.
+playbook 'path/to/playbook.yaml' is missing required field 'schemaVersion'.
 Add `schemaVersion: 1` at the top of the file.
 Supported versions: [1].
 ```
@@ -65,8 +68,7 @@ When `schemaVersion` is set to an unknown value (e.g. when an old Regis
 sees a playbook authored for a future version):
 
 ```text
-PlaybookVersionError: playbook 'path/to/playbook.yaml' declares schemaVersion=2 but this
-regis (vX.Y.Z) only supports [1]. Upgrade regis or use a compatible playbook.
+playbook 'path/to/playbook.yaml' declares schemaVersion=2 but this regis (vX.Y.Z) only supports [1]. Upgrade regis or use a compatible playbook.
 ```
 
 ## Report metadata
