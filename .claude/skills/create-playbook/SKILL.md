@@ -225,6 +225,8 @@ Construct valid YAML from stages 2–4. Use this structure:
 # Regis Playbook — <name>
 # Docs: https://trivoallan.github.io/regis/docs/concepts/playbooks
 
+schemaVersion: 1
+version: "1.0.0"
 name: "<name>"
 description: "<description>" # omit if not provided
 
@@ -273,6 +275,8 @@ integrations: # only if GitLab chosen
   # integrations.gitlab.templates:
   #   - url: https://example.com/evidence-template
 ```
+
+- `schemaVersion: 1` and `version: "1.0.0"` identify the playbook format and bundle version. Both are required. Bump `version` (SemVer) when you change rules.
 
 ### File 2: `README.md`
 

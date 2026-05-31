@@ -22,6 +22,7 @@ idna = ">=3.15"
 regis = {extras = ["dev"], file = ".", editable = true}
 pillow = ">=12.2.0"
 referencing = "*"
+"ruamel.yaml" = "*"
 
 [dev-packages]
 pytest = ">=7.4"

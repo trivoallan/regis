@@ -177,6 +177,7 @@ jobs:
         run: |
           # Copy all schemas first to allow cross-category resolution
           mkdir -p docs/website/static/schemas
+          rm -rf docs/website/static/schemas/playbook
           cp -rv regis/schemas/* docs/website/static/schemas/
           # Clean up any non-JSON files (like __init__.py) inadvertently copied
           find docs/website/static/schemas/ -type f ! -name "*.json" -delete

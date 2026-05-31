@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import json
-from importlib.resources import files
 from pathlib import Path
 
 import click
@@ -29,39 +27,65 @@ def validate_playbook(path: Path) -> None:
     """Validate a playbook YAML/JSON file (or bundle directory) against the schema."""
     import jsonschema
 
-    from regis.playbook.loader import load_playbook
+    from regis.playbook.loader import PlaybookVersionError, load_playbook
 
     try:
         playbook = load_playbook(path)
+    except PlaybookVersionError as exc:
+        click.echo(f"  ✗ {path} is invalid:", err=True)
+        for line in str(exc).splitlines():
+            click.echo(f"    {line}", err=True)
+        raise click.exceptions.Exit(1) from exc
+    except jsonschema.ValidationError as exc:
+        click.echo(f"  ✗ {path} is invalid:", err=True)
+        click.echo(f"    - {_format_validation_error(exc)}", err=True)
+        raise click.exceptions.Exit(1) from exc
     except Exception as exc:
+        # YAML/JSON parse errors, missing file, etc.
         raise click.ClickException(f"Failed to load playbook: {exc}") from exc
 
-    schema_pkg = files("regis.schemas.playbook")
-    schema = json.loads(
-        schema_pkg.joinpath("definition.schema.json").read_text(encoding="utf-8")
-    )
-    jsonlogic_schema = json.loads(
-        schema_pkg.joinpath("jsonlogic.schema.json").read_text(encoding="utf-8")
+    click.echo(
+        f"  ✓ {path} is valid (schemaVersion={playbook['schemaVersion']}, "
+        f"version={playbook['version']})."
     )
 
-    from referencing import Registry, Resource
 
-    registry = Registry().with_resources(
-        [
-            (schema.get("$id", ""), Resource.from_contents(schema)),
-            (jsonlogic_schema.get("$id", ""), Resource.from_contents(jsonlogic_schema)),
-            # Allow $ref to bare filename (definition.schema.json references jsonlogic.schema.json relatively)
-            ("jsonlogic.schema.json", Resource.from_contents(jsonlogic_schema)),
-        ]
-    )
+@playbook_group.command(name="upgrade")
+@click.argument("path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+def upgrade_playbook(path: Path) -> None:
+    """Inject schemaVersion and version into a legacy playbook file.
 
-    validator = jsonschema.Draft202012Validator(schema, registry=registry)
-    errors = sorted(validator.iter_errors(playbook), key=lambda e: list(e.absolute_path))
+    Preserves comments and formatting via ruamel.yaml. Idempotent: if both
+    fields are already present, the file is left untouched.
+    """
+    from ruamel.yaml import YAML
+    from ruamel.yaml.scalarstring import DoubleQuotedScalarString
 
-    if errors:
-        click.echo(f"  ✗ {path} is invalid:", err=True)
-        for err in errors:
-            click.echo(f"    - {_format_validation_error(err)}", err=True)
-        raise click.exceptions.Exit(1)
+    yaml = YAML()
+    yaml.preserve_quotes = True
+    yaml.indent(mapping=2, sequence=4, offset=2)
 
-    click.echo(f"  ✓ {path} is valid.")
+    with open(path, encoding="utf-8") as f:
+        data = yaml.load(f)
+
+    if data is None:
+        raise click.ClickException(
+            f"{path}: file is empty or not a valid YAML document."
+        )
+
+    changes: list[str] = []
+    if "schemaVersion" not in data:
+        data.insert(0, "schemaVersion", 1)
+        changes.append("schemaVersion")
+    if "version" not in data:
+        # Insert after schemaVersion (which is now guaranteed to exist).
+        position = list(data.keys()).index("schemaVersion") + 1
+        data.insert(position, "version", DoubleQuotedScalarString("1.0.0"))
+        changes.append("version")
+
+    if changes:
+        with open(path, "w", encoding="utf-8") as f:
+            yaml.dump(data, f)
+        click.echo(f"  Upgraded {path}: added {', '.join(changes)}.")
+    else:
+        click.echo(f"  {path}: already at schemaVersion 1, nothing to do.")

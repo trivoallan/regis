@@ -1,0 +1,8 @@
+{
+  "label": "Upgrade Guides",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Migration guides for breaking changes between Regis versions."
+  }
+}

@@ -21,6 +21,7 @@ dependencies = [
   "cookiecutter>=2.5",
   "referencing>=0.28.4",
   "python-gitlab>=4.4.0",
+  "ruamel.yaml>=0.18",
 ]
 
 [project.scripts]
@@ -99,3 +100,11 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = ["yaml.*", "requests.*", "json_logic.*", "referencing.*"]
 ignore_missing_imports = true
+
+# Workaround for a mypy 1.19.1 internal AssertionError when trunk lints
+# downstream importers in isolation. follow_imports=skip avoids the
+# cross-ref lookup that crashes, without silencing type errors in the
+# module itself (which is still checked when targeted directly).
+[[tool.mypy.overrides]]
+module = ["regis.playbook.schema_registry"]
+follow_imports = "skip"

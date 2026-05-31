@@ -26,6 +26,8 @@ class TestLoadPlaybook:
 
     def test_load_from_file(self, tmp_path):
         custom = {
+            "schemaVersion": 1,
+            "version": "1.0.0",
             "name": "Custom",
             "sections": [
                 {
@@ -34,7 +36,7 @@ class TestLoadPlaybook:
                     "scorecards": [
                         {
                             "name": "test-scorecard",
-                            "title": "A test scorecard",
+                            "description": "A test scorecard",
                             "level": "bronze",
                             "condition": {"==": [1, 1]},
                         },
@@ -52,6 +54,8 @@ class TestLoadPlaybook:
         import json
 
         custom = {
+            "schemaVersion": 1,
+            "version": "1.0.0",
             "name": "JSON Card",
             "sections": [
                 {
@@ -60,7 +64,7 @@ class TestLoadPlaybook:
                     "scorecards": [
                         {
                             "name": "always-pass",
-                            "title": "Always passes",
+                            "description": "Always passes",
                             "level": "bronze",
                             "condition": {"==": [1, 1]},
                         },
@@ -78,6 +82,8 @@ class TestEvaluate:
     """Test playbook evaluation."""
 
     PLAYBOOK = {
+        "schemaVersion": 1,
+        "version": "1.0.0",
         "name": "Test Playbook",
         "sections": [
             {
@@ -324,6 +330,8 @@ class TestGitLabChecklist:
     """Test GitLab MR description checklist item evaluation."""
 
     BASE_PLAYBOOK = {
+        "schemaVersion": 1,
+        "version": "1.0.0",
         "name": "Checklist Test",
         "sections": [
             {
@@ -534,6 +542,8 @@ class TestGitLabTemplates:
     """Test GitLab MR templates evaluation."""
 
     BASE_PLAYBOOK = {
+        "schemaVersion": 1,
+        "version": "1.0.0",
         "name": "Templates Test",
         "sections": [
             {
@@ -602,3 +612,19 @@ class TestGitLabTemplates:
         pb = self._make_playbook([])
         result = evaluate(pb, {})
         assert "mr_templates" not in result
+
+
+def test_evaluate_propagates_playbook_metadata() -> None:
+    from regis.playbook.evaluator import evaluate
+
+    playbook = {
+        "schemaVersion": 1,
+        "version": "2.3.4",
+        "name": "MetadataPlaybook",
+    }
+    report: dict = {"results": {}}
+    result = evaluate(playbook, report)
+
+    assert result["playbook_name"] == "MetadataPlaybook"
+    assert result["playbook_version"] == "2.3.4"
+    assert result["schema_version"] == 1
