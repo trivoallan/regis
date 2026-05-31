@@ -230,6 +230,33 @@ Bootstrap a new custom RegiS playbook from a template.
 regis bootstrap playbook [OUTPUT_DIR] [--no-input]
 ```
 
+### `bootstrap tools`
+
+Pre-warm the local analyzer-tools cache by fetching the scanner binaries pinned in the manifest (`grype`, `syft`, `trufflehog`, `regctl`, `dockle`, `hadolint`). Each download is verified against its pinned sha256 (and cosign signature when available) before being moved into the cache.
+
+```bash
+regis bootstrap tools [--check]
+```
+
+Use `--check` to print the cache state without fetching anything — handy in CI to decide whether to restore a cache key.
+
+```text
+$ regis bootstrap tools --check
+  ⏩ grype        0.112.0    not cached (will fetch on first use)
+  ⏩ syft         1.44.0     not cached (will fetch on first use)
+  ⏩ trufflehog   3.95.3     not cached (will fetch on first use)
+  ⏩ regctl       0.11.5     not cached (will fetch on first use)
+  ⏩ dockle       0.4.15     not cached (will fetch on first use)
+  ⏩ hadolint     2.12.0     not cached (will fetch on first use)
+
+$ regis bootstrap tools
+  ✓ grype        -> /home/regis/.cache/regis/tools/grype/0.112.0/linux-amd64/grype
+  ✓ syft         -> /home/regis/.cache/regis/tools/syft/1.44.0/linux-amd64/syft
+  ...
+```
+
+See [Managing Analyzer Tools](../usage/tools-management.md) for cache location, mirror configuration, air-gapped workflows, and signature verification.
+
 ### `bootstrap archive`
 
 Bootstrap a standalone archive viewer site for browsing and filtering historical regis reports. The generated site is built with Docusaurus and Tremor, deploys to [GitHub Pages or GitLab Pages](../usage/integrations/), and exposes a PowerBI-compatible JSON endpoint.
@@ -328,6 +355,17 @@ $ regis doctor
 ```
 
 Exit code `0` if every tool is found, `1` if any is missing.
+
+A second **Tools (manifest)** section then reports the state of each scanner in the local cache populated by `regis bootstrap tools`:
+
+```text
+  Tools (manifest)
+  ✓ grype        0.112.0    cached
+  ⏩ syft         1.44.0     not cached (will fetch on first use)
+  ✗ trufflehog   3.95.3     sha mismatch — re-run `regis bootstrap tools`
+```
+
+See [Managing Analyzer Tools](../usage/tools-management.md) for details on the cache layout and how to pre-warm it.
 
 ### `version`
 

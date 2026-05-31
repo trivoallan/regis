@@ -31,13 +31,17 @@ analyzers:
 
 The most frequently repeated `regis analyze` flags can be set via the environment. CLI flags always take precedence over environment variables.
 
-| Variable            | Equivalent flag                                                            |
-| :------------------ | :------------------------------------------------------------------------- |
-| `REGIS_PLAYBOOK`    | `-p, --playbook` — path or URL to a custom playbook.                       |
-| `REGIS_PLATFORM`    | `--platform` — target platform for multi-arch images (e.g. `linux/amd64`). |
-| `REGIS_OUTPUT`      | `-o, --output` — output filename template.                                 |
-| `REGIS_OUTPUT_DIR`  | `-D, --output-dir` — base directory template for output files.             |
-| `REGIS_MAX_WORKERS` | `--max-workers` — maximum number of analyzers to run in parallel.          |
+| Variable               | Equivalent flag                                                                                                              |
+| :--------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| `REGIS_PLAYBOOK`       | `-p, --playbook` — path or URL to a custom playbook.                                                                         |
+| `REGIS_PLATFORM`       | `--platform` — target platform for multi-arch images (e.g. `linux/amd64`).                                                   |
+| `REGIS_OUTPUT`         | `-o, --output` — output filename template.                                                                                   |
+| `REGIS_OUTPUT_DIR`     | `-D, --output-dir` — base directory template for output files.                                                               |
+| `REGIS_MAX_WORKERS`    | `--max-workers` — maximum number of analyzers to run in parallel.                                                            |
+| `REGIS_CACHE_DIR`      | Override the analyzer-tools cache root. See [Managing Analyzer Tools](./tools-management.md).                                |
+| `REGIS_TOOLS_MIRROR`   | Base URL alternative to GitHub releases for fetching scanner binaries. See [Managing Analyzer Tools](./tools-management.md). |
+| `REGIS_OFFLINE`        | `1` → never fetch tools over the network; cache-only. See [Managing Analyzer Tools](./tools-management.md).                  |
+| `REGIS_REQUIRE_COSIGN` | `1` → fail when cosign verification cannot be performed. See [Managing Analyzer Tools](./tools-management.md).               |
 
 ## Managing the Cache
 
