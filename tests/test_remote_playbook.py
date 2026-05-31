@@ -13,6 +13,8 @@ from regis.playbook.engine import load_playbook
 def test_load_playbook_remote_yaml():
     url = "https://example.com/playbook.yaml"
     content = {
+        "schemaVersion": 1,
+        "version": "1.0.0",
         "name": "Remote Playbook",
         "sections": [{"name": "Main", "scorecards": []}],
     }
@@ -34,7 +36,7 @@ def test_load_playbook_remote_json():
     import json
 
     url = "https://example.com/playbook.json"
-    content = {"name": "Remote JSON", "sections": []}
+    content = {"schemaVersion": 1, "version": "1.0.0", "name": "Remote JSON", "sections": []}
     responses.add(
         responses.GET,
         url,

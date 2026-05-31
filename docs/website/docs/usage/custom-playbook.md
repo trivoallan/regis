@@ -102,6 +102,8 @@ you for:
 A minimal playbook requires only a `name`. Rules reference provider templates by slug:
 
 ```yaml
+schemaVersion: 1
+version: "1.0.0"
 name: My Security Policy
 
 tiers:

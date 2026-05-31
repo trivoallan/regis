@@ -388,6 +388,8 @@ This command will prompt you for basic information (name, slug, etc.) and genera
 The following example shows a simplified playbook definition:
 
 ```yaml
+schemaVersion: 1
+version: "1.0.0"
 name: Minimal Playbook
 slug: minimal
 pages:

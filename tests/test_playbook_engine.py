@@ -26,6 +26,8 @@ class TestLoadPlaybook:
 
     def test_load_from_file(self, tmp_path):
         custom = {
+            "schemaVersion": 1,
+            "version": "1.0.0",
             "name": "Custom",
             "sections": [
                 {
@@ -52,6 +54,8 @@ class TestLoadPlaybook:
         import json
 
         custom = {
+            "schemaVersion": 1,
+            "version": "1.0.0",
             "name": "JSON Card",
             "sections": [
                 {
@@ -78,6 +82,8 @@ class TestEvaluate:
     """Test playbook evaluation."""
 
     PLAYBOOK = {
+        "schemaVersion": 1,
+        "version": "1.0.0",
         "name": "Test Playbook",
         "sections": [
             {
@@ -324,6 +330,8 @@ class TestGitLabChecklist:
     """Test GitLab MR description checklist item evaluation."""
 
     BASE_PLAYBOOK = {
+        "schemaVersion": 1,
+        "version": "1.0.0",
         "name": "Checklist Test",
         "sections": [
             {
@@ -534,6 +542,8 @@ class TestGitLabTemplates:
     """Test GitLab MR templates evaluation."""
 
     BASE_PLAYBOOK = {
+        "schemaVersion": 1,
+        "version": "1.0.0",
         "name": "Templates Test",
         "sections": [
             {
