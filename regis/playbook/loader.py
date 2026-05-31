@@ -93,22 +93,33 @@ def _get_schema_or_raise(schema_version: int, path: str | Path) -> dict[str, Any
         ) from None
 
 
+_registry_cache: dict[str, Registry] = {}
+
+
 def _build_validator_registry(schema: dict[str, Any]) -> Registry:
-    """Build a referencing.Registry that resolves the v1 schema's relative $refs."""
-    pkg_root = importlib.resources.files("regis.schemas.playbook")
-    jsonlogic_schema = json.loads(
-        pkg_root.joinpath("jsonlogic.schema.json").read_text(encoding="utf-8")
-    )
-    return Registry().with_resources(
-        [
-            (schema.get("$id", ""), Resource.from_contents(schema)),
-            (jsonlogic_schema.get("$id", ""), Resource.from_contents(jsonlogic_schema)),
-            # v1 schema references jsonlogic.schema.json as "../jsonlogic.schema.json".
-            # Provide both forms so the ref resolves regardless of base URI used by the validator.
-            ("../jsonlogic.schema.json", Resource.from_contents(jsonlogic_schema)),
-            ("jsonlogic.schema.json", Resource.from_contents(jsonlogic_schema)),
-        ]
-    )
+    """Build a referencing.Registry that resolves the v1 schema's relative $refs.
+
+    Results are memoized by schema ``$id`` so repeated calls (e.g. in bulk
+    analysis or matrix CI) pay the file-read and Registry construction cost
+    only once per distinct schema version.
+    """
+    schema_id = schema.get("$id", "")
+    if schema_id not in _registry_cache:
+        pkg_root = importlib.resources.files("regis.schemas.playbook")
+        jsonlogic_schema = json.loads(
+            pkg_root.joinpath("jsonlogic.schema.json").read_text(encoding="utf-8")
+        )
+        _registry_cache[schema_id] = Registry().with_resources(
+            [
+                (schema_id, Resource.from_contents(schema)),
+                (jsonlogic_schema.get("$id", ""), Resource.from_contents(jsonlogic_schema)),
+                # v1 schema references jsonlogic.schema.json as "../jsonlogic.schema.json".
+                # Provide both forms so the ref resolves regardless of base URI used by the validator.
+                ("../jsonlogic.schema.json", Resource.from_contents(jsonlogic_schema)),
+                ("jsonlogic.schema.json", Resource.from_contents(jsonlogic_schema)),
+            ]
+        )
+    return _registry_cache[schema_id]
 
 
 def _validate(
