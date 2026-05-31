@@ -69,4 +69,4 @@ Voir `docs/memory-bank/roadmap.md` pour le détail complet.
 
 ## Decisions in Progress
 
-- **Monorepo vs split** (pré-v1) : exploration structurée, pas encore de décision. Inconnues : patterns contributeurs futurs, cadence post-v1, gouvernance à l'échelle.
+- ~~**Monorepo vs split** (pré-v1)~~ : **tranché [2026-05-31]** → split du dashboard dans un dépôt dédié, artefact OCI épinglé consommé via `ToolFetcher` au build-time. Voir `decisionLog.md` [2026-05-31] + plan `plans/2026-05-31-dashboard-repo-split-plan.md`. Cible : avant v1.0.0-alpha.
