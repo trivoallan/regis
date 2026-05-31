@@ -17,6 +17,11 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from regis.tools import manifest as _manifest
+from regis.tools.cosign import (
+    CosignUnavailable,
+    CosignVerificationFailed,
+    verify_blob,
+)
 from regis.tools.manifest import Tool
 
 logger = logging.getLogger(__name__)
@@ -154,6 +159,26 @@ class ToolFetcher:
                 raise ToolFetchError(
                     f"{tool.name} sha256 mismatch: expected {expected_sha}, got {actual}"
                 )
+            if tool.cosign is not None:
+                try:
+                    verify_blob(extracted, url, tool.cosign)
+                    logger.info("cosign: verified %s", tool.name)
+                except CosignUnavailable as exc:
+                    if (
+                        self.require_cosign
+                        or os.environ.get("REGIS_REQUIRE_COSIGN") == "1"
+                    ):
+                        raise ToolFetchError(
+                            f"{tool.name}: cosign required but unavailable ({exc})"
+                        ) from exc
+                    logger.info(
+                        "cosign verification skipped for %s (binary not on PATH)",
+                        tool.name,
+                    )
+                except CosignVerificationFailed as exc:
+                    raise ToolFetchError(
+                        f"{tool.name}: cosign verification failed: {exc}"
+                    ) from exc
             extracted.replace(target)
             os.chmod(target, 0o755)  # nosec B103 — tool binaries must be executable
         finally:

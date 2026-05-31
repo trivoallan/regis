@@ -295,3 +295,58 @@ def test_mirror_env_var_is_picked_up(monkeypatch, tmp_path):
     _patch_manifest(monkeypatch, tools)
     fetcher = ToolFetcher(cache_dir=tmp_path / "cache", arch="amd64")
     assert fetcher.mirror == "https://nope.invalid"
+
+
+def test_cosign_required_but_missing_raises(monkeypatch, tmp_path):
+    payload = b"x"
+    sha = hashlib.sha256(payload).hexdigest()
+    pub = tmp_path / "pub"
+    pub.mkdir()
+    (pub / "tool.bin").write_bytes(payload)
+    with _serve(pub) as base_url:
+        from regis.tools.manifest import CosignPolicy, Tool
+
+        tools = {
+            "grype": Tool(
+                name="grype",
+                version="0.0.1",
+                url_template=f"{base_url}/tool.bin",
+                archive="none",
+                sha256={"amd64": sha, "arm64": sha},
+                cosign=CosignPolicy(issuer="https://x", identity_regex=".*"),
+            )
+        }
+        _patch_manifest(monkeypatch, tools)
+        monkeypatch.setenv("REGIS_REQUIRE_COSIGN", "1")
+        monkeypatch.setattr("regis.tools.cosign.shutil.which", lambda _: None)
+        fetcher = ToolFetcher(cache_dir=tmp_path / "cache", arch="amd64")
+        with pytest.raises(ToolFetchError, match="cosign required but unavailable"):
+            fetcher.ensure("grype")
+
+
+def test_cosign_missing_is_silently_skipped_by_default(monkeypatch, tmp_path, caplog):
+    payload = b"x"
+    sha = hashlib.sha256(payload).hexdigest()
+    pub = tmp_path / "pub"
+    pub.mkdir()
+    (pub / "tool.bin").write_bytes(payload)
+    with _serve(pub) as base_url:
+        from regis.tools.manifest import CosignPolicy, Tool
+
+        tools = {
+            "grype": Tool(
+                name="grype",
+                version="0.0.1",
+                url_template=f"{base_url}/tool.bin",
+                archive="none",
+                sha256={"amd64": sha, "arm64": sha},
+                cosign=CosignPolicy(issuer="https://x", identity_regex=".*"),
+            )
+        }
+        _patch_manifest(monkeypatch, tools)
+        monkeypatch.delenv("REGIS_REQUIRE_COSIGN", raising=False)
+        monkeypatch.setattr("regis.tools.cosign.shutil.which", lambda _: None)
+        fetcher = ToolFetcher(cache_dir=tmp_path / "cache", arch="amd64")
+        with caplog.at_level("INFO"):
+            fetcher.ensure("grype")
+        assert any("cosign verification skipped" in r.message for r in caplog.records)
