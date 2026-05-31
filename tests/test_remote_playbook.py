@@ -16,7 +16,7 @@ def test_load_playbook_remote_yaml():
         "schemaVersion": 1,
         "version": "1.0.0",
         "name": "Remote Playbook",
-        "sections": [{"name": "Main", "scorecards": []}],
+        "sections": [{"name": "Main"}],
     }
     responses.add(
         responses.GET,
@@ -36,7 +36,12 @@ def test_load_playbook_remote_json():
     import json
 
     url = "https://example.com/playbook.json"
-    content = {"schemaVersion": 1, "version": "1.0.0", "name": "Remote JSON", "sections": []}
+    content = {
+        "schemaVersion": 1,
+        "version": "1.0.0",
+        "name": "Remote JSON",
+        "sections": [{"name": "Main"}],
+    }
     responses.add(
         responses.GET,
         url,

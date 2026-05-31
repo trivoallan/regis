@@ -36,7 +36,7 @@ class TestLoadPlaybook:
                     "scorecards": [
                         {
                             "name": "test-scorecard",
-                            "title": "A test scorecard",
+                            "description": "A test scorecard",
                             "level": "bronze",
                             "condition": {"==": [1, 1]},
                         },
@@ -64,7 +64,7 @@ class TestLoadPlaybook:
                     "scorecards": [
                         {
                             "name": "always-pass",
-                            "title": "Always passes",
+                            "description": "Always passes",
                             "level": "bronze",
                             "condition": {"==": [1, 1]},
                         },

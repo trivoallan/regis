@@ -13,28 +13,32 @@ from regis.cli import main
 class TestPlaybookValidate:
     def test_validate_built_in_default_bundle(self):
         runner = CliRunner()
-        result = runner.invoke(main, ["playbook", "validate", "regis/playbooks/default"])
+        result = runner.invoke(
+            main, ["playbook", "validate", "regis/playbooks/default"]
+        )
         assert result.exit_code == 0
         assert "is valid" in result.output
 
     def test_validate_missing_required_name_field(self, tmp_path: Path):
         bad = tmp_path / "bad.yaml"
-        bad.write_text("description: missing-name\n", encoding="utf-8")
+        bad.write_text(
+            'schemaVersion: 1\nversion: "1.0.0"\ndescription: missing-name\n',
+            encoding="utf-8",
+        )
         runner = CliRunner()
         result = runner.invoke(main, ["playbook", "validate", str(bad)])
         assert result.exit_code == 1
-        assert "is invalid" in result.output
         assert "'name' is a required property" in result.output
 
     def test_validate_additional_property_rejected(self, tmp_path: Path):
         bad = tmp_path / "extra.yaml"
         bad.write_text(
-            textwrap.dedent(
-                """
+            textwrap.dedent("""
+                schemaVersion: 1
+                version: "1.0.0"
                 name: with-extras
                 foo: bar
-                """
-            ).strip(),
+                """).strip(),
             encoding="utf-8",
         )
         runner = CliRunner()

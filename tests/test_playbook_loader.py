@@ -9,6 +9,7 @@ import pytest
 import yaml
 
 from regis.playbook.engine import bundle_meta_schema_path, is_bundle, load_playbook
+from regis.playbook.loader import PlaybookVersionError
 
 MINIMAL_PLAYBOOK = {
     "schemaVersion": 1,
@@ -20,7 +21,7 @@ MINIMAL_PLAYBOOK = {
             "scorecards": [
                 {
                     "name": "always-pass",
-                    "title": "Always passes",
+                    "description": "Always passes",
                     "condition": {"==": [1, 1]},
                 }
             ],
@@ -132,3 +133,86 @@ class TestLoadPlaybookBundle:
         f.write_text(json.dumps(MINIMAL_PLAYBOOK))
         loaded = load_playbook(f)
         assert loaded["name"] == "Bundle Playbook"
+
+
+def _write(tmp_path, content: str) -> str:
+    path = tmp_path / "playbook.yaml"
+    path.write_text(content, encoding="utf-8")
+    return str(path)
+
+
+def test_loads_valid_v1_playbook(tmp_path) -> None:
+    content = (
+        "schemaVersion: 1\n"
+        'version: "1.0.0"\n'
+        "name: Valid Playbook\n"
+    )
+    pb = load_playbook(_write(tmp_path, content))
+    assert pb["schemaVersion"] == 1
+    assert pb["version"] == "1.0.0"
+    assert pb["name"] == "Valid Playbook"
+
+
+def test_missing_schema_version_raises(tmp_path) -> None:
+    content = 'version: "1.0.0"\nname: No Schema Version\n'
+    with pytest.raises(PlaybookVersionError) as exc:
+        load_playbook(_write(tmp_path, content))
+    msg = str(exc.value)
+    assert "schemaVersion" in msg
+    assert "Add `schemaVersion: 1`" in msg
+    assert "[1]" in msg
+
+
+def test_schema_version_not_integer_raises(tmp_path) -> None:
+    content = (
+        'schemaVersion: "1"\n'
+        'version: "1.0.0"\n'
+        "name: String Schema Version\n"
+    )
+    with pytest.raises(PlaybookVersionError) as exc:
+        load_playbook(_write(tmp_path, content))
+    assert "must be an integer" in str(exc.value)
+
+
+def test_schema_version_boolean_raises(tmp_path) -> None:
+    content = (
+        "schemaVersion: true\n"
+        'version: "1.0.0"\n'
+        "name: Boolean Schema Version\n"
+    )
+    with pytest.raises(PlaybookVersionError) as exc:
+        load_playbook(_write(tmp_path, content))
+    assert "must be an integer" in str(exc.value)
+
+
+def test_unknown_schema_version_raises(tmp_path) -> None:
+    content = (
+        "schemaVersion: 99\n"
+        'version: "1.0.0"\n'
+        "name: Future Playbook\n"
+    )
+    with pytest.raises(PlaybookVersionError) as exc:
+        load_playbook(_write(tmp_path, content))
+    msg = str(exc.value)
+    assert "schemaVersion=99" in msg
+    assert "[1]" in msg
+
+
+def test_missing_version_field_fails_schema_validation(tmp_path) -> None:
+    import jsonschema
+
+    content = "schemaVersion: 1\nname: No Version\n"
+    with pytest.raises(jsonschema.ValidationError):
+        load_playbook(_write(tmp_path, content))
+
+
+def test_invalid_semver_fails_schema_validation(tmp_path) -> None:
+    import jsonschema
+
+    content = (
+        "schemaVersion: 1\n"
+        'version: "1.2"\n'
+        "name: Invalid SemVer\n"
+    )
+    with pytest.raises(jsonschema.ValidationError):
+        load_playbook(_write(tmp_path, content))
