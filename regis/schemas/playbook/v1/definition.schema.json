@@ -9,11 +9,11 @@
   "properties": {
     "schemaVersion": {
       "type": "integer",
-      "description": "Schema version of the playbook format (added in this commit, not yet required)."
+      "description": "Schema version of the playbook format. Must equal 1 for this schema."
     },
     "version": {
       "type": "string",
-      "description": "SemVer of the playbook bundle (added in this commit, not yet required)."
+      "description": "SemVer of the playbook bundle (e.g. \"1.2.3\")."
     },
     "name": {
       "type": "string",
