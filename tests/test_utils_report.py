@@ -166,6 +166,21 @@ class TestRunPlaybooks:
             assert isinstance(result, dict)
 
 
+def test_run_playbooks_surfaces_friendly_error_for_legacy_playbook(tmp_path) -> None:
+    """A playbook without schemaVersion should produce a Click error, not a traceback."""
+    import pytest
+    from click.exceptions import ClickException
+
+    from regis.utils.report import evaluate_playbooks
+
+    legacy = tmp_path / "playbook.yaml"
+    legacy.write_text("name: Legacy\n", encoding="utf-8")
+
+    with pytest.raises(ClickException) as exc_info:
+        evaluate_playbooks((str(legacy),), {"results": {}}, formats=["json"])
+    assert "schemaVersion" in str(exc_info.value.message)
+
+
 def test_result_schema_accepts_playbook_metadata() -> None:
     import importlib.resources
     import json

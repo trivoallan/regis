@@ -132,6 +132,7 @@ def evaluate_playbooks(
 ) -> list[dict[str, Any]]:
     """Load and evaluate playbooks, returning the list of results."""
     from regis.playbook.engine import evaluate, load_playbook
+    from regis.playbook.loader import PlaybookVersionError
 
     playbook_results = []
     if not playbook_paths:
@@ -148,7 +149,16 @@ def evaluate_playbooks(
             )
             action = "Downloading" if is_remote else "Evaluating"
             _echo_info(f"  {action} playbook: {pb_path}...", err=True)
-            pb_def = load_playbook(pb_path)
+            try:
+                pb_def = load_playbook(pb_path)
+            except PlaybookVersionError as exc:
+                raise click.ClickException(
+                    f"Failed to load playbook '{pb_path}': {exc}"
+                ) from exc
+            except jsonschema.ValidationError as exc:
+                raise click.ClickException(
+                    f"Playbook '{pb_path}' failed schema validation: {exc.message}"
+                ) from exc
             pb_result = evaluate(
                 pb_def, analysis_report, source_name=Path(pb_path).stem
             )

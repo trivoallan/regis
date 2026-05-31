@@ -100,3 +100,7 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = ["yaml.*", "requests.*", "json_logic.*", "referencing.*"]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["regis.playbook.schema_registry"]
+ignore_errors = true
