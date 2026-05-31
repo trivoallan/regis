@@ -42,14 +42,13 @@ jobs:
         with:
           image: regis:size-check
           # Measured amd64 size (the CI arch, overlay2): ~372 MiB extracted
-          # on-disk. The scanner binaries dominate: grype + syft + trufflehog
-          # are ~260 MiB extracted combined (each a large Go binary), versus the
-          # single trivy binary (~146 MiB) they replaced — so the trivy→grype
-          # migration grew the image by ~114 MiB. Remaining bulk:
-          # python:3.14-slim base (~80 MB) + python build (~38 MB) +
-          # venv (~29 MB) + dockle (~25 MB) + regctl (~12 MB). Ceiling set to
-          # 385 MB to clear the measured 372 MiB with modest headroom. Trimming
-          # the scanner binaries (UPX, alpine/wolfi base) is tracked separately
-          # and would bring this back down materially.
+          # on-disk. The trivy→grype migration replaced one trivy binary with
+          # three Go scanner binaries (grype, syft, trufflehog) that are
+          # collectively larger, so they now dominate the image footprint and
+          # pushed it past the old 360 MB ceiling. (Local darwin/arm64 sizes,
+          # for reference only — amd64 differs: grype ~77, syft ~74,
+          # trufflehog ~110 MiB, vs trivy ~146 MiB.) Ceiling raised 360 → 385 MB
+          # to clear the measured 372 MiB with modest headroom; trimming the
+          # binaries (UPX, alpine/wolfi base) is tracked separately.
           size: 385MB
           show_current_size: true
