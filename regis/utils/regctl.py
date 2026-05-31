@@ -16,7 +16,10 @@ import subprocess  # nosec B404
 import tempfile
 from typing import TYPE_CHECKING
 
+import click
+
 from regis.analyzers.base import AnalyzerError
+from regis.utils.process import ensure_tool
 
 if TYPE_CHECKING:
     from regis.registry.client import RegistryClient
@@ -85,7 +88,11 @@ def run_regctl(
         AnalyzerError: if regctl is not installed or the call times out.
         subprocess.CalledProcessError: if regctl exits non-zero.
     """
-    cmd = ["regctl"]
+    try:
+        regctl_bin = ensure_tool("regctl")
+    except click.ClickException as exc:
+        raise AnalyzerError(str(exc)) from exc
+    cmd = [regctl_bin]
     env = dict(os.environ)
     docker_config_dir: str | None = None
 

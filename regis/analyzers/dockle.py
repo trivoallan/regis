@@ -8,8 +8,11 @@ import os
 import subprocess
 from typing import Any
 
+import click
+
 from regis.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis.registry.client import RegistryClient
+from regis.utils.process import ensure_tool
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +64,11 @@ class DockleAnalyzer(BaseAnalyzer):
 
         target = f"{registry}/{repository}:{tag}"
 
-        cmd_dockle = ["dockle", "-f", "json", target]
+        try:
+            dockle_bin = ensure_tool("dockle")
+        except click.ClickException as exc:
+            raise AnalyzerError(str(exc)) from exc
+        cmd_dockle = [dockle_bin, "-f", "json", target]
 
         # Setup environment variables for dockle authentication
         env = os.environ.copy()

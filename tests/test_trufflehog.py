@@ -4,10 +4,16 @@ import base64
 import json
 from unittest.mock import MagicMock, patch
 
+import click
 import pytest
 
 from regis.analyzers.base import AnalyzerError
 from regis.utils.trufflehog import run_trufflehog
+
+
+def _missing(_name):
+    raise click.ClickException("trufflehog not found")
+
 
 # NDJSON: one finding per line, plus a blank line that must be ignored.
 _NDJSON = (
@@ -20,16 +26,15 @@ _NDJSON = (
 
 
 class TestRunTrufflehog:
-    @patch("regis.utils.trufflehog.shutil.which")
-    def test_not_found(self, mock_which):
-        mock_which.return_value = None
-        with pytest.raises(AnalyzerError, match="trufflehog executable not found"):
-            run_trufflehog("alpine:3.20")
+    def test_not_found(self):
+        with patch("regis.utils.trufflehog.ensure_tool", _missing):
+            with pytest.raises(AnalyzerError, match="not found"):
+                run_trufflehog("alpine:3.20")
 
-    @patch("regis.utils.trufflehog.shutil.which")
+    @patch("regis.utils.trufflehog.ensure_tool")
     @patch("regis.utils.trufflehog.subprocess.run")
-    def test_parses_ndjson_ignoring_blank_lines(self, mock_run, mock_which):
-        mock_which.return_value = "/usr/local/bin/trufflehog"
+    def test_parses_ndjson_ignoring_blank_lines(self, mock_run, mock_ensure):
+        mock_ensure.return_value = "/usr/local/bin/trufflehog"
         mock_run.return_value = MagicMock(stdout=_NDJSON, returncode=0)
 
         findings = run_trufflehog("alpine:3.20")
@@ -41,27 +46,27 @@ class TestRunTrufflehog:
         assert "docker" in args and "--json" in args
         assert "--image" in args
 
-    @patch("regis.utils.trufflehog.shutil.which")
+    @patch("regis.utils.trufflehog.ensure_tool")
     @patch("regis.utils.trufflehog.subprocess.run")
-    def test_nonzero_exit_with_findings_is_not_an_error(self, mock_run, mock_which):
+    def test_nonzero_exit_with_findings_is_not_an_error(self, mock_run, mock_ensure):
         # trufflehog exits non-zero (e.g. 183) when secrets are found with --fail.
-        mock_which.return_value = "/usr/local/bin/trufflehog"
+        mock_ensure.return_value = "/usr/local/bin/trufflehog"
         mock_run.return_value = MagicMock(stdout=_NDJSON, returncode=183)
         findings = run_trufflehog("alpine:3.20")
         assert len(findings) == 2
 
-    @patch("regis.utils.trufflehog.shutil.which")
+    @patch("regis.utils.trufflehog.ensure_tool")
     @patch("regis.utils.trufflehog.subprocess.run")
-    def test_invalid_json_line_raises(self, mock_run, mock_which):
-        mock_which.return_value = "/usr/local/bin/trufflehog"
+    def test_invalid_json_line_raises(self, mock_run, mock_ensure):
+        mock_ensure.return_value = "/usr/local/bin/trufflehog"
         mock_run.return_value = MagicMock(stdout="not-json\n", returncode=0)
         with pytest.raises(AnalyzerError, match="trufflehog produced invalid"):
             run_trufflehog("alpine:3.20")
 
-    @patch("regis.utils.trufflehog.shutil.which")
+    @patch("regis.utils.trufflehog.ensure_tool")
     @patch("regis.utils.trufflehog.subprocess.run")
-    def test_credentials_written_to_temp_docker_config(self, mock_run, mock_which):
-        mock_which.return_value = "/usr/local/bin/trufflehog"
+    def test_credentials_written_to_temp_docker_config(self, mock_run, mock_ensure):
+        mock_ensure.return_value = "/usr/local/bin/trufflehog"
         captured = {}
 
         def _capture(*args, **kwargs):

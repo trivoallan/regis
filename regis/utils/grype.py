@@ -9,11 +9,13 @@ from __future__ import annotations
 import json
 import logging
 import os
-import shutil
 import subprocess  # nosec B404
 from typing import Any
 
+import click
+
 from regis.analyzers.base import AnalyzerError
+from regis.utils.process import ensure_tool
 
 logger = logging.getLogger(__name__)
 
@@ -43,9 +45,10 @@ def run_grype(
     Raises:
         AnalyzerError: if grype is missing, fails, or emits invalid JSON.
     """
-    grype_path = shutil.which("grype")
-    if not grype_path:
-        raise AnalyzerError("grype executable not found in PATH")
+    try:
+        grype_path = ensure_tool("grype")
+    except click.ClickException as exc:
+        raise AnalyzerError(str(exc)) from exc
 
     env = os.environ.copy()
     user = username or env.get("REGIS_USERNAME")

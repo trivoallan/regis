@@ -9,11 +9,13 @@ from __future__ import annotations
 import json
 import logging
 import os
-import shutil
 import subprocess  # nosec B404
 from typing import Any
 
+import click
+
 from regis.analyzers.base import AnalyzerError
+from regis.utils.process import ensure_tool
 
 logger = logging.getLogger(__name__)
 
@@ -43,9 +45,10 @@ def run_syft(
     Raises:
         AnalyzerError: if syft is missing, fails, or emits invalid JSON.
     """
-    syft_path = shutil.which("syft")
-    if not syft_path:
-        raise AnalyzerError("syft executable not found in PATH")
+    try:
+        syft_path = ensure_tool("syft")
+    except click.ClickException as exc:
+        raise AnalyzerError(str(exc)) from exc
 
     env = os.environ.copy()
     user = username or env.get("REGIS_USERNAME")

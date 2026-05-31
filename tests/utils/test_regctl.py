@@ -15,6 +15,12 @@ from regis.registry.client import RegistryClient
 from regis.utils.regctl import image_ref, run_regctl
 
 
+@pytest.fixture(autouse=True)
+def _stub_ensure_tool(monkeypatch):
+    """Pin ensure_tool to the bare 'regctl' name so the cmd[0] assertions hold."""
+    monkeypatch.setattr("regis.utils.regctl.ensure_tool", lambda _name: "regctl")
+
+
 def _client(username=None, password=None, registry="docker.io"):
     c = MagicMock(spec=RegistryClient)
     c.registry = registry
