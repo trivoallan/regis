@@ -72,14 +72,14 @@ While running, `analyze` prints one line per analyzer with elapsed time:
   Running 8 analyzer(s) with 4 worker(s)...
   ✓ oci           (0.8s)
   ✓ metadata      (0.9s)
-  ✓ trivy         (18.3s)
+  ✓ cve           (18.3s)
 ```
 
 When `--playbook` is explicitly provided, a one-line summary is printed at the end:
 
 ```text
   Playbook · validation-import  12 rules · 10 passed · 2 failed (critical)
-  ✗ [trivy.no-critical-cves]   2 critical CVEs found
+  ✗ [cve.no-critical-cves]   2 critical CVEs found
   ✗ [freshness.max-age-days]   Image is 120 days old (max: 90)
 ```
 
@@ -148,7 +148,7 @@ _Options:_
 - `-D, --output-dir DIR`: Write one Markdown file per rule into this directory (markdown format only).
 - `--index / --no-index`: Generate an `index.md` in the output directory (default: off).
 - `--filter-level [info|warning|critical]`: Keep only rules at this level.
-- `--filter-provider NAME`: Keep only rules whose provider matches (e.g. `trivy`, `hadolint`). Combine with `--filter-level` to AND the filters.
+- `--filter-provider NAME`: Keep only rules whose provider matches (e.g. `cve`, `hadolint`). Combine with `--filter-level` to AND the filters.
 
 ### `rules show`
 
@@ -309,17 +309,19 @@ Commands for seamless integration with GitLab CI/CD.
 
 ### `list`
 
-List all available analyzers (e.g., `oci`, `trivy`, `hadolint`).
+List all available analyzers (e.g., `oci`, `cve`, `hadolint`).
 
 ### `doctor`
 
-Check whether all required external binaries (`trivy`, `regctl`, `hadolint`, `dockle`) are available on `PATH` and print their versions. Useful when onboarding or diagnosing CI failures.
+Check whether all required external binaries (`grype`, `syft`, `trufflehog`, `regctl`, `hadolint`, `dockle`) are available on `PATH` and print their versions. Useful when onboarding or diagnosing CI failures.
 
 For each tool, the command prints the first line of `tool --version` verbatim — exact prefix/format depends on the tool. Missing tools are reported as `not found in PATH`.
 
 ```text
 $ regis doctor
-  ✓ trivy        Version: 0.50.1
+  ✓ grype        grype 0.74.0
+  ✓ syft         syft 1.0.0
+  ✓ trufflehog   trufflehog 3.63.0
   ✓ regctl       regctl version v0.7.1
   ✓ hadolint     Haskell Dockerfile Linter 2.12.0
   ✗ dockle       not found in PATH

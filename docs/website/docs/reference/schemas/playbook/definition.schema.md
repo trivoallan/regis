@@ -289,10 +289,10 @@
 | Property                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                   |
 | --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
 | - [label](#pages_items_sections_items_display_widgets_items_label )         | No      | string | No         | -          | Display label for the widget.                                                                                       |
-| - [value](#pages_items_sections_items_display_widgets_items_value )         | No      | string | No         | -          | Dot-separated path into the report data, e.g. 'results.trivy.critical_count'.                                       |
+| - [value](#pages_items_sections_items_display_widgets_items_value )         | No      | string | No         | -          | Dot-separated path into the report data, e.g. 'results.cve.critical_count'.                                         |
 | - [url](#pages_items_sections_items_display_widgets_items_url )             | No      | string | No         | -          | Optional URL for the widget. Supports Jinja2 templates.                                                             |
 | - [icon](#pages_items_sections_items_display_widgets_items_icon )           | No      | string | No         | -          | Emoji or icon displayed alongside the widget.                                                                       |
-| - [template](#pages_items_sections_items_display_widgets_items_template )   | No      | string | No         | -          | Path to a Jinja2 HTML template within the theme, e.g. analyzers/trivy/table.html.                                   |
+| - [template](#pages_items_sections_items_display_widgets_items_template )   | No      | string | No         | -          | Path to a Jinja2 HTML template within the theme, e.g. analyzers/cve/table.html.                                     |
 | - [options](#pages_items_sections_items_display_widgets_items_options )     | No      | object | No         | -          | Arbitrary options passed directly to the Jinja2 template.                                                           |
 | - [condition](#pages_items_sections_items_display_widgets_items_condition ) | No      | object | No         | -          | Optional jsonLogic expression to conditionally display this widget. If it evaluates to falsy, the widget is hidden. |
 
@@ -310,7 +310,7 @@
 | -------- | -------- |
 | **Type** | `string` |
 
-**Description:** Dot-separated path into the report data, e.g. 'results.trivy.critical_count'.
+**Description:** Dot-separated path into the report data, e.g. 'results.cve.critical_count'.
 
 ###### <a name="pages_items_sections_items_display_widgets_items_url"></a>5.1.3.1.3.2.1.3. Property `url`
 
@@ -334,7 +334,7 @@
 | -------- | -------- |
 | **Type** | `string` |
 
-**Description:** Path to a Jinja2 HTML template within the theme, e.g. analyzers/trivy/table.html.
+**Description:** Path to a Jinja2 HTML template within the theme, e.g. analyzers/cve/table.html.
 
 ###### <a name="pages_items_sections_items_display_widgets_items_options"></a>5.1.3.1.3.2.1.6. Property `options`
 
@@ -500,13 +500,13 @@ Must be one of:
 
 **Description:** An evaluation scorecard with a JsonLogic condition.
 
-| Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                       |
-| -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [name](#pages_items_sections_items_scorecards_items_name )               | No      | string          | No         | -          | Unique identifier for the scorecard.                                                                                                                                                                    |
-| - [description](#pages_items_sections_items_scorecards_items_description ) | No      | string          | No         | -          | Human-readable description. Defaults to name if omitted.                                                                                                                                                |
-| - [level](#pages_items_sections_items_scorecards_items_level )             | No      | string          | No         | -          | Level this scorecard belongs to. Must match a level name defined in the section.                                                                                                                        |
-| - [tags](#pages_items_sections_items_scorecards_items_tags )               | No      | array of string | No         | -          | Arbitrary tags for filtering or grouping.                                                                                                                                                               |
-| + [condition](#pages_items_sections_items_scorecards_items_condition )     | No      | object          | No         | -          | JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {"var": "results.trivy.critical_count"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or. |
+| Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                     |
+| -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [name](#pages_items_sections_items_scorecards_items_name )               | No      | string          | No         | -          | Unique identifier for the scorecard.                                                                                                                                                                  |
+| - [description](#pages_items_sections_items_scorecards_items_description ) | No      | string          | No         | -          | Human-readable description. Defaults to name if omitted.                                                                                                                                              |
+| - [level](#pages_items_sections_items_scorecards_items_level )             | No      | string          | No         | -          | Level this scorecard belongs to. Must match a level name defined in the section.                                                                                                                      |
+| - [tags](#pages_items_sections_items_scorecards_items_tags )               | No      | array of string | No         | -          | Arbitrary tags for filtering or grouping.                                                                                                                                                             |
+| + [condition](#pages_items_sections_items_scorecards_items_condition )     | No      | object          | No         | -          | JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {"var": "results.cve.critical_count"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or. |
 
 ###### <a name="pages_items_sections_items_scorecards_items_name"></a>5.1.3.1.5.1.1. Property `name`
 
@@ -565,7 +565,7 @@ Must be one of:
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-**Description:** JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {"var": "results.trivy.critical_count"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or.
+**Description:** JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {"var": "results.cve.critical_count"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or.
 
 ###### <a name="pages_items_sections_items_widgets"></a>5.1.3.1.6. Property `widgets`
 
@@ -1071,7 +1071,7 @@ Must be one of:
 | Property                             | Pattern | Type             | Deprecated | Definition | Title/Description                                   |
 | ------------------------------------ | ------- | ---------------- | ---------- | ---------- | --------------------------------------------------- |
 | - [slug](#rules_items_slug )         | No      | string           | No         | -          | Unique identifier for the rule instance.            |
-| - [provider](#rules_items_provider ) | No      | string           | No         | -          | Analyzer name (e.g. 'trivy').                       |
+| - [provider](#rules_items_provider ) | No      | string           | No         | -          | Analyzer name (e.g. 'cve').                         |
 | - [rule](#rules_items_rule )         | No      | string           | No         | -          | Template name within the provider (e.g. 'cve-max'). |
 | - [options](#rules_items_options )   | No      | object           | No         | -          | Configuration parameters for the rule template.     |
 | - [enable](#rules_items_enable )     | No      | boolean          | No         | -          | Whether to enable this rule.                        |
@@ -1093,7 +1093,7 @@ Must be one of:
 | -------- | -------- |
 | **Type** | `string` |
 
-**Description:** Analyzer name (e.g. 'trivy').
+**Description:** Analyzer name (e.g. 'cve').
 
 #### <a name="rules_items_rule"></a>9.1.3. Property `rule`
 
@@ -1325,4 +1325,4 @@ Must be one of:
 * "information"
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-30 at 14:08:21 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-30 at 17:57:38 +0200

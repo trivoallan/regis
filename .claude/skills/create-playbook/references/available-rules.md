@@ -6,20 +6,19 @@ analyzer source files.
 
 ---
 
-## trivy — Vulnerability & secret scanning
+## cve — Vulnerability scanning (grype)
 
-Source: `regis/analyzers/trivy.py`
+Source: `regis/analyzers/cve.py`
 
 | slug            | options                                                                                  | description                                                                                                                |
 | --------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `cve-count`     | `level` (string: `critical` / `high` / `medium` / `low`), `max_count` (int, default `0`) | Fail if the number of CVEs at the given severity exceeds `max_count`. Use one rule per severity level you want to enforce. |
 | `fix-available` | `max_count` (int, default `0`)                                                           | Fail if the number of CVEs that have a fix available exceeds `max_count`.                                                  |
-| `secret-scan`   | `max_count` (int, default `0`)                                                           | Fail if the number of embedded secrets/tokens detected exceeds `max_count`.                                                |
 
-### Example — trivy rules
+### Example — cve rules
 
 ```yaml
-- provider: trivy
+- provider: cve
   rule: cve-count
   slug: cve-critical
   level: critical
@@ -27,7 +26,7 @@ Source: `regis/analyzers/trivy.py`
     level: critical
     max_count: 0
 
-- provider: trivy
+- provider: cve
   rule: cve-count
   slug: cve-high
   level: warning
@@ -35,14 +34,28 @@ Source: `regis/analyzers/trivy.py`
     level: high
     max_count: 10
 
-- provider: trivy
+- provider: cve
   rule: fix-available
   slug: cve-fixable
   level: warning
   options:
     max_count: 0
+```
 
-- provider: trivy
+---
+
+## secrets — Secret scanning (trufflehog)
+
+Source: `regis/analyzers/secrets.py`
+
+| slug          | options                        | description                                                                 |
+| ------------- | ------------------------------ | --------------------------------------------------------------------------- |
+| `secret-scan` | `max_count` (int, default `0`) | Fail if the number of embedded secrets/tokens detected exceeds `max_count`. |
+
+### Example — secrets rules
+
+```yaml
+- provider: secrets
   rule: secret-scan
   slug: no-secrets
   level: critical

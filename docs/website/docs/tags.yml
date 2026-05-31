@@ -53,10 +53,15 @@ oci:
   description: Related to the OCI analyzer.
   permalink: /analyzers/oci
 
-trivy:
-  label: trivy
-  description: Related to the Trivy analyzer.
-  permalink: /analyzers/trivy
+cve:
+  label: cve
+  description: Related to the CVE (grype) analyzer.
+  permalink: /analyzers/cve
+
+secrets:
+  label: secrets
+  description: Related to the secrets (trufflehog) analyzer.
+  permalink: /analyzers/secrets
 
 versioning:
   label: versioning

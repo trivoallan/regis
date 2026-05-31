@@ -117,12 +117,12 @@ def test_render_order_tags_append():
             {
                 "name": "S1",
                 "scorecards": [{"name": "Sc1", "condition": True, "tags": ["tag1"]}],
-                "display": {"analyzers": ["trivy"]},
+                "display": {"analyzers": ["cve"]},
             }
         ]
     }
     # report with some tags to trigger tags_summary
-    report = {"results": {"trivy": {"tags": {"high_vulns": 1}}}}
+    report = {"results": {"cve": {"tags": {"high_vulns": 1}}}}
     result = evaluate(playbook, report)
     # Check that 'tags' was appended to render_order if not present
     # Sections are now inside pages

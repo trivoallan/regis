@@ -216,7 +216,7 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     default="all",
     help=(
         "Sections to include in the HTML report: 'all' (default), 'summary', "
-        "or comma-separated analyzer slugs (e.g. 'trivy,hadolint'). "
+        "or comma-separated analyzer slugs (e.g. 'cve,hadolint'). "
         "Only applies to --html."
     ),
 )
@@ -749,7 +749,7 @@ def analyze(
     default="all",
     help=(
         "Sections to include in the HTML report: 'all' (default), 'summary', "
-        "or comma-separated analyzer slugs (e.g. 'trivy,hadolint'). "
+        "or comma-separated analyzer slugs (e.g. 'cve,hadolint'). "
         "Only applies to --html."
     ),
 )

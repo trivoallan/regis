@@ -176,7 +176,7 @@ def evaluate(
     rules_results = evaluate_rules(report, playbook)
 
     # Inject rule results into the report so they are available in context (via dots)
-    # NamedList allows lookup by slug (e.g. rules.trivy-no-critical.passed)
+    # NamedList allows lookup by slug (e.g. rules.cve-no-critical.passed)
     report["rules"] = NamedList(rules_results["rules"])
     report["rules_summary"] = {
         "score": rules_results["score"],

@@ -9,7 +9,9 @@ import click
 
 # Tools required by regis analyzers, in display order.
 _REQUIRED_TOOLS: list[tuple[str, str]] = [
-    ("trivy", "--version"),
+    ("grype", "version"),
+    ("syft", "version"),
+    ("trufflehog", "--version"),
     ("regctl", "version"),
     ("hadolint", "--version"),
     ("dockle", "--version"),

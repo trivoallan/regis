@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trivoallan.github.io/regis/schemas/analyzer/cve.schema.json",
+  "title": "cve.output",
+  "description": "Vulnerability scan results from Grype.",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "tag",
+    "scanner_version",
+    "vulnerability_count",
+    "critical_count",
+    "high_count",
+    "medium_count",
+    "low_count",
+    "negligible_count",
+    "unknown_count",
+    "fixed_count",
+    "targets"
+  ],
+  "properties": {
+    "analyzer": { "type": "string", "const": "cve" },
+    "repository": { "type": "string" },
+    "tag": { "type": "string" },
+    "scanner_version": {
+      "type": "string",
+      "description": "Version of the grype CLI used."
+    },
+    "vulnerability_count": { "type": "integer", "minimum": 0 },
+    "critical_count": { "type": "integer", "minimum": 0 },
+    "high_count": { "type": "integer", "minimum": 0 },
+    "medium_count": { "type": "integer", "minimum": 0 },
+    "low_count": { "type": "integer", "minimum": 0 },
+    "negligible_count": { "type": "integer", "minimum": 0 },
+    "unknown_count": { "type": "integer", "minimum": 0 },
+    "fixed_count": { "type": "integer", "minimum": 0 },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["Target", "Vulnerabilities"],
+        "properties": {
+          "Target": {
+            "type": "string",
+            "description": "Artifact type (apk, deb, python, …)."
+          },
+          "Vulnerabilities": {
+            "type": ["array", "null"],
+            "items": {
+              "type": "object",
+              "required": [
+                "VulnerabilityID",
+                "PkgName",
+                "InstalledVersion",
+                "Severity"
+              ],
+              "properties": {
+                "VulnerabilityID": { "type": "string" },
+                "PkgName": { "type": "string" },
+                "InstalledVersion": { "type": "string" },
+                "FixedVersion": { "type": "string" },
+                "Severity": { "type": "string" },
+                "Title": { "type": "string" },
+                "Description": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

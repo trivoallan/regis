@@ -28,7 +28,7 @@ def report_data():
             "mr_description_checklists": [],
         },
         "analyzers": {
-            "trivy": {
+            "cve": {
                 "vulnerabilities": {
                     "summary": {"CRITICAL": 2, "HIGH": 5, "MEDIUM": 12, "LOW": 8}
                 }
@@ -186,7 +186,7 @@ def test_applies_labels_to_pr(runner, tmp_path):
             "rules_summary": {"score": 90, "total": 5, "passed": 5},
             "tier": "Gold",
             "labels": ["regis:security-review"],
-            "badge_labels": [{"name": "regis::trivy::critical", "class": "error"}],
+            "badge_labels": [{"name": "regis::cve::critical", "class": "error"}],
         },
         "analyzers": {},
     }
@@ -232,7 +232,7 @@ def test_applies_labels_to_pr(runner, tmp_path):
 
         labels_body = mock_requests.post.call_args_list[1][1]["json"]["labels"]
         assert "regis:security-review" in labels_body
-        assert "regis::trivy::critical" in labels_body
+        assert "regis::cve::critical" in labels_body
 
 
 def test_token_read_from_env(runner, report_file, monkeypatch):

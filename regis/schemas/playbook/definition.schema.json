@@ -203,7 +203,7 @@
           },
           "provider": {
             "type": "string",
-            "description": "Analyzer name (e.g. 'trivy')."
+            "description": "Analyzer name (e.g. 'cve')."
           },
           "rule": {
             "type": "string",
@@ -391,7 +391,7 @@
         },
         "value": {
           "type": "string",
-          "description": "Dot-separated path into the report data, e.g. 'results.trivy.critical_count'."
+          "description": "Dot-separated path into the report data, e.g. 'results.cve.critical_count'."
         },
         "url": {
           "type": "string",
@@ -403,7 +403,7 @@
         },
         "template": {
           "type": "string",
-          "description": "Path to a Jinja2 HTML template within the theme, e.g. analyzers/trivy/table.html."
+          "description": "Path to a Jinja2 HTML template within the theme, e.g. analyzers/cve/table.html."
         },
         "options": {
           "type": "object",
@@ -487,7 +487,7 @@
           }
         },
         "condition": {
-          "description": "JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {\"var\": \"results.trivy.critical_count\"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or."
+          "description": "JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {\"var\": \"results.cve.critical_count\"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or."
         }
       },
       "additionalProperties": false

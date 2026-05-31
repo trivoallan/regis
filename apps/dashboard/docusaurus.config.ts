@@ -58,6 +58,11 @@ const config: Config = {
                 label: "Analyzers",
                 collapsed: false,
                 items: [
+                  {
+                    type: "doc",
+                    id: "analyzers/cve",
+                    label: "Vulnerabilities",
+                  },
                   { type: "doc", id: "analyzers/dockle", label: "Dockle" },
                   {
                     type: "doc",
@@ -87,8 +92,8 @@ const config: Config = {
                     id: "analyzers/scorecarddev",
                     label: "Scorecard",
                   },
+                  { type: "doc", id: "analyzers/secrets", label: "Secrets" },
                   { type: "doc", id: "analyzers/size", label: "Size" },
-                  { type: "doc", id: "analyzers/trivy", label: "Trivy" },
                   {
                     type: "doc",
                     id: "analyzers/versioning",

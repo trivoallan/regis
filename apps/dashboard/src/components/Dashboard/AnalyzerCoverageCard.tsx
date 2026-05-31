@@ -8,7 +8,8 @@ interface AnalyzerCoverageCardProps {
 
 const ANALYZER_LABELS: Record<string, string> = {
   oci: "OCI",
-  trivy: "Trivy",
+  cve: "Vulnerabilities",
+  secrets: "Secrets",
   hadolint: "Hadolint",
   sbom: "SBOM",
   dockle: "Dockle",

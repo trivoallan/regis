@@ -41,14 +41,15 @@ jobs:
         uses: wemake-services/docker-image-size-limit@f5970eb0c2180ac296475bfd22c5a58955370051 # 2.2.0
         with:
           image: regis:size-check
-          # Measured amd64 size (the CI arch, overlay2): ~337 MB extracted
-          # on-disk. Bulk is trivy (~160 MB) + python:3.14-slim base (~80 MB)
-          # + python build (~38 MB) + venv (~29 MB) + dockle (~25 MB) +
-          # regctl (~12 MB). Ceiling set to 360 MB (~7 % headroom) to absorb
-          # trivy-version drift. Further reduction (alpine/wolfi base,
-          # pinning/trimming trivy, UPX) is tracked separately.
-          # NOTE: the compressed manifest sum (what gets pulled over the wire)
-          # is ~108 MB; the badge published from cd-docker.yml shows the
-          # extracted on-disk number (what users actually pay for after pull).
-          size: 360MB
+          # Measured amd64 size (the CI arch, overlay2): ~372 MiB extracted
+          # on-disk. The scanner binaries dominate: grype + syft + trufflehog
+          # are ~260 MiB extracted combined (each a large Go binary), versus the
+          # single trivy binary (~146 MiB) they replaced — so the trivy→grype
+          # migration grew the image by ~114 MiB. Remaining bulk:
+          # python:3.14-slim base (~80 MB) + python build (~38 MB) +
+          # venv (~29 MB) + dockle (~25 MB) + regctl (~12 MB). Ceiling set to
+          # 385 MB to clear the measured 372 MiB with modest headroom. Trimming
+          # the scanner binaries (UPX, alpine/wolfi base) is tracked separately
+          # and would bring this back down materially.
+          size: 385MB
           show_current_size: true

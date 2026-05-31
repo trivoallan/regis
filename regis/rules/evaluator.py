@@ -289,7 +289,7 @@ def _add_custom_operations():
     )
 
     # get: get a value from a dictionary by key
-    # Usage: {"get": [{"var": "results.trivy"}, "critical_count"]}
+    # Usage: {"get": [{"var": "results.cve"}, "critical_count"]}
     json_logic.add_operation(
         "get",
         lambda data, key: data.get(key) if isinstance(data, dict) else None,

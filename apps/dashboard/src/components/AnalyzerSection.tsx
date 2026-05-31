@@ -5,7 +5,7 @@
 
 import React from "react";
 import CodeBlock from "@theme/CodeBlock";
-import { TrivySection } from "./TrivySection";
+import { CveSection } from "./CveSection";
 import { FreshnessSection } from "./FreshnessSection";
 import { SizeSection } from "./SizeSection";
 import { HadolintSection } from "./HadolintSection";
@@ -16,6 +16,7 @@ import { ScorecardSection } from "./ScorecardSection";
 import { VersioningSection } from "./VersioningSection";
 import { OciSection } from "./OciSection";
 import { SbomSection } from "./SbomSection";
+import { SecretsSection } from "./SecretsSection";
 import { DockleSection } from "./DockleSection";
 
 import { ErrorCard } from "./ErrorCard";
@@ -44,8 +45,10 @@ function renderAnalyzer(
   }
 
   switch (name) {
-    case "trivy":
-      return <TrivySection data={data as never} />;
+    case "cve":
+      return <CveSection data={data as never} />;
+    case "secrets":
+      return <SecretsSection data={data as never} />;
     case "freshness":
       return <FreshnessSection data={data as never} />;
     case "size":

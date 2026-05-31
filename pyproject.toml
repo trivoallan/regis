@@ -30,7 +30,7 @@ regis = "regis.cli:main"
 versioning = "regis.analyzers.versioning:VersioningAnalyzer"
 scorecarddev = "regis.analyzers.scorecarddev:ScorecardDevAnalyzer"
 oci = "regis.analyzers.oci:OciAnalyzer"
-trivy = "regis.analyzers.trivy:TrivyAnalyzer"
+cve = "regis.analyzers.cve:CveAnalyzer"
 endoflife = "regis.analyzers.endoflife:EndOfLifeAnalyzer"
 popularity = "regis.analyzers.popularity:PopularityAnalyzer"
 size = "regis.analyzers.size:SizeAnalyzer"
@@ -40,6 +40,7 @@ sbom = "regis.analyzers.sbom:SbomAnalyzer"
 hadolint = "regis.analyzers.hadolint:HadolintAnalyzer"
 dockle = "regis.analyzers.dockle:DockleAnalyzer"
 metadata = "regis.analyzers.metadata:MetadataAnalyzer"
+secrets = "regis.analyzers.secrets:SecretsAnalyzer"
 
 [project.optional-dependencies]
 server = ["fastapi>=0.115.0", "uvicorn[standard]>=0.34"]

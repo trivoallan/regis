@@ -28,7 +28,7 @@ Failing any critical rule blocks the image from reaching a Gold or Silver tier.
 | :-------------------------- | :------- | :----------------------------------------------------------------------------------- |
 | `registry-domain-whitelist` | `core`   | Image must originate from a trusted registry (docker.io, quay.io, ghcr.io, ghcr.io). |
 | `no-root`                   | `oci`    | Image must not be configured to run as the `root` user.                              |
-| `cve-critical`              | `trivy`  | No `CRITICAL` CVEs allowed (max: 0).                                                 |
+| `cve-critical`              | `cve`    | No `CRITICAL` CVEs allowed (max: 0).                                                 |
 
 ### Warning
 
@@ -36,8 +36,8 @@ Warning-level failures reduce the compliance score but do not block promotion on
 
 | Slug            | Provider       | Description                                      |
 | :-------------- | :------------- | :----------------------------------------------- |
-| `cve-high`      | `trivy`        | No more than 10 `HIGH` CVEs.                     |
-| `cve-fixable`   | `trivy`        | No unpatched CVEs with an available fix.         |
+| `cve-high`      | `cve`          | No more than 10 `HIGH` CVEs.                     |
+| `cve-fixable`   | `cve`          | No unpatched CVEs with an available fix.         |
 | `has-sbom`      | `sbom`         | Image must provide a Software Bill of Materials. |
 | `scorecard-min` | `scorecarddev` | OpenSSF Scorecard score must be ≥ 5.0.           |
 

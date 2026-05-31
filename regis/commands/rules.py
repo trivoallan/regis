@@ -147,7 +147,7 @@ def rules_group():
     "--filter-provider",
     "filter_provider",
     default=None,
-    help="Keep only rules whose provider matches (e.g. trivy, hadolint).",
+    help="Keep only rules whose provider matches (e.g. cve, hadolint).",
 )
 def list_rules(
     rules_path: str | None,
@@ -181,9 +181,7 @@ def list_rules(
             r for r in final_rules if r.get("level", "info").lower() == wanted_level
         ]
     if filter_provider:
-        final_rules = [
-            r for r in final_rules if r.get("provider") == filter_provider
-        ]
+        final_rules = [r for r in final_rules if r.get("provider") == filter_provider]
 
     final_rules.sort(key=lambda r: r.get("slug", ""))
 

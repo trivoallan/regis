@@ -18,7 +18,9 @@ For a complete list and technical details for each, see the [Analyzers Reference
 :::
 
 - **OCI**: Fetches low-level image metadata (labels, architecture, layers, creation date) directly from the registry via `regctl`.
-- **Trivy**: Performs vulnerability scanning (CVEs) and generates Software Bill of Materials (SBOM).
+- **CVE**: Performs vulnerability scanning (CVEs) via grype.
+- **Secrets**: Detects embedded secrets and credentials via trufflehog.
+- **SBOM**: Generates a Software Bill of Materials (CycloneDX / SPDX) via syft.
 - **Hadolint**: Lints Dockerfiles to ensure best practices and security standards are met.
 - **Freshness**: Calculates the "age" of an image relative to its base image and updates.
 - **End-Of-Life (EOL)**: Checks if the base OS or language runtime is approaching its end of support.
@@ -32,7 +34,7 @@ Below is the step-by-step process `regis` follows when analyzing an image:
 graph TD
     A[Start: regis analyze] --> B[Fetch Metadata via regctl]
     B --> C{Run Analyzers}
-    C --> D[Trivy: Vulns/SBOM]
+    C --> D[grype: Vulns / syft: SBOM]
     C --> E[Hadolint: Linter]
     C --> F[OCI: Metadata]
     C --> G[...]

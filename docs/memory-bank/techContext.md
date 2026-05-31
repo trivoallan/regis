@@ -45,12 +45,14 @@
 
 These must be in `PATH` for the relevant analyzers to work:
 
-| Binary     | Analyzer slug | Module                        |
-| ---------- | ------------- | ----------------------------- |
-| `trivy`    | `trivy`       | `regis/analyzers/trivy.py`    |
-| `skopeo`   | `skopeo`      | `regis/analyzers/skopeo.py`   |
-| `hadolint` | `hadolint`    | `regis/analyzers/hadolint.py` |
-| `dockle`   | `dockle`      | `regis/analyzers/dockle.py`   |
+| Binary       | Analyzer slug | Module                        |
+| ------------ | ------------- | ----------------------------- |
+| `grype`      | `cve`         | `regis/analyzers/cve.py`      |
+| `trufflehog` | `secrets`     | `regis/analyzers/secrets.py`  |
+| `syft`       | `sbom`        | `regis/analyzers/sbom.py`     |
+| `regctl`     | `oci`         | `regis/analyzers/oci.py`      |
+| `hadolint`   | `hadolint`    | `regis/analyzers/hadolint.py` |
+| `dockle`     | `dockle`      | `regis/analyzers/dockle.py`   |
 
 ## Development Environment
 

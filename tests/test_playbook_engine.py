@@ -202,7 +202,7 @@ class TestEvaluate:
                 "tags": {"total_tags": 0},
                 "provenance": {"has_provenance": False},
                 "playbookdev": {"score": 0},
-                "trivy": {"vulnerability_count": 100},
+                "cve": {"vulnerability_count": 100},
             },
         }
         result = evaluate(self.PLAYBOOK, report)
@@ -275,7 +275,7 @@ class TestEvaluate:
                     ],
                     "display": {
                         "widgets": [{"label": "W", "value": "x"}],
-                        "analyzers": ["trivy"],
+                        "analyzers": ["cve"],
                     },
                     "levels": [{"name": "bronze", "order": 1}],
                 },
@@ -357,11 +357,11 @@ class TestGitLabChecklist:
             [
                 {
                     "label": "No critical CVEs",
-                    "show_if": {"==": [{"var": "results.trivy.critical_count"}, 0]},
+                    "show_if": {"==": [{"var": "results.cve.critical_count"}, 0]},
                 }
             ]
         )
-        report = {"results": {"trivy": {"critical_count": 0}}}
+        report = {"results": {"cve": {"critical_count": 0}}}
         result = evaluate(pb, report)
         assert result["mr_description_checklists"] == [
             {
@@ -376,11 +376,11 @@ class TestGitLabChecklist:
             [
                 {
                     "label": "No critical CVEs",
-                    "show_if": {"==": [{"var": "results.trivy.critical_count"}, 0]},
+                    "show_if": {"==": [{"var": "results.cve.critical_count"}, 0]},
                 }
             ]
         )
-        report = {"results": {"trivy": {"critical_count": 5}}}
+        report = {"results": {"cve": {"critical_count": 5}}}
         result = evaluate(pb, report)
         assert "mr_description_checklists" not in result
 
@@ -430,11 +430,11 @@ class TestGitLabChecklist:
             [
                 {
                     "label": "No critical CVEs",
-                    "check_if": {"==": [{"var": "results.trivy.critical_count"}, 0]},
+                    "check_if": {"==": [{"var": "results.cve.critical_count"}, 0]},
                 }
             ]
         )
-        report = {"results": {"trivy": {"critical_count": 0}}}
+        report = {"results": {"cve": {"critical_count": 0}}}
         result = evaluate(pb, report)
         assert result["mr_description_checklists"] == [
             {
@@ -449,11 +449,11 @@ class TestGitLabChecklist:
             [
                 {
                     "label": "No critical CVEs",
-                    "check_if": {"==": [{"var": "results.trivy.critical_count"}, 0]},
+                    "check_if": {"==": [{"var": "results.cve.critical_count"}, 0]},
                 }
             ]
         )
-        report = {"results": {"trivy": {"critical_count": 3}}}
+        report = {"results": {"cve": {"critical_count": 3}}}
         result = evaluate(pb, report)
         assert result["mr_description_checklists"] == [
             {
@@ -504,7 +504,7 @@ class TestGitLabChecklist:
                             {
                                 "label": "No critical CVEs",
                                 "check_if": {
-                                    "==": [{"var": "results.trivy.critical_count"}, 0]
+                                    "==": [{"var": "results.cve.critical_count"}, 0]
                                 },
                             }
                         ],
@@ -516,7 +516,7 @@ class TestGitLabChecklist:
                 ]
             }
         }
-        report = {"results": {"trivy": {"critical_count": 0}}}
+        report = {"results": {"cve": {"critical_count": 0}}}
         result = evaluate(pb, report)
         assert result["mr_description_checklists"] == [
             {

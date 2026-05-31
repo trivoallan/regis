@@ -1,0 +1,1465 @@
+{
+  "matches": [
+    {
+      "vulnerability": {
+        "id": "CVE-2025-60876",
+        "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+        "namespace": "nvd:cpe",
+        "severity": "Medium",
+        "urls": [
+          "https://gist.github.com/subyumatest/41554af6a72aedaacaec026adc311092",
+          "https://lists.busybox.net/pipermail/busybox/attachments/20250823/ccdc96ef/attachment-0001.htm",
+          "https://lists.busybox.net/pipermail/busybox/attachments/20250828/e7f90492/attachment.htm"
+        ],
+        "description": "BusyBox wget thru 1.3.7 accepted raw CR (0x0D)/LF (0x0A) and other C0 control bytes in the HTTP request-target (path/query), allowing the request line to be split and attacker-controlled headers to be injected. To preserve the HTTP/1.1 request-line shape METHOD SP request-target SP HTTP/1.1, a raw space (0x20) in the request-target must also be rejected (clients should use %20).",
+        "cvss": [
+          {
+            "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+            "type": "Secondary",
+            "version": "3.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+            "metrics": {
+              "baseScore": 6.5,
+              "exploitabilityScore": 3.9,
+              "impactScore": 2.6
+            },
+            "vendorMetadata": {}
+          }
+        ],
+        "epss": [
+          {
+            "cve": "CVE-2025-60876",
+            "epss": 0.00051,
+            "percentile": 0.16364,
+            "date": "2026-05-29"
+          }
+        ],
+        "cwes": [
+          {
+            "cve": "CVE-2025-60876",
+            "cwe": "CWE-284",
+            "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+            "type": "Secondary"
+          }
+        ],
+        "fix": { "versions": [], "state": "" },
+        "advisories": [],
+        "risk": 0.029325
+      },
+      "relatedVulnerabilities": [],
+      "matchDetails": [
+        {
+          "type": "cpe-match",
+          "matcher": "apk-matcher",
+          "searchedBy": {
+            "namespace": "nvd:cpe",
+            "cpes": ["cpe:2.3:a:busybox:busybox:1.36.1:*:*:*:*:*:*:*"],
+            "package": { "name": "busybox", "version": "1.36.1-r31" }
+          },
+          "found": {
+            "vulnerabilityID": "CVE-2025-60876",
+            "versionConstraint": "<= 1.37.0 (unknown)",
+            "cpes": ["cpe:2.3:a:busybox:busybox:*:*:*:*:*:*:*:*"]
+          }
+        }
+      ],
+      "artifact": {
+        "id": "a6a0537c11acf05d",
+        "name": "busybox",
+        "version": "1.36.1-r31",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["GPL-2.0-only"],
+        "cpes": ["cpe:2.3:a:busybox:busybox:1.36.1-r31:*:*:*:*:*:*:*"],
+        "purl": "pkg:apk/alpine/busybox@1.36.1-r31?arch=aarch64&distro=alpine-3.20.10",
+        "upstreams": [{ "name": "busybox" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/bin" },
+            { "path": "/bin/busybox" },
+            { "path": "/etc" },
+            { "path": "/etc/securetty" },
+            { "path": "/etc/busybox-paths.d" },
+            { "path": "/etc/busybox-paths.d/busybox" },
+            { "path": "/etc/logrotate.d" },
+            { "path": "/etc/logrotate.d/acpid" },
+            { "path": "/etc/network" },
+            { "path": "/etc/network/if-down.d" },
+            { "path": "/etc/network/if-post-down.d" },
+            { "path": "/etc/network/if-post-up.d" },
+            { "path": "/etc/network/if-pre-down.d" },
+            { "path": "/etc/network/if-pre-up.d" },
+            { "path": "/etc/network/if-up.d" },
+            { "path": "/etc/network/if-up.d/dad" },
+            { "path": "/etc/udhcpc" },
+            { "path": "/etc/udhcpc/udhcpc.conf" },
+            { "path": "/sbin" },
+            { "path": "/tmp" },
+            { "path": "/usr" },
+            { "path": "/usr/sbin" },
+            { "path": "/usr/share" },
+            { "path": "/usr/share/udhcpc" },
+            { "path": "/usr/share/udhcpc/default.script" },
+            { "path": "/var" },
+            { "path": "/var/cache" },
+            { "path": "/var/cache/misc" }
+          ]
+        }
+      }
+    },
+    {
+      "vulnerability": {
+        "id": "CVE-2025-60876",
+        "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+        "namespace": "nvd:cpe",
+        "severity": "Medium",
+        "urls": [
+          "https://gist.github.com/subyumatest/41554af6a72aedaacaec026adc311092",
+          "https://lists.busybox.net/pipermail/busybox/attachments/20250823/ccdc96ef/attachment-0001.htm",
+          "https://lists.busybox.net/pipermail/busybox/attachments/20250828/e7f90492/attachment.htm"
+        ],
+        "description": "BusyBox wget thru 1.3.7 accepted raw CR (0x0D)/LF (0x0A) and other C0 control bytes in the HTTP request-target (path/query), allowing the request line to be split and attacker-controlled headers to be injected. To preserve the HTTP/1.1 request-line shape METHOD SP request-target SP HTTP/1.1, a raw space (0x20) in the request-target must also be rejected (clients should use %20).",
+        "cvss": [
+          {
+            "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+            "type": "Secondary",
+            "version": "3.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+            "metrics": {
+              "baseScore": 6.5,
+              "exploitabilityScore": 3.9,
+              "impactScore": 2.6
+            },
+            "vendorMetadata": {}
+          }
+        ],
+        "epss": [
+          {
+            "cve": "CVE-2025-60876",
+            "epss": 0.00051,
+            "percentile": 0.16364,
+            "date": "2026-05-29"
+          }
+        ],
+        "cwes": [
+          {
+            "cve": "CVE-2025-60876",
+            "cwe": "CWE-284",
+            "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+            "type": "Secondary"
+          }
+        ],
+        "fix": { "versions": [], "state": "" },
+        "advisories": [],
+        "risk": 0.029325
+      },
+      "relatedVulnerabilities": [],
+      "matchDetails": [
+        {
+          "type": "cpe-match",
+          "matcher": "apk-matcher",
+          "searchedBy": {
+            "namespace": "nvd:cpe",
+            "cpes": ["cpe:2.3:a:busybox:busybox:1.36.1:*:*:*:*:*:*:*"],
+            "package": { "name": "busybox", "version": "1.36.1-r31" }
+          },
+          "found": {
+            "vulnerabilityID": "CVE-2025-60876",
+            "versionConstraint": "<= 1.37.0 (unknown)",
+            "cpes": ["cpe:2.3:a:busybox:busybox:*:*:*:*:*:*:*:*"]
+          }
+        }
+      ],
+      "artifact": {
+        "id": "3f5c5e6b53d979db",
+        "name": "busybox-binsh",
+        "version": "1.36.1-r31",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["GPL-2.0-only"],
+        "cpes": [
+          "cpe:2.3:a:busybox-binsh:busybox-binsh:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:busybox-binsh:busybox_binsh:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:busybox_binsh:busybox-binsh:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:busybox_binsh:busybox_binsh:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:busybox:busybox-binsh:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:busybox:busybox_binsh:1.36.1-r31:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/busybox-binsh@1.36.1-r31?arch=aarch64&distro=alpine-3.20.10&upstream=busybox",
+        "upstreams": [{ "name": "busybox" }],
+        "metadataType": "ApkMetadata",
+        "metadata": { "files": [{ "path": "/bin" }, { "path": "/bin/sh" }] }
+      }
+    },
+    {
+      "vulnerability": {
+        "id": "CVE-2025-60876",
+        "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2025-60876",
+        "namespace": "nvd:cpe",
+        "severity": "Medium",
+        "urls": [
+          "https://gist.github.com/subyumatest/41554af6a72aedaacaec026adc311092",
+          "https://lists.busybox.net/pipermail/busybox/attachments/20250823/ccdc96ef/attachment-0001.htm",
+          "https://lists.busybox.net/pipermail/busybox/attachments/20250828/e7f90492/attachment.htm"
+        ],
+        "description": "BusyBox wget thru 1.3.7 accepted raw CR (0x0D)/LF (0x0A) and other C0 control bytes in the HTTP request-target (path/query), allowing the request line to be split and attacker-controlled headers to be injected. To preserve the HTTP/1.1 request-line shape METHOD SP request-target SP HTTP/1.1, a raw space (0x20) in the request-target must also be rejected (clients should use %20).",
+        "cvss": [
+          {
+            "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+            "type": "Secondary",
+            "version": "3.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+            "metrics": {
+              "baseScore": 6.5,
+              "exploitabilityScore": 3.9,
+              "impactScore": 2.6
+            },
+            "vendorMetadata": {}
+          }
+        ],
+        "epss": [
+          {
+            "cve": "CVE-2025-60876",
+            "epss": 0.00051,
+            "percentile": 0.16364,
+            "date": "2026-05-29"
+          }
+        ],
+        "cwes": [
+          {
+            "cve": "CVE-2025-60876",
+            "cwe": "CWE-284",
+            "source": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+            "type": "Secondary"
+          }
+        ],
+        "fix": { "versions": [], "state": "" },
+        "advisories": [],
+        "risk": 0.029325
+      },
+      "relatedVulnerabilities": [],
+      "matchDetails": [
+        {
+          "type": "cpe-match",
+          "matcher": "apk-matcher",
+          "searchedBy": {
+            "namespace": "nvd:cpe",
+            "cpes": ["cpe:2.3:a:busybox:busybox:1.36.1:*:*:*:*:*:*:*"],
+            "package": { "name": "busybox", "version": "1.36.1-r31" }
+          },
+          "found": {
+            "vulnerabilityID": "CVE-2025-60876",
+            "versionConstraint": "<= 1.37.0 (unknown)",
+            "cpes": ["cpe:2.3:a:busybox:busybox:*:*:*:*:*:*:*:*"]
+          }
+        }
+      ],
+      "artifact": {
+        "id": "08e4498c1dfeec93",
+        "name": "ssl_client",
+        "version": "1.36.1-r31",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["GPL-2.0-only"],
+        "cpes": [
+          "cpe:2.3:a:ssl-client:ssl-client:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ssl-client:ssl_client:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ssl_client:ssl-client:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ssl_client:ssl_client:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ssl:ssl-client:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ssl:ssl_client:1.36.1-r31:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/ssl_client@1.36.1-r31?arch=aarch64&distro=alpine-3.20.10&upstream=busybox",
+        "upstreams": [{ "name": "busybox" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/usr" },
+            { "path": "/usr/bin" },
+            { "path": "/usr/bin/ssl_client" }
+          ]
+        }
+      }
+    }
+  ],
+  "alertsByPackage": [
+    {
+      "package": {
+        "id": "07354995b7aa075a",
+        "name": "libcrypto3",
+        "version": "3.3.7-r0",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["Apache-2.0"],
+        "cpes": [
+          "cpe:2.3:a:libcrypto3:libcrypto3:3.3.7-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:libcrypto3:libcrypto:3.3.7-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:libcrypto:libcrypto3:3.3.7-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:libcrypto:libcrypto:3.3.7-r0:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/libcrypto3@3.3.7-r0?arch=aarch64&distro=alpine-3.20.10&upstream=openssl",
+        "upstreams": [{ "name": "openssl" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/etc" },
+            { "path": "/etc/ssl" },
+            { "path": "/etc/ssl/ct_log_list.cnf" },
+            { "path": "/etc/ssl/ct_log_list.cnf.dist" },
+            { "path": "/etc/ssl/openssl.cnf" },
+            { "path": "/etc/ssl/openssl.cnf.dist" },
+            { "path": "/etc/ssl/certs" },
+            { "path": "/etc/ssl/private" },
+            { "path": "/lib" },
+            { "path": "/lib/libcrypto.so.3" },
+            { "path": "/usr" },
+            { "path": "/usr/lib" },
+            { "path": "/usr/lib/libcrypto.so.3" },
+            { "path": "/usr/lib/engines-3" },
+            { "path": "/usr/lib/engines-3/afalg.so" },
+            { "path": "/usr/lib/engines-3/capi.so" },
+            { "path": "/usr/lib/engines-3/loader_attic.so" },
+            { "path": "/usr/lib/engines-3/padlock.so" },
+            { "path": "/usr/lib/ossl-modules" },
+            { "path": "/usr/lib/ossl-modules/legacy.so" }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "08e4498c1dfeec93",
+        "name": "ssl_client",
+        "version": "1.36.1-r31",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["GPL-2.0-only"],
+        "cpes": [
+          "cpe:2.3:a:ssl-client:ssl-client:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ssl-client:ssl_client:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ssl_client:ssl-client:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ssl_client:ssl_client:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ssl:ssl-client:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ssl:ssl_client:1.36.1-r31:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/ssl_client@1.36.1-r31?arch=aarch64&distro=alpine-3.20.10&upstream=busybox",
+        "upstreams": [{ "name": "busybox" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/usr" },
+            { "path": "/usr/bin" },
+            { "path": "/usr/bin/ssl_client" }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "3f5c5e6b53d979db",
+        "name": "busybox-binsh",
+        "version": "1.36.1-r31",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["GPL-2.0-only"],
+        "cpes": [
+          "cpe:2.3:a:busybox-binsh:busybox-binsh:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:busybox-binsh:busybox_binsh:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:busybox_binsh:busybox-binsh:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:busybox_binsh:busybox_binsh:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:busybox:busybox-binsh:1.36.1-r31:*:*:*:*:*:*:*",
+          "cpe:2.3:a:busybox:busybox_binsh:1.36.1-r31:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/busybox-binsh@1.36.1-r31?arch=aarch64&distro=alpine-3.20.10&upstream=busybox",
+        "upstreams": [{ "name": "busybox" }],
+        "metadataType": "ApkMetadata",
+        "metadata": { "files": [{ "path": "/bin" }, { "path": "/bin/sh" }] }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "6dcdd7dc29c063ea",
+        "name": "musl",
+        "version": "1.2.5-r3",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["MIT"],
+        "cpes": [
+          "cpe:2.3:a:musl-libc:musl:1.2.5-r3:*:*:*:*:*:*:*",
+          "cpe:2.3:a:musl_libc:musl:1.2.5-r3:*:*:*:*:*:*:*",
+          "cpe:2.3:a:musl:musl:1.2.5-r3:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/musl@1.2.5-r3?arch=aarch64&distro=alpine-3.20.10",
+        "upstreams": [{ "name": "musl" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/lib" },
+            { "path": "/lib/ld-musl-aarch64.so.1" },
+            { "path": "/lib/libc.musl-aarch64.so.1" }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "79597b43a49073ac",
+        "name": "scanelf",
+        "version": "1.3.7-r2",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["GPL-2.0-only"],
+        "cpes": ["cpe:2.3:a:scanelf:scanelf:1.3.7-r2:*:*:*:*:*:*:*"],
+        "purl": "pkg:apk/alpine/scanelf@1.3.7-r2?arch=aarch64&distro=alpine-3.20.10&upstream=pax-utils",
+        "upstreams": [{ "name": "pax-utils" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/usr" },
+            { "path": "/usr/bin" },
+            { "path": "/usr/bin/scanelf" }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "7dd8dd3195a50a7c",
+        "name": "alpine-keys",
+        "version": "2.4-r1",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["MIT"],
+        "cpes": [
+          "cpe:2.3:a:alpine-keys:alpine-keys:2.4-r1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine-keys:alpine_keys:2.4-r1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine_keys:alpine-keys:2.4-r1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine_keys:alpine_keys:2.4-r1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine:alpine-keys:2.4-r1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine:alpine_keys:2.4-r1:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/alpine-keys@2.4-r1?arch=aarch64&distro=alpine-3.20.10",
+        "upstreams": [{ "name": "alpine-keys" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/etc" },
+            { "path": "/etc/apk" },
+            { "path": "/etc/apk/keys" },
+            {
+              "path": "/etc/apk/keys/alpine-devel@lists.alpinelinux.org-524d27bb.rsa.pub"
+            },
+            {
+              "path": "/etc/apk/keys/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub"
+            },
+            {
+              "path": "/etc/apk/keys/alpine-devel@lists.alpinelinux.org-616a9724.rsa.pub"
+            },
+            {
+              "path": "/etc/apk/keys/alpine-devel@lists.alpinelinux.org-616adfeb.rsa.pub"
+            },
+            {
+              "path": "/etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+            },
+            { "path": "/usr" },
+            { "path": "/usr/share" },
+            { "path": "/usr/share/apk" },
+            { "path": "/usr/share/apk/keys" },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-4a6a0840.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-5243ef4b.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-524d27bb.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-5261cecb.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-58cbb476.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-58e4f17d.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-5e69ca50.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-6165ee59.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-61666e3f.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-616a9724.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-616abc23.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-616ac3bc.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-616adfeb.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/alpine-devel@lists.alpinelinux.org-616db30d.rsa.pub"
+            },
+            { "path": "/usr/share/apk/keys/aarch64" },
+            {
+              "path": "/usr/share/apk/keys/aarch64/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/aarch64/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub"
+            },
+            { "path": "/usr/share/apk/keys/armhf" },
+            {
+              "path": "/usr/share/apk/keys/armhf/alpine-devel@lists.alpinelinux.org-524d27bb.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/armhf/alpine-devel@lists.alpinelinux.org-616a9724.rsa.pub"
+            },
+            { "path": "/usr/share/apk/keys/armv7" },
+            {
+              "path": "/usr/share/apk/keys/armv7/alpine-devel@lists.alpinelinux.org-524d27bb.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/armv7/alpine-devel@lists.alpinelinux.org-616adfeb.rsa.pub"
+            },
+            { "path": "/usr/share/apk/keys/mips64" },
+            {
+              "path": "/usr/share/apk/keys/mips64/alpine-devel@lists.alpinelinux.org-5e69ca50.rsa.pub"
+            },
+            { "path": "/usr/share/apk/keys/ppc64le" },
+            {
+              "path": "/usr/share/apk/keys/ppc64le/alpine-devel@lists.alpinelinux.org-58cbb476.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/ppc64le/alpine-devel@lists.alpinelinux.org-616abc23.rsa.pub"
+            },
+            { "path": "/usr/share/apk/keys/riscv64" },
+            {
+              "path": "/usr/share/apk/keys/riscv64/alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/riscv64/alpine-devel@lists.alpinelinux.org-616db30d.rsa.pub"
+            },
+            { "path": "/usr/share/apk/keys/s390x" },
+            {
+              "path": "/usr/share/apk/keys/s390x/alpine-devel@lists.alpinelinux.org-58e4f17d.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/s390x/alpine-devel@lists.alpinelinux.org-616ac3bc.rsa.pub"
+            },
+            { "path": "/usr/share/apk/keys/x86" },
+            {
+              "path": "/usr/share/apk/keys/x86/alpine-devel@lists.alpinelinux.org-4a6a0840.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/x86/alpine-devel@lists.alpinelinux.org-5243ef4b.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/x86/alpine-devel@lists.alpinelinux.org-61666e3f.rsa.pub"
+            },
+            { "path": "/usr/share/apk/keys/x86_64" },
+            {
+              "path": "/usr/share/apk/keys/x86_64/alpine-devel@lists.alpinelinux.org-4a6a0840.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/x86_64/alpine-devel@lists.alpinelinux.org-5261cecb.rsa.pub"
+            },
+            {
+              "path": "/usr/share/apk/keys/x86_64/alpine-devel@lists.alpinelinux.org-6165ee59.rsa.pub"
+            }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "8d645c7d2c9ab6eb",
+        "name": "alpine-baselayout",
+        "version": "3.6.5-r0",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["GPL-2.0-only"],
+        "cpes": [
+          "cpe:2.3:a:alpine-baselayout:alpine-baselayout:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine-baselayout:alpine_baselayout:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine_baselayout:alpine-baselayout:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine_baselayout:alpine_baselayout:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine:alpine-baselayout:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine:alpine_baselayout:3.6.5-r0:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/alpine-baselayout@3.6.5-r0?arch=aarch64&distro=alpine-3.20.10",
+        "upstreams": [{ "name": "alpine-baselayout" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/dev" },
+            { "path": "/dev/pts" },
+            { "path": "/dev/shm" },
+            { "path": "/etc" },
+            { "path": "/etc/motd" },
+            { "path": "/etc/crontabs" },
+            { "path": "/etc/crontabs/root" },
+            { "path": "/etc/modprobe.d" },
+            { "path": "/etc/modprobe.d/aliases.conf" },
+            { "path": "/etc/modprobe.d/blacklist.conf" },
+            { "path": "/etc/modprobe.d/i386.conf" },
+            { "path": "/etc/modprobe.d/kms.conf" },
+            { "path": "/etc/modules-load.d" },
+            { "path": "/etc/network" },
+            { "path": "/etc/network/if-down.d" },
+            { "path": "/etc/network/if-post-down.d" },
+            { "path": "/etc/network/if-pre-up.d" },
+            { "path": "/etc/network/if-up.d" },
+            { "path": "/etc/opt" },
+            { "path": "/etc/periodic" },
+            { "path": "/etc/periodic/15min" },
+            { "path": "/etc/periodic/daily" },
+            { "path": "/etc/periodic/hourly" },
+            { "path": "/etc/periodic/monthly" },
+            { "path": "/etc/periodic/weekly" },
+            { "path": "/etc/profile.d" },
+            { "path": "/etc/profile.d/20locale.sh" },
+            { "path": "/etc/profile.d/README" },
+            { "path": "/etc/profile.d/color_prompt.sh.disabled" },
+            { "path": "/etc/sysctl.d" },
+            { "path": "/home" },
+            { "path": "/lib" },
+            { "path": "/lib/firmware" },
+            { "path": "/lib/modules-load.d" },
+            { "path": "/lib/sysctl.d" },
+            { "path": "/lib/sysctl.d/00-alpine.conf" },
+            { "path": "/media" },
+            { "path": "/media/cdrom" },
+            { "path": "/media/floppy" },
+            { "path": "/media/usb" },
+            { "path": "/mnt" },
+            { "path": "/opt" },
+            { "path": "/proc" },
+            { "path": "/root" },
+            { "path": "/run" },
+            { "path": "/sbin" },
+            { "path": "/srv" },
+            { "path": "/sys" },
+            { "path": "/tmp" },
+            { "path": "/usr" },
+            { "path": "/usr/bin" },
+            { "path": "/usr/lib" },
+            { "path": "/usr/lib/modules-load.d" },
+            { "path": "/usr/local" },
+            { "path": "/usr/local/bin" },
+            { "path": "/usr/local/lib" },
+            { "path": "/usr/local/share" },
+            { "path": "/usr/sbin" },
+            { "path": "/usr/share" },
+            { "path": "/usr/share/man" },
+            { "path": "/usr/share/misc" },
+            { "path": "/var" },
+            { "path": "/var/run" },
+            { "path": "/var/cache" },
+            { "path": "/var/cache/misc" },
+            { "path": "/var/empty" },
+            { "path": "/var/lib" },
+            { "path": "/var/lib/misc" },
+            { "path": "/var/local" },
+            { "path": "/var/lock" },
+            { "path": "/var/lock/subsys" },
+            { "path": "/var/log" },
+            { "path": "/var/mail" },
+            { "path": "/var/opt" },
+            { "path": "/var/spool" },
+            { "path": "/var/spool/mail" },
+            { "path": "/var/spool/cron" },
+            { "path": "/var/spool/cron/crontabs" },
+            { "path": "/var/tmp" }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "8d8969ab763f5c88",
+        "name": "ca-certificates-bundle",
+        "version": "20260413-r0",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["MPL-2.0 AND MIT"],
+        "cpes": [
+          "cpe:2.3:a:ca-certificates-bundle:ca-certificates-bundle:20260413-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ca-certificates-bundle:ca_certificates_bundle:20260413-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ca_certificates_bundle:ca-certificates-bundle:20260413-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ca_certificates_bundle:ca_certificates_bundle:20260413-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ca-certificates:ca-certificates-bundle:20260413-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ca-certificates:ca_certificates_bundle:20260413-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ca_certificates:ca-certificates-bundle:20260413-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ca_certificates:ca_certificates_bundle:20260413-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:mozilla:ca-certificates-bundle:20260413-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:mozilla:ca_certificates_bundle:20260413-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ca:ca-certificates-bundle:20260413-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:ca:ca_certificates_bundle:20260413-r0:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/ca-certificates-bundle@20260413-r0?arch=aarch64&distro=alpine-3.20.10&upstream=ca-certificates",
+        "upstreams": [{ "name": "ca-certificates" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/etc" },
+            { "path": "/etc/ssl" },
+            { "path": "/etc/ssl/cert.pem" },
+            { "path": "/etc/ssl/certs" },
+            { "path": "/etc/ssl/certs/ca-certificates.crt" },
+            { "path": "/etc/ssl1.1" },
+            { "path": "/etc/ssl1.1/cert.pem" },
+            { "path": "/etc/ssl1.1/certs" }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "977c0e9c1bdcda77",
+        "name": "alpine-baselayout-data",
+        "version": "3.6.5-r0",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["GPL-2.0-only"],
+        "cpes": [
+          "cpe:2.3:a:alpine-baselayout-data:alpine-baselayout-data:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine-baselayout-data:alpine_baselayout_data:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine_baselayout_data:alpine-baselayout-data:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine_baselayout_data:alpine_baselayout_data:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine-baselayout:alpine-baselayout-data:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine-baselayout:alpine_baselayout_data:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine_baselayout:alpine-baselayout-data:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine_baselayout:alpine_baselayout_data:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine:alpine-baselayout-data:3.6.5-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:alpine:alpine_baselayout_data:3.6.5-r0:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/alpine-baselayout-data@3.6.5-r0?arch=aarch64&distro=alpine-3.20.10&upstream=alpine-baselayout",
+        "upstreams": [{ "name": "alpine-baselayout" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/etc" },
+            { "path": "/etc/fstab" },
+            { "path": "/etc/group" },
+            { "path": "/etc/hostname" },
+            { "path": "/etc/hosts" },
+            { "path": "/etc/inittab" },
+            { "path": "/etc/modules" },
+            { "path": "/etc/mtab" },
+            { "path": "/etc/nsswitch.conf" },
+            { "path": "/etc/passwd" },
+            { "path": "/etc/profile" },
+            { "path": "/etc/protocols" },
+            { "path": "/etc/services" },
+            { "path": "/etc/shadow" },
+            { "path": "/etc/shells" },
+            { "path": "/etc/sysctl.conf" }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "a6a0537c11acf05d",
+        "name": "busybox",
+        "version": "1.36.1-r31",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["GPL-2.0-only"],
+        "cpes": ["cpe:2.3:a:busybox:busybox:1.36.1-r31:*:*:*:*:*:*:*"],
+        "purl": "pkg:apk/alpine/busybox@1.36.1-r31?arch=aarch64&distro=alpine-3.20.10",
+        "upstreams": [{ "name": "busybox" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/bin" },
+            { "path": "/bin/busybox" },
+            { "path": "/etc" },
+            { "path": "/etc/securetty" },
+            { "path": "/etc/busybox-paths.d" },
+            { "path": "/etc/busybox-paths.d/busybox" },
+            { "path": "/etc/logrotate.d" },
+            { "path": "/etc/logrotate.d/acpid" },
+            { "path": "/etc/network" },
+            { "path": "/etc/network/if-down.d" },
+            { "path": "/etc/network/if-post-down.d" },
+            { "path": "/etc/network/if-post-up.d" },
+            { "path": "/etc/network/if-pre-down.d" },
+            { "path": "/etc/network/if-pre-up.d" },
+            { "path": "/etc/network/if-up.d" },
+            { "path": "/etc/network/if-up.d/dad" },
+            { "path": "/etc/udhcpc" },
+            { "path": "/etc/udhcpc/udhcpc.conf" },
+            { "path": "/sbin" },
+            { "path": "/tmp" },
+            { "path": "/usr" },
+            { "path": "/usr/sbin" },
+            { "path": "/usr/share" },
+            { "path": "/usr/share/udhcpc" },
+            { "path": "/usr/share/udhcpc/default.script" },
+            { "path": "/var" },
+            { "path": "/var/cache" },
+            { "path": "/var/cache/misc" }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "aa9849d247add51e",
+        "name": "apk-tools",
+        "version": "2.14.4-r1",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["GPL-2.0-only"],
+        "cpes": [
+          "cpe:2.3:a:apk-tools:apk-tools:2.14.4-r1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:apk-tools:apk_tools:2.14.4-r1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:apk_tools:apk-tools:2.14.4-r1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:apk_tools:apk_tools:2.14.4-r1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:apk:apk-tools:2.14.4-r1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:apk:apk_tools:2.14.4-r1:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/apk-tools@2.14.4-r1?arch=aarch64&distro=alpine-3.20.10",
+        "upstreams": [{ "name": "apk-tools" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/etc" },
+            { "path": "/etc/apk" },
+            { "path": "/etc/apk/keys" },
+            { "path": "/etc/apk/protected_paths.d" },
+            { "path": "/lib" },
+            { "path": "/lib/libapk.so.2.14.0" },
+            { "path": "/lib/apk" },
+            { "path": "/lib/apk/db" },
+            { "path": "/lib/apk/exec" },
+            { "path": "/sbin" },
+            { "path": "/sbin/apk" }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "ba8a89789a796fe2",
+        "name": "zlib",
+        "version": "1.3.2-r0",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["Zlib"],
+        "cpes": ["cpe:2.3:a:zlib:zlib:1.3.2-r0:*:*:*:*:*:*:*"],
+        "purl": "pkg:apk/alpine/zlib@1.3.2-r0?arch=aarch64&distro=alpine-3.20.10",
+        "upstreams": [{ "name": "zlib" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/lib" },
+            { "path": "/lib/libz.so.1" },
+            { "path": "/lib/libz.so.1.3.2" }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "c9c2a9d7c134be14",
+        "name": "libssl3",
+        "version": "3.3.7-r0",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["Apache-2.0"],
+        "cpes": [
+          "cpe:2.3:a:libssl3:libssl3:3.3.7-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:libssl3:libssl:3.3.7-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:libssl:libssl3:3.3.7-r0:*:*:*:*:*:*:*",
+          "cpe:2.3:a:libssl:libssl:3.3.7-r0:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/libssl3@3.3.7-r0?arch=aarch64&distro=alpine-3.20.10&upstream=openssl",
+        "upstreams": [{ "name": "openssl" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/lib" },
+            { "path": "/lib/libssl.so.3" },
+            { "path": "/usr" },
+            { "path": "/usr/lib" },
+            { "path": "/usr/lib/libssl.so.3" }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    },
+    {
+      "package": {
+        "id": "ff0cffffebef70f2",
+        "name": "musl-utils",
+        "version": "1.2.5-r3",
+        "type": "apk",
+        "locations": [
+          {
+            "path": "/lib/apk/db/installed",
+            "layerID": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+            "accessPath": "/lib/apk/db/installed",
+            "annotations": { "evidence": "primary" }
+          }
+        ],
+        "language": "",
+        "licenses": ["MIT AND BSD-2-Clause AND GPL-2.0-or-later"],
+        "cpes": [
+          "cpe:2.3:a:musl-utils:musl-utils:1.2.5-r3:*:*:*:*:*:*:*",
+          "cpe:2.3:a:musl-utils:musl_utils:1.2.5-r3:*:*:*:*:*:*:*",
+          "cpe:2.3:a:musl_utils:musl-utils:1.2.5-r3:*:*:*:*:*:*:*",
+          "cpe:2.3:a:musl_utils:musl_utils:1.2.5-r3:*:*:*:*:*:*:*",
+          "cpe:2.3:a:musl-libc:musl-utils:1.2.5-r3:*:*:*:*:*:*:*",
+          "cpe:2.3:a:musl-libc:musl_utils:1.2.5-r3:*:*:*:*:*:*:*",
+          "cpe:2.3:a:musl:musl-utils:1.2.5-r3:*:*:*:*:*:*:*",
+          "cpe:2.3:a:musl:musl_utils:1.2.5-r3:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:apk/alpine/musl-utils@1.2.5-r3?arch=aarch64&distro=alpine-3.20.10&upstream=musl",
+        "upstreams": [{ "name": "musl" }],
+        "metadataType": "ApkMetadata",
+        "metadata": {
+          "files": [
+            { "path": "/sbin" },
+            { "path": "/sbin/ldconfig" },
+            { "path": "/usr" },
+            { "path": "/usr/bin" },
+            { "path": "/usr/bin/getconf" },
+            { "path": "/usr/bin/getent" },
+            { "path": "/usr/bin/iconv" },
+            { "path": "/usr/bin/ldd" }
+          ]
+        }
+      },
+      "alerts": [
+        {
+          "type": "distro-eol",
+          "message": "Package is from end-of-life distro: alpine 3.20.10",
+          "metadata": { "name": "alpine", "version": "3.20.10" }
+        }
+      ]
+    }
+  ],
+  "source": {
+    "type": "image",
+    "target": {
+      "userInput": "alpine:3.20",
+      "imageID": "sha256:ab3fe4defd29ba6231229a4d41440ac8bde8218e85870e53876277faa24b35c4",
+      "manifestDigest": "sha256:faba7d04de40fd02519030bdb26916416210ada0417c8c4627bba5dcf0e740e8",
+      "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+      "tags": ["alpine:3.20"],
+      "imageSize": 8817851,
+      "layers": [
+        {
+          "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+          "digest": "sha256:88b4fba61c4c714a2fc173ddf7e9324a257304696830bf41ad28ecc58c11c95f",
+          "size": 8817851
+        }
+      ],
+      "manifest": "eyJzY2hlbWFWZXJzaW9uIjoyLCJtZWRpYVR5cGUiOiJhcHBsaWNhdGlvbi92bmQuZG9ja2VyLmRpc3RyaWJ1dGlvbi5tYW5pZmVzdC52Mitqc29uIiwiY29uZmlnIjp7Im1lZGlhVHlwZSI6ImFwcGxpY2F0aW9uL3ZuZC5kb2NrZXIuY29udGFpbmVyLmltYWdlLnYxK2pzb24iLCJzaXplIjo2MjgsImRpZ2VzdCI6InNoYTI1NjphYjNmZTRkZWZkMjliYTYyMzEyMjlhNGQ0MTQ0MGFjOGJkZTgyMThlODU4NzBlNTM4NzYyNzdmYWEyNGIzNWM0In0sImxheWVycyI6W3sibWVkaWFUeXBlIjoiYXBwbGljYXRpb24vdm5kLmRvY2tlci5pbWFnZS5yb290ZnMuZGlmZi50YXIuZ3ppcCIsInNpemUiOjQwOTIzMTksImRpZ2VzdCI6InNoYTI1Njo4OGI0ZmJhNjFjNGM3MTRhMmZjMTczZGRmN2U5MzI0YTI1NzMwNDY5NjgzMGJmNDFhZDI4ZWNjNThjMTFjOTVmIn1dfQ==",
+      "config": "eyJhcmNoaXRlY3R1cmUiOiJhcm02NCIsImNvbmZpZyI6eyJFbnYiOlsiUEFUSD0vdXNyL2xvY2FsL3NiaW46L3Vzci9sb2NhbC9iaW46L3Vzci9zYmluOi91c3IvYmluOi9zYmluOi9iaW4iXSwiQ21kIjpbIi9iaW4vc2giXSwiV29ya2luZ0RpciI6Ii8ifSwiY3JlYXRlZCI6IjIwMjYtMDQtMTZUMjM6NTM6MjQuODk2OTUzNTM3WiIsImhpc3RvcnkiOlt7ImNyZWF0ZWQiOiIyMDI2LTA0LTE2VDIzOjUzOjI0Ljg5Njk1MzUzN1oiLCJjcmVhdGVkX2J5IjoiQUREIGFscGluZS1taW5pcm9vdGZzLTMuMjAuMTAtYWFyY2g2NC50YXIuZ3ogLyAjIGJ1aWxka2l0IiwiY29tbWVudCI6ImJ1aWxka2l0LmRvY2tlcmZpbGUudjAifSx7ImNyZWF0ZWQiOiIyMDI2LTA0LTE2VDIzOjUzOjI0Ljg5Njk1MzUzN1oiLCJjcmVhdGVkX2J5IjoiQ01EIFtcIi9iaW4vc2hcIl0iLCJjb21tZW50IjoiYnVpbGRraXQuZG9ja2VyZmlsZS52MCIsImVtcHR5X2xheWVyIjp0cnVlfV0sIm9zIjoibGludXgiLCJyb290ZnMiOnsidHlwZSI6ImxheWVycyIsImRpZmZfaWRzIjpbInNoYTI1Njo4OGI0ZmJhNjFjNGM3MTRhMmZjMTczZGRmN2U5MzI0YTI1NzMwNDY5NjgzMGJmNDFhZDI4ZWNjNThjMTFjOTVmIl19LCJ2YXJpYW50IjoidjgifQ==",
+      "repoDigests": [
+        "alpine@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+      ],
+      "architecture": "arm64",
+      "os": "linux"
+    }
+  },
+  "distro": { "name": "alpine", "version": "3.20.10", "idLike": [] },
+  "descriptor": {
+    "name": "grype",
+    "version": "0.112.0",
+    "configuration": {
+      "output": ["json"],
+      "file": "",
+      "pretty": false,
+      "distro": "",
+      "add-cpes-if-none": false,
+      "output-template-file": "",
+      "check-for-app-update": true,
+      "only-fixed": false,
+      "only-notfixed": false,
+      "ignore-wontfix": "",
+      "platform": "",
+      "search": {
+        "scope": "squashed",
+        "unindexed-archives": false,
+        "indexed-archives": true
+      },
+      "ignore": [
+        {
+          "vulnerability": "",
+          "include-aliases": false,
+          "reason": "",
+          "namespace": "",
+          "fix-state": "",
+          "package": {
+            "name": "kernel-headers",
+            "version": "",
+            "language": "",
+            "type": "rpm",
+            "location": "",
+            "upstream-name": "kernel"
+          },
+          "vex-status": "",
+          "vex-justification": "",
+          "match-type": "exact-indirect-match"
+        },
+        {
+          "vulnerability": "",
+          "include-aliases": false,
+          "reason": "",
+          "namespace": "",
+          "fix-state": "",
+          "package": {
+            "name": "linux(-.*)?-headers-.*",
+            "version": "",
+            "language": "",
+            "type": "deb",
+            "location": "",
+            "upstream-name": "linux.*"
+          },
+          "vex-status": "",
+          "vex-justification": "",
+          "match-type": "exact-indirect-match"
+        },
+        {
+          "vulnerability": "",
+          "include-aliases": false,
+          "reason": "",
+          "namespace": "",
+          "fix-state": "",
+          "package": {
+            "name": "linux-libc-dev",
+            "version": "",
+            "language": "",
+            "type": "deb",
+            "location": "",
+            "upstream-name": "linux"
+          },
+          "vex-status": "",
+          "vex-justification": "",
+          "match-type": "exact-indirect-match"
+        }
+      ],
+      "exclude": [],
+      "externalSources": {
+        "enable": false,
+        "maven": {
+          "searchUpstreamBySha1": true,
+          "baseUrl": "https://search.maven.org/solrsearch/select",
+          "rateLimit": 300000000
+        }
+      },
+      "match": {
+        "java": { "using-cpes": false },
+        "jvm": { "using-cpes": true },
+        "dotnet": { "using-cpes": false },
+        "golang": {
+          "using-cpes": false,
+          "always-use-cpe-for-stdlib": true,
+          "allow-main-module-pseudo-version-comparison": false
+        },
+        "javascript": { "using-cpes": false },
+        "python": { "using-cpes": false },
+        "ruby": { "using-cpes": false },
+        "rust": { "using-cpes": false },
+        "hex": { "using-cpes": false },
+        "stock": { "using-cpes": true },
+        "dpkg": {
+          "using-cpes": false,
+          "missing-epoch-strategy": "zero",
+          "use-cpes-for-eol": false
+        },
+        "rpm": {
+          "using-cpes": false,
+          "missing-epoch-strategy": "auto",
+          "use-cpes-for-eol": false
+        }
+      },
+      "fail-on-severity": "",
+      "registry": {
+        "insecure-skip-tls-verify": false,
+        "insecure-use-http": false,
+        "ca-cert": ""
+      },
+      "show-suppressed": false,
+      "by-cve": false,
+      "SortBy": { "sort-by": "risk" },
+      "name": "",
+      "default-image-pull-source": "",
+      "from": null,
+      "vex-documents": [],
+      "vex-add": [],
+      "match-upstream-kernel-headers": false,
+      "fix-channel": {
+        "redhat-eus": { "apply": "auto", "versions": ">= 8.0" }
+      },
+      "timestamp": true,
+      "alerts": { "enable-eol-distro-warnings": true },
+      "db": {
+        "cache-dir": "/Users/tristan/Library/Caches/grype/db",
+        "update-url": "https://grype.anchore.io/databases",
+        "ca-cert": "",
+        "auto-update": true,
+        "validate-by-hash-on-start": true,
+        "validate-age": true,
+        "max-allowed-built-age": 432000000000000,
+        "require-update-check": false,
+        "update-available-timeout": 30000000000,
+        "update-download-timeout": 300000000000,
+        "max-update-check-frequency": 7200000000000
+      },
+      "exp": {},
+      "dev": { "db": { "debug": false } }
+    },
+    "db": {
+      "status": {
+        "schemaVersion": "v6.1.4",
+        "from": "https://grype.anchore.io/databases/v6/vulnerability-db_v6.1.4_2026-05-29T17:21:47Z_1780125661.tar.zst?checksum=sha256%3A88f6f4182111eeb714982e5534be5bd8f1f478aafafe83ad6c6fcccf9d015d06",
+        "built": "2026-05-30T07:21:01Z",
+        "path": "/Users/tristan/Library/Caches/grype/db/6/vulnerability.db",
+        "valid": true
+      },
+      "providers": {
+        "alma": {
+          "captured": "2026-05-30T00:49:41Z",
+          "input": "xxh64:ac6a3acb15f5634e"
+        },
+        "alpine": {
+          "captured": "2026-05-30T00:49:46Z",
+          "input": "xxh64:6b48ce0fd8084b7c"
+        },
+        "amazon": {
+          "captured": "2026-05-30T00:49:52Z",
+          "input": "xxh64:54677ddf973d195d"
+        },
+        "arch": {
+          "captured": "2026-05-30T00:50:11Z",
+          "input": "xxh64:e2686773d4df284f"
+        },
+        "bitnami": {
+          "captured": "2026-05-30T00:49:42Z",
+          "input": "xxh64:61cee3e71cd91ae2"
+        },
+        "chainguard": {
+          "captured": "2026-05-30T00:49:56Z",
+          "input": "xxh64:4970f9c3c7b7ac11"
+        },
+        "chainguard-libraries": {
+          "captured": "2026-05-30T00:49:45Z",
+          "input": "xxh64:09884468029d3b61"
+        },
+        "debian": {
+          "captured": "2026-05-30T00:50:25Z",
+          "input": "xxh64:0734a29d42dbd052"
+        },
+        "echo": {
+          "captured": "2026-05-30T00:50:27Z",
+          "input": "xxh64:9b271ae329a07d9f"
+        },
+        "eol": {
+          "captured": "2026-05-30T00:50:14Z",
+          "input": "xxh64:3f39f58af90489c6"
+        },
+        "epss": {
+          "captured": "2026-05-30T00:50:33Z",
+          "input": "xxh64:6a620b6316e10039"
+        },
+        "fedora": {
+          "captured": "2026-05-30T00:50:24Z",
+          "input": "xxh64:00b0e8226ffe3ca6"
+        },
+        "github": {
+          "captured": "2026-05-30T00:50:22Z",
+          "input": "xxh64:8eef7512460a124a"
+        },
+        "hummingbird": {
+          "captured": "2026-05-30T00:50:00Z",
+          "input": "xxh64:73a995206686d8b5"
+        },
+        "kev": {
+          "captured": "2026-05-30T00:50:41Z",
+          "input": "xxh64:cfe8db8ba4607a23"
+        },
+        "mariner": {
+          "captured": "2026-05-30T00:50:18Z",
+          "input": "xxh64:bd04e97564c22d3c"
+        },
+        "minimos": {
+          "captured": "2026-05-30T00:50:20Z",
+          "input": "xxh64:4f318296b89aa1b7"
+        },
+        "nvd": {
+          "captured": "2026-05-30T00:50:36Z",
+          "input": "xxh64:288e886994a78154"
+        },
+        "oracle": {
+          "captured": "2026-05-30T00:50:51Z",
+          "input": "xxh64:fadc549cef36e21d"
+        },
+        "photon": {
+          "captured": "2026-05-30T00:49:46Z",
+          "input": "xxh64:0f0ac225e0cedb56"
+        },
+        "rhel": {
+          "captured": "2026-05-30T00:50:56Z",
+          "input": "xxh64:7110b35e9723514f"
+        },
+        "secureos": {
+          "captured": "2026-05-30T00:49:46Z",
+          "input": "xxh64:f6bce52c45b96eda"
+        },
+        "sles": {
+          "captured": "2026-05-30T00:50:21Z",
+          "input": "xxh64:1a8a73a6fbff4804"
+        },
+        "ubuntu": {
+          "captured": "2026-05-29T17:21:47Z",
+          "input": "xxh64:9f2ca014f5ccfd27"
+        },
+        "wolfi": {
+          "captured": "2026-05-30T00:49:47Z",
+          "input": "xxh64:a5baa156e3643a67"
+        }
+      }
+    },
+    "timestamp": "2026-05-30T16:36:37.010568+02:00"
+  }
+}

@@ -18,7 +18,7 @@
 ## Service Contracts
 
 - Registry and CI integrations rely on external tool behavior and API compatibility
-- Some analyzers require binaries such as `trivy`, `skopeo`, `hadolint`, and `dockle`
+- Some analyzers require binaries such as `grype`, `syft`, `trufflehog`, `regctl`, `hadolint`, and `dockle`
 
 ## Integration Patterns
 

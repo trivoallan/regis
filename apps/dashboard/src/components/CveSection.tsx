@@ -14,7 +14,7 @@ import {
 } from "@tremor/react";
 import { StatCard } from "./StatCard";
 
-interface TrivyVulnerability {
+interface CveVulnerability {
   VulnerabilityID: string;
   Severity: string;
   Title?: string;
@@ -24,20 +24,20 @@ interface TrivyVulnerability {
   PublishedDate?: string;
   LastModifiedDate?: string;
 }
-interface TrivyTarget {
+interface CveTarget {
   Target: string;
-  Vulnerabilities?: TrivyVulnerability[];
+  Vulnerabilities?: CveVulnerability[];
 }
-interface TrivyData {
+interface CveData {
   vulnerability_count: number;
   critical_count: number;
   high_count: number;
   medium_count: number;
   low_count: number;
+  negligible_count: number;
   unknown_count: number;
   fixed_count: number;
-  secrets_count: number;
-  targets?: TrivyTarget[];
+  targets?: CveTarget[];
 }
 
 const SEVERITY_COLOR: Record<
@@ -53,7 +53,7 @@ const SEVERITY_COLOR: Record<
 
 const PAGE_SIZE = 50;
 
-function byDate(a: TrivyVulnerability, b: TrivyVulnerability): number {
+function byDate(a: CveVulnerability, b: CveVulnerability): number {
   const da = a.PublishedDate ?? a.LastModifiedDate ?? "";
   const db = b.PublishedDate ?? b.LastModifiedDate ?? "";
   return db.localeCompare(da);
@@ -63,7 +63,7 @@ function VulnTable({
   vulns,
   severity,
 }: {
-  vulns: (TrivyVulnerability & { target: string })[];
+  vulns: (CveVulnerability & { target: string })[];
   severity: "CRITICAL" | "HIGH";
 }): React.JSX.Element | null {
   const [page, setPage] = useState(0);
@@ -157,19 +157,23 @@ function VulnTable({
   );
 }
 
-export function TrivySection({ data }: { data: TrivyData }): React.JSX.Element {
+export function CveSection({ data }: { data: CveData }): React.JSX.Element {
   const allVulns = (
     data.targets?.flatMap(
       (t) => t.Vulnerabilities?.map((v) => ({ ...v, target: t.Target })) ?? [],
     ) ?? []
   ).sort(byDate);
 
-  const criticalVulns = allVulns.filter((v) => v.Severity === "CRITICAL");
-  const highVulns = allVulns.filter((v) => v.Severity === "HIGH");
+  const criticalVulns = allVulns.filter(
+    (v) => (v.Severity ?? "").toUpperCase() === "CRITICAL",
+  );
+  const highVulns = allVulns.filter(
+    (v) => (v.Severity ?? "").toUpperCase() === "HIGH",
+  );
 
   return (
     <div className="space-y-6">
-      <Grid numItemsSm={2} numItemsLg={5} className="gap-4">
+      <Grid numItemsSm={2} numItemsLg={4} className="gap-4">
         <StatCard label="Total" value={data.vulnerability_count} />
         <StatCard
           label="Critical"
@@ -188,15 +192,6 @@ export function TrivySection({ data }: { data: TrivyData }): React.JSX.Element {
           }
         />
         <StatCard label="Fixable" value={data.fixed_count} />
-        <StatCard
-          label="Secrets"
-          value={data.secrets_count}
-          badge={
-            data.secrets_count > 0 ? (
-              <Badge color="rose">Detected</Badge>
-            ) : undefined
-          }
-        />
       </Grid>
 
       {data.vulnerability_count > 0 && (
@@ -208,9 +203,10 @@ export function TrivySection({ data }: { data: TrivyData }): React.JSX.Element {
               data.high_count,
               data.medium_count,
               data.low_count,
+              data.negligible_count,
               data.unknown_count,
             ]}
-            colors={["rose", "orange", "amber", "blue", "gray"]}
+            colors={["rose", "orange", "amber", "blue", "emerald", "gray"]}
             showLabels={false}
           />
           <div className="flex gap-2 mt-3 flex-wrap">
@@ -219,6 +215,11 @@ export function TrivySection({ data }: { data: TrivyData }): React.JSX.Element {
               { label: "High", count: data.high_count, color: "orange" },
               { label: "Medium", count: data.medium_count, color: "amber" },
               { label: "Low", count: data.low_count, color: "blue" },
+              {
+                label: "Negligible",
+                count: data.negligible_count,
+                color: "emerald",
+              },
               { label: "Unknown", count: data.unknown_count, color: "gray" },
             ]
               .filter((s) => s.count > 0)

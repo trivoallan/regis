@@ -30,7 +30,7 @@ The following are considered **stable** and safe to depend on in custom playbook
 
 ### Evolving interfaces
 
-- Individual **analyzer output schemas** — new fields may be added to any analyzer's output. Existing fields (e.g., `trivy.vulnerabilities.summary`) are stable within a major version.
+- Individual **analyzer output schemas** — new fields may be added to any analyzer's output. Existing fields (e.g., `cve.critical_count`) are stable within a major version.
 - **CLI flags and output format** — command signatures are stable after one release cycle; output formatting (text mode) may change.
 
 ---

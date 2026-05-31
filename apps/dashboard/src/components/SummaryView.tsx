@@ -67,14 +67,14 @@ export function SummaryView(): React.JSX.Element {
   const tier = report.tier ?? pb?.tier;
   const analyzers = req.analyzers ?? [];
 
-  const trivyData = report.results?.trivy as Record<string, number> | undefined;
-  const vulnerabilityData = trivyData
+  const cveData = report.results?.cve as Record<string, number> | undefined;
+  const vulnerabilityData = cveData
     ? [
-        { severity: "Critical", count: trivyData.critical_count ?? 0 },
-        { severity: "High", count: trivyData.high_count ?? 0 },
-        { severity: "Medium", count: trivyData.medium_count ?? 0 },
-        { severity: "Low", count: trivyData.low_count ?? 0 },
-        { severity: "Unknown", count: trivyData.unknown_count ?? 0 },
+        { severity: "Critical", count: cveData.critical_count ?? 0 },
+        { severity: "High", count: cveData.high_count ?? 0 },
+        { severity: "Medium", count: cveData.medium_count ?? 0 },
+        { severity: "Low", count: cveData.low_count ?? 0 },
+        { severity: "Unknown", count: cveData.unknown_count ?? 0 },
       ]
     : [];
 

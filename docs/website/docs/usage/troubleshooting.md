@@ -13,7 +13,9 @@ When you run `regis`, it requires certain external binaries depending on which a
 **Error symptoms:**
 
 - `Command 'regctl' not found`
-- `Command 'trivy' not found`
+- `Command 'grype' not found`
+- `Command 'syft' not found`
+- `Command 'trufflehog' not found`
 - `Command 'hadolint' not found`
 - `Command 'dockle' not found`
 
@@ -134,7 +136,7 @@ Rules marked as "incomplete" or unexpected scores.
    cat report.json | jq '.analyzers | keys'
    ```
 
-2. **Ensure your playbook doesn't reference non-existent analyzers**. For example, if you include a `trivy` rule but didn't run the Trivy analyzer, the rule will be incomplete.
+2. **Ensure your playbook doesn't reference non-existent analyzers**. For example, if you include a `cve` rule but didn't run the cve analyzer, the rule will be incomplete.
 
 3. **Check your rule conditions** in your playbook. If a rule accesses a field that an analyzer didn't populate, it will be marked incomplete rather than failed.
 
@@ -192,8 +194,8 @@ For local images, use the full reference: `docker.io/library/nginx:latest` or `l
 Use the `-a` or `--analyzer` flag to limit which analyzers run:
 
 ```bash
-# Run only Trivy and OCI metadata
-regis analyze myimage:latest -a trivy -a oci
+# Run only CVE scanning and OCI metadata
+regis analyze myimage:latest -a cve -a oci
 ```
 
 This is useful when you only care about specific security checks or want to speed up analysis.

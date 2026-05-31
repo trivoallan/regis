@@ -14,7 +14,7 @@ Scores are determined by the [Playbooks](./playbooks.md) you apply. A playbook d
 
 ### Major Score Categories
 
-- **Security Posture**: Derived from Trivy (CVEs), Hadolint (Dockerfile security), and Provenance checks.
+- **Security Posture**: Derived from grype (CVEs), trufflehog (secrets), Hadolint (Dockerfile security), and Provenance checks.
 - **Freshness**: Measures how recently the image was built and how far it has drifted from its base image.
 - **Compliance**: Tracks adherence to internal standards (e.g., mandatory labels, allowed registries).
 - **Efficiency**: Analyzes image size, layer count, and potential optimizations.

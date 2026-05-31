@@ -27,8 +27,8 @@ pages:
     sections:
       - name: Vulnerabilities
         widgets:
-          - template: analyzers/trivy/cards.html
-          - template: analyzers/trivy/table.html
+          - template: analyzers/cve/cards.html
+          - template: analyzers/cve/table.html
             options:
               title: Critical & High Vulnerabilities
               limit: 20

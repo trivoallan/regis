@@ -20,7 +20,7 @@ _MINIMAL_REPORT = {
     },
     "rules_summary": {"passed": ["r1", "r2"], "total": ["r1", "r2", "r3"], "score": 66},
     "results": {
-        "trivy": {
+        "cve": {
             "critical_count": 0,
             "high_count": 1,
             "medium_count": 3,

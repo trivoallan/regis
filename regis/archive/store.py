@@ -62,8 +62,8 @@ def _make_summary(report: dict[str, Any], path: str) -> dict[str, Any]:
     pb = report.get("playbook") or (report.get("playbooks") or [{}])[0]
     tier = report.get("tier") or (pb.get("tier") if isinstance(pb, dict) else None)
 
-    # Trivy
-    trivy = (report.get("results") or {}).get("trivy") or {}
+    # CVEs (grype)
+    cve = (report.get("results") or {}).get("cve") or {}
     # Freshness
     freshness = (report.get("results") or {}).get("freshness") or {}
     # SBOM
@@ -82,10 +82,10 @@ def _make_summary(report: dict[str, Any], path: str) -> dict[str, Any]:
         "tier": tier,
         "rules_passed": rules_passed,
         "rules_total": rules_total,
-        "cve_critical": trivy.get("critical_count"),
-        "cve_high": trivy.get("high_count"),
-        "cve_medium": trivy.get("medium_count"),
-        "cve_low": trivy.get("low_count"),
+        "cve_critical": cve.get("critical_count"),
+        "cve_high": cve.get("high_count"),
+        "cve_medium": cve.get("medium_count"),
+        "cve_low": cve.get("low_count"),
         "age_days": freshness.get("age_days"),
         "sbom_component_count": sbom.get("component_count"),
         "scorecard_score": scorecard.get("score"),
