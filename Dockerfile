@@ -45,7 +45,7 @@ COPY --from=frontend-builder /app/apps/dashboard/build regis/dashboard_assets
 # --no-compile skips .pyc generation (PYTHONDONTWRITEBYTECODE keeps runtime
 # from regenerating them); prune any residual bytecode caches afterwards.
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
-RUN VERSION=$(grep -oE 'version = "[^"]+"' pyproject.toml | head -1 | sed 's/version = "\(.*\)"/\1/') && \
+RUN VERSION=$(awk -F'"' '/^version = / { print $2; exit }' pyproject.toml) && \
     SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" pip install --no-compile . && \
     find /opt/venv -type d -name __pycache__ -prune -exec rm -rf {} + && \
     find /opt/venv -type f -name '*.pyc' -delete

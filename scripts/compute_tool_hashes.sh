@@ -12,6 +12,15 @@ TOOLS=(
 
 for entry in "${TOOLS[@]}"; do
   IFS='|' read -r name version tpl <<<"$entry"
+  # Determine extraction policy: archive type and member name.
+  # The ToolFetcher in regis/tools/fetcher.py verifies the sha256 of the
+  # EXTRACTED binary (after unpacking the archive), not the archive itself,
+  # so we must extract and hash the inner member for archive=tar.gz tools.
+  case "$name" in
+    grype|syft|trufflehog|dockle) archive=tar.gz; member="$name" ;;
+    regctl|hadolint)              archive=none;   member="" ;;
+    *) echo "unknown tool: $name" >&2; exit 1 ;;
+  esac
   for arch in amd64 arm64; do
     case "$name/$arch" in
       dockle/amd64) arch_alt=64bit ;;
@@ -23,7 +32,11 @@ for entry in "${TOOLS[@]}"; do
     url="${tpl//\{version\}/$version}"
     url="${url//\{arch\}/$arch}"
     url="${url//\{arch_alt\}/$arch_alt}"
-    sha=$(curl -sSfL "$url" | sha256sum | awk '{print $1}')
+    if [ "$archive" = "tar.gz" ]; then
+      sha=$(curl -sSfL "$url" | tar -xzO "$member" | sha256sum | awk '{print $1}')
+    else
+      sha=$(curl -sSfL "$url" | sha256sum | awk '{print $1}')
+    fi
     echo "$name  $arch  $sha"
   done
 done
