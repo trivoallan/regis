@@ -76,6 +76,8 @@ def test_stringify_condition_edge_cases():
 def test_evaluate_errors_and_edge_cases(caplog):
     # jsonLogic error in scorecard
     playbook = {
+        "schemaVersion": 1,
+        "version": "1.0.0",
         "name": "Test",
         "sections": [
             {
