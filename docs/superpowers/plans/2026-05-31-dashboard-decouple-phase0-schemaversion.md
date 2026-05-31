@@ -22,14 +22,14 @@ This plan covers **only Phase 0** of the full-decouple design. It is intentional
 
 ## File Structure
 
-| File | Responsibility | Action |
-| --- | --- | --- |
-| `regis/schemas/report/report.schema.json` | Report envelope JSON Schema | Modify — add `schemaVersion` property + mark required |
-| `regis/utils/report.py` | Report helpers (`validate_report`, etc.) | Modify — add `REPORT_SCHEMA_VERSION` constant + `ensure_schema_version()` helper |
-| `regis/commands/analyze.py` | `analyze` / `evaluate` commands; the report producer | Modify — stamp producer + backfill the two load paths |
-| `tests/test_report_schema_version.py` | Schema + helper unit tests | Create |
-| `tests/fixtures/report.v1.json` | Cross-repo contract fixture (consumed by future `regis-dashboard` CI) | Create |
-| `tests/test_analyze_rerun.py` | Existing rerun integration tests | Modify — add a real-validation backfill test |
+| File                                      | Responsibility                                                        | Action                                                                           |
+| ----------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `regis/schemas/report/report.schema.json` | Report envelope JSON Schema                                           | Modify — add `schemaVersion` property + mark required                            |
+| `regis/utils/report.py`                   | Report helpers (`validate_report`, etc.)                              | Modify — add `REPORT_SCHEMA_VERSION` constant + `ensure_schema_version()` helper |
+| `regis/commands/analyze.py`               | `analyze` / `evaluate` commands; the report producer                  | Modify — stamp producer + backfill the two load paths                            |
+| `tests/test_report_schema_version.py`     | Schema + helper unit tests                                            | Create                                                                           |
+| `tests/fixtures/report.v1.json`           | Cross-repo contract fixture (consumed by future `regis-dashboard` CI) | Create                                                                           |
+| `tests/test_analyze_rerun.py`             | Existing rerun integration tests                                      | Modify — add a real-validation backfill test                                     |
 
 The root of `report.schema.json` is `"additionalProperties": false`, so the schema change (Task 1) is a hard prerequisite for the producer change — a report stamped with `schemaVersion` will **fail** validation until the schema permits the field. TDD order below respects this.
 
@@ -38,6 +38,7 @@ The root of `report.schema.json` is `"additionalProperties": false`, so the sche
 ### Task 1: Add `schemaVersion` to the report schema
 
 **Files:**
+
 - Modify: `regis/schemas/report/report.schema.json` (root `properties` ~line 8, root `required` line 7)
 - Test: `tests/test_report_schema_version.py` (create)
 
@@ -141,6 +142,7 @@ git commit -m "feat(schema)!: require schemaVersion on report envelope"
 ### Task 2: Add the `REPORT_SCHEMA_VERSION` constant and `ensure_schema_version()` helper
 
 **Files:**
+
 - Modify: `regis/utils/report.py` (add constant near the top of the module, after imports; add helper near `validate_report` at line 235)
 - Test: `tests/test_report_schema_version.py` (append)
 
@@ -217,6 +219,7 @@ git commit -m "feat(report): add REPORT_SCHEMA_VERSION constant and ensure_schem
 ### Task 3: Stamp the producer and backfill the two load paths
 
 **Files:**
+
 - Modify: `regis/commands/analyze.py` (producer ~line 611; rerun load ~line 393; evaluate load ~line 797)
 - Test: `tests/test_analyze_rerun.py` (append a real-validation backfill test)
 
@@ -341,6 +344,7 @@ git commit -m "feat(report): stamp schemaVersion on produced reports and backfil
 ### Task 4: Ship the cross-repo contract fixture
 
 **Files:**
+
 - Create: `tests/fixtures/report.v1.json`
 - Test: `tests/test_report_schema_version.py` (append)
 
@@ -390,8 +394,8 @@ Create `tests/fixtures/report.v1.json`:
     "timestamp": "2026-05-31T12:00:00+00:00"
   },
   "results": {
-    "metadata": {"created": "2026-05-20T00:00:00+00:00"},
-    "cve": {"critical": 0, "high": 1, "medium": 4, "low": 12}
+    "metadata": { "created": "2026-05-20T00:00:00+00:00" },
+    "cve": { "critical": 0, "high": 1, "medium": 4, "low": 12 }
   },
   "rules": [
     {
@@ -466,7 +470,7 @@ git commit -m "test(report): align existing assertions with schemaVersion field"
 - **Spec "Phase 0" bullet 1** (add `schemaVersion: 1` to schema + producers + tests) → Tasks 1, 2, 3.
 - **Spec "Phase 0" bullet 2** (version contract fixtures `tests/fixtures/report.v1.json`) → Task 4.
 - **Spec "distinct from `version`"** → enforced in Task 1 description and the fixture (both fields present, different values).
-- **Spec "schemaVersion absent → treat as 0" (dashboard-side)** → intentionally **not** in this plan; that logic lives in the future dashboard repo (Phase 1), not the core. The core *backfills to 1* on its own load paths (legacy reports it produced were structurally v1); it never emits 0.
+- **Spec "schemaVersion absent → treat as 0" (dashboard-side)** → intentionally **not** in this plan; that logic lives in the future dashboard repo (Phase 1), not the core. The core _backfills to 1_ on its own load paths (legacy reports it produced were structurally v1); it never emits 0.
 - **Breaking-change note:** making `schemaVersion` required is schema-breaking for any external consumer that validates its own `report.json` against `report.schema.json`, so Task 1 commits with `feat(schema)!` (matching the [#626](https://github.com/trivoallan/regis/pull/626) `feat(playbook)!: require schemaVersion` precedent). regis itself stays user-facing-compatible because every core path stamps or backfills the field. Release-mechanics consequence: with `bump-minor-pre-major: true`, this `!` cuts a **pre-major minor** bump (0.32 → 0.33) when Phase 0 merges. Phase 2's removal then becomes the next bump (→ 0.34). The design doc's "0.33" label refers to the overall effort; the actual numbers fall out of merge order.
 
 ## Out of scope (later phases — do not implement here)
@@ -474,3 +478,13 @@ git commit -m "test(report): align existing assertions with schemaVersion field"
 - Removing `regis dashboard` / `--site` / `bootstrap archive` (Phase 2).
 - The new `regis-dashboard` repo, its CI, and the render-side compatibility check (Phase 1).
 - Adding a `decisionLog.md` entry and updating `activeContext.md` / `progress.md` (Phase 3 / Memory-Bank update).
+
+## Implementation deviations (recorded post-execution, 2026-05-31)
+
+Two justified departures from the literal plan surfaced during subagent-driven execution and code review:
+
+1. **Three report-load paths, not two.** Task 3 as written named the `--rerun` and `evaluate` load paths. A **third** path exists: the **cache-hit** path in `analyze.py` (`final_report = json.loads(cache_path.read_text(...))` inside `if cache_path.exists():`), which feeds `validate_report` at the main call site. A legacy cached `report.json` would have failed the now-required field. `ensure_schema_version(final_report)` was added there too. A code-reviewer grep confirmed `validate_report` has exactly three call sites and all are now covered; the other report readers (`commands/archive.py`, `rules.py`, the gh/gitlab CLIs) never validate, so they are not gaps.
+
+2. **Contract fixture made schema-honest.** The plan's `tests/fixtures/report.v1.json` used invented `results.metadata` / `results.cve` payloads. Because this fixture is the cross-repo render contract, the blobs were replaced with minimal payloads that validate against the real `regis/schemas/analyzer/oci.schema.json` and `cve.schema.json` (slugs `oci` + `cve`, `request.analyzers: ["cve", "oci"]`), and `TestContractFixture` gained `test_analyzer_blobs_match_their_schemas` to lock that honesty against drift.
+
+**Final state:** 5 task commits on the branch; full suite `626 passed`, coverage `91.18%`; `trunk check` reports no new issues on all changed files. Pre-existing, unrelated lint in untouched files (`regis/report/html.py` unused `json`; `ruff format` drift in two test files) was deliberately left out of scope.
