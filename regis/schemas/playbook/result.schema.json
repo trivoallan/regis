@@ -17,6 +17,14 @@
       "type": "string",
       "description": "Identifier of the playbook that was executed."
     },
+    "playbook_version": {
+      "type": ["string", "null"],
+      "description": "SemVer of the playbook that produced this report."
+    },
+    "schema_version": {
+      "type": ["integer", "null"],
+      "description": "schemaVersion of the playbook format that produced this report."
+    },
     "sidebar": {
       "type": "object",
       "description": "Sidebar navigation metadata for the report UI."

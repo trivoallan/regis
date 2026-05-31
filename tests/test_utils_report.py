@@ -164,3 +164,28 @@ class TestRunPlaybooks:
             result = run_playbooks((), self._ANALYSIS_REPORT, formats=["json"])
             # Either the default was loaded or no paths existed
             assert isinstance(result, dict)
+
+
+def test_result_schema_accepts_playbook_metadata() -> None:
+    import importlib.resources
+    import json
+
+    import jsonschema
+
+    schema_text = (
+        importlib.resources.files("regis.schemas.playbook")
+        .joinpath("result.schema.json")
+        .read_text(encoding="utf-8")
+    )
+    schema = json.loads(schema_text)
+
+    report = {
+        "playbook_name": "Test",
+        "playbook_version": "1.2.3",
+        "schema_version": 1,
+        "score": 100,
+        "total_scorecards": 1,
+        "passed_scorecards": 1,
+        "pages": [],
+    }
+    jsonschema.validate(instance=report, schema=schema)  # must not raise
