@@ -34,7 +34,7 @@ Logic operators) do **not** bump `schemaVersion`.
 #### Version 1 (current)
 
 Initial versioned schema. The authoritative source is
-[`definition.schema.json`](./schemas/playbook/definition.schema.md).
+[`definition.schema.json`](./schemas/playbook/v1/definition.schema.md).
 
 ## `version`
 
