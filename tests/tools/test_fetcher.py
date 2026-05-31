@@ -190,3 +190,61 @@ def test_archive_targz_extracts_member(monkeypatch, tmp_path):
 
         path = fetcher.ensure("grype")
         assert path.read_bytes() == payload
+
+
+def test_concurrent_ensure_downloads_only_once(monkeypatch, tmp_path):
+    import concurrent.futures
+    import threading
+
+    payload = b"x" * 1024
+    sha = hashlib.sha256(payload).hexdigest()
+    pub = tmp_path / "pub"
+    pub.mkdir()
+    (pub / "tool.bin").write_bytes(payload)
+
+    serve_count = {"n": 0}
+    lock = threading.Lock()
+
+    class CountingHandler(http.server.SimpleHTTPRequestHandler):
+        def do_GET(self):
+            with lock:
+                serve_count["n"] += 1
+            super().do_GET()
+
+    def handler(*a, **kw):
+        return CountingHandler(*a, directory=str(pub), **kw)
+
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    base_url = f"http://127.0.0.1:{server.server_address[1]}"
+
+    try:
+        from regis.tools.manifest import Tool
+
+        tools = {
+            "grype": Tool(
+                name="grype",
+                version="0.0.1",
+                url_template=f"{base_url}/tool.bin",
+                archive="none",
+                sha256={"amd64": sha, "arm64": sha},
+            )
+        }
+        _patch_manifest(monkeypatch, tools)
+        cache = tmp_path / "cache"
+
+        def worker(_):
+            f = ToolFetcher(cache_dir=cache, arch="amd64")
+            return f.ensure("grype")
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+            paths = list(pool.map(worker, range(4)))
+
+        assert all(p == paths[0] for p in paths)
+        assert paths[0].read_bytes() == payload
+        # Concurrent first-run: only one fetch should hit the network.
+        assert serve_count["n"] == 1
+    finally:
+        server.shutdown()
+        thread.join(timeout=2)

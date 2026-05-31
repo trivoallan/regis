@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import fcntl
 import hashlib
 import logging
 import os
@@ -11,6 +12,7 @@ import tarfile
 import tempfile
 import urllib.request
 import zipfile
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -61,6 +63,18 @@ def _sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+@contextmanager
+def _file_lock(path: Path):
+    """Cross-process advisory lock on *path* (creates the file if needed)."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a+") as lockf:
+        fcntl.flock(lockf.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(lockf.fileno(), fcntl.LOCK_UN)
+
+
 class ToolFetcher:
     def __init__(
         self,
@@ -96,7 +110,12 @@ class ToolFetcher:
                 f"(REGIS_OFFLINE=1). Expected at {target}."
             )
         target.parent.mkdir(parents=True, exist_ok=True)
-        self._download_and_install(tool, target, expected_sha)
+        lock_path = target.with_suffix(target.suffix + ".lock")
+        with _file_lock(lock_path):
+            # Re-check inside the lock: another caller may have downloaded.
+            if target.exists() and _sha256_file(target) == expected_sha:
+                return target
+            self._download_and_install(tool, target, expected_sha)
         return target
 
     def _resolve_url(self, tool: Tool) -> str:
