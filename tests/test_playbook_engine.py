@@ -612,3 +612,19 @@ class TestGitLabTemplates:
         pb = self._make_playbook([])
         result = evaluate(pb, {})
         assert "mr_templates" not in result
+
+
+def test_evaluate_propagates_playbook_metadata() -> None:
+    from regis.playbook.evaluator import evaluate
+
+    playbook = {
+        "schemaVersion": 1,
+        "version": "2.3.4",
+        "name": "MetadataPlaybook",
+    }
+    report: dict = {"results": {}}
+    result = evaluate(playbook, report)
+
+    assert result["playbook_name"] == "MetadataPlaybook"
+    assert result["playbook_version"] == "2.3.4"
+    assert result["schema_version"] == 1
