@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../schemas/playbook/definition.schema.json
+# yaml-language-server: $schema=../schemas/playbook/v1/definition.schema.json
 name: RegiS Default Playbook
 
 tiers:

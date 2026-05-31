@@ -38,7 +38,7 @@ def validate_playbook(path: Path) -> None:
 
     schema_pkg = files("regis.schemas.playbook")
     schema = json.loads(
-        schema_pkg.joinpath("definition.schema.json").read_text(encoding="utf-8")
+        schema_pkg.joinpath("v1").joinpath("definition.schema.json").read_text(encoding="utf-8")
     )
     jsonlogic_schema = json.loads(
         schema_pkg.joinpath("jsonlogic.schema.json").read_text(encoding="utf-8")
@@ -50,13 +50,15 @@ def validate_playbook(path: Path) -> None:
         [
             (schema.get("$id", ""), Resource.from_contents(schema)),
             (jsonlogic_schema.get("$id", ""), Resource.from_contents(jsonlogic_schema)),
-            # Allow $ref to bare filename (definition.schema.json references jsonlogic.schema.json relatively)
+            # Allow $ref to bare filename for backwards compatibility
             ("jsonlogic.schema.json", Resource.from_contents(jsonlogic_schema)),
         ]
     )
 
     validator = jsonschema.Draft202012Validator(schema, registry=registry)
-    errors = sorted(validator.iter_errors(playbook), key=lambda e: list(e.absolute_path))
+    errors = sorted(
+        validator.iter_errors(playbook), key=lambda e: list(e.absolute_path)
+    )
 
     if errors:
         click.echo(f"  ✗ {path} is invalid:", err=True)

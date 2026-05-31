@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis/schemas/playbook/definition.schema.json",
+  "$id": "https://trivoallan.github.io/regis/schemas/playbook/v1/definition.schema.json",
   "title": "playbook.definition",
   "description": "Schema for regis playbook definition files (YAML or JSON).",
   "type": "object",
@@ -36,7 +36,7 @@
           },
           "condition": {
             "description": "Optional JsonLogic expression to determine if the link should be displayed.",
-            "$ref": "jsonlogic.schema.json"
+            "$ref": "../jsonlogic.schema.json"
           }
         }
       }
@@ -182,7 +182,7 @@
                   },
                   "condition": {
                     "description": "JSON Logic expression to conditionally render the template.",
-                    "$ref": "jsonlogic.schema.json"
+                    "$ref": "../jsonlogic.schema.json"
                   }
                 }
               }
@@ -254,7 +254,7 @@
           },
           "condition": {
             "description": "JsonLogic expression evaluated against the report context.",
-            "$ref": "jsonlogic.schema.json"
+            "$ref": "../jsonlogic.schema.json"
           }
         }
       }
@@ -281,7 +281,7 @@
           },
           "condition": {
             "description": "JsonLogic expression. The badge is shown when this evaluates to truthy.",
-            "$ref": "jsonlogic.schema.json"
+            "$ref": "../jsonlogic.schema.json"
           },
           "class": {
             "type": "string",
