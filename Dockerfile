@@ -4,7 +4,7 @@ ARG VARIANT=slim
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 1: frontend-builder — builds the Docusaurus dashboard
 # ──────────────────────────────────────────────────────────────────────────────
-FROM node:25-slim AS frontend-builder
+FROM node:25-alpine AS frontend-builder
 RUN npm install -g pnpm@10.10.0
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
@@ -16,24 +16,22 @@ RUN pnpm run build
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 2: python-builder — compiles Python deps into a venv
 # ──────────────────────────────────────────────────────────────────────────────
-# Was python:3.14-slim. Pinned to 3.11 because the runtime base
-# (gcr.io/distroless/python3-debian12) ships Python 3.11; aligning ABIs.
+# Alpine 3.11 builder paired with Alpine 3.11 runtime — matching musl libc and
+# CPython ABIs so the venv's symlinked interpreter resolves cleanly at runtime.
 # regis requires python>=3.10 per pyproject.toml.
-FROM python:3.11-slim AS python-builder
+FROM python:3.11-alpine AS python-builder
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DEBIAN_FRONTEND=noninteractive \
     PIP_NO_CACHE_DIR=1
 
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential && \
-    rm -rf /var/lib/apt/lists/*
-
-# --copies (not symlinks): distroless has no /usr/local/bin/python to satisfy
-# the venv's default interpreter symlink. Real binary lets the regis console
-# script shebang resolve at runtime.
-RUN python -m venv --copies /opt/venv
+# build-base: gcc/musl-dev for any source-wheel fallback
+# linux-headers, libffi-dev, openssl-dev: required by cffi/cryptography-style
+# C extensions if PyPI has no musl wheel for the version we resolve.
+# Symlinked venv (no --copies): runtime base ships the matching python3.11
+# interpreter, so the symlink resolves and we save ~10 MB vs copying.
+# hadolint ignore=DL3018
+RUN apk add --no-cache build-base linux-headers libffi-dev openssl-dev && \
+    python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /src
@@ -46,7 +44,8 @@ COPY --from=frontend-builder /app/apps/dashboard/build regis/dashboard_assets
 # `pip install 'regis[server]'` for `regis dashboard serve`.
 # --no-compile skips .pyc generation (PYTHONDONTWRITEBYTECODE keeps runtime
 # from regenerating them); prune any residual bytecode caches afterwards.
-RUN VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml) && \
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
+RUN VERSION=$(grep -oE 'version = "[^"]+"' pyproject.toml | head -1 | sed 's/version = "\(.*\)"/\1/') && \
     SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" pip install --no-compile . && \
     find /opt/venv -type d -name __pycache__ -prune -exec rm -rf {} + && \
     find /opt/venv -type f -name '*.pyc' -delete
@@ -135,14 +134,13 @@ USER curl_user
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 4a: final-slim — minimal runtime with only regctl baked
 # ──────────────────────────────────────────────────────────────────────────────
-# Runtime base: python:3.11-slim (Fallback 3 from the round-3 plan).
-# Distroless (gcr.io/distroless/python3-debian12) was the original target but
-# does not ship libpython3.11.so.1.0 as a usable shared library, so a venv's
-# `--copies` Python interpreter cannot dynamically link against it at runtime
-# (it fails with "libpython3.11.so.1.0: cannot open shared object file").
-# python:3.11-slim adds ~30-40 MB vs distroless but lifts the size ceiling
-# from <100 MB to ~120-140 MB, still well under the 150 MB target.
-FROM python:3.11-slim AS final-slim
+# Runtime base: python:3.11-alpine (round-3 task 14 — Alpine pivot).
+# Alpine's ~50 MB base + musl libc beats both python:3.11-slim (~165 MB) and
+# distroless (~80 MB but with libpython copy overhead) for this use case.
+# PyYAML, MarkupSafe, and other C-extension deps have musl wheels on PyPI;
+# the Anchore Go scanners are CGO-free and run cleanly on musl; hadolint
+# (Haskell) needs Alpine's gcompat glibc shim in the full variant.
+FROM python:3.11-alpine AS final-slim
 
 LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.description="Regis — Slim variant (scanners lazy-loaded at first use)." \
@@ -155,27 +153,21 @@ LABEL org.opencontainers.image.title="regis" \
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DEBIAN_FRONTEND=noninteractive \
     PATH="/opt/venv/bin:/usr/local/bin:$PATH" \
     PYTHONPATH=/opt/venv/lib/python3.11/site-packages \
     REGIS_VARIANT=slim \
     HOME=/home/regis
 
-# Minimal runtime dependencies — ca-certificates for HTTPS, plus the tools
-# fetcher (regis bootstrap tools / lazy ensure_tool) needs curl-style network
-# access; the regis.tools.fetcher module uses urllib from the stdlib so no
-# extra apt deps are required here.
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-      ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+# ca-certificates for HTTPS to registries / GitHub releases (regis bootstrap
+# tools / lazy ensure_tool fetcher uses urllib from stdlib, which honours
+# /etc/ssl/certs).
+# hadolint ignore=DL3018
+RUN apk add --no-cache ca-certificates
 
 # Non-root user (uid 1001) — matches the previous image's runtime identity so
 # bind-mounts and CI cache permissions don't break.
-RUN groupadd -g 1001 regis && \
-    useradd -u 1001 -g regis -m -d /home/regis regis
+RUN addgroup -g 1001 regis && \
+    adduser -D -u 1001 -G regis -h /home/regis regis
 
 COPY --from=python-builder /opt/venv /opt/venv
 COPY --from=tools-fetcher /tools/regctl /usr/local/bin/regctl
@@ -191,7 +183,7 @@ CMD ["--help"]
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 4b: final-full — minimal runtime with all scanners baked
 # ──────────────────────────────────────────────────────────────────────────────
-FROM python:3.11-slim AS final-full
+FROM python:3.11-alpine AS final-full
 
 LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.description="Regis — Full variant (all scanners baked)." \
@@ -204,21 +196,20 @@ LABEL org.opencontainers.image.title="regis" \
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DEBIAN_FRONTEND=noninteractive \
     PATH="/opt/venv/bin:/usr/local/bin:$PATH" \
     PYTHONPATH=/opt/venv/lib/python3.11/site-packages \
     REGIS_VARIANT=full \
     HOME=/home/regis
 
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-      ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+# ca-certificates: HTTPS to registries.
+# gcompat: glibc shim for Alpine — hadolint is a Haskell-compiled binary
+# that depends on glibc's dynamic loader; gcompat provides the shim so it
+# can run on musl. Adds ~500 KB but is required for hadolint to start.
+# hadolint ignore=DL3018
+RUN apk add --no-cache ca-certificates gcompat
 
-RUN groupadd -g 1001 regis && \
-    useradd -u 1001 -g regis -m -d /home/regis regis
+RUN addgroup -g 1001 regis && \
+    adduser -D -u 1001 -G regis -h /home/regis regis
 
 COPY --from=python-builder /opt/venv /opt/venv
 COPY --from=tools-fetcher /tools/grype      /usr/local/bin/grype
