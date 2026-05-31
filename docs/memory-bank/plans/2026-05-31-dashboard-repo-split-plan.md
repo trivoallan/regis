@@ -12,15 +12,15 @@
 `apps/dashboard` (Docusaurus + Tremor/React) vit aujourd'hui dans le mono-repo `regis`.
 Couplage actuel :
 
-| Lien | Nature | Localisation |
-| --- | --- | --- |
+| Lien                     | Nature                    | Localisation                                                                                                             |
+| ------------------------ | ------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Build → assets embarqués | **dur** (build/packaging) | `Dockerfile` stage `frontend-builder` → `regis/dashboard_assets` ; `pyproject.toml` package-data `dashboard_assets/**/*` |
-| Build live / bundled | **dur** | `regis/report/docusaurus.py` (mode *source* vs *bundled*) |
-| Workspace JS | **dur** | `pnpm-workspace.yaml` (`apps/*` + `docs/website`) |
-| Contrat données | **souple** (déjà propre) | `report.json` ↔ `regis/schemas/report/report.schema.json`, consommé runtime par `ReportProvider.tsx` / `Root.tsx` |
-| Serveur | souple | `regis/server/` (extra `[server]`) |
-| Template archive | dur (duplication) | `regis/cookiecutters/archive` + `apps/dashboard/.regis-sync.json` |
-| Déploiement | CI | `cd-dashboard.yml` → gh-pages cœur `/regis/tools/<ver>/dashboard/` |
+| Build live / bundled     | **dur**                   | `regis/report/docusaurus.py` (mode _source_ vs _bundled_)                                                                |
+| Workspace JS             | **dur**                   | `pnpm-workspace.yaml` (`apps/*` + `docs/website`)                                                                        |
+| Contrat données          | **souple** (déjà propre)  | `report.json` ↔ `regis/schemas/report/report.schema.json`, consommé runtime par `ReportProvider.tsx` / `Root.tsx`        |
+| Serveur                  | souple                    | `regis/server/` (extra `[server]`)                                                                                       |
+| Template archive         | dur (duplication)         | `regis/cookiecutters/archive` + `apps/dashboard/.regis-sync.json`                                                        |
+| Déploiement              | CI                        | `cd-dashboard.yml` → gh-pages cœur `/regis/tools/<ver>/dashboard/`                                                       |
 
 ## Moteurs (validés)
 
