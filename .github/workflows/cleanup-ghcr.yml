@@ -1,0 +1,52 @@
+name: Maintenance / GHCR cleanup
+
+# Prunes accumulated noise from the `regis` container package:
+#   - untagged manifests left behind when floating tags (`main`, `latest`,
+#     `latest-full`) are re-pointed at a new build;
+#   - ghost / partial multi-arch parents whose platform children are gone;
+#   - stale per-commit `sha-<short>` tags older than the retention window.
+# Release tags (`latest*`, semver) and the floating `main*` pointers are never
+# touched. Runs weekly and on demand.
+
+on:
+  schedule:
+    # Mondays 04:17 UTC — off-peak, avoids the top-of-hour cron stampede.
+    - cron: 17 4 * * 1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+# Never run two prunes against the same package at once.
+concurrency:
+  group: cleanup-ghcr
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    steps:
+      - name: Prune GHCR package versions
+        uses: dataaxiom/ghcr-cleanup-action@f092b48ba3b604b2a83690dc4b2bbb3392e1045f # v1.2.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          owner: ${{ github.repository_owner }}
+          packages: regis
+          # Retire old per-commit sha tags; keep everything younger than the
+          # window so a freshly published build is never raced.
+          delete-tags: sha-*
+          older-than: 4 weeks
+          # Belt-and-suspenders: these are never deleted even if a future tag
+          # scheme makes them match a delete rule.
+          exclude-tags: latest,latest-slim,latest-full,main,main-full
+          delete-untagged: true
+          delete-ghost-images: true
+          delete-partial-images: true
+          # Verify surviving multi-arch images still resolve after the prune.
+          validate: true

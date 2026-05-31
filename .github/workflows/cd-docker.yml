@@ -73,11 +73,15 @@ jobs:
           # plain tags plus a :latest-slim alias on tag pushes.
           flavor: |
             suffix=${{ matrix.variant == 'full' && '-full' || '' }},onlatest=true
+          # Per-commit `sha-<short>` tags are emitted on tag builds only. On
+          # `main` pushes they accumulate one (×2 variants) per commit on the
+          # GHCR versions page with no cleanup, so the floating `main` tag plus
+          # the immutable `@sha256:` digest carry traceability there instead.
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=sha,format=short
+            type=sha,format=short,enable=${{ github.ref_type == 'tag' }}
             type=raw,value=latest-slim,enable=${{ matrix.variant == 'slim' && github.ref_type == 'tag' }}
 
       - name: Build and push Docker image
