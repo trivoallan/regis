@@ -8,21 +8,21 @@ tags:
 
 No secrets or credentials should be embedded in the image.
 
-| Provider | Level | Tags |
-| :--- | :--- | :--- |
-| secrets | Critical | security |
+| Provider | Level    | Tags     |
+| :------- | :------- | :------- |
+| secrets  | Critical | security |
 
 ## Parameters
 
-| Name | Default Value | Description |
-| :--- | :--- | :--- |
-| `max_count` | `0` | n/a |
+| Name        | Default Value | Description |
+| :---------- | :------------ | :---------- |
+| `max_count` | `0`           | n/a         |
 
 ## Messages
 
-| Type | Message |
-| :--- | :--- |
-| **Pass** | No secrets detected in the image. |
+| Type     | Message                                                                    |
+| :------- | :------------------------------------------------------------------------- |
+| **Pass** | No secrets detected in the image.                                          |
 | **Fail** | TruffleHog detected ${results.secrets.secrets_count} secrets in the image. |
 
 ## Playbook Example
