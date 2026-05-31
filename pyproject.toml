@@ -101,6 +101,10 @@ ignore_missing_imports = true
 module = ["yaml.*", "requests.*", "json_logic.*", "referencing.*"]
 ignore_missing_imports = true
 
+# Workaround for a mypy 1.19.1 internal AssertionError when trunk lints
+# downstream importers in isolation. follow_imports=skip avoids the
+# cross-ref lookup that crashes, without silencing type errors in the
+# module itself (which is still checked when targeted directly).
 [[tool.mypy.overrides]]
 module = ["regis.playbook.schema_registry"]
-ignore_errors = true
+follow_imports = "skip"
