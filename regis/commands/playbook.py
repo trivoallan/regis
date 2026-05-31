@@ -48,3 +48,44 @@ def validate_playbook(path: Path) -> None:
         f"  ✓ {path} is valid (schemaVersion={playbook['schemaVersion']}, "
         f"version={playbook['version']})."
     )
+
+
+@playbook_group.command(name="upgrade")
+@click.argument("path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+def upgrade_playbook(path: Path) -> None:
+    """Inject schemaVersion and version into a legacy playbook file.
+
+    Preserves comments and formatting via ruamel.yaml. Idempotent: if both
+    fields are already present, the file is left untouched.
+    """
+    from ruamel.yaml import YAML
+    from ruamel.yaml.scalarstring import DoubleQuotedScalarString
+
+    yaml = YAML()
+    yaml.preserve_quotes = True
+    yaml.indent(mapping=2, sequence=4, offset=2)
+
+    with open(path, encoding="utf-8") as f:
+        data = yaml.load(f)
+
+    if data is None:
+        raise click.ClickException(
+            f"{path}: file is empty or not a valid YAML document."
+        )
+
+    changes: list[str] = []
+    if "schemaVersion" not in data:
+        data.insert(0, "schemaVersion", 1)
+        changes.append("schemaVersion")
+    if "version" not in data:
+        # Insert after schemaVersion (which is now guaranteed to exist).
+        position = list(data.keys()).index("schemaVersion") + 1
+        data.insert(position, "version", DoubleQuotedScalarString("1.0.0"))
+        changes.append("version")
+
+    if changes:
+        with open(path, "w", encoding="utf-8") as f:
+            yaml.dump(data, f)
+        click.echo(f"  Upgraded {path}: added {', '.join(changes)}.")
+    else:
+        click.echo(f"  {path}: already at schemaVersion 1, nothing to do.")

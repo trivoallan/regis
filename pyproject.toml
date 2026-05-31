@@ -21,6 +21,7 @@ dependencies = [
   "cookiecutter>=2.5",
   "referencing>=0.28.4",
   "python-gitlab>=4.4.0",
+  "ruamel.yaml>=0.18",
 ]
 
 [project.scripts]
