@@ -1,78 +1,88 @@
-"""Tests for `regis playbook upgrade`."""
+"""Tests de `regis playbook upgrade` (legacy plat → enveloppe k8s)."""
 
 from __future__ import annotations
 
+import yaml
 from click.testing import CliRunner
 
-from regis.cli import main
+from regis.commands.playbook import playbook_group
+from regis.playbook.loader import load_playbook
 
 
-def test_upgrade_injects_missing_fields_preserving_comments(tmp_path) -> None:
-    playbook = tmp_path / "playbook.yaml"
-    playbook.write_text(
-        """# Important business context for this playbook
-name: LegacyPlaybook
-# Tiers come from compliance team
-tiers:
-  - name: Gold
-    condition: { ">": [{ var: rules_summary.score }, 90] }
-""",
+def _run(path) -> str:
+    result = CliRunner().invoke(playbook_group, ["upgrade", str(path)])
+    assert result.exit_code == 0, result.output
+    return result.output
+
+
+def test_upgrade_flat_to_envelope(tmp_path) -> None:
+    pb = tmp_path / "playbook.yaml"
+    pb.write_text(
+        "schemaVersion: 1\n"
+        'version: "2.1.0"\n'
+        "name: My Playbook\n"
+        "slug: my-pb\n"
+        "rules:\n"
+        "  - provider: cve\n"
+        "    rule: cve-count\n"
+        "    slug: c\n"
+        "    level: info\n",
         encoding="utf-8",
     )
-
-    runner = CliRunner()
-    result = runner.invoke(main, ["playbook", "upgrade", str(playbook)])
-    assert result.exit_code == 0, result.output
-
-    text = playbook.read_text(encoding="utf-8")
-    assert "schemaVersion: 1" in text
-    assert 'version: "1.0.0"' in text or "version: '1.0.0'" in text
-    # Comments preserved:
-    assert "# Important business context" in text
-    assert "# Tiers come from compliance team" in text
-    # Existing content preserved:
-    assert "name: LegacyPlaybook" in text
+    _run(pb)
+    data = yaml.safe_load(pb.read_text(encoding="utf-8"))
+    assert data["apiVersion"] == "regis.trivoallan.dev/v1alpha1"
+    assert data["kind"] == "Playbook"
+    assert data["metadata"]["name"] == "my-pb"
+    assert data["metadata"]["title"] == "My Playbook"
+    assert data["metadata"]["labels"]["app.kubernetes.io/version"] == "2.1.0"
+    assert data["spec"]["rules"][0]["slug"] == "c"
+    assert load_playbook(pb)["name"] == "My Playbook"
 
 
-def test_upgrade_noop_when_fields_present(tmp_path) -> None:
-    original = 'schemaVersion: 1\nversion: "2.0.0"\nname: AlreadyUpgraded\n'
-    playbook = tmp_path / "playbook.yaml"
-    playbook.write_text(original, encoding="utf-8")
-
-    runner = CliRunner()
-    result = runner.invoke(main, ["playbook", "upgrade", str(playbook)])
-    assert result.exit_code == 0, result.output
-    # Version not bumped, file unchanged
-    assert playbook.read_text(encoding="utf-8") == original
+def test_upgrade_slugifies_name_when_no_slug(tmp_path) -> None:
+    pb = tmp_path / "playbook.yaml"
+    pb.write_text("name: My Cool Playbook\nrules: []\n", encoding="utf-8")
+    _run(pb)
+    data = yaml.safe_load(pb.read_text(encoding="utf-8"))
+    assert data["metadata"]["name"] == "my-cool-playbook"
+    assert data["metadata"]["labels"]["app.kubernetes.io/version"] == "1.0.0"
 
 
-def test_upgrade_adds_only_missing_field(tmp_path) -> None:
-    """If schemaVersion is present but version is not, only version is injected."""
-    playbook = tmp_path / "playbook.yaml"
-    playbook.write_text(
-        "schemaVersion: 1\nname: PartialUpgrade\n",
+def test_upgrade_drops_deprecated_pages(tmp_path) -> None:
+    pb = tmp_path / "playbook.yaml"
+    pb.write_text(
+        "name: P\nslug: p\npages:\n  - title: Overview\n    sections: []\n",
         encoding="utf-8",
     )
-
-    runner = CliRunner()
-    result = runner.invoke(main, ["playbook", "upgrade", str(playbook)])
-    assert result.exit_code == 0, result.output
-
-    text = playbook.read_text(encoding="utf-8")
-    assert "schemaVersion: 1" in text
-    assert 'version: "1.0.0"' in text or "version: '1.0.0'" in text
-    assert "name: PartialUpgrade" in text
+    out = _run(pb)
+    data = yaml.safe_load(pb.read_text(encoding="utf-8"))
+    assert "pages" not in data and "pages" not in data.get("spec", {})
+    assert "Dropped deprecated: pages" in out
 
 
-def test_upgrade_validates_after_writing(tmp_path) -> None:
-    """After upgrade, the file should pass `regis playbook validate`."""
-    playbook = tmp_path / "playbook.yaml"
-    playbook.write_text("name: NeedsUpgrade\n", encoding="utf-8")
+def test_upgrade_is_idempotent(tmp_path) -> None:
+    pb = tmp_path / "playbook.yaml"
+    pb.write_text("name: P\nslug: p\nrules: []\n", encoding="utf-8")
+    _run(pb)
+    first = pb.read_text(encoding="utf-8")
+    out = _run(pb)
+    assert pb.read_text(encoding="utf-8") == first
+    assert "nothing to do" in out
 
-    runner = CliRunner()
-    upgrade_result = runner.invoke(main, ["playbook", "upgrade", str(playbook)])
-    assert upgrade_result.exit_code == 0
 
-    validate_result = runner.invoke(main, ["playbook", "validate", str(playbook)])
-    assert validate_result.exit_code == 0, validate_result.output
-    assert "schemaVersion=1" in validate_result.output
+def test_upgrade_slugifies_legacy_slug(tmp_path) -> None:
+    pb = tmp_path / "playbook.yaml"
+    pb.write_text("name: P\nslug: My_Legacy_Slug\nrules: []\n", encoding="utf-8")
+    _run(pb)
+    data = yaml.safe_load(pb.read_text(encoding="utf-8"))
+    assert data["metadata"]["name"] == "my-legacy-slug"
+    # L'enveloppe produite est rechargeable (donc valide).
+    assert load_playbook(pb)["slug"] == "my-legacy-slug"
+
+
+def test_upgrade_suggests_validate(tmp_path) -> None:
+    pb = tmp_path / "playbook.yaml"
+    pb.write_text("name: P\nslug: p\nrules: []\n", encoding="utf-8")
+    out = _run(pb)
+    assert "regis playbook validate" in out

@@ -70,7 +70,7 @@ The skill writes a ready-to-use playbook bundle:
 my-policy/
 ├── playbook.yaml          # Rules, tiers, badges, CI integration
 ├── README.md              # Generated documentation
-└── inputs.schema.json     # Only if non-image inputs were configured
+└── meta.schema.json       # Optional: project metadata schema
 ```
 
 Run your new playbook immediately:
@@ -99,45 +99,57 @@ you for:
 
 ## Understand the playbook structure
 
-A minimal playbook requires only a `name`. Rules reference provider templates by slug:
+A minimal playbook uses the Kubernetes-style envelope (`apiVersion`/`kind`/`metadata`/`spec`). Rules reference provider templates by slug:
 
 ```yaml
-schemaVersion: 1
-version: "1.0.0"
-name: My Security Policy
+# yaml-language-server: $schema=https://trivoallan.github.io/regis/schemas/playbook/v1alpha1/playbook.schema.json
+apiVersion: regis.trivoallan.dev/v1alpha1
+kind: Playbook
+metadata:
+  name: my-security-policy # machine id — RFC 1123 DNS label
+  title: My Security Policy # display name
+  labels:
+    app.kubernetes.io/version: "1.0.0"
 
-tiers:
-  - name: Gold
-    condition: { ">": [{ var: rules_summary.score }, 90] }
-  - name: Silver
-    condition: { ">": [{ var: rules_summary.score }, 70] }
+spec:
+  tiers:
+    - name: Gold
+      condition: { ">": [{ var: rules_summary.score }, 90] }
+    - name: Silver
+      condition: { ">": [{ var: rules_summary.score }, 70] }
 
-rules:
-  - provider: cve
-    rule: cve-count
-    slug: cve-critical
-    level: critical
-    options:
+  rules:
+    - provider: cve
+      rule: cve-count
+      slug: cve-critical
       level: critical
-      max_count: 0
+      options:
+        level: critical
+        max_count: 0
 
-  - provider: hadolint
-    rule: severity-count
-    slug: hadolint-errors
-    level: warning
-    options:
-      level: error
-      max_count: 0
+    - provider: hadolint
+      rule: severity-count
+      slug: hadolint-errors
+      level: warning
+      options:
+        level: error
+        max_count: 0
 ```
 
 Key concepts:
 
-- **Rules**: Each rule references a provider template (`rule:`) with a unique `slug`, a `level`
-  that affects scoring, and provider-specific `options`.
-- **Tiers**: Named compliance levels resolved from `rules_summary.score` using JSON Logic
-  conditions.
+- **Rules** (under `spec.rules`): Each rule references a provider template (`rule:`) with a
+  unique `slug`, a `level` that affects scoring, and provider-specific `options`.
+- **Tiers** (under `spec.tiers`): Named compliance levels resolved from `rules_summary.score`
+  using JSON Logic conditions.
 - **Results path**: Raw analyser data is accessible via dot-notation
   (for example, `results.cve.critical_count`).
+
+:::tip
+To migrate an existing playbook from the old `schemaVersion`/`name` format, run
+`regis playbook upgrade path/to/playbook.yaml`. See the
+[upgrade guide](../upgrade/playbook-schema-v1.md) for details.
+:::
 
 ---
 
@@ -162,6 +174,6 @@ regis evaluate report.json --playbook my-policy/ --html
 :::tip
 For the full list of available rule templates, providers, and advanced options (badges, GitLab
 checklists, inputs schema), see the
-[Playbook Schema Reference](../reference/schemas/playbook/definition.schema.md) and the
+[Playbook Schema Reference](../reference/schemas/playbook/v1alpha1/playbook.schema.md) and the
 [Playbooks concept guide](../concepts/playbooks.md).
 :::

@@ -178,7 +178,7 @@ def test_run_playbooks_surfaces_friendly_error_for_legacy_playbook(tmp_path) -> 
 
     with pytest.raises(ClickException) as exc_info:
         evaluate_playbooks((str(legacy),), {"results": {}}, formats=["json"])
-    assert "schemaVersion" in str(exc_info.value.message)
+    assert "apiVersion" in str(exc_info.value.message)
 
 
 def test_result_schema_accepts_playbook_metadata() -> None:
@@ -197,7 +197,7 @@ def test_result_schema_accepts_playbook_metadata() -> None:
     report = {
         "playbook_name": "Test",
         "playbook_version": "1.2.3",
-        "schema_version": 1,
+        "api_version": "regis.trivoallan.dev/v1alpha1",
         "score": 100,
         "total_scorecards": 1,
         "passed_scorecards": 1,

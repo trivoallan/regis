@@ -222,61 +222,66 @@ Assemble the playbook bundle and write to the output directory specified in Stag
 Construct valid YAML from stages 2–4. Use this structure:
 
 ```yaml
+# yaml-language-server: $schema=https://trivoallan.github.io/regis/schemas/playbook/v1alpha1/playbook.schema.json
 # Regis Playbook — <name>
 # Docs: https://trivoallan.github.io/regis/docs/concepts/playbooks
+apiVersion: regis.trivoallan.dev/v1alpha1
+kind: Playbook
+metadata:
+  name: "<slug>" # machine id — RFC 1123 DNS label (from stage 1)
+  title: "<name>" # human display name (from stage 1)
+  description: "<description>" # omit if not provided
+  labels:
+    app.kubernetes.io/version: "1.0.0" # bump (SemVer) when you change rules
 
-schemaVersion: 1
-version: "1.0.0"
-name: "<name>"
-description: "<description>" # omit if not provided
+spec:
+  tiers:
+    - name: Gold
+      condition:
+        ">": [{ var: rules_summary.score }, 90]
+    - name: Silver
+      condition:
+        ">": [{ var: rules_summary.score }, 70]
+    - name: Bronze
+      condition:
+        ">": [{ var: rules_summary.score }, 50]
 
-tiers:
-  - name: Gold
-    condition:
-      ">": [{ var: rules_summary.score }, 90]
-  - name: Silver
-    condition:
-      ">": [{ var: rules_summary.score }, 70]
-  - name: Bronze
-    condition:
-      ">": [{ var: rules_summary.score }, 50]
+  rules:
+    - provider: <provider>
+      rule: <rule-slug>
+      slug: <unique-slug>
+      level: <critical|warning|info>
+      options: # omit if no options
+        <key>: <value>
 
-rules:
-  - provider: <provider>
-    rule: <rule-slug>
-    slug: <unique-slug>
-    level: <critical|warning|info>
-    options: # omit if no options
-      <key>: <value>
+  badges: # omit if no CI or no badges requested
+    - slug: <rule-slug>
+      scope: <Scope>
+      value: <Label>
+      condition:
+        "!": [{ var: rules.<slug>.passed }]
+      class: <error|warning|success|information>
 
-badges: # omit if no CI or no badges requested
-  - slug: <rule-slug>
-    scope: <Scope>
-    value: <Label>
-    condition:
-      "!": [{ var: rules.<slug>.passed }]
-    class: <error|warning|success|information>
-
-integrations: # only if GitLab chosen
-  gitlab:
-    badges:
-      - <slug>
-    checklists:
-      - title: "Security Review"
-        items:
-          - label: Security review completed
-          - label: <item>
-            show_if: { "!!": [{ var: rules.<slug> }] }
-            check_if: { var: rules.<slug>.passed }
+  integrations: # only if GitLab chosen
+    gitlab:
+      badges:
+        - <slug>
+      checklists:
+        - title: "Security Review"
+          items:
+            - label: Security review completed
+            - label: <item>
+              show_if: { "!!": [{ var: rules.<slug> }] }
+              check_if: { var: rules.<slug>.passed }
 
   # links:
   #   - label: Return to Merge Request
   #     url: "{{ env.CI_MERGE_REQUEST_PROJECT_URL }}/-/merge_requests/{{ env.CI_MERGE_REQUEST_IID }}"
-  # integrations.gitlab.templates:
-  #   - url: https://example.com/evidence-template
 ```
 
-- `schemaVersion: 1` and `version: "1.0.0"` identify the playbook format and bundle version. Both are required. Bump `version` (SemVer) when you change rules.
+- `metadata.name` is the machine identifier (slug) — lowercase alphanumerics and hyphens, max 63 chars.
+- `metadata.title` is the human-readable display name.
+- `metadata.labels["app.kubernetes.io/version"]` is the SemVer of the playbook bundle. Bump it when you change rules.
 
 ### File 2: `README.md`
 

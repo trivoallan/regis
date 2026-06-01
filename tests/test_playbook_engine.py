@@ -26,51 +26,51 @@ class TestLoadPlaybook:
 
     def test_load_from_file(self, tmp_path):
         custom = {
-            "schemaVersion": 1,
-            "version": "1.0.0",
-            "name": "Custom",
-            "sections": [
-                {
-                    "name": "Main",
-                    "levels": [{"name": "bronze", "order": 1}],
-                    "scorecards": [
-                        {
-                            "name": "test-scorecard",
-                            "description": "A test scorecard",
-                            "level": "bronze",
-                            "condition": {"==": [1, 1]},
-                        },
-                    ],
-                }
-            ],
+            "apiVersion": "regis.trivoallan.dev/v1alpha1",
+            "kind": "Playbook",
+            "metadata": {
+                "name": "custom",
+                "title": "Custom",
+                "labels": {"app.kubernetes.io/version": "1.0.0"},
+            },
+            "spec": {
+                "rules": [
+                    {
+                        "slug": "test-rule",
+                        "provider": "core",
+                        "rule": "always-true",
+                        "level": "warning",
+                    },
+                ],
+            },
         }
         p = tmp_path / "custom.yaml"
         p.write_text(yaml.dump(custom))
         loaded = load_playbook(p)
         assert loaded["name"] == "Custom"
-        assert len(loaded["sections"][0]["scorecards"]) == 1
+        assert len(loaded["rules"]) == 1
 
     def test_load_json(self, tmp_path):
         import json
 
         custom = {
-            "schemaVersion": 1,
-            "version": "1.0.0",
-            "name": "JSON Card",
-            "sections": [
-                {
-                    "name": "Main",
-                    "levels": [{"name": "bronze", "order": 1}],
-                    "scorecards": [
-                        {
-                            "name": "always-pass",
-                            "description": "Always passes",
-                            "level": "bronze",
-                            "condition": {"==": [1, 1]},
-                        },
-                    ],
-                }
-            ],
+            "apiVersion": "regis.trivoallan.dev/v1alpha1",
+            "kind": "Playbook",
+            "metadata": {
+                "name": "json-card",
+                "title": "JSON Card",
+                "labels": {"app.kubernetes.io/version": "1.0.0"},
+            },
+            "spec": {
+                "rules": [
+                    {
+                        "slug": "always-pass",
+                        "provider": "core",
+                        "rule": "always-true",
+                        "level": "warning",
+                    },
+                ],
+            },
         }
         p = tmp_path / "custom.json"
         p.write_text(json.dumps(custom))
@@ -618,7 +618,8 @@ def test_evaluate_propagates_playbook_metadata() -> None:
     from regis.playbook.evaluator import evaluate
 
     playbook = {
-        "schemaVersion": 1,
+        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "kind": "Playbook",
         "version": "2.3.4",
         "name": "MetadataPlaybook",
     }
@@ -627,4 +628,21 @@ def test_evaluate_propagates_playbook_metadata() -> None:
 
     assert result["playbook_name"] == "MetadataPlaybook"
     assert result["playbook_version"] == "2.3.4"
-    assert result["schema_version"] == 1
+    assert result["api_version"] == "regis.trivoallan.dev/v1alpha1"
+    assert "schema_version" not in result
+
+
+def test_evaluate_propagates_api_version() -> None:
+    from regis.playbook.evaluator import evaluate
+
+    playbook = {
+        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "kind": "Playbook",
+        "name": "X",
+        "version": "1.0.0",
+        "rules": [],
+    }
+    result = evaluate(playbook, {"analyzers": {}})
+    assert result["api_version"] == "regis.trivoallan.dev/v1alpha1"
+    assert result["playbook_version"] == "1.0.0"
+    assert "schema_version" not in result

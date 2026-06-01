@@ -5,7 +5,7 @@ Supports loading playbook definitions from:
 - Local bundle directories (containing playbook.yaml)
 - Remote HTTP/HTTPS URLs
 
-Every playbook must declare ``schemaVersion`` (integer) at the top level.
+Every playbook must declare ``apiVersion`` and ``kind: Playbook`` at the top level.
 The loader dispatches to the matching JSON Schema via the schema registry
 and validates the playbook before returning.
 """
@@ -25,16 +25,41 @@ from regis.playbook import schema_registry
 
 
 class PlaybookVersionError(ValueError):
-    """Raised when schemaVersion is missing, malformed, or unsupported."""
+    """Raised when apiVersion is missing, malformed, or unsupported."""
 
 
 def load_playbook(path: str | Path) -> dict[str, Any]:
     """Load and validate a playbook from a file, bundle dir, or URL."""
     raw = _read_raw(path)
-    schema_version = _extract_schema_version(raw, path)
-    schema = _get_schema_or_raise(schema_version, path)
-    _validate(raw, schema, path, schema_version)
-    return raw
+    api_version = _extract_api_version(raw, path)
+    schema = _get_schema_or_raise(api_version, path)
+    _validate(raw, schema, path, api_version)
+    return normalize_playbook(raw)
+
+
+def normalize_playbook(raw: dict[str, Any]) -> dict[str, Any]:
+    """Flatten the envelope into the internal shape consumers expect.
+
+    Projects ``metadata``/``spec`` back onto the historical top-level keys
+    (``name``, ``slug``, ``version``, ``description`` + ``spec.*``) so the
+    evaluator, integrations and report code need no changes.
+
+    Precondition: *raw* must be an already-validated envelope (apiVersion/kind present).
+    """
+    meta = raw.get("metadata", {})
+    spec = raw.get("spec", {})
+    labels = meta.get("labels", {})
+    return {
+        "apiVersion": raw["apiVersion"],
+        "kind": raw["kind"],
+        "metadata": meta,
+        "spec": spec,
+        "name": meta.get("title") or meta.get("name"),
+        "slug": meta.get("name"),
+        "version": labels.get("app.kubernetes.io/version"),
+        "description": meta.get("description"),
+        **spec,
+    }
 
 
 def _read_raw(path: str | Path) -> dict[str, Any]:
@@ -62,34 +87,41 @@ def _read_raw(path: str | Path) -> dict[str, Any]:
     return json.loads(text)
 
 
-def _extract_schema_version(raw: dict[str, Any], path: str | Path) -> int:
-    if "schemaVersion" not in raw:
+def _extract_api_version(raw: dict[str, Any], path: str | Path) -> str:
+    if "apiVersion" not in raw:
         raise PlaybookVersionError(
-            f"playbook '{path}' is missing required field 'schemaVersion'.\n"
-            f"Add `schemaVersion: 1` at the top of the file.\n"
-            f"Supported versions: {schema_registry.supported_versions()}."
+            f"playbook '{path}' is missing required field 'apiVersion'.\n"
+            f"Add `apiVersion: regis.trivoallan.dev/v1alpha1` and `kind: Playbook` "
+            f"at the top of the file (run `regis playbook upgrade` to migrate a "
+            f"legacy playbook).\n"
+            f"Supported: {schema_registry.supported_versions()}."
         )
-    value = raw["schemaVersion"]
-    # YAML's `true`/`false` parse as bool (a subclass of int); reject explicitly.
-    if isinstance(value, bool) or not isinstance(value, int):
+    api_version = raw["apiVersion"]
+    if not isinstance(api_version, str):
         raise PlaybookVersionError(
-            f"playbook '{path}' has an invalid schemaVersion: {value!r} must be an integer.\n"
-            f"Supported versions: {schema_registry.supported_versions()}."
+            f"playbook '{path}' has an invalid apiVersion: {api_version!r} "
+            f"must be a string.\n"
+            f"Supported: {schema_registry.supported_versions()}."
         )
-    return value
+    kind = raw.get("kind")
+    if kind != "Playbook":
+        raise PlaybookVersionError(
+            f"playbook '{path}' has kind={kind!r}; expected 'Playbook'."
+        )
+    return api_version
 
 
-def _get_schema_or_raise(schema_version: int, path: str | Path) -> dict[str, Any]:
+def _get_schema_or_raise(api_version: str, path: str | Path) -> dict[str, Any]:
     try:
-        return schema_registry.get_schema(schema_version)
+        return schema_registry.get_schema(api_version)
     except KeyError:
         from importlib.metadata import version as _pkg_version
 
         raise PlaybookVersionError(
-            f"playbook '{path}' declares schemaVersion={schema_version} but this "
+            f"playbook '{path}' declares apiVersion={api_version!r} but this "
             f"regis (v{_pkg_version('regis')}) only supports "
             f"{schema_registry.supported_versions()}. "
-            f"Upgrade regis or use a compatible playbook."
+            f"Upgrade regis or run `regis playbook upgrade`."
         ) from None
 
 
@@ -97,7 +129,7 @@ _registry_cache: dict[str, Registry] = {}
 
 
 def _build_validator_registry(schema: dict[str, Any]) -> Registry:
-    """Build a referencing.Registry that resolves the v1 schema's relative $refs.
+    """Build a referencing.Registry that resolves the v1alpha1 schema's relative $refs.
 
     Results are memoized by schema ``$id`` so repeated calls (e.g. in bulk
     analysis or matrix CI) pay the file-read and Registry construction cost
@@ -129,7 +161,7 @@ def _validate(
     raw: dict[str, Any],
     schema: dict[str, Any],
     path: str | Path,
-    schema_version: int,
+    api_version: str,
 ) -> None:
     registry = _build_validator_registry(schema)
     validator = jsonschema.Draft202012Validator(schema, registry=registry)
@@ -137,7 +169,7 @@ def _validate(
         validator.validate(raw)
     except jsonschema.ValidationError as exc:
         exc.message = (
-            f"playbook '{path}' failed validation against schemaVersion={schema_version}: "
+            f"playbook '{path}' failed validation against apiVersion={api_version}: "
             f"{exc.message}"
         )
         raise

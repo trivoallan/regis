@@ -12,42 +12,83 @@ Playbooks are the core of the `regis` evaluation engine. They define the securit
 
 A playbook serves two primary functions:
 
-1.  **Policy Enforcement**: It defines a set of "scorecards" (rules) that an image must pass to be considered compliant.
-2.  **Report Structuring**: It defines the layout and content of the generated HTML report, including pages, sections, and widgets.
+1.  **Policy Enforcement**: It defines a set of rules that an image must pass to be considered compliant.
+2.  **Report Structuring**: It controls what badges, tiers, and links appear in the generated report.
 
-By using playbooks, you can decouple the raw data extraction (performed by analyzers like OCI or CVE) from the business logic used to evaluate that data. This allow you to apply different compliance standards to different environments or projects without changing the underlying analysis code.
+By using playbooks, you can decouple the raw data extraction (performed by analyzers like OCI or CVE) from the business logic used to evaluate that data. This allows you to apply different compliance standards to different environments or projects without changing the underlying analysis code.
+
+## Playbook format
+
+Playbooks use a Kubernetes-style resource envelope. Every `playbook.yaml` must declare these four top-level keys:
+
+| Field        | Required | Description                                                |
+| ------------ | -------- | ---------------------------------------------------------- |
+| `apiVersion` | yes      | Must be `regis.trivoallan.dev/v1alpha1`.                   |
+| `kind`       | yes      | Must be `Playbook`.                                        |
+| `metadata`   | yes      | Identity and version of this playbook (see below).         |
+| `spec`       | yes      | Rules, tiers, badges, integrations, and links (see below). |
+
+### `metadata` fields
+
+| Field                                          | Required | Description                                                                              |
+| ---------------------------------------------- | -------- | ---------------------------------------------------------------------------------------- |
+| `metadata.name`                                | yes      | Machine identifier — RFC 1123 DNS label (lowercase alphanumerics and `-`, max 63 chars). |
+| `metadata.title`                               | no       | Human-readable display name shown in reports.                                            |
+| `metadata.description`                         | no       | Human-readable description of what this playbook evaluates.                              |
+| `metadata.labels["app.kubernetes.io/version"]` | yes      | SemVer of your playbook bundle (e.g. `"1.0.0"`). Bump when you change rules.             |
+| `metadata.annotations`                         | no       | Free-form non-identifying metadata (arbitrary string key/value pairs).                   |
+
+### `spec` fields
+
+| Field               | Required | Description                                                     |
+| ------------------- | -------- | --------------------------------------------------------------- |
+| `spec.tiers`        | no       | Compliance tier thresholds (Gold / Silver / Bronze).            |
+| `spec.rules`        | no       | Rule template instantiations (provider + rule slug + options).  |
+| `spec.badges`       | no       | Dynamic status badges displayed in the report header.           |
+| `spec.integrations` | no       | Third-party platform integrations (e.g. `integrations.gitlab`). |
+| `spec.links`        | no       | Custom action links displayed in the report.                    |
+
+### Field mapping from the legacy format
+
+If you have an existing playbook that uses the old flat format, run:
+
+```bash
+regis playbook upgrade path/to/playbook.yaml
+```
+
+The mapping is:
+
+| Legacy field                 | New location                                   |
+| ---------------------------- | ---------------------------------------------- |
+| `schemaVersion`              | replaced by `apiVersion`                       |
+| `version`                    | `metadata.labels["app.kubernetes.io/version"]` |
+| `name`                       | `metadata.title`                               |
+| `slug`                       | `metadata.name`                                |
+| `description`                | `metadata.description`                         |
+| `tiers`                      | `spec.tiers`                                   |
+| `rules`                      | `spec.rules`                                   |
+| `badges`                     | `spec.badges`                                  |
+| `integrations`               | `spec.integrations`                            |
+| `links`                      | `spec.links`                                   |
+| `pages`/`sections`/`sidebar` | removed (not used by the report viewer)        |
 
 ## Core Concepts
 
-The following concepts are central to understanding and creating playbooks. For a complete technical reference of all available attributes, refer to the [Playbook Schema Definition](../reference/schemas/playbook/definition.schema.md).
-
-### Scorecards
-
-A scorecard is a single evaluation rule. It defines a condition that must evaluate to true for the scorecard to pass. Scorecards are typically grouped into sections and can be assigned to priority levels (such as critical, warning, or info).
-
-### UI Structure
-
-Playbooks define how analysis results are presented in the HTML report through a hierarchical structure:
-
-- **Pages**: The top-level containers in the report. Each page is a distinct view in the SPA.
-- **Sections**: Groups of related scorecards and widgets within a page.
-- **Widgets**: Interactive UI components that display specific values or metrics. Widgets can be key-value summaries, KPI cards, or detailed tables.
-  rendered from templates.
-
-For example, a section named "Mandatory Requirements" becomes `mandatory_requirements`.
+The following concepts are central to understanding and creating playbooks. For a complete technical reference of all available attributes, refer to the [Playbook Schema Reference](../reference/schemas/playbook/v1alpha1/playbook.schema.md).
 
 ### Tiers
 
 Playbooks can define **Tiers** to categorize the overall quality of an image based on the compliance score. Each tier is defined by a name and a condition.
 
 ```yaml
-tiers:
-  - name: Gold
-    condition: { ">": [{ var: rules_summary.score }, 90] }
-  - name: Silver
-    condition: { ">": [{ var: rules_summary.score }, 70] }
-  - name: Bronze
-    condition: { ">": [{ var: rules_summary.score }, 50] }
+spec:
+  tiers:
+    - name: Gold
+      condition: { ">": [{ var: rules_summary.score }, 90] }
+    - name: Silver
+      condition: { ">": [{ var: rules_summary.score }, 70] }
+    - name: Bronze
+      condition: { ">": [{ var: rules_summary.score }, 50] }
 ```
 
 The evaluator checks tiers in the order they are defined. The first tier whose condition evaluates to truthy is assigned to the report.
@@ -57,15 +98,16 @@ The evaluator checks tiers in the order they are defined. The first tier whose c
 **Badges** provide high-level visual status indicators in the report header. They are dynamic and support variable interpolation using the `${var.path}` syntax.
 
 ```yaml
-badges:
-  - slug: score
-    scope: Score
-    value: "${rules_summary.score}"
-    class: information
-  - slug: freshness
-    scope: Freshness
-    condition: { "==": [{ var: rules.freshness-age.passed }, true] }
-    class: success
+spec:
+  badges:
+    - slug: score
+      scope: Score
+      value: "${rules_summary.score}"
+      class: information
+    - slug: freshness
+      scope: Freshness
+      condition: { "==": [{ var: rules.freshness-age.passed }, true] }
+      class: success
 ```
 
 | Field       | Description                                                                                                                 |
@@ -90,14 +132,11 @@ You use JSON Logic to access analysis results and perform comparisons. For examp
 { "==": [{ "var": "results.cve.critical_count" }, 0] }
 ```
 
-Or, to check the score of a specific section using its normalized name:
+Or, to check the overall playbook score:
 
 ```json
 {
-  ">=": [
-    { "var": "playbooks.0.pages.compliance.sections.security_checks.score" },
-    90
-  ]
+  ">=": [{ "var": "playbooks.0.score" }, 90]
 }
 ```
 
@@ -119,7 +158,7 @@ For example, to display the overall compliance score in a widget, you might use:
 - label: Overall Compliance
   value: "{{ playbooks.0.score }}%"
 - label: Mandatory Checks
-  value: "{{ playbooks.0.pages.compliance.sections.security_checks.score }}%"
+  value: "{{ playbooks.0.score }}%"
 ```
 
 ## GitLab Integration
@@ -131,12 +170,13 @@ Playbooks can automate Merge Request (MR) management in GitLab through the `inte
 The `badges` list automatically synchronizes authorized status badges as GitLab labels. Each badge in the list is identified by its **slug**.
 
 ```yaml
-integrations:
-  gitlab:
-    badges:
-      - score
-      - freshness
-      - cve-critical
+spec:
+  integrations:
+    gitlab:
+      badges:
+        - score
+        - freshness
+        - cve-critical
 ```
 
 This ensures that the MR UI (labels) always reflects the visual status shown in the HTML report. Regular condition-based labels are deprecated in favor of this badge-driven approach.
@@ -153,28 +193,29 @@ Each checklist can have a `title` and a list of `items`. Each item has a mandato
 | `check_if` | A JSON Logic expression. If provided and truthy, the checkbox renders pre-checked (`- [x]`). Otherwise it renders unchecked (`- [ ]`).                                  |
 
 ```yaml
-integrations:
-  gitlab:
-    checklists:
-      - title: 📝 Security Review
-        items:
-          - label: Security review completed # <1>
-          - label: No critical vulnerabilities found
-            show_if: { "==": [{ var: results.cve.critical_count }, 0] } # <2>
-            check_if: { "==": [{ var: results.cve.critical_count }, 0] } # <3>
-      - title: 🚀 Compliance checks
-        items:
-          - label: Image from a trusted registry
-            show_if:
-              {
-                "in":
-                  [{ var: request.registry }, [docker.io, quay.io, ghcr.io]],
-              }
-            check_if:
-              {
-                "in":
-                  [{ var: request.registry }, [docker.io, quay.io, ghcr.io]],
-              }
+spec:
+  integrations:
+    gitlab:
+      checklists:
+        - title: 📝 Security Review
+          items:
+            - label: Security review completed # <1>
+            - label: No critical vulnerabilities found
+              show_if: { "==": [{ var: results.cve.critical_count }, 0] } # <2>
+              check_if: { "==": [{ var: results.cve.critical_count }, 0] } # <3>
+        - title: 🚀 Compliance checks
+          items:
+            - label: Image from a trusted registry
+              show_if:
+                {
+                  "in":
+                    [{ var: request.registry }, [docker.io, quay.io, ghcr.io]],
+                }
+              check_if:
+                {
+                  "in":
+                    [{ var: request.registry }, [docker.io, quay.io, ghcr.io]],
+                }
 ```
 
 (1) Unconditional item — always included, always unchecked.
@@ -200,12 +241,13 @@ Each item must have a `url` and an optional `condition`:
 | `condition` | A JSON Logic expression. If provided, the template is only evaluated and generated when the condition evaluates to truthy.                               |
 
 ```yaml
-integrations:
-  gitlab:
-    templates:
-      - url: "https://github.com/my-org/security-evidence-template"
-        directory: "templates/my-evidence" # optional
-        condition: { ">": [{ var: results.cve.critical_count }, 0] }
+spec:
+  integrations:
+    gitlab:
+      templates:
+        - url: "https://github.com/my-org/security-evidence-template"
+          directory: "templates/my-evidence" # optional
+          condition: { ">": [{ var: results.cve.critical_count }, 0] }
 ```
 
 :::warning
@@ -227,7 +269,7 @@ A playbook is a **directory** (bundle) rather than a single file. The bundle use
 
 ```text
 my-playbook/
-├── playbook.yaml        # rules, tiers, badges, pages
+├── playbook.yaml        # apiVersion/kind/metadata/spec envelope
 ├── meta.schema.json     # JSON Schema for --meta validation
 └── README.md
 ```
@@ -238,7 +280,11 @@ You can pass a bundle directory anywhere a playbook path is accepted:
 regis analyze myimage:latest --playbook ./my-playbook/
 ```
 
-Legacy single-file playbooks (`playbook.yaml`) continue to work.
+Legacy single-file playbooks using the old `schemaVersion`/`name` format are automatically upgraded on load. To migrate permanently, run:
+
+```bash
+regis playbook upgrade path/to/playbook.yaml
+```
 
 ---
 
@@ -321,54 +367,58 @@ Metadata values are accessible under `metadata.*` via JSON Logic `var`:
 **Rule — require PROJECT_ID before granting a compliance tier:**
 
 ```yaml
-rules:
-  - provider: metadata
-    rule: metadata
-    slug: project-registered
-    level: critical
-    condition:
-      "!!": [{ var: "metadata.PROJECT_ID" }]
-    messages:
-      pass: "Project ID provided: ${metadata.PROJECT_ID}"
-      fail: "PROJECT_ID is required for compliance reporting"
+spec:
+  rules:
+    - provider: metadata
+      rule: metadata
+      slug: project-registered
+      level: critical
+      condition:
+        "!!": [{ var: "metadata.PROJECT_ID" }]
+      messages:
+        pass: "Project ID provided: ${metadata.PROJECT_ID}"
+        fail: "PROJECT_ID is required for compliance reporting"
 ```
 
 **Badge — display the project ID:**
 
 ```yaml
-badges:
-  - slug: project-id
-    scope: Project
-    value: "${metadata.PROJECT_ID}"
-    condition:
-      "!!": [{ var: "metadata.PROJECT_ID" }]
-    class: information
+spec:
+  badges:
+    - slug: project-id
+      scope: Project
+      value: "${metadata.PROJECT_ID}"
+      condition:
+        "!!": [{ var: "metadata.PROJECT_ID" }]
+      class: information
 ```
 
 **MR checklist — link to the security document:**
 
 ```yaml
-integrations:
-  gitlab:
-    checklists:
-      - title: 📋 Security Evidence
-        items:
-          - label: Security validation document submitted
-            show_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
-            check_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
-          - label: "Review document: ${metadata.SEC_DOC_URL}"
-            show_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
+spec:
+  integrations:
+    gitlab:
+      checklists:
+        - title: 📋 Security Evidence
+          items:
+            - label: Security validation document submitted
+              show_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
+              check_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
+            - label: "Review document: ${metadata.SEC_DOC_URL}"
+              show_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
 ```
 
 **Tier condition — gate Gold tier on CI platform:**
 
 ```yaml
-tiers:
-  - name: Gold
-    condition:
-      and:
-        - { ">": [{ var: rules_summary.score }, 90] }
-        - { "==": [{ var: "metadata.ci.platform" }, "github"] }
+spec:
+  tiers:
+    - name: Gold
+      condition:
+        and:
+          - { ">": [{ var: rules_summary.score }, 90] }
+          - { "==": [{ var: "metadata.ci.platform" }, "github"] }
 ```
 
 ---
@@ -385,26 +435,32 @@ This command will prompt you for basic information (name, slug, etc.) and genera
 
 ## Example Playbook
 
-The following example shows a simplified playbook definition:
+The following example shows a minimal valid playbook definition:
 
 ```yaml
-schemaVersion: 1
-version: "1.0.0"
-name: Minimal Playbook
-slug: minimal
-pages:
-  - title: Compliance Overview
-    slug: index
-    sections:
-      - name: Security Checks
-        scorecards:
-          - name: no-root
-            title: Image must not run as root
-            condition:
-              "!=": [{ var: results.oci.platforms.0.user }, root]
-        widgets:
-          - label: Compliance Level
-            value: "{{ playbooks.0.score }}%"
+# yaml-language-server: $schema=https://trivoallan.github.io/regis/schemas/playbook/v1alpha1/playbook.schema.json
+apiVersion: regis.trivoallan.dev/v1alpha1
+kind: Playbook
+metadata:
+  name: minimal
+  title: Minimal Playbook
+  labels:
+    app.kubernetes.io/version: "1.0.0"
+spec:
+  tiers:
+    - name: Gold
+      condition: { ">": [{ var: rules_summary.score }, 90] }
+    - name: Silver
+      condition: { ">": [{ var: rules_summary.score }, 70] }
+    - name: Bronze
+      condition: { ">": [{ var: rules_summary.score }, 50] }
+  rules:
+    - provider: oci
+      rule: user-blacklist
+      slug: no-root
+      level: critical
+      options:
+        blacklist: [root, "0"]
 ```
 
 :::tip

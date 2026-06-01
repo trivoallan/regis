@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import importlib.metadata
-import json
 from datetime import datetime, timezone
 from importlib import resources
 from typing import Any

@@ -17,6 +17,11 @@ Voir `docs/memory-bank/roadmap.md` pour le détail complet.
 
 ## Recent Changes
 
+- [2026-06-01] **Playbook format → enveloppe Kubernetes (PR #640, breaking)**:
+  - Les playbooks adoptent `apiVersion: regis.trivoallan.dev/v1alpha1` / `kind: Playbook` / `metadata` / `spec`. `schemaVersion` (entier) → `apiVersion` ; `metadata` style Backstage (`name`=id, `title`=affichage, `description`, SemVer du bundle → label `app.kubernetes.io/version`) ; `tiers`/`rules`/`badges`/`integrations`/`links` sous `spec`. Sémantique d'évaluation inchangée.
+  - **Rupture nette** (pré-v1) : le loader rejette l'ancien format à plat ; `regis playbook upgrade` restructure les playbooks legacy (drop `pages`/`sections`/`sidebar`, idempotent). Nouveau `regis/schemas/playbook/v1alpha1/playbook.schema.json` ; registre indexé par `apiVersion` ; ancien schéma `v1` supprimé. Le loader valide puis **normalise** l'enveloppe en dict aplati → consommateurs en aval inchangés (approche A).
+  - Champ d'audit rapport `schema_version` → `api_version` (`evaluator.py`) ; schémas de sortie `result`/`report` alignés. Le `schemaVersion` entier de l'enveloppe report (`REPORT_SCHEMA_VERSION`) est un concept distinct, intact. Default + 2 cookiecutters + skill `/create-playbook` + docs migrés.
+  - Livré via skills empilées (brainstorming → writing-plans → subagent-driven-development, 10 tâches TDD, 1 implémenteur + revue indépendante par tâche). Suite 539 PASS, couverture 91.66 %. `feat(playbook)!` → bump 0.33 → 0.34. Décision : `decisionLog.md` ; spec : `docs/superpowers/specs/2026-06-01-playbook-kubernetes-kinds-design.md`.
 - [2026-06-01] **Dashboard full decouple — décision + Phase 0 + Phase 1 livrées**:
   - **Décision** (voir `decisionLog.md`) : le cœur **arrête complètement de livrer la dashboard**. `apps/dashboard` est extrait dans un dépôt dédié `regis-dashboard`. Lien unique : contrat `report.json` + `schemaVersion` entier, vérifié **100 % au runtime côté dashboard** ; le cœur n'a **aucune** logique de compatibilité. **Supersède** l'approche OCI/`ToolFetcher` (PR #628, fermée).
   - **Coupe radicale** : `serve` standalone = **static-preview-only**. Le backend GitLab proxy + webhooks/SSE (`regis/server/`) est abandonné, pas réécrit en Node ; `gitlab.tsx` + ses 3 composants exclusifs sont retirés à l'extraction.

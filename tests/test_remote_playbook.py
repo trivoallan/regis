@@ -13,10 +13,23 @@ from regis.playbook.engine import load_playbook
 def test_load_playbook_remote_yaml():
     url = "https://example.com/playbook.yaml"
     content = {
-        "schemaVersion": 1,
-        "version": "1.0.0",
-        "name": "Remote Playbook",
-        "sections": [{"name": "Main"}],
+        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "kind": "Playbook",
+        "metadata": {
+            "name": "remote-playbook",
+            "title": "Remote Playbook",
+            "labels": {"app.kubernetes.io/version": "1.0.0"},
+        },
+        "spec": {
+            "rules": [
+                {
+                    "slug": "main-rule",
+                    "provider": "core",
+                    "rule": "always-true",
+                    "level": "warning",
+                },
+            ],
+        },
     }
     responses.add(
         responses.GET,
@@ -28,7 +41,7 @@ def test_load_playbook_remote_yaml():
 
     loaded = load_playbook(url)
     assert loaded["name"] == "Remote Playbook"
-    assert loaded["sections"][0]["name"] == "Main"
+    assert loaded["rules"][0]["slug"] == "main-rule"
 
 
 @responses.activate
@@ -37,10 +50,23 @@ def test_load_playbook_remote_json():
 
     url = "https://example.com/playbook.json"
     content = {
-        "schemaVersion": 1,
-        "version": "1.0.0",
-        "name": "Remote JSON",
-        "sections": [{"name": "Main"}],
+        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "kind": "Playbook",
+        "metadata": {
+            "name": "remote-json",
+            "title": "Remote JSON",
+            "labels": {"app.kubernetes.io/version": "1.0.0"},
+        },
+        "spec": {
+            "rules": [
+                {
+                    "slug": "json-rule",
+                    "provider": "core",
+                    "rule": "always-true",
+                    "level": "warning",
+                },
+            ],
+        },
     }
     responses.add(
         responses.GET,

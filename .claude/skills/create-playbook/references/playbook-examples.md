@@ -16,24 +16,29 @@ defaults to 100 and every image reaches Gold. Use this to verify connectivity be
 adding enforcement.
 
 ```yaml
+# yaml-language-server: $schema=https://trivoallan.github.io/regis/schemas/playbook/v1alpha1/playbook.schema.json
 # playbook.yaml — minimal skeleton
-schemaVersion: 1
-version: "1.0.0"
-name: "My Playbook"
-
-tiers:
-  - name: Gold
-    condition:
-      ">": [{ var: rules_summary.score }, 90]
-  - name: Silver
-    condition:
-      ">": [{ var: rules_summary.score }, 70]
-  - name: Bronze
-    condition:
-      ">": [{ var: rules_summary.score }, 50]
+apiVersion: regis.trivoallan.dev/v1alpha1
+kind: Playbook
+metadata:
+  name: my-playbook
+  title: "My Playbook"
+  labels:
+    app.kubernetes.io/version: "1.0.0"
+spec:
+  tiers:
+    - name: Gold
+      condition:
+        ">": [{ var: rules_summary.score }, 90]
+    - name: Silver
+      condition:
+        ">": [{ var: rules_summary.score }, 70]
+    - name: Bronze
+      condition:
+        ">": [{ var: rules_summary.score }, 50]
 ```
 
-No `rules:` block — add rules incrementally as you tighten policy.
+No `spec.rules` block — add rules incrementally as you tighten policy.
 
 ---
 
@@ -43,99 +48,104 @@ A Gold/Silver/Bronze policy that enforces vulnerability limits, Dockerfile quali
 and SBOM presence. Adapted from the Regis default playbook.
 
 ```yaml
+# yaml-language-server: $schema=https://trivoallan.github.io/regis/schemas/playbook/v1alpha1/playbook.schema.json
 # playbook.yaml — security-focused
-schemaVersion: 1
-version: "1.0.0"
-name: "Security Policy"
-description: "Enforce vulnerability, Dockerfile, and supply-chain baselines."
+apiVersion: regis.trivoallan.dev/v1alpha1
+kind: Playbook
+metadata:
+  name: security-policy
+  title: "Security Policy"
+  description: "Enforce vulnerability, Dockerfile, and supply-chain baselines."
+  labels:
+    app.kubernetes.io/version: "1.0.0"
+spec:
+  tiers:
+    - name: Gold
+      condition:
+        ">": [{ var: rules_summary.score }, 90]
+    - name: Silver
+      condition:
+        ">": [{ var: rules_summary.score }, 70]
+    - name: Bronze
+      condition:
+        ">": [{ var: rules_summary.score }, 50]
 
-tiers:
-  - name: Gold
-    condition:
-      ">": [{ var: rules_summary.score }, 90]
-  - name: Silver
-    condition:
-      ">": [{ var: rules_summary.score }, 70]
-  - name: Bronze
-    condition:
-      ">": [{ var: rules_summary.score }, 50]
+  rules:
+    # ── Vulnerabilities ────────────────────────────────────────────────────────
 
-rules:
-  # ── Vulnerabilities ────────────────────────────────────────────────────────
-
-  # Zero tolerance for critical CVEs.
-  - provider: cve
-    rule: cve-count
-    slug: cve-critical
-    level: critical
-    options:
+    # Zero tolerance for critical CVEs.
+    - provider: cve
+      rule: cve-count
+      slug: cve-critical
       level: critical
-      max_count: 0
+      options:
+        level: critical
+        max_count: 0
 
-  # Allow up to 10 high CVEs before flagging.
-  - provider: cve
-    rule: cve-count
-    slug: cve-high
-    level: warning
-    options:
-      level: high
-      max_count: 10
+    # Allow up to 10 high CVEs before flagging.
+    - provider: cve
+      rule: cve-count
+      slug: cve-high
+      level: warning
+      options:
+        level: high
+        max_count: 10
 
-  # Warn if fixable CVEs exist — no excuse for unpatched known issues.
-  - provider: cve
-    rule: fix-available
-    slug: cve-fixable
-    level: warning
-    options:
-      max_count: 0
+    # Warn if fixable CVEs exist — no excuse for unpatched known issues.
+    - provider: cve
+      rule: fix-available
+      slug: cve-fixable
+      level: warning
+      options:
+        max_count: 0
 
-  # ── Dockerfile quality ─────────────────────────────────────────────────────
+    # ── Dockerfile quality ─────────────────────────────────────────────────────
 
-  # Dockerfile must have zero hadolint errors.
-  - provider: hadolint
-    rule: severity-count
-    slug: dockerfile-errors
-    level: warning
-    options:
-      level: error
-      max_count: 0
+    # Dockerfile must have zero hadolint errors.
+    - provider: hadolint
+      rule: severity-count
+      slug: dockerfile-errors
+      level: warning
+      options:
+        level: error
+        max_count: 0
 
-  # ── Supply chain ───────────────────────────────────────────────────────────
+    # ── Supply chain ───────────────────────────────────────────────────────────
 
-  # Image must ship an SBOM (CycloneDX or SPDX).
-  - provider: sbom
-    rule: has-sbom
-    slug: has-sbom
-    level: warning
+    # Image must ship an SBOM (CycloneDX or SPDX).
+    - provider: sbom
+      rule: has-sbom
+      slug: has-sbom
+      level: warning
 
-  # Opt-in: block strong copyleft licenses. Disabled by default because standard
-  # Linux base images commonly include GPL packages.
-  - provider: sbom
-    rule: license-blocklist
-    slug: no-strong-copyleft
-    level: critical
-    enable: false
-    options:
-      blocklist:
-        - GPL-2.0
-        - GPL-2.0-only
-        - GPL-2.0-or-later
-        - GPL-3.0
-        - GPL-3.0-only
-        - GPL-3.0-or-later
-        - AGPL-1.0
-        - LGPL-2.1
-        - LGPL-3.0
+    # Opt-in: block strong copyleft licenses. Disabled by default because standard
+    # Linux base images commonly include GPL packages.
+    - provider: sbom
+      rule: license-blocklist
+      slug: no-strong-copyleft
+      level: critical
+      enable: false
+      options:
+        blocklist:
+          - GPL-2.0
+          - GPL-2.0-only
+          - GPL-2.0-or-later
+          - GPL-3.0
+          - GPL-3.0-only
+          - GPL-3.0-or-later
+          - AGPL-1.0
+          - LGPL-2.1
+          - LGPL-3.0
 
-  # ── Image age ──────────────────────────────────────────────────────────────
+    # ── Image age ──────────────────────────────────────────────────────────────
 
-  # Images must be rebuilt within 90 days.
-  - provider: freshness
-    rule: age
-    slug: age
-    level: info
-    options:
-      max_days: 90
+    # Images must be rebuilt within 90 days.
+    - provider: freshness
+      rule: age
+      slug: age
+      level: info
+      options:
+        max_days: 90
 ```
 
 **How scoring works:** `critical` rule failures deduct more from the score than
@@ -151,144 +161,147 @@ GitLab merge-request badges, and a security checklist. Adapted from the
 `regis bootstrap gitlab-ci` cookiecutter template.
 
 ```yaml
+# yaml-language-server: $schema=https://trivoallan.github.io/regis/schemas/playbook/v1alpha1/playbook.schema.json
 # playbook.yaml — full example with GitLab integration
 # Generated by: regis bootstrap gitlab-ci
 # Docs: https://trivoallan.github.io/regis/docs/concepts/playbooks
+apiVersion: regis.trivoallan.dev/v1alpha1
+kind: Playbook
+metadata:
+  name: production-container-policy
+  title: "Production Container Policy"
+  description: "Full security and compliance policy for production image releases."
+  labels:
+    app.kubernetes.io/version: "1.0.0"
+spec:
+  tiers:
+    - name: Gold
+      condition:
+        ">": [{ var: rules_summary.score }, 90]
+    - name: Silver
+      condition:
+        ">": [{ var: rules_summary.score }, 70]
+    - name: Bronze
+      condition:
+        ">": [{ var: rules_summary.score }, 50]
 
-schemaVersion: 1
-version: "1.0.0"
-name: "Production Container Policy"
-description: "Full security and compliance policy for production image releases."
+  rules:
+    # ── Vulnerabilities ────────────────────────────────────────────────────────
 
-tiers:
-  - name: Gold
-    condition:
-      ">": [{ var: rules_summary.score }, 90]
-  - name: Silver
-    condition:
-      ">": [{ var: rules_summary.score }, 70]
-  - name: Bronze
-    condition:
-      ">": [{ var: rules_summary.score }, 50]
-
-rules:
-  # ── Vulnerabilities ────────────────────────────────────────────────────────
-
-  - provider: cve
-    rule: cve-count
-    slug: cve-critical
-    level: critical
-    options:
+    - provider: cve
+      rule: cve-count
+      slug: cve-critical
       level: critical
-      max_count: 0
+      options:
+        level: critical
+        max_count: 0
 
-  - provider: cve
-    rule: cve-count
-    slug: cve-high
-    level: warning
-    options:
-      level: high
-      max_count: 10
+    - provider: cve
+      rule: cve-count
+      slug: cve-high
+      level: warning
+      options:
+        level: high
+        max_count: 10
 
-  - provider: cve
-    rule: fix-available
-    slug: cve-fixable
-    level: warning
+    - provider: cve
+      rule: fix-available
+      slug: cve-fixable
+      level: warning
 
-  # ── Runtime configuration ──────────────────────────────────────────────────
+    # ── Runtime configuration ──────────────────────────────────────────────────
 
-  # Image must not run as root.
-  - provider: oci
-    rule: user-blacklist
-    slug: no-root
-    level: critical
-    options:
-      blacklist:
-        - root
-        - "0"
+    # Image must not run as root.
+    - provider: oci
+      rule: user-blacklist
+      slug: no-root
+      level: critical
+      options:
+        blacklist:
+          - root
+          - "0"
 
-  # ── Image age ──────────────────────────────────────────────────────────────
+    # ── Image age ──────────────────────────────────────────────────────────────
 
-  - provider: freshness
-    rule: age
-    slug: age
-    level: info
-    options:
-      max_days: 90
+    - provider: freshness
+      rule: age
+      slug: age
+      level: info
+      options:
+        max_days: 90
 
-  # ── Supply chain ───────────────────────────────────────────────────────────
+    # ── Supply chain ───────────────────────────────────────────────────────────
 
-  - provider: sbom
-    rule: has-sbom
-    slug: has-sbom
-    level: warning
+    - provider: sbom
+      rule: has-sbom
+      slug: has-sbom
+      level: warning
 
-# ── Badges ─────────────────────────────────────────────────────────────────
-# Badges render on the Regis report. The GitLab integration surfaces them on
-# the project page and in merge requests.
+  # ── Badges ─────────────────────────────────────────────────────────────────
+  # Badges render on the Regis report. The GitLab integration surfaces them on
+  # the project page and in merge requests.
 
-badges:
-  - slug: cve-critical
-    scope: CVE
-    value: Critical
-    condition:
-      "!": [{ var: rules.cve-critical.passed }]
-    class: error
+  badges:
+    - slug: cve-critical
+      scope: CVE
+      value: Critical
+      condition:
+        "!": [{ var: rules.cve-critical.passed }]
+      class: error
 
-  - slug: cve-high
-    scope: CVE
-    value: High
-    condition:
-      "!": [{ var: rules.cve-high.passed }]
-    class: warning
+    - slug: cve-high
+      scope: CVE
+      value: High
+      condition:
+        "!": [{ var: rules.cve-high.passed }]
+      class: warning
 
-  - slug: freshness
-    scope: Freshness
-    value: Fresh
-    condition:
-      "==": [{ var: rules.age.passed }, true]
-    class: success
+    - slug: freshness
+      scope: Freshness
+      value: Fresh
+      condition:
+        "==": [{ var: rules.age.passed }, true]
+      class: success
 
-# ── GitLab integration ──────────────────────────────────────────────────────
+  # ── GitLab integration ──────────────────────────────────────────────────────
 
-integrations:
-  gitlab:
-    # Badges shown on the GitLab project overview page.
-    badges:
-      - cve-critical
-      - cve-high
-      - freshness
+  integrations:
+    gitlab:
+      # Badges shown on the GitLab project overview page.
+      badges:
+        - cve-critical
+        - cve-high
+        - freshness
 
-    # Checklist injected into merge request descriptions.
-    checklists:
-      - title: "Security Review"
-        items:
-          - label: Security review completed
-          - label: No critical vulnerabilities detected
-            show_if: { "!!": [{ var: rules.cve-critical }] }
-            check_if: { var: rules.cve-critical.passed }
-          - label: Image does not run as root
-            show_if: { "!!": [{ var: rules.no-root }] }
-            check_if: { var: rules.no-root.passed }
+      # Checklist injected into merge request descriptions.
+      checklists:
+        - title: "Security Review"
+          items:
+            - label: Security review completed
+            - label: No critical vulnerabilities detected
+              show_if: { "!!": [{ var: rules.cve-critical }] }
+              check_if: { var: rules.cve-critical.passed }
+            - label: Image does not run as root
+              show_if: { "!!": [{ var: rules.no-root }] }
+              check_if: { var: rules.no-root.passed }
 
-# ── Links ───────────────────────────────────────────────────────────────────
+  # ── Links ───────────────────────────────────────────────────────────────────
 
-links:
-  - label: Return to Merge Request
-    url: "{{ request.metadata['gitlab.mr_url'] }}"
-    condition: { "!!": [{ var: request.metadata.gitlab.mr_url }] }
+  links:
+    - label: Return to Merge Request
+      url: "{{ request.metadata['gitlab.mr_url'] }}"
+      condition: { "!!": [{ var: request.metadata.gitlab.mr_url }] }
 ```
 
-### Companion `inputs.schema.json` (optional)
+### Companion `meta.schema.json` (optional)
 
 If your team needs to pass structured metadata alongside the image (e.g., a security
-approval ticket or documentation URL), add an `inputs.schema.json` to the bundle:
+approval ticket or documentation URL), add a `meta.schema.json` to the bundle:
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
-  "required": ["security_approval_id"],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [{ "$ref": "https://regis/schemas/meta/well-known.schema.json" }],
   "properties": {
     "security_approval_id": {
       "type": "string",
@@ -299,7 +312,8 @@ approval ticket or documentation URL), add an `inputs.schema.json` to the bundle
       "format": "uri",
       "description": "URL to the security design document (optional)"
     }
-  }
+  },
+  "required": ["security_approval_id"]
 }
 ```
 
@@ -308,7 +322,7 @@ Pass inputs at analysis time:
 ```bash
 regis analyze \
   --playbook ./production-policy \
-  --input security_approval_id=SEC-1234 \
-  --input security_doc_url=https://wiki.example.com/sec/SEC-1234 \
+  -m security_approval_id=SEC-1234 \
+  -m security_doc_url=https://wiki.example.com/sec/SEC-1234 \
   nginx:1.27
 ```

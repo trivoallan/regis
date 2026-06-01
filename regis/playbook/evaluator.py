@@ -194,7 +194,7 @@ def evaluate(
     result: dict[str, Any] = {
         "playbook_name": playbook.get("name", "unnamed"),
         "playbook_version": playbook.get("version"),
-        "schema_version": playbook.get("schemaVersion"),
+        "api_version": playbook.get("apiVersion"),
         "score": (
             round(total_passed_all / total_scorecards_all * 100)
             if total_scorecards_all

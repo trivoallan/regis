@@ -1,34 +1,32 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/trivoallan/regis/main/regis/(reference/schemas/playbook.schema.json
-name: "{{ cookiecutter.project_name }}"
-description: "{{ cookiecutter.description }}"
-
-pages:
-  - title: Overview
-    slug: index
-    sections:
-      - name: Summary
-        widgets:
-          - label: Compliance Score
-            value: "{{ '{{' }} playbooks.0.score {{ '}}' }}%"
-          - label: Passed Scorecards
-            value: "{{ '{{' }} playbooks.0.passed_scorecards {{ '}}' }} / {{ '{{' }} playbooks.0.total_scorecards {{ '}}' }}"
-
-      - name: Image Details
-        widgets:
-          - label: Registry
-            value: "{{ '{{' }} request.registry {{ '}}' }}"
-          - label: Repository
-            value: "{{ '{{' }} request.repository {{ '}}' }}"
-          - label: Tag
-            value: "{{ '{{' }} request.tag {{ '}}' }}"
-
-  - title: Security Checks
-    slug: security
-    sections:
-      - name: Vulnerabilities
-        widgets:
-          - template: analyzers/cve/cards.html
-          - template: analyzers/cve/table.html
-            options:
-              title: Critical & High Vulnerabilities
-              limit: 20
+# yaml-language-server: $schema=https://raw.githubusercontent.com/trivoallan/regis/main/regis/schemas/playbook/v1alpha1/playbook.schema.json
+apiVersion: regis.trivoallan.dev/v1alpha1
+kind: Playbook
+metadata:
+  name: "{{ cookiecutter.project_slug }}"
+  title: "{{ cookiecutter.project_name }}"
+  description: "{{ cookiecutter.description }}"
+  labels:
+    app.kubernetes.io/version: "1.0.0"
+spec:
+  tiers:
+    - name: Gold
+      condition:
+        ">": [{ var: rules_summary.score }, 90]
+    - name: Silver
+      condition:
+        ">": [{ var: rules_summary.score }, 70]
+    - name: Bronze
+      condition:
+        ">": [{ var: rules_summary.score }, 50]
+  rules:
+    - provider: cve
+      rule: cve-count
+      slug: cve-critical
+      level: critical
+      options:
+        level: critical
+        max_count: 0
+    - provider: sbom
+      rule: has-sbom
+      slug: has-sbom
+      level: warning

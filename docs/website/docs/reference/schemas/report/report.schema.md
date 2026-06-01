@@ -365,7 +365,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------- |
 | + [playbook_name](#playbooks_items_playbook_name )         | No      | string          | No         | -          | Identifier of the playbook that was executed.                             |
 | - [playbook_version](#playbooks_items_playbook_version )   | No      | string or null  | No         | -          | SemVer of the playbook that produced this report.                         |
-| - [schema_version](#playbooks_items_schema_version )       | No      | integer or null | No         | -          | schemaVersion of the playbook format that produced this report.           |
+| - [api_version](#playbooks_items_api_version )             | No      | string or null  | No         | -          | apiVersion of the playbook that produced this result.                     |
 | - [sidebar](#playbooks_items_sidebar )                     | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                            |
 | - [version](#playbooks_items_version )                     | No      | string or null  | No         | -          | Version of regis that generated this report.                              |
 | - [tier](#playbooks_items_tier )                           | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions. |
@@ -395,13 +395,13 @@ Must be one of:
 
 **Description:** SemVer of the playbook that produced this report.
 
-#### <a name="playbooks_items_schema_version"></a>10.1.3. Property `schema_version`
+#### <a name="playbooks_items_api_version"></a>10.1.3. Property `api_version`
 
-|          |                   |
-| -------- | ----------------- |
-| **Type** | `integer or null` |
+|          |                  |
+| -------- | ---------------- |
+| **Type** | `string or null` |
 
-**Description:** schemaVersion of the playbook format that produced this report.
+**Description:** apiVersion of the playbook that produced this result (e.g. "regis.trivoallan.dev/v1alpha1").
 
 #### <a name="playbooks_items_sidebar"></a>10.1.4. Property `sidebar`
 

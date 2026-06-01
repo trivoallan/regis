@@ -9,6 +9,17 @@ from click.testing import CliRunner
 
 from regis.cli import main
 
+# Minimal valid envelope fixture (reused across tests).
+_VALID_ENVELOPE = (
+    "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+    "kind: Playbook\n"
+    "metadata:\n"
+    "  name: minimal\n"
+    "  labels:\n"
+    '    app.kubernetes.io/version: "1.0.0"\n'
+    "spec: {}\n"
+)
+
 
 class TestPlaybookValidate:
     def test_validate_built_in_default_bundle(self):
@@ -21,8 +32,14 @@ class TestPlaybookValidate:
 
     def test_validate_missing_required_name_field(self, tmp_path: Path):
         bad = tmp_path / "bad.yaml"
+        # Envelope without metadata.name — schema requires it.
         bad.write_text(
-            'schemaVersion: 1\nversion: "1.0.0"\ndescription: missing-name\n',
+            "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+            "kind: Playbook\n"
+            "metadata:\n"
+            "  labels:\n"
+            '    app.kubernetes.io/version: "1.0.0"\n'
+            "spec: {}\n",
             encoding="utf-8",
         )
         runner = CliRunner()
@@ -32,11 +49,16 @@ class TestPlaybookValidate:
 
     def test_validate_additional_property_rejected(self, tmp_path: Path):
         bad = tmp_path / "extra.yaml"
+        # Extra property at the envelope root — additionalProperties: false.
         bad.write_text(
             textwrap.dedent("""
-                schemaVersion: 1
-                version: "1.0.0"
-                name: with-extras
+                apiVersion: regis.trivoallan.dev/v1alpha1
+                kind: Playbook
+                metadata:
+                  name: with-extras
+                  labels:
+                    app.kubernetes.io/version: "1.0.0"
+                spec: {}
                 foo: bar
                 """).strip(),
             encoding="utf-8",
@@ -64,33 +86,63 @@ class TestPlaybookValidate:
 
     def test_validate_minimal_valid_playbook(self, tmp_path: Path):
         ok = tmp_path / "min.yaml"
-        ok.write_text(
-            'schemaVersion: 1\nversion: "1.0.0"\nname: minimal\n', encoding="utf-8"
-        )
+        ok.write_text(_VALID_ENVELOPE, encoding="utf-8")
         runner = CliRunner()
         result = runner.invoke(main, ["playbook", "validate", str(ok)])
         assert result.exit_code == 0
         assert "is valid" in result.output
 
-    def test_validate_reports_schema_version_and_version(self, tmp_path: Path):
+    def test_validate_reports_api_version_and_version(self, tmp_path: Path):
         playbook = tmp_path / "playbook.yaml"
         playbook.write_text(
-            'schemaVersion: 1\nversion: "1.2.3"\nname: SchemaVersionTest\n',
+            "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+            "kind: Playbook\n"
+            "metadata:\n"
+            "  name: apiversiontest\n"
+            "  labels:\n"
+            '    app.kubernetes.io/version: "1.2.3"\n'
+            "spec: {}\n",
             encoding="utf-8",
         )
         runner = CliRunner()
         result = runner.invoke(main, ["playbook", "validate", str(playbook)])
         assert result.exit_code == 0, result.output
-        assert "schemaVersion=1" in result.output
+        assert "apiVersion=regis.trivoallan.dev/v1alpha1" in result.output
+        assert "kind=Playbook" in result.output
         assert "version=1.2.3" in result.output
 
-    def test_validate_fails_on_missing_schema_version(self, tmp_path: Path):
+    def test_validate_fails_on_missing_api_version(self, tmp_path: Path):
         playbook = tmp_path / "playbook.yaml"
         playbook.write_text(
-            'version: "1.0.0"\nname: NoSchemaVersion\n',
+            "kind: Playbook\n"
+            "metadata:\n"
+            "  name: no-api-version\n"
+            "  labels:\n"
+            '    app.kubernetes.io/version: "1.0.0"\n'
+            "spec: {}\n",
             encoding="utf-8",
         )
         runner = CliRunner()
         result = runner.invoke(main, ["playbook", "validate", str(playbook)])
         assert result.exit_code == 1
-        assert "schemaVersion" in result.output
+        assert "apiVersion" in result.output
+
+
+def test_validate_prints_api_version(tmp_path) -> None:
+    from click.testing import CliRunner
+
+    from regis.commands.playbook import playbook_group
+
+    pb = tmp_path / "playbook.yaml"
+    pb.write_text(
+        "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+        "kind: Playbook\n"
+        "metadata:\n  name: x\n  labels:\n"
+        '    app.kubernetes.io/version: "1.0.0"\n'
+        "spec: {}\n",
+        encoding="utf-8",
+    )
+    result = CliRunner().invoke(playbook_group, ["validate", str(pb)])
+    assert result.exit_code == 0
+    assert "regis.trivoallan.dev/v1alpha1" in result.output
+    assert "Playbook" in result.output

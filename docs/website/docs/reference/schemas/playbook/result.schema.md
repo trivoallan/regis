@@ -13,7 +13,7 @@
 | ------------------------------------------ | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------- |
 | + [playbook_name](#playbook_name )         | No      | string          | No         | -          | Identifier of the playbook that was executed.                             |
 | - [playbook_version](#playbook_version )   | No      | string or null  | No         | -          | SemVer of the playbook that produced this report.                         |
-| - [schema_version](#schema_version )       | No      | integer or null | No         | -          | schemaVersion of the playbook format that produced this report.           |
+| - [api_version](#api_version )             | No      | string or null  | No         | -          | apiVersion of the playbook that produced this result.                     |
 | - [sidebar](#sidebar )                     | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                            |
 | - [version](#version )                     | No      | string or null  | No         | -          | Version of regis that generated this report.                              |
 | - [tier](#tier )                           | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions. |
@@ -43,13 +43,13 @@
 
 **Description:** SemVer of the playbook that produced this report.
 
-## <a name="schema_version"></a>3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `schema_version`
+## <a name="api_version"></a>3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `api_version`
 
-|          |                   |
-| -------- | ----------------- |
-| **Type** | `integer or null` |
+|          |                  |
+| -------- | ---------------- |
+| **Type** | `string or null` |
 
-**Description:** schemaVersion of the playbook format that produced this report.
+**Description:** apiVersion of the playbook that produced this result (e.g. "regis.trivoallan.dev/v1alpha1").
 
 ## <a name="sidebar"></a>4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `sidebar`
 

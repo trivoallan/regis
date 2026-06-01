@@ -115,7 +115,15 @@ class TestCliRulesListFilters:
         runner = CliRunner()
         # 'warning' may have zero rules in defaults — accept either empty or filtered output
         result = runner.invoke(
-            main, ["rules", "list", "--filter-level", "info", "--filter-provider", "nonexistent-provider"]
+            main,
+            [
+                "rules",
+                "list",
+                "--filter-level",
+                "info",
+                "--filter-provider",
+                "nonexistent-provider",
+            ],
         )
         assert result.exit_code == 0
         assert "No rules found." in result.output

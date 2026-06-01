@@ -12,6 +12,11 @@
 
 ## Completed (Recent)
 
+- **Playbook format → enveloppe Kubernetes (2026-06-01, PR #640)** — breaking, pré-v1:
+  - `apiVersion: regis.trivoallan.dev/v1alpha1` / `kind: Playbook` / `metadata` (style Backstage) / `spec` ; remplace l'entier `schemaVersion`. Le loader valide contre le nouveau schéma `v1alpha1` puis normalise vers la forme aplatie interne (consommateurs inchangés, approche A) ; ancien schéma `v1` supprimé.
+  - `regis playbook upgrade` migre les playbooks legacy à plat (drop `pages`/`sections`/`sidebar`, idempotent) ; `validate` affiche apiVersion/kind. Default + 2 cookiecutters + skill `/create-playbook` + docs migrés. Audit rapport `schema_version` → `api_version` (le `schemaVersion` de l'enveloppe report reste intact).
+  - 10 tâches TDD via subagent-driven-development ; suite 539 PASS, couverture 91.66 % ; `feat(playbook)!` → 0.33 → 0.34.
+
 - **Dashboard decouple — Phase 1 (2026-06-01)** — standalone repo [`trivoallan/regis-dashboard`](https://github.com/trivoallan/regis-dashboard):
   - 1a: `git filter-repo` extraction (history preserved) → own GitHub Pages, `v0.1.0`, release-please + PAT-triggered CI + branch protection.
   - 1b (PR #2): TS CLI (`render`/`serve`/`archive add|configure`/`bootstrap archive`) + `node:20-alpine` Docker image (GHCR on `v*` tags) + vitest.

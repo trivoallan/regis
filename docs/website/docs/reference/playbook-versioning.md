@@ -4,39 +4,40 @@ sidebar_position: 4
 
 # Playbook Versioning
 
-Every Regis playbook declares two version-related fields at its root:
+Every Regis playbook uses a Kubernetes-style resource envelope. Two fields carry version information:
 
-| Field           | Type    | Required | Purpose                                              |
-| --------------- | ------- | -------- | ---------------------------------------------------- |
-| `schemaVersion` | integer | yes      | Identifies the format version of the playbook.       |
-| `version`       | string  | yes      | SemVer of the playbook bundle (`MAJOR.MINOR.PATCH`). |
+| Field                                          | Required | Purpose                                                                     |
+| ---------------------------------------------- | -------- | --------------------------------------------------------------------------- |
+| `apiVersion`                                   | yes      | Identifies the playbook format. Must equal `regis.trivoallan.dev/v1alpha1`. |
+| `metadata.labels["app.kubernetes.io/version"]` | yes      | SemVer of your playbook bundle (`MAJOR.MINOR.PATCH`).                       |
 
 ## Example
 
 ```yaml
-schemaVersion: 1
-version: "1.0.0"
-name: My Playbook
-# … rules, tiers, badges, …
+apiVersion: regis.trivoallan.dev/v1alpha1
+kind: Playbook
+metadata:
+  name: my-playbook
+  title: My Playbook
+  labels:
+    app.kubernetes.io/version: "1.0.0"
+spec:
+  # … rules, tiers, badges, …
 ```
 
-## `schemaVersion`
+## `apiVersion`
 
-A monotonically increasing integer. Each bump is **breaking** — Regis ships
-with a fixed set of supported `schemaVersion` values, and any playbook
-declaring an unsupported value fails to load with a clear error.
+The `apiVersion` field encodes the API group and version of the playbook format.
+The only supported value is `regis.trivoallan.dev/v1alpha1`.
 
-Purely **additive** changes to the schema (new optional fields, new JSON
-Logic operators) do **not** bump `schemaVersion`.
+Future breaking changes to the schema will introduce a new `apiVersion` (e.g.
+`v1beta1`, `v1`). Regis will reject playbooks declaring an unsupported
+`apiVersion` with a clear error.
 
-### Changelog
+Purely **additive** changes to the schema (new optional fields, new JSON Logic
+operators) do **not** bump the `apiVersion`.
 
-#### Version 1 (current)
-
-Initial versioned schema. The authoritative source is
-[`definition.schema.json`](./schemas/playbook/v1/definition.schema.md).
-
-## `version`
+## `metadata.labels["app.kubernetes.io/version"]`
 
 A SemVer string (`MAJOR.MINOR.PATCH`, no pre-release or build metadata).
 This is the version of **your playbook bundle**, independent from the Regis
@@ -51,25 +52,19 @@ Suggested convention:
 Regis enforces the SemVer format but not the discipline — the convention
 above is yours to follow.
 
-## Validation errors
+## Validation
 
-The underlying exception class is `regis.playbook.loader.PlaybookVersionError` for
-programmatic catchers. `regis playbook validate` surfaces just the message body:
-
-When `schemaVersion` is missing:
-
-```text
-playbook 'path/to/playbook.yaml' is missing required field 'schemaVersion'.
-Add `schemaVersion: 1` at the top of the file.
-Supported versions: [1].
+```bash
+regis playbook validate path/to/playbook.yaml
 ```
 
-When `schemaVersion` is set to an unknown value (e.g. when an old Regis
-sees a playbook authored for a future version):
+A successful run prints:
 
 ```text
-playbook 'path/to/playbook.yaml' declares schemaVersion=2 but this regis (vX.Y.Z) only supports [1]. Upgrade regis or use a compatible playbook.
+  ✓ path/to/playbook.yaml is valid (apiVersion=regis.trivoallan.dev/v1alpha1, kind=Playbook, version=1.0.0).
 ```
+
+If validation fails, the error message names the offending field and suggests the fix.
 
 ## Report metadata
 
@@ -80,15 +75,22 @@ traceability:
 {
   "playbook_name": "My Playbook",
   "playbook_version": "1.2.3",
-  "schema_version": 1,
+  "api_version": "regis.trivoallan.dev/v1alpha1",
   "version": "0.33.0"
 }
 ```
 
 Where `version` at the top level is the **regis binary** version (set by
-`regis analyze`), and `playbook_version` / `schema_version` come from the
+`regis analyze`), and `playbook_version` / `api_version` come from the
 playbook itself.
 
 ## Migrating an existing playbook
 
-See the [migration guide](../upgrade/playbook-schema-v1.md).
+If your `playbook.yaml` still uses the old `schemaVersion`/`name` flat format,
+run the automated migration:
+
+```bash
+regis playbook upgrade path/to/playbook.yaml
+```
+
+See the [migration guide](../upgrade/playbook-schema-v1.md) for details.
