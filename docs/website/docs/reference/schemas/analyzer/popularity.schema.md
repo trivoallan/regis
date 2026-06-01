@@ -96,4 +96,4 @@ Specific value: `"popularity"`
 **Description:** True if this is an official Docker Hub repository.
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-05-31 at 15:05:10 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-01 at 07:29:26 +0000
