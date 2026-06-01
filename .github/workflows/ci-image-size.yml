@@ -11,7 +11,6 @@ on:
       - pyproject.toml
       - Pipfile
       - Pipfile.lock
-      - apps/dashboard/**
       - .github/workflows/ci-image-size.yml
   workflow_dispatch:
 

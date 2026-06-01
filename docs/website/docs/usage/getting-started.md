@@ -49,16 +49,16 @@ If you plan to use automated documentation snapshots or the archive feature on a
 Run your first analysis against a public image to see Regis in action:
 
 ```bash
-regis analyze alpine:latest --evaluate --site --open
+regis analyze alpine:latest --evaluate --html
 ```
 
 This command:
 
 - Runs all built-in [analyzers](../concepts/analyzers.md) against the `alpine:latest` image
 - Evaluates results against the default [playbook](../concepts/playbooks.md)
-- Generates an interactive HTML [report](../concepts/reports.md) and opens it in your browser
+- Writes a self-contained `report.html` you can open in any browser
 
-You'll see a dashboard with a compliance score, vulnerability findings, best practice checks, and image metadata. See [Scoring](../concepts/scoring.md) to understand how scores are calculated.
+Open the generated `report.html` to see a compliance score, vulnerability findings, best practice checks, and image metadata. See [Scoring](../concepts/scoring.md) to understand how scores are calculated. For an interactive, filterable dashboard and multi-archive browsing, see the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project.
 
 **Next steps:**
 

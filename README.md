@@ -108,10 +108,17 @@ These artifacts are uploaded by the release/CD workflow as GitHub Actions workfl
 
 ---
 
-> **Breaking change in v0.32.0** — The published image no longer bundles
-> Node.js. `regis bootstrap archive --dev` and `--repo` must now be run
-> from a host that has Node 20+ and pnpm installed (install via `nvm`,
-> `fnm`, or `brew install node`). All other commands work unchanged.
+> **Breaking change in v0.33.0** — The interactive dashboard, the multi-report
+> archive browser, and archive-site scaffolding were removed from the core and
+> now live in the standalone
+> [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project
+> (`regis-dashboard render|serve|archive add|archive configure|bootstrap archive`).
+> The `regis dashboard` command, the `regis archive add|configure` commands, the
+> `bootstrap archive` subcommand, and `analyze --site` (with `--base-url`/`--open`
+> and the `html-site` format) were removed. Use `regis analyze --json` (the
+> `report.json` contract), `regis analyze --html` (self-contained `report.html`),
+> and `regis analyze --archive <dir>` (archive data the standalone dashboard
+> consumes) instead.
 
 ## GitHub Action
 

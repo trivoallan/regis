@@ -159,18 +159,15 @@ Once the analysis job completes, the pipeline runs the `push_results` reporting 
 
 ### 4. Viewing Reports as Artifacts
 
-While GitLab Pages is great for the latest report, you often want to view the specific report for a given job. Our standard template exposes the `reports/` directory as an artifact.
+You often want to view the specific report for a given job. Our standard template exposes the `reports/` directory as an artifact.
 
-When viewing a Docusaurus report as an artifact, the `baseUrl` must be set correctly. The `regis` command in our template handles this automatically:
+The `--html` flag writes a self-contained, single-file `report.html`:
 
 ```bash
-# Calculate the base URL dynamically for GitLab artifact viewer
-REPORT_BASE_URL="/${CI_PROJECT_PATH}/-/jobs/${CI_JOB_ID}/artifacts/file/reports/${CI_JOB_ID}/"
-
-regis analyze "$IMAGE_URL" --site --base-url "$REPORT_BASE_URL" ...
+regis analyze "$IMAGE_URL" --html ...
 ```
 
-This ensures that all interactive elements and stylesheets load correctly directly from the GitLab UI.
+Because the report is a single self-contained file, it loads correctly straight from the GitLab artifact viewer — no base URL configuration needed. For an interactive, filterable dashboard and multi-archive browsing, point the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project at the `report.json` (or `--archive` data) the job produces.
 
 ### 5. Governance
 

@@ -56,7 +56,7 @@ C4Container
         Container(cli, "CLI", "Python · Click", "Entry point: parses arguments and orchestrates the analysis workflow.")
         Container(engine, "Analysis Engine", "Python", "Manages the analyzer lifecycle, shared auth, and result aggregation.")
         Container(playbook, "Playbook Engine", "Python · JSON Logic", "Evaluates consolidated metadata against user-defined security rules.")
-        Container(reporting, "Reporting Engine", "React · Docusaurus", "Generates interactive SPA dashboards and structured JSON reports.")
+        Container(reporting, "Reporting Engine", "Python", "Generates the structured report.json contract and a self-contained report.html.")
         Container(connectors, "Registry Connectors", "Python", "Delegates extraction tasks to external security tools via subprocess.")
     }
 
@@ -129,7 +129,7 @@ The playbook engine evaluates consolidated analyzer results against user-defined
 ### Reporting Layer
 
 The reporting layer transforms the analysis and playbook results into high-quality, actionable formats.
-It leverages a modern **Single Page Application (SPA)** architecture built with **Docusaurus and React** to produce rich, interactive dashboards for human review. It also generates structured JSON (see [Report Schema](../reference/schemas/report/report.schema.md)) for automated processing.
+It produces a structured `report.json` (see [Report Schema](../reference/schemas/report/report.schema.md)) — the machine-readable contract for automated processing — and a self-contained, single-file `report.html` for human review. For a rich, interactive dashboard and multi-archive browsing, the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project consumes the same `report.json` contract.
 
 ## Technology Stack
 

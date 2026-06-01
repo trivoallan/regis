@@ -12,31 +12,18 @@ You can analyze any public container image using the built-in [analyzers](../con
 regis analyze nginx:latest
 ```
 
-## Generating a Web Report
+## Generating an HTML Report
 
-To generate a rich, interactive HTML report alongside the JSON report, use the `--site` (or `-s`) flag:
-
-```bash
-regis analyze nginx:latest --site --open
-```
-
-The `--open` flag will automatically launch your default browser to view the generated dashboard.
-
-`regis` now uses a modern **Single Page Application (SPA)** based on Docusaurus to provide an exceptional viewing experience. See [Reports](../concepts/reports.md) for details on the report architecture.
-
-Reports are written to the `reports/` directory by default (e.g., `reports/docker.io/library/nginx/sha256-.../index.html`).
-
-### Serving from Subpaths
-
-Because the report is an SPA, it needs to know its base URL if it's not served from the root of a domain. Use the `--base-url` flag for this:
+To generate a self-contained HTML report alongside the JSON report, use the `--html` flag:
 
 ```bash
-# Example for GitLab artifacts
-regis analyze nginx:latest --site --base-url "/group/project/-/jobs/123/artifacts/file/reports/123/"
+regis analyze nginx:latest --html
 ```
+
+This writes a single, portable `report.html` file — no server or base URL configuration required. Open it in any browser or ship it as a CI artifact. See [Reports](../concepts/reports.md) for details on the report architecture.
 
 :::tip
-When using the [GitLab integration](./integrations/gitlab.md), this base URL is calculated automatically by our standard CI template.
+For an interactive, filterable dashboard and multi-archive browsing, use the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project. It consumes the `report.json` and `--archive` data the core CLI produces.
 :::
 
 ## Advanced Tools

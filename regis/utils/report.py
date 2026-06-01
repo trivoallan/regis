@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import logging
-import webbrowser
 from datetime import datetime
 from importlib import resources
 from pathlib import Path
@@ -167,42 +166,39 @@ def evaluate_playbooks(
             )
             playbook_results.append(pb_result)
 
-            if "html-site" not in formats or len(formats) > 1:
-                summary_parts = []
-                for section in pb_result.get("sections", []):
-                    for lv_name, stats in section.get("levels_summary", {}).items():
-                        summary_parts.append(
-                            f"{lv_name}: {stats['passed']}/{stats['total']}"
-                        )
+            summary_parts = []
+            for section in pb_result.get("sections", []):
+                for lv_name, stats in section.get("levels_summary", {}).items():
+                    summary_parts.append(
+                        f"{lv_name}: {stats['passed']}/{stats['total']}"
+                    )
 
-                summary_str = " · ".join(summary_parts)
-                rs = pb_result.get("rules_summary", {})
-                passed_rules = rs.get("passed", [])
-                total_rules = rs.get("total", [])
-                passed_count = (
-                    len(passed_rules)
-                    if isinstance(passed_rules, list)
-                    else passed_rules
-                )
-                total_count = (
-                    len(total_rules) if isinstance(total_rules, list) else total_rules
-                )
-                rules_score = rs.get("score", pb_result["score"])
-                _echo_info(
-                    f"    {summary_str} "
-                    f"({passed_count}/{total_count} rules passed, "
-                    f"{rules_score}%)\n",
-                    err=True,
-                )
+            summary_str = " · ".join(summary_parts)
+            rs = pb_result.get("rules_summary", {})
+            passed_rules = rs.get("passed", [])
+            total_rules = rs.get("total", [])
+            passed_count = (
+                len(passed_rules) if isinstance(passed_rules, list) else passed_rules
+            )
+            total_count = (
+                len(total_rules) if isinstance(total_rules, list) else total_rules
+            )
+            rules_score = rs.get("score", pb_result["score"])
+            _echo_info(
+                f"    {summary_str} "
+                f"({passed_count}/{total_count} rules passed, "
+                f"{rules_score}%)\n",
+                err=True,
+            )
 
-                if show_rules and pb_result.get("rules"):
-                    _echo_info("    Rules Evaluation Summary:", err=True)
-                    for r in pb_result["rules"]:
-                        icon = "✅" if r["passed"] else "❌"
-                        if r["status"] == "incomplete":
-                            icon = "⚠️"
-                        _echo_info(f"      {icon} [{r['slug']}] {r['message']}")
-                    _echo_info("", err=True)
+            if show_rules and pb_result.get("rules"):
+                _echo_info("    Rules Evaluation Summary:", err=True)
+                for r in pb_result["rules"]:
+                    icon = "✅" if r["passed"] else "❌"
+                    if r["status"] == "incomplete":
+                        icon = "⚠️"
+                    _echo_info(f"      {icon} [{r['slug']}] {r['message']}")
+                _echo_info("", err=True)
 
     return playbook_results
 
@@ -333,67 +329,11 @@ def render_and_save_reports(
     output_dir_template: str | None,
     theme: str,
     pretty: bool,
-    base_url: str = "/",
-    open_browser: bool = False,
     sections: str = "all",
 ) -> None:
     """Render and save reports in requested formats."""
     for fmt in formats:
-        if fmt == "html-site":
-            from regis.report.docusaurus import build_report_site
-
-            out_dir = format_output_path(output_dir_template or ".", report, "json")
-
-            try:
-                build_report_site(
-                    report=report,
-                    output_dir=out_dir,
-                    base_url=base_url,
-                    pretty=pretty,
-                )
-            except RuntimeError as exc:
-                raise click.ClickException(str(exc)) from exc
-
-            _echo_info(
-                f"  Report site generated at {out_dir}",
-                err=True,
-            )
-
-            if open_browser:
-                import http.server
-                import socket
-                import socketserver
-
-                index_file = out_dir / "index.html"
-                if not index_file.exists():
-                    click.echo(
-                        f"  Warning: Could not find index.html at {out_dir}. Browser not opened.",
-                        err=True,
-                    )
-                    return
-
-                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                    s.bind(("", 0))
-                    port = s.getsockname()[1]
-
-                url = f"http://localhost:{port}"
-                click.echo(f"  Starting local server at {url}", err=True)
-                click.echo("  Press Ctrl+C to stop serving.", err=True)
-
-                class ReportHandler(http.server.SimpleHTTPRequestHandler):
-                    """Serve the generated report directory over HTTP for local preview."""
-
-                    def __init__(self, *args, directory=str(out_dir), **kwargs):
-                        super().__init__(*args, directory=directory, **kwargs)
-
-                with socketserver.TCPServer(("", port), ReportHandler) as httpd:
-                    webbrowser.open(url)
-                    try:
-                        httpd.serve_forever()
-                    except KeyboardInterrupt:
-                        click.echo("\n  Stopping server...", err=True)
-                        httpd.shutdown()
-        elif fmt == "html":
+        if fmt == "html":
             from regis.report.html import render_html_single
 
             rendered = render_html_single(report, sections=sections)

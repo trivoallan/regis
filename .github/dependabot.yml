@@ -7,17 +7,6 @@ updates:
     open-pull-requests-limit: 0
 
   - package-ecosystem: npm
-    directory: /apps/dashboard
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    ignore:
-      # Tailwind v4 is a breaking change (PostCSS plugin split, config format changed)
-      # Pin to v3 until a proper migration is done
-      - dependency-name: tailwindcss
-        versions: [">=4"]
-
-  - package-ecosystem: npm
     directory: /docs/website
     schedule:
       interval: weekly

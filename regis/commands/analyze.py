@@ -199,13 +199,6 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     help="Arbitrary metadata in key=value format. Can be repeated. Supports dot notation (e.g. ci.job_id=123).",
 )
 @click.option(
-    "-s",
-    "--site",
-    is_flag=True,
-    default=False,
-    help="Generate HTML report site.",
-)
-@click.option(
     "--html",
     "html_single",
     is_flag=True,
@@ -264,18 +257,6 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     help="Minimum rule level that triggers a command failure (default: critical).",
 )
 @click.option(
-    "--base-url",
-    default="/",
-    help="Base URL for the HTML report site (useful for GitHub/GitLab Pages or artifacts).",
-)
-@click.option(
-    "--open",
-    "open_browser",
-    is_flag=True,
-    default=False,
-    help="Open the HTML report in the default browser.",
-)
-@click.option(
     "--archive",
     "-A",
     "archive_dir",
@@ -316,7 +297,6 @@ def analyze(
     output_template: str | None,
     output_dir_template: str | None,
     pretty: bool,
-    site: bool,
     html_single: bool,
     sections: str,
     theme: str,
@@ -327,8 +307,6 @@ def analyze(
     evaluate: bool = False,
     fail: bool = False,
     fail_level: str = "critical",
-    base_url: str = "/",
-    open_browser: bool = False,
     archive_dir: Path | None = None,
     max_workers: int = 4,
     rerun: str | None = None,
@@ -449,14 +427,12 @@ def analyze(
         logger.debug("Failed to fetch digest: %s", exc)
         digest = ref.tag
 
-    if (site or html_single) and archive_dir:
-        raise click.UsageError("--site/--html and --archive are mutually exclusive.")
+    if html_single and archive_dir:
+        raise click.UsageError("--html and --archive are mutually exclusive.")
 
     formats = []
     if not archive_dir:
         formats.append("json")
-    if site:
-        formats.append("html-site")
     if html_single:
         formats.append("html")
     if markdown:
@@ -675,13 +651,20 @@ def analyze(
             output_dir_template,
             theme,
             pretty,
-            base_url=base_url,
-            open_browser=open_browser,
             sections=sections,
         )
 
     if not archive_dir:
         render_mr_templates(final_report, output_dir_template)
+
+    # Discoverability: the interactive viewer now ships separately. Only point to
+    # it for the plain machine-report path (not --html, which is self-contained,
+    # and not --archive, which feeds the standalone dashboard directly).
+    if not html_single and not archive_dir:
+        _info(
+            "  Explore interactively: https://github.com/trivoallan/regis-dashboard",
+            quiet=quiet,
+        )
 
     # Only print the summary when the user explicitly requested a playbook —
     # avoids changing stdout for default runs that auto-load the built-in playbook.
@@ -735,13 +718,6 @@ def analyze(
     help="Pretty-print the JSON output (default: on).",
 )
 @click.option(
-    "-s",
-    "--site",
-    is_flag=True,
-    default=False,
-    help="Generate HTML report site.",
-)
-@click.option(
     "--html",
     "html_single",
     is_flag=True,
@@ -764,28 +740,13 @@ def analyze(
     type=click.Choice(["default"], case_sensitive=False),
     help="Theme to use for HTML report (default: default).",
 )
-@click.option(
-    "--base-url",
-    default="/",
-    help="Base URL for the HTML report site.",
-)
-@click.option(
-    "--open",
-    "open_browser",
-    is_flag=True,
-    default=False,
-    help="Open the HTML report in the default browser.",
-)
 def evaluate_cmd(
     input_path: str,
     playbook_paths: tuple[str, ...],
     output_template: str | None,
     output_dir_template: str | None,
     pretty: bool,
-    site: bool,
     theme: str,
-    base_url: str = "/",
-    open_browser: bool = False,
     html_single: bool = False,
     sections: str = "all",
 ) -> None:
@@ -808,8 +769,6 @@ def evaluate_cmd(
         )
 
     formats = ["json"]
-    if site:
-        formats.append("html-site")
     if html_single:
         formats.append("html")
 
@@ -826,8 +785,6 @@ def evaluate_cmd(
         output_dir_template,
         theme,
         pretty,
-        base_url=base_url,
-        open_browser=open_browser,
         sections=sections,
     )
 

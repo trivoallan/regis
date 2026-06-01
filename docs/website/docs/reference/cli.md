@@ -34,12 +34,9 @@ _Output options:_
 
 - `-o, --output TEMPLATE`: Output filename template (e.g. `report.{format}`).
 - `-D, --output-dir TEMPLATE`: Base directory template for output files (default: `reports/{registry}/{repository}/{digest}`).
-- `-s, --site`: Generate the HTML report site.
 - `--html`: Generate a self-contained single-file `report.html`.
 - `--sections all|summary|<slugs>`: Sections to include in the HTML report. Only applies to `--html`.
 - `--markdown`: Also emit a Markdown summary report (`report.md`).
-- `--base-url PATH`: Base URL for the HTML report site (useful for GitHub/GitLab Pages or artifacts).
-- `--open`: Open the HTML report in the default browser automatically.
 - `--pretty/--no-pretty`: Pretty-print the JSON output (default: on).
 
 _Evaluation options:_
@@ -97,14 +94,6 @@ The most frequently repeated `analyze` flags can be set via the environment. CLI
 | `REGIS_OUTPUT_DIR`  | `-D, --output-dir` |
 | `REGIS_MAX_WORKERS` | `--max-workers`    |
 
-### `archive add`
-
-Add an existing `report.json` to an archive directory.
-
-```bash
-regis archive add REPORT_PATH --archive-dir DIR
-```
-
 ### `evaluate`
 
 Evaluate playbooks against an existing analysis report (dry-run).
@@ -116,9 +105,7 @@ regis evaluate [OPTIONS] INPUT_PATH
 _Options:_
 
 - `-p, --playbook PATH`: Path or URL to custom playbook YAML/JSON file(s).
-- `-s, --site`: Generate HTML report site.
-- `--base-url PATH`: Base URL for the HTML report site.
-- `--open`: Open the HTML report in the default browser automatically.
+- `--html`: Generate a self-contained single-file `report.html`.
 
 ### `check`
 
@@ -192,33 +179,19 @@ $ regis playbook validate broken-playbook.yaml
     - rules.2.level: 'high' is not one of ['info', 'warning', 'critical']
 ```
 
-## Viewer Commands
+## Interactive Viewer
 
-Manage and serve the interactive dashboard.
+The interactive dashboard and multi-report archive browser now live in a
+separate project: [`regis-dashboard`](https://github.com/trivoallan/regis-dashboard).
+It provides the `regis-dashboard render`, `serve`, `archive add`,
+`archive configure`, and `bootstrap archive` commands.
 
-### `dashboard serve`
+The Regis core CLI still produces everything the standalone dashboard consumes:
 
-Serve the static React viewer and preview a report locally.
-
-```bash
-regis dashboard serve [OPTIONS] [REPORT]
-```
-
-_Options:_
-
-- `-p, --port INTEGER`: Port to listen on (default: `8000`).
-
-### `dashboard export`
-
-Export the viewer app alongside a target report for static hosting.
-
-```bash
-regis dashboard export [OPTIONS] [REPORT]
-```
-
-_Options:_
-
-- `-o, --output PATH`: **(Required)** Directory to export the static site into.
+- `regis analyze --json` writes the machine-readable `report.json` contract.
+- `regis analyze --html` writes a self-contained single-file `report.html`.
+- `regis analyze --archive <dir>` appends to an archive directory the
+  standalone dashboard can browse.
 
 ## Project Bootstrapping {#bootstrap}
 
@@ -257,66 +230,14 @@ $ regis bootstrap tools
 
 See [Managing Analyzer Tools](../usage/tools-management.md) for cache location, mirror configuration, air-gapped workflows, and signature verification.
 
-### `bootstrap archive`
-
-Bootstrap a standalone archive viewer site for browsing and filtering historical regis reports. The generated site is built with Docusaurus and Tremor, deploys to [GitHub Pages or GitLab Pages](../usage/integrations/), and exposes a PowerBI-compatible JSON endpoint.
-
-```bash
-regis bootstrap archive [OUTPUT_DIR] [OPTIONS]
-```
-
-_Options:_
-
-| Option                        | Default                            | Description                                                                                                                                          |
-| :---------------------------- | :--------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--no-input`                  | `False`                            | Skip cookiecutter prompts; use template defaults.                                                                                                    |
-| `--platform [github\|gitlab]` | _(prompt)_                         | Target platform. Skips the cookiecutter platform prompt.                                                                                             |
-| `--dev`                       | `False`                            | After scaffolding, run `pnpm install` and start the local dev server.                                                                                |
-| `--port INTEGER`              | `3000`                             | Port for the dev server (only with `--dev`).                                                                                                         |
-| `--repo`                      | `False`                            | After scaffolding, create a remote repository and enable Pages.                                                                                      |
-| `--repo-name TEXT`            | project slug                       | Name of the remote repository (only with `--repo`).                                                                                                  |
-| `--public / --private`        | public (GitHub) / private (GitLab) | Repository visibility (only with `--repo`).                                                                                                          |
-| `--org TEXT`                  | _(current user)_                   | Organisation or GitLab group (only with `--repo`).                                                                                                   |
-| `--sync-from PATH`            | —                                  | Sync UI changes from a working copy back to the cookiecutter template. See [Customizing the Archive UI](../usage/integrations/archive-customize.md). |
-
-:::note Prerequisite
-
-`--dev` and `--repo` require Node.js 20+ and pnpm on the host. These commands
-no longer work from inside the official Regis Docker image (since v0.32.0).
-Install Node via `nvm`, `fnm`, or `brew install node`, then enable pnpm with
-`corepack enable && corepack prepare pnpm@latest --activate`.
-
+:::note
+After a successful bootstrap, all `bootstrap` commands display **Post-install notes** from the template (and then remove the temporary `.regis-post-install.md` file). These notes contain setup instructions and next steps.
 :::
-
-`--dev` and `--repo` are mutually exclusive.
-
-**`--dev` mode** — local iteration without a remote repository:
-
-```bash
-regis bootstrap archive ./my-archive --no-input --dev
-# Scaffolds, runs pnpm install, starts http://localhost:3000
-```
-
-**`--repo` mode** — full remote setup:
-
-1. Checks that `pnpm`, `git`, and `gh` / `glab` are available and authenticated.
-2. Scaffolds the archive site.
-3. Runs `pnpm install`.
-4. Creates an initial git commit.
-5. Creates the remote repository (`gh repo create` or `glab repo create`).
-6. Enables GitHub Pages in workflow mode (GitHub only; GitLab Pages activates via the `pages` job).
-7. Prints the expected Pages URL and the command to add your first report.
-
-```bash
-regis bootstrap archive ./my-archive --repo --platform github --no-input
-```
 
 :::tip
-If the remote repository already exists (for example after a failed first attempt), the creation step is skipped and the code is pushed to the existing repository.
-:::
-
-:::note
-After a successful bootstrap, all `bootstrap` commands display **Post-install notes** from the template (and then remove the temporary `.regis-post-install.md` file). These notes contain setup instructions for GitHub/GitLab and next steps.
+Looking for `bootstrap archive`? Scaffolding a standalone archive viewer site
+moved to the [`regis-dashboard`](https://github.com/trivoallan/regis-dashboard)
+project (`regis-dashboard bootstrap archive`).
 :::
 
 ## Utility Commands
