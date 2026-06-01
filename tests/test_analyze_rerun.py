@@ -335,8 +335,15 @@ class TestRerunBackfillsSchemaVersion:
 
             result = runner.invoke(
                 main,
-                ["analyze", "--rerun", "metadata", "--report", str(report_dir),
-                 "-m", "PROJECT_ID=PROJ-42"],
+                [
+                    "analyze",
+                    "--rerun",
+                    "metadata",
+                    "--report",
+                    str(report_dir),
+                    "-m",
+                    "PROJECT_ID=PROJ-42",
+                ],
             )
 
             assert result.exit_code == 0, result.output
