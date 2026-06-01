@@ -26,51 +26,51 @@ class TestLoadPlaybook:
 
     def test_load_from_file(self, tmp_path):
         custom = {
-            "schemaVersion": 1,
-            "version": "1.0.0",
-            "name": "Custom",
-            "sections": [
-                {
-                    "name": "Main",
-                    "levels": [{"name": "bronze", "order": 1}],
-                    "scorecards": [
-                        {
-                            "name": "test-scorecard",
-                            "description": "A test scorecard",
-                            "level": "bronze",
-                            "condition": {"==": [1, 1]},
-                        },
-                    ],
-                }
-            ],
+            "apiVersion": "regis.trivoallan.dev/v1alpha1",
+            "kind": "Playbook",
+            "metadata": {
+                "name": "custom",
+                "title": "Custom",
+                "labels": {"app.kubernetes.io/version": "1.0.0"},
+            },
+            "spec": {
+                "rules": [
+                    {
+                        "slug": "test-rule",
+                        "provider": "core",
+                        "rule": "always-true",
+                        "level": "warning",
+                    },
+                ],
+            },
         }
         p = tmp_path / "custom.yaml"
         p.write_text(yaml.dump(custom))
         loaded = load_playbook(p)
         assert loaded["name"] == "Custom"
-        assert len(loaded["sections"][0]["scorecards"]) == 1
+        assert len(loaded["rules"]) == 1
 
     def test_load_json(self, tmp_path):
         import json
 
         custom = {
-            "schemaVersion": 1,
-            "version": "1.0.0",
-            "name": "JSON Card",
-            "sections": [
-                {
-                    "name": "Main",
-                    "levels": [{"name": "bronze", "order": 1}],
-                    "scorecards": [
-                        {
-                            "name": "always-pass",
-                            "description": "Always passes",
-                            "level": "bronze",
-                            "condition": {"==": [1, 1]},
-                        },
-                    ],
-                }
-            ],
+            "apiVersion": "regis.trivoallan.dev/v1alpha1",
+            "kind": "Playbook",
+            "metadata": {
+                "name": "json-card",
+                "title": "JSON Card",
+                "labels": {"app.kubernetes.io/version": "1.0.0"},
+            },
+            "spec": {
+                "rules": [
+                    {
+                        "slug": "always-pass",
+                        "provider": "core",
+                        "rule": "always-true",
+                        "level": "warning",
+                    },
+                ],
+            },
         }
         p = tmp_path / "custom.json"
         p.write_text(json.dumps(custom))

@@ -178,7 +178,7 @@ def test_run_playbooks_surfaces_friendly_error_for_legacy_playbook(tmp_path) -> 
 
     with pytest.raises(ClickException) as exc_info:
         evaluate_playbooks((str(legacy),), {"results": {}}, formats=["json"])
-    assert "schemaVersion" in str(exc_info.value.message)
+    assert "apiVersion" in str(exc_info.value.message)
 
 
 def test_result_schema_accepts_playbook_metadata() -> None:
