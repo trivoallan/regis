@@ -3,7 +3,7 @@
 ## Command
 
 ```bash
-pipenv run regis analyze ghcr.io/trivoallan/regis:0.18.0 --evaluate --site --output-dir docs/website/static/examples/playbooks/default/regis
+pipenv run regis analyze ghcr.io/trivoallan/regis:0.18.0 --evaluate --html --output-dir docs/website/static/examples/playbooks/default/regis
 ```
 
 ## Playbook used

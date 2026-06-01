@@ -52,24 +52,17 @@ Each archive is a self-contained directory containing:
 
 Regis supports multiple archive storage backends:
 
-- **Git Repository**: Version-control your archive using `regis archive bootstrap`. Commit new reports automatically via CI/CD pipelines.
+- **Git Repository**: Version-control your archive directory and commit new reports automatically via CI/CD pipelines.
 - **CI Artifacts**: Store archives in your CI system (GitHub Actions, GitLab CI, etc.) as build artifacts.
 - **Local Directory**: Keep archives on disk for local development and testing.
 
 ### Multi-Archive Support
 
-For large organizations with multiple image repositories, use `archives.json` to combine and query reports from multiple archive sources:
-
-```json
-{
-  "sources": [
-    { "name": "app-frontend", "path": "archives/frontend" },
-    { "name": "app-backend", "path": "archives/backend" }
-  ]
-}
-```
-
-The dashboard can then aggregate metrics across all archives.
+For large organizations with multiple image repositories, the standalone
+[`regis-dashboard`](https://github.com/trivoallan/regis-dashboard) viewer can
+combine and query reports from multiple archive sources, aggregating metrics
+across all of them. The core CLI's job is to keep each archive directory up to
+date — see [Multi-Archive Setup](../usage/multi-archive.md).
 
 ## Archives and Other Concepts
 
@@ -87,21 +80,25 @@ Each report in an archive was evaluated against a [playbook](./playbooks.md). Th
 
 ## Getting Started with Archives
 
-To bootstrap an archive using a Git repository:
+To append a report to an archive directory, pass `--archive` to `analyze`:
 
 ```bash
-regis archive bootstrap my-app-archive --repo https://github.com/my-org/my-app-archive.git
+regis analyze my-app:latest --archive ./my-app-archive
 ```
 
-See [Archive Repository Setup](../usage/integrations/archive-repo.md) for detailed configuration.
+This writes (or updates) the `manifest.json` index and a timestamped report in
+the target directory. Run it from CI on every build to grow the history
+automatically.
 
-To customize archive behavior (naming, metadata, retention):
+To browse, render, and host archives — including scaffolding a viewer site and
+publishing it to a Git repository — use the standalone
+[`regis-dashboard`](https://github.com/trivoallan/regis-dashboard) project. See
+[Archive Repository Setup](../usage/integrations/archive-repo.md) and
+[Customizing the Archive UI](../usage/integrations/archive-customize.md).
 
-See [Customizing Archives](../usage/integrations/archive-customize.md).
+For multi-archive setups:
 
-For multi-archive queries and aggregation:
-
-See [Multi-Archive Configuration](../usage/multi-archive.md).
+See [Multi-Archive Setup](../usage/multi-archive.md).
 
 :::tip
 Archives work best in CI/CD pipelines. Each image build automatically appends a new report to the archive, creating a complete history without manual steps.

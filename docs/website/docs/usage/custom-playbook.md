@@ -76,7 +76,7 @@ my-policy/
 Run your new playbook immediately:
 
 ```bash
-regis analyze nginx:latest --playbook my-policy/ --site
+regis analyze nginx:latest --playbook my-policy/ --html
 ```
 
 ---
@@ -144,7 +144,7 @@ Key concepts:
 ## Run your playbook
 
 ```bash
-regis analyze nginx:latest --playbook my-policy/ --site
+regis analyze nginx:latest --playbook my-policy/ --html
 ```
 
 ## Iterate locally (dry-run)
@@ -156,7 +156,7 @@ Iterate on rules without re-analysing the image:
 regis analyze nginx:latest -o report.json
 
 # 2. Re-evaluate against the saved report
-regis evaluate report.json --playbook my-policy/ --site
+regis evaluate report.json --playbook my-policy/ --html
 ```
 
 :::tip

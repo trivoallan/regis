@@ -183,7 +183,9 @@ def test_html_not_in_formats_without_flag(runner, tmp_path, _mock_analyze_infra)
     assert "html" not in formats
 
 
-def test_analyze_prints_dashboard_pointer_for_json(runner, tmp_path, _mock_analyze_infra):
+def test_analyze_prints_dashboard_pointer_for_json(
+    runner, tmp_path, _mock_analyze_infra
+):
     """A plain (json) analyze run points the user at regis-dashboard."""
     result = runner.invoke(
         analyze,

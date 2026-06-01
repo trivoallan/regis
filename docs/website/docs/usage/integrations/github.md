@@ -170,7 +170,7 @@ jobs:
         run: |
           pipenv run regis analyze ghcr.io/${{ github.repository }}:latest \
             --auth ghcr.io=${{ github.actor }}:${{ secrets.GITHUB_TOKEN }} \
-            --site \
+            --html \
             --meta "trigger.user=${{ github.actor }}" \
             --meta "trigger.url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
@@ -180,6 +180,9 @@ jobs:
           name: regis-security-report
           path: reports/
 ```
+
+The `--html` flag writes a self-contained `report.html` (alongside `report.json`)
+into the `reports/` tree, ready to download from the workflow run.
 
 ## Publishing to GitHub Pages
 
@@ -213,7 +216,7 @@ deploy:
 ```
 
 :::important
-To use this job, update your `Run Analysis` step to use `--site` and ensure you use `actions/upload-pages-artifact` instead of `upload-artifact` in the `build-and-analyze` job.
+To use this job, ensure your `Run Analysis` step uses `--html` and that you use `actions/upload-pages-artifact` (pointing at the directory containing `report.html`) instead of `upload-artifact` in the `build-and-analyze` job.
 :::
 
 ```yaml
@@ -303,4 +306,6 @@ regis github update-pr \
 
 ## Viewing Reports
 
-When using the `--site` flag, `regis` generates a full HTML site in the `reports/` directory. By uploading this directory as a workflow artifact (as shown in the example), you can download and view the interactive reports directly from the GitHub Actions run page.
+When using the `--html` flag, `regis` writes a self-contained `report.html` into the `reports/` directory. By uploading this directory as a workflow artifact (as shown in the example), you can download and open the report directly from the GitHub Actions run page — no server required.
+
+For an interactive, filterable dashboard and multi-archive browsing, point the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project at the `report.json` (or `--archive` data) produced by the analysis.

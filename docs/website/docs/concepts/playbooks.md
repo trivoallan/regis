@@ -422,7 +422,7 @@ Use the `evaluate` subcommand:
 regis analyze nginx:latest -o report.json
 
 # 2. Iterate on your playbook locally
-regis evaluate report.json -p my-playbook.yaml --site
+regis evaluate report.json -p my-playbook.yaml --html
 ```
 
-The `evaluate` command supports most of the reporting options found in `analyze`, including `--site`, `--theme`, and `--output-dir`.
+The `evaluate` command supports most of the reporting options found in `analyze`, including `--html` and `--output-dir`.

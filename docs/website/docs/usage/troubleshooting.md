@@ -91,29 +91,29 @@ When analyzing very large images or connecting to slow registries, you may encou
 
 ## Report Generation Issues
 
-Problems with `--site` flag, blank report pages, or baseUrl mismatches.
+Problems with the `--html` report or an empty/blank report file.
 
 **Error symptoms:**
 
-- `--site` flag fails silently or produces an empty report
-- Report displays blank pages in the browser
-- Assets fail to load when served from a subdirectory
+- `--html` produces an empty or partial `report.html`
+- The JSON report is missing expected analyzer data
 
 **Solutions:**
 
-1. **Check the base URL**. If you're serving the report from a subdirectory, always set `--base-url`:
+1. **Generate a self-contained HTML report** with `--html`. It writes a single portable `report.html` that needs no base URL or web server:
 
    ```bash
-   regis analyze nginx:latest --site --base-url "/reports/nginx/"
+   regis analyze nginx:latest --html
    ```
 
-2. **Verify the report directory exists**. Reports are written to `reports/` by default. Check that the directory was created and contains `index.html`.
+2. **Review the JSON report** to ensure the analysis succeeded:
 
-3. **Review the JSON report** to ensure the analysis succeeded:
    ```bash
    regis analyze nginx:latest -o report.json
    cat report.json | jq .
    ```
+
+3. **For an interactive, filterable dashboard**, use the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project, which consumes the `report.json` and `--archive` data the core CLI produces.
 
 For detailed information on how reports work, see [Reports](../concepts/reports.md).
 
@@ -144,32 +144,28 @@ For detailed information on rule evaluation, see [Rules](../concepts/rules.md) a
 
 ## Archive Issues
 
-Problems with archive creation, missing `manifest.json`, or blank dashboards.
+Problems with archive creation, missing `manifest.json`, or empty archives.
 
 **Error symptoms:**
 
 - `manifest.json` not found in archive directory
-- Archive dashboard displays no historical data
-- Reports added to archive but don't appear in the index
+- Reports added to an archive but don't appear in the index
 
 **Solutions:**
 
-1. **Initialize the archive** before adding reports:
-
-   ```bash
-   regis archive init ./my-archive
-   ```
-
-2. **Add reports to the archive**:
+1. **Add reports with `--archive`**. The directory and `manifest.json` are created automatically on the first run:
 
    ```bash
    regis analyze myimage:latest --archive ./my-archive
    ```
 
-3. **Verify the manifest exists**:
+2. **Verify the manifest exists**:
+
    ```bash
    cat ./my-archive/manifest.json | jq .
    ```
+
+3. **Browse the archive** with the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project, which renders historical data from the archive directory.
 
 For detailed information on archives, see [Archives](../concepts/archives.md).
 
@@ -221,7 +217,7 @@ Yes. Regis is designed for CI/CD. Use Docker for simplicity:
 ```bash
 docker run --rm \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  trivoallan/regis analyze myimage:latest --site
+  trivoallan/regis analyze myimage:latest --html
 ```
 
-Then collect the generated `reports/` directory as a CI artifact. See the [GitHub](./integrations/github.md) and [GitLab](./integrations/gitlab.md) integration guides for more details.
+Then collect the generated `report.html` (and `report.json`) as a CI artifact. See the [GitHub](./integrations/github.md) and [GitLab](./integrations/gitlab.md) integration guides for more details.
