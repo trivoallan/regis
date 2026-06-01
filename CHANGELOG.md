@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.34.0](https://github.com/trivoallan/regis/compare/v0.33.0...v0.34.0) (2026-06-01)
+
+### ⚠ BREAKING CHANGES
+
+- **playbook:** adopt Kubernetes-style apiVersion/kind/metadata/spec envelope ([#640](https://github.com/trivoallan/regis/issues/640))
+
+### Features
+
+- **playbook:** adopt Kubernetes-style apiVersion/kind/metadata/spec envelope ([#640](https://github.com/trivoallan/regis/issues/640)) ([0a4327e](https://github.com/trivoallan/regis/commit/0a4327e896ddb9f7e2c97bb3be068125c3d9ef45))
+
 ## [0.33.0](https://github.com/trivoallan/regis/compare/v0.32.0...v0.33.0) (2026-06-01)
 
 ### ⚠ BREAKING CHANGES
