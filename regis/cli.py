@@ -9,7 +9,6 @@ import click
 
 from regis.analyzers.discovery import discover_analyzers
 from regis.commands.analyze import analyze, evaluate_cmd, list_analyzers
-from regis.commands.archive import archive
 from regis.commands.bootstrap import bootstrap
 from regis.commands.check import check, version_cmd
 from regis.commands.doctor import doctor
@@ -83,7 +82,6 @@ main.add_command(analyze)
 main.add_command(evaluate_cmd, name="evaluate")
 main.add_command(list_analyzers, name="list")
 main.add_command(bootstrap)
-main.add_command(archive)
 main.add_command(check)
 main.add_command(version_cmd, name="version")
 main.add_command(rules_group, name="rules")
