@@ -21,9 +21,9 @@
       "type": ["string", "null"],
       "description": "SemVer of the playbook that produced this report."
     },
-    "schema_version": {
-      "type": ["integer", "null"],
-      "description": "schemaVersion of the playbook format that produced this report."
+    "api_version": {
+      "type": ["string", "null"],
+      "description": "apiVersion of the playbook that produced this result (e.g. \"regis.trivoallan.dev/v1alpha1\")."
     },
     "sidebar": {
       "type": "object",
