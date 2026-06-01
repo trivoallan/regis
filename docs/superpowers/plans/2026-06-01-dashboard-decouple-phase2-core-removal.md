@@ -34,26 +34,26 @@
 
 ## File Structure
 
-| File | Action | Task |
-| --- | --- | --- |
-| `regis/commands/dashboard.py` | **delete** | 1 |
-| `regis/server/**` | **delete** (dir) | 1 |
-| `tests/test_dashboard.py`, `tests/test_server_*.py` | **delete** | 1 |
-| `regis/cli.py` | modify (unregister `dashboard`, `archive`) | 1, 2 |
-| `regis/commands/archive.py` | **delete** | 2 |
-| `tests/test_archive_command.py`, `tests/test_archive_configure.py` | **delete** | 2 |
-| `regis/commands/bootstrap.py` | modify (drop `archive` subcommand) | 3 |
-| `regis/cookiecutters/archive/**` | **delete** (dir) | 3 |
-| `tests/test_bootstrap.py` | modify (drop archive tests) | 3 |
-| `regis/commands/analyze.py` | modify (drop `--site` on `analyze` + `evaluate`) | 4 |
-| `regis/utils/report.py` | modify (drop `html-site` branch) | 4 |
-| `regis/report/docusaurus.py` | **delete** | 4 |
-| `tests/test_docusaurus.py` | **delete**; `tests/test_cli.py` modify (`--site`) | 4 |
-| `pyproject.toml` | modify (server extra, deps, package-data, coverage omit) | 5 |
-| `apps/dashboard/**`, `pnpm-workspace.yaml`, `cd-dashboard.yml`, `ci-image-size.yml`, `dependabot.yml` | delete/modify | 6 |
-| `regis/cookiecutters/gitlab-ci/{{cookiecutter.project_slug}}/.gitlab-ci.yml` | modify (`--site`→`--html`) | 7 |
-| `regis/commands/analyze.py`, `tests/commands/test_analyze_*.py` | modify (post-analyze message + test) | 8 |
-| `docs/website/**`, `README.md` | modify (remove dashboard/archive/`--site` references) | 9 |
+| File                                                                                                  | Action                                                   | Task |
+| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ---- |
+| `regis/commands/dashboard.py`                                                                         | **delete**                                               | 1    |
+| `regis/server/**`                                                                                     | **delete** (dir)                                         | 1    |
+| `tests/test_dashboard.py`, `tests/test_server_*.py`                                                   | **delete**                                               | 1    |
+| `regis/cli.py`                                                                                        | modify (unregister `dashboard`, `archive`)               | 1, 2 |
+| `regis/commands/archive.py`                                                                           | **delete**                                               | 2    |
+| `tests/test_archive_command.py`, `tests/test_archive_configure.py`                                    | **delete**                                               | 2    |
+| `regis/commands/bootstrap.py`                                                                         | modify (drop `archive` subcommand)                       | 3    |
+| `regis/cookiecutters/archive/**`                                                                      | **delete** (dir)                                         | 3    |
+| `tests/test_bootstrap.py`                                                                             | modify (drop archive tests)                              | 3    |
+| `regis/commands/analyze.py`                                                                           | modify (drop `--site` on `analyze` + `evaluate`)         | 4    |
+| `regis/utils/report.py`                                                                               | modify (drop `html-site` branch)                         | 4    |
+| `regis/report/docusaurus.py`                                                                          | **delete**                                               | 4    |
+| `tests/test_docusaurus.py`                                                                            | **delete**; `tests/test_cli.py` modify (`--site`)        | 4    |
+| `pyproject.toml`                                                                                      | modify (server extra, deps, package-data, coverage omit) | 5    |
+| `apps/dashboard/**`, `pnpm-workspace.yaml`, `cd-dashboard.yml`, `ci-image-size.yml`, `dependabot.yml` | delete/modify                                            | 6    |
+| `regis/cookiecutters/gitlab-ci/{{cookiecutter.project_slug}}/.gitlab-ci.yml`                          | modify (`--site`→`--html`)                               | 7    |
+| `regis/commands/analyze.py`, `tests/commands/test_analyze_*.py`                                       | modify (post-analyze message + test)                     | 8    |
+| `docs/website/**`, `README.md`                                                                        | modify (remove dashboard/archive/`--site` references)    | 9    |
 
 ---
 
@@ -348,7 +348,7 @@ packages:
   - docs/website
 ```
 
-- [ ] **Step 3: Remove the `apps/dashboard/**` trigger from `.github/workflows/ci-image-size.yml`**
+- [ ] **Step 3: Remove the `apps/dashboard/**`trigger from`.github/workflows/ci-image-size.yml`\*\*
 
 Delete the `- apps/dashboard/**` line (line 14) from the `paths:` list. If that leaves `paths:` referencing only unrelated entries, keep them; if it empties the list, leave the remaining real entries intact (do not delete `paths:` wholesale).
 
@@ -388,13 +388,13 @@ git commit -m "ci!: remove apps/dashboard, cd-dashboard workflow, and its CI/dep
 In the template, replace the `--site` invocation (≈ line 55) so the generated pipeline produces a self-contained single-file report instead of a Docusaurus site. Remove the now-irrelevant `--base-url` line (only `--site` consumed it) and the `REPORT_BASE_URL` export above it:
 
 ```yaml
-      regis analyze "$IMAGE_URL" \
-        --playbook playbook.yaml \
-        --html \
-        --output-dir reports \
-        --meta "trigger.user=$GITLAB_USER_LOGIN" \
-        --meta "trigger.url=$CI_JOB_URL" \
-        --meta "gitlab.mr_url=$CI_MERGE_REQUEST_PROJECT_URL/-/merge_requests/$CI_MERGE_REQUEST_IID"
+regis analyze "$IMAGE_URL" \
+--playbook playbook.yaml \
+--html \
+--output-dir reports \
+--meta "trigger.user=$GITLAB_USER_LOGIN" \
+--meta "trigger.url=$CI_JOB_URL" \
+--meta "gitlab.mr_url=$CI_MERGE_REQUEST_PROJECT_URL/-/merge_requests/$CI_MERGE_REQUEST_IID"
 ```
 
 (If later jobs in the template publish a `report/` Pages site from the `--site` output, repoint them at the `report.html` artifact. Read the rest of the template and adjust the artifact paths accordingly.)
@@ -506,6 +506,7 @@ grep -rln -E "regis dashboard|regis archive|bootstrap archive|--site|report-view
 ```
 
 Work the resulting list. For each file, apply one of:
+
 - **Removed command/flag mention** (`regis dashboard`, `regis archive add|configure`, `bootstrap archive`, `--site`) → delete the line/section, or rewrite to the retained path (`regis analyze --html` for self-contained, `regis analyze --json` + a link to `https://github.com/trivoallan/regis-dashboard` for interactive).
 - **Whole page about the removed feature** (e.g. `report-viewer.md`, `archive-customize.md`, `archive-repo.md`, `multi-archive.md`) → replace its body with a short "moved to regis-dashboard" stub linking the new repo, OR remove the page and its sidebar entry. If you remove a page, also remove its reference in `docs/website/sidebars.*` and any in-doc links to it (the Docs Link Check CI will fail on dangling links).
 
