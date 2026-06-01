@@ -132,14 +132,11 @@ You use JSON Logic to access analysis results and perform comparisons. For examp
 { "==": [{ "var": "results.cve.critical_count" }, 0] }
 ```
 
-Or, to check the score of a specific section using its normalized name:
+Or, to check the overall playbook score:
 
 ```json
 {
-  ">=": [
-    { "var": "playbooks.0.pages.compliance.sections.security_checks.score" },
-    90
-  ]
+  ">=": [{ "var": "playbooks.0.score" }, 90]
 }
 ```
 
@@ -161,7 +158,7 @@ For example, to display the overall compliance score in a widget, you might use:
 - label: Overall Compliance
   value: "{{ playbooks.0.score }}%"
 - label: Mandatory Checks
-  value: "{{ playbooks.0.pages.compliance.sections.security_checks.score }}%"
+  value: "{{ playbooks.0.score }}%"
 ```
 
 ## GitLab Integration

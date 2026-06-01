@@ -70,7 +70,7 @@ The skill writes a ready-to-use playbook bundle:
 my-policy/
 ├── playbook.yaml          # Rules, tiers, badges, CI integration
 ├── README.md              # Generated documentation
-└── inputs.schema.json     # Only if non-image inputs were configured
+└── meta.schema.json       # Optional: project metadata schema
 ```
 
 Run your new playbook immediately:
