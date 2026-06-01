@@ -2,6 +2,15 @@
 
 > Supplemental file: this records historical decisions that complement the core Memory Bank files.
 
+## 2026-06-01: Playbook Format — Kubernetes-Style apiVersion/kind/metadata/spec Envelope
+
+- **Decision**: Playbooks adopt the Kubernetes resource envelope — `apiVersion: regis.trivoallan.dev/v1alpha1`, `kind: Playbook`, `metadata`, `spec`. The integer `schemaVersion` is replaced by `apiVersion` (the version mechanism). Metadata is Backstage-style: `metadata.name` (machine id, RFC-1123), `metadata.title` (display name), `metadata.description`, and the bundle SemVer → `metadata.labels["app.kubernetes.io/version"]`. `tiers`/`rules`/`badges`/`integrations`/`links` move under `spec`; evaluation semantics are unchanged.
+- **Rationale**: ecosystem familiarity — Kubernetes, Backstage, and GitOps tooling all share this envelope; `apiVersion` is the idiomatic version channel (keeping the integer `schemaVersion` alongside would be redundant). `v1alpha1` deliberately signals that the format may still churn before v1.
+- **Implementation choice (approach A)**: clean break (pre-v1) — the loader rejects the old flat format and `regis playbook upgrade` migrates it (dropping deprecated `pages`/`sections`/`sidebar`). The loader validates against a new `v1alpha1` JSON Schema, then **normalizes** the envelope back into the historical flat dict, so the ~12 downstream consumers (evaluator, GitLab integration, report) are untouched. The typed-model and propagate-the-envelope alternatives were deferred.
+- **Scope (YAGNI)**: a single `kind` (`Playbook`); multi-kind decomposition (`RuleSet`/`Tier`/…) and a CRD/operator were explicitly deferred.
+- **Distinct concept preserved**: the report's playbook audit field `schema_version` → `api_version`, but the report-envelope integer `schemaVersion` (`REPORT_SCHEMA_VERSION`, the dashboard contract) is unchanged — do not conflate them.
+- **References**: `docs/superpowers/specs/2026-06-01-playbook-kubernetes-kinds-design.md`; plan `docs/memory-bank/plans/playbook-kubernetes-kinds-plan.md`; PR #640 (breaking `feat(playbook)!`, pre-major bump 0.33 → 0.34). Evolves the 2026-05-31 playbook-versioning work (the integer `schemaVersion` introduced there is replaced here).
+
 ## 2026-06-01: Dashboard Full Decouple — Core Stops Shipping the Dashboard
 
 - **Decision**: Extract `apps/dashboard` into a standalone `regis-dashboard` repo. The core stops shipping the dashboard entirely; the two projects link only through a versioned `report.json` + integer `schemaVersion` contract, checked **100% at runtime, dashboard-side**. The core carries zero compatibility logic — it emits the current `schemaVersion` and never gates.
