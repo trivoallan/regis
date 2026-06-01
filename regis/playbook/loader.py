@@ -5,7 +5,7 @@ Supports loading playbook definitions from:
 - Local bundle directories (containing playbook.yaml)
 - Remote HTTP/HTTPS URLs
 
-Every playbook must declare ``schemaVersion`` (integer) at the top level.
+Every playbook must declare ``apiVersion`` and ``kind: Playbook`` at the top level.
 The loader dispatches to the matching JSON Schema via the schema registry
 and validates the playbook before returning.
 """
@@ -25,7 +25,7 @@ from regis.playbook import schema_registry
 
 
 class PlaybookVersionError(ValueError):
-    """Raised when schemaVersion is missing, malformed, or unsupported."""
+    """Raised when apiVersion is missing, malformed, or unsupported."""
 
 
 def load_playbook(path: str | Path) -> dict[str, Any]:
@@ -43,6 +43,8 @@ def normalize_playbook(raw: dict[str, Any]) -> dict[str, Any]:
     Projects ``metadata``/``spec`` back onto the historical top-level keys
     (``name``, ``slug``, ``version``, ``description`` + ``spec.*``) so the
     evaluator, integrations and report code need no changes.
+
+    Precondition: *raw* must be an already-validated envelope (apiVersion/kind present).
     """
     meta = raw.get("metadata", {})
     spec = raw.get("spec", {})
@@ -127,7 +129,7 @@ _registry_cache: dict[str, Registry] = {}
 
 
 def _build_validator_registry(schema: dict[str, Any]) -> Registry:
-    """Build a referencing.Registry that resolves the v1 schema's relative $refs.
+    """Build a referencing.Registry that resolves the v1alpha1 schema's relative $refs.
 
     Results are memoized by schema ``$id`` so repeated calls (e.g. in bulk
     analysis or matrix CI) pay the file-read and Registry construction cost

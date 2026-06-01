@@ -1,4 +1,4 @@
-"""Playbook schema registry — version → JSON Schema dispatch."""
+"""Playbook schema registry — apiVersion → JSON Schema dispatch."""
 
 from __future__ import annotations
 
