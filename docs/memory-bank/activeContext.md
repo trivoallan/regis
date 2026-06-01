@@ -17,6 +17,11 @@ Voir `docs/memory-bank/roadmap.md` pour le détail complet.
 
 ## Recent Changes
 
+- [2026-06-01] **Dashboard full decouple — décision + Phase 0 livrée + Phase 1 planifiée**:
+  - **Décision** (voir `decisionLog.md`) : le cœur **arrête complètement de livrer la dashboard**. `apps/dashboard` est extrait dans un dépôt dédié `regis-dashboard`. Lien unique : contrat `report.json` + `schemaVersion` entier, vérifié **100 % au runtime côté dashboard** ; le cœur n'a **aucune** logique de compatibilité. **Supersède** l'approche OCI/`ToolFetcher` (PR #628, fermée).
+  - **Coupe radicale** : `serve` standalone = **static-preview-only**. Le backend GitLab proxy + webhooks/SSE (`regis/server/`) est abandonné, pas réécrit en Node ; `gitlab.tsx` + ses 3 composants exclusifs sont retirés à l'extraction.
+  - **Phase 0 livrée (PR #630)** : champ `schemaVersion` entier requis sur l'enveloppe `report.json` (`regis/schemas/report/report.schema.json`), constante `REPORT_SCHEMA_VERSION` + helper `ensure_schema_version()` dans `regis/utils/report.py`, producteur estampillé + backfill des **trois** chemins de chargement (rerun, evaluate, cache-hit) dans `regis/commands/analyze.py`, fixture contrat `tests/fixtures/report.v1.json`. Suite 626 PASS, couverture 91.18 %. Breaking (`feat(schema)!`) → bump pré-v1 0.32 → 0.33.
+  - **Phase 1 planifiée (PR #632)** : trois plans sous `docs/superpowers/plans/` — 1a extraction + bootstrap Pages, 1b CLI Node (render/serve/archive/bootstrap) + image Docker, 1c compat runtime + test de contrat cross-repo. Phase 2 (retrait du cœur) reste bloquée tant que Phase 1 n'est pas en ligne.
 - [2026-05-31] **Docker image size — round 3** (PR pending):
   - Lazy-loaded scanner binaries via new `regis.tools` package: manifest (`regis/tools/manifest.yaml` pins grype/syft/trufflehog/hadolint/dockle/regctl with sha256 per arch + optional cosign issuer), typed loader, `ToolFetcher` (cache, sha256, flock concurrency, mirror, cosign best-effort, fetch_all), `ensure_tool()` bridge in `regis/utils/process.py`.
   - Six analyzer/wrapper sites (`grype.py`, `syft.py`, `trufflehog.py`, `regctl.py`, `hadolint.py`, `dockle.py`) routed through `ensure_tool` — host PATH still short-circuits; manifest-listed tools fall back to the fetcher when absent.
@@ -69,4 +74,4 @@ Voir `docs/memory-bank/roadmap.md` pour le détail complet.
 
 ## Decisions in Progress
 
-- **Monorepo vs split** (pré-v1) : exploration structurée, pas encore de décision. Inconnues : patterns contributeurs futurs, cadence post-v1, gouvernance à l'échelle.
+- **Monorepo vs split** (pré-v1) : ✅ **résolu [2026-06-01]** — split décidé via la coupe radicale (le cœur n'embarque plus la dashboard). Détail dans `decisionLog.md` et l'entrée Recent Changes ci-dessus.

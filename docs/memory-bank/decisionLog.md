@@ -2,6 +2,15 @@
 
 > Supplemental file: this records historical decisions that complement the core Memory Bank files.
 
+## 2026-06-01: Dashboard Full Decouple — Core Stops Shipping the Dashboard
+
+- **Decision**: Extract `apps/dashboard` into a standalone `regis-dashboard` repo. The core stops shipping the dashboard entirely; the two projects link only through a versioned `report.json` + integer `schemaVersion` contract, checked **100% at runtime, dashboard-side**. The core carries zero compatibility logic — it emits the current `schemaVersion` and never gates.
+- **Supersedes**: the OCI-artifact-via-`ToolFetcher` + build-time-pin approach (PR #628, closed). That reuse was thin — four of `ToolFetcher`'s five reasons to exist (lazy slim, mirror, offline, doctor integration) were opted out, leaving essentially "uses ghcr."
+- **Rationale**: decouple release cadences; remove Node/pnpm/Docusaurus from the Python wheel/image build path; the radical cut removes more complexity than the split adds.
+- **Scope decision**: standalone `serve` is **static-preview-only** — the `regis dashboard serve` GitLab MR proxy + webhook/SSE backend (`regis/server/`) is dropped, not reimplemented in Node; `gitlab.tsx` and its three exclusive components are removed during extraction.
+- **Sequencing**: Phase 0 (`schemaVersion` contract, shipped — PR #630) → Phase 1 (new repo: 1a extraction, 1b CLI+Docker, 1c runtime compat+contract — planned, PR #632) → Phase 2 (core removal, blocked until Phase 1 is live) → Phase 3 (docs). Phase 0 is a breaking schema change (`feat(schema)!`) → pre-major minor bump 0.32 → 0.33.
+- **References**: `docs/superpowers/specs/2026-05-31-dashboard-full-decouple-design.md`; plans under `docs/superpowers/plans/2026-05-31-dashboard-decouple-phase1{a,b,c}-*.md`; PRs #630, #632.
+
 ## 2026-04-21: Consolidate Memory Bank Under `docs/memory-bank/`
 
 - **Decision**: Keep `docs/memory-bank/` as the single source of truth for Memory Bank content.
