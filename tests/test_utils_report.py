@@ -197,7 +197,7 @@ def test_result_schema_accepts_playbook_metadata() -> None:
     report = {
         "playbook_name": "Test",
         "playbook_version": "1.2.3",
-        "schema_version": 1,
+        "api_version": "regis.trivoallan.dev/v1alpha1",
         "score": 100,
         "total_scorecards": 1,
         "passed_scorecards": 1,
