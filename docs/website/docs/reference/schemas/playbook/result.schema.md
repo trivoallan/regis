@@ -9,23 +9,23 @@
 
 **Description:** Final playbook result produced by regis, containing metadata and analyzer results.
 
-| Property                                   | Pattern | Type            | Deprecated | Definition | Title/Description                                                         |
-| ------------------------------------------ | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------- |
-| + [playbook_name](#playbook_name )         | No      | string          | No         | -          | Identifier of the playbook that was executed.                             |
-| - [playbook_version](#playbook_version )   | No      | string or null  | No         | -          | SemVer of the playbook that produced this report.                         |
-| - [api_version](#api_version )             | No      | string or null  | No         | -          | apiVersion of the playbook that produced this result.                     |
-| - [sidebar](#sidebar )                     | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                            |
-| - [version](#version )                     | No      | string or null  | No         | -          | Version of regis that generated this report.                              |
-| - [tier](#tier )                           | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions. |
-| - [badges](#badges )                       | No      | array of object | No         | -          | -                                                                         |
-| - [rules](#rules )                         | No      | array of object | No         | -          | -                                                                         |
-| - [rules_summary](#rules_summary )         | No      | object          | No         | -          | -                                                                         |
-| + [score](#score )                         | No      | integer         | No         | -          | Overall percentage score for the playbook.                                |
-| + [total_scorecards](#total_scorecards )   | No      | integer         | No         | -          | Total number of scorecards evaluated.                                     |
-| + [passed_scorecards](#passed_scorecards ) | No      | integer         | No         | -          | Number of scorecards that passed.                                         |
-| - [links](#links )                         | No      | array of object | No         | -          | External links associated with this playbook result.                      |
-| + [pages](#pages )                         | No      | array of object | No         | -          | -                                                                         |
-| - [mr_templates](#mr_templates )           | No      | array of object | No         | -          | Cookiecutter templates to be run for MR descriptions.                     |
+| Property                                   | Pattern | Type            | Deprecated | Definition | Title/Description                                                                            |
+| ------------------------------------------ | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------- |
+| + [playbook_name](#playbook_name )         | No      | string          | No         | -          | Identifier of the playbook that was executed.                                                |
+| - [playbook_version](#playbook_version )   | No      | string or null  | No         | -          | SemVer of the playbook that produced this report.                                            |
+| - [api_version](#api_version )             | No      | string or null  | No         | -          | apiVersion of the playbook that produced this result (e.g. "regis.trivoallan.dev/v1alpha1"). |
+| - [sidebar](#sidebar )                     | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                                               |
+| - [version](#version )                     | No      | string or null  | No         | -          | Version of regis that generated this report.                                                 |
+| - [tier](#tier )                           | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.                    |
+| - [badges](#badges )                       | No      | array of object | No         | -          | -                                                                                            |
+| - [rules](#rules )                         | No      | array of object | No         | -          | -                                                                                            |
+| - [rules_summary](#rules_summary )         | No      | object          | No         | -          | -                                                                                            |
+| + [score](#score )                         | No      | integer         | No         | -          | Overall percentage score for the playbook.                                                   |
+| + [total_scorecards](#total_scorecards )   | No      | integer         | No         | -          | Total number of scorecards evaluated.                                                        |
+| + [passed_scorecards](#passed_scorecards ) | No      | integer         | No         | -          | Number of scorecards that passed.                                                            |
+| - [links](#links )                         | No      | array of object | No         | -          | External links associated with this playbook result.                                         |
+| + [pages](#pages )                         | No      | array of object | No         | -          | -                                                                                            |
+| - [mr_templates](#mr_templates )           | No      | array of object | No         | -          | Cookiecutter templates to be run for MR descriptions.                                        |
 
 ## <a name="playbook_name"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `playbook_name`
 
@@ -1120,4 +1120,4 @@ Must be one of:
 | **Type** | `string` |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-01 at 12:56:04 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-01 at 16:09:40 +0000
