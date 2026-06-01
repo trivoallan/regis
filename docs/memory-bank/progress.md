@@ -12,10 +12,16 @@
 
 ## Completed (Recent)
 
+- **Dashboard decouple — Phase 1 (2026-06-01)** — standalone repo [`trivoallan/regis-dashboard`](https://github.com/trivoallan/regis-dashboard):
+  - 1a: `git filter-repo` extraction (history preserved) → own GitHub Pages, `v0.1.0`, release-please + PAT-triggered CI + branch protection.
+  - 1b (PR #2): TS CLI (`render`/`serve`/`archive add|configure`/`bootstrap archive`) + `node:20-alpine` Docker image (GHCR on `v*` tags) + vitest.
+  - 1c (PR #4): runtime `schemaVersion` compat gate in `ReportProvider` + offline & live cross-repo contract tests.
+  - Core touched only by Phase 0 (#630). Dashboard owns all compat logic; GitLab live-backend dropped (static-preview-only). `0.2.0` release PR open. Phase 2 (core cleanup) still pending.
+
 - **Dashboard decouple — Phase 0 : contrat `schemaVersion` (2026-06-01, PR #630)**:
   - Champ entier `schemaVersion` requis sur l'enveloppe `report.json` ; constante `REPORT_SCHEMA_VERSION` + helper `ensure_schema_version()` ; producteur estampillé + backfill des trois chemins de chargement (rerun/evaluate/cache-hit).
   - Fixture de contrat cross-repo `tests/fixtures/report.v1.json`. Suite 626 PASS, couverture 91.18 %. Breaking → 0.32 → 0.33.
-  - Décision globale (coupe radicale, static-preview-only) consignée dans `decisionLog.md` ; Phase 1 planifiée (PR #632) ; supersède PR #628 (fermée).
+  - Décision globale (coupe radicale, static-preview-only) consignée dans `decisionLog.md` ; supersède PR #628 (fermée).
 
 - **Docker image size reduction — round 2 (2026-05-29)**:
   - Removed git/jq from runtime; FastAPI/Uvicorn → optional `[server]` extra; `--no-compile` venv + cache prune.
