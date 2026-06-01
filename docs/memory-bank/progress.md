@@ -12,6 +12,11 @@
 
 ## Completed (Recent)
 
+- **Dashboard decouple — Phase 0 : contrat `schemaVersion` (2026-06-01, PR #630)**:
+  - Champ entier `schemaVersion` requis sur l'enveloppe `report.json` ; constante `REPORT_SCHEMA_VERSION` + helper `ensure_schema_version()` ; producteur estampillé + backfill des trois chemins de chargement (rerun/evaluate/cache-hit).
+  - Fixture de contrat cross-repo `tests/fixtures/report.v1.json`. Suite 626 PASS, couverture 91.18 %. Breaking → 0.32 → 0.33.
+  - Décision globale (coupe radicale, static-preview-only) consignée dans `decisionLog.md` ; Phase 1 planifiée (PR #632) ; supersède PR #628 (fermée).
+
 - **Docker image size reduction — round 2 (2026-05-29)**:
   - Removed git/jq from runtime; FastAPI/Uvicorn → optional `[server]` extra; `--no-compile` venv + cache prune.
   - Measured arm64 tar 186 MB → 138 MB (round 2); 244 MB → 138 MB cumulative (~43 %). CI ceiling tightened 250 → 220 MB.
