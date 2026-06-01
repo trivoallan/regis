@@ -1,4 +1,4 @@
-"""Tests for the playbook schema registry."""
+"""Tests du registre de schémas playbook (clé = apiVersion)."""
 
 from __future__ import annotations
 
@@ -7,17 +7,15 @@ import pytest
 from regis.playbook import schema_registry
 
 
-def test_supported_versions_lists_v1() -> None:
-    assert schema_registry.supported_versions() == [1]
+def test_supported_versions_lists_v1alpha1() -> None:
+    assert "regis.trivoallan.dev/v1alpha1" in schema_registry.supported_versions()
 
 
-def test_get_schema_v1_returns_dict_with_expected_id() -> None:
-    schema = schema_registry.get_schema(1)
-    assert isinstance(schema, dict)
-    assert schema["$id"].endswith("/v1/definition.schema.json")
-    assert schema["title"] == "playbook.definition"
+def test_get_schema_returns_playbook_kind() -> None:
+    schema = schema_registry.get_schema("regis.trivoallan.dev/v1alpha1")
+    assert schema["properties"]["kind"]["const"] == "Playbook"
 
 
-def test_get_schema_unknown_version_raises_key_error() -> None:
+def test_get_schema_unknown_raises_keyerror() -> None:
     with pytest.raises(KeyError):
-        schema_registry.get_schema(99)
+        schema_registry.get_schema("regis.trivoallan.dev/v9")
