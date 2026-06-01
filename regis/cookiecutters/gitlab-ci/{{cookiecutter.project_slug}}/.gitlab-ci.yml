@@ -48,12 +48,9 @@ analyze_image:
         IMAGE_URL=$(cat .regis-image-url)
       fi
 
-      REPORT_BASE_URL="/${CI_PROJECT_PATH}/-/jobs/${CI_JOB_ID}/artifacts/file/reports/${CI_JOB_ID}/"
-
       regis analyze "$IMAGE_URL" \
         --playbook playbook.yaml \
-        --site \
-        --base-url "$REPORT_BASE_URL" \
+        --html \
         --output-dir reports \
         --meta "trigger.user=$GITLAB_USER_LOGIN" \
         --meta "trigger.url=$CI_JOB_URL" \
@@ -84,7 +81,7 @@ push_results:
 
       # Post results to MR
       MR_API_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}"
-      REPORT_URL="${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/file/reports/${CI_JOB_ID}/index.html"
+      REPORT_URL="${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/file/reports/report.html"
 
       regis gitlab update-mr \
         --report reports/report.json \
