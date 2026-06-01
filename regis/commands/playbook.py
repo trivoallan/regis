@@ -53,13 +53,15 @@ def validate_playbook(path: Path) -> None:
 @playbook_group.command(name="upgrade")
 @click.argument("path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
 def upgrade_playbook(path: Path) -> None:
-    """Inject schemaVersion and version into a legacy playbook file.
+    """Convert a legacy flat playbook into the apiVersion/kind/metadata/spec envelope.
 
-    Preserves comments and formatting via ruamel.yaml. Idempotent: if both
-    fields are already present, the file is left untouched.
+    Idempotent: if the document already declares an ``apiVersion`` it is left
+    untouched. Deprecated ``pages``/``sections``/``sidebar`` are dropped.
     """
+    import re
+
     from ruamel.yaml import YAML
-    from ruamel.yaml.scalarstring import DoubleQuotedScalarString
+    from ruamel.yaml.comments import CommentedMap
 
     yaml = YAML()
     yaml.preserve_quotes = True
@@ -73,19 +75,48 @@ def upgrade_playbook(path: Path) -> None:
             f"{path}: file is empty or not a valid YAML document."
         )
 
-    changes: list[str] = []
-    if "schemaVersion" not in data:
-        data.insert(0, "schemaVersion", 1)
-        changes.append("schemaVersion")
-    if "version" not in data:
-        # Insert after schemaVersion (which is now guaranteed to exist).
-        position = list(data.keys()).index("schemaVersion") + 1
-        data.insert(position, "version", DoubleQuotedScalarString("1.0.0"))
-        changes.append("version")
+    if "apiVersion" in data:
+        click.echo(
+            f"  {path}: already uses the apiVersion/kind envelope, nothing to do."
+        )
+        return
 
-    if changes:
-        with open(path, "w", encoding="utf-8") as f:
-            yaml.dump(data, f)
-        click.echo(f"  Upgraded {path}: added {', '.join(changes)}.")
-    else:
-        click.echo(f"  {path}: already at schemaVersion 1, nothing to do.")
+    def _slugify(value: str) -> str:
+        slug = re.sub(r"[^a-z0-9]+", "-", str(value).lower()).strip("-")
+        return slug or "playbook"
+
+    display_name = data.get("name")
+    slug = _slugify(data.get("slug") or display_name or "playbook")
+    version = data.get("version") or "1.0.0"
+
+    metadata = CommentedMap()
+    metadata["name"] = slug
+    if display_name:
+        metadata["title"] = display_name
+    if data.get("description"):
+        metadata["description"] = data["description"]
+    labels = CommentedMap()
+    labels["app.kubernetes.io/version"] = version
+    metadata["labels"] = labels
+
+    spec = CommentedMap()
+    for key in ("tiers", "rules", "badges", "integrations", "links"):
+        if key in data:
+            spec[key] = data[key]
+
+    dropped = [k for k in ("pages", "sections", "sidebar") if k in data]
+
+    new_doc = CommentedMap()
+    new_doc["apiVersion"] = "regis.trivoallan.dev/v1alpha1"
+    new_doc["kind"] = "Playbook"
+    new_doc["metadata"] = metadata
+    new_doc["spec"] = spec
+
+    with open(path, "w", encoding="utf-8") as f:
+        yaml.dump(new_doc, f)
+
+    msg = f"  Upgraded {path} to the apiVersion/kind envelope."
+    if dropped:
+        msg += f" Dropped deprecated: {', '.join(dropped)}."
+    msg += f" Run `regis playbook validate {path}` to verify."
+    click.echo(msg)
