@@ -12,21 +12,18 @@ from regis.playbook.engine import bundle_meta_schema_path, is_bundle, load_playb
 from regis.playbook.loader import PlaybookVersionError
 
 MINIMAL_PLAYBOOK = {
-    "schemaVersion": 1,
-    "version": "1.0.0",
-    "name": "Bundle Playbook",
-    "sections": [
-        {
-            "name": "Main",
-            "scorecards": [
-                {
-                    "name": "always-pass",
-                    "description": "Always passes",
-                    "condition": {"==": [1, 1]},
-                }
-            ],
-        }
-    ],
+    "apiVersion": "regis.trivoallan.dev/v1alpha1",
+    "kind": "Playbook",
+    "metadata": {
+        "name": "bundle-playbook",
+        "title": "Bundle Playbook",
+        "labels": {"app.kubernetes.io/version": "1.0.0"},
+    },
+    "spec": {
+        "rules": [
+            {"provider": "cve", "rule": "cve-count", "slug": "always", "level": "info"}
+        ]
+    },
 }
 
 
@@ -91,8 +88,9 @@ class TestLoadPlaybookBundle:
         playbook_file.write_text(yaml.dump(MINIMAL_PLAYBOOK))
 
         loaded = load_playbook(bundle_dir)
-        assert loaded["name"] == "Bundle Playbook"
-        assert len(loaded["sections"][0]["scorecards"]) == 1
+        assert loaded["slug"] == "bundle-playbook"
+        assert loaded["version"] == "1.0.0"
+        assert loaded["rules"][0]["slug"] == "always"
 
     def test_load_from_bundle_directory_string_path(self, tmp_path):
         bundle_dir = tmp_path / "my-bundle"
@@ -141,62 +139,101 @@ def _write(tmp_path, content: str) -> str:
     return str(path)
 
 
-def test_loads_valid_v1_playbook(tmp_path) -> None:
-    content = "schemaVersion: 1\n" 'version: "1.0.0"\n' "name: Valid Playbook\n"
+def test_loads_valid_envelope(tmp_path) -> None:
+    content = (
+        "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+        "kind: Playbook\n"
+        "metadata:\n"
+        "  name: valid\n"
+        "  title: Valid Playbook\n"
+        "  labels:\n"
+        '    app.kubernetes.io/version: "1.0.0"\n'
+        "spec: {}\n"
+    )
     pb = load_playbook(_write(tmp_path, content))
-    assert pb["schemaVersion"] == 1
-    assert pb["version"] == "1.0.0"
-    assert pb["name"] == "Valid Playbook"
+    assert pb["apiVersion"] == "regis.trivoallan.dev/v1alpha1"
+    assert pb["kind"] == "Playbook"
+    assert pb["name"] == "Valid Playbook"  # metadata.title
+    assert pb["slug"] == "valid"  # metadata.name
+    assert pb["version"] == "1.0.0"  # label
 
 
-def test_missing_schema_version_raises(tmp_path) -> None:
-    content = 'version: "1.0.0"\nname: No Schema Version\n'
+def test_name_falls_back_to_metadata_name_when_no_title(tmp_path) -> None:
+    content = (
+        "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+        "kind: Playbook\n"
+        "metadata:\n"
+        "  name: no-title\n"
+        "  labels:\n"
+        '    app.kubernetes.io/version: "1.0.0"\n'
+        "spec: {}\n"
+    )
+    pb = load_playbook(_write(tmp_path, content))
+    assert pb["name"] == "no-title"
+
+
+def test_missing_api_version_raises(tmp_path) -> None:
+    content = "kind: Playbook\nmetadata:\n  name: x\nspec: {}\n"
     with pytest.raises(PlaybookVersionError) as exc:
         load_playbook(_write(tmp_path, content))
     msg = str(exc.value)
-    assert "schemaVersion" in msg
-    assert "Add `schemaVersion: 1`" in msg
-    assert "[1]" in msg
+    assert "apiVersion" in msg
+    assert "Add `apiVersion: regis.trivoallan.dev/v1alpha1`" in msg
 
 
-def test_schema_version_not_integer_raises(tmp_path) -> None:
+def test_wrong_kind_raises(tmp_path) -> None:
     content = (
-        'schemaVersion: "1"\n' 'version: "1.0.0"\n' "name: String Schema Version\n"
+        "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+        "kind: RuleSet\n"
+        "metadata:\n  name: x\nspec: {}\n"
     )
     with pytest.raises(PlaybookVersionError) as exc:
         load_playbook(_write(tmp_path, content))
-    assert "must be an integer" in str(exc.value)
+    assert "expected 'Playbook'" in str(exc.value)
 
 
-def test_schema_version_boolean_raises(tmp_path) -> None:
+def test_unknown_api_version_raises(tmp_path) -> None:
     content = (
-        "schemaVersion: true\n" 'version: "1.0.0"\n' "name: Boolean Schema Version\n"
+        "apiVersion: regis.trivoallan.dev/v9\n"
+        "kind: Playbook\n"
+        "metadata:\n  name: x\nspec: {}\n"
     )
-    with pytest.raises(PlaybookVersionError) as exc:
-        load_playbook(_write(tmp_path, content))
-    assert "must be an integer" in str(exc.value)
-
-
-def test_unknown_schema_version_raises(tmp_path) -> None:
-    content = "schemaVersion: 99\n" 'version: "1.0.0"\n' "name: Future Playbook\n"
     with pytest.raises(PlaybookVersionError) as exc:
         load_playbook(_write(tmp_path, content))
     msg = str(exc.value)
-    assert "schemaVersion=99" in msg
-    assert "[1]" in msg
+    assert "apiVersion=" in msg
+    assert "regis playbook upgrade" in msg
 
 
-def test_missing_version_field_fails_schema_validation(tmp_path) -> None:
+def test_legacy_flat_format_rejected(tmp_path) -> None:
+    content = 'schemaVersion: 1\nversion: "1.0.0"\nname: Legacy\n'
+    with pytest.raises(PlaybookVersionError) as exc:
+        load_playbook(_write(tmp_path, content))
+    assert "apiVersion" in str(exc.value)
+
+
+def test_missing_version_label_fails_schema_validation(tmp_path) -> None:
     import jsonschema
 
-    content = "schemaVersion: 1\nname: No Version\n"
+    content = (
+        "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+        "kind: Playbook\n"
+        "metadata:\n  name: x\n  labels: {}\n"
+        "spec: {}\n"
+    )
     with pytest.raises(jsonschema.ValidationError):
         load_playbook(_write(tmp_path, content))
 
 
-def test_invalid_semver_fails_schema_validation(tmp_path) -> None:
+def test_invalid_semver_label_fails_schema_validation(tmp_path) -> None:
     import jsonschema
 
-    content = "schemaVersion: 1\n" 'version: "1.2"\n' "name: Invalid SemVer\n"
+    content = (
+        "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+        "kind: Playbook\n"
+        "metadata:\n  name: x\n  labels:\n"
+        '    app.kubernetes.io/version: "1.2"\n'
+        "spec: {}\n"
+    )
     with pytest.raises(jsonschema.ValidationError):
         load_playbook(_write(tmp_path, content))
