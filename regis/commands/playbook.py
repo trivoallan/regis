@@ -45,8 +45,8 @@ def validate_playbook(path: Path) -> None:
         raise click.ClickException(f"Failed to load playbook: {exc}") from exc
 
     click.echo(
-        f"  ✓ {path} is valid (schemaVersion={playbook['schemaVersion']}, "
-        f"version={playbook['version']})."
+        f"  ✓ {path} is valid (apiVersion={playbook['apiVersion']}, "
+        f"kind={playbook['kind']}, version={playbook.get('version')})."
     )
 
 
