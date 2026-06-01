@@ -40,7 +40,7 @@ def test_bootstrap_no_cookiecutter():
     with patch.dict("sys.modules", {"cookiecutter.main": None}):
         runner = CliRunner()
         # We need a path that exists for template_path
-        result = runner.invoke(main, ["bootstrap", "archive", ".", "--no-input"])
+        result = runner.invoke(main, ["bootstrap", "playbook", ".", "--no-input"])
         assert "cookiecutter not found" in result.output
 
 
