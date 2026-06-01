@@ -2,19 +2,7 @@
 ARG VARIANT=slim
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Stage 1: frontend-builder — builds the Docusaurus dashboard
-# ──────────────────────────────────────────────────────────────────────────────
-FROM node:25-alpine AS frontend-builder
-RUN npm install -g pnpm@10.10.0
-WORKDIR /app
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
-COPY apps/ apps/
-RUN pnpm install --frozen-lockfile
-WORKDIR /app/apps/dashboard
-RUN pnpm run build
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Stage 2: python-builder — compiles Python deps into a venv
+# Stage 1: python-builder — compiles Python deps into a venv
 # ──────────────────────────────────────────────────────────────────────────────
 # Alpine 3.11 builder paired with Alpine 3.11 runtime — matching musl libc and
 # CPython ABIs so the venv's symlinked interpreter resolves cleanly at runtime.
@@ -37,11 +25,10 @@ ENV PATH="/opt/venv/bin:$PATH"
 WORKDIR /src
 COPY pyproject.toml Pipfile Pipfile.lock ./
 COPY regis/ regis/
-COPY --from=frontend-builder /app/apps/dashboard/build regis/dashboard_assets
 
-# Core install only — the optional [server] extra (FastAPI/Uvicorn) is
-# intentionally excluded to keep the runtime image small. Use a host with
-# `pip install 'regis[server]'` for `regis dashboard serve`.
+# Core install only. The interactive dashboard + its FastAPI server moved to
+# the standalone regis-dashboard repo, so there is no Node build stage and no
+# dashboard_assets baked into the image.
 # --no-compile skips .pyc generation (PYTHONDONTWRITEBYTECODE keeps runtime
 # from regenerating them); prune any residual bytecode caches afterwards.
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
