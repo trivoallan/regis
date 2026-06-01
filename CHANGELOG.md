@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.33.0](https://github.com/trivoallan/regis/compare/v0.32.0...v0.33.0) (2026-06-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop the dashboard frontend-builder stage from the Dockerfile ([#636](https://github.com/trivoallan/regis/issues/636))
+* remove dashboard/site/server from the core (Phase 2) ([#634](https://github.com/trivoallan/regis/issues/634))
+* **report:** add required report schemaVersion (dashboard-decouple Phase 0) ([#630](https://github.com/trivoallan/regis/issues/630))
+* **playbook:** every playbook must now declare schemaVersion: 1 and a SemVer-formatted version. Existing playbooks must be migrated; see the upgrade guide (added in Task 12).
+* **build:** the default :latest image is now slim. Scanner binaries (grype, syft, trufflehog, hadolint, dockle) are downloaded on first use. Air-gapped users should pull :latest-full instead, or set REGIS_TOOLS_MIRROR.
+* **analyzer:** the 'trivy' analyzer is replaced by 'cve' (grype) and 'secrets' (trufflehog); SBOM generation now uses syft. Playbooks using 'provider: trivy' must switch to 'provider: cve' / 'provider: secrets', and 'results.trivy.*' becomes 'results.cve.*' / 'results.secrets.*'.
+
+### Features
+
+* **analyzer:** replace trivy with grype (cve), syft (sbom), trufflehog (secrets) ([#620](https://github.com/trivoallan/regis/issues/620)) ([6ea387f](https://github.com/trivoallan/regis/commit/6ea387fb4e98b5cfa1f97ccce01dafe57c8a058e))
+* **build:** round-3 image trim — slim 156 MB via lazy-loaded scanners ([#623](https://github.com/trivoallan/regis/issues/623)) ([fef0a70](https://github.com/trivoallan/regis/commit/fef0a7045c4f89960e5fe6739cdb3dfec4cac1ff))
+* **playbook:** require schemaVersion and version + dispatch registry ([#626](https://github.com/trivoallan/regis/issues/626)) ([3e542da](https://github.com/trivoallan/regis/commit/3e542dad70fca1e2aaf88cb5f0af68e47348e212))
+* remove dashboard/site/server from the core (Phase 2) ([#634](https://github.com/trivoallan/regis/issues/634)) ([db472d8](https://github.com/trivoallan/regis/commit/db472d878e517ef44a988de2f97dfbb64cc92c6f))
+* **report:** add required report schemaVersion (dashboard-decouple Phase 0) ([#630](https://github.com/trivoallan/regis/issues/630)) ([27e5b6c](https://github.com/trivoallan/regis/commit/27e5b6c5449e0aee60488ecf4b47f858de5fd48c))
+
+
+### Bug Fixes
+
+* **ci:** grant contents:write so SBOMs attach to GitHub Releases ([#618](https://github.com/trivoallan/regis/issues/618)) ([4015949](https://github.com/trivoallan/regis/commit/401594960e9cb83227d9a158de77724ed6790243))
+* **docs:** replace dead ghcr-badge.egpl.dev with CI-generated image-size badge ([#613](https://github.com/trivoallan/regis/issues/613)) ([4b84426](https://github.com/trivoallan/regis/commit/4b8442623156f0a5f407990bf2a65298da30dc27))
+
+
+### Build System
+
+* drop the dashboard frontend-builder stage from the Dockerfile ([#636](https://github.com/trivoallan/regis/issues/636)) ([6ec04f7](https://github.com/trivoallan/regis/commit/6ec04f75acda39b6f79ec1ae7acdbb141581b20c))
+
 ## [0.32.0](https://github.com/trivoallan/regis/compare/v0.31.0...v0.32.0) (2026-05-30)
 
 ### ⚠ BREAKING CHANGES
