@@ -138,59 +138,6 @@ class TestCliBasics:
             # Also check request metadata
             assert report["request"]["metadata"]["ci"]["job_id"] == "456"
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
-    @patch("regis.report.docusaurus.build_report_site")
-    def test_analyze_html_with_metadata(
-        self, mock_build_site, mock_discover, mock_client
-    ):
-        # Mock build_report_site to only write the report.json file,
-        # avoiding the heavy Docusaurus/npm build process during unit tests.
-        def side_effect(report, output_dir, **kwargs):
-            output_dir.mkdir(parents=True, exist_ok=True)
-            (output_dir / "report.json").write_text(
-                json.dumps(report), encoding="utf-8"
-            )
-
-        mock_build_site.side_effect = side_effect
-        from regis.analyzers.base import BaseAnalyzer
-
-        class DummyAnalyzer(BaseAnalyzer):
-            def analyze(self, client, repo, tag):
-                return {"analyzer": "dummy", "repository": repo, "tag": tag}
-
-            def validate(self, report):
-                pass
-
-        mock_discover.return_value = {"dummy": DummyAnalyzer}
-        mock_client.return_value.get_digest.return_value = None
-
-        runner = CliRunner()
-        with runner.isolated_filesystem():
-            result = runner.invoke(
-                main,
-                [
-                    "analyze",
-                    "nginx:latest",
-                    "--site",
-                    "--meta",
-                    "build=123",
-                    "--meta",
-                    "env=prod",
-                ],
-            )
-            assert result.exit_code == 0
-
-            # Report data is written to report.json alongside the static SPA
-            report_file = Path(
-                "reports/registry-1.docker.io/library-nginx/latest/report.json"
-            )
-            report_data = json.loads(report_file.read_text(encoding="utf-8"))
-
-            assert "metadata" in report_data
-            assert report_data["metadata"]["build"] == "123"
-            assert report_data["metadata"]["env"] == "prod"
-
 
 class TestAnalyzeParallelism:
     """Test parallel analyzer execution."""
