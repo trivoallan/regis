@@ -55,10 +55,11 @@ def test_generated_playbook_has_gitlab_integration():
 
         pb_file = Path("my-regis-pipeline/playbook.yaml")
         data = yaml.safe_load(pb_file.read_text(encoding="utf-8"))
-        assert "integrations" in data
-        assert "gitlab" in data["integrations"]
-        assert "badges" in data["integrations"]["gitlab"]
-        assert "checklists" in data["integrations"]["gitlab"]
+        assert "spec" in data
+        assert "integrations" in data["spec"]
+        assert "gitlab" in data["spec"]["integrations"]
+        assert "badges" in data["spec"]["integrations"]["gitlab"]
+        assert "checklists" in data["spec"]["integrations"]["gitlab"]
 
 
 def test_generated_ci_variables_lists_required_vars():

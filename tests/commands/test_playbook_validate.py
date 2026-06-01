@@ -5,7 +5,6 @@ from __future__ import annotations
 import textwrap
 from pathlib import Path
 
-import pytest
 from click.testing import CliRunner
 
 from regis.cli import main
@@ -23,10 +22,6 @@ _VALID_ENVELOPE = (
 
 
 class TestPlaybookValidate:
-    @pytest.mark.skip(
-        reason="Built-in default bundle still uses schemaVersion v1 (legacy format). "
-        "Re-enable after the bundle is migrated to the v1alpha1 envelope."
-    )
     def test_validate_built_in_default_bundle(self):
         runner = CliRunner()
         result = runner.invoke(
