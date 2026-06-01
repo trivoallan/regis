@@ -4,8 +4,13 @@
   "title": "report",
   "description": "Final report envelope produced by regis, containing request metadata and analyzer results.",
   "type": "object",
-  "required": ["request", "results", "version"],
+  "required": ["schemaVersion", "request", "results", "version"],
   "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Report-structure contract version. Consumers (e.g. the standalone dashboard) gate rendering on this. Distinct from `version` (package/snapshot)."
+    },
     "version": {
       "type": ["string", "null"],
       "description": "Version of regis that generated this report."
