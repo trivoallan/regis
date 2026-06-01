@@ -15,6 +15,9 @@ import jsonschema
 
 logger = logging.getLogger(__name__)
 
+REPORT_SCHEMA_VERSION = 1
+"""Current report-structure contract version (see report.schema.json)."""
+
 
 def format_output_path(template: str, report: dict[str, Any], fmt: str) -> Path:
     """Format an output path template using data from the report."""
@@ -230,6 +233,16 @@ def run_playbooks(
         final_report["links"] = all_links
 
     return final_report
+
+
+def ensure_schema_version(report: dict[str, Any]) -> dict[str, Any]:
+    """Stamp `schemaVersion` on a report if absent. Backfills legacy reports.
+
+    Mutates `report` in place and returns it. Existing values are preserved so a
+    future report carrying a higher version is never silently downgraded.
+    """
+    report.setdefault("schemaVersion", REPORT_SCHEMA_VERSION)
+    return report
 
 
 def validate_report(report: dict[str, Any]) -> None:

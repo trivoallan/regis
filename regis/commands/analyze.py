@@ -18,6 +18,8 @@ from regis.analyzers.discovery import discover_analyzers
 from regis.registry.client import RegistryClient, RegistryError
 from regis.registry.parser import parse_image_url
 from regis.utils.report import (
+    REPORT_SCHEMA_VERSION,
+    ensure_schema_version,
     format_output_path,
     render_and_save_reports,
     render_mr_templates,
@@ -405,6 +407,7 @@ def analyze(
         rerun_report = run_playbooks(
             playbook_paths, existing_report, formats, show_rules=evaluate
         )
+        ensure_schema_version(rerun_report)
         validate_report(rerun_report)
 
         indent = 2 if pretty else None
@@ -485,6 +488,7 @@ def analyze(
             if cache_path.exists():
                 _info(f"  Using cached report from {cache_path}", quiet=quiet)
                 final_report = json.loads(cache_path.read_text(encoding="utf-8"))
+                ensure_schema_version(final_report)
         except Exception as exc:
             logger.debug("Cache lookup failed: %s", exc)
 
@@ -609,6 +613,7 @@ def analyze(
         metadata_dict = _parse_meta(meta)
 
         analysis_report = {
+            "schemaVersion": REPORT_SCHEMA_VERSION,
             "version": version("regis"),
             "request": {
                 "url": url,
@@ -796,6 +801,7 @@ def evaluate_cmd(
 
     if "results" in data:
         analysis_report = data
+        ensure_schema_version(analysis_report)
     else:
         raise click.ClickException(
             "Input file does not appear to be a regis report (missing 'results' key)."

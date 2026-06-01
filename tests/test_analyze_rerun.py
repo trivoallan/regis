@@ -303,3 +303,51 @@ class TestRerunMergeMeta:
             )
             assert "EXISTING_KEY" not in updated["metadata"]
             assert updated["metadata"]["NEW_KEY"] == "only"
+
+
+class TestRerunBackfillsSchemaVersion:
+    """A legacy report (no schemaVersion) flows through --rerun under real validation."""
+
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_rerun_backfills_schema_version(self, mock_discover):
+        mock_discover.return_value = {"metadata": MetadataAnalyzer}
+
+        legacy_report = {
+            "version": "0.1.0",
+            "request": {
+                "url": "r/repo:latest",
+                "registry": "r",
+                "repository": "repo",
+                "tag": "latest",
+                "analyzers": ["metadata"],
+                "timestamp": "2024-01-01T00:00:00+00:00",
+            },
+            "results": {},
+        }
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            report_dir = Path("my_report")
+            report_dir.mkdir()
+            (report_dir / "report.json").write_text(
+                json.dumps(legacy_report), encoding="utf-8"
+            )
+
+            result = runner.invoke(
+                main,
+                [
+                    "analyze",
+                    "--rerun",
+                    "metadata",
+                    "--report",
+                    str(report_dir),
+                    "-m",
+                    "PROJECT_ID=PROJ-42",
+                ],
+            )
+
+            assert result.exit_code == 0, result.output
+            updated = json.loads(
+                (report_dir / "report.json").read_text(encoding="utf-8")
+            )
+            assert updated["schemaVersion"] == 1

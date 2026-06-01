@@ -406,8 +406,13 @@ class TestAnalyzeCacheAndFail:
 
             result = runner.invoke(main, ["analyze", "nginx:latest", "--cache"])
 
-        assert result.exit_code == 0
-        assert "cached" in result.output
+            assert result.exit_code == 0
+            assert "cached" in result.output
+            # The legacy cached report had no schemaVersion; the cache-hit load
+            # path must backfill it before validation, and the saved report
+            # carries it.
+            saved = json.loads((cache_dir / "report.json").read_text(encoding="utf-8"))
+            assert saved["schemaVersion"] == 1
 
     @patch("regis.commands.analyze.render_mr_templates")
     @patch("regis.commands.analyze.render_and_save_reports")
