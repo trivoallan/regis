@@ -10,7 +10,6 @@ from click.testing import CliRunner
 
 from regis.cli import main
 
-
 # Minimal valid envelope fixture (reused across tests).
 _VALID_ENVELOPE = (
     "apiVersion: regis.trivoallan.dev/v1alpha1\n"
