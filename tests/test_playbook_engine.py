@@ -618,7 +618,8 @@ def test_evaluate_propagates_playbook_metadata() -> None:
     from regis.playbook.evaluator import evaluate
 
     playbook = {
-        "schemaVersion": 1,
+        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "kind": "Playbook",
         "version": "2.3.4",
         "name": "MetadataPlaybook",
     }
@@ -627,4 +628,21 @@ def test_evaluate_propagates_playbook_metadata() -> None:
 
     assert result["playbook_name"] == "MetadataPlaybook"
     assert result["playbook_version"] == "2.3.4"
-    assert result["schema_version"] == 1
+    assert result["api_version"] == "regis.trivoallan.dev/v1alpha1"
+    assert "schema_version" not in result
+
+
+def test_evaluate_propagates_api_version() -> None:
+    from regis.playbook.evaluator import evaluate
+
+    playbook = {
+        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "kind": "Playbook",
+        "name": "X",
+        "version": "1.0.0",
+        "rules": [],
+    }
+    result = evaluate(playbook, {"analyzers": {}})
+    assert result["api_version"] == "regis.trivoallan.dev/v1alpha1"
+    assert result["playbook_version"] == "1.0.0"
+    assert "schema_version" not in result
