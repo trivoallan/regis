@@ -21,32 +21,32 @@ By using playbooks, you can decouple the raw data extraction (performed by analy
 
 Playbooks use a Kubernetes-style resource envelope. Every `playbook.yaml` must declare these four top-level keys:
 
-| Field        | Required | Description                                                 |
-| ------------ | -------- | ----------------------------------------------------------- |
-| `apiVersion` | yes      | Must be `regis.trivoallan.dev/v1alpha1`.                    |
-| `kind`       | yes      | Must be `Playbook`.                                         |
-| `metadata`   | yes      | Identity and version of this playbook (see below).          |
-| `spec`       | yes      | Rules, tiers, badges, integrations, and links (see below).  |
+| Field        | Required | Description                                                |
+| ------------ | -------- | ---------------------------------------------------------- |
+| `apiVersion` | yes      | Must be `regis.trivoallan.dev/v1alpha1`.                   |
+| `kind`       | yes      | Must be `Playbook`.                                        |
+| `metadata`   | yes      | Identity and version of this playbook (see below).         |
+| `spec`       | yes      | Rules, tiers, badges, integrations, and links (see below). |
 
 ### `metadata` fields
 
-| Field                              | Required | Description                                                                                  |
-| ---------------------------------- | -------- | -------------------------------------------------------------------------------------------- |
-| `metadata.name`                    | yes      | Machine identifier — RFC 1123 DNS label (lowercase alphanumerics and `-`, max 63 chars).     |
-| `metadata.title`                   | no       | Human-readable display name shown in reports.                                                |
-| `metadata.description`             | no       | Human-readable description of what this playbook evaluates.                                  |
-| `metadata.labels["app.kubernetes.io/version"]` | yes | SemVer of your playbook bundle (e.g. `"1.0.0"`). Bump when you change rules.   |
-| `metadata.annotations`             | no       | Free-form non-identifying metadata (arbitrary string key/value pairs).                       |
+| Field                                          | Required | Description                                                                              |
+| ---------------------------------------------- | -------- | ---------------------------------------------------------------------------------------- |
+| `metadata.name`                                | yes      | Machine identifier — RFC 1123 DNS label (lowercase alphanumerics and `-`, max 63 chars). |
+| `metadata.title`                               | no       | Human-readable display name shown in reports.                                            |
+| `metadata.description`                         | no       | Human-readable description of what this playbook evaluates.                              |
+| `metadata.labels["app.kubernetes.io/version"]` | yes      | SemVer of your playbook bundle (e.g. `"1.0.0"`). Bump when you change rules.             |
+| `metadata.annotations`                         | no       | Free-form non-identifying metadata (arbitrary string key/value pairs).                   |
 
 ### `spec` fields
 
-| Field               | Required | Description                                                                         |
-| ------------------- | -------- | ----------------------------------------------------------------------------------- |
-| `spec.tiers`        | no       | Compliance tier thresholds (Gold / Silver / Bronze).                                |
-| `spec.rules`        | no       | Rule template instantiations (provider + rule slug + options).                      |
-| `spec.badges`       | no       | Dynamic status badges displayed in the report header.                               |
-| `spec.integrations` | no       | Third-party platform integrations (e.g. `integrations.gitlab`).                     |
-| `spec.links`        | no       | Custom action links displayed in the report.                                        |
+| Field               | Required | Description                                                     |
+| ------------------- | -------- | --------------------------------------------------------------- |
+| `spec.tiers`        | no       | Compliance tier thresholds (Gold / Silver / Bronze).            |
+| `spec.rules`        | no       | Rule template instantiations (provider + rule slug + options).  |
+| `spec.badges`       | no       | Dynamic status badges displayed in the report header.           |
+| `spec.integrations` | no       | Third-party platform integrations (e.g. `integrations.gitlab`). |
+| `spec.links`        | no       | Custom action links displayed in the report.                    |
 
 ### Field mapping from the legacy format
 
@@ -58,19 +58,19 @@ regis playbook upgrade path/to/playbook.yaml
 
 The mapping is:
 
-| Legacy field      | New location                                    |
-| ----------------- | ----------------------------------------------- |
-| `schemaVersion`   | replaced by `apiVersion`                        |
-| `version`         | `metadata.labels["app.kubernetes.io/version"]`  |
-| `name`            | `metadata.title`                                |
-| `slug`            | `metadata.name`                                 |
-| `description`     | `metadata.description`                          |
-| `tiers`           | `spec.tiers`                                    |
-| `rules`           | `spec.rules`                                    |
-| `badges`          | `spec.badges`                                   |
-| `integrations`    | `spec.integrations`                             |
-| `links`           | `spec.links`                                    |
-| `pages`/`sections`/`sidebar` | removed (not used by the report viewer) |
+| Legacy field                 | New location                                   |
+| ---------------------------- | ---------------------------------------------- |
+| `schemaVersion`              | replaced by `apiVersion`                       |
+| `version`                    | `metadata.labels["app.kubernetes.io/version"]` |
+| `name`                       | `metadata.title`                               |
+| `slug`                       | `metadata.name`                                |
+| `description`                | `metadata.description`                         |
+| `tiers`                      | `spec.tiers`                                   |
+| `rules`                      | `spec.rules`                                   |
+| `badges`                     | `spec.badges`                                  |
+| `integrations`               | `spec.integrations`                            |
+| `links`                      | `spec.links`                                   |
+| `pages`/`sections`/`sidebar` | removed (not used by the report viewer)        |
 
 ## Core Concepts
 

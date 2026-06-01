@@ -228,11 +228,11 @@ Construct valid YAML from stages 2–4. Use this structure:
 apiVersion: regis.trivoallan.dev/v1alpha1
 kind: Playbook
 metadata:
-  name: "<slug>"                         # machine id — RFC 1123 DNS label (from stage 1)
-  title: "<name>"                        # human display name (from stage 1)
-  description: "<description>"           # omit if not provided
+  name: "<slug>" # machine id — RFC 1123 DNS label (from stage 1)
+  title: "<name>" # human display name (from stage 1)
+  description: "<description>" # omit if not provided
   labels:
-    app.kubernetes.io/version: "1.0.0"  # bump (SemVer) when you change rules
+    app.kubernetes.io/version: "1.0.0" # bump (SemVer) when you change rules
 
 spec:
   tiers:

@@ -106,8 +106,8 @@ A minimal playbook uses the Kubernetes-style envelope (`apiVersion`/`kind`/`meta
 apiVersion: regis.trivoallan.dev/v1alpha1
 kind: Playbook
 metadata:
-  name: my-security-policy          # machine id — RFC 1123 DNS label
-  title: My Security Policy         # display name
+  name: my-security-policy # machine id — RFC 1123 DNS label
+  title: My Security Policy # display name
   labels:
     app.kubernetes.io/version: "1.0.0"
 

@@ -26,19 +26,19 @@ back to disk. Run the migration command to make the change permanent.
 
 ## Field mapping
 
-| Old field         | New location                                    | Notes                                     |
-| ----------------- | ----------------------------------------------- | ----------------------------------------- |
-| `schemaVersion`   | replaced by `apiVersion`                        | `apiVersion: regis.trivoallan.dev/v1alpha1` |
-| `name`            | `metadata.title`                                | human-readable display name               |
-| `slug`            | `metadata.name`                                 | machine id — RFC 1123 DNS label           |
-| `description`     | `metadata.description`                          | optional                                  |
-| `version`         | `metadata.labels["app.kubernetes.io/version"]`  | SemVer string                             |
-| `tiers`           | `spec.tiers`                                    |                                           |
-| `rules`           | `spec.rules`                                    |                                           |
-| `badges`          | `spec.badges`                                   |                                           |
-| `integrations`    | `spec.integrations`                             |                                           |
-| `links`           | `spec.links`                                    |                                           |
-| `pages`/`sections`/`sidebar` | removed                          | not used by the report viewer             |
+| Old field                    | New location                                   | Notes                                       |
+| ---------------------------- | ---------------------------------------------- | ------------------------------------------- |
+| `schemaVersion`              | replaced by `apiVersion`                       | `apiVersion: regis.trivoallan.dev/v1alpha1` |
+| `name`                       | `metadata.title`                               | human-readable display name                 |
+| `slug`                       | `metadata.name`                                | machine id — RFC 1123 DNS label             |
+| `description`                | `metadata.description`                         | optional                                    |
+| `version`                    | `metadata.labels["app.kubernetes.io/version"]` | SemVer string                               |
+| `tiers`                      | `spec.tiers`                                   |                                             |
+| `rules`                      | `spec.rules`                                   |                                             |
+| `badges`                     | `spec.badges`                                  |                                             |
+| `integrations`               | `spec.integrations`                            |                                             |
+| `links`                      | `spec.links`                                   |                                             |
+| `pages`/`sections`/`sidebar` | removed                                        | not used by the report viewer               |
 
 ## Automated migration
 
@@ -84,15 +84,15 @@ description: "Optional description."
 apiVersion: regis.trivoallan.dev/v1alpha1
 kind: Playbook
 metadata:
-  name: your-playbook          # was: slug
-  title: Your Playbook Name    # was: name
+  name: your-playbook # was: slug
+  title: Your Playbook Name # was: name
   description: "Optional description."
   labels:
-    app.kubernetes.io/version: "1.0.0"  # was: version
+    app.kubernetes.io/version: "1.0.0" # was: version
 spec:
-  tiers: [...]    # unchanged content, now under spec
-  rules: [...]    # unchanged content, now under spec
-  badges: [...]   # unchanged content, now under spec
+  tiers: [...] # unchanged content, now under spec
+  rules: [...] # unchanged content, now under spec
+  badges: [...] # unchanged content, now under spec
 ```
 
 Note: `metadata.name` must be an RFC 1123 DNS label — lowercase alphanumerics

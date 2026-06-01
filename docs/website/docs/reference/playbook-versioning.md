@@ -6,10 +6,10 @@ sidebar_position: 4
 
 Every Regis playbook uses a Kubernetes-style resource envelope. Two fields carry version information:
 
-| Field                                           | Required | Purpose                                                      |
-| ----------------------------------------------- | -------- | ------------------------------------------------------------ |
-| `apiVersion`                                    | yes      | Identifies the playbook format. Must equal `regis.trivoallan.dev/v1alpha1`. |
-| `metadata.labels["app.kubernetes.io/version"]`  | yes      | SemVer of your playbook bundle (`MAJOR.MINOR.PATCH`).        |
+| Field                                          | Required | Purpose                                                                     |
+| ---------------------------------------------- | -------- | --------------------------------------------------------------------------- |
+| `apiVersion`                                   | yes      | Identifies the playbook format. Must equal `regis.trivoallan.dev/v1alpha1`. |
+| `metadata.labels["app.kubernetes.io/version"]` | yes      | SemVer of your playbook bundle (`MAJOR.MINOR.PATCH`).                       |
 
 ## Example
 
