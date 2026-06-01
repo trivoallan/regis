@@ -44,15 +44,12 @@ metadata = "regis.analyzers.metadata:MetadataAnalyzer"
 secrets = "regis.analyzers.secrets:SecretsAnalyzer"
 
 [project.optional-dependencies]
-server = ["fastapi>=0.115.0", "uvicorn[standard]>=0.34"]
 dev = [
   "pytest>=7.4",
   "pytest-cov>=4.1",
   "responses>=0.24",
   "genbadge[coverage]>=1.1",
   "httpx>=0.28",
-  "fastapi>=0.115.0",
-  "uvicorn[standard]>=0.34",
 ]
 
 [tool.setuptools.packages.find]
@@ -64,7 +61,6 @@ regis = [
   "scorecard/*.yaml",
   "templates/**/*",
   "cookiecutters/**/*",
-  "dashboard_assets/**/*",
   "playbooks/**/*",
   "data/*.json",
 ]
@@ -80,7 +76,7 @@ addopts = "--cov=regis --cov-report=term-missing --cov-report=html --cov-report=
 
 [tool.coverage.run]
 source = ["regis"]
-omit = ["regis/cookiecutters/*", "regis/dashboard_assets/*"]
+omit = ["regis/cookiecutters/*"]
 
 [tool.coverage.report]
 fail_under = 90
