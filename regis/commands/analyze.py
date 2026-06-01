@@ -657,6 +657,15 @@ def analyze(
     if not archive_dir:
         render_mr_templates(final_report, output_dir_template)
 
+    # Discoverability: the interactive viewer now ships separately. Only point to
+    # it for the plain machine-report path (not --html, which is self-contained,
+    # and not --archive, which feeds the standalone dashboard directly).
+    if not html_single and not archive_dir:
+        _info(
+            "  Explore interactively: https://github.com/trivoallan/regis-dashboard",
+            quiet=quiet,
+        )
+
     # Only print the summary when the user explicitly requested a playbook —
     # avoids changing stdout for default runs that auto-load the built-in playbook.
     if playbook_paths:
