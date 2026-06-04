@@ -25,16 +25,16 @@ The action wraps the `regis` CLI (shipped as the
 
 ## Inputs
 
-| Input             | Required | Default                 | Description                                                        |
-| ----------------- | -------- | ----------------------- | ------------------------------------------------------------------ |
-| `image-url`       | Yes      | —                       | Container image URL to analyze                                     |
-| `auth`            | No       | `""`                    | Registry credentials as `registry=user:pass`                       |
-| `playbook`        | No       | `""`                    | URL or path to a custom playbook YAML                              |
-| `report-url`      | No       | `""`                    | URL to the hosted report (used in the PR comment link)             |
-| `github-token`    | No       | `${{ github.token }}`   | Token for posting PR comments; requires `pull-requests: write`     |
-| `pr-url`          | No       | `""`                    | PR URL to comment on; auto-detected in `pull_request` context      |
-| `upload-artifact` | No       | `true`                  | Whether to upload the report as a workflow artifact                |
-| `artifact-name`   | No       | `regis-security-report` | Name for the uploaded artifact                                     |
+| Input             | Required | Default                 | Description                                                          |
+| ----------------- | -------- | ----------------------- | -------------------------------------------------------------------- |
+| `image-url`       | Yes      | —                       | Container image URL to analyze                                       |
+| `auth`            | No       | `""`                    | Registry credentials as `registry=user:pass`                         |
+| `playbook`        | No       | `""`                    | URL or path to a custom playbook YAML                                |
+| `report-url`      | No       | `""`                    | URL to the hosted report (used in the PR comment link)               |
+| `github-token`    | No       | `${{ github.token }}`   | Token for posting PR comments; requires `pull-requests: write`       |
+| `pr-url`          | No       | `""`                    | PR URL to comment on; auto-detected in `pull_request` context        |
+| `upload-artifact` | No       | `true`                  | Whether to upload the report as a workflow artifact                  |
+| `artifact-name`   | No       | `regis-security-report` | Name for the uploaded artifact                                       |
 | `version`         | No       | `latest`                | `regis` Docker image tag to run (pin to a release tag in production) |
 
 ## Outputs
