@@ -1,0 +1,7 @@
+# Reports produced by local action runs
+reports/
+regis-reports/
+
+# OS / editor cruft
+.DS_Store
+*.swp

@@ -119,9 +119,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Exclude trivoallan/regis — self-referencing action cannot be SHA-pinned
-          if grep -RInE 'uses:\s*[^[:space:]]+@(v[0-9]+|main|master|latest)\b' .github/workflows/*.yml \
-            | grep -v 'trivoallan/regis@'; then
+          if grep -RInE 'uses:\s*[^[:space:]]+@(v[0-9]+|main|master|latest)\b' .github/workflows/*.yml; then
             echo "::error::Found non-pinned action reference in top-level workflows. Pin all actions to full commit SHA."
             exit 1
           fi

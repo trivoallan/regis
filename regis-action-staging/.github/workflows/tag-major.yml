@@ -1,0 +1,37 @@
+name: Update major version tag
+
+# When a release is published (e.g. v1.2.3), move the floating major tag
+# (v1) to point at it, following the GitHub Actions Marketplace convention
+# so consumers can pin to `@v1` and receive non-breaking updates.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  tag-major:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Move major version tag
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          # RELEASE_TAG looks like v1.2.3 -> derive major tag v1
+          MAJOR="${RELEASE_TAG%%.*}"
+          if [ -z "${MAJOR}" ] || [ "${MAJOR}" = "${RELEASE_TAG}" ]; then
+            echo "::error::Unexpected release tag format: ${RELEASE_TAG}"
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -f "${MAJOR}" "${RELEASE_TAG}"
+          git push -f origin "${MAJOR}"

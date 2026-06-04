@@ -18,6 +18,19 @@ The fastest way to integrate `regis` is to use the official reusable GitHub
 Action. It wraps the full analysis workflow—running the scanner, uploading the
 report artifact, and posting a PR comment—into a single step.
 
+The action is published from its own repository,
+[`trivoallan/regis-action`](https://github.com/trivoallan/regis-action), and is
+versioned independently from the `regis` core. Reference it as
+`trivoallan/regis-action@v1`.
+
+:::note Migrating from `trivoallan/regis@vX`
+The action previously lived in the core repository and was referenced as
+`uses: trivoallan/regis@vX`. It has moved to
+[`trivoallan/regis-action`](https://github.com/trivoallan/regis-action).
+Replace `uses: trivoallan/regis@vX` with `uses: trivoallan/regis-action@v1`.
+The `version:` input (the `regis` Docker image tag) is unchanged.
+:::
+
 ### Permissions
 
 ```yaml
@@ -68,7 +81,7 @@ jobs:
           tags: ghcr.io/${{ github.repository }}:latest
 
       - name: Analyze with regis
-        uses: trivoallan/regis@v0.25.0
+        uses: trivoallan/regis-action@v1
         with:
           image-url: ghcr.io/${{ github.repository }}:latest
           auth: ghcr.io=${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}

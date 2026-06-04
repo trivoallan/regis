@@ -124,6 +124,13 @@ These artifacts are uploaded by the release/CD workflow as GitHub Actions workfl
 
 The [**regis-security-analysis**](https://github.com/marketplace/actions/regis-security-analysis) GitHub Action runs a full Regis security analysis on any OCI image, uploads the HTML report as a workflow artifact, and optionally posts a summary comment on pull requests.
 
+The action lives in its own repository, [**trivoallan/regis-action**](https://github.com/trivoallan/regis-action), and is versioned independently from this core project. Reference it as `trivoallan/regis-action@v1`.
+
+> **Migrating from `trivoallan/regis@vX`?** The action used to be hosted in this
+> repository. It has moved to [`trivoallan/regis-action`](https://github.com/trivoallan/regis-action).
+> Replace `uses: trivoallan/regis@vX` with `uses: trivoallan/regis-action@v1`.
+> The `version:` input (the `regis` Docker image tag) is unchanged.
+
 ### Inputs
 
 | Input             | Required | Default                 | Description                                                        |
@@ -147,7 +154,7 @@ The [**regis-security-analysis**](https://github.com/marketplace/actions/regis-s
 ### Basic usage
 
 ```yaml
-- uses: trivoallan/regis@main
+- uses: trivoallan/regis-action@v1
   with:
     image-url: ghcr.io/your-org/your-image:latest
 ```
@@ -163,7 +170,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: trivoallan/regis@main
+      - uses: trivoallan/regis-action@v1
         with:
           image-url: ghcr.io/your-org/your-image:latest
           pr-url: ${{ github.event.pull_request.html_url }}
@@ -174,16 +181,16 @@ The PR comment fires only when `pr-url` is set. The `github-token` always defaul
 
 ### Version pinning
 
-`@main` always uses the latest action code, which may be unstable. For production workflows, pin to a release tag:
+`@v1` tracks the latest stable v1.x of the action. For fully reproducible runs, pin an exact release and the Docker image tag:
 
 ```yaml
-- uses: trivoallan/regis@v0.28.0
+- uses: trivoallan/regis-action@v1.0.0
   with:
     image-url: ghcr.io/your-org/your-image:latest
-    version: "0.28.0" # Docker image tag — independent from the action ref above
+    version: "v0.34.0" # Docker image tag — independent from the action ref above
 ```
 
-The `uses:` ref (action code) and the `version:` input (Docker image tag) are independent; pin both for a fully reproducible run.
+The `uses:` ref (action code, versioned in `trivoallan/regis-action`) and the `version:` input (the `regis` Docker image tag, released from this repository) are independent; pin both for a fully reproducible run.
 
 ---
 

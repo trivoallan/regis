@@ -12,6 +12,11 @@
 
 ## Completed (Recent)
 
+- **GitHub Action extraction → dépôt dédié (2026-06-04)** — breaking, pré-v1:
+  - L'action composite quitte le cœur pour [`trivoallan/regis-action`](https://github.com/trivoallan/regis-action), versionnée indépendamment (`v1.x`, release-please `simple` + `tag-major.yml`). Suppression côté cœur de `action.yml`, `ci-action-dogfood.yml`, et de l'exception de SHA-pinning dans `ci-lint.yml`.
+  - Docs repointées vers `trivoallan/regis-action@v1` + note de migration (`README.md`, guide `integrations/github.md`) ; snapshots `versioned_docs/` laissés intacts.
+  - Dépôt `regis-action` créé via l'API ; push des fichiers bloqué par le périmètre MCP de session → contenu mis en attente sous `regis-action-staging/`. `feat(ci)!`. Décision : `decisionLog.md` ; plan : `docs/memory-bank/plans/github-action-extraction-plan.md`.
+
 - **Playbook format → enveloppe Kubernetes (2026-06-01, PR #640)** — breaking, pré-v1:
   - `apiVersion: regis.trivoallan.dev/v1alpha1` / `kind: Playbook` / `metadata` (style Backstage) / `spec` ; remplace l'entier `schemaVersion`. Le loader valide contre le nouveau schéma `v1alpha1` puis normalise vers la forme aplatie interne (consommateurs inchangés, approche A) ; ancien schéma `v1` supprimé.
   - `regis playbook upgrade` migre les playbooks legacy à plat (drop `pages`/`sections`/`sidebar`, idempotent) ; `validate` affiche apiVersion/kind. Default + 2 cookiecutters + skill `/create-playbook` + docs migrés. Audit rapport `schema_version` → `api_version` (le `schemaVersion` de l'enveloppe report reste intact).
