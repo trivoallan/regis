@@ -30,6 +30,9 @@ Commit a `playbook.yaml` to your repo (scaffold one with `regis bootstrap playbo
 | `REGIS_IMAGE`    | No       | Regis image (default `ghcr.io/trivoallan/regis:latest`).                    |
 | `REGIS_PLAYBOOK` | No       | Playbook path (default `playbook.yaml`).                                    |
 
+Mark `GITLAB_TOKEN` as **Masked** in **Settings → CI/CD → Variables** so it is not
+exposed in job logs (it is embedded in the authenticated `git push` URL).
+
 ## How it works
 
 1. **request** (web trigger): creates a `regis/analyze/<ts>` branch + MR carrying the image URL.

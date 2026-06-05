@@ -94,15 +94,7 @@ regis_report:
         --data-urlencode "body=${COMMENT}" "${MR_API}/notes" >/dev/null \
         || echo "Warning: failed to post MR comment"
 
-      # 2. Labels: plain + coloured badge labels -> comma-separated list
-      LABELS=""
-      add_label() {
-        [ -z "${1:-}" ] && return 0
-        if [ -z "$LABELS" ]; then LABELS="$1"; else LABELS="${LABELS},$1"; fi
-      }
-      for l in $(jq -r '.playbook.labels // [] | .[]' "$REPORT_JSON"); do
-        add_label "$l"
-      done
+      # 2. Labels: create coloured badge labels, then build the full label list
       # create badge labels with their colour if missing
       jq -r '.playbook.badge_labels // [] | .[] | [.name, .class] | @tsv' "$REPORT_JSON" \
       | while IFS="$(printf '\t')" read -r name cls; do
@@ -118,10 +110,13 @@ regis_report:
             --data-urlencode "name=${name}" --data-urlencode "color=#${color}" \
             "${PROJ_API}/labels" >/dev/null || true
         done
-      # collect badge label names (separate pass: the while-subshell can't mutate LABELS)
-      for name in $(jq -r '.playbook.badge_labels // [] | .[].name' "$REPORT_JSON"); do
-        add_label "$name"
-      done
+      # full label set (plain + badge names) as a comma-separated list — built with
+      # jq so label names containing spaces are not word-split by the shell
+      LABELS=$(jq -r '
+        ((.playbook.labels // []) + ((.playbook.badge_labels // []) | map(.name)))
+        | map(select(. != null and . != ""))
+        | join(",")
+      ' "$REPORT_JSON")
 
       # 3. MR description: prepend report link if absent, append checklists
       CUR_DESC=$(curl -sf --header "$TOKEN_HEADER" "$MR_API" | jq -r '.description // ""')
@@ -143,7 +138,11 @@ regis_report:
         | join("\n")
       ' "$REPORT_JSON")
       if [ -n "$CHECKLIST" ]; then
-        NEW_DESC="${NEW_DESC}${CHECKLIST}"
+        # idempotent: don't re-append the checklist on a pipeline retry
+        case "$NEW_DESC" in
+          *"$CHECKLIST"*) ;;
+          *) NEW_DESC="${NEW_DESC}${CHECKLIST}" ;;
+        esac
       fi
 
       # 4. Apply description + labels (add_labels appends; idempotent)
