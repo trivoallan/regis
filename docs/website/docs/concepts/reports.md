@@ -50,6 +50,7 @@ This architecture allows for:
 
 - **A Stable Contract**: `report.json` is a documented, machine-readable contract every downstream tool can rely on.
 - **Self-Contained Portability**: `report.html` is a single file, ready to be served from any static host or viewed as a CI/CD artifact.
+- **Rich, Navigable Views**: `report.html` offers filterable, drill-down views per analyzer — no server or external service required.
 
 ## Philosophy: Visual Excellence
 
@@ -70,4 +71,3 @@ We believe that security reports should be easy to read and aesthetically pleasi
 # Generate both report.json and a self-contained report.html
 regis analyze <image-url> --html
 ```
-
