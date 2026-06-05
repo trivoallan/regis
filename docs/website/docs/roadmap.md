@@ -44,7 +44,7 @@ The following are considered **stable** and safe to depend on in custom playbook
 | **`bootstrap gitlab-ci` wizard** | v0.27.0 | Interactive wizard to generate a Request-to-MR GitLab CI pipeline                             |
 | **GitLab dashboard integration** | v0.28.0 | Live dashboard with GitLab API proxy, pipeline trigger, webhook support, and embedded UI      |
 | **Dashboard serve → FastAPI**    | v0.28.0 | Local dashboard server migrated to FastAPI for improved performance and extensibility         |
-| **GitHub PR integration**        | v0.25.0 | `regis github update-pr` command posts analysis results as PR comments                        |
+| **GitHub PR integration**        | v0.25.0 | Moved to `trivoallan/regis-action` (command removed from core)                                |
 | **Reusable GitHub Action**       | v0.25.0 | Composite action encapsulating analysis, artifact upload, and PR comment                      |
 
 ## Near-term (v0.29.0)
