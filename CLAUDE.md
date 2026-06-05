@@ -61,7 +61,7 @@ apps/dashboard/       # Docusaurus + Tremor report viewer (pnpm workspace)
 ## Craftsmanship
 
 - **Spec-based programming with stacked skills.** This project favors composable, spec-driven workflows on two levels:
-  - **Methodology**: use Claude Code skills as stacked building blocks — [Superpowers](https://claude.com/plugins/superpowers) for engineering discipline (`/brainstorming`, `/execute-plan`, TDD, systematic debugging) composed with project skills (`/create-playbook`, `/verify`, `/code-review`, `/init`). Each skill encodes a reviewed spec; chaining them produces predictable, auditable workflows. When a recurring task has no skill, author one (`/skill-authoring`) rather than re-improvising.
+  - **Methodology**: use Claude Code skills as stacked building blocks — [Superpowers](https://claude.com/plugins/superpowers) for engineering discipline (`/brainstorming`, `/execute-plan`, TDD, systematic debugging) composed with project skills (`/verify`, `/code-review`, `/init`). Each skill encodes a reviewed spec; chaining them produces predictable, auditable workflows. When a recurring task has no skill, author one (`/skill-authoring`) rather than re-improvising.
   - **Architecture**: prefer declarative specs (JSON Schemas, playbook YAML, JSON Logic rules) over imperative code paths. Extend existing schemas before adding ad-hoc Python logic.
 - Prefer established, state-of-the-art libraries over starting from scratch.
 - Prefer Python over ECMAScript languages when possible.
