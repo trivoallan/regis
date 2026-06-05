@@ -10,28 +10,28 @@ spec:
   tiers:
     - name: Gold
       condition:
-        ">": [{ var: rules_summary.score }, 90]
+        ">": [var: rules_summary.score, 90]
     - name: Silver
       condition:
-        ">": [{ var: rules_summary.score }, 70]
+        ">": [var: rules_summary.score, 70]
     - name: Bronze
       condition:
-        ">": [{ var: rules_summary.score }, 50]
+        ">": [var: rules_summary.score, 50]
 
   rules:
     # --- Security (Critical) ---
     - provider: core
-      rule: registry-domain-whitelist
+      criterion: registry-domain-whitelist
       slug: registry-domain-whitelist
       level: critical
 
     - provider: oci
-      rule: user-blacklist
+      criterion: user-blacklist
       slug: no-root
       level: critical
 
     - provider: cve
-      rule: cve-count
+      criterion: cve-count
       slug: cve-critical
       level: critical
       options:
@@ -40,7 +40,7 @@ spec:
 
     # --- Security (Warning) ---
     - provider: cve
-      rule: cve-count
+      criterion: cve-count
       slug: cve-high
       level: warning
       options:
@@ -48,12 +48,12 @@ spec:
         max_count: 10
 
     - provider: cve
-      rule: fix-available
+      criterion: fix-available
       slug: cve-fixable
       level: warning
 
     - provider: sbom
-      rule: has-sbom
+      criterion: has-sbom
       slug: has-sbom
       level: warning
 
@@ -61,7 +61,7 @@ spec:
     # standard Linux distributions commonly include GPL-licensed packages —
     # enable this rule only when your policy explicitly forbids strong copyleft.
     - provider: sbom
-      rule: license-blocklist
+      criterion: license-blocklist
       slug: no-strong-copyleft
       level: critical
       enable: false
@@ -81,7 +81,7 @@ spec:
 
     # Opt-in: warn on weak copyleft licenses (LGPL, MPL, EPL, CDDL, EUPL).
     - provider: sbom
-      rule: license-blocklist
+      criterion: license-blocklist
       slug: no-weak-copyleft
       level: warning
       enable: false
@@ -105,7 +105,7 @@ spec:
           - EUPL-1.2
 
     - provider: scorecarddev
-      rule: min-score
+      criterion: min-score
       slug: scorecard-min
       level: warning
       options:
@@ -113,14 +113,14 @@ spec:
 
     # --- Hygiene (Info) ---
     - provider: freshness
-      rule: age
+      criterion: age
       slug: age
       level: info
       options:
         max_days: 90
 
     - provider: oci
-      rule: tag-blacklist
+      criterion: tag-blacklist
       slug: no-latest
       level: info
 
@@ -129,25 +129,25 @@ spec:
       scope: CVE
       value: Critical
       condition:
-        "!": [{ var: rules.cve-critical.passed }]
+        "!": [var: rules.cve-critical.passed]
       class: error
     - slug: cve-high
       scope: CVE
       value: High
       condition:
-        "!": [{ var: rules.cve-high.passed }]
+        "!": [var: rules.cve-high.passed]
       class: warning
     - slug: freshness-fresh
       scope: Freshness
       value: Fresh
       condition:
-        "==": [{ var: rules.age.passed }, true]
+        "==": [var: rules.age.passed, true]
       class: success
     - slug: freshness-stale
       scope: Freshness
       value: Stale
       condition:
-        "!": [{ var: rules.age.passed }]
+        "!": [var: rules.age.passed]
       class: warning
 
   integrations:
@@ -162,13 +162,13 @@ spec:
           items:
             - label: Revue de sécurité réalisée
             - label: Aucune vulnérabilité CRITIQUE détectée
-              show_if: { "!!": [{ var: rules.cve-critical }] }
+              show_if: { "!!": [var: rules.cve-critical] }
               check_if: { var: rules.cve-critical.passed }
             - label: Image issue d'un registre de confiance
-              show_if: { "!!": [{ var: rules.registry-domain-whitelist }] }
+              show_if: { "!!": [var: rules.registry-domain-whitelist] }
               check_if: { var: rules.registry-domain-whitelist.passed }
             - label: Image ne tourne pas en root
-              show_if: { "!!": [{ var: rules.no-root }] }
+              show_if: { "!!": [var: rules.no-root] }
               check_if: { var: rules.no-root.passed }
       templates:
         - url: https://github.com/trivoallan/regis
@@ -177,4 +177,4 @@ spec:
   links:
     - label: Return to Merge Request
       url: "{{ request.metadata['gitlab.mr_url'] }}"
-      condition: { "!!": [{ var: request.metadata.gitlab.mr_url }] }
+      condition: { "!!": [var: request.metadata.gitlab.mr_url] }

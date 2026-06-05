@@ -12,8 +12,10 @@ pré-migration et son jumeau migré doivent produire un rapport IDENTIQUE.
 
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
 
+import pytest
 import yaml
 from click.testing import CliRunner
 
@@ -229,6 +231,35 @@ def test_migration_preserves_evaluation(tmp_path: Path) -> None:
     after = yaml.safe_load(pb.read_text(encoding="utf-8"))
     res_after = evaluate_rules(_SAMPLE_REPORT, {"rules": after["spec"]["rules"]})
 
+    assert res_after == res_before
+
+
+def test_migration_silences_deprecation_warning(tmp_path: Path) -> None:
+    """Migrating the file closes the deprecation seam end to end.
+
+    BEFORE migration the legacy ``rule:`` template-reference key makes the
+    engine emit a ``DeprecationWarning`` on every evaluation; AFTER running
+    ``migrate`` the migrated playbook evaluates with ZERO deprecation warnings,
+    while producing a byte-identical report.
+    """
+    pb = _write(tmp_path, _LEGACY_PLAYBOOK)
+    before = yaml.safe_load(pb.read_text(encoding="utf-8"))
+
+    # BEFORE: the legacy `rule:` key triggers a DeprecationWarning.
+    with pytest.warns(DeprecationWarning):
+        res_before = evaluate_rules(_SAMPLE_REPORT, {"rules": before["spec"]["rules"]})
+
+    CliRunner().invoke(playbook_group, ["migrate", "-i", str(pb)])
+
+    after = yaml.safe_load(pb.read_text(encoding="utf-8"))
+
+    # AFTER: zero deprecation warnings — promote any to an error so a single
+    # stray warning fails the test.
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        res_after = evaluate_rules(_SAMPLE_REPORT, {"rules": after["spec"]["rules"]})
+
+    # The whole point of the dual-bind migration: identical report.
     assert res_after == res_before
 
 
