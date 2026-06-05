@@ -49,6 +49,7 @@ _Performance / caching:_
 
 - `--cache`: Use existing `report.json` as cache if available.
 - `--max-workers INTEGER`: Maximum number of analyzers to run in parallel (default: 4).
+
 _Metadata:_
 
 - `-m, --meta KEY=VALUE`: Arbitrary metadata. Supports dot notation (`ci.job_id=123`). Repeatable.
