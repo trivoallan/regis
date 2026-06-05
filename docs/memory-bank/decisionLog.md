@@ -2,6 +2,17 @@
 
 > Supplemental file: this records historical decisions that complement the core Memory Bank files.
 
+## 2026-06-04: GitHub Action Extraction — Core Stops Shipping the Action
+
+- **Decision**: Extract the composite GitHub Action (`action.yml`, previously at the core repo root, published on the Marketplace as `trivoallan/regis@vX`) into a dedicated repository [`trivoallan/regis-action`](https://github.com/trivoallan/regis-action). The core repository stops shipping the action entirely.
+- **Clean break (no shim)**: `action.yml` is removed from the core (breaking for consumers using `uses: trivoallan/regis@vX`); the dogfood workflow `ci-action-dogfood.yml` and the `ci-lint.yml` SHA-pinning self-reference exception are removed with it. Consumers migrate to `uses: trivoallan/regis-action@v1`.
+- **Independent versioning**: the action gets its own cadence (`v1.x`) via release-please (`release-type: simple`) + a `tag-major.yml` workflow that maintains the floating `v1` Marketplace tag. The action's `version:` input still targets a core image `ghcr.io/trivoallan/regis:<tag>`; the `uses:` ref and the `version:` input stay independent.
+- **Fresh start (no `git filter-repo`)**: unlike the dashboard decouple, the action content is a single trivial YAML file, so the new repo starts with a clean history rather than preserving the file's history.
+- **Mirrors** the 2026-06-01 dashboard decouple precedent (decoupled release cadences, dedicated repo) but simpler — no source code, no Docker build, no runtime compat contract (the action just runs the published core image).
+- **Stale-action catch**: the extracted `action.yml` (copied verbatim from the core) still passed `regis analyze --site`, a flag the 0.33 dashboard decouple removed in favour of `--html`. It failed against `regis:latest`; fixed to `--html` in `regis-action` (`4dd2b9b`) before cutting `v1.0.0`.
+- **Outcome (2026-06-04)**: the `regis-action` repo was created via the GitHub API, but the session's MCP repo scope (`trivoallan/regis` only) blocked pushing files to it, so the new-repo content was first staged under `regis-action-staging/` on the extraction branch. The maintainer then pushed the bundle to `regis-action` (`5ab906d`), cut `v1.0.0` + floating `v1`, set branch protection (required check `Lint action`), verified the self-test, and removed the staging directory from the PR branch. **Remaining manual**: add the `RELEASE_PLEASE_TOKEN` PAT secret and publish to the Marketplace (web-only).
+- **References**: branch `claude/github-action-extraction-6zdu5`; PR #644; plan `docs/memory-bank/plans/github-action-extraction-plan.md`; new repo [`trivoallan/regis-action`](https://github.com/trivoallan/regis-action) `v1.0.0`. Core change is breaking (`feat(ci)!`) → pre-major minor bump.
+
 ## 2026-06-01: Playbook Format — Kubernetes-Style apiVersion/kind/metadata/spec Envelope
 
 - **Decision**: Playbooks adopt the Kubernetes resource envelope — `apiVersion: regis.trivoallan.dev/v1alpha1`, `kind: Playbook`, `metadata`, `spec`. The integer `schemaVersion` is replaced by `apiVersion` (the version mechanism). Metadata is Backstage-style: `metadata.name` (machine id, RFC-1123), `metadata.title` (display name), `metadata.description`, and the bundle SemVer → `metadata.labels["app.kubernetes.io/version"]`. `tiers`/`rules`/`badges`/`integrations`/`links` move under `spec`; evaluation semantics are unchanged.
