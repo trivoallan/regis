@@ -28,8 +28,9 @@ This writes a single, portable `report.html` file — no server or base URL conf
 
 - `bootstrap`: Infrastructure as Code (IaC) for your analysis. Bootstrap a new Git repository or a new [playbook](../concepts/playbooks.md).
 - `evaluate`: Test [playbooks](../concepts/playbooks.md) against existing analysis reports without re-fetching image data.
-- `gitlab`: Seamless integration with GitLab CI/CD for automated reporting and MR updates.
 
-:::info
-Our **[GitLab integration](./integrations/gitlab.md)** is currently the most feature-rich, offering automated Merge Request comments, status updates, and deep CI/CD pipeline integration.
+:::note
+GitLab CI integration ships as a reusable template from its own repository,
+[`trivoallan/regis-gitlab`](https://github.com/trivoallan/regis-gitlab). See the
+**[GitLab integration guide](./integrations/gitlab.md)**.
 :::
