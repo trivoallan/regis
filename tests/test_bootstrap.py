@@ -26,7 +26,7 @@ def test_bootstrap_help():
     result = runner.invoke(main, ["bootstrap", "--help"])
     assert result.exit_code == 0
     assert "playbook" in result.output
-    assert "gitlab-ci" in result.output
+    assert "gitlab-ci" not in result.output
     assert "tools" in result.output
     assert "archive" not in result.output
 
