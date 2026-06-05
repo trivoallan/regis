@@ -474,16 +474,17 @@ Specific value: `"Playbook"`
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                                  | Pattern | Type             | Deprecated | Definition | Title/Description                                   |
-| ----------------------------------------- | ------- | ---------------- | ---------- | ---------- | --------------------------------------------------- |
-| - [slug](#spec_rules_items_slug )         | No      | string           | No         | -          | Unique identifier for the rule instance.            |
-| - [provider](#spec_rules_items_provider ) | No      | string           | No         | -          | Analyzer name (e.g. 'cve').                         |
-| - [rule](#spec_rules_items_rule )         | No      | string           | No         | -          | Template name within the provider (e.g. 'cve-max'). |
-| - [options](#spec_rules_items_options )   | No      | object           | No         | -          | Configuration parameters for the rule template.     |
-| - [enable](#spec_rules_items_enable )     | No      | boolean          | No         | -          | Whether to enable this rule.                        |
-| - [level](#spec_rules_items_level )       | No      | enum (of string) | No         | -          | Severity level of the rule.                         |
-| - [tags](#spec_rules_items_tags )         | No      | array of string  | No         | -          | Arbitrary tags.                                     |
-| - [messages](#spec_rules_items_messages ) | No      | object           | No         | -          | -                                                   |
+| Property                                    | Pattern | Type             | Deprecated | Definition | Title/Description                                                                      |
+| ------------------------------------------- | ------- | ---------------- | ---------- | ---------- | -------------------------------------------------------------------------------------- |
+| - [slug](#spec_rules_items_slug )           | No      | string           | No         | -          | Unique identifier for the rule instance.                                               |
+| - [provider](#spec_rules_items_provider )   | No      | string           | No         | -          | Analyzer name (e.g. 'cve').                                                            |
+| - [criterion](#spec_rules_items_criterion ) | No      | string           | No         | -          | Criterion template name within the provider (e.g. 'cve-max').                          |
+| - [rule](#spec_rules_items_rule )           | No      | string           | No         | -          | (Deprecated) Alias of 'criterion'. Template name within the provider (e.g. 'cve-max'). |
+| - [options](#spec_rules_items_options )     | No      | object           | No         | -          | Configuration parameters for the rule template.                                        |
+| - [enable](#spec_rules_items_enable )       | No      | boolean          | No         | -          | Whether to enable this rule.                                                           |
+| - [level](#spec_rules_items_level )         | No      | enum (of string) | No         | -          | Severity level of the rule.                                                            |
+| - [tags](#spec_rules_items_tags )           | No      | array of string  | No         | -          | Arbitrary tags.                                                                        |
+| - [messages](#spec_rules_items_messages )   | No      | object           | No         | -          | -                                                                                      |
 
 ##### <a name="spec_rules_items_slug"></a>4.3.1.1. Property `slug`
 
@@ -501,15 +502,23 @@ Specific value: `"Playbook"`
 
 **Description:** Analyzer name (e.g. 'cve').
 
-##### <a name="spec_rules_items_rule"></a>4.3.1.3. Property `rule`
+##### <a name="spec_rules_items_criterion"></a>4.3.1.3. Property `criterion`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-**Description:** Template name within the provider (e.g. 'cve-max').
+**Description:** Criterion template name within the provider (e.g. 'cve-max').
 
-##### <a name="spec_rules_items_options"></a>4.3.1.4. Property `options`
+##### <a name="spec_rules_items_rule"></a>4.3.1.4. Property `rule`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+**Description:** (Deprecated) Alias of 'criterion'. Template name within the provider (e.g. 'cve-max').
+
+##### <a name="spec_rules_items_options"></a>4.3.1.5. Property `options`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -522,7 +531,7 @@ Specific value: `"Playbook"`
 | ----------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#spec_rules_items_options_additionalProperties ) | No      | object | No         | -          | -                 |
 
-##### <a name="spec_rules_items_enable"></a>4.3.1.5. Property `enable`
+##### <a name="spec_rules_items_enable"></a>4.3.1.6. Property `enable`
 
 |             |           |
 | ----------- | --------- |
@@ -531,7 +540,7 @@ Specific value: `"Playbook"`
 
 **Description:** Whether to enable this rule.
 
-##### <a name="spec_rules_items_level"></a>4.3.1.6. Property `level`
+##### <a name="spec_rules_items_level"></a>4.3.1.7. Property `level`
 
 |          |                    |
 | -------- | ------------------ |
@@ -545,7 +554,7 @@ Must be one of:
 * "critical"
 * "none"
 
-##### <a name="spec_rules_items_tags"></a>4.3.1.7. Property `tags`
+##### <a name="spec_rules_items_tags"></a>4.3.1.8. Property `tags`
 
 |          |                   |
 | -------- | ----------------- |
@@ -565,13 +574,13 @@ Must be one of:
 | ------------------------------------------ | ----------- |
 | [tags items](#spec_rules_items_tags_items) | -           |
 
-###### <a name="spec_rules_items_tags_items"></a>4.3.1.7.1. tags items
+###### <a name="spec_rules_items_tags_items"></a>4.3.1.8.1. tags items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-##### <a name="spec_rules_items_messages"></a>4.3.1.8. Property `messages`
+##### <a name="spec_rules_items_messages"></a>4.3.1.9. Property `messages`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -583,13 +592,13 @@ Must be one of:
 | - [pass](#spec_rules_items_messages_pass ) | No      | string | No         | -          | -                 |
 | - [fail](#spec_rules_items_messages_fail ) | No      | string | No         | -          | -                 |
 
-###### <a name="spec_rules_items_messages_pass"></a>4.3.1.8.1. Property `pass`
+###### <a name="spec_rules_items_messages_pass"></a>4.3.1.9.1. Property `pass`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="spec_rules_items_messages_fail"></a>4.3.1.8.2. Property `fail`
+###### <a name="spec_rules_items_messages_fail"></a>4.3.1.9.2. Property `fail`
 
 |          |          |
 | -------- | -------- |
@@ -731,4 +740,4 @@ Must be one of:
 * "information"
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-01 at 16:51:05 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-05 at 12:27:34 +0000

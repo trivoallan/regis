@@ -8,22 +8,22 @@ tags:
 
 Image has an acceptable number of layers.
 
-| Provider | Level   | Tags        |
-| :------- | :------ | :---------- |
-| oci      | Warning | performance |
+| Provider | Level | Tags |
+| :--- | :--- | :--- |
+| oci | Warning | performance |
 
 ## Parameters
 
-| Name         | Default Value | Description |
-| :----------- | :------------ | :---------- |
-| `max_layers` | `30`          | n/a         |
+| Name | Default Value | Description |
+| :--- | :--- | :--- |
+| `max_layers` | `30` | n/a |
 
 ## Messages
 
-| Type     | Message                                                                                                      |
-| :------- | :----------------------------------------------------------------------------------------------------------- |
-| **Pass** | Image has ${results.oci.platforms.0.layers_count} layers.                                                    |
-| **Fail** | Image has too many layers (${results.oci.platforms.0.layers_count}). Max allowed: ${rule.params.max_layers}. |
+| Type | Message |
+| :--- | :--- |
+| **Pass** | Image has ${results.oci.platforms.0.layers_count} layers. |
+| **Fail** | Image has too many layers (${results.oci.platforms.0.layers_count}). Max allowed: ${criterion.params.max_layers}. |
 
 ## Playbook Example
 
@@ -44,7 +44,7 @@ rules:
       "var": "results.oci.platforms.0.layers_count"
     },
     {
-      "var": "rule.params.max_layers"
+      "var": "criterion.params.max_layers"
     }
   ]
 }

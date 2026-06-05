@@ -8,22 +8,22 @@ tags:
 
 Image should support multiple platforms.
 
-| Provider | Level | Tags          |
-| :------- | :---- | :------------ |
-| oci      | Info  | compatibility |
+| Provider | Level | Tags |
+| :--- | :--- | :--- |
+| oci | Info | compatibility |
 
 ## Parameters
 
-| Name            | Default Value | Description |
-| :-------------- | :------------ | :---------- |
-| `min_platforms` | `2`           | n/a         |
+| Name | Default Value | Description |
+| :--- | :--- | :--- |
+| `min_platforms` | `2` | n/a |
 
 ## Messages
 
-| Type     | Message                                                                                                     |
-| :------- | :---------------------------------------------------------------------------------------------------------- |
-| **Pass** | Image supports ${results.oci.platforms.length} platforms.                                                   |
-| **Fail** | Image only supports ${results.oci.platforms.length} platforms (min required: ${rule.params.min_platforms}). |
+| Type | Message |
+| :--- | :--- |
+| **Pass** | Image supports ${results.oci.platforms.length} platforms. |
+| **Fail** | Image only supports ${results.oci.platforms.length} platforms (min required: ${criterion.params.min_platforms}). |
 
 ## Playbook Example
 
@@ -57,7 +57,7 @@ rules:
       ]
     },
     {
-      "var": "rule.params.min_platforms"
+      "var": "criterion.params.min_platforms"
     }
   ]
 }

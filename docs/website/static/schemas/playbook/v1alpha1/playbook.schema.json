@@ -163,9 +163,13 @@
                 "type": "string",
                 "description": "Analyzer name (e.g. 'cve')."
               },
+              "criterion": {
+                "type": "string",
+                "description": "Criterion template name within the provider (e.g. 'cve-max')."
+              },
               "rule": {
                 "type": "string",
-                "description": "Template name within the provider (e.g. 'cve-max')."
+                "description": "(Deprecated) Alias of 'criterion'. Template name within the provider (e.g. 'cve-max')."
               },
               "options": {
                 "type": "object",
