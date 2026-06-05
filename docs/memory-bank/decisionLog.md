@@ -2,6 +2,15 @@
 
 > Supplemental file: this records historical decisions that complement the core Memory Bank files.
 
+## 2026-06-05: Vocabulary — Disambiguate "rule" into a Four-Layer Model
+
+- **Decision**: Split the overloaded word "rule" into four named layers — **finding → metric → criterion → rule**. What an analyzer ships as a reusable, parameterized condition (e.g. `cve-count`, formerly a "default rule"/template) is now a **criterion**; "rule" is reserved for the playbook-bound policy decision (criterion + options + severity + tier).
+- **Trigger**: the `concepts/rules` docs page conflated what analyzers expose (measurements/conditions) with the policy decision a playbook makes. A product brainstorm concluded "rule" was overloaded across measurement → condition → decision.
+- **Naming**: `criterion`, **not** `check` — `check` collides with the existing `regis check` command (it would recreate the overload); `criterion` was also the user's first instinct. `metric` is the concept term for analyzer aggregates (`results.*`, what criteria read); `finding` stays a local term for a problem detection; an SBOM `component` is inventory, explicitly _not_ a finding.
+- **Full rename, non-breaking**: `rule.` → `criterion.` everywhere, including the JSON Logic namespace (`rule.params` → `criterion.params`). The engine dual-binds `criterion`/`rule` and the loader dual-reads the `criterion:`/`rule:` key, so legacy playbooks evaluate identically (with deprecation warnings) during a window; cut at the next major. `BaseAnalyzer.default_rules()` → `default_criteria()` with a bidirectional back-compat shim (MRO scan) for third-party plugins.
+- **Codemod**: `regis playbook migrate` (idempotent, evaluation-preserving — guaranteed by the dual-bind) rewrites user playbooks; the built-in default playbook was migrated with it (dogfood) so it no longer warns on every run.
+- **References**: plan `docs/memory-bank/plans/2026-06-05-rename-rule-to-criterion-plan.md`; PR #646 (`feat(playbook)`, non-breaking → pre-major minor bump). Built via brainstorming → subagent-driven-development (4 tasks, spec + quality review per task, plus a final holistic review that caught the un-migrated default playbook). Follow-up: the `/create-playbook` skill still emits `rule:` keys.
+
 ## 2026-06-04: GitHub Action Extraction — Core Stops Shipping the Action
 
 - **Decision**: Extract the composite GitHub Action (`action.yml`, previously at the core repo root, published on the Marketplace as `trivoallan/regis@vX`) into a dedicated repository [`trivoallan/regis-action`](https://github.com/trivoallan/regis-action). The core repository stops shipping the action entirely.
