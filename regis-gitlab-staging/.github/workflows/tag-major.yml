@@ -1,0 +1,21 @@
+name: Update floating major tag
+on:
+  push:
+    tags:
+      - v*.*.*
+permissions:
+  contents: write
+jobs:
+  tag-major:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Move floating vN tag
+        run: |
+          set -eu
+          TAG="${GITHUB_REF_NAME}"          # e.g. v1.2.3
+          MAJOR="${TAG%%.*}"                 # e.g. v1
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -f "$MAJOR" "$TAG"
+          git push -f origin "$MAJOR"

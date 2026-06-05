@@ -1,0 +1,19 @@
+name: Lint template
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate YAML
+        run: |
+          python -c "import yaml; yaml.safe_load(open('templates/regis-mr.yml')); print('template valid')"
+          python -c "import yaml; yaml.safe_load(open('examples/.gitlab-ci.yml')); print('example valid')"
+      - name: yamllint
+        run: |
+          pipx run yamllint -d "{extends: default, rules: {line-length: disable, document-start: disable}}" templates/ examples/
