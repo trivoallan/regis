@@ -22,10 +22,6 @@ regis analyze nginx:latest --html
 
 This writes a single, portable `report.html` file — no server or base URL configuration required. Open it in any browser or ship it as a CI artifact. See [Reports](../concepts/reports.md) for details on the report architecture.
 
-:::tip
-For an interactive, filterable dashboard and multi-archive browsing, use the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project. It consumes the `report.json` and `--archive` data the core CLI produces.
-:::
-
 ## Advanced Tools
 
 `regis` includes specialized subcommands for advanced workflows:

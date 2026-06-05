@@ -139,16 +139,6 @@ metadata:
   label: metadata
   description: OCI labels and image metadata.
 
-dashboard:
-  label: dashboard
-  description: Related to the interactive dashboard and security dashboards.
-  permalink: /usage/dashboard
-
-archives:
-  label: archives
-  description: Report archiving and historical tracking.
-  permalink: /concepts/archives
-
 concepts:
   label: concepts
   description: Core concepts and architecture overview.

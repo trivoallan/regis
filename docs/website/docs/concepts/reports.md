@@ -15,8 +15,6 @@ The Regis core CLI produces two report artifacts:
 - **`report.json`** — the source of truth. A machine-readable document containing all analysis and evaluation data, perfect for automated processing and as the contract every downstream tool consumes.
 - **`report.html`** — a self-contained, single-file HTML report. Fully portable: open it in any browser or ship it as a CI/CD artifact, no server or base URL configuration required.
 
-For a fully **interactive** dashboard — instant filtering, sorting, and searching across thousands of findings, plus multi-archive browsing — use the standalone [`regis-dashboard`](https://github.com/trivoallan/regis-dashboard) project. It consumes the same `report.json` contract and `--archive` data the core CLI emits.
-
 The following diagram illustrates the relationship between the CLI and the generated reports:
 
 ```mermaid
@@ -35,14 +33,10 @@ C4Component
         Component(html_file, "report.html", "HTML", "Self-contained single-file report.")
     }
 
-    Container_Ext(dashboard, "regis-dashboard", "Separate project", "Interactive viewer / multi-archive browser. Consumes report.json.")
-
     Rel(engine, reporter, "Passes analysis results", "In-process")
     Rel(reporter, json_data, "Writes", "File system")
     Rel(reporter, html_file, "Writes", "File system")
     Rel(user, html_file, "Opens in browser", "Browser")
-    Rel(dashboard, json_data, "Consumes", "File / HTTP")
-    Rel(user, dashboard, "Browses findings", "Browser")
 
     UpdateElementStyle(user, $fontColor="white", $bgColor="#08427B", $borderColor="#052E56")
     UpdateElementStyle(engine, $fontColor="white", $bgColor="#1A8C4E", $borderColor="#136B3B")
@@ -56,7 +50,6 @@ This architecture allows for:
 
 - **A Stable Contract**: `report.json` is a documented, machine-readable contract every downstream tool can rely on.
 - **Self-Contained Portability**: `report.html` is a single file, ready to be served from any static host or viewed as a CI/CD artifact.
-- **Rich Interactivity**: The standalone dashboard adds instant filtering, sorting, and searching across thousands of vulnerability findings.
 
 ## Philosophy: Visual Excellence
 
@@ -78,6 +71,3 @@ We believe that security reports should be easy to read and aesthetically pleasi
 regis analyze <image-url> --html
 ```
 
-:::tip
-For a rich, interactive dashboard that consumes the `report.json` contract, see the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project.
-:::

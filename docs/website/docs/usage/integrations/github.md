@@ -280,4 +280,3 @@ regis analyze <image-url> \
 
 When using the `--html` flag, `regis` writes a self-contained `report.html` into the `reports/` directory. By uploading this directory as a workflow artifact (as shown in the example), you can download and open the report directly from the GitHub Actions run page — no server required.
 
-For an interactive, filterable dashboard and multi-archive browsing, point the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project at the `report.json` (or `--archive` data) produced by the analysis.

@@ -42,7 +42,7 @@ For developers wanting to contribute to the project, use **Pipenv**:
 
 ## GitHub Repository Configuration
 
-If you plan to use automated documentation snapshots or the archive feature on a GitHub repository with protected branches, ensure that the **"Allow auto-merge"** option is enabled in your repository's general settings. This allows the automated workflows to synchronize documentation safely without manual intervention on every update. See the [GitHub Actions integration guide](./integrations/github.md) for more details.
+If you plan to use automated documentation snapshots on a GitHub repository with protected branches, ensure that the **"Allow auto-merge"** option is enabled in your repository's general settings. This allows the automated workflows to synchronize documentation safely without manual intervention on every update. See the [GitHub Actions integration guide](./integrations/github.md) for more details.
 
 ## Your First Analysis
 
@@ -58,7 +58,7 @@ This command:
 - Evaluates results against the default [playbook](../concepts/playbooks.md)
 - Writes a self-contained `report.html` you can open in any browser
 
-Open the generated `report.html` to see a compliance score, vulnerability findings, best practice checks, and image metadata. See [Scoring](../concepts/scoring.md) to understand how scores are calculated. For an interactive, filterable dashboard and multi-archive browsing, see the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project.
+Open the generated `report.html` to see a compliance score, vulnerability findings, best practice checks, and image metadata. See [Scoring](../concepts/scoring.md) to understand how scores are calculated.
 
 **Next steps:**
 

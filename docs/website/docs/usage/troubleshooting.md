@@ -113,8 +113,6 @@ Problems with the `--html` report or an empty/blank report file.
    cat report.json | jq .
    ```
 
-3. **For an interactive, filterable dashboard**, use the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project, which consumes the `report.json` and `--archive` data the core CLI produces.
-
 For detailed information on how reports work, see [Reports](../concepts/reports.md).
 
 ## Playbook Evaluation Issues
@@ -141,33 +139,6 @@ Rules marked as "incomplete" or unexpected scores.
 3. **Check your rule conditions** in your playbook. If a rule accesses a field that an analyzer didn't populate, it will be marked incomplete rather than failed.
 
 For detailed information on rule evaluation, see [Rules](../concepts/rules.md) and [Scoring](../concepts/scoring.md).
-
-## Archive Issues
-
-Problems with archive creation, missing `manifest.json`, or empty archives.
-
-**Error symptoms:**
-
-- `manifest.json` not found in archive directory
-- Reports added to an archive but don't appear in the index
-
-**Solutions:**
-
-1. **Add reports with `--archive`**. The directory and `manifest.json` are created automatically on the first run:
-
-   ```bash
-   regis analyze myimage:latest --archive ./my-archive
-   ```
-
-2. **Verify the manifest exists**:
-
-   ```bash
-   cat ./my-archive/manifest.json | jq .
-   ```
-
-3. **Browse the archive** with the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project, which renders historical data from the archive directory.
-
-For detailed information on archives, see [Archives](../concepts/archives.md).
 
 ## FAQ
 

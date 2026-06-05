@@ -49,8 +49,6 @@ _Performance / caching:_
 
 - `--cache`: Use existing `report.json` as cache if available.
 - `--max-workers INTEGER`: Maximum number of analyzers to run in parallel (default: 4).
-- `-A, --archive DIR`: Append the report to an archive directory (writes `manifest.json` and `data.json`).
-
 _Metadata:_
 
 - `-m, --meta KEY=VALUE`: Arbitrary metadata. Supports dot notation (`ci.job_id=123`). Repeatable.
@@ -179,20 +177,6 @@ $ regis playbook validate broken-playbook.yaml
     - rules.2.level: 'high' is not one of ['info', 'warning', 'critical']
 ```
 
-## Interactive Viewer
-
-The interactive dashboard and multi-report archive browser now live in a
-separate project: [`regis-dashboard`](https://github.com/trivoallan/regis-dashboard).
-It provides the `regis-dashboard render`, `serve`, `archive add`,
-`archive configure`, and `bootstrap archive` commands.
-
-The Regis core CLI still produces everything the standalone dashboard consumes:
-
-- `regis analyze --json` writes the machine-readable `report.json` contract.
-- `regis analyze --html` writes a self-contained single-file `report.html`.
-- `regis analyze --archive <dir>` appends to an archive directory the
-  standalone dashboard can browse.
-
 ## Project Bootstrapping {#bootstrap}
 
 ### `bootstrap playbook`
@@ -232,12 +216,6 @@ See [Managing Analyzer Tools](../usage/tools-management.md) for cache location, 
 
 :::note
 After a successful bootstrap, all `bootstrap` commands display **Post-install notes** from the template (and then remove the temporary `.regis-post-install.md` file). These notes contain setup instructions and next steps.
-:::
-
-:::tip
-Looking for `bootstrap archive`? Scaffolding a standalone archive viewer site
-moved to the [`regis-dashboard`](https://github.com/trivoallan/regis-dashboard)
-project (`regis-dashboard bootstrap archive`).
 :::
 
 ## Utility Commands
