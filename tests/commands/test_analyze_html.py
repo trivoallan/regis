@@ -94,16 +94,6 @@ def test_sections_forwarded_to_render(runner, tmp_path, _mock_analyze_infra):
     assert call_kwargs.get("sections") == "summary"
 
 
-def test_html_archive_mutually_exclusive(runner, tmp_path, _mock_analyze_infra):
-    """--html and --archive together produce a UsageError."""
-    result = runner.invoke(
-        analyze,
-        ["nginx:latest", "--html", "--archive", str(tmp_path)],
-    )
-    assert result.exit_code != 0
-    assert "mutually exclusive" in result.output.lower()
-
-
 def test_evaluate_cmd_html_flag(runner, tmp_path):
     """evaluate --html passes 'html' in formats."""
     report_file = tmp_path / "report.json"
@@ -181,25 +171,3 @@ def test_html_not_in_formats_without_flag(runner, tmp_path, _mock_analyze_infra)
     assert result.exit_code == 0, result.output
     formats = _mock_analyze_infra.call_args[0][1]
     assert "html" not in formats
-
-
-def test_analyze_prints_dashboard_pointer_for_json(
-    runner, tmp_path, _mock_analyze_infra
-):
-    """A plain (json) analyze run points the user at regis-dashboard."""
-    result = runner.invoke(
-        analyze,
-        ["nginx:latest", "--output-dir", str(tmp_path)],
-    )
-    assert result.exit_code == 0, result.output
-    assert "github.com/trivoallan/regis-dashboard" in result.output
-
-
-def test_html_run_omits_dashboard_pointer(runner, tmp_path, _mock_analyze_infra):
-    """--html (self-contained) does not print the interactive pointer."""
-    result = runner.invoke(
-        analyze,
-        ["nginx:latest", "--html", "--output-dir", str(tmp_path)],
-    )
-    assert result.exit_code == 0, result.output
-    assert "regis-dashboard" not in result.output

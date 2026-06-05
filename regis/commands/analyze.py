@@ -257,14 +257,6 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     help="Minimum rule level that triggers a command failure (default: critical).",
 )
 @click.option(
-    "--archive",
-    "-A",
-    "archive_dir",
-    type=click.Path(file_okay=False, writable=True, path_type=Path),
-    default=None,
-    help="Archive directory: persist the report and update manifest.json / data.json.",
-)
-@click.option(
     "--max-workers",
     default=4,
     show_default=True,
@@ -307,7 +299,6 @@ def analyze(
     evaluate: bool = False,
     fail: bool = False,
     fail_level: str = "critical",
-    archive_dir: Path | None = None,
     max_workers: int = 4,
     rerun: str | None = None,
     report_dir: Path | None = None,
@@ -427,12 +418,7 @@ def analyze(
         logger.debug("Failed to fetch digest: %s", exc)
         digest = ref.tag
 
-    if html_single and archive_dir:
-        raise click.UsageError("--html and --archive are mutually exclusive.")
-
-    formats = []
-    if not archive_dir:
-        formats.append("json")
+    formats = ["json"]
     if html_single:
         formats.append("html")
     if markdown:
@@ -639,32 +625,17 @@ def analyze(
     if final_report.get("snapshot_date"):
         _info(f"  Snapshot date: {final_report['snapshot_date']}", quiet=quiet)
 
-    if archive_dir:
-        from regis.archive.store import add_to_archive
+    render_and_save_reports(
+        final_report,
+        formats,
+        output_template,
+        output_dir_template,
+        theme,
+        pretty,
+        sections=sections,
+    )
 
-        add_to_archive(final_report, archive_dir)
-    else:
-        render_and_save_reports(
-            final_report,
-            formats,
-            output_template,
-            output_dir_template,
-            theme,
-            pretty,
-            sections=sections,
-        )
-
-    if not archive_dir:
-        render_mr_templates(final_report, output_dir_template)
-
-    # Discoverability: the interactive viewer now ships separately. Only point to
-    # it for the plain machine-report path (not --html, which is self-contained,
-    # and not --archive, which feeds the standalone dashboard directly).
-    if not html_single and not archive_dir:
-        _info(
-            "  Explore interactively: https://github.com/trivoallan/regis-dashboard",
-            quiet=quiet,
-        )
+    render_mr_templates(final_report, output_dir_template)
 
     # Only print the summary when the user explicitly requested a playbook —
     # avoids changing stdout for default runs that auto-load the built-in playbook.
