@@ -11,7 +11,7 @@
 
 | Property                           | Pattern | Type            | Deprecated | Definition                                   | Title/Description                                                                                                                                  |
 | ---------------------------------- | ------- | --------------- | ---------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [schemaVersion](#schemaVersion ) | No      | integer         | No         | -                                            | Report-structure contract version. Consumers (e.g. the standalone dashboard) gate rendering on this. Distinct from \`version\` (package/snapshot). |
+| + [schemaVersion](#schemaVersion ) | No      | integer         | No         | -                                            | Report-structure contract version. Downstream consumers gate rendering on this. Distinct from \`version\` (package/snapshot). |
 | + [version](#version )             | No      | string or null  | No         | -                                            | Version of regis that generated this report.                                                                                                       |
 | - [snapshot_date](#snapshot_date ) | No      | string          | No         | -                                            | ISO 8601 date when this version was snapshotted in the doc site.                                                                                   |
 | - [tier](#tier )                   | No      | string or null  | No         | -                                            | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.                                                                          |
@@ -31,7 +31,7 @@
 | -------- | --------- |
 | **Type** | `integer` |
 
-**Description:** Report-structure contract version. Consumers (e.g. the standalone dashboard) gate rendering on this. Distinct from `version` (package/snapshot).
+**Description:** Report-structure contract version. Downstream consumers gate rendering on this. Distinct from `version` (package/snapshot).
 
 | Restrictions |        |
 | ------------ | ------ |

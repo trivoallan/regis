@@ -129,7 +129,7 @@ The playbook engine evaluates consolidated analyzer results against user-defined
 ### Reporting Layer
 
 The reporting layer transforms the analysis and playbook results into high-quality, actionable formats.
-It produces a structured `report.json` (see [Report Schema](../reference/schemas/report/report.schema.md)) — the machine-readable contract for automated processing — and a self-contained, single-file `report.html` for human review. For a rich, interactive dashboard and multi-archive browsing, the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project consumes the same `report.json` contract.
+It produces a structured `report.json` (see [Report Schema](../reference/schemas/report/report.schema.md)) — the machine-readable contract for automated processing — and a self-contained, single-file `report.html` for human review.
 
 ## Technology Stack
 

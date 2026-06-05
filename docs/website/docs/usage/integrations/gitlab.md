@@ -167,7 +167,7 @@ The `--html` flag writes a self-contained, single-file `report.html`:
 regis analyze "$IMAGE_URL" --html ...
 ```
 
-Because the report is a single self-contained file, it loads correctly straight from the GitLab artifact viewer — no base URL configuration needed. For an interactive, filterable dashboard and multi-archive browsing, point the standalone [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project at the `report.json` (or `--archive` data) the job produces.
+Because the report is a single self-contained file, it loads correctly straight from the GitLab artifact viewer — no base URL configuration needed.
 
 ### 5. Governance
 

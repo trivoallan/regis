@@ -40,10 +40,7 @@ The following are considered **stable** and safe to depend on in custom playbook
 | Feature                          | Version | Description                                                                                   |
 | -------------------------------- | ------- | --------------------------------------------------------------------------------------------- |
 | **Project rebrand**              | v0.26.0 | Renamed from `regis-cli` to `Regis` (Registry Scores) across package, CLI, docs, and branding |
-| **`archive configure` command**  | v0.27.0 | Multi-archive setup: configure multiple archive targets from a single CLI command             |
 | **`bootstrap gitlab-ci` wizard** | v0.27.0 | Interactive wizard to generate a Request-to-MR GitLab CI pipeline                             |
-| **GitLab dashboard integration** | v0.28.0 | Live dashboard with GitLab API proxy, pipeline trigger, webhook support, and embedded UI      |
-| **Dashboard serve → FastAPI**    | v0.28.0 | Local dashboard server migrated to FastAPI for improved performance and extensibility         |
 | **GitHub PR integration**        | v0.25.0 | Moved to `trivoallan/regis-action` (command removed from core)                                |
 | **Reusable GitHub Action**       | v0.25.0 | Composite action encapsulating analysis, artifact upload, and PR comment                      |
 
@@ -61,12 +58,6 @@ The following are considered **stable** and safe to depend on in custom playbook
 | **Multi-image comparison** | Compare security posture across multiple images in a single report                 |
 | **SARIF export**           | Export vulnerability findings in SARIF format for GitHub Code Scanning integration |
 | **Policy versioning**      | Version playbooks independently from the CLI, with explicit compatibility ranges   |
-
-## Deferred
-
-| Feature                               | Reason                                          |
-| ------------------------------------- | ----------------------------------------------- |
-| **Tailwind v4 migration** (dashboard) | Blocked on `@headlessui/tailwindcss` v4 support |
 
 ---
 
