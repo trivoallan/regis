@@ -99,7 +99,7 @@ you for:
 
 ## Understand the playbook structure
 
-A minimal playbook uses the Kubernetes-style envelope (`apiVersion`/`kind`/`metadata`/`spec`). Rules reference provider templates by slug:
+A minimal playbook uses the Kubernetes-style envelope (`apiVersion`/`kind`/`metadata`/`spec`). Each rule binds a provider criterion by slug:
 
 ```yaml
 # yaml-language-server: $schema=https://trivoallan.github.io/regis/schemas/playbook/v1alpha1/playbook.schema.json
@@ -120,7 +120,7 @@ spec:
 
   rules:
     - provider: cve
-      rule: cve-count
+      criterion: cve-count
       slug: cve-critical
       level: critical
       options:
@@ -128,7 +128,7 @@ spec:
         max_count: 0
 
     - provider: hadolint
-      rule: severity-count
+      criterion: severity-count
       slug: hadolint-errors
       level: warning
       options:
@@ -138,7 +138,7 @@ spec:
 
 Key concepts:
 
-- **Rules** (under `spec.rules`): Each rule references a provider template (`rule:`) with a
+- **Rules** (under `spec.rules`): Each rule binds a provider criterion (`criterion:`) with a
   unique `slug`, a `level` that affects scoring, and provider-specific `options`.
 - **Tiers** (under `spec.tiers`): Named compliance levels resolved from `rules_summary.score`
   using JSON Logic conditions.

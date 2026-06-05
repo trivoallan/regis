@@ -88,6 +88,11 @@ rules:
   description: Detailed explanation of rule evaluation and JSON logic.
   permalink: /concepts/rules
 
+criteria:
+  label: criteria
+  description: Reusable parameterized conditions shipped by analyzers and bound into rules.
+  permalink: /concepts/criteria
+
 reports:
   label: reports
   description: Generating HTML and JSON reports from analysis results.
