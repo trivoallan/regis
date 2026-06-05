@@ -44,19 +44,22 @@ publication from a tagged release, and the initial `v1.0.0` + `v1` tags.
 
 ## Status / Outcome (2026-06-04)
 
-- `trivoallan/regis-action` repo **created** via the GitHub API.
-- Pushing files to it was **blocked** by the session MCP repo scope
-  (`trivoallan/regis` only) — no `add_repo`/`list_repos` tool available to
-  expand scope. New-repo content staged under `regis-action-staging/`.
-- Core cleanup (Part B) **completed** on the branch.
+- `trivoallan/regis-action` repo **created** via the GitHub API; pushing files
+  was **blocked** by the session MCP repo scope (`trivoallan/regis` only), so
+  the bundle first transited through `regis-action-staging/`.
+- **Latent bug caught**: the extracted `action.yml` still passed
+  `analyze --site` (removed in 0.33) → fixed to `--html` in `regis-action`
+  (`4dd2b9b`) before tagging.
+- Maintainer **pushed the bundle** (`5ab906d`), cut `v1.0.0` + floating `v1`,
+  set branch protection (required `Lint action`), verified the self-test, and
+  **removed `regis-action-staging/`** from the PR branch.
+- Core cleanup (Part B) **completed**; PR #644.
 
-## Follow-ups (manual)
+## Follow-ups (manual — maintainer only)
 
-1. Push `regis-action-staging/` content to `trivoallan/regis-action` `main`
-   (or re-run with an expanded MCP scope), then delete the staging dir.
-2. Wire repo secrets + branch protection; cut the initial `v1.0.0` release so
-   `@v1` resolves; (re)publish to the Marketplace from the new repo.
-3. Verify a third-party `uses: trivoallan/regis-action@v1` run end-to-end.
+1. Add the `RELEASE_PLEASE_TOKEN` PAT secret to `trivoallan/regis-action`
+   (`contents:write` + `pull-requests:write`) so `release-please` runs.
+2. Publish to the Marketplace from the `v1.0.0` release (web UI only).
 
 ## Verification
 

@@ -15,7 +15,8 @@
 - **GitHub Action extraction → dépôt dédié (2026-06-04)** — breaking, pré-v1:
   - L'action composite quitte le cœur pour [`trivoallan/regis-action`](https://github.com/trivoallan/regis-action), versionnée indépendamment (`v1.x`, release-please `simple` + `tag-major.yml`). Suppression côté cœur de `action.yml`, `ci-action-dogfood.yml`, et de l'exception de SHA-pinning dans `ci-lint.yml`.
   - Docs repointées vers `trivoallan/regis-action@v1` + note de migration (`README.md`, guide `integrations/github.md`) ; snapshots `versioned_docs/` laissés intacts.
-  - Dépôt `regis-action` créé via l'API ; push des fichiers bloqué par le périmètre MCP de session → contenu mis en attente sous `regis-action-staging/`. `feat(ci)!`. Décision : `decisionLog.md` ; plan : `docs/memory-bank/plans/github-action-extraction-plan.md`.
+  - Bug latent corrigé pendant l'extraction : l'`action.yml` passait `analyze --site` (retiré en 0.33) → `--html` dans `regis-action` (`4dd2b9b`).
+  - Dépôt [`trivoallan/regis-action`](https://github.com/trivoallan/regis-action) live : bundle poussé (`5ab906d`), `v1.0.0` + `v1` flottant coupés, branch protection (`Lint action`), self-test vert, staging retiré de la branche PR. Reste manuel : secret PAT `RELEASE_PLEASE_TOKEN` + publication Marketplace. `feat(ci)!`, PR #644. Décision : `decisionLog.md` ; plan : `docs/memory-bank/plans/github-action-extraction-plan.md`.
 
 - **Playbook format → enveloppe Kubernetes (2026-06-01, PR #640)** — breaking, pré-v1:
   - `apiVersion: regis.trivoallan.dev/v1alpha1` / `kind: Playbook` / `metadata` (style Backstage) / `spec` ; remplace l'entier `schemaVersion`. Le loader valide contre le nouveau schéma `v1alpha1` puis normalise vers la forme aplatie interne (consommateurs inchangés, approche A) ; ancien schéma `v1` supprimé.
