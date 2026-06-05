@@ -12,6 +12,12 @@
 
 ## Completed (Recent)
 
+- **Dégraissage pré-v1 — suppression de 3 features inutiles (2026-06-05)** — 3 PR distinctes (brainstorming → spec → plans → subagent-driven):
+  - **PR #648** (`chore(skills)`, non cassant) — skill Claude `/create-playbook` retirée (chevauchait `regis bootstrap playbook`) ; `custom-playbook.md` + `CLAUDE.md` mis à jour ; porte les design docs partagés (spec + 3 plans).
+  - **PR #649** (`feat(cli)!`, mineur) — commande `regis github` retirée (redondante depuis l'extraction de `trivoallan/regis-action`) ; `gitlab` conservé.
+  - **PR #650** (`feat(cli)!`, mineur) — feature **archive** retirée (`--archive` + `regis/archive` + schéma) suite à l'**abandon de `regis-dashboard`** au profit de regis-backstage (qui ne consomme pas le format archive) ; pages archive/viewer purgées ; `--html`/`report.json` conservés.
+  - Suites 569/563/543 PASS, couverture ≥ 91,6 %. Spec : `docs/superpowers/specs/2026-06-05-feature-pruning-design.md`. ⚠ PR1/PR3 (sur `main`) éditent des docs communs → rebase de la 2ᵉ mergée.
+
 - **Vocabulaire « rule » → modèle 4 couches (2026-06-05, PR #646)** — non cassant:
   - `finding → metric → criterion → rule` : les analyzers livrent des **criteria** (conditions réutilisables paramétrées, ex-« default rules ») ; « rule » = la décision liée dans le playbook. Clé playbook `criterion:` (legacy `rule:` déprécié mais fonctionnel), namespace `criterion.params.*`. Choix `criterion` (pas `check`, collision `regis check`).
   - Moteur dual-bind + loader dual-read + warn de dépréciation ; `default_rules()`→`default_criteria()` (shim tiers) ; codemod `regis playbook migrate` (idempotent, préserve l'évaluation) ; playbook par défaut migré (dogfood). Doc recadrée + guide `upgrade/rule-to-criterion.md` + page analyzers (metric/finding/component).
