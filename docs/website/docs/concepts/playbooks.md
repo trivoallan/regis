@@ -40,13 +40,13 @@ Playbooks use a Kubernetes-style resource envelope. Every `playbook.yaml` must d
 
 ### `spec` fields
 
-| Field               | Required | Description                                                     |
-| ------------------- | -------- | --------------------------------------------------------------- |
-| `spec.tiers`        | no       | Compliance tier thresholds (Gold / Silver / Bronze).            |
-| `spec.rules`        | no       | Rule template instantiations (provider + rule slug + options).  |
-| `spec.badges`       | no       | Dynamic status badges displayed in the report header.           |
-| `spec.integrations` | no       | Third-party platform integrations (e.g. `integrations.gitlab`). |
-| `spec.links`        | no       | Custom action links displayed in the report.                    |
+| Field               | Required | Description                                                           |
+| ------------------- | -------- | --------------------------------------------------------------------- |
+| `spec.tiers`        | no       | Compliance tier thresholds (Gold / Silver / Bronze).                  |
+| `spec.rules`        | no       | Rules: bindings of a criterion (provider + criterion slug + options). |
+| `spec.badges`       | no       | Dynamic status badges displayed in the report header.                 |
+| `spec.integrations` | no       | Third-party platform integrations (e.g. `integrations.gitlab`).       |
+| `spec.links`        | no       | Custom action links displayed in the report.                          |
 
 ### Field mapping from the legacy format
 
@@ -370,7 +370,7 @@ Metadata values are accessible under `metadata.*` via JSON Logic `var`:
 spec:
   rules:
     - provider: metadata
-      rule: metadata
+      criterion: metadata
       slug: project-registered
       level: critical
       condition:
@@ -456,7 +456,7 @@ spec:
       condition: { ">": [{ var: rules_summary.score }, 50] }
   rules:
     - provider: oci
-      rule: user-blacklist
+      criterion: user-blacklist
       slug: no-root
       level: critical
       options:

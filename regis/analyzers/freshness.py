@@ -35,7 +35,7 @@ class FreshnessAnalyzer(BaseAnalyzer):
     schema_file = "analyzer/freshness.schema.json"
 
     @classmethod
-    def default_rules(cls) -> list[dict[str, Any]]:
+    def default_criteria(cls) -> list[dict[str, Any]]:
         return [
             {
                 "slug": "age",
@@ -46,12 +46,12 @@ class FreshnessAnalyzer(BaseAnalyzer):
                 "condition": {
                     "<": [
                         {"var": "results.freshness.age_days"},
-                        {"var": "rule.params.max_days"},
+                        {"var": "criterion.params.max_days"},
                     ]
                 },
                 "messages": {
-                    "pass": "Image is less than ${rule.params.max_days} days old (${results.freshness.age_days} days).",  # nosec B105
-                    "fail": "Image is older than ${rule.params.max_days} days (${results.freshness.age_days} days).",
+                    "pass": "Image is less than ${criterion.params.max_days} days old (${results.freshness.age_days} days).",  # nosec B105
+                    "fail": "Image is older than ${criterion.params.max_days} days (${results.freshness.age_days} days).",
                 },
             }
         ]

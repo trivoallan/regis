@@ -39,8 +39,8 @@ def analyzer():
 
 
 class TestCveAnalyzer:
-    def test_default_rules_slugs(self, analyzer):
-        slugs = {r["slug"] for r in analyzer.default_rules()}
+    def test_default_criteria_slugs(self, analyzer):
+        slugs = {r["slug"] for r in analyzer.default_criteria()}
         assert {"fix-available", "cve-count"} <= slugs
 
     @patch("regis.analyzers.cve.run_grype")

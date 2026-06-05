@@ -24,7 +24,7 @@ class HadolintAnalyzer(BaseAnalyzer):
     schema_file = "analyzer/hadolint.schema.json"
 
     @classmethod
-    def default_rules(cls) -> list[dict[str, Any]]:
+    def default_criteria(cls) -> list[dict[str, Any]]:
         return [
             {
                 "slug": "severity-count",
@@ -37,15 +37,15 @@ class HadolintAnalyzer(BaseAnalyzer):
                         {
                             "get": [
                                 {"var": "results.hadolint.issues_by_level"},
-                                {"var": "rule.params.level"},
+                                {"var": "criterion.params.level"},
                             ]
                         },
-                        {"var": "rule.params.max_count"},
+                        {"var": "criterion.params.max_count"},
                     ]
                 },
                 "messages": {
-                    "pass": "Hadolint ${rule.params.level} issues are within limits.",  # nosec B105
-                    "fail": "Hadolint found ${results.hadolint.issues_by_level.${rule.params.level}} ${rule.params.level} issues (max allowed: ${rule.params.max_count}).",
+                    "pass": "Hadolint ${criterion.params.level} issues are within limits.",  # nosec B105
+                    "fail": "Hadolint found ${results.hadolint.issues_by_level.${criterion.params.level}} ${criterion.params.level} issues (max allowed: ${criterion.params.max_count}).",
                 },
             },
         ]

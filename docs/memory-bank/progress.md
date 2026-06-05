@@ -12,6 +12,11 @@
 
 ## Completed (Recent)
 
+- **Vocabulaire « rule » → modèle 4 couches (2026-06-05, PR #646)** — non cassant:
+  - `finding → metric → criterion → rule` : les analyzers livrent des **criteria** (conditions réutilisables paramétrées, ex-« default rules ») ; « rule » = la décision liée dans le playbook. Clé playbook `criterion:` (legacy `rule:` déprécié mais fonctionnel), namespace `criterion.params.*`. Choix `criterion` (pas `check`, collision `regis check`).
+  - Moteur dual-bind + loader dual-read + warn de dépréciation ; `default_rules()`→`default_criteria()` (shim tiers) ; codemod `regis playbook migrate` (idempotent, préserve l'évaluation) ; playbook par défaut migré (dogfood). Doc recadrée + guide `upgrade/rule-to-criterion.md` + page analyzers (metric/finding/component).
+  - Suite 569 PASS, couverture 91.68 %. `feat(playbook)` non cassant → mineur. Décision : `decisionLog.md` ; plan : `plans/2026-06-05-rename-rule-to-criterion-plan.md`. Suivi : skill `/create-playbook` émet encore `rule:`.
+
 - **GitHub Action extraction → dépôt dédié (2026-06-04)** — breaking, pré-v1:
   - L'action composite quitte le cœur pour [`trivoallan/regis-action`](https://github.com/trivoallan/regis-action), versionnée indépendamment (`v1.x`, release-please `simple` + `tag-major.yml`). Suppression côté cœur de `action.yml`, `ci-action-dogfood.yml`, et de l'exception de SHA-pinning dans `ci-lint.yml`.
   - Docs repointées vers `trivoallan/regis-action@v1` + note de migration (`README.md`, guide `integrations/github.md`) ; snapshots `versioned_docs/` laissés intacts.

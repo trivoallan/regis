@@ -2,45 +2,109 @@
 sidebar_position: 4
 tags:
   - rules
+  - criteria
 ---
 
-# Rules
+# Rules and criteria
 
-Rules are the evaluation heart of RegiS. Each rule defines a specific condition that the [analysis results](./analyzers.md) must satisfy, together with a severity level, interpolated messages, and optional parameters. Rules are grouped and evaluated by [playbooks](./playbooks.md), and their results feed into the overall [score](./scoring.md).
+Rules are the evaluation heart of Regis. A **rule** is the policy decision your
+playbook makes: it binds a reusable **criterion** to concrete options, a severity
+level, and a tier. Criteria are shipped by [analyzers](./analyzers.md); rules are
+written by you in a [playbook](./playbooks.md). Their results feed into the
+overall [score](./scoring.md).
 
-## How Rules Work
+## The four-layer model
+
+Regis separates _what an analyzer detects_ from _the policy you enforce_ through
+four layers. Read the chain from the bottom up: evidence is aggregated into
+measurements, measurements are evaluated by conditions, and conditions are bound
+into decisions.
 
 ```mermaid
 flowchart TD
-    A(["`**Analyzers**
-    cve · oci · dockle …`"]) -->|produce| B[(Analysis Report)]
-    B --> C{Rules Engine}
-    D(["`**Default Rules**
-    built-in per analyzer`"]) --> C
-    E(["`**Playbook Rules**
-    your overrides & templates`"]) --> C
-    C --> F{For each rule}
-    F -->|evaluate JSON Logic| G{Passed?}
-    G -->|yes| H[✅ Pass — interpolate message]
-    G -->|no| I[❌ Fail — interpolate message]
-    H & I --> J[(Rules Report\nscore · by_tag · results)]
+    F(["`**finding**
+    a raw detection
+    (a CVE, a leaked secret)`"])
+    M(["`**metric**
+    an aggregate measurement
+    (critical_count, has_sbom, score)`"])
+    C(["`**criterion**
+    a reusable parameterized condition
+    shipped by an analyzer`"])
+    R(["`**rule**
+    the policy decision
+    (criterion + options + severity + tier)`"])
+
+    F -->|aggregated into| M
+    M -->|evaluated by| C
+    C -->|bound into| R
 ```
+
+| Layer         | What it is                                                                                                                                                                     | Who owns it |
+| :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------- |
+| **finding**   | A raw detection of a problem (a CVE on a package, a leaked secret). Evidence for drill-down.                                                                                   | Analyzer    |
+| **metric**    | An aggregate measurement an analyzer exposes (`critical_count`, `has_sbom`, `score`). Lives under `results.<analyzer>.<metric>`. **This is what criteria evaluate.**           | Analyzer    |
+| **criterion** | A reusable, parameterized _condition_ shipped by an analyzer (for example, the `cve-count` criterion). Policy-neutral: it carries a JSON Logic `condition` plus open `params`. | Analyzer    |
+| **rule**      | The policy _decision_: a criterion bound to concrete options, a severity `level`, and a tier. This is what you write in a playbook.                                            | You         |
+
+:::info
+SBOM **components** are inventory, not findings — having a package is not, by
+itself, a problem. See
+[Analyzers](./analyzers.md#what-an-analyzer-exposes).
+:::
+
+## Criteria vs. rules
+
+A **criterion** is policy-neutral. The `cve-count` criterion knows _how_ to count
+vulnerabilities at a given severity and compare the count against a threshold, but
+it does not decide _which_ severity matters or _how many_ are too many. Those are
+policy choices.
+
+A **rule** makes those choices. You build a rule by binding a criterion to:
+
+- concrete **options** (the values its `params` take — for example, `level: critical`, `max_count: 0`);
+- a severity **level** (`critical`, `high`, `warning`…) that drives scoring;
+- the **tier** it contributes to.
+
+The same criterion can back many rules. A single `cve-count` criterion can be
+bound once to forbid all critical CVEs and again to tolerate up to ten
+high-severity CVEs.
+
+## How rules are evaluated
 
 When `regis` runs an analysis, the rules engine:
 
 1. **Collects default rules** from every analyzer that participated in the run.
-2. **Merges playbook rules** on top — overriding defaults or instantiating new rule instances from templates.
-3. **Evaluates** each active rule against the analysis report using [JSON Logic](https://jsonlogic.com/).
+2. **Merges playbook rules** on top — overriding defaults or instantiating new rules by binding a criterion.
+3. **Evaluates** each active rule's condition against the analysis report using [JSON Logic](https://jsonlogic.com/).
 4. **Interpolates** pass/fail messages with live report values.
 5. **Produces** a scored rules report.
 
-## Built-in Default Rules
+```mermaid
+flowchart TD
+    A(["`**Analyzers**
+    cve · oci · dockle …`"]) -->|expose metrics| B[(Analysis Report)]
+    B --> C{Rules Engine}
+    D(["`**Default rules**
+    built-in per analyzer`"]) --> C
+    E(["`**Playbook rules**
+    your criterion bindings`"]) --> C
+    C --> F{For each rule}
+    F -->|evaluate JSON Logic| G{Passed?}
+    G -->|yes| H[Pass — interpolate message]
+    G -->|no| I[Fail — interpolate message]
+    H & I --> J[(Rules Report\nscore · by_tag · results)]
+```
 
-Each analyzer ships its own built-in rules that are automatically activated when that analyzer runs. You do not need to declare them in your playbook to benefit from them.
+## Built-in default rules
+
+Each analyzer ships its own built-in rules, automatically activated when that
+analyzer runs. You do not need to declare them in your playbook to benefit from
+them.
 
 :::tip
-For the full list of standard rules, their parameters, and condition details, see the
-[Rules Reference](../reference/rules/).
+For the full list of standard criteria, their parameters, and condition details,
+see the [Rules Reference](../reference/rules/).
 :::
 
 You can inspect them at any time from the CLI:
@@ -49,95 +113,117 @@ You can inspect them at any time from the CLI:
 # List all default rules (table)
 regis rules list
 
-# Show the full definition of a specific rule
-regis rules show cve cve-count
+# Show the full definition of a specific criterion
+regis rules show cve-count
 ```
 
-## Customizing Rules in a Playbook
+## Writing rules in a playbook
 
-Add a top-level `rules` list to your `playbook.yaml` to override defaults, instantiate templates, or define brand-new rules.
+Add a `rules` list under `spec` in your `playbook.yaml` to override defaults, bind
+criteria, or define brand-new rules.
 
-### Overriding a Default Rule
+### Overriding a default rule
 
-Match a default rule by its `provider` and `rule` (slug) to change its level, parameters, or messages:
+Match a default rule by its `provider` and the criterion it binds to change its
+level, options, or messages. Reference the criterion with the `criterion:` key:
 
 ```yaml
-rules:
-  # Demote critical CVE rule to a warning
-  - provider: cve
-    rule: fix-available
-    level: warning
-    messages:
-      fail: "${results.cve.fixed_count} patchable vulnerabilities found — please fix soon."
+spec:
+  rules:
+    # Demote critical CVE rule to a warning
+    - provider: cve
+      criterion: fix-available
+      level: warning
+      messages:
+        fail: "${results.cve.fixed_count} patchable vulnerabilities found — please fix soon."
 
-  # Disable a rule entirely
-  - provider: oci
-    rule: platforms-count
-    enable: false
+    # Disable a rule entirely
+    - provider: oci
+      criterion: platforms-count
+      enable: false
 
-  # Restrict to your private registry only
-  - provider: core
-    rule: registry-domain-whitelist
-    options:
-      domains: ["my-private-registry.example.com"]
+    # Restrict to your private registry only
+    - provider: core
+      criterion: registry-domain-whitelist
+      options:
+        domains: ["my-private-registry.example.com"]
 ```
-
-### Instantiating Rule Templates
-
-Some rules are **templates**: they are designed to be instantiated multiple times with different parameters. Use `provider` + `rule` + `options` to create a named instance:
-
-```yaml
-rules:
-  # Block any critical CVEs
-  - provider: cve
-    rule: cve-count
-    options:
-      level: critical
-      max_count: 0
-
-  # Allow up to 10 high-severity CVEs
-  - provider: cve
-    rule: cve-count
-    slug: cve-high-tolerance # optional: give your instance a custom slug
-    options:
-      level: high
-      max_count: 10
-```
-
-When no `slug` is provided, the engine generates one automatically from the template name and the `level` option (e.g. `cve-count.critical`).
 
 :::note
-Template rules — such as `cve/cve-count`, `hadolint/severity-count`, or `dockle/severity-count` — are multi-purpose. Rather than shipping one hard-coded rule per severity, a single template can be instantiated as many times as you need.
+The `criterion:` key replaces the older `rule:` key, which referenced the same
+thing. `rule:` still works as a deprecated alias and emits a warning. To migrate
+existing playbooks automatically, run `regis playbook migrate` — see the
+[migration guide](../upgrade/rule-to-criterion.md).
 :::
 
-### Adding a Fully Custom Rule
+### Binding a criterion several times
 
-You can define completely new rules with arbitrary JSON Logic conditions:
+Many criteria are designed to be bound multiple times with different options. Use
+`provider` + `criterion` + `options` to create a named rule. Give each binding its
+own `slug`:
 
 ```yaml
-rules:
-  - slug: company-label-required
-    description: Image must carry the company owner label.
-    level: critical
-    tags: [compliance]
-    condition:
-      "in":
-        [
-          "my-company.owner",
-          { "keys": [{ "var": "results.oci.platforms.0.labels" }] },
-        ]
-    messages:
-      pass: "Company label is present."
-      fail: "Missing 'my-company.owner' label."
+spec:
+  rules:
+    # Block any critical CVEs
+    - provider: cve
+      criterion: cve-count
+      slug: cve-critical
+      options:
+        level: critical
+        max_count: 0
+
+    # Allow up to 10 high-severity CVEs
+    - provider: cve
+      criterion: cve-count
+      slug: cve-high-tolerance
+      options:
+        level: high
+        max_count: 10
 ```
 
-## Rule Evaluation Mechanics
+When no `slug` is provided, the engine generates one automatically from the
+criterion name and the `level` option (for example, `cve-count.critical`).
 
-### JSON Logic Conditions
+:::note
+Criteria such as `cve/cve-count`, `hadolint/severity-count`, or
+`dockle/severity-count` are multi-purpose. Rather than shipping one hard-coded
+rule per severity, a single criterion can be bound as many times as you need.
+:::
 
-Rule conditions are expressed as [JSON Logic](https://jsonlogic.com/) objects. The evaluation context exposes the full, flattened analysis report.
+### Adding a fully custom rule
 
-RegiS adds several custom operators on top of the standard set:
+You can define completely new rules with arbitrary JSON Logic conditions instead
+of binding a shipped criterion. Metrics are read from the `results.*` namespace:
+
+```yaml
+spec:
+  rules:
+    - slug: company-label-required
+      description: Image must carry the company owner label.
+      level: critical
+      tags: [compliance]
+      condition:
+        "in":
+          [
+            "my-company.owner",
+            { "keys": [{ "var": "results.oci.platforms.0.labels" }] },
+          ]
+      messages:
+        pass: "Company label is present."
+        fail: "Missing 'my-company.owner' label."
+```
+
+## Rule evaluation mechanics
+
+### JSON Logic conditions
+
+Rule conditions are expressed as [JSON Logic](https://jsonlogic.com/) objects. The
+evaluation context exposes the full, flattened analysis report. Analyzer
+**metrics** are always under the `results.*` namespace (for example,
+`results.cve.critical_count`).
+
+Regis adds several custom operators on top of the standard set:
 
 | Operator       | Description                                                      |
 | :------------- | :--------------------------------------------------------------- |
@@ -148,23 +234,34 @@ RegiS adds several custom operators on top of the standard set:
 | `get`          | Gets a value from a dictionary by a computed key.                |
 | `env_contains` | `true` if any string in _b_ is a substring of any string in _a_. |
 
-The current rule definition is always accessible under `rule.*` (e.g. `{\"var\": \"rule.params.max_count\"}`).
+The bound criterion's options are accessible under `criterion.params.*` (for
+example, `{"var": "criterion.params.max_count"}`).
 
-### String Interpolation
+:::note
+The legacy `rule.params.*` namespace still resolves during the deprecation
+window but is deprecated in favor of `criterion.params.*`.
+:::
 
-Pass and fail messages support `${path.to.var}` interpolation against the same evaluation context:
+### String interpolation
+
+Pass and fail messages support `${path.to.var}` interpolation against the same
+evaluation context. Use `results.*` for metrics and `criterion.params.*` for the
+bound criterion's options:
 
 ```yaml
 messages:
-  pass: "Image is ${results.freshness.age_days} days old — within the ${rule.params.max_days}-day limit."
-  fail: "Image is ${results.freshness.age_days} days old (limit: ${rule.params.max_days})."
+  pass: "Image is ${results.freshness.age_days} days old — within the ${criterion.params.max_days}-day limit."
+  fail: "Image is ${results.freshness.age_days} days old (limit: ${criterion.params.max_days})."
 ```
 
-### Incomplete Rules
+### Incomplete rules
 
-If the evaluation context is missing data that a condition accesses (e.g. an analyzer did not run), the rule is marked **`incomplete`** rather than `failed`. This prevents false negatives when an analyzer is simply not part of the current run.
+If the evaluation context is missing data that a condition accesses (for example,
+an analyzer did not run), the rule is marked **`incomplete`** rather than
+`failed`. This prevents false negatives when an analyzer is simply not part of the
+current run.
 
-## Evaluating Rules from the CLI
+## Evaluating rules from the CLI
 
 ```bash
 # Evaluate a report against the default rules
@@ -177,9 +274,10 @@ regis rules evaluate report.json --rules playbook.yaml
 regis rules evaluate report.json -o rules_report.json
 ```
 
-### Blocking CI/CD Pipelines
+### Blocking CI/CD pipelines
 
-Use `--fail` to exit with a non-zero code when rules breach a given severity threshold:
+Use `--fail` to exit with a non-zero code when rules breach a given severity
+threshold:
 
 ```bash
 # Fail the pipeline if any CRITICAL rule is breached

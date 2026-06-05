@@ -132,13 +132,13 @@ class TestSbomAnalyzer:
         assert strong <= COPYLEFT_LICENSES
         assert weak <= COPYLEFT_LICENSES
 
-    def test_default_rules_include_license_blocklist(self, analyzer):
-        slugs = {r["slug"] for r in analyzer.default_rules()}
+    def test_default_criteria_include_license_blocklist(self, analyzer):
+        slugs = {r["slug"] for r in analyzer.default_criteria()}
         assert "license-blocklist" in slugs
 
     def test_license_blocklist_rule_structure(self, analyzer):
         rule = next(
-            r for r in analyzer.default_rules() if r["slug"] == "license-blocklist"
+            r for r in analyzer.default_criteria() if r["slug"] == "license-blocklist"
         )
         assert "params" in rule
         assert rule["params"]["blocklist"] == []
