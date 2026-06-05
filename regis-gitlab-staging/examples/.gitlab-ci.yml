@@ -1,7 +1,0 @@
-# Minimal consumer of the regis-gitlab template.
-include:
-  - remote: https://raw.githubusercontent.com/trivoallan/regis-gitlab/v1/templates/regis-mr.yml
-
-variables:
-  REGIS_IMAGE: ghcr.io/trivoallan/regis:latest
-  REGIS_PLAYBOOK: playbook.yaml
