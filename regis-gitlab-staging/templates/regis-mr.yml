@@ -1,0 +1,159 @@
+# Regis — Request-to-MR reusable template
+# Consume via:
+#   include:
+#     - remote: "https://raw.githubusercontent.com/trivoallan/regis-gitlab/v1/templates/regis-mr.yml"
+# Required: GITLAB_TOKEN (api scope). See README for all variables.
+
+variables:
+  REGIS_IMAGE: ghcr.io/trivoallan/regis:latest
+  REGIS_PLAYBOOK: playbook.yaml
+
+stages:
+  - request
+  - analyze
+  - report
+
+regis_request:
+  stage: request
+  image: alpine:latest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" && $IMAGE_URL
+  before_script:
+    - apk add --no-cache git
+  script:
+    - |
+      BRANCH="regis/analyze/$(date +%Y%m%d-%H%M%S)"
+      git config user.name "regis-ci"
+      git config user.email "regis-ci@noreply"
+      git checkout -b "$BRANCH"
+      echo "$IMAGE_URL" > .regis-image-url
+      git add .regis-image-url
+      git commit -m "chore(regis): request analysis of $IMAGE_URL"
+      git push \
+        -o merge_request.create \
+        -o merge_request.title="Regis Analysis: $IMAGE_URL" \
+        -o merge_request.description="Automated security analysis requested via pipeline." \
+        -o merge_request.remove_source_branch \
+        "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" \
+        "$BRANCH"
+
+regis_analyze:
+  stage: analyze
+  image: $REGIS_IMAGE
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - |
+      if [ -f .regis-image-url ]; then
+        IMAGE_URL=$(cat .regis-image-url)
+      fi
+      regis analyze "$IMAGE_URL" \
+        --playbook "$REGIS_PLAYBOOK" \
+        --html \
+        --output-dir reports \
+        --meta "trigger.user=$GITLAB_USER_LOGIN" \
+        --meta "trigger.url=$CI_JOB_URL" \
+        --meta "gitlab.mr_url=$CI_MERGE_REQUEST_PROJECT_URL/-/merge_requests/$CI_MERGE_REQUEST_IID"
+  artifacts:
+    paths:
+      - reports/
+    expire_in: 30 days
+
+regis_report:
+  stage: report
+  image: alpine:latest
+  needs:
+    - regis_analyze
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  before_script:
+    - apk add --no-cache git curl jq
+  script:
+    - |
+      set -eu
+
+      # Push the report artifact back onto the MR source branch
+      git config user.name "regis-ci"
+      git config user.email "regis-ci@noreply"
+      git add reports/ || true
+      git commit -m "chore(report): analysis complete" || true
+      git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" \
+        HEAD:"$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" || true
+
+      MR_API="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}"
+      PROJ_API="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}"
+      REPORT_URL="${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/file/reports/report.html"
+      REPORT_JSON="reports/report.json"
+      TOKEN_HEADER="PRIVATE-TOKEN: ${GITLAB_TOKEN}"
+
+      # 1. Comment with the report link
+      COMMENT="🚀 **regis Analysis Complete!**
+
+      The full HTML security report is ready: [View Analysis Report](${REPORT_URL})"
+      curl -sf --header "$TOKEN_HEADER" --request POST \
+        --data-urlencode "body=${COMMENT}" "${MR_API}/notes" >/dev/null \
+        || echo "Warning: failed to post MR comment"
+
+      # 2. Labels: plain + coloured badge labels -> comma-separated list
+      LABELS=""
+      add_label() {
+        [ -z "${1:-}" ] && return 0
+        if [ -z "$LABELS" ]; then LABELS="$1"; else LABELS="${LABELS},$1"; fi
+      }
+      for l in $(jq -r '.playbook.labels // [] | .[]' "$REPORT_JSON"); do
+        add_label "$l"
+      done
+      # create badge labels with their colour if missing
+      jq -r '.playbook.badge_labels // [] | .[] | [.name, .class] | @tsv' "$REPORT_JSON" \
+      | while IFS="$(printf '\t')" read -r name cls; do
+          [ -z "$name" ] && continue
+          case "$cls" in
+            success) color=388e3c ;;
+            warning) color=fbc02d ;;
+            error) color=d32f2f ;;
+            information) color=1976d2 ;;
+            *) color=607d8b ;;
+          esac
+          curl -s --header "$TOKEN_HEADER" --request POST \
+            --data-urlencode "name=${name}" --data-urlencode "color=#${color}" \
+            "${PROJ_API}/labels" >/dev/null || true
+        done
+      # collect badge label names (separate pass: the while-subshell can't mutate LABELS)
+      for name in $(jq -r '.playbook.badge_labels // [] | .[].name' "$REPORT_JSON"); do
+        add_label "$name"
+      done
+
+      # 3. MR description: prepend report link if absent, append checklists
+      CUR_DESC=$(curl -sf --header "$TOKEN_HEADER" "$MR_API" | jq -r '.description // ""')
+      NEW_DESC="$CUR_DESC"
+      case "$CUR_DESC" in
+        *"View Analysis Report"*) ;;
+        *) NEW_DESC=$(printf '📝 **[View Analysis Report](%s)**\n\n%s' "$REPORT_URL" "$CUR_DESC") ;;
+      esac
+      CHECKLIST=$(jq -r '
+        (.playbook.mr_description_checklists // [])
+        | map(
+            (if .title then "\n\n---\n\n## " + .title + "\n" else "" end)
+            + ((.items // [])
+               | map(if type == "object"
+                      then "- [" + (if .checked then "x" else " " end) + "] " + .label
+                      else "- [ ] " + . end)
+               | join("\n"))
+          )
+        | join("\n")
+      ' "$REPORT_JSON")
+      if [ -n "$CHECKLIST" ]; then
+        NEW_DESC="${NEW_DESC}${CHECKLIST}"
+      fi
+
+      # 4. Apply description + labels (add_labels appends; idempotent)
+      if [ -n "$LABELS" ]; then
+        curl -sf --header "$TOKEN_HEADER" --request PUT \
+          --data-urlencode "description=${NEW_DESC}" \
+          --data-urlencode "add_labels=${LABELS}" \
+          "$MR_API" >/dev/null || echo "Warning: failed to update MR"
+      else
+        curl -sf --header "$TOKEN_HEADER" --request PUT \
+          --data-urlencode "description=${NEW_DESC}" \
+          "$MR_API" >/dev/null || echo "Warning: failed to update MR"
+      fi
