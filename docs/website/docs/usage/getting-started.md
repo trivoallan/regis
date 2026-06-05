@@ -64,5 +64,4 @@ Open the generated `report.html` to see a compliance score, vulnerability findin
 
 - Define custom rules: [Custom Playbooks](./custom-playbook.md)
 - Integrate into your workflow: [CI/CD Integration](./integrations/github.md)
-- Track changes over time: [Archives](../concepts/archives.md)
 - Fine-tune behavior: [Advanced Configuration](./configuration.md)

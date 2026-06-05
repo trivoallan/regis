@@ -6,7 +6,7 @@ tags:
 
 # Reports
 
-One of the core missions of `regis` is to bridge the gap between automated tools and human review through **Visual Excellence**. Reports display the results of [rule evaluation](./rules.md), the overall [score](./scoring.md), and can be collected over time into [archives](./archives.md) for historical tracking.
+One of the core missions of `regis` is to bridge the gap between automated tools and human review through **Visual Excellence**. Reports display the results of [rule evaluation](./rules.md) and the overall [score](./scoring.md).
 
 ## The Reporting Engine
 
