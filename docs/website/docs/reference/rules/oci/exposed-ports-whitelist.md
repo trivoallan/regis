@@ -46,7 +46,7 @@ rules:
       "var": "results.oci.platforms.0.exposed_ports"
     },
     {
-      "var": "rule.params.allowed_ports"
+      "var": "criterion.params.allowed_ports"
     }
   ]
 }

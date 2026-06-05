@@ -20,10 +20,10 @@ Image must have required OCI labels.
 
 ## Messages
 
-| Type     | Message                                                              |
-| :------- | :------------------------------------------------------------------- |
-| **Pass** | All required labels are present.                                     |
-| **Fail** | Image is missing one or more required labels: ${rule.params.labels}. |
+| Type     | Message                                                                   |
+| :------- | :------------------------------------------------------------------------ |
+| **Pass** | All required labels are present.                                          |
+| **Fail** | Image is missing one or more required labels: ${criterion.params.labels}. |
 
 ## Playbook Example
 
@@ -49,7 +49,7 @@ rules:
       ]
     },
     {
-      "var": "rule.params.labels"
+      "var": "criterion.params.labels"
     }
   ]
 }

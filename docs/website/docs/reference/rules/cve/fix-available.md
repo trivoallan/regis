@@ -44,7 +44,7 @@ rules:
       "var": "results.cve.fixed_count"
     },
     {
-      "var": "rule.params.max_count"
+      "var": "criterion.params.max_count"
     }
   ]
 }

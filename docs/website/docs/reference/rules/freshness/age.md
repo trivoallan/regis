@@ -20,10 +20,10 @@ Image should be less than expected days old.
 
 ## Messages
 
-| Type     | Message                                                                                   |
-| :------- | :---------------------------------------------------------------------------------------- |
-| **Pass** | Image is less than ${rule.params.max_days} days old (${results.freshness.age_days} days). |
-| **Fail** | Image is older than ${rule.params.max_days} days (${results.freshness.age_days} days).    |
+| Type     | Message                                                                                        |
+| :------- | :--------------------------------------------------------------------------------------------- |
+| **Pass** | Image is less than ${criterion.params.max_days} days old (${results.freshness.age_days} days). |
+| **Fail** | Image is older than ${criterion.params.max_days} days (${results.freshness.age_days} days).    |
 
 ## Playbook Example
 
@@ -44,7 +44,7 @@ rules:
       "var": "results.freshness.age_days"
     },
     {
-      "var": "rule.params.max_days"
+      "var": "criterion.params.max_days"
     }
   ]
 }

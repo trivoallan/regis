@@ -47,7 +47,7 @@ rules:
         "var": "results.oci.platforms.0.env"
       },
       {
-        "var": "rule.params.keys"
+        "var": "criterion.params.keys"
       }
     ]
   }

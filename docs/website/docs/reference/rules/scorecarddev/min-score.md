@@ -20,10 +20,10 @@ OpenSSF Scorecard score is above the threshold.
 
 ## Messages
 
-| Type     | Message                                                                                             |
-| :------- | :-------------------------------------------------------------------------------------------------- |
-| **Pass** | Scorecard score is ${results.scorecarddev.score} (min required: ${rule.params.min_score}).          |
-| **Fail** | Scorecard score is too low: ${results.scorecarddev.score} (min required: ${rule.params.min_score}). |
+| Type     | Message                                                                                                  |
+| :------- | :------------------------------------------------------------------------------------------------------- |
+| **Pass** | Scorecard score is ${results.scorecarddev.score} (min required: ${criterion.params.min_score}).          |
+| **Fail** | Scorecard score is too low: ${results.scorecarddev.score} (min required: ${criterion.params.min_score}). |
 
 ## Playbook Example
 
@@ -44,7 +44,7 @@ rules:
       "var": "results.scorecarddev.score"
     },
     {
-      "var": "rule.params.min_score"
+      "var": "criterion.params.min_score"
     }
   ]
 }

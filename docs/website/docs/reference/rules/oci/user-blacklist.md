@@ -20,10 +20,10 @@ Image must not run as root.
 
 ## Messages
 
-| Type     | Message                                                     |
-| :------- | :---------------------------------------------------------- |
-| **Pass** | Image does not run as '${rule.params.forbidden_user}'.      |
-| **Fail** | Image configured to run as '${rule.params.forbidden_user}'. |
+| Type     | Message                                                          |
+| :------- | :--------------------------------------------------------------- |
+| **Pass** | Image does not run as '${criterion.params.forbidden_user}'.      |
+| **Fail** | Image configured to run as '${criterion.params.forbidden_user}'. |
 
 ## Playbook Example
 
@@ -44,7 +44,7 @@ rules:
       "var": "results.oci.platforms.0.user"
     },
     {
-      "var": "rule.params.forbidden_user"
+      "var": "criterion.params.forbidden_user"
     }
   ]
 }

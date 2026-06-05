@@ -20,10 +20,10 @@ Image size is within limits.
 
 ## Messages
 
-| Type     | Message                                                                              |
-| :------- | :----------------------------------------------------------------------------------- |
-| **Pass** | Image size is within limits (${results.oci.platforms.0.size} bytes).                 |
-| **Fail** | Image size exceeds ${rule.params.max_mb} MB (${results.oci.platforms.0.size} bytes). |
+| Type     | Message                                                                                   |
+| :------- | :---------------------------------------------------------------------------------------- |
+| **Pass** | Image size is within limits (${results.oci.platforms.0.size} bytes).                      |
+| **Fail** | Image size exceeds ${criterion.params.max_mb} MB (${results.oci.platforms.0.size} bytes). |
 
 ## Playbook Example
 
@@ -46,7 +46,7 @@ rules:
     {
       "*": [
         {
-          "var": "rule.params.max_mb"
+          "var": "criterion.params.max_mb"
         },
         1048576
       ]

@@ -20,10 +20,10 @@ Image should support multiple platforms.
 
 ## Messages
 
-| Type     | Message                                                                                                     |
-| :------- | :---------------------------------------------------------------------------------------------------------- |
-| **Pass** | Image supports ${results.oci.platforms.length} platforms.                                                   |
-| **Fail** | Image only supports ${results.oci.platforms.length} platforms (min required: ${rule.params.min_platforms}). |
+| Type     | Message                                                                                                          |
+| :------- | :--------------------------------------------------------------------------------------------------------------- |
+| **Pass** | Image supports ${results.oci.platforms.length} platforms.                                                        |
+| **Fail** | Image only supports ${results.oci.platforms.length} platforms (min required: ${criterion.params.min_platforms}). |
 
 ## Playbook Example
 
@@ -57,7 +57,7 @@ rules:
       ]
     },
     {
-      "var": "rule.params.min_platforms"
+      "var": "criterion.params.min_platforms"
     }
   ]
 }

@@ -48,7 +48,7 @@ rules:
       "var": "request.registry"
     },
     {
-      "var": "rule.params.domains"
+      "var": "criterion.params.domains"
     }
   ]
 }

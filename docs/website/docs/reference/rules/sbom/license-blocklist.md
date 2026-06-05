@@ -47,7 +47,7 @@ rules:
           "var": "results.sbom.licenses"
         },
         {
-          "var": "rule.params.blocklist"
+          "var": "criterion.params.blocklist"
         }
       ]
     }
