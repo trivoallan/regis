@@ -28,16 +28,16 @@ cœur réellement couplé à la dashboard standalone est l'archive. Le rapport H
 
 ### Triage complet (verdicts)
 
-| Candidate | Réalité observée | Verdict |
-| --- | --- | --- |
-| `regis github update-pr` | Redondant avec `regis-action` (qui poste déjà le commentaire PR) ; escape-hatch manuel documenté | **Supprimer** |
-| skill `/create-playbook` (`.claude/skills/`) | Skill orientée produit, documentée ; chevauche `regis bootstrap playbook` | **Supprimer** |
-| archive (`--archive` + `regis/archive/store.py`) | Unique consommateur = `regis-dashboard`, destiné à l'abandon ; regis-backstage ne consomme pas le format | **Supprimer** |
-| `regis gitlab` (`create-request`, `update-mr`) | Pas d'action extraite équivalente ; « Guide GitLab CI » au roadmap Sprint 1 | **Garder** (extraire plus tard) |
-| `.github/skills/*` (gh-cli, conventional-commit, pytest-coverage) | Aides contributeur génériques | **Garder** |
-| `regis check <url>` | Préflight d'accessibilité de manifest, peu coûteux | **Garder** |
-| `--html` / `report/html.py` | Rapport self-contained, indépendant de la dashboard | **Garder** |
-| `regis version`, `list`, `evaluate`, `doctor` | Fonctions distinctes et utiles | **Garder** |
+| Candidate                                                         | Réalité observée                                                                                         | Verdict                         |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| `regis github update-pr`                                          | Redondant avec `regis-action` (qui poste déjà le commentaire PR) ; escape-hatch manuel documenté         | **Supprimer**                   |
+| skill `/create-playbook` (`.claude/skills/`)                      | Skill orientée produit, documentée ; chevauche `regis bootstrap playbook`                                | **Supprimer**                   |
+| archive (`--archive` + `regis/archive/store.py`)                  | Unique consommateur = `regis-dashboard`, destiné à l'abandon ; regis-backstage ne consomme pas le format | **Supprimer**                   |
+| `regis gitlab` (`create-request`, `update-mr`)                    | Pas d'action extraite équivalente ; « Guide GitLab CI » au roadmap Sprint 1                              | **Garder** (extraire plus tard) |
+| `.github/skills/*` (gh-cli, conventional-commit, pytest-coverage) | Aides contributeur génériques                                                                            | **Garder**                      |
+| `regis check <url>`                                               | Préflight d'accessibilité de manifest, peu coûteux                                                       | **Garder**                      |
+| `--html` / `report/html.py`                                       | Rapport self-contained, indépendant de la dashboard                                                      | **Garder**                      |
+| `regis version`, `list`, `evaluate`, `doctor`                     | Fonctions distinctes et utiles                                                                           | **Garder**                      |
 
 ### Périmètre retenu
 
@@ -67,14 +67,14 @@ de valeur nette ; tout besoin avancé est couvert par l'action.
 
 ### Touchpoints exacts
 
-| Fichier | Action |
-| --- | --- |
-| `regis/github_cli.py` (217 l.) | **Supprimer le fichier** |
-| `regis/cli.py` | Retirer l'import `from regis.github_cli import github_cmd` (l. 17) et `main.add_command(github_cmd, name="github")` (l. 79) |
-| `tests/test_github_cli.py` | **Supprimer le fichier** |
-| `docs/website/docs/usage/integrations/github.md` | Retirer la section « Posting Results to Pull Requests » (l. 279–319) ; repointer le lecteur vers `regis-action@v1` |
-| `docs/website/docs/roadmap.md` (l. 47) | Retirer ou mettre à jour la ligne d'historique de la feature |
-| `docs/website/versioned_docs/**` | **Intacts** (snapshots figés, convention projet) |
+| Fichier                                          | Action                                                                                                                      |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `regis/github_cli.py` (217 l.)                   | **Supprimer le fichier**                                                                                                    |
+| `regis/cli.py`                                   | Retirer l'import `from regis.github_cli import github_cmd` (l. 17) et `main.add_command(github_cmd, name="github")` (l. 79) |
+| `tests/test_github_cli.py`                       | **Supprimer le fichier**                                                                                                    |
+| `docs/website/docs/usage/integrations/github.md` | Retirer la section « Posting Results to Pull Requests » (l. 279–319) ; repointer le lecteur vers `regis-action@v1`          |
+| `docs/website/docs/roadmap.md` (l. 47)           | Retirer ou mettre à jour la ligne d'historique de la feature                                                                |
+| `docs/website/versioned_docs/**`                 | **Intacts** (snapshots figés, convention projet)                                                                            |
 
 ### Vérifications préalables (faites)
 
@@ -99,12 +99,12 @@ Les skills contributeur génériques (`.github/skills/*`) sont **conservées**.
 
 ### Touchpoints exacts
 
-| Fichier | Action |
-| --- | --- |
-| `.claude/skills/create-playbook/` (SKILL.md + `references/available-rules.md` + `references/playbook-examples.md`) | **Supprimer l'arborescence** |
-| `docs/website/docs/usage/custom-playbook.md` | Retirer la section « Create a playbook with the AI assistant » (l. 14–84) ; promouvoir « Bootstrap a skeleton manually » (`regis bootstrap playbook`) comme chemin principal |
-| `CLAUDE.md` (l. 64) | Retirer `/create-playbook` de la liste des « project skills » (sinon contradiction) |
-| `docs/website/versioned_docs/**`, `docs/memory-bank/**` | **Intacts** (snapshots / historique) |
+| Fichier                                                                                                            | Action                                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.claude/skills/create-playbook/` (SKILL.md + `references/available-rules.md` + `references/playbook-examples.md`) | **Supprimer l'arborescence**                                                                                                                                                 |
+| `docs/website/docs/usage/custom-playbook.md`                                                                       | Retirer la section « Create a playbook with the AI assistant » (l. 14–84) ; promouvoir « Bootstrap a skeleton manually » (`regis bootstrap playbook`) comme chemin principal |
+| `CLAUDE.md` (l. 64)                                                                                                | Retirer `/create-playbook` de la liste des « project skills » (sinon contradiction)                                                                                          |
+| `docs/website/versioned_docs/**`, `docs/memory-bank/**`                                                            | **Intacts** (snapshots / historique)                                                                                                                                         |
 
 ### Versioning & commit
 
@@ -125,29 +125,29 @@ abandonné).
 
 ### Touchpoints exacts — code
 
-| Fichier | Action |
-| --- | --- |
-| `regis/archive/` (`store.py` + `__init__.py`) | **Supprimer le package** |
-| `regis/commands/analyze.py` | Retirer l'option `--archive` (l. 260–265), le param `archive_dir` (310), la validation d'exclusion mutuelle avec `--html` (430–431) et les branches `add_to_archive` (434, 642–645, 657–663) + commentaire (662). **Uniquement `analyze`** (pas `evaluate`) |
-| `regis/schemas/archives.schema.json` (955 B) | **Supprimer** (schéma orphelin — zéro référence vérifiée) |
+| Fichier                                       | Action                                                                                                                                                                                                                                                      |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `regis/archive/` (`store.py` + `__init__.py`) | **Supprimer le package**                                                                                                                                                                                                                                    |
+| `regis/commands/analyze.py`                   | Retirer l'option `--archive` (l. 260–265), le param `archive_dir` (310), la validation d'exclusion mutuelle avec `--html` (430–431) et les branches `add_to_archive` (434, 642–645, 657–663) + commentaire (662). **Uniquement `analyze`** (pas `evaluate`) |
+| `regis/schemas/archives.schema.json` (955 B)  | **Supprimer** (schéma orphelin — zéro référence vérifiée)                                                                                                                                                                                                   |
 
 ### Touchpoints exacts — tests
 
-| Fichier | Action |
-| --- | --- |
-| `tests/test_archive_store.py` | **Supprimer le fichier** |
-| `tests/commands/test_analyze_html.py` | Élaguer les cas testant `--archive` / l'exclusion mutuelle ; conserver les cas `--html` |
-| `tests/test_bootstrap.py` | Vérifier/retirer toute référence archive résiduelle (probable faux positif — pas de sous-commande `bootstrap archive`) |
+| Fichier                               | Action                                                                                                                 |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `tests/test_archive_store.py`         | **Supprimer le fichier**                                                                                               |
+| `tests/commands/test_analyze_html.py` | Élaguer les cas testant `--archive` / l'exclusion mutuelle ; conserver les cas `--html`                                |
+| `tests/test_bootstrap.py`             | Vérifier/retirer toute référence archive résiduelle (probable faux positif — pas de sous-commande `bootstrap archive`) |
 
 ### Touchpoints exacts — doc
 
-| Cible | Action |
-| --- | --- |
-| `concepts/archives.md`, `usage/multi-archive.md`, `integrations/archive-repo.md`, `integrations/archive-customize.md` | **Supprimer** (pages 100 % archive) |
-| `usage/report-viewer.md`, `tools/viewer.mdx` | **Supprimer** (stubs de redirection vers le dépôt dashboard abandonné) |
+| Cible                                                                                                                                                                                                                     | Action                                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `concepts/archives.md`, `usage/multi-archive.md`, `integrations/archive-repo.md`, `integrations/archive-customize.md`                                                                                                     | **Supprimer** (pages 100 % archive)                                                                                                  |
+| `usage/report-viewer.md`, `tools/viewer.mdx`                                                                                                                                                                              | **Supprimer** (stubs de redirection vers le dépôt dashboard abandonné)                                                               |
 | `getting-started.md`, `analyze-image.md`, `concepts/reports.md`, `concepts/introduction.md`, `usage/troubleshooting.md`, `integrations/github.md`, `integrations/gitlab.md`, `reference/cli.md`, `roadmap.md`, `tags.yml` | Élaguer les mentions archive / dashboard-viewer. **Préserver impérativement le contenu `--html`** (rapport self-contained, conservé) |
-| Sidebar Docusaurus (`sidebars.*`) | Retirer les entrées des pages supprimées |
-| `docs/website/versioned_docs/**` | **Intacts** (snapshots figés) |
+| Sidebar Docusaurus (`sidebars.*`)                                                                                                                                                                                         | Retirer les entrées des pages supprimées                                                                                             |
+| `docs/website/versioned_docs/**`                                                                                                                                                                                          | **Intacts** (snapshots figés)                                                                                                        |
 
 > Note éditoriale (à trancher au plan) : remplacer le récit « viewer » par un pointeur bref vers
 > `--html` (rapport rapide) et/ou le plugin Backstage, pour ne pas laisser de trou.
@@ -180,15 +180,15 @@ abandonné).
 
 ## 6. Risques & mitigations
 
-| Risque | Mitigation |
-| --- | --- |
-| Un utilisateur dépendait de `regis github update-pr` | Note de migration explicite vers `regis-action@v1` (commit + github.md) |
-| Un utilisateur dépendait de `--archive` | Note de migration dans le commit ; orienter vers `--html` (rapport ponctuel) ou le plugin Backstage |
-| Abandon dashboard non encore acté côté dépôt | La suppression cœur est découplée du calendrier d'archivage de `regis-dashboard` ; décision validée par l'utilisateur |
-| Chute de couverture sous 90 % | Le code retiré emporte ses tests ; impact net neutre/positif — vérifier le ratio avant PR |
-| Liens doc cassés (pages supprimées, sidebar) | Grep des ancres + build doc avant PR ; suppression coordonnée des entrées sidebar |
-| Suppression accidentelle de doc `--html` en élaguant les mentions archive | Instruction explicite : préserver tout contenu `--html` (feature conservée) |
-| Contradiction `CLAUDE.md` ↔ skills réellement présentes | Mise à jour de la ligne 64 (suppression B) |
+| Risque                                                                    | Mitigation                                                                                                            |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Un utilisateur dépendait de `regis github update-pr`                      | Note de migration explicite vers `regis-action@v1` (commit + github.md)                                               |
+| Un utilisateur dépendait de `--archive`                                   | Note de migration dans le commit ; orienter vers `--html` (rapport ponctuel) ou le plugin Backstage                   |
+| Abandon dashboard non encore acté côté dépôt                              | La suppression cœur est découplée du calendrier d'archivage de `regis-dashboard` ; décision validée par l'utilisateur |
+| Chute de couverture sous 90 %                                             | Le code retiré emporte ses tests ; impact net neutre/positif — vérifier le ratio avant PR                             |
+| Liens doc cassés (pages supprimées, sidebar)                              | Grep des ancres + build doc avant PR ; suppression coordonnée des entrées sidebar                                     |
+| Suppression accidentelle de doc `--html` en élaguant les mentions archive | Instruction explicite : préserver tout contenu `--html` (feature conservée)                                           |
+| Contradiction `CLAUDE.md` ↔ skills réellement présentes                   | Mise à jour de la ligne 64 (suppression B)                                                                            |
 
 ## 7. Livraison
 
