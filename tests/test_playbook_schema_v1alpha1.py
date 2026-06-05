@@ -84,3 +84,21 @@ def test_additional_property_in_spec_fails() -> None:
     doc = {**VALID, "spec": {**VALID["spec"], "pages": []}}
     with pytest.raises(jsonschema.ValidationError):
         _validator().validate(doc)
+
+
+def test_criterion_key_allowed_on_rule_entry() -> None:
+    """The `criterion` key is accepted alongside the legacy `rule` key."""
+    doc = {
+        **VALID,
+        "spec": {
+            "rules": [
+                {
+                    "provider": "cve",
+                    "criterion": "cve-count",
+                    "slug": "x",
+                    "level": "info",
+                }
+            ]
+        },
+    }
+    _validator().validate(doc)

@@ -1,5 +1,7 @@
 """Tests for rules evaluator."""
 
+import pytest
+
 from regis.rules.evaluator import evaluate_rules, get_default_rules, merge_rules
 
 
@@ -91,3 +93,92 @@ def test_evaluate_rule_params():
     freshness2 = next(r for r in res2["rules"] if r["slug"] == "age")
     assert freshness2["passed"] is False
     assert freshness2["message"] == "Image is older than 7 days (15 days)."
+
+
+def test_criterion_key_equivalent_to_legacy_rule_key():
+    """A `criterion:` template reference yields a report identical to `rule:`."""
+    report = {
+        "request": {"registry": "docker.io", "analyzers": ["cve"]},
+        "results": {
+            "cve": {
+                "critical_count": 3,
+                "high_count": 5,
+                "fixed_count": 0,
+            }
+        },
+    }
+
+    legacy_def = {
+        "rules": [
+            {
+                "provider": "cve",
+                "rule": "cve-count",
+                "slug": "cve-critical",
+                "options": {"level": "critical", "max_count": 0},
+            }
+        ]
+    }
+    new_def = {
+        "rules": [
+            {
+                "provider": "cve",
+                "criterion": "cve-count",
+                "slug": "cve-critical",
+                "options": {"level": "critical", "max_count": 0},
+            }
+        ]
+    }
+
+    res_legacy = evaluate_rules(report, legacy_def)
+    res_new = evaluate_rules(report, new_def)
+
+    assert res_new == res_legacy
+
+    # And the instantiated criterion is actually present and evaluated.
+    crit = next(r for r in res_new["rules"] if r["slug"] == "cve-critical")
+    assert crit["passed"] is False
+
+
+def test_legacy_rule_key_emits_deprecation_warning():
+    """Using the legacy `rule:` template key fires a deprecation warning."""
+    report = {
+        "request": {"registry": "docker.io", "analyzers": ["cve"]},
+        "results": {"cve": {"critical_count": 0, "fixed_count": 0}},
+    }
+    legacy_def = {
+        "rules": [
+            {
+                "provider": "cve",
+                "rule": "cve-count",
+                "slug": "cve-critical",
+                "options": {"level": "critical", "max_count": 0},
+            }
+        ]
+    }
+
+    with pytest.warns(DeprecationWarning, match="criterion"):
+        evaluate_rules(report, legacy_def)
+
+
+def test_criterion_key_does_not_warn():
+    """Using the preferred `criterion:` key emits no deprecation warning."""
+    report = {
+        "request": {"registry": "docker.io", "analyzers": ["cve"]},
+        "results": {"cve": {"critical_count": 0, "fixed_count": 0}},
+    }
+    new_def = {
+        "rules": [
+            {
+                "provider": "cve",
+                "criterion": "cve-count",
+                "slug": "cve-critical",
+                "options": {"level": "critical", "max_count": 0},
+            }
+        ]
+    }
+
+    import warnings
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        evaluate_rules(report, new_def)

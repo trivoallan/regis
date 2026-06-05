@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+import warnings
 from typing import Any
 
 import json_logic
@@ -17,6 +18,22 @@ logger = logging.getLogger(__name__)
 # Uses [^${}]+ to match only innermost expressions (no nested braces/dollars),
 # enabling multi-pass resolution of nested patterns like ${outer.${inner}}.
 _INTERPOLATION_RE = re.compile(r"\$\{([^${}]+)\}")
+
+
+def _warn_legacy_rule_key() -> None:
+    """Emit a deprecation warning for a legacy `rule:` template-reference entry.
+
+    Playbook entries should reference a criterion template via the `criterion:`
+    key. The `rule:` key is retained as a deprecated alias during the
+    rule -> criterion vocabulary migration.
+    """
+    warnings.warn(
+        "Playbook entries using the 'rule:' key to reference a criterion "
+        "template are deprecated; use 'criterion:' instead. "
+        "Run 'regis playbook migrate' to update your playbooks automatically.",
+        DeprecationWarning,
+        stacklevel=3,
+    )
 
 
 def _interpolate_string(template: str, context: dict[str, Any]) -> str:
@@ -118,7 +135,10 @@ def merge_rules(
     instantiated_template_keys: set[tuple[str, str]] = set()
     for rule_def in custom_rules:
         provider = rule_def.get("provider")
-        template_name = rule_def.get("rule")
+        # Prefer the new `criterion:` key; fall back to the legacy `rule:` key.
+        template_name = rule_def.get("criterion") or rule_def.get("rule")
+        if "criterion" not in rule_def and rule_def.get("rule"):
+            _warn_legacy_rule_key()
         options = rule_def.get("options", {})
         slug = rule_def.get("slug")
 
@@ -168,7 +188,7 @@ def merge_rules(
                 overrides = {
                     k: v
                     for k, v in rule_def.items()
-                    if k not in ("provider", "rule", "options", "slug")
+                    if k not in ("provider", "criterion", "rule", "options", "slug")
                 }
                 instance.update(overrides)
                 processed_custom.append(instance)
@@ -189,7 +209,11 @@ def merge_rules(
 
         # Case B: Standard override or new rule
         else:
-            rule_id = rule_def.get("rule") or rule_def.get("slug")
+            rule_id = (
+                rule_def.get("criterion")
+                or rule_def.get("rule")
+                or rule_def.get("slug")
+            )
             if not rule_id:
                 continue
 
@@ -338,8 +362,11 @@ def evaluate_rules(
     enabled_rules = [r for r in final_rules if r.get("enable", True)]
 
     for rule in enabled_rules:
-        # Inject the current rule into the flattened context
-        # This makes it accessible via e.g. {"var": "rule.params.max_days"}
+        # Inject the current rule into the flattened context under both keys.
+        # `criterion` is the new vocabulary; `rule` is kept as a legacy alias so
+        # existing conditions/messages referencing {"var": "rule.params.x"}
+        # keep working. Both point at the same object.
+        flat_context["criterion"] = rule
         flat_context["rule"] = rule
 
         condition = rule.get("condition", {})
