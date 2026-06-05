@@ -101,6 +101,9 @@ ignore_missing_imports = true
 # downstream importers in isolation. follow_imports=skip avoids the
 # cross-ref lookup that crashes, without silencing type errors in the
 # module itself (which is still checked when targeted directly).
+# regis.analyzers.base is included because it imports the stdlib `warnings`
+# module (added for the default_rules deprecation shim), which trips the same
+# cross-ref AssertionError when downstream analyzer modules are linted alone.
 [[tool.mypy.overrides]]
-module = ["regis.playbook.schema_registry"]
+module = ["regis.playbook.schema_registry", "regis.analyzers.base"]
 follow_imports = "skip"

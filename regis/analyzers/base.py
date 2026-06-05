@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import warnings
 from abc import ABC, abstractmethod
 from importlib import resources
 from typing import Any
@@ -17,6 +18,22 @@ logger = logging.getLogger(__name__)
 
 class AnalyzerError(Exception):
     """Raised when an analyzer encounters an error."""
+
+
+def _overrides_legacy_default_rules(cls: type) -> bool:
+    """Return True if *cls* (or a non-base ancestor) overrides ``default_rules``.
+
+    Used to honor third-party analyzers that only implement the deprecated
+    :meth:`BaseAnalyzer.default_rules` API. Scans the MRO, ignoring
+    :class:`BaseAnalyzer` itself, for a class declaring ``default_rules`` in its
+    own ``__dict__``.
+    """
+    for klass in cls.__mro__:
+        if klass is BaseAnalyzer:
+            continue
+        if "default_rules" in klass.__dict__:
+            return True
+    return False
 
 
 class BaseAnalyzer(ABC):
@@ -33,11 +50,51 @@ class BaseAnalyzer(ABC):
     schema_file: str = ""
 
     @classmethod
-    def default_rules(cls) -> list[dict[str, Any]]:
-        """Return a list of default rules provided by this analyzer.
-        Override in subclasses to provide default evaluation rules.
+    def default_criteria(cls) -> list[dict[str, Any]]:
+        """Return the default criteria (reusable, parameterized conditions).
+
+        This is the canonical method analyzers override to ship reusable
+        criterion templates. Override in subclasses to provide defaults.
+
+        Back-compat: a direct subclass of :class:`BaseAnalyzer` that only
+        overrides the legacy :meth:`default_rules` (renamed in the rule ->
+        criterion migration) is still honored. The base implementation
+        delegates to ``default_rules`` *only* when a subclass has actually
+        overridden it; otherwise it returns its own (empty) defaults.
+
+        The recursion guard is essential: the deprecated :meth:`default_rules`
+        shim delegates back to ``default_criteria``, so without it an analyzer
+        overriding neither method would loop forever between the two. Override
+        detection uses an MRO ``__dict__`` scan
+        (:func:`_overrides_legacy_default_rules`) rather than the identity check
+        ``cls.default_rules is not BaseAnalyzer.default_rules`` — the latter
+        cannot distinguish a subclass that declared its own ``default_rules``
+        from one that merely inherits the base shim, and reintroduces the
+        recursion it was meant to prevent.
         """
+        if _overrides_legacy_default_rules(cls):
+            # External subclass overrode only the legacy method — honor it.
+            # No warning here: the subclass is the one carrying the deprecated
+            # API, and it is exercised at evaluation time, not here.
+            return cls.default_rules()
         return []
+
+    @classmethod
+    def default_rules(cls) -> list[dict[str, Any]]:
+        """Deprecated alias for :meth:`default_criteria`.
+
+        Retained as a back-compat shim during the rule -> criterion vocabulary
+        migration. Emits a :class:`DeprecationWarning` and delegates to
+        :meth:`default_criteria`. Third-party plugins that override this method
+        keep working (see :meth:`default_criteria`).
+        """
+        warnings.warn(
+            "BaseAnalyzer.default_rules() is deprecated; "
+            "override and call default_criteria() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return cls.default_criteria()
 
     @abstractmethod
     def analyze(

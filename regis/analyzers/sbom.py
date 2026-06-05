@@ -89,7 +89,7 @@ class SbomAnalyzer(BaseAnalyzer):
     schema_file = "analyzer/sbom.schema.json"
 
     @classmethod
-    def default_rules(cls) -> list[dict[str, Any]]:
+    def default_criteria(cls) -> list[dict[str, Any]]:
         return [
             {
                 "slug": "has-sbom",
@@ -116,7 +116,7 @@ class SbomAnalyzer(BaseAnalyzer):
                         {
                             "intersects": [
                                 {"var": "results.sbom.licenses"},
-                                {"var": "rule.params.blocklist"},
+                                {"var": "criterion.params.blocklist"},
                             ]
                         }
                     ]

@@ -94,7 +94,7 @@ def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
             "condition": {
                 "in": [
                     {"var": "request.registry"},
-                    {"var": "rule.params.domains"},
+                    {"var": "criterion.params.domains"},
                 ]
             },
             "messages": {
@@ -107,7 +107,7 @@ def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
     for name in analyzers_present:
         if name in analyzers:
             cls = analyzers[name]
-            rules = cls.default_rules()
+            rules = cls.default_criteria()
             for rule in rules:
                 rule["provider"] = name
             default_rules.extend(rules)
@@ -162,7 +162,7 @@ def merge_rules(
                 all_analyzers = discover_analyzers()
                 prov_cls = all_analyzers.get(provider)
                 if prov_cls:
-                    for r in prov_cls.default_rules():
+                    for r in prov_cls.default_criteria():
                         if r.get("slug") == template_name:
                             r_copy = r.copy()
                             r_copy["provider"] = provider

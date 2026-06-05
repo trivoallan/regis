@@ -134,7 +134,7 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
     schema_file = "analyzer/scorecarddev.schema.json"
 
     @classmethod
-    def default_rules(cls) -> list[dict[str, Any]]:
+    def default_criteria(cls) -> list[dict[str, Any]]:
         return [
             {
                 "slug": "min-score",
@@ -145,12 +145,12 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
                 "condition": {
                     ">=": [
                         {"var": "results.scorecarddev.score"},
-                        {"var": "rule.params.min_score"},
+                        {"var": "criterion.params.min_score"},
                     ]
                 },
                 "messages": {
-                    "pass": "Scorecard score is ${results.scorecarddev.score} (min required: ${rule.params.min_score}).",  # nosec B105
-                    "fail": "Scorecard score is too low: ${results.scorecarddev.score} (min required: ${rule.params.min_score}).",
+                    "pass": "Scorecard score is ${results.scorecarddev.score} (min required: ${criterion.params.min_score}).",  # nosec B105
+                    "fail": "Scorecard score is too low: ${results.scorecarddev.score} (min required: ${criterion.params.min_score}).",
                 },
             },
         ]

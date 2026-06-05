@@ -29,8 +29,8 @@ def analyzer():
 
 
 class TestSecretsAnalyzer:
-    def test_default_rules_slug(self, analyzer):
-        slugs = {r["slug"] for r in analyzer.default_rules()}
+    def test_default_criteria_slug(self, analyzer):
+        slugs = {r["slug"] for r in analyzer.default_criteria()}
         assert "secret-scan" in slugs
 
     @patch("regis.analyzers.secrets._scanner_version", return_value="3.95.3")

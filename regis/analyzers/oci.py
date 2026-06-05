@@ -32,7 +32,7 @@ class OciAnalyzer(BaseAnalyzer):
     schema_file = "analyzer/oci.schema.json"
 
     @classmethod
-    def default_rules(cls) -> list[dict[str, Any]]:
+    def default_criteria(cls) -> list[dict[str, Any]]:
         return [
             {
                 "slug": "user-blacklist",
@@ -43,12 +43,12 @@ class OciAnalyzer(BaseAnalyzer):
                 "condition": {
                     "!=": [
                         {"var": "results.oci.platforms.0.user"},
-                        {"var": "rule.params.forbidden_user"},
+                        {"var": "criterion.params.forbidden_user"},
                     ]
                 },
                 "messages": {
-                    "pass": "Image does not run as '${rule.params.forbidden_user}'.",  # nosec B105
-                    "fail": "Image configured to run as '${rule.params.forbidden_user}'.",
+                    "pass": "Image does not run as '${criterion.params.forbidden_user}'.",  # nosec B105
+                    "fail": "Image configured to run as '${criterion.params.forbidden_user}'.",
                 },
             },
             {
@@ -60,12 +60,12 @@ class OciAnalyzer(BaseAnalyzer):
                 "condition": {
                     "<=": [
                         {"var": "results.oci.platforms.0.size"},
-                        {"*": [{"var": "rule.params.max_mb"}, 1048576]},
+                        {"*": [{"var": "criterion.params.max_mb"}, 1048576]},
                     ]
                 },
                 "messages": {
                     "pass": "Image size is within limits (${results.oci.platforms.0.size} bytes).",  # nosec B105
-                    "fail": "Image size exceeds ${rule.params.max_mb} MB (${results.oci.platforms.0.size} bytes).",
+                    "fail": "Image size exceeds ${criterion.params.max_mb} MB (${results.oci.platforms.0.size} bytes).",
                 },
             },
             {
@@ -77,12 +77,12 @@ class OciAnalyzer(BaseAnalyzer):
                 "condition": {
                     "<=": [
                         {"var": "results.oci.platforms.0.layers_count"},
-                        {"var": "rule.params.max_layers"},
+                        {"var": "criterion.params.max_layers"},
                     ]
                 },
                 "messages": {
                     "pass": "Image has ${results.oci.platforms.0.layers_count} layers.",  # nosec B105
-                    "fail": "Image has too many layers (${results.oci.platforms.0.layers_count}). Max allowed: ${rule.params.max_layers}.",
+                    "fail": "Image has too many layers (${results.oci.platforms.0.layers_count}). Max allowed: ${criterion.params.max_layers}.",
                 },
             },
             {
@@ -111,12 +111,12 @@ class OciAnalyzer(BaseAnalyzer):
                                 0,
                             ]
                         },
-                        {"var": "rule.params.min_platforms"},
+                        {"var": "criterion.params.min_platforms"},
                     ]
                 },
                 "messages": {
                     "pass": "Image supports ${results.oci.platforms.length} platforms.",  # nosec B105
-                    "fail": "Image only supports ${results.oci.platforms.length} platforms (min required: ${rule.params.min_platforms}).",
+                    "fail": "Image only supports ${results.oci.platforms.length} platforms (min required: ${criterion.params.min_platforms}).",
                 },
             },
             {
@@ -128,7 +128,7 @@ class OciAnalyzer(BaseAnalyzer):
                 "condition": {
                     "subset": [
                         {"var": "results.oci.platforms.0.exposed_ports"},
-                        {"var": "rule.params.allowed_ports"},
+                        {"var": "criterion.params.allowed_ports"},
                     ]
                 },
                 "messages": {
@@ -145,12 +145,12 @@ class OciAnalyzer(BaseAnalyzer):
                 "condition": {
                     "contains_all": [
                         {"keys": [{"var": "results.oci.platforms.0.labels"}]},
-                        {"var": "rule.params.labels"},
+                        {"var": "criterion.params.labels"},
                     ]
                 },
                 "messages": {
                     "pass": "All required labels are present.",  # nosec B105
-                    "fail": "Image is missing one or more required labels: ${rule.params.labels}.",
+                    "fail": "Image is missing one or more required labels: ${criterion.params.labels}.",
                 },
             },
             {
@@ -163,7 +163,7 @@ class OciAnalyzer(BaseAnalyzer):
                     "!": {
                         "env_contains": [
                             {"var": "results.oci.platforms.0.env"},
-                            {"var": "rule.params.keys"},
+                            {"var": "criterion.params.keys"},
                         ]
                     }
                 },

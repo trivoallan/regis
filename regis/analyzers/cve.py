@@ -29,7 +29,7 @@ class CveAnalyzer(BaseAnalyzer):
     schema_file = "analyzer/cve.schema.json"
 
     @classmethod
-    def default_rules(cls) -> list[dict[str, Any]]:
+    def default_criteria(cls) -> list[dict[str, Any]]:
         return [
             {
                 "slug": "fix-available",
@@ -40,7 +40,7 @@ class CveAnalyzer(BaseAnalyzer):
                 "condition": {
                     "<=": [
                         {"var": "results.cve.fixed_count"},
-                        {"var": "rule.params.max_count"},
+                        {"var": "criterion.params.max_count"},
                     ]
                 },
                 "messages": {
@@ -59,15 +59,15 @@ class CveAnalyzer(BaseAnalyzer):
                         {
                             "get": [
                                 {"var": "results.cve"},
-                                {"cat": [{"var": "rule.params.level"}, "_count"]},
+                                {"cat": [{"var": "criterion.params.level"}, "_count"]},
                             ]
                         },
-                        {"var": "rule.params.max_count"},
+                        {"var": "criterion.params.max_count"},
                     ]
                 },
                 "messages": {
-                    "pass": "Number of ${rule.params.level} vulnerabilities is within limits.",  # nosec B105
-                    "fail": "Image has ${results.cve.${rule.params.level}_count} ${rule.params.level} CVEs (max allowed: ${rule.params.max_count}).",
+                    "pass": "Number of ${criterion.params.level} vulnerabilities is within limits.",  # nosec B105
+                    "fail": "Image has ${results.cve.${criterion.params.level}_count} ${criterion.params.level} CVEs (max allowed: ${criterion.params.max_count}).",
                 },
             },
         ]

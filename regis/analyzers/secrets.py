@@ -46,7 +46,7 @@ class SecretsAnalyzer(BaseAnalyzer):
     schema_file = "analyzer/secrets.schema.json"
 
     @classmethod
-    def default_rules(cls) -> list[dict[str, Any]]:
+    def default_criteria(cls) -> list[dict[str, Any]]:
         return [
             {
                 "slug": "secret-scan",
@@ -57,7 +57,7 @@ class SecretsAnalyzer(BaseAnalyzer):
                 "condition": {
                     "<=": [
                         {"var": "results.secrets.secrets_count"},
-                        {"var": "rule.params.max_count"},
+                        {"var": "criterion.params.max_count"},
                     ]
                 },
                 "messages": {
