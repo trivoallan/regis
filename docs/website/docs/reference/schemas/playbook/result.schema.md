@@ -25,7 +25,8 @@
 | + [passed_scorecards](#passed_scorecards ) | No      | integer         | No         | -          | Number of scorecards that passed.                                                            |
 | - [links](#links )                         | No      | array of object | No         | -          | External links associated with this playbook result.                                         |
 | + [pages](#pages )                         | No      | array of object | No         | -          | -                                                                                            |
-| - [mr_templates](#mr_templates )           | No      | array of object | No         | -          | Cookiecutter templates to be run for MR descriptions.                                        |
+| - [checklists](#checklists )               | No      | array of object | No         | -          | Resolved checklists surfaced to downstream integrations.                                     |
+| - [templates](#templates )                 | No      | array of object | No         | -          | Cookiecutter templates surfaced to downstream integrations.                                  |
 
 ## <a name="playbook_name"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `playbook_name`
 
@@ -1075,13 +1076,13 @@ Must be one of:
 
 **Description:** The actual value fetched after resolution.
 
-## <a name="mr_templates"></a>15. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `mr_templates`
+## <a name="checklists"></a>15. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checklists`
 
 |          |                   |
 | -------- | ----------------- |
 | **Type** | `array of object` |
 
-**Description:** Cookiecutter templates to be run for MR descriptions.
+**Description:** Resolved checklists surfaced to downstream integrations.
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -1091,33 +1092,115 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be           | Description |
-| ----------------------------------------- | ----------- |
-| [mr_templates items](#mr_templates_items) | -           |
+| Each item of this array must be       | Description |
+| ------------------------------------- | ----------- |
+| [checklists items](#checklists_items) | -           |
 
-### <a name="mr_templates_items"></a>15.1. mr_templates items
+### <a name="checklists_items"></a>15.1. checklists items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [url](#mr_templates_items_url )             | No      | string | No         | -          | -                 |
-| - [directory](#mr_templates_items_directory ) | No      | string | No         | -          | -                 |
+| Property                            | Pattern | Type            | Deprecated | Definition | Title/Description                |
+| ----------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------- |
+| + [title](#checklists_items_title ) | No      | string          | No         | -          | Display title for the checklist. |
+| + [items](#checklists_items_items ) | No      | array of object | No         | -          | -                                |
 
-#### <a name="mr_templates_items_url"></a>15.1.1. Property `url`
+#### <a name="checklists_items_title"></a>15.1.1. Property `title`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-#### <a name="mr_templates_items_directory"></a>15.1.2. Property `directory`
+**Description:** Display title for the checklist.
+
+#### <a name="checklists_items_items"></a>15.1.2. Property `items`
+
+|          |                   |
+| -------- | ----------------- |
+| **Type** | `array of object` |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be              | Description |
+| -------------------------------------------- | ----------- |
+| [items items](#checklists_items_items_items) | -           |
+
+##### <a name="checklists_items_items_items"></a>15.1.2.1. items items
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+| Property                                            | Pattern | Type    | Deprecated | Definition | Title/Description |
+| --------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| + [label](#checklists_items_items_items_label )     | No      | string  | No         | -          | -                 |
+| + [checked](#checklists_items_items_items_checked ) | No      | boolean | No         | -          | -                 |
+
+###### <a name="checklists_items_items_items_label"></a>15.1.2.1.1. Property `label`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+###### <a name="checklists_items_items_items_checked"></a>15.1.2.1.2. Property `checked`
+
+|          |           |
+| -------- | --------- |
+| **Type** | `boolean` |
+
+## <a name="templates"></a>16. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `templates`
+
+|          |                   |
+| -------- | ----------------- |
+| **Type** | `array of object` |
+
+**Description:** Cookiecutter templates surfaced to downstream integrations.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be     | Description |
+| ----------------------------------- | ----------- |
+| [templates items](#templates_items) | -           |
+
+### <a name="templates_items"></a>16.1. templates items
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| + [url](#templates_items_url )             | No      | string | No         | -          | -                 |
+| - [directory](#templates_items_directory ) | No      | string | No         | -          | -                 |
+
+#### <a name="templates_items_url"></a>16.1.1. Property `url`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+#### <a name="templates_items_directory"></a>16.1.2. Property `directory`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-05 at 14:44:18 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-06 at 19:49:31 +0200

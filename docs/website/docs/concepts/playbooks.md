@@ -21,12 +21,12 @@ By using playbooks, you can decouple the raw data extraction (performed by analy
 
 Playbooks use a Kubernetes-style resource envelope. Every `playbook.yaml` must declare these four top-level keys:
 
-| Field        | Required | Description                                                |
-| ------------ | -------- | ---------------------------------------------------------- |
-| `apiVersion` | yes      | Must be `regis.io/v1alpha1`.                               |
-| `kind`       | yes      | Must be `Playbook`.                                        |
-| `metadata`   | yes      | Identity and version of this playbook (see below).         |
-| `spec`       | yes      | Rules, tiers, badges, integrations, and links (see below). |
+| Field        | Required | Description                                                           |
+| ------------ | -------- | --------------------------------------------------------------------- |
+| `apiVersion` | yes      | Must be `regis.io/v1alpha1`.                                          |
+| `kind`       | yes      | Must be `Playbook`.                                                   |
+| `metadata`   | yes      | Identity and version of this playbook (see below).                    |
+| `spec`       | yes      | Rules, tiers, badges, presentation directives, and links (see below). |
 
 ### `metadata` fields
 
@@ -40,13 +40,13 @@ Playbooks use a Kubernetes-style resource envelope. Every `playbook.yaml` must d
 
 ### `spec` fields
 
-| Field               | Required | Description                                                           |
-| ------------------- | -------- | --------------------------------------------------------------------- |
-| `spec.tiers`        | no       | Compliance tier thresholds (Gold / Silver / Bronze).                  |
-| `spec.rules`        | no       | Rules: bindings of a criterion (provider + criterion slug + options). |
-| `spec.badges`       | no       | Dynamic status badges displayed in the report header.                 |
-| `spec.integrations` | no       | Third-party platform integrations (e.g. `integrations.gitlab`).       |
-| `spec.links`        | no       | Custom action links displayed in the report.                          |
+| Field               | Required | Description                                                                                                                                     |
+| ------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `spec.tiers`        | no       | Compliance tier thresholds (Gold / Silver / Bronze).                                                                                            |
+| `spec.rules`        | no       | Rules: bindings of a criterion (provider + criterion slug + options).                                                                           |
+| `spec.badges`       | no       | Dynamic status badges displayed in the report header.                                                                                           |
+| `spec.presentation` | no       | Platform-neutral presentation directives (badge labels, checklists, templates) consumed by integrations (e.g. GitLab MR, GitHub PR, Backstage). |
+| `spec.links`        | no       | Custom action links displayed in the report.                                                                                                    |
 
 ### Field mapping from the legacy format
 
@@ -68,7 +68,7 @@ The mapping is:
 | `tiers`                      | `spec.tiers`                                   |
 | `rules`                      | `spec.rules`                                   |
 | `badges`                     | `spec.badges`                                  |
-| `integrations`               | `spec.integrations`                            |
+| `integrations`               | `spec.presentation`                            |
 | `links`                      | `spec.links`                                   |
 | `pages`/`sections`/`sidebar` | removed (not used by the report viewer)        |
 
@@ -161,29 +161,28 @@ For example, to display the overall compliance score in a widget, you might use:
   value: "{{ playbooks.0.score }}%"
 ```
 
-## GitLab Integration
+## Presentation Directives
 
-Playbooks can automate Merge Request (MR) management in GitLab through the `integrations.gitlab` key.
+`spec.presentation` defines platform-neutral directives that consuming integrations (GitLab MR, GitHub PR, Backstage, etc.) can render. The playbook engine evaluates these directives once and exposes the results in the report; each integration then decides how to surface them.
 
-### Badge Synchronization
+### Badge Labels
 
-The `badges` list automatically synchronizes authorized status badges as GitLab labels. Each badge in the list is identified by its **slug**.
+The `badge_labels` list specifies which badge slugs integrations should surface as status labels. Each slug must match a badge defined in `spec.badges`.
 
 ```yaml
 spec:
-  integrations:
-    gitlab:
-      badges:
-        - score
-        - freshness
-        - cve-critical
+  presentation:
+    badge_labels:
+      - score
+      - freshness
+      - cve-critical
 ```
 
-This ensures that the MR UI (labels) always reflects the visual status shown in the HTML report. Regular condition-based labels are deprecated in favor of this badge-driven approach.
+Integrations use this list to keep their label surface (e.g. GitLab MR labels, GitHub PR labels) in sync with the badge values shown in the HTML report.
 
-### MR Description Checklists
+### Checklists
 
-The `checklists` list adds configurable checklists to the body of the Merge Request description. This lets you define manual verification steps that reviewers must tick off before approving the MR.
+The `checklists` list adds configurable verification checklists to integration surfaces (e.g. the Merge Request or Pull Request description). Each checklist lets you define manual steps that reviewers must tick off before approving.
 
 Each checklist can have a `title` and a list of `items`. Each item has a mandatory `label` and two optional conditions:
 
@@ -194,28 +193,27 @@ Each checklist can have a `title` and a list of `items`. Each item has a mandato
 
 ```yaml
 spec:
-  integrations:
-    gitlab:
-      checklists:
-        - title: 📝 Security Review
-          items:
-            - label: Security review completed # <1>
-            - label: No critical vulnerabilities found
-              show_if: { "==": [{ var: results.cve.critical_count }, 0] } # <2>
-              check_if: { "==": [{ var: results.cve.critical_count }, 0] } # <3>
-        - title: 🚀 Compliance checks
-          items:
-            - label: Image from a trusted registry
-              show_if:
-                {
-                  "in":
-                    [{ var: request.registry }, [docker.io, quay.io, ghcr.io]],
-                }
-              check_if:
-                {
-                  "in":
-                    [{ var: request.registry }, [docker.io, quay.io, ghcr.io]],
-                }
+  presentation:
+    checklists:
+      - title: 📝 Security Review
+        items:
+          - label: Security review completed # <1>
+          - label: No critical vulnerabilities found
+            show_if: { "==": [{ var: results.cve.critical_count }, 0] } # <2>
+            check_if: { "==": [{ var: results.cve.critical_count }, 0] } # <3>
+      - title: 🚀 Compliance checks
+        items:
+          - label: Image from a trusted registry
+            show_if:
+              {
+                "in":
+                  [{ var: request.registry }, [docker.io, quay.io, ghcr.io]],
+              }
+            check_if:
+              {
+                "in":
+                  [{ var: request.registry }, [docker.io, quay.io, ghcr.io]],
+              }
 ```
 
 (1) Unconditional item — always included, always unchecked.
@@ -226,11 +224,11 @@ spec:
 You can use `show_if` and `check_if` independently. For example, an item may always be shown (`no show_if`) but pre-checked only when a condition passes.
 :::
 
-The engine exposes the resolved checklists as `mr_description_checklists` (a list of `{title, items: [{label, checked}]}` objects) in the playbook evaluation result. The CI layer converts this list to Markdown checklists with H2 titles and appends it to the MR description.
+The engine exposes the resolved checklists as `checklists` (a list of `{title, items: [{label, checked}]}` objects) in the playbook evaluation result. Each integration converts this list to its native format — for example, a GitLab CI job appends them as Markdown checklists to the MR description.
 
-### MR Templates
+### Templates
 
-The `templates` list lets you define Cookiecutter templates that will be rendered directly into the Merge Request branch by the pipeline. This is useful for automatically generating boilerplate code, security compliance files, or evidence reports based on the analysis results.
+The `templates` list lets you define Cookiecutter templates that integrations can render into their target branch or workspace. This is useful for automatically generating boilerplate code, security compliance files, or evidence reports based on the analysis results.
 
 Each item must have a `url` and an optional `condition`:
 
@@ -242,12 +240,11 @@ Each item must have a `url` and an optional `condition`:
 
 ```yaml
 spec:
-  integrations:
-    gitlab:
-      templates:
-        - url: "https://github.com/my-org/security-evidence-template"
-          directory: "templates/my-evidence" # optional
-          condition: { ">": [{ var: results.cve.critical_count }, 0] }
+  presentation:
+    templates:
+      - url: "https://github.com/my-org/security-evidence-template"
+        directory: "templates/my-evidence" # optional
+        condition: { ">": [{ var: results.cve.critical_count }, 0] }
 ```
 
 :::warning
@@ -261,7 +258,7 @@ Because Cookiecutter ignores extra context variables that aren't defined in the 
 
 :::
 
-During evaluation, templates whose condition passes are aggregated. The CLI then executes these templates with access to the full analysis context (e.g., `cookiecutter.regis.score`), and writes the generated files back to the current working directory so they can be committed to the MR branch.
+During evaluation, templates whose condition passes are aggregated and exposed as `templates` in the playbook result. Each integration then executes these templates with the full analysis context (e.g., `cookiecutter.regis.score`) and writes the generated files to the appropriate location.
 
 ## Bundle Structure
 
@@ -393,20 +390,19 @@ spec:
       class: information
 ```
 
-**MR checklist — link to the security document:**
+**Presentation checklist — link to the security document:**
 
 ```yaml
 spec:
-  integrations:
-    gitlab:
-      checklists:
-        - title: 📋 Security Evidence
-          items:
-            - label: Security validation document submitted
-              show_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
-              check_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
-            - label: "Review document: ${metadata.SEC_DOC_URL}"
-              show_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
+  presentation:
+    checklists:
+      - title: 📋 Security Evidence
+        items:
+          - label: Security validation document submitted
+            show_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
+            check_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
+          - label: "Review document: ${metadata.SEC_DOC_URL}"
+            show_if: { "!!": [{ var: "metadata.SEC_DOC_URL" }] }
 ```
 
 **Tier condition — gate Gold tier on CI platform:**

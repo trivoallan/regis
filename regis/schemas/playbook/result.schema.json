@@ -381,7 +381,10 @@
         "type": "object",
         "required": ["title", "items"],
         "properties": {
-          "title": { "type": "string", "description": "Display title for the checklist." },
+          "title": {
+            "type": "string",
+            "description": "Display title for the checklist."
+          },
           "items": {
             "type": "array",
             "items": {

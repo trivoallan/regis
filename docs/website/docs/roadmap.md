@@ -22,7 +22,7 @@ Regis categorizes its public interfaces into stability tiers so you can make inf
 
 The following are considered **stable** and safe to depend on in custom playbooks:
 
-- **Playbook definition schema** — `name`, `description`, `slug`, `sections`, `rules`, `conditions`, `tiers`, `links`, `labels`, `badge_labels`, `mr_description_checklists`
+- **Playbook definition schema** — `name`, `description`, `slug`, `sections`, `rules`, `conditions`, `tiers`, `links`, `labels`, `spec.presentation` (`badge_labels`, `checklists`, `templates`)
 - **Report JSON top-level fields** — `version`, `request`, `results`, `playbook`, `playbooks`, `rules`, `rules_summary`, `tier`, `badges`, `links`
 - **Rule result fields** — `slug`, `description`, `passed`, `status`, `message`, `level`, `tags`, `analyzers`
 - **Rules summary** — `score` (0-100), `total`, `passed`, `by_tag`
