@@ -326,8 +326,8 @@ class TestEvaluate:
         assert widgets[2]["resolved_value"] == "B"
 
 
-class TestGitLabChecklist:
-    """Test GitLab MR description checklist item evaluation."""
+class TestPresentationChecklists:
+    """Test presentation checklist item evaluation."""
 
     BASE_PLAYBOOK = {
         "schemaVersion": 1,
@@ -536,8 +536,8 @@ class TestGitLabChecklist:
         ]
 
 
-class TestGitLabTemplates:
-    """Test GitLab MR templates evaluation."""
+class TestPresentationTemplates:
+    """Test presentation templates evaluation."""
 
     BASE_PLAYBOOK = {
         "schemaVersion": 1,
