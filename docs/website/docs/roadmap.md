@@ -37,12 +37,12 @@ The following are considered **stable** and safe to depend on in custom playbook
 
 ## Recently shipped
 
-| Feature                          | Version | Description                                                                                   |
-| -------------------------------- | ------- | --------------------------------------------------------------------------------------------- |
-| **Project rebrand**              | v0.26.0 | Renamed from `regis-cli` to `Regis` (Registry Scores) across package, CLI, docs, and branding |
+| Feature                         | Version | Description                                                                                                                              |
+| ------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Project rebrand**             | v0.26.0 | Renamed from `regis-cli` to `Regis` (Registry Scores) across package, CLI, docs, and branding                                            |
 | **GitLab CI reusable template** | v0.27.0 | `regis bootstrap gitlab-ci` and `regis gitlab` commands moved to [`trivoallan/regis-gitlab`](https://github.com/trivoallan/regis-gitlab) |
-| **GitHub PR integration**        | v0.25.0 | Moved to `trivoallan/regis-action` (command removed from core)                                |
-| **Reusable GitHub Action**       | v0.25.0 | Composite action encapsulating analysis, artifact upload, and PR comment                      |
+| **GitHub PR integration**       | v0.25.0 | Moved to `trivoallan/regis-action` (command removed from core)                                                                           |
+| **Reusable GitHub Action**      | v0.25.0 | Composite action encapsulating analysis, artifact upload, and PR comment                                                                 |
 
 ## Near-term (v0.29.0)
 
