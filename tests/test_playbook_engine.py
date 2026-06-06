@@ -345,14 +345,14 @@ class TestGitLabChecklist:
         import copy
 
         pb: dict[str, Any] = copy.deepcopy(self.BASE_PLAYBOOK)
-        pb["integrations"] = {"gitlab": {"checklist": checklist}}
+        pb["presentation"] = {"checklist": checklist}
         return pb
 
     def test_unconditional_item_always_included(self):
         """Items with no condition are always added to the checklist."""
         pb = self._make_playbook([{"label": "Manual review done"}])
         result = evaluate(pb, {})
-        assert result["mr_description_checklists"] == [
+        assert result["checklists"] == [
             {
                 "title": "📝 Review Checklist",
                 "items": [{"label": "Manual review done", "checked": False}],
@@ -371,7 +371,7 @@ class TestGitLabChecklist:
         )
         report = {"results": {"cve": {"critical_count": 0}}}
         result = evaluate(pb, report)
-        assert result["mr_description_checklists"] == [
+        assert result["checklists"] == [
             {
                 "title": "📝 Review Checklist",
                 "items": [{"label": "No critical CVEs", "checked": False}],
@@ -390,7 +390,7 @@ class TestGitLabChecklist:
         )
         report = {"results": {"cve": {"critical_count": 5}}}
         result = evaluate(pb, report)
-        assert "mr_description_checklists" not in result
+        assert "checklists" not in result
 
     def test_missing_data_excludes_item(self):
         """Items whose condition references missing data are excluded."""
@@ -403,7 +403,7 @@ class TestGitLabChecklist:
             ]
         )
         result = evaluate(pb, {})
-        assert "mr_description_checklists" not in result
+        assert "checklists" not in result
 
     def test_mixed_items(self):
         """Mixed conditional and unconditional items produce correct subset."""
@@ -422,7 +422,7 @@ class TestGitLabChecklist:
         )
         report = {"results": {"ok": True}}
         result = evaluate(pb, report)
-        assert result["mr_description_checklists"] == [
+        assert result["checklists"] == [
             {
                 "title": "📝 Review Checklist",
                 "items": [
@@ -444,7 +444,7 @@ class TestGitLabChecklist:
         )
         report = {"results": {"cve": {"critical_count": 0}}}
         result = evaluate(pb, report)
-        assert result["mr_description_checklists"] == [
+        assert result["checklists"] == [
             {
                 "title": "📝 Review Checklist",
                 "items": [{"label": "No critical CVEs", "checked": True}],
@@ -463,7 +463,7 @@ class TestGitLabChecklist:
         )
         report = {"results": {"cve": {"critical_count": 3}}}
         result = evaluate(pb, report)
-        assert result["mr_description_checklists"] == [
+        assert result["checklists"] == [
             {
                 "title": "📝 Review Checklist",
                 "items": [{"label": "No critical CVEs", "checked": False}],
@@ -481,7 +481,7 @@ class TestGitLabChecklist:
             ]
         )
         result = evaluate(pb, {})
-        assert result["mr_description_checklists"] == [
+        assert result["checklists"] == [
             {
                 "title": "📝 Review Checklist",
                 "items": [{"label": "Some item", "checked": False}],
@@ -489,44 +489,42 @@ class TestGitLabChecklist:
         ]
 
     def test_no_checklist_key_absent(self):
-        """When checklist is not defined, mr_description_checklists is absent."""
+        """When checklist is not defined, checklists is absent."""
         result = evaluate(self.BASE_PLAYBOOK, {})
-        assert "mr_description_checklists" not in result
+        assert "checklists" not in result
 
     def test_empty_checklist_key_absent(self):
-        """When checklist is an empty list, mr_description_checklists is absent."""
+        """When checklist is an empty list, checklists is absent."""
         pb = self._make_playbook([])
         result = evaluate(pb, {})
-        assert "mr_description_checklists" not in result
+        assert "checklists" not in result
 
     def test_multiple_checklists(self):
         import copy
 
         pb = copy.deepcopy(self.BASE_PLAYBOOK)
-        pb["integrations"] = {
-            "gitlab": {
-                "checklists": [
-                    {
-                        "title": "Security Checklist",
-                        "items": [
-                            {
-                                "label": "No critical CVEs",
-                                "check_if": {
-                                    "==": [{"var": "results.cve.critical_count"}, 0]
-                                },
-                            }
-                        ],
-                    },
-                    {
-                        "title": "Compliance Checklist",
-                        "items": [{"label": "Manual compliance check"}],
-                    },
-                ]
-            }
+        pb["presentation"] = {
+            "checklists": [
+                {
+                    "title": "Security Checklist",
+                    "items": [
+                        {
+                            "label": "No critical CVEs",
+                            "check_if": {
+                                "==": [{"var": "results.cve.critical_count"}, 0]
+                            },
+                        }
+                    ],
+                },
+                {
+                    "title": "Compliance Checklist",
+                    "items": [{"label": "Manual compliance check"}],
+                },
+            ]
         }
         report = {"results": {"cve": {"critical_count": 0}}}
         result = evaluate(pb, report)
-        assert result["mr_description_checklists"] == [
+        assert result["checklists"] == [
             {
                 "title": "Security Checklist",
                 "items": [{"label": "No critical CVEs", "checked": True}],
@@ -557,14 +555,14 @@ class TestGitLabTemplates:
         import copy
 
         pb: dict[str, Any] = copy.deepcopy(self.BASE_PLAYBOOK)
-        pb["integrations"] = {"gitlab": {"templates": templates}}
+        pb["presentation"] = {"templates": templates}
         return pb
 
     def test_unconditional_template_included(self):
         """Templates with no condition are always added."""
         pb = self._make_playbook([{"url": "https://example.com/template"}])
         result = evaluate(pb, {})
-        assert result["mr_templates"] == [{"url": "https://example.com/template"}]
+        assert result["templates"] == [{"url": "https://example.com/template"}]
 
     def test_truthy_condition_includes_template(self):
         """Templates whose condition evaluates to True are included."""
@@ -578,7 +576,7 @@ class TestGitLabTemplates:
         )
         report = {"results": {"ok": True}}
         result = evaluate(pb, report)
-        assert result["mr_templates"] == [{"url": "local/path/to/template"}]
+        assert result["templates"] == [{"url": "local/path/to/template"}]
 
     def test_falsy_condition_excludes_template(self):
         """Templates whose condition evaluates to False are excluded."""
@@ -592,7 +590,7 @@ class TestGitLabTemplates:
         )
         report = {"results": {"ok": True}}
         result = evaluate(pb, report)
-        assert "mr_templates" not in result
+        assert "templates" not in result
 
     def test_missing_data_excludes_template(self):
         """Templates whose condition references missing data are excluded."""
@@ -605,13 +603,13 @@ class TestGitLabTemplates:
             ]
         )
         result = evaluate(pb, {})
-        assert "mr_templates" not in result
+        assert "templates" not in result
 
     def test_empty_templates_absent(self):
-        """When templates is an empty list, mr_templates is absent."""
+        """When templates is an empty list, templates is absent."""
         pb = self._make_playbook([])
         result = evaluate(pb, {})
-        assert "mr_templates" not in result
+        assert "templates" not in result
 
 
 def test_evaluate_propagates_playbook_metadata() -> None:

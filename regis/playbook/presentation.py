@@ -96,7 +96,7 @@ def _resolve_checklists(
             resolved_checklists.append({"title": title, "items": resolved_items})
 
     if resolved_checklists:
-        return {"mr_description_checklists": resolved_checklists}
+        return {"checklists": resolved_checklists}
     return {}
 
 
@@ -129,7 +129,7 @@ def _resolve_templates(
         resolved_templates.append(resolved_tmpl)
 
     if resolved_templates:
-        return {"mr_templates": resolved_templates}
+        return {"templates": resolved_templates}
     return {}
 
 

@@ -374,7 +374,29 @@
         }
       }
     },
-    "mr_templates": {
+    "checklists": {
+      "type": "array",
+      "description": "Resolved checklists surfaced to downstream integrations.",
+      "items": {
+        "type": "object",
+        "required": ["title", "items"],
+        "properties": {
+          "title": { "type": "string", "description": "Display title for the checklist." },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["label", "checked"],
+              "properties": {
+                "label": { "type": "string" },
+                "checked": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "templates": {
       "type": "array",
       "items": {
         "type": "object",
@@ -384,7 +406,7 @@
           "directory": { "type": "string" }
         }
       },
-      "description": "Cookiecutter templates to be run for MR descriptions."
+      "description": "Cookiecutter templates surfaced to downstream integrations."
     }
   }
 }
