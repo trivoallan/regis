@@ -17,7 +17,7 @@ def _load_schema_v1alpha1() -> dict[str, Any]:
 
 
 _SCHEMAS: dict[str, Callable[[], dict[str, Any]]] = {
-    "regis.trivoallan.dev/v1alpha1": _load_schema_v1alpha1,
+    "regis.io/v1alpha1": _load_schema_v1alpha1,
 }
 
 

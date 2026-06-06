@@ -13,7 +13,7 @@ def test_default_playbook_loads_as_envelope() -> None:
     )
     with importlib.resources.as_file(path) as p:
         pb = load_playbook(p)
-    assert pb["apiVersion"] == "regis.trivoallan.dev/v1alpha1"
+    assert pb["apiVersion"] == "regis.io/v1alpha1"
     assert pb["kind"] == "Playbook"
     assert pb["slug"] == "default"
     assert pb["version"] == "1.0.0"

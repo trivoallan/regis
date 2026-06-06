@@ -91,7 +91,7 @@ def _extract_api_version(raw: dict[str, Any], path: str | Path) -> str:
     if "apiVersion" not in raw:
         raise PlaybookVersionError(
             f"playbook '{path}' is missing required field 'apiVersion'.\n"
-            f"Add `apiVersion: regis.trivoallan.dev/v1alpha1` and `kind: Playbook` "
+            f"Add `apiVersion: regis.io/v1alpha1` and `kind: Playbook` "
             f"at the top of the file (run `regis playbook upgrade` to migrate a "
             f"legacy playbook).\n"
             f"Supported: {schema_registry.supported_versions()}."

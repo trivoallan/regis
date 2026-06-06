@@ -23,7 +23,7 @@ Playbooks use a Kubernetes-style resource envelope. Every `playbook.yaml` must d
 
 | Field        | Required | Description                                                |
 | ------------ | -------- | ---------------------------------------------------------- |
-| `apiVersion` | yes      | Must be `regis.trivoallan.dev/v1alpha1`.                   |
+| `apiVersion` | yes      | Must be `regis.io/v1alpha1`.                               |
 | `kind`       | yes      | Must be `Playbook`.                                        |
 | `metadata`   | yes      | Identity and version of this playbook (see below).         |
 | `spec`       | yes      | Rules, tiers, badges, integrations, and links (see below). |
@@ -439,7 +439,7 @@ The following example shows a minimal valid playbook definition:
 
 ```yaml
 # yaml-language-server: $schema=https://trivoallan.github.io/regis/schemas/playbook/v1alpha1/playbook.schema.json
-apiVersion: regis.trivoallan.dev/v1alpha1
+apiVersion: regis.io/v1alpha1
 kind: Playbook
 metadata:
   name: minimal

@@ -31,7 +31,7 @@ def test_upgrade_flat_to_envelope(tmp_path) -> None:
     )
     _run(pb)
     data = yaml.safe_load(pb.read_text(encoding="utf-8"))
-    assert data["apiVersion"] == "regis.trivoallan.dev/v1alpha1"
+    assert data["apiVersion"] == "regis.io/v1alpha1"
     assert data["kind"] == "Playbook"
     assert data["metadata"]["name"] == "my-pb"
     assert data["metadata"]["title"] == "My Playbook"

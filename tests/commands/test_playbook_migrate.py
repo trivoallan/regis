@@ -39,7 +39,7 @@ from regis.rules.evaluator import evaluate_rules
 #     interpolation `${results.cve.${rule.params.level}_count}`.
 _LEGACY_PLAYBOOK = """\
 # yaml-language-server: $schema=../../schemas/playbook/v1alpha1/playbook.schema.json
-apiVersion: regis.trivoallan.dev/v1alpha1
+apiVersion: regis.io/v1alpha1
 kind: Playbook
 metadata:
   name: legacy
@@ -326,7 +326,7 @@ def test_migrate_already_migrated_is_noop(tmp_path: Path) -> None:
 # byte-for-byte.
 _CRITERION_NATIVE_PLAYBOOK = """\
 # yaml-language-server: $schema=../../schemas/playbook/v1alpha1/playbook.schema.json
-apiVersion: regis.trivoallan.dev/v1alpha1
+apiVersion: regis.io/v1alpha1
 kind: Playbook
 metadata:
   name: native

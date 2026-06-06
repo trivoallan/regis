@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schemas/playbook/v1alpha1/playbook.schema.json
-apiVersion: regis.trivoallan.dev/v1alpha1
+apiVersion: regis.io/v1alpha1
 kind: Playbook
 metadata:
   name: default

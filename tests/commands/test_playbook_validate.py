@@ -11,7 +11,7 @@ from regis.cli import main
 
 # Minimal valid envelope fixture (reused across tests).
 _VALID_ENVELOPE = (
-    "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+    "apiVersion: regis.io/v1alpha1\n"
     "kind: Playbook\n"
     "metadata:\n"
     "  name: minimal\n"
@@ -34,7 +34,7 @@ class TestPlaybookValidate:
         bad = tmp_path / "bad.yaml"
         # Envelope without metadata.name — schema requires it.
         bad.write_text(
-            "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+            "apiVersion: regis.io/v1alpha1\n"
             "kind: Playbook\n"
             "metadata:\n"
             "  labels:\n"
@@ -52,7 +52,7 @@ class TestPlaybookValidate:
         # Extra property at the envelope root — additionalProperties: false.
         bad.write_text(
             textwrap.dedent("""
-                apiVersion: regis.trivoallan.dev/v1alpha1
+                apiVersion: regis.io/v1alpha1
                 kind: Playbook
                 metadata:
                   name: with-extras
@@ -95,7 +95,7 @@ class TestPlaybookValidate:
     def test_validate_reports_api_version_and_version(self, tmp_path: Path):
         playbook = tmp_path / "playbook.yaml"
         playbook.write_text(
-            "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+            "apiVersion: regis.io/v1alpha1\n"
             "kind: Playbook\n"
             "metadata:\n"
             "  name: apiversiontest\n"
@@ -107,7 +107,7 @@ class TestPlaybookValidate:
         runner = CliRunner()
         result = runner.invoke(main, ["playbook", "validate", str(playbook)])
         assert result.exit_code == 0, result.output
-        assert "apiVersion=regis.trivoallan.dev/v1alpha1" in result.output
+        assert "apiVersion=regis.io/v1alpha1" in result.output
         assert "kind=Playbook" in result.output
         assert "version=1.2.3" in result.output
 
@@ -135,7 +135,7 @@ def test_validate_prints_api_version(tmp_path) -> None:
 
     pb = tmp_path / "playbook.yaml"
     pb.write_text(
-        "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+        "apiVersion: regis.io/v1alpha1\n"
         "kind: Playbook\n"
         "metadata:\n  name: x\n  labels:\n"
         '    app.kubernetes.io/version: "1.0.0"\n'
@@ -144,5 +144,5 @@ def test_validate_prints_api_version(tmp_path) -> None:
     )
     result = CliRunner().invoke(playbook_group, ["validate", str(pb)])
     assert result.exit_code == 0
-    assert "regis.trivoallan.dev/v1alpha1" in result.output
+    assert "regis.io/v1alpha1" in result.output
     assert "Playbook" in result.output

@@ -13,7 +13,7 @@
 | ------------------------------------------ | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------- |
 | + [playbook_name](#playbook_name )         | No      | string          | No         | -          | Identifier of the playbook that was executed.                                                |
 | - [playbook_version](#playbook_version )   | No      | string or null  | No         | -          | SemVer of the playbook that produced this report.                                            |
-| - [api_version](#api_version )             | No      | string or null  | No         | -          | apiVersion of the playbook that produced this result (e.g. "regis.trivoallan.dev/v1alpha1"). |
+| - [api_version](#api_version )             | No      | string or null  | No         | -          | apiVersion of the playbook that produced this result (e.g. "regis.io/v1alpha1"). |
 | - [sidebar](#sidebar )                     | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                                               |
 | - [version](#version )                     | No      | string or null  | No         | -          | Version of regis that generated this report.                                                 |
 | - [tier](#tier )                           | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.                    |
@@ -49,7 +49,7 @@
 | -------- | ---------------- |
 | **Type** | `string or null` |
 
-**Description:** apiVersion of the playbook that produced this result (e.g. "regis.trivoallan.dev/v1alpha1").
+**Description:** apiVersion of the playbook that produced this result (e.g. "regis.io/v1alpha1").
 
 ## <a name="sidebar"></a>4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `sidebar`
 

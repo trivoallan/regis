@@ -11,7 +11,7 @@
 
 | Property                     | Pattern | Type   | Deprecated | Definition | Title/Description                                                  |
 | ---------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------ |
-| + [apiVersion](#apiVersion ) | No      | const  | No         | -          | API group and version. Must equal 'regis.trivoallan.dev/v1alpha1'. |
+| + [apiVersion](#apiVersion ) | No      | const  | No         | -          | API group and version. Must equal 'regis.io/v1alpha1'. |
 | + [kind](#kind )             | No      | const  | No         | -          | Resource kind. Must equal 'Playbook'.                              |
 | + [metadata](#metadata )     | No      | object | No         | -          | -                                                                  |
 | + [spec](#spec )             | No      | object | No         | -          | Playbook body: rules, tiers, badges, integrations, links.          |
@@ -22,9 +22,9 @@
 | -------- | ------- |
 | **Type** | `const` |
 
-**Description:** API group and version. Must equal 'regis.trivoallan.dev/v1alpha1'.
+**Description:** API group and version. Must equal 'regis.io/v1alpha1'.
 
-Specific value: `"regis.trivoallan.dev/v1alpha1"`
+Specific value: `"regis.io/v1alpha1"`
 
 ## <a name="kind"></a>2. ![Required](https://img.shields.io/badge/Required-blue) Property `kind`
 

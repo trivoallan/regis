@@ -8,8 +8,8 @@
   "additionalProperties": false,
   "properties": {
     "apiVersion": {
-      "const": "regis.trivoallan.dev/v1alpha1",
-      "description": "API group and version. Must equal 'regis.trivoallan.dev/v1alpha1'."
+      "const": "regis.io/v1alpha1",
+      "description": "API group and version. Must equal 'regis.io/v1alpha1'."
     },
     "kind": {
       "const": "Playbook",
