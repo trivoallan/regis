@@ -23,7 +23,7 @@
     },
     "api_version": {
       "type": ["string", "null"],
-      "description": "apiVersion of the playbook that produced this result (e.g. \"regis.trivoallan.dev/v1alpha1\")."
+      "description": "apiVersion of the playbook that produced this result (e.g. \"regis.io/v1alpha1\")."
     },
     "sidebar": {
       "type": "object",

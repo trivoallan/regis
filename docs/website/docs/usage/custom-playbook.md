@@ -34,7 +34,7 @@ A minimal playbook uses the Kubernetes-style envelope (`apiVersion`/`kind`/`meta
 
 ```yaml
 # yaml-language-server: $schema=https://trivoallan.github.io/regis/schemas/playbook/v1alpha1/playbook.schema.json
-apiVersion: regis.trivoallan.dev/v1alpha1
+apiVersion: regis.io/v1alpha1
 kind: Playbook
 metadata:
   name: my-security-policy # machine id — RFC 1123 DNS label

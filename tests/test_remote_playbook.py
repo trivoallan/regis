@@ -13,7 +13,7 @@ from regis.playbook.engine import load_playbook
 def test_load_playbook_remote_yaml():
     url = "https://example.com/playbook.yaml"
     content = {
-        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "apiVersion": "regis.io/v1alpha1",
         "kind": "Playbook",
         "metadata": {
             "name": "remote-playbook",
@@ -50,7 +50,7 @@ def test_load_playbook_remote_json():
 
     url = "https://example.com/playbook.json"
     content = {
-        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "apiVersion": "regis.io/v1alpha1",
         "kind": "Playbook",
         "metadata": {
             "name": "remote-json",

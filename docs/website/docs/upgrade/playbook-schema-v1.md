@@ -8,7 +8,7 @@ Starting with Regis v0.34, every playbook **must** use the Kubernetes-style
 resource envelope:
 
 ```yaml
-apiVersion: regis.trivoallan.dev/v1alpha1
+apiVersion: regis.io/v1alpha1
 kind: Playbook
 metadata:
   name: <id>
@@ -26,19 +26,19 @@ back to disk. Run the migration command to make the change permanent.
 
 ## Field mapping
 
-| Old field                    | New location                                   | Notes                                       |
-| ---------------------------- | ---------------------------------------------- | ------------------------------------------- |
-| `schemaVersion`              | replaced by `apiVersion`                       | `apiVersion: regis.trivoallan.dev/v1alpha1` |
-| `name`                       | `metadata.title`                               | human-readable display name                 |
-| `slug`                       | `metadata.name`                                | machine id — RFC 1123 DNS label             |
-| `description`                | `metadata.description`                         | optional                                    |
-| `version`                    | `metadata.labels["app.kubernetes.io/version"]` | SemVer string                               |
-| `tiers`                      | `spec.tiers`                                   |                                             |
-| `rules`                      | `spec.rules`                                   |                                             |
-| `badges`                     | `spec.badges`                                  |                                             |
-| `integrations`               | `spec.integrations`                            |                                             |
-| `links`                      | `spec.links`                                   |                                             |
-| `pages`/`sections`/`sidebar` | removed                                        | not used by the report viewer               |
+| Old field                    | New location                                   | Notes                           |
+| ---------------------------- | ---------------------------------------------- | ------------------------------- |
+| `schemaVersion`              | replaced by `apiVersion`                       | `apiVersion: regis.io/v1alpha1` |
+| `name`                       | `metadata.title`                               | human-readable display name     |
+| `slug`                       | `metadata.name`                                | machine id — RFC 1123 DNS label |
+| `description`                | `metadata.description`                         | optional                        |
+| `version`                    | `metadata.labels["app.kubernetes.io/version"]` | SemVer string                   |
+| `tiers`                      | `spec.tiers`                                   |                                 |
+| `rules`                      | `spec.rules`                                   |                                 |
+| `badges`                     | `spec.badges`                                  |                                 |
+| `integrations`               | `spec.integrations`                            |                                 |
+| `links`                      | `spec.links`                                   |                                 |
+| `pages`/`sections`/`sidebar` | removed                                        | not used by the report viewer   |
 
 ## Automated migration
 
@@ -81,7 +81,7 @@ description: "Optional description."
 
 ```yaml
 # yaml-language-server: $schema=https://trivoallan.github.io/regis/schemas/playbook/v1alpha1/playbook.schema.json
-apiVersion: regis.trivoallan.dev/v1alpha1
+apiVersion: regis.io/v1alpha1
 kind: Playbook
 metadata:
   name: your-playbook # was: slug
@@ -108,7 +108,7 @@ regis playbook validate path/to/playbook.yaml
 A successful run prints:
 
 ```text
-  ✓ path/to/playbook.yaml is valid (apiVersion=regis.trivoallan.dev/v1alpha1, kind=Playbook, version=1.0.0).
+  ✓ path/to/playbook.yaml is valid (apiVersion=regis.io/v1alpha1, kind=Playbook, version=1.0.0).
 ```
 
 If validation fails, the error message names the offending field and suggests

@@ -31,7 +31,7 @@ def _validator() -> jsonschema.Draft202012Validator:
 
 
 VALID = {
-    "apiVersion": "regis.trivoallan.dev/v1alpha1",
+    "apiVersion": "regis.io/v1alpha1",
     "kind": "Playbook",
     "metadata": {
         "name": "default",

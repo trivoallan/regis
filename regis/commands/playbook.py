@@ -255,7 +255,7 @@ def upgrade_playbook(path: Path) -> None:
     dropped = [k for k in ("pages", "sections", "sidebar") if k in data]
 
     new_doc = CommentedMap()
-    new_doc["apiVersion"] = "regis.trivoallan.dev/v1alpha1"
+    new_doc["apiVersion"] = "regis.io/v1alpha1"
     new_doc["kind"] = "Playbook"
     new_doc["metadata"] = metadata
     new_doc["spec"] = spec

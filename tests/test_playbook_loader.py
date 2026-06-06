@@ -12,7 +12,7 @@ from regis.playbook.engine import bundle_meta_schema_path, is_bundle, load_playb
 from regis.playbook.loader import PlaybookVersionError
 
 MINIMAL_PLAYBOOK = {
-    "apiVersion": "regis.trivoallan.dev/v1alpha1",
+    "apiVersion": "regis.io/v1alpha1",
     "kind": "Playbook",
     "metadata": {
         "name": "bundle-playbook",
@@ -141,7 +141,7 @@ def _write(tmp_path, content: str) -> str:
 
 def test_loads_valid_envelope(tmp_path) -> None:
     content = (
-        "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+        "apiVersion: regis.io/v1alpha1\n"
         "kind: Playbook\n"
         "metadata:\n"
         "  name: valid\n"
@@ -151,7 +151,7 @@ def test_loads_valid_envelope(tmp_path) -> None:
         "spec: {}\n"
     )
     pb = load_playbook(_write(tmp_path, content))
-    assert pb["apiVersion"] == "regis.trivoallan.dev/v1alpha1"
+    assert pb["apiVersion"] == "regis.io/v1alpha1"
     assert pb["kind"] == "Playbook"
     assert pb["name"] == "Valid Playbook"  # metadata.title
     assert pb["slug"] == "valid"  # metadata.name
@@ -160,7 +160,7 @@ def test_loads_valid_envelope(tmp_path) -> None:
 
 def test_name_falls_back_to_metadata_name_when_no_title(tmp_path) -> None:
     content = (
-        "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+        "apiVersion: regis.io/v1alpha1\n"
         "kind: Playbook\n"
         "metadata:\n"
         "  name: no-title\n"
@@ -178,12 +178,12 @@ def test_missing_api_version_raises(tmp_path) -> None:
         load_playbook(_write(tmp_path, content))
     msg = str(exc.value)
     assert "apiVersion" in msg
-    assert "Add `apiVersion: regis.trivoallan.dev/v1alpha1`" in msg
+    assert "Add `apiVersion: regis.io/v1alpha1`" in msg
 
 
 def test_wrong_kind_raises(tmp_path) -> None:
     content = (
-        "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+        "apiVersion: regis.io/v1alpha1\n"
         "kind: RuleSet\n"
         "metadata:\n  name: x\nspec: {}\n"
     )
@@ -194,7 +194,7 @@ def test_wrong_kind_raises(tmp_path) -> None:
 
 def test_unknown_api_version_raises(tmp_path) -> None:
     content = (
-        "apiVersion: regis.trivoallan.dev/v9\n"
+        "apiVersion: regis.io/v9\n"
         "kind: Playbook\n"
         "metadata:\n  name: x\nspec: {}\n"
     )
@@ -216,7 +216,7 @@ def test_missing_version_label_fails_schema_validation(tmp_path) -> None:
     import jsonschema
 
     content = (
-        "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+        "apiVersion: regis.io/v1alpha1\n"
         "kind: Playbook\n"
         "metadata:\n  name: x\n  labels: {}\n"
         "spec: {}\n"
@@ -229,7 +229,7 @@ def test_invalid_semver_label_fails_schema_validation(tmp_path) -> None:
     import jsonschema
 
     content = (
-        "apiVersion: regis.trivoallan.dev/v1alpha1\n"
+        "apiVersion: regis.io/v1alpha1\n"
         "kind: Playbook\n"
         "metadata:\n  name: x\n  labels:\n"
         '    app.kubernetes.io/version: "1.2"\n'
