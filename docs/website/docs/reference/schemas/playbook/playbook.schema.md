@@ -14,7 +14,7 @@
 | + [apiVersion](#apiVersion ) | No      | const  | No         | -          | API group and version. Must equal 'regis.io/v1alpha1'. |
 | + [kind](#kind )             | No      | const  | No         | -          | Resource kind. Must equal 'Playbook'.                              |
 | + [metadata](#metadata )     | No      | object | No         | -          | -                                                                  |
-| + [spec](#spec )             | No      | object | No         | -          | Playbook body: rules, tiers, badges, integrations, links.          |
+| + [spec](#spec )             | No      | object | No         | -          | Playbook body: rules, tiers, badges, presentation, links.          |
 
 ## <a name="apiVersion"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `apiVersion`
 
@@ -136,12 +136,12 @@ Specific value: `"Playbook"`
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-**Description:** Playbook body: rules, tiers, badges, integrations, links.
+**Description:** Playbook body: rules, tiers, badges, presentation, links.
 
 | Property                              | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                           |
 | ------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------- |
 | - [links](#spec_links )               | No      | array of object | No         | -          | Optional custom links to display as actions for this playbook.                                                              |
-| - [integrations](#spec_integrations ) | No      | object          | No         | -          | Optional third-party platform integrations (e.g. GitLab, GitHub).                                                           |
+| - [presentation](#spec_presentation ) | No      | object          | No         | -          | Platform-neutral presentation directives surfaced to downstream integrations (labels, checklists, templates).               |
 | - [rules](#spec_rules )               | No      | array of object | No         | -          | Custom rule overrides or template instantiations.                                                                           |
 | - [tiers](#spec_tiers )               | No      | array of object | No         | -          | Compliance tier thresholds. Each tier is awarded when its JsonLogic condition evaluates to true, evaluated in order.        |
 | - [badges](#spec_badges )             | No      | array of object | No         | -          | Dynamic status badges displayed in the report header. Each badge is conditionally rendered based on a JsonLogic expression. |
@@ -206,126 +206,28 @@ Specific value: `"Playbook"`
 
 **Description:** Optional JsonLogic expression to determine if the link should be displayed.
 
-### <a name="spec_integrations"></a>4.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `integrations`
-
-|                           |                                                                             |
-| ------------------------- | --------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                    |
-| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
-
-**Description:** Optional third-party platform integrations (e.g. GitLab, GitHub).
-
-| Property                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [gitlab](#spec_integrations_gitlab ) | No      | object | No         | -          | -                 |
-
-#### <a name="spec_integrations_gitlab"></a>4.2.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `gitlab`
-
-|                           |                                                                             |
-| ------------------------- | --------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                    |
-| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
-
-| Property                                              | Pattern | Type            | Deprecated | Definition | Title/Description                                                                           |
-| ----------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------- |
-| - [badges](#spec_integrations_gitlab_badges )         | No      | array of string | No         | -          | List of badge slugs to be imported as GitLab Merge Request labels.                          |
-| - [checklist](#spec_integrations_gitlab_checklist )   | No      | array           | No         | -          | (Deprecated) Single checklist items added as checkboxes to the Merge Request description.   |
-| - [checklists](#spec_integrations_gitlab_checklists ) | No      | array of object | No         | -          | Configurable checklists added as checkboxes to the Merge Request description.               |
-| - [templates](#spec_integrations_gitlab_templates )   | No      | array of object | No         | -          | URLs to Cookiecutter templates that will be rendered and added to the Merge Request branch. |
-
-##### <a name="spec_integrations_gitlab_badges"></a>4.2.1.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `badges`
-
-|          |                   |
-| -------- | ----------------- |
-| **Type** | `array of string` |
-
-**Description:** List of badge slugs to be imported as GitLab Merge Request labels.
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                        | Description |
-| ------------------------------------------------------ | ----------- |
-| [badges items](#spec_integrations_gitlab_badges_items) | -           |
-
-###### <a name="spec_integrations_gitlab_badges_items"></a>4.2.1.1.1. badges items
-
-|          |          |
-| -------- | -------- |
-| **Type** | `string` |
-
-##### <a name="spec_integrations_gitlab_checklist"></a>4.2.1.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checklist`
-
-|          |         |
-| -------- | ------- |
-| **Type** | `array` |
-
-**Description:** (Deprecated) Single checklist items added as checkboxes to the Merge Request description.
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                             | Description |
-| ----------------------------------------------------------- | ----------- |
-| [checklist_item](#spec_integrations_gitlab_checklist_items) | -           |
-
-###### <a name="spec_integrations_gitlab_checklist_items"></a>4.2.1.2.1. checklist_item
+### <a name="spec_presentation"></a>4.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `presentation`
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
-| **Defined in**            | #/$defs/checklist_item                                         |
 
-| Property                                                          | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                     |
-| ----------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [label](#spec_integrations_gitlab_checklist_items_label )       | No      | string | No         | -          | Text of the checkbox item.                                                                                                                            |
-| - [show_if](#spec_integrations_gitlab_checklist_items_show_if )   | No      | object | No         | -          | Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy.                                        |
-| - [check_if](#spec_integrations_gitlab_checklist_items_check_if ) | No      | object | No         | -          | Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ]). |
+**Description:** Platform-neutral presentation directives surfaced to downstream integrations (labels, checklists, templates).
 
-###### <a name="spec_integrations_gitlab_checklist_items_label"></a>4.2.1.2.1.1. Property `label`
+| Property                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                                               |
+| ---------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------- |
+| - [badges](#spec_presentation_badges )         | No      | array of string | No         | -          | Badge slugs to surface as labels for consuming integrations.                    |
+| - [checklists](#spec_presentation_checklists ) | No      | array of object | No         | -          | Conditional checklists surfaced by integrations (e.g. in an MR/PR description). |
+| - [templates](#spec_presentation_templates )   | No      | array of object | No         | -          | Conditional Cookiecutter templates surfaced to integrations.                    |
 
-|          |          |
-| -------- | -------- |
-| **Type** | `string` |
-
-**Description:** Text of the checkbox item.
-
-###### <a name="spec_integrations_gitlab_checklist_items_show_if"></a>4.2.1.2.1.2. Property `show_if`
-
-|                           |                                                                             |
-| ------------------------- | --------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                    |
-| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
-
-**Description:** Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy.
-
-###### <a name="spec_integrations_gitlab_checklist_items_check_if"></a>4.2.1.2.1.3. Property `check_if`
-
-|                           |                                                                             |
-| ------------------------- | --------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                    |
-| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
-
-**Description:** Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ]).
-
-##### <a name="spec_integrations_gitlab_checklists"></a>4.2.1.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checklists`
+#### <a name="spec_presentation_badges"></a>4.2.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `badges`
 
 |          |                   |
 | -------- | ----------------- |
-| **Type** | `array of object` |
+| **Type** | `array of string` |
 
-**Description:** Configurable checklists added as checkboxes to the Merge Request description.
+**Description:** Badge slugs to surface as labels for consuming integrations.
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -335,23 +237,49 @@ Specific value: `"Playbook"`
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                | Description |
-| -------------------------------------------------------------- | ----------- |
-| [checklists items](#spec_integrations_gitlab_checklists_items) | -           |
+| Each item of this array must be                 | Description |
+| ----------------------------------------------- | ----------- |
+| [badges items](#spec_presentation_badges_items) | -           |
 
-###### <a name="spec_integrations_gitlab_checklists_items"></a>4.2.1.3.1. checklists items
+##### <a name="spec_presentation_badges_items"></a>4.2.1.1. badges items
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+#### <a name="spec_presentation_checklists"></a>4.2.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checklists`
+
+|          |                   |
+| -------- | ----------------- |
+| **Type** | `array of object` |
+
+**Description:** Conditional checklists surfaced by integrations (e.g. in an MR/PR description).
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                         | Description |
+| ------------------------------------------------------- | ----------- |
+| [checklists items](#spec_presentation_checklists_items) | -           |
+
+##### <a name="spec_presentation_checklists_items"></a>4.2.2.1. checklists items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description                |
-| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | -------------------------------- |
-| - [title](#spec_integrations_gitlab_checklists_items_title ) | No      | string | No         | -          | Display title for the checklist. |
-| + [items](#spec_integrations_gitlab_checklists_items_items ) | No      | array  | No         | -          | Items in this checklist.         |
+| Property                                              | Pattern | Type   | Deprecated | Definition | Title/Description                |
+| ----------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------- |
+| - [title](#spec_presentation_checklists_items_title ) | No      | string | No         | -          | Display title for the checklist. |
+| + [items](#spec_presentation_checklists_items_items ) | No      | array  | No         | -          | Items in this checklist.         |
 
-###### <a name="spec_integrations_gitlab_checklists_items_title"></a>4.2.1.3.1.1. Property `title`
+###### <a name="spec_presentation_checklists_items_title"></a>4.2.2.1.1. Property `title`
 
 |          |          |
 | -------- | -------- |
@@ -359,7 +287,7 @@ Specific value: `"Playbook"`
 
 **Description:** Display title for the checklist.
 
-###### <a name="spec_integrations_gitlab_checklists_items_items"></a>4.2.1.3.1.2. Property `items`
+###### <a name="spec_presentation_checklists_items_items"></a>4.2.2.1.2. Property `items`
 
 |          |         |
 | -------- | ------- |
@@ -375,25 +303,57 @@ Specific value: `"Playbook"`
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                          | Description |
-| ------------------------------------------------------------------------ | ----------- |
-| [checklist_item](#spec_integrations_gitlab_checklists_items_items_items) | -           |
+| Each item of this array must be                                   | Description |
+| ----------------------------------------------------------------- | ----------- |
+| [checklist_item](#spec_presentation_checklists_items_items_items) | -           |
 
-###### <a name="spec_integrations_gitlab_checklists_items_items_items"></a>4.2.1.3.1.2.1. checklist_item
+###### <a name="spec_presentation_checklists_items_items_items"></a>4.2.2.1.2.1. checklist_item
 
-|                           |                                                                                       |
-| ------------------------- | ------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                              |
-| **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red)                        |
-| **Same definition as**    | [spec_integrations_gitlab_checklist_items](#spec_integrations_gitlab_checklist_items) |
+|                           |                                                                |
+| ------------------------- | -------------------------------------------------------------- |
+| **Type**                  | `object`                                                       |
+| **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
+| **Defined in**            | #/$defs/checklist_item                                         |
 
-##### <a name="spec_integrations_gitlab_templates"></a>4.2.1.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `templates`
+| Property                                                                | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                     |
+| ----------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [label](#spec_presentation_checklists_items_items_items_label )       | No      | string | No         | -          | Text of the checkbox item.                                                                                                                            |
+| - [show_if](#spec_presentation_checklists_items_items_items_show_if )   | No      | object | No         | -          | Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy.                                        |
+| - [check_if](#spec_presentation_checklists_items_items_items_check_if ) | No      | object | No         | -          | Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ]). |
+
+###### <a name="spec_presentation_checklists_items_items_items_label"></a>4.2.2.1.2.1.1. Property `label`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+**Description:** Text of the checkbox item.
+
+###### <a name="spec_presentation_checklists_items_items_items_show_if"></a>4.2.2.1.2.1.2. Property `show_if`
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+**Description:** Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy.
+
+###### <a name="spec_presentation_checklists_items_items_items_check_if"></a>4.2.2.1.2.1.3. Property `check_if`
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+**Description:** Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ]).
+
+#### <a name="spec_presentation_templates"></a>4.2.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `templates`
 
 |          |                   |
 | -------- | ----------------- |
 | **Type** | `array of object` |
 
-**Description:** URLs to Cookiecutter templates that will be rendered and added to the Merge Request branch.
+**Description:** Conditional Cookiecutter templates surfaced to integrations.
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -403,24 +363,24 @@ Specific value: `"Playbook"`
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                              | Description |
-| ------------------------------------------------------------ | ----------- |
-| [templates items](#spec_integrations_gitlab_templates_items) | -           |
+| Each item of this array must be                       | Description |
+| ----------------------------------------------------- | ----------- |
+| [templates items](#spec_presentation_templates_items) | -           |
 
-###### <a name="spec_integrations_gitlab_templates_items"></a>4.2.1.4.1. templates items
+##### <a name="spec_presentation_templates_items"></a>4.2.3.1. templates items
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                                                            | Pattern | Type                                           | Deprecated | Definition                                        | Title/Description                                                    |
-| ------------------------------------------------------------------- | ------- | ---------------------------------------------- | ---------- | ------------------------------------------------- | -------------------------------------------------------------------- |
-| + [url](#spec_integrations_gitlab_templates_items_url )             | No      | string                                         | No         | -                                                 | Cookiecutter template URL or path.                                   |
-| - [directory](#spec_integrations_gitlab_templates_items_directory ) | No      | string                                         | No         | -                                                 | Optional subdirectory within the repository containing the template. |
-| - [condition](#spec_integrations_gitlab_templates_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#spec_links_items_condition ) | jsonlogic                                                            |
+| Property                                                     | Pattern | Type                                           | Deprecated | Definition                                        | Title/Description                              |
+| ------------------------------------------------------------ | ------- | ---------------------------------------------- | ---------- | ------------------------------------------------- | ---------------------------------------------- |
+| + [url](#spec_presentation_templates_items_url )             | No      | string                                         | No         | -                                                 | Cookiecutter template URL or path.             |
+| - [directory](#spec_presentation_templates_items_directory ) | No      | string                                         | No         | -                                                 | Optional subdirectory containing the template. |
+| - [condition](#spec_presentation_templates_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#spec_links_items_condition ) | jsonlogic                                      |
 
-###### <a name="spec_integrations_gitlab_templates_items_url"></a>4.2.1.4.1.1. Property `url`
+###### <a name="spec_presentation_templates_items_url"></a>4.2.3.1.1. Property `url`
 
 |          |          |
 | -------- | -------- |
@@ -428,15 +388,15 @@ Specific value: `"Playbook"`
 
 **Description:** Cookiecutter template URL or path.
 
-###### <a name="spec_integrations_gitlab_templates_items_directory"></a>4.2.1.4.1.2. Property `directory`
+###### <a name="spec_presentation_templates_items_directory"></a>4.2.3.1.2. Property `directory`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-**Description:** Optional subdirectory within the repository containing the template.
+**Description:** Optional subdirectory containing the template.
 
-###### <a name="spec_integrations_gitlab_templates_items_condition"></a>4.2.1.4.1.3. Property `condition`
+###### <a name="spec_presentation_templates_items_condition"></a>4.2.3.1.3. Property `condition`
 
 **Title:** jsonlogic
 
@@ -445,7 +405,7 @@ Specific value: `"Playbook"`
 | **Type**               | `object, array, string, number, boolean or null` |
 | **Same definition as** | [condition](#spec_links_items_condition)         |
 
-**Description:** JSON Logic expression to conditionally render the template.
+**Description:** JSON Logic expression to conditionally surface the template.
 
 ### <a name="spec_rules"></a>4.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `rules`
 
@@ -740,4 +700,4 @@ Must be one of:
 * "information"
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-05 at 14:44:18 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-06 at 19:49:31 +0200

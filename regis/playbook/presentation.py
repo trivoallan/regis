@@ -1,7 +1,8 @@
-"""GitLab integration resolvers for the playbook engine.
+"""Presentation resolvers for the playbook engine.
 
-Evaluates GitLab-specific playbook directives (labels, MR description
-checklists, MR templates) against the full evaluation context.
+Evaluates platform-neutral presentation directives (labels from badges,
+checklists, templates) against the full evaluation context. Consumed by
+downstream integrations (GitLab MR, GitHub PR, Backstage, …).
 """
 
 from __future__ import annotations
@@ -18,7 +19,7 @@ def _resolve_badge_labels(
     integration: dict[str, Any],
     full_context: dict[str, Any],
 ) -> dict[str, Any]:
-    """Resolve explicit badge slugs to be imported as GitLab labels."""
+    """Resolve badge slugs to platform labels surfaced to downstream integrations."""
     badge_slugs = integration.get("badges", [])
     if not badge_slugs:
         return {}
@@ -48,7 +49,7 @@ def _resolve_checklists(
     integration: dict[str, Any],
     full_context: dict[str, Any],
 ) -> dict[str, Any]:
-    """Evaluate GitLab MR description checklist items."""
+    """Evaluate presentation checklist items against the evaluation context."""
     checklist_defs = integration.get("checklist")
     checklists_defs = integration.get("checklists", [])
 
@@ -95,7 +96,7 @@ def _resolve_checklists(
             resolved_checklists.append({"title": title, "items": resolved_items})
 
     if resolved_checklists:
-        return {"mr_description_checklists": resolved_checklists}
+        return {"checklists": resolved_checklists}
     return {}
 
 
@@ -103,7 +104,7 @@ def _resolve_templates(
     integration: dict[str, Any],
     full_context: dict[str, Any],
 ) -> dict[str, Any]:
-    """Evaluate GitLab MR template conditions and return resolved template entries."""
+    """Evaluate presentation template conditions and return resolved template entries."""
     template_defs = integration.get("templates", [])
     if not template_defs:
         return {}
@@ -128,22 +129,24 @@ def _resolve_templates(
         resolved_templates.append(resolved_tmpl)
 
     if resolved_templates:
-        return {"mr_templates": resolved_templates}
+        return {"templates": resolved_templates}
     return {}
 
 
-def resolve_gitlab_integration(
+def resolve_presentation(
     playbook: dict[str, Any],
     full_context: dict[str, Any],
 ) -> dict[str, Any]:
-    """Resolve all GitLab integration directives (badges, checklists, templates).
+    """Resolve all presentation directives (badges, checklists, templates).
 
-    Returns a dict merged into the evaluation result by the orchestrator.
+    Reads the normalized flat ``playbook["presentation"]`` (the loader projects
+    ``spec.presentation`` onto the top level). Returns a dict merged into the
+    evaluation result by the orchestrator.
     """
-    integration = playbook.get("integrations", {}).get("gitlab", {})
+    presentation = playbook.get("presentation", {})
     result: dict[str, Any] = {}
-    result.update(_resolve_badge_labels(integration, full_context))
-    result.update(_resolve_checklists(integration, full_context))
-    result.update(_resolve_templates(integration, full_context))
+    result.update(_resolve_badge_labels(presentation, full_context))
+    result.update(_resolve_checklists(presentation, full_context))
+    result.update(_resolve_templates(presentation, full_context))
 
     return result

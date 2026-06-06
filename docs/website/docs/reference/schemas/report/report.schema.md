@@ -9,21 +9,21 @@
 
 **Description:** Final report envelope produced by regis, containing request metadata and analyzer results.
 
-| Property                           | Pattern | Type            | Deprecated | Definition                                   | Title/Description                                                                                                                                  |
-| ---------------------------------- | ------- | --------------- | ---------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Property                           | Pattern | Type            | Deprecated | Definition                                   | Title/Description                                                                                                             |
+| ---------------------------------- | ------- | --------------- | ---------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | + [schemaVersion](#schemaVersion ) | No      | integer         | No         | -                                            | Report-structure contract version. Downstream consumers gate rendering on this. Distinct from \`version\` (package/snapshot). |
-| + [version](#version )             | No      | string or null  | No         | -                                            | Version of regis that generated this report.                                                                                                       |
-| - [snapshot_date](#snapshot_date ) | No      | string          | No         | -                                            | ISO 8601 date when this version was snapshotted in the doc site.                                                                                   |
-| - [tier](#tier )                   | No      | string or null  | No         | -                                            | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.                                                                          |
-| - [badges](#badges )               | No      | array of object | No         | -                                            | -                                                                                                                                                  |
-| - [metadata](#metadata )           | No      | object          | No         | -                                            | Arbitrary user-provided metadata.                                                                                                                  |
-| - [links](#links )                 | No      | array of object | No         | -                                            | Custom templated links.                                                                                                                            |
-| + [request](#request )             | No      | object          | No         | -                                            | Metadata describing the analysis request.                                                                                                          |
-| + [results](#results )             | No      | object          | No         | -                                            | Analyzer results keyed by analyzer name.                                                                                                           |
-| - [playbooks](#playbooks )         | No      | array           | No         | -                                            | List of evaluated playbook results.                                                                                                                |
-| - [playbook](#playbook )           | No      | object          | No         | Same as [playbook.result](#playbooks_items ) | playbook.result                                                                                                                                    |
-| - [rules](#rules )                 | No      | array of object | No         | -                                            | List of unified rule results (promoted from playbooks[0]).                                                                                         |
-| - [rules_summary](#rules_summary ) | No      | object          | No         | -                                            | Summary of rule evaluation results.                                                                                                                |
+| + [version](#version )             | No      | string or null  | No         | -                                            | Version of regis that generated this report.                                                                                  |
+| - [snapshot_date](#snapshot_date ) | No      | string          | No         | -                                            | ISO 8601 date when this version was snapshotted in the doc site.                                                              |
+| - [tier](#tier )                   | No      | string or null  | No         | -                                            | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.                                                     |
+| - [badges](#badges )               | No      | array of object | No         | -                                            | -                                                                                                                             |
+| - [metadata](#metadata )           | No      | object          | No         | -                                            | Arbitrary user-provided metadata.                                                                                             |
+| - [links](#links )                 | No      | array of object | No         | -                                            | Custom templated links.                                                                                                       |
+| + [request](#request )             | No      | object          | No         | -                                            | Metadata describing the analysis request.                                                                                     |
+| + [results](#results )             | No      | object          | No         | -                                            | Analyzer results keyed by analyzer name.                                                                                      |
+| - [playbooks](#playbooks )         | No      | array           | No         | -                                            | List of evaluated playbook results.                                                                                           |
+| - [playbook](#playbook )           | No      | object          | No         | Same as [playbook.result](#playbooks_items ) | playbook.result                                                                                                               |
+| - [rules](#rules )                 | No      | array of object | No         | -                                            | List of unified rule results (promoted from playbooks[0]).                                                                    |
+| - [rules_summary](#rules_summary ) | No      | object          | No         | -                                            | Summary of rule evaluation results.                                                                                           |
 
 ## <a name="schemaVersion"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `schemaVersion`
 
@@ -377,7 +377,8 @@ Must be one of:
 | + [passed_scorecards](#playbooks_items_passed_scorecards ) | No      | integer         | No         | -          | Number of scorecards that passed.                                                            |
 | - [links](#playbooks_items_links )                         | No      | array of object | No         | -          | External links associated with this playbook result.                                         |
 | + [pages](#playbooks_items_pages )                         | No      | array of object | No         | -          | -                                                                                            |
-| - [mr_templates](#playbooks_items_mr_templates )           | No      | array of object | No         | -          | Cookiecutter templates to be run for MR descriptions.                                        |
+| - [checklists](#playbooks_items_checklists )               | No      | array of object | No         | -          | Resolved checklists surfaced to downstream integrations.                                     |
+| - [templates](#playbooks_items_templates )                 | No      | array of object | No         | -          | Cookiecutter templates surfaced to downstream integrations.                                  |
 
 #### <a name="playbooks_items_playbook_name"></a>10.1.1. Property `playbook_name`
 
@@ -1427,13 +1428,13 @@ Must be one of:
 
 **Description:** The actual value fetched after resolution.
 
-#### <a name="playbooks_items_mr_templates"></a>10.1.15. Property `mr_templates`
+#### <a name="playbooks_items_checklists"></a>10.1.15. Property `checklists`
 
 |          |                   |
 | -------- | ----------------- |
 | **Type** | `array of object` |
 
-**Description:** Cookiecutter templates to be run for MR descriptions.
+**Description:** Resolved checklists surfaced to downstream integrations.
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -1443,29 +1444,111 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                           | Description |
-| --------------------------------------------------------- | ----------- |
-| [mr_templates items](#playbooks_items_mr_templates_items) | -           |
+| Each item of this array must be                       | Description |
+| ----------------------------------------------------- | ----------- |
+| [checklists items](#playbooks_items_checklists_items) | -           |
 
-##### <a name="playbooks_items_mr_templates_items"></a>10.1.15.1. mr_templates items
+##### <a name="playbooks_items_checklists_items"></a>10.1.15.1. checklists items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [url](#playbooks_items_mr_templates_items_url )             | No      | string | No         | -          | -                 |
-| - [directory](#playbooks_items_mr_templates_items_directory ) | No      | string | No         | -          | -                 |
+| Property                                            | Pattern | Type            | Deprecated | Definition | Title/Description                |
+| --------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------- |
+| + [title](#playbooks_items_checklists_items_title ) | No      | string          | No         | -          | Display title for the checklist. |
+| + [items](#playbooks_items_checklists_items_items ) | No      | array of object | No         | -          | -                                |
 
-###### <a name="playbooks_items_mr_templates_items_url"></a>10.1.15.1.1. Property `url`
+###### <a name="playbooks_items_checklists_items_title"></a>10.1.15.1.1. Property `title`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_mr_templates_items_directory"></a>10.1.15.1.2. Property `directory`
+**Description:** Display title for the checklist.
+
+###### <a name="playbooks_items_checklists_items_items"></a>10.1.15.1.2. Property `items`
+
+|          |                   |
+| -------- | ----------------- |
+| **Type** | `array of object` |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                              | Description |
+| ------------------------------------------------------------ | ----------- |
+| [items items](#playbooks_items_checklists_items_items_items) | -           |
+
+###### <a name="playbooks_items_checklists_items_items_items"></a>10.1.15.1.2.1. items items
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+| Property                                                            | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| + [label](#playbooks_items_checklists_items_items_items_label )     | No      | string  | No         | -          | -                 |
+| + [checked](#playbooks_items_checklists_items_items_items_checked ) | No      | boolean | No         | -          | -                 |
+
+###### <a name="playbooks_items_checklists_items_items_items_label"></a>10.1.15.1.2.1.1. Property `label`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+###### <a name="playbooks_items_checklists_items_items_items_checked"></a>10.1.15.1.2.1.2. Property `checked`
+
+|          |           |
+| -------- | --------- |
+| **Type** | `boolean` |
+
+#### <a name="playbooks_items_templates"></a>10.1.16. Property `templates`
+
+|          |                   |
+| -------- | ----------------- |
+| **Type** | `array of object` |
+
+**Description:** Cookiecutter templates surfaced to downstream integrations.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                     | Description |
+| --------------------------------------------------- | ----------- |
+| [templates items](#playbooks_items_templates_items) | -           |
+
+##### <a name="playbooks_items_templates_items"></a>10.1.16.1. templates items
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| + [url](#playbooks_items_templates_items_url )             | No      | string | No         | -          | -                 |
+| - [directory](#playbooks_items_templates_items_directory ) | No      | string | No         | -          | -                 |
+
+###### <a name="playbooks_items_templates_items_url"></a>10.1.16.1.1. Property `url`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+###### <a name="playbooks_items_templates_items_directory"></a>10.1.16.1.2. Property `directory`
 
 |          |          |
 | -------- | -------- |
@@ -1791,4 +1874,4 @@ Must be one of:
 | **Maximum**  | &le; 100 |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-05 at 14:44:19 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-06 at 19:49:32 +0200

@@ -9,7 +9,7 @@
     "schemaVersion": {
       "type": "integer",
       "minimum": 1,
-      "description": "Report-structure contract version. Consumers (e.g. the standalone dashboard) gate rendering on this. Distinct from `version` (package/snapshot)."
+      "description": "Report-structure contract version. Downstream consumers gate rendering on this. Distinct from `version` (package/snapshot)."
     },
     "version": {
       "type": ["string", "null"],

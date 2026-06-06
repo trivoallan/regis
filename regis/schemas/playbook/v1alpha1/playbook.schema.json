@@ -56,7 +56,7 @@
     "spec": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Playbook body: rules, tiers, badges, integrations, links.",
+      "description": "Playbook body: rules, tiers, badges, presentation, links.",
       "properties": {
         "links": {
           "type": "array",
@@ -80,69 +80,54 @@
             }
           }
         },
-        "integrations": {
+        "presentation": {
           "type": "object",
-          "description": "Optional third-party platform integrations (e.g. GitLab, GitHub).",
+          "description": "Platform-neutral presentation directives surfaced to downstream integrations (labels, checklists, templates).",
+          "additionalProperties": false,
           "properties": {
-            "gitlab": {
-              "type": "object",
-              "properties": {
-                "badges": {
-                  "type": "array",
-                  "description": "List of badge slugs to be imported as GitLab Merge Request labels.",
+            "badges": {
+              "type": "array",
+              "description": "Badge slugs to surface as labels for consuming integrations.",
+              "items": { "type": "string" }
+            },
+            "checklists": {
+              "type": "array",
+              "description": "Conditional checklists surfaced by integrations (e.g. in an MR/PR description).",
+              "items": {
+                "type": "object",
+                "required": ["items"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Display title for the checklist."
+                  },
                   "items": {
-                    "type": "string"
+                    "type": "array",
+                    "description": "Items in this checklist.",
+                    "items": { "$ref": "#/$defs/checklist_item" }
                   }
-                },
-                "checklist": {
-                  "type": "array",
-                  "description": "(Deprecated) Single checklist items added as checkboxes to the Merge Request description.",
-                  "items": {
-                    "$ref": "#/$defs/checklist_item"
-                  }
-                },
-                "checklists": {
-                  "type": "array",
-                  "description": "Configurable checklists added as checkboxes to the Merge Request description.",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "title": {
-                        "type": "string",
-                        "description": "Display title for the checklist."
-                      },
-                      "items": {
-                        "type": "array",
-                        "description": "Items in this checklist.",
-                        "items": {
-                          "$ref": "#/$defs/checklist_item"
-                        }
-                      }
-                    },
-                    "required": ["items"]
-                  }
-                },
-                "templates": {
-                  "type": "array",
-                  "description": "URLs to Cookiecutter templates that will be rendered and added to the Merge Request branch.",
-                  "items": {
-                    "type": "object",
-                    "required": ["url"],
-                    "additionalProperties": false,
-                    "properties": {
-                      "url": {
-                        "type": "string",
-                        "description": "Cookiecutter template URL or path."
-                      },
-                      "directory": {
-                        "type": "string",
-                        "description": "Optional subdirectory within the repository containing the template."
-                      },
-                      "condition": {
-                        "description": "JSON Logic expression to conditionally render the template.",
-                        "$ref": "../jsonlogic.schema.json"
-                      }
-                    }
+                }
+              }
+            },
+            "templates": {
+              "type": "array",
+              "description": "Conditional Cookiecutter templates surfaced to integrations.",
+              "items": {
+                "type": "object",
+                "required": ["url"],
+                "additionalProperties": false,
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "Cookiecutter template URL or path."
+                  },
+                  "directory": {
+                    "type": "string",
+                    "description": "Optional subdirectory containing the template."
+                  },
+                  "condition": {
+                    "description": "JSON Logic expression to conditionally surface the template.",
+                    "$ref": "../jsonlogic.schema.json"
                   }
                 }
               }

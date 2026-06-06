@@ -381,3 +381,56 @@ def test_migrate_criterion_native_roundtrips_byte_identical(tmp_path: Path) -> N
     result = CliRunner().invoke(playbook_group, ["migrate", "-i", str(pb)])
     assert result.exit_code == 0, result.output
     assert pb.read_text(encoding="utf-8") == original
+
+
+def test_migrate_integrations_gitlab_to_presentation():
+    data = {
+        "apiVersion": "regis.io/v1alpha1",
+        "kind": "Playbook",
+        "metadata": {"name": "p"},
+        "spec": {
+            "rules": [],
+            "integrations": {
+                "gitlab": {
+                    "badges": ["score"],
+                    "checklist": [{"label": "legacy item"}],
+                    "templates": [{"url": "gh:org/t"}],
+                }
+            },
+        },
+    }
+    _migrate_playbook_data(data)
+
+    assert "integrations" not in data["spec"]
+    pres = data["spec"]["presentation"]
+    assert pres["badges"] == ["score"]
+    # the deprecated singular `checklist` is folded into `checklists`
+    assert pres["checklists"] == [{"items": [{"label": "legacy item"}]}]
+    assert pres["templates"] == [{"url": "gh:org/t"}]
+
+
+def test_migrate_presentation_is_idempotent():
+    data = {
+        "apiVersion": "regis.io/v1alpha1",
+        "kind": "Playbook",
+        "metadata": {"name": "p"},
+        "spec": {"rules": [], "presentation": {"badges": ["score"]}},
+    }
+    _migrate_playbook_data(data)
+    assert data["spec"]["presentation"] == {"badges": ["score"]}
+    assert "integrations" not in data["spec"]
+
+
+def test_migrate_leaves_non_gitlab_integration_untouched():
+    from regis.commands.playbook import _migrate_playbook_data
+
+    data = {
+        "apiVersion": "regis.io/v1alpha1",
+        "kind": "Playbook",
+        "metadata": {"name": "p"},
+        "spec": {"rules": [], "integrations": {"github": {"foo": "bar"}}},
+    }
+    _migrate_playbook_data(data)
+    # no gitlab sub-key: integrations is left as-is, no presentation created
+    assert data["spec"]["integrations"] == {"github": {"foo": "bar"}}
+    assert "presentation" not in data["spec"]

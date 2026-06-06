@@ -150,31 +150,30 @@ spec:
         "!": [var: rules.age.passed]
       class: warning
 
-  integrations:
-    gitlab:
-      badges:
-        - score
-        - freshness
-        - cve-critical
-        - cve-high
-      checklists:
-        - title: 📝 Review Checklist
-          items:
-            - label: Revue de sécurité réalisée
-            - label: Aucune vulnérabilité CRITIQUE détectée
-              show_if: { "!!": [var: rules.cve-critical] }
-              check_if: { var: rules.cve-critical.passed }
-            - label: Image issue d'un registre de confiance
-              show_if: { "!!": [var: rules.registry-domain-whitelist] }
-              check_if: { var: rules.registry-domain-whitelist.passed }
-            - label: Image ne tourne pas en root
-              show_if: { "!!": [var: rules.no-root] }
-              check_if: { var: rules.no-root.passed }
-      templates:
-        - url: https://github.com/trivoallan/regis
-          directory: regis/cookiecutters/mr-evidence
-
   links:
     - label: Return to Merge Request
       url: "{{ request.metadata['gitlab.mr_url'] }}"
       condition: { "!!": [var: request.metadata.gitlab.mr_url] }
+  presentation:
+    badges:
+      - score
+      - freshness
+      - cve-critical
+      - cve-high
+    templates:
+      - url: https://github.com/trivoallan/regis
+        directory: regis/cookiecutters/mr-evidence
+
+    checklists:
+      - title: 📝 Review Checklist
+        items:
+          - label: Revue de sécurité réalisée
+          - label: Aucune vulnérabilité CRITIQUE détectée
+            show_if: { "!!": [var: rules.cve-critical] }
+            check_if: { var: rules.cve-critical.passed }
+          - label: Image issue d'un registre de confiance
+            show_if: { "!!": [var: rules.registry-domain-whitelist] }
+            check_if: { var: rules.registry-domain-whitelist.passed }
+          - label: Image ne tourne pas en root
+            show_if: { "!!": [var: rules.no-root] }
+            check_if: { var: rules.no-root.passed }

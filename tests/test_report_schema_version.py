@@ -61,10 +61,10 @@ class TestReportSchemaVersion:
 
 
 class TestEnsureSchemaVersion:
-    def test_constant_is_one(self):
+    def test_constant_is_two(self):
         from regis.utils.report import REPORT_SCHEMA_VERSION
 
-        assert REPORT_SCHEMA_VERSION == 1
+        assert REPORT_SCHEMA_VERSION == 2
 
     def test_sets_when_missing(self):
         from regis.utils.report import REPORT_SCHEMA_VERSION, ensure_schema_version
@@ -92,10 +92,10 @@ class TestContractFixture:
 
         from regis.utils.report import validate_report
 
-        fixture = Path(__file__).parent / "fixtures" / "report.v1.json"
+        fixture = Path(__file__).parent / "fixtures" / "report.v2.json"
         report = json.loads(fixture.read_text(encoding="utf-8"))
 
-        assert report["schemaVersion"] == 1
+        assert report["schemaVersion"] == 2
         validate_report(report)  # must not raise
 
     def test_analyzer_blobs_match_their_schemas(self):
@@ -104,7 +104,7 @@ class TestContractFixture:
 
         import jsonschema
 
-        fixtures = Path(__file__).parent / "fixtures" / "report.v1.json"
+        fixtures = Path(__file__).parent / "fixtures" / "report.v2.json"
         report = json.loads(fixtures.read_text(encoding="utf-8"))
 
         schema_dir = importlib.resources.files("regis.schemas.analyzer")
