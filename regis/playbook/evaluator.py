@@ -5,7 +5,7 @@ The ``evaluate`` function is the main entry point. It:
 2. Evaluates each page and section (scorecards, widgets).
 3. Assembles the result dict.
 4. Performs a final widget resolution pass using the full context.
-5. Resolves playbook-level links and GitLab integration directives.
+5. Resolves playbook-level links and presentation directives.
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ import logging
 from typing import Any
 
 from regis.playbook.context import NamedList, _build_context
-from regis.playbook.integrations.gitlab import resolve_gitlab_integration
+from regis.playbook.presentation import resolve_presentation
 from regis.playbook.sections import _evaluate_section, resolve_widgets_final
 from regis.playbook.templates import _resolve_template
 from regis.rules.evaluator import evaluate_rules
@@ -287,13 +287,13 @@ def evaluate(
             resolved_badges.append(badge_res)
         result["badges"] = resolved_badges
 
-    # Resolve sidebar, links, and GitLab integration
+    # Resolve sidebar, links, and presentation directives
     sidebar = playbook.get("sidebar")
     if sidebar:
         result["sidebar"] = sidebar
 
     _resolve_links(playbook, result, full_context, report)
-    result.update(resolve_gitlab_integration(playbook, full_context))
+    result.update(resolve_presentation(playbook, full_context))
 
     if source_name:
         result["_meta"] = {"source_name": source_name}

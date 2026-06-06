@@ -1,7 +1,8 @@
-"""GitLab integration resolvers for the playbook engine.
+"""Presentation resolvers for the playbook engine.
 
-Evaluates GitLab-specific playbook directives (labels, MR description
-checklists, MR templates) against the full evaluation context.
+Evaluates platform-neutral presentation directives (labels from badges,
+checklists, templates) against the full evaluation context. Consumed by
+downstream integrations (GitLab MR, GitHub PR, Backstage, …).
 """
 
 from __future__ import annotations
@@ -132,18 +133,20 @@ def _resolve_templates(
     return {}
 
 
-def resolve_gitlab_integration(
+def resolve_presentation(
     playbook: dict[str, Any],
     full_context: dict[str, Any],
 ) -> dict[str, Any]:
-    """Resolve all GitLab integration directives (badges, checklists, templates).
+    """Resolve all presentation directives (badges, checklists, templates).
 
-    Returns a dict merged into the evaluation result by the orchestrator.
+    Reads the normalized flat ``playbook["presentation"]`` (the loader projects
+    ``spec.presentation`` onto the top level). Returns a dict merged into the
+    evaluation result by the orchestrator.
     """
-    integration = playbook.get("integrations", {}).get("gitlab", {})
+    presentation = playbook.get("presentation", {})
     result: dict[str, Any] = {}
-    result.update(_resolve_badge_labels(integration, full_context))
-    result.update(_resolve_checklists(integration, full_context))
-    result.update(_resolve_templates(integration, full_context))
+    result.update(_resolve_badge_labels(presentation, full_context))
+    result.update(_resolve_checklists(presentation, full_context))
+    result.update(_resolve_templates(presentation, full_context))
 
     return result
