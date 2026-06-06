@@ -59,7 +59,7 @@ def _mock_analyze_infra(tmp_path):
         ),
         patch("regis.commands.analyze.run_playbooks", return_value=_MINIMAL_REPORT),
         patch("regis.commands.analyze.validate_report"),
-        patch("regis.commands.analyze.render_mr_templates"),
+        patch("regis.commands.analyze.render_presentation_templates"),
         patch("regis.commands.analyze.render_and_save_reports") as mock_render,
     ):
         yield mock_render
@@ -102,7 +102,7 @@ def test_evaluate_cmd_html_flag(runner, tmp_path):
     with (
         patch("regis.commands.analyze.run_playbooks", return_value=_MINIMAL_REPORT),
         patch("regis.commands.analyze.validate_report"),
-        patch("regis.commands.analyze.render_mr_templates"),
+        patch("regis.commands.analyze.render_presentation_templates"),
         patch("regis.commands.analyze.render_and_save_reports") as mock_render,
     ):
         result = runner.invoke(
@@ -123,7 +123,7 @@ def test_evaluate_sections_forwarded_to_render(runner, tmp_path):
         patch("regis.commands.analyze.run_playbooks", return_value=_MINIMAL_REPORT),
         patch("regis.commands.analyze.validate_report"),
         patch("regis.commands.analyze.render_and_save_reports") as mock_render,
-        patch("regis.commands.analyze.render_mr_templates"),
+        patch("regis.commands.analyze.render_presentation_templates"),
     ):
         result = runner.invoke(
             evaluate_cmd,

@@ -19,7 +19,7 @@ def _resolve_badge_labels(
     integration: dict[str, Any],
     full_context: dict[str, Any],
 ) -> dict[str, Any]:
-    """Resolve explicit badge slugs to be imported as GitLab labels."""
+    """Resolve badge slugs to platform labels surfaced to downstream integrations."""
     badge_slugs = integration.get("badges", [])
     if not badge_slugs:
         return {}
@@ -49,7 +49,7 @@ def _resolve_checklists(
     integration: dict[str, Any],
     full_context: dict[str, Any],
 ) -> dict[str, Any]:
-    """Evaluate GitLab MR description checklist items."""
+    """Evaluate presentation checklist items against the evaluation context."""
     checklist_defs = integration.get("checklist")
     checklists_defs = integration.get("checklists", [])
 
@@ -104,7 +104,7 @@ def _resolve_templates(
     integration: dict[str, Any],
     full_context: dict[str, Any],
 ) -> dict[str, Any]:
-    """Evaluate GitLab MR template conditions and return resolved template entries."""
+    """Evaluate presentation template conditions and return resolved template entries."""
     template_defs = integration.get("templates", [])
     if not template_defs:
         return {}

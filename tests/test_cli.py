@@ -361,7 +361,7 @@ class TestAnalyzeCacheAndFail:
             saved = json.loads((cache_dir / "report.json").read_text(encoding="utf-8"))
             assert saved["schemaVersion"] == 2
 
-    @patch("regis.commands.analyze.render_mr_templates")
+    @patch("regis.commands.analyze.render_presentation_templates")
     @patch("regis.commands.analyze.render_and_save_reports")
     @patch("regis.commands.analyze.validate_report")
     @patch("regis.commands.analyze.run_playbooks")

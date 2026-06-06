@@ -368,18 +368,18 @@ def render_and_save_reports(
             )
 
 
-def render_mr_templates(
+def render_presentation_templates(
     report: dict[str, Any], output_dir_template: str | None
 ) -> None:
-    """Execute Cookiecutter templates for Merge Requests."""
+    """Execute Cookiecutter templates surfaced by playbook presentation directives."""
     playbooks = report.get("playbooks", [])
-    valid_mr_templates = []
+    valid_templates = []
     for pb in playbooks:
         for tmpl in pb.get("templates", []):
-            if tmpl not in valid_mr_templates:
-                valid_mr_templates.append(tmpl)
+            if tmpl not in valid_templates:
+                valid_templates.append(tmpl)
 
-    if valid_mr_templates:
+    if valid_templates:
         try:
             from cookiecutter.main import cookiecutter
         except ImportError:
@@ -388,10 +388,12 @@ def render_mr_templates(
                 err=True,
             )
         else:
-            for tmpl_def in valid_mr_templates:
+            for tmpl_def in valid_templates:
                 tmpl_url = tmpl_def.get("url")
                 tmpl_dir = tmpl_def.get("directory")
-                click.echo(f"  Rendering MR template: {tmpl_url}...", err=True)
+                click.echo(
+                    f"  Rendering presentation template: {tmpl_url}...", err=True
+                )
                 try:
                     out_dir = format_output_path(
                         output_dir_template or ".", report, "json"

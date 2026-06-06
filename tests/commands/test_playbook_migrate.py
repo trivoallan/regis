@@ -419,3 +419,18 @@ def test_migrate_presentation_is_idempotent():
     _migrate_playbook_data(data)
     assert data["spec"]["presentation"] == {"badges": ["score"]}
     assert "integrations" not in data["spec"]
+
+
+def test_migrate_leaves_non_gitlab_integration_untouched():
+    from regis.commands.playbook import _migrate_playbook_data
+
+    data = {
+        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "kind": "Playbook",
+        "metadata": {"name": "p"},
+        "spec": {"rules": [], "integrations": {"github": {"foo": "bar"}}},
+    }
+    _migrate_playbook_data(data)
+    # no gitlab sub-key: integrations is left as-is, no presentation created
+    assert data["spec"]["integrations"] == {"github": {"foo": "bar"}}
+    assert "presentation" not in data["spec"]

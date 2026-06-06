@@ -19,7 +19,6 @@ from regis.utils.report import (
     escape_jinja,
     format_output_path,
     render_and_save_reports,
-    render_mr_templates,
     run_playbooks,
     set_nested_value,
     validate_report,
@@ -37,7 +36,6 @@ _escape_jinja = escape_jinja
 _run_playbooks = run_playbooks
 _validate_report = validate_report
 _render_and_save_reports = render_and_save_reports
-_render_mr_templates = render_mr_templates
 
 
 @click.group()

@@ -22,7 +22,7 @@ from regis.utils.report import (
     ensure_schema_version,
     format_output_path,
     render_and_save_reports,
-    render_mr_templates,
+    render_presentation_templates,
     run_playbooks,
     set_nested_value,
     validate_report,
@@ -635,7 +635,7 @@ def analyze(
         sections=sections,
     )
 
-    render_mr_templates(final_report, output_dir_template)
+    render_presentation_templates(final_report, output_dir_template)
 
     # Only print the summary when the user explicitly requested a playbook —
     # avoids changing stdout for default runs that auto-load the built-in playbook.
@@ -759,7 +759,7 @@ def evaluate_cmd(
         sections=sections,
     )
 
-    render_mr_templates(final_report, output_dir_template)
+    render_presentation_templates(final_report, output_dir_template)
 
 
 @click.command(name="list")

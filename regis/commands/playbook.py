@@ -294,7 +294,7 @@ def upgrade_playbook(path: Path) -> None:
     metadata["labels"] = labels
 
     spec = CommentedMap()
-    for key in ("tiers", "rules", "badges", "integrations", "links"):
+    for key in ("tiers", "rules", "badges", "integrations", "presentation", "links"):
         if key in data:
             spec[key] = data[key]
 
