@@ -375,7 +375,7 @@ def render_mr_templates(
     playbooks = report.get("playbooks", [])
     valid_mr_templates = []
     for pb in playbooks:
-        for tmpl in pb.get("mr_templates", []):
+        for tmpl in pb.get("templates", []):
             if tmpl not in valid_mr_templates:
                 valid_mr_templates.append(tmpl)
 
@@ -384,7 +384,7 @@ def render_mr_templates(
             from cookiecutter.main import cookiecutter
         except ImportError:
             click.echo(
-                "  Warning: cookiecutter not found. Cannot evaluate mr_templates.",
+                "  Warning: cookiecutter not found. Cannot evaluate presentation templates.",
                 err=True,
             )
         else:
