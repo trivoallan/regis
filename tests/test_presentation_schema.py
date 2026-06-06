@@ -13,7 +13,7 @@ SCHEMA = json.loads(
 
 def _doc(spec_extra: dict) -> dict:
     return {
-        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "apiVersion": "regis.io/v1alpha1",
         "kind": "Playbook",
         "metadata": {"name": "p", "labels": {"app.kubernetes.io/version": "1.0.0"}},
         "spec": {"rules": [], **spec_extra},

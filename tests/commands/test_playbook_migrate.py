@@ -385,7 +385,7 @@ def test_migrate_criterion_native_roundtrips_byte_identical(tmp_path: Path) -> N
 
 def test_migrate_integrations_gitlab_to_presentation():
     data = {
-        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "apiVersion": "regis.io/v1alpha1",
         "kind": "Playbook",
         "metadata": {"name": "p"},
         "spec": {
@@ -411,7 +411,7 @@ def test_migrate_integrations_gitlab_to_presentation():
 
 def test_migrate_presentation_is_idempotent():
     data = {
-        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "apiVersion": "regis.io/v1alpha1",
         "kind": "Playbook",
         "metadata": {"name": "p"},
         "spec": {"rules": [], "presentation": {"badges": ["score"]}},
@@ -425,7 +425,7 @@ def test_migrate_leaves_non_gitlab_integration_untouched():
     from regis.commands.playbook import _migrate_playbook_data
 
     data = {
-        "apiVersion": "regis.trivoallan.dev/v1alpha1",
+        "apiVersion": "regis.io/v1alpha1",
         "kind": "Playbook",
         "metadata": {"name": "p"},
         "spec": {"rules": [], "integrations": {"github": {"foo": "bar"}}},
