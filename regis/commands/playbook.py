@@ -135,6 +135,46 @@ def _migrate_rule_entry(entry: Any) -> None:
                 messages[key] = _migrate_message(value)
 
 
+def _migrate_integrations_to_presentation(container: Any) -> None:
+    """Move ``integrations.gitlab.{badges,checklist,checklists,templates}`` to a
+    platform-neutral ``presentation`` block on the same container. Idempotent.
+
+    Folds the deprecated singular ``checklist`` into ``checklists``.
+    """
+    if not isinstance(container, dict):
+        return
+    integrations = container.get("integrations")
+    if not isinstance(integrations, dict):
+        return
+    gitlab = integrations.get("gitlab")
+    if not isinstance(gitlab, dict):
+        return
+
+    presentation = container.get("presentation")
+    if not isinstance(presentation, dict):
+        presentation = {}
+
+    if "badges" in gitlab and "badges" not in presentation:
+        presentation["badges"] = gitlab["badges"]
+    if "templates" in gitlab and "templates" not in presentation:
+        presentation["templates"] = gitlab["templates"]
+
+    checklists = gitlab.get("checklists")
+    if not checklists and gitlab.get("checklist"):
+        # fold the deprecated singular `checklist` into the `checklists` shape
+        checklists = [{"items": gitlab["checklist"]}]
+    if checklists and "checklists" not in presentation:
+        presentation["checklists"] = checklists
+
+    if presentation:
+        container["presentation"] = presentation
+
+    # remove the now-migrated gitlab integration; drop `integrations` if empty
+    integrations.pop("gitlab", None)
+    if not integrations:
+        container.pop("integrations", None)
+
+
 def _migrate_playbook_data(data: Any) -> None:
     """Migrate a parsed playbook document in place (``rule`` → ``criterion``).
 
@@ -153,6 +193,12 @@ def _migrate_playbook_data(data: Any) -> None:
         return
     for entry in rules:
         _migrate_rule_entry(entry)
+
+    # presentation migration (integrations.gitlab -> presentation)
+    if isinstance(spec, dict):
+        _migrate_integrations_to_presentation(spec)
+    else:
+        _migrate_integrations_to_presentation(data)
 
 
 def _format_validation_error(error) -> str:
@@ -289,6 +335,8 @@ def migrate_playbook(path: Path, in_place: bool) -> None:
     2. ``rule.`` references in JSON-Logic ``condition`` trees and ``${rule.…}``
        interpolations in ``messages`` → ``criterion`` (``results.*`` metric
        paths are left untouched).
+    3. ``spec.integrations.gitlab`` → platform-neutral ``spec.presentation``
+       (folding the deprecated singular ``checklist`` into ``checklists``).
 
     Comments and formatting are preserved via round-trip YAML. The codemod is
     idempotent: running it on an already-migrated playbook is a no-op. By
