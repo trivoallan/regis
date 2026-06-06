@@ -221,13 +221,6 @@ After a successful bootstrap, all `bootstrap` commands display **Post-install no
 
 ## Utility Commands
 
-### `gitlab`
-
-Commands for seamless integration with GitLab CI/CD.
-
-- `gitlab create-request`: Create a Merge Request comment with analysis status.
-- `gitlab update-mr`: Update Merge Request with final results and labels.
-
 ### `list`
 
 List all available analyzers (e.g., `oci`, `cve`, `hadolint`).

@@ -14,7 +14,6 @@ from regis.commands.check import check, version_cmd
 from regis.commands.doctor import doctor
 from regis.commands.playbook import playbook_group
 from regis.commands.rules import rules_group
-from regis.gitlab_cli import gitlab_cmd
 from regis.utils.process import require_tool, run_cmd
 from regis.utils.report import (
     escape_jinja,
@@ -75,7 +74,6 @@ def main(ctx: click.Context, verbose: bool, quiet: bool) -> None:
     ctx.obj["verbose"] = verbose
 
 
-main.add_command(gitlab_cmd, name="gitlab")
 main.add_command(analyze)
 main.add_command(evaluate_cmd, name="evaluate")
 main.add_command(list_analyzers, name="list")
