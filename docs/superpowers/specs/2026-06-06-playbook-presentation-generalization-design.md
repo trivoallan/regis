@@ -3,7 +3,7 @@
 - **Date** : 2026-06-06
 - **Statut** : validé (brainstorming)
 - **Sous-projet** : #1 (cœur) d'un effort multi-dépôts. Découple le moteur de playbook des
-  spécificités plateforme, le rend extensible, et déplace le *rendu* plateforme vers les dépôts
+  spécificités plateforme, le rend extensible, et déplace le _rendu_ plateforme vers les dépôts
   d'intégration.
 
 ## 1. Contexte et cadrage
@@ -39,12 +39,12 @@ regis-backstage), qui sont **non-Python** et ne peuvent pas exécuter de résolv
 
 ### Décomposition de l'effort (rappel)
 
-| # | Sous-projet | Statut |
-| --- | --- | --- |
-| **1** | **Cœur — généralisation** (ce spec) | en cours |
-| 2 | regis-gitlab (template lit les champs neutres) | cycle propre, après #1 |
-| 3 | regis-backstage (`regis-common` types/schema + rendu) | cycle propre, après #1 |
-| 4 | regis-action (consomme les champs neutres → parité PR GitHub) | cycle propre, après #1 |
+| #     | Sous-projet                                                   | Statut                 |
+| ----- | ------------------------------------------------------------- | ---------------------- |
+| **1** | **Cœur — généralisation** (ce spec)                           | en cours               |
+| 2     | regis-gitlab (template lit les champs neutres)                | cycle propre, après #1 |
+| 3     | regis-backstage (`regis-common` types/schema + rendu)         | cycle propre, après #1 |
+| 4     | regis-action (consomme les champs neutres → parité PR GitHub) | cycle propre, après #1 |
 
 **Ce spec ne couvre que #1 (cœur).** Les #2/#3/#4 auront leur propre spec→plan.
 
@@ -126,12 +126,12 @@ Dans `regis/schemas/playbook/v1alpha1/playbook.schema.json` :
 
 ## 9. Séquencement & risques
 
-| Risque | Mitigation |
-| --- | --- |
-| Hard-cut casse les consommateurs avant #2/#3/#4 | Dégradation gracieuse (gate `schemaVersion` côté backstage, `// []` côté template) ; merger #1 puis enchaîner #2/#3/#4 rapidement |
-| Dépendance à `regis-gitlab.py` (renommé) vs PR #652 ouverte | Brancher l'implémentation sur `main` **après merge de #652** (qui conserve `gitlab.py`) ; sinon conflit de renommage |
-| Champ « stable » documenté (`mr_description_checklists`) | Le schéma playbook est `v1alpha1` (évolutif, pré-v1) ; migration fournie ; roadmap mise à jour |
-| Playbooks tiers utilisant `integrations.gitlab` | `regis playbook upgrade` les migre ; warning de dépréciation possible si on veut un dual-read transitoire (optionnel, non retenu — hard-cut) |
+| Risque                                                      | Mitigation                                                                                                                                   |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hard-cut casse les consommateurs avant #2/#3/#4             | Dégradation gracieuse (gate `schemaVersion` côté backstage, `// []` côté template) ; merger #1 puis enchaîner #2/#3/#4 rapidement            |
+| Dépendance à `regis-gitlab.py` (renommé) vs PR #652 ouverte | Brancher l'implémentation sur `main` **après merge de #652** (qui conserve `gitlab.py`) ; sinon conflit de renommage                         |
+| Champ « stable » documenté (`mr_description_checklists`)    | Le schéma playbook est `v1alpha1` (évolutif, pré-v1) ; migration fournie ; roadmap mise à jour                                               |
+| Playbooks tiers utilisant `integrations.gitlab`             | `regis playbook upgrade` les migre ; warning de dépréciation possible si on veut un dual-read transitoire (optionnel, non retenu — hard-cut) |
 
 ## 10. Livrable
 
