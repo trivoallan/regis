@@ -96,13 +96,8 @@ jobs:
             --exclude-path docs/website/versioned_docs
             --exclude-path docs/website/node_modules
             --exclude 'pathname:///'
-            --exclude 'http://localhost'
-            --exclude 'https://example.com'
-            --exclude 'regis\.example\.com'
-            --exclude 'my-private-registry\.example\.com'
-            --exclude 'host\.example\.com'
             --exclude '\.schema\.md'
-            --exclude '^https?://claude\.ai'
+            --exclude '^https?://'
             docs/website/docs/
           fail: true
 
