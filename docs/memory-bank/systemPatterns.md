@@ -51,13 +51,28 @@ Backward compatibility: the legacy `rule:` entry key and `rule.*` condition name
 - **`ci-test.yml`** includes `pip-audit` and enforces a HIGH/CRITICAL severity gate via `scripts/enforce_pip_audit_severity.py` (severity is resolved from OSV metadata).
 - **`cd-docker.yml`** emits CycloneDX/SPDX SBOM artifacts and provenance attestations via `actions/attest-build-provenance`.
 - **GitHub App authentication**: All workflows use `actions/create-github-app-token@v1` with `REGIS_CI_APP_ID` + `REGIS_CI_APP_PRIVATE_KEY`. Never use `GITHUB_TOKEN` for checkouts that need to trigger downstream CI runs — it won't.
-- **`peaceiris/actions-gh-pages`** with the App token requires `personal_token:`, not `github_token:`.
 - **Trunk auto-fmt in CI**: the trunk workflow commits formatting fixes via `stefanzweifel/git-auto-commit-action`. The checkout must use the App token so the commit triggers a new workflow run.
 - **Trunk pre-commit**: locally, `trunk-check-fix-pre-commit` runs `trunk check --fix` on `git commit`. Commit the auto-fixed files it produces.
 - **Dependabot PRs + secrets**: workflows triggered by Dependabot via `pull_request` run with read-only `GITHUB_TOKEN` and no secrets. Use `pull_request_target` for any workflow that must act on Dependabot PRs (safe when no PR code is checked out).
 - **Release Please PRs** are labelled `autorelease: pending`. Exclude them from auto-merge with `!contains(github.event.pull_request.labels.*.name, 'autorelease: pending')`. Don't manually edit Release Please PRs unless necessary.
 - **Auto-rebase + squash merge no-op**: if a fix branch is auto-rebased after `main` already contains the same change, the squash merge becomes a no-op. Always branch from the latest `main` immediately before committing.
 - **mypy** is excluded for `tests/**` (crashes on Linux CI with stale cache on `http.server`).
+
+### Docs hosting — Pages served from an artifact (no `gh-pages` branch)
+
+The published documentation site is deployed from a **GitHub Actions build
+artifact** (`actions/upload-pages-artifact` + `actions/deploy-pages` in
+`cd-docs.yml`), **not** from a `gh-pages` branch. There is intentionally no
+`gh-pages` branch: it previously accumulated every deploy commit under
+`keep_files: true` and grew the default clone to ~326 MB. The Docusaurus build
+output is **never committed** — `ci-lint.yml`'s `generated-artifacts-guard` job
+fails any PR that tracks `**/search-index.json`, `docs/v<N>*/`, `_site/**`, or
+`docs/website/build/**`. Only the latest 3 doc versions + `next` are served
+(matching `release-snapshot.yml`'s 3-version source pruning). GitHub Pages
+**Source** must be set to _GitHub Actions_ in repo Settings → Pages.
+`actions/upload-pages-artifact` strips dotfiles (e.g. `.nojekyll`) by default,
+which is harmless here because a GitHub Actions Pages source does not invoke
+Jekyll.
 
 ## Mémoire & artefacts de planification — taxonomie
 

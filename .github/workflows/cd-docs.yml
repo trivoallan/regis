@@ -33,7 +33,6 @@ jobs:
     environment: docs-production
     permissions:
       contents: write
-      pages: write
       pull-requests: write
     steps:
       - name: Generate GitHub App token
@@ -270,24 +269,29 @@ jobs:
             docs/website/docs/reference/schemas/**
             docs/website/static/schemas/**
 
-      - name: Deploy docs to GitHub Pages
-        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
-        with:
-          personal_token: ${{ steps.generate-token.outputs.token }}
-          publish_dir: docs/website/build
-          destination_dir: docs
-          keep_files: true
-          user_name: regis-ci[bot]
-          user_email: regis-ci[bot]@users.noreply.github.com
-          commit_message: "ci(docs): deploy documentation"
+      - name: Assemble Pages site
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site/docs
+          cp -r docs/website/build/. _site/docs/
+          cp -r .github/pages-root/. _site/
 
-      - name: Deploy root redirect to GitHub Pages
-        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          personal_token: ${{ steps.generate-token.outputs.token }}
-          publish_dir: .github/pages-root
-          destination_dir: .
-          keep_files: true
-          user_name: regis-ci[bot]
-          user_email: regis-ci[bot]@users.noreply.github.com
-          commit_message: "ci(docs): deploy root redirect"
+          path: _site
+
+  deploy-pages:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
