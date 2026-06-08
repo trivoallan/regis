@@ -56,7 +56,12 @@ def render_html_single(report: dict[str, Any], sections: str = "all") -> str:
 
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
-    from regis.playbook.verdict import badge_emoji, build_verdict, tier_label
+    from regis.playbook.verdict import (
+        badge_emoji,
+        build_verdict,
+        format_counts,
+        tier_label,
+    )
 
     _v = build_verdict(report)
     _BADGE_CSS = {"error": "failed", "warning": "warning", "success": "passed"}
@@ -64,11 +69,7 @@ def render_html_single(report: dict[str, Any], sections: str = "all") -> str:
     if _v.evaluated:
         verdict_view = {
             "headline": f"{tier_label(_v.tier, _v.tier_icon)} · {_v.score}/100",
-            "passed": _v.passed,
-            "total": _v.total,
-            "failed": _v.failed,
-            "incomplete": _v.incomplete,
-            "worst_level": _v.worst_level,
+            "counts": format_counts(_v),
             "badges": [
                 {
                     "label": b.label,

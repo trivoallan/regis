@@ -1,9 +1,39 @@
 from regis.playbook.verdict import (
+    Verdict,
     VerdictBadge,
     badge_emoji,
     build_verdict,
+    format_counts,
     tier_label,
 )
+
+
+def _verdict(**kw):
+    base = dict(
+        evaluated=True,
+        tier=None,
+        tier_icon=None,
+        score=0,
+        total=0,
+        passed=0,
+        failed=0,
+        incomplete=0,
+        worst_level=None,
+    )
+    base.update(kw)
+    return Verdict(**base)
+
+
+def test_format_counts_is_english_with_severity_square():
+    v = _verdict(total=20, passed=17, failed=2, incomplete=1, worst_level="critical")
+    assert (
+        format_counts(v) == "17/20 rules · 2 failed · 1 incomplete · worst: 🟥 critical"
+    )
+
+
+def test_format_counts_all_pass():
+    v = _verdict(total=3, passed=3)
+    assert format_counts(v) == "3/3 rules · all pass ✓"
 
 
 def _report(**pb):

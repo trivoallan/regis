@@ -72,6 +72,25 @@ def level_emoji(level: str | None) -> str:
     return LEVEL_EMOJI.get(str(level).lower(), "") if level else ""
 
 
+def format_counts(v: Verdict) -> str:
+    """Render the verdict counts line in English, shared by every surface.
+
+    e.g. "17/20 rules · 2 failed · 1 incomplete · worst: 🟥 critical"
+    or   "20/20 rules · all pass ✓".
+    User-facing output is English regardless of conversation language.
+    """
+    counts = f"{v.passed}/{v.total} rules"
+    if v.failed == 0 and v.incomplete == 0:
+        return counts + " · all pass ✓"
+    if v.failed:
+        counts += f" · {v.failed} failed"
+    if v.incomplete:
+        counts += f" · {v.incomplete} incomplete"
+    if v.worst_level:
+        counts += f" · worst: {level_emoji(v.worst_level)} {v.worst_level}"
+    return counts
+
+
 def _source(final_report: dict[str, Any]) -> dict[str, Any] | None:
     """Pick the playbook result to render: playbooks[0], else top-level hoisted."""
     playbooks = final_report.get("playbooks") or []

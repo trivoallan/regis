@@ -108,13 +108,7 @@
 {% if verdict %}
 <section class="verdict">
   <h2 class="verdict-headline">{{ verdict.headline }}</h2>
-  <p class="verdict-counts">
-    <strong>{{ verdict.passed }}/{{ verdict.total }} rules</strong>
-    {% if verdict.failed %} · {{ verdict.failed }} failed{% endif %}
-    {% if verdict.incomplete %} · {{ verdict.incomplete }} incomplete{% endif %}
-    {% if verdict.worst_level %} · worst: {{ verdict.worst_level }}{% endif %}
-    {% if not verdict.failed and not verdict.incomplete %} · all pass ✓{% endif %}
-  </p>
+  <p class="verdict-counts"><strong>{{ verdict.counts }}</strong></p>
   {% if verdict.badges %}
   <p class="verdict-badges">
     {% for b in verdict.badges %}

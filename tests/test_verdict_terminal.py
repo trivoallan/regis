@@ -60,8 +60,8 @@ def test_verdict_block_headline_and_lines(capsys):
     _render_verdict_block(_report(), quiet=False)
     out = _strip_ansi(capsys.readouterr().err)
     assert "🥈 Silver · 78/100" in out
-    assert "17/20 règles" in out and "2 échecs" in out and "1 incomplète" in out
-    assert "pire niveau : 🟥 critical" in out
+    assert "17/20 rules" in out and "2 failed" in out and "1 incomplete" in out
+    assert "worst: 🟥 critical" in out
     assert "🟥 CVE: Critical" in out and "🟧 CVE: High" in out
     assert "[cve-critical]" in out and "1 critical CVE (max 0)" in out
     assert "[scorecard-min]" in out
@@ -102,7 +102,7 @@ def test_verdict_block_all_pass(capsys):
     _render_verdict_block(report, quiet=False)
     out = _strip_ansi(capsys.readouterr().err)
     assert "🥇 Gold · 100/100" in out
-    assert "tout passe ✓" in out
+    assert "all pass ✓" in out
 
 
 def test_verdict_block_not_evaluated_prints_nothing(capsys):

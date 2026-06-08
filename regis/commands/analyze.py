@@ -80,7 +80,7 @@ def _render_verdict_block(final_report: dict[str, Any], *, quiet: bool) -> None:
         LEVEL_STYLE,
         badge_emoji,
         build_verdict,
-        level_emoji,
+        format_counts,
         tier_label,
     )
 
@@ -92,18 +92,8 @@ def _render_verdict_block(final_report: dict[str, Any], *, quiet: bool) -> None:
     headline = f"{tier_label(v.tier, v.tier_icon)} · {v.score}/100"
     click.echo(f"  {click.style(headline, bold=True)}", err=True)
 
-    # Counts line
-    counts = f"{v.passed}/{v.total} règles"
-    if v.failed == 0 and v.incomplete == 0:
-        counts += " · tout passe ✓"
-    else:
-        if v.failed:
-            counts += f" · {v.failed} échec{'s' if v.failed > 1 else ''}"
-        if v.incomplete:
-            counts += f" · {v.incomplete} incomplète{'s' if v.incomplete > 1 else ''}"
-        if v.worst_level:
-            counts += f" · pire niveau : {level_emoji(v.worst_level)} {v.worst_level}"
-    click.echo(f"  {counts}", err=True)
+    # Counts line (shared across surfaces)
+    click.echo(f"  {format_counts(v)}", err=True)
 
     # Badges line
     if v.badges:

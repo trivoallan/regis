@@ -853,7 +853,7 @@ class TestAnalyzeSummary:
 
         out = re.sub(r"\x1b\[[0-9;]*m", "", capsys.readouterr().err)
         assert "🥇 Gold · 100/100" in out
-        assert "tout passe ✓" in out
+        assert "all pass ✓" in out
         assert "✗" not in out
 
     def test_render_verdict_block_failed_rules_listed(self, capsys):
@@ -899,7 +899,7 @@ class TestAnalyzeSummary:
         )
         out = re.sub(r"\x1b\[[0-9;]*m", "", capsys.readouterr().err)
         assert "🥉 Bronze · 33/100" in out
-        assert "2 échecs" in out
+        assert "2 failed" in out
         assert "✗ [trivy.no-critical-cves]" in out
         assert "2 critical CVEs found" in out
         assert "✗ [freshness.max-age-days]" in out

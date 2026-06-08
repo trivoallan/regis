@@ -250,7 +250,7 @@ def test_markdown_includes_verdict_header():
     assert "## 🥈 Silver · 78/100" in md
     assert "🟥 CVE: Critical" in md
     # Worst level carries the severity square — must match the terminal surface.
-    assert "pire niveau : 🟥 critical" in md
+    assert "worst: 🟥 critical" in md
     assert "| ✗ | cve-critical | critical | 1 critical CVE (max 0) |" in md
     assert "| ⚠ | scorecard-min | warning | data unavailable |" in md
 
@@ -290,5 +290,5 @@ def test_markdown_escapes_pipe_in_rule_message():
     md = _render_markdown(report)
     # The pipe inside the message must be escaped so the table row stays intact.
     assert "found a\\|b in pkg" in md
-    # Counts line surfaces the singular failure (no trailing 's').
-    assert "1 échec " in md or md.rstrip().endswith("1 échec")
+    # Counts line surfaces the failure.
+    assert "1 failed" in md

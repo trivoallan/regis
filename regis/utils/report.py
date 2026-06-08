@@ -295,7 +295,7 @@ def _verdict_markdown(report: dict[str, Any]) -> list[str]:
     from regis.playbook.verdict import (
         badge_emoji,
         build_verdict,
-        level_emoji,
+        format_counts,
         tier_label,
     )
 
@@ -304,18 +304,7 @@ def _verdict_markdown(report: dict[str, Any]) -> list[str]:
         return []
 
     lines = [f"## {tier_label(v.tier, v.tier_icon)} · {v.score}/100", ""]
-
-    counts = f"**{v.passed}/{v.total} règles**"
-    if v.failed == 0 and v.incomplete == 0:
-        counts += " · tout passe ✓"
-    else:
-        if v.failed:
-            counts += f" · {v.failed} échec{'s' if v.failed > 1 else ''}"
-        if v.incomplete:
-            counts += f" · {v.incomplete} incomplète{'s' if v.incomplete > 1 else ''}"
-        if v.worst_level:
-            counts += f" · pire niveau : {level_emoji(v.worst_level)} {v.worst_level}"
-    lines += [counts, ""]
+    lines += [f"**{format_counts(v)}**", ""]
 
     if v.badges:
         lines += [" · ".join(f"{badge_emoji(b.klass)} {b.label}" for b in v.badges), ""]
@@ -327,7 +316,7 @@ def _verdict_markdown(report: dict[str, Any]) -> list[str]:
             # collapse newlines so a row never breaks the table.
             return value.replace("|", "\\|").replace("\n", " ")
 
-        lines += ["| | Règle | Niveau | Résultat |", "| --- | --- | --- | --- |"]
+        lines += ["| | Rule | Level | Result |", "| --- | --- | --- | --- |"]
         for f in v.failures:
             lines.append(
                 f"| ✗ | {_cell(f.slug)} | {_cell(f.level)} | {_cell(f.message)} |"

@@ -75,14 +75,14 @@ At the end of every run, a **verdict block** summarizes the playbook evaluation 
 
 ```text
   🥈 Silver · 78/100
-  17/20 règles · 2 échecs · 1 incomplète · pire niveau : 🟧 warning
+  17/20 rules · 2 failed · 1 incomplete · worst: 🟧 warning
   🟥 CVE: Critical   🟧 CVE: High
   ✗ [cve-critical]    1 critical CVE (max 0)
   ✗ [cve-high]        12 high CVEs (max 10)
   ⚠ [scorecard-min]   OpenSSF Scorecard data unavailable
 ```
 
-The tier headline (`🥈 Silver`) is data-driven: each tier in a playbook may declare an optional `icon`; tiers without one render with a neutral `🏷️` marker, and a run that meets no tier shows `⚪ Unrated`. Severity uses colored squares (`🟥` critical/error, `🟧` warning, `🟩`/`🟦` success/info) so they never read as tier medals. When all rules pass, the counts line collapses to `N/N règles · tout passe ✓`.
+The tier headline (`🥈 Silver`) is data-driven: each tier in a playbook may declare an optional `icon`; tiers without one render with a neutral `🏷️` marker, and a run that meets no tier shows `⚪ Unrated`. Severity uses colored squares (`🟥` critical/error, `🟧` warning, `🟩`/`🟦` success/info) so they never read as tier medals. When all rules pass, the counts line collapses to `N/N rules · all pass ✓`.
 
 The verdict block is written to stderr and shown by default. The same verdict header is prepended to the `--markdown` report and rendered as a panel at the top of the `--html` report. All of this is silenced under `-q`/`--quiet`.
 
