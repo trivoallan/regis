@@ -41,3 +41,9 @@ The following rules are provided by default:
 | `exposed-ports-whitelist` | Image exposes permitted ports.                          | `warning`  |
 | `required-labels`         | Image must have required OCI labels.                    | `warning`  |
 | `env-blacklist`           | Image must not contain forbidden environment variables. | `critical` |
+
+:::note Opt-in rules
+
+`platforms-required`, `platforms-whitelist`, and `platforms-blacklist` ship **disabled by default** — their defaults are policy choices that would otherwise warn on common images. Activate one by binding its criterion in your playbook (for example `criterion: platforms-whitelist` with `options:`); binding a criterion enables it automatically. All other rules above run by default.
+
+:::

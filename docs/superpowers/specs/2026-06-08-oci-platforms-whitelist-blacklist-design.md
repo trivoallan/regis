@@ -55,6 +55,16 @@ Appended to `OciAnalyzer.default_criteria()`. Param name is `platforms` in all t
 `required-labels`, whose param is plainly `labels`). Tags `["compatibility"]`, default
 level `warning` (playbooks override level/tier per binding).
 
+**Opt-in activation (post-review decision).** Unlike the other OCI criteria, these three
+ship with `"enable": False`, so they are **disabled by default** and do not fire on every
+report. Rationale: every entry in `default_criteria()` is otherwise auto-evaluated by
+`get_default_rules()`, and the policy defaults above (require/allow `linux/amd64` +
+`linux/arm64`) would warn on common single-arch and broad multi-arch images out of the box.
+To keep "bind it = use it" ergonomic, `merge_rules()` sets `instance["enable"] = True` when
+a playbook instantiates a criterion via `criterion:` (an explicit `enable: false` in the
+binding still wins). A slug-only override (Case B) does **not** auto-activate an opt-in
+criterion — use `criterion:` to bind and enable.
+
 | Slug                  | Semantics                             | Default `platforms`              | Condition (JSON Logic)                          |
 | :-------------------- | :------------------------------------ | :------------------------------- | :---------------------------------------------- |
 | `platforms-required`  | image must support **at least** these | `["linux/amd64", "linux/arm64"]` | `contains_all(platforms_supported, platforms)`  |
