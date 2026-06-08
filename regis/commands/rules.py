@@ -68,11 +68,11 @@ def _render_rule_markdown(rule: dict[str, Any]) -> str:
     lines.append("rules:")
     lines.append(f"  - provider: {provider}")
 
-    rule_name = slug
+    criterion_name = slug
     if "." in slug:
-        rule_name = slug.split(".", 1)[1]
+        criterion_name = slug.split(".", 1)[1]
 
-    lines.append(f"    rule: {rule_name}")
+    lines.append(f"    criterion: {criterion_name}")
 
     if params:
         lines.append("    options:")

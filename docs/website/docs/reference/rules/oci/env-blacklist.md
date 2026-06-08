@@ -30,7 +30,7 @@ Image must not contain forbidden environment variables.
 ```yaml
 rules:
   - provider: oci
-    rule: env-blacklist
+    criterion: env-blacklist
     options:
       keys:
         - DEBUG

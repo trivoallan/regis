@@ -31,7 +31,7 @@ Max allowed issues for a given severity level.
 ```yaml
 rules:
   - provider: dockle
-    rule: severity-count
+    criterion: severity-count
     options:
       level: FATAL
       max_count: 0

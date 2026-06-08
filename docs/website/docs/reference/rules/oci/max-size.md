@@ -30,7 +30,7 @@ Image size is within limits.
 ```yaml
 rules:
   - provider: oci
-    rule: max-size
+    criterion: max-size
     options:
       max_mb: 1000
 ```

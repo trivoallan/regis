@@ -31,7 +31,7 @@ Max allowed violations for a given severity level.
 ```yaml
 rules:
   - provider: hadolint
-    rule: severity-count
+    criterion: severity-count
     options:
       level: error
       max_count: 0

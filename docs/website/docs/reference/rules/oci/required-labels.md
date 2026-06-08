@@ -30,7 +30,7 @@ Image must have required OCI labels.
 ```yaml
 rules:
   - provider: oci
-    rule: required-labels
+    criterion: required-labels
     options:
       labels:
         - org.opencontainers.image.source

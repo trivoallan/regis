@@ -30,7 +30,7 @@ Checks if requested image registry domain is in the domains list.
 ```yaml
 rules:
   - provider: core
-    rule: registry-domain-whitelist
+    criterion: registry-domain-whitelist
     options:
       domains:
         - docker.io

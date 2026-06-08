@@ -30,7 +30,7 @@ No secrets or credentials should be embedded in the image.
 ```yaml
 rules:
   - provider: secrets
-    rule: secret-scan
+    criterion: secret-scan
     options:
       max_count: 0
 ```

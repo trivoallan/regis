@@ -30,7 +30,7 @@ OpenSSF Scorecard score is above the threshold.
 ```yaml
 rules:
   - provider: scorecarddev
-    rule: min-score
+    criterion: min-score
     options:
       min_score: 5.0
 ```

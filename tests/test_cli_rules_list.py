@@ -93,6 +93,11 @@ class TestCliRulesList:
             )
             assert "| core | Critical | security |" in rule_content
             assert "## Condition" in rule_content
+            # The playbook example must use the `criterion:` vocabulary, not the
+            # legacy `rule:` template key (renamed in #646).
+            assert "## Playbook Example" in rule_content
+            assert "criterion: registry-domain-whitelist" in rule_content
+            assert "\n    rule:" not in rule_content
 
 
 class TestCliRulesListFilters:

@@ -30,7 +30,7 @@ Image should support multiple platforms.
 ```yaml
 rules:
   - provider: oci
-    rule: platforms-count
+    criterion: platforms-count
     options:
       min_platforms: 2
 ```

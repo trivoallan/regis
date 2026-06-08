@@ -30,7 +30,7 @@ Image exposes permitted ports.
 ```yaml
 rules:
   - provider: oci
-    rule: exposed-ports-whitelist
+    criterion: exposed-ports-whitelist
     options:
       allowed_ports:
         - "80"

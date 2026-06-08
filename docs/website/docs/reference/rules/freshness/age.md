@@ -30,7 +30,7 @@ Image should be less than expected days old.
 ```yaml
 rules:
   - provider: freshness
-    rule: age
+    criterion: age
     options:
       max_days: 30
 ```
