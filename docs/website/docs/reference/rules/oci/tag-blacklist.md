@@ -24,7 +24,7 @@ Image tag should not be 'latest'.
 ```yaml
 rules:
   - provider: oci
-    rule: tag-blacklist
+    criterion: tag-blacklist
 ```
 
 ## Condition

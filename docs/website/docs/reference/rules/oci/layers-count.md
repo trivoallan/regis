@@ -30,7 +30,7 @@ Image has an acceptable number of layers.
 ```yaml
 rules:
   - provider: oci
-    rule: layers-count
+    criterion: layers-count
     options:
       max_layers: 30
 ```

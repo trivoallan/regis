@@ -30,7 +30,7 @@ Image must not run as root.
 ```yaml
 rules:
   - provider: oci
-    rule: user-blacklist
+    criterion: user-blacklist
     options:
       forbidden_user: root
 ```

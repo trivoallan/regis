@@ -24,7 +24,7 @@ Image must provide a Software Bill of Materials.
 ```yaml
 rules:
   - provider: sbom
-    rule: has-sbom
+    criterion: has-sbom
 ```
 
 ## Condition

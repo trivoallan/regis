@@ -31,7 +31,7 @@ Image must not include components with licenses from the configured blocklist.
 ```yaml
 rules:
   - provider: sbom
-    rule: license-blocklist
+    criterion: license-blocklist
     options:
       blocklist: []
 ```

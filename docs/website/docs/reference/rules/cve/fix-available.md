@@ -30,7 +30,7 @@ All vulnerabilities should be fixed if a patch exists.
 ```yaml
 rules:
   - provider: cve
-    rule: fix-available
+    criterion: fix-available
     options:
       max_count: 0
 ```
