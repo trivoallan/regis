@@ -25,15 +25,15 @@ Ce paramètre est un faux paramètre :
 Remplacer le critère unique à compteur par **deux critères booléens** qui
 expriment l'intention exacte et exploitent la distinction vérifié/non-vérifié :
 
-| Slug | Niveau | Condition | Intention |
-| :-- | :-- | :-- | :-- |
-| `verified-secrets` | `critical` | `verified_count == 0` | Credentials confirmés actifs |
-| `secret-scan` | `warning` | `secrets_count == 0` | Tout secret détecté (vérifié ou non) |
+| Slug               | Niveau     | Condition             | Intention                            |
+| :----------------- | :--------- | :-------------------- | :----------------------------------- |
+| `verified-secrets` | `critical` | `verified_count == 0` | Credentials confirmés actifs         |
+| `secret-scan`      | `warning`  | `secrets_count == 0`  | Tout secret détecté (vérifié ou non) |
 
 ### Choix de nommage
 
 - `secret-scan` est **conservé** pour le critère large (warning) plutôt que
-  renommé en `unverified-secrets` : ce critère fire sur *tous* les secrets, donc
+  renommé en `unverified-secrets` : ce critère fire sur _tous_ les secrets, donc
   « unverified » serait trompeur ; conserver le slug préserve l'URL de doc
   existante. C'est néanmoins un breaking change car sa sémantique change
   (compteur → booléen, `critical` → `warning`, suppression de `max_count`).
@@ -78,10 +78,10 @@ déjà produits (`regis/analyzers/secrets.py:105`) et requis par le schéma
 Ajouter **uniquement** `verified-secrets` dans la section Security (Critical) :
 
 ```yaml
-    - provider: secrets
-      criterion: verified-secrets
-      slug: verified-secrets
-      level: critical
+- provider: secrets
+  criterion: verified-secrets
+  slug: verified-secrets
+  level: critical
 ```
 
 Le critère large `secret-scan` (warning) reste disponible dans
@@ -113,7 +113,7 @@ Vérifier que `_render_rule_markdown` gère proprement un critère sans `params`
 ## Hors périmètre (YAGNI)
 
 - Pas d'allowlist de findings spécifiques (mécanisme séparé, futur si besoin).
-- Pas de nouveau champ `unverified_count` : le warning fire sur *tous* les
+- Pas de nouveau champ `unverified_count` : le warning fire sur _tous_ les
   secrets (`secrets_count`), donc inutile.
 - Pas de critère `info` distinct pour les non-vérifiés.
 
