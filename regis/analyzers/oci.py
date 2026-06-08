@@ -25,6 +25,27 @@ def _norm(registry: str) -> str:
     return "docker.io" if registry == "registry-1.docker.io" else registry
 
 
+def _platforms_supported(platforms: list[dict[str, Any]]) -> list[str]:
+    """Project platform objects into canonical ``os/arch[/variant]`` strings.
+
+    Skips entries whose ``os`` or ``architecture`` is missing or ``"unknown"``.
+    Deduplicates while preserving first-seen order.
+    """
+    seen: list[str] = []
+    for platform in platforms:
+        os_name = platform.get("os")
+        arch = platform.get("architecture")
+        if not os_name or not arch or os_name == "unknown" or arch == "unknown":
+            continue
+        name = f"{os_name}/{arch}"
+        variant = platform.get("variant")
+        if variant:
+            name = f"{name}/{variant}"
+        if name not in seen:
+            seen.append(name)
+    return seen
+
+
 class OciAnalyzer(BaseAnalyzer):
     """Fetch OCI metadata for an image using regctl: per-platform details and tags."""
 

@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, patch
 
 import jsonschema
 
-from regis.analyzers.oci import OciAnalyzer
+from regis.analyzers.oci import OciAnalyzer, _platforms_supported
 
 _FIXTURES = Path(__file__).parent / "fixtures" / "regctl"
 
@@ -241,3 +241,31 @@ def test_oci_docker_hub_registry_normalized_in_tag_ls():
     assert tag_calls, "expected a tag ls call"
     # registry-1.docker.io must be normalized to docker.io.
     assert tag_calls[0][2] == "docker.io/library/nginx"
+
+
+def test_platforms_supported_dedup_and_order():
+    platforms = [
+        {"os": "linux", "architecture": "amd64"},
+        {"os": "linux", "architecture": "arm64"},
+        {"os": "linux", "architecture": "amd64"},  # duplicate
+    ]
+    assert _platforms_supported(platforms) == ["linux/amd64", "linux/arm64"]
+
+
+def test_platforms_supported_includes_variant():
+    platforms = [
+        {"os": "linux", "architecture": "arm64", "variant": "v8"},
+        {"os": "linux", "architecture": "arm", "variant": "v7"},
+    ]
+    assert _platforms_supported(platforms) == ["linux/arm64/v8", "linux/arm/v7"]
+
+
+def test_platforms_supported_skips_unknown_and_missing():
+    platforms = [
+        {"os": "unknown", "architecture": "unknown"},
+        {"os": "linux", "architecture": "unknown"},
+        {"os": "linux"},  # missing architecture
+        {"architecture": "amd64"},  # missing os
+        {"os": "linux", "architecture": "amd64"},
+    ]
+    assert _platforms_supported(platforms) == ["linux/amd64"]
