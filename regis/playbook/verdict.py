@@ -130,7 +130,7 @@ def build_verdict(final_report: dict[str, Any]) -> Verdict:
         tier=src.get("tier"),
         tier_icon=src.get("tier_icon"),
         score=int(summary.get("score", 0)),
-        total=summary.get("total", len(rules)),
+        total=int(summary.get("total", len(rules))),
         passed=len(passed),
         failed=len(failed),
         incomplete=len(incomplete),

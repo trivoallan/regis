@@ -1,8 +1,8 @@
 from regis.playbook.verdict import (
     VerdictBadge,
+    badge_emoji,
     build_verdict,
     tier_label,
-    badge_emoji,
 )
 
 
@@ -97,3 +97,54 @@ def test_badge_emoji_mapping():
     assert badge_emoji("warning") == "🟧"
     assert badge_emoji("success") == "🟩"
     assert badge_emoji("information") == ""
+
+
+def test_worst_level_warning_when_no_critical():
+    # Locks the severity ordering: with no critical failure, worst is warning.
+    v = build_verdict(
+        _report(
+            rules_summary={"score": 80, "total": 2, "passed": 1},
+            rules=[
+                {
+                    "slug": "info-rule",
+                    "level": "info",
+                    "passed": False,
+                    "status": "failed",
+                    "message": "minor",
+                },
+                {
+                    "slug": "warn-rule",
+                    "level": "warning",
+                    "passed": False,
+                    "status": "failed",
+                    "message": "watch out",
+                },
+            ],
+            badge_labels=[],
+        )
+    )
+    assert v.worst_level == "warning"
+
+
+def test_build_verdict_from_top_level_hoisted_fields():
+    # No `playbooks` key: build_verdict falls back to top-level hoisted fields
+    # (the `--evaluate`/rerun shape).
+    report = {
+        "tier": "Gold",
+        "rules_summary": {"score": 100, "total": 1, "passed": 1},
+        "rules": [
+            {
+                "slug": "ok",
+                "level": "info",
+                "passed": True,
+                "status": "passed",
+                "message": "",
+            },
+        ],
+        "badge_labels": [],
+    }
+    v = build_verdict(report)
+    assert v.evaluated is True
+    assert v.tier == "Gold"
+    assert v.tier_icon is None
+    assert (v.passed, v.failed, v.incomplete) == (1, 0, 0)
