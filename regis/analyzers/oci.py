@@ -140,6 +140,59 @@ class OciAnalyzer(BaseAnalyzer):
                 },
             },
             {
+                "slug": "platforms-required",
+                "description": "Image must support a required set of platforms.",
+                "level": "warning",
+                "tags": ["compatibility"],
+                "params": {"platforms": ["linux/amd64", "linux/arm64"]},
+                "condition": {
+                    "contains_all": [
+                        {"var": "results.oci.platforms_supported"},
+                        {"var": "criterion.params.platforms"},
+                    ]
+                },
+                "messages": {
+                    "pass": "Image supports all required platforms.",  # nosec B105
+                    "fail": "Image is missing required platforms (supported: ${results.oci.platforms_supported}; required: ${criterion.params.platforms}).",
+                },
+            },
+            {
+                "slug": "platforms-whitelist",
+                "description": "Image must only support allowed platforms.",
+                "level": "warning",
+                "tags": ["compatibility"],
+                "params": {"platforms": ["linux/amd64", "linux/arm64"]},
+                "condition": {
+                    "subset": [
+                        {"var": "results.oci.platforms_supported"},
+                        {"var": "criterion.params.platforms"},
+                    ]
+                },
+                "messages": {
+                    "pass": "All supported platforms are allowed.",  # nosec B105
+                    "fail": "Image supports disallowed platforms: ${results.oci.platforms_supported} (allowed: ${criterion.params.platforms}).",
+                },
+            },
+            {
+                "slug": "platforms-blacklist",
+                "description": "Image must not support forbidden platforms.",
+                "level": "warning",
+                "tags": ["compatibility"],
+                "params": {"platforms": ["windows/amd64"]},
+                "condition": {
+                    "!": {
+                        "intersects": [
+                            {"var": "results.oci.platforms_supported"},
+                            {"var": "criterion.params.platforms"},
+                        ]
+                    }
+                },
+                "messages": {
+                    "pass": "Image supports no forbidden platforms.",  # nosec B105
+                    "fail": "Image supports forbidden platforms: ${results.oci.platforms_supported} (forbidden: ${criterion.params.platforms}).",
+                },
+            },
+            {
                 "slug": "exposed-ports-whitelist",
                 "description": "Image exposes permitted ports.",
                 "level": "warning",

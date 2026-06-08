@@ -10,6 +10,7 @@ from unittest.mock import MagicMock, patch
 import jsonschema
 
 from regis.analyzers.oci import OciAnalyzer, _platforms_supported
+from regis.rules.evaluator import evaluate_rules
 
 _FIXTURES = Path(__file__).parent / "fixtures" / "regctl"
 
@@ -294,3 +295,85 @@ def test_oci_report_includes_platforms_supported():
     assert all("unknown" not in name for name in supported)
     # The fixture resolves exactly 8 real platforms (8 unknown/unknown filtered out).
     assert len(supported) == 8
+
+
+def _oci_report(supported: list[str]) -> dict:
+    return {
+        "request": {"registry": "docker.io", "analyzers": ["oci"]},
+        "results": {"oci": {"platforms_supported": supported}},
+    }
+
+
+def _eval_oci_criterion(supported: list[str], criterion: str, platforms: list[str]):
+    rules_def = {
+        "rules": [
+            {
+                "provider": "oci",
+                "criterion": criterion,
+                "slug": "under-test",
+                "options": {"platforms": platforms},
+            }
+        ]
+    }
+    res = evaluate_rules(_oci_report(supported), rules_def)
+    return next(r for r in res["rules"] if r["slug"] == "under-test")
+
+
+def test_platforms_required_pass_and_fail():
+    # All required platforms are supported (extras allowed) -> pass.
+    passed = _eval_oci_criterion(
+        ["linux/amd64", "linux/arm64", "windows/amd64"],
+        "platforms-required",
+        ["linux/amd64", "linux/arm64"],
+    )
+    assert passed["passed"] is True
+
+    # A required platform is missing -> fail.
+    failed = _eval_oci_criterion(
+        ["linux/amd64"],
+        "platforms-required",
+        ["linux/amd64", "linux/arm64"],
+    )
+    assert failed["passed"] is False
+
+
+def test_platforms_whitelist_pass_and_fail():
+    # Every supported platform is allowed -> pass.
+    passed = _eval_oci_criterion(
+        ["linux/amd64", "linux/arm64"],
+        "platforms-whitelist",
+        ["linux/amd64", "linux/arm64", "windows/amd64"],
+    )
+    assert passed["passed"] is True
+
+    # A supported platform is not in the allowed set -> fail.
+    failed = _eval_oci_criterion(
+        ["linux/amd64", "linux/arm64"],
+        "platforms-whitelist",
+        ["linux/amd64"],
+    )
+    assert failed["passed"] is False
+
+
+def test_platforms_blacklist_pass_and_fail():
+    # No forbidden platform is supported -> pass.
+    passed = _eval_oci_criterion(
+        ["linux/amd64", "linux/arm64"],
+        "platforms-blacklist",
+        ["windows/amd64"],
+    )
+    assert passed["passed"] is True
+
+    # A forbidden platform is supported -> fail.
+    failed = _eval_oci_criterion(
+        ["linux/amd64", "linux/arm64"],
+        "platforms-blacklist",
+        ["linux/arm64"],
+    )
+    assert failed["passed"] is False
+
+
+def test_platforms_required_fails_when_none_supported():
+    # Empty projection cannot satisfy a required platform -> fail.
+    failed = _eval_oci_criterion([], "platforms-required", ["linux/amd64"])
+    assert failed["passed"] is False
