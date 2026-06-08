@@ -172,7 +172,7 @@ def evaluate(
     - ``sections``       — per-section breakdown (scorecards, levels, display, widgets)
     - ``score``          — overall percentage of scorecards passed (0–100)
     """
-    # 0. Evaluate rules (merges analyzer defaults with playbook 'rules' section)
+    # 0. Evaluate the playbook's declared rules (resolved against the criterion catalogue)
     rules_results = evaluate_rules(report, playbook)
 
     # Inject rule results into the report so they are available in context (via dots)

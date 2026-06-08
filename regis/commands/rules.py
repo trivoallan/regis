@@ -158,22 +158,24 @@ def list_rules(
     filter_level: str | None = None,
     filter_provider: str | None = None,
 ) -> None:
-    """List all available default rules and any overrides."""
+    """List the available criteria catalogue (or the resolved set for a rules file)."""
     import yaml
 
-    from regis.rules.evaluator import get_default_rules, merge_rules
+    from regis.rules.evaluator import get_criterion_templates, resolve_rules
 
     analyzers = discover_analyzers()
-    defaults = get_default_rules(list(analyzers.keys()))
+    templates = get_criterion_templates(list(analyzers.keys()))
 
-    custom = []
+    declared = []
     if rules_path:
         path = Path(rules_path)
         if path.exists():
             data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-            custom = data.get("rules", [])
+            declared = data.get("rules", [])
 
-    final_rules = merge_rules(defaults, custom)
+    # No rules file (or a file with no rules) -> show the full catalogue
+    # (discovery). With declared rules -> show exactly what they resolve to.
+    final_rules = resolve_rules(templates, declared) if declared else list(templates)
 
     if filter_level:
         wanted_level = filter_level.lower()
@@ -291,19 +293,19 @@ def show_rule(slug: str, rules_path: str | None, output_format: str) -> None:
     """Display the full definition of a specific rule."""
     import yaml
 
-    from regis.rules.evaluator import get_default_rules, merge_rules
+    from regis.rules.evaluator import get_criterion_templates, resolve_rules
 
     analyzers = discover_analyzers()
-    defaults = get_default_rules(list(analyzers.keys()))
+    templates = get_criterion_templates(list(analyzers.keys()))
 
-    custom = []
+    declared = []
     if rules_path:
         path = Path(rules_path)
         if path.exists():
             data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-            custom = data.get("rules", [])
+            declared = data.get("rules", [])
 
-    final_rules = merge_rules(defaults, custom)
+    final_rules = resolve_rules(templates, declared) if declared else list(templates)
     matching_rule = next((r for r in final_rules if r.get("slug") == slug), None)
 
     if not matching_rule:

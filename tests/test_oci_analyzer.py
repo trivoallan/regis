@@ -383,18 +383,18 @@ def test_platforms_required_fails_when_none_supported():
 
 
 def test_platform_criteria_are_opt_in_by_default():
-    # With no playbook rules binding them, the three platform-identity criteria
-    # must NOT be evaluated (they ship with enable: False).
+    # No implicit inheritance: with no playbook rules, nothing is evaluated.
+    # The three platform-identity criteria (shipped with enable: False) require
+    # an explicit binding -- and so does every other OCI criterion now, since
+    # analyzer defaults are no longer auto-injected.
     report = _oci_report(["linux/amd64"])
-    res = evaluate_rules(report)  # no rules_def -> only default-active rules run
+    res = evaluate_rules(report)  # no rules_def -> nothing evaluated
     slugs = {r["slug"] for r in res["rules"]}
     assert "platforms-required" not in slugs
     assert "platforms-whitelist" not in slugs
     assert "platforms-blacklist" not in slugs
-    # Sanity: an always-active OCI criterion (platforms-count) is still present.
-    # (It evaluates as "incomplete" here since _oci_report omits results.oci.platforms,
-    # but incomplete rules still appear in res["rules"], so presence is what we assert.)
-    assert "platforms-count" in slugs
+    # platforms-count is no longer auto-active either; it must be declared.
+    assert "platforms-count" not in slugs
 
 
 def test_platforms_binding_can_be_explicitly_disabled():

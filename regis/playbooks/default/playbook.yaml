@@ -5,7 +5,7 @@ metadata:
   name: default
   title: RegiS Default Playbook
   labels:
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 2.0.0
 spec:
   tiers:
     - name: Gold
@@ -60,6 +60,22 @@ spec:
     - provider: sbom
       criterion: has-sbom
       slug: has-sbom
+      level: warning
+
+    # --- Container hygiene (Warning) ---
+    - provider: dockle
+      criterion: severity-count
+      slug: dockle-fatal
+      level: warning
+
+    - provider: hadolint
+      criterion: severity-count
+      slug: hadolint-error
+      level: warning
+
+    - provider: secrets
+      criterion: secret-scan
+      slug: secret-scan
       level: warning
 
     # Opt-in: block strong copyleft licenses (GPL, AGPL). Images based on
