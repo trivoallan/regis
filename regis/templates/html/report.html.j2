@@ -124,6 +124,7 @@
   {% endif %}
   {% if verdict.failures or verdict.incompletes %}
   <table class="verdict-rules">
+    <thead><tr><th></th><th>Rule</th><th>Level</th><th>Result</th></tr></thead>
     <tbody>
       {% for f in verdict.failures %}
       <tr><td>✗</td><td>{{ f.slug }}</td><td>{{ f.level }}</td><td>{{ f.message }}</td></tr>
