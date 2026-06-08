@@ -1,8 +1,11 @@
 """Tests for rules evaluator."""
 
+import warnings
+
 import pytest
 
 from regis.rules.evaluator import (
+    _interpolate_string,
     evaluate_rules,
     get_criterion_templates,
     resolve_rules,
@@ -214,8 +217,6 @@ def test_criterion_key_does_not_warn():
         ]
     }
 
-    import warnings
-
     with warnings.catch_warnings():
         warnings.simplefilter("error", DeprecationWarning)
         evaluate_rules(report, new_def)
@@ -331,3 +332,295 @@ def test_missing_results_still_incomplete():
     res = evaluate_rules(report, rules_def)
     rule = next(r for r in res["rules"] if r["slug"] == "needs-cve")
     assert rule["status"] == "incomplete"
+
+
+# ---------------------------------------------------------------------------
+# _interpolate_string edge cases
+# ---------------------------------------------------------------------------
+
+
+def test_interpolate_empty_template_returns_input():
+    assert _interpolate_string("", {}) == ""
+
+
+def test_interpolate_list_length():
+    ctx = {"items": ["a", "b", "c"]}
+    assert _interpolate_string("n=${items.length}", ctx) == "n=3"
+
+
+def test_interpolate_list_index():
+    ctx = {"items": ["a", "b", "c"]}
+    assert _interpolate_string("first=${items.0}", ctx) == "first=a"
+    assert _interpolate_string("last=${items.2}", ctx) == "last=c"
+
+
+def test_interpolate_list_index_out_of_range_keeps_placeholder():
+    assert _interpolate_string("x=${items.9}", {"items": ["a"]}) == "x=${items.9}"
+
+
+def test_interpolate_list_invalid_part_keeps_placeholder():
+    """A non-integer, non-'length' part on a list keeps the placeholder."""
+    assert (
+        _interpolate_string("x=${items.foo}", {"items": ["a", "b"]}) == "x=${items.foo}"
+    )
+
+
+def test_interpolate_missing_nested_key_returns_missing():
+    """A path that reaches a dict but the key is absent returns MISSING."""
+    ctx = {"data": {"a": 1}}
+    assert _interpolate_string("v=${data.b}", ctx) == "v=MISSING"
+
+
+# ---------------------------------------------------------------------------
+# Custom JSON Logic operators — non-list / non-dict inputs return False / []
+# ---------------------------------------------------------------------------
+
+
+def test_custom_operators_with_non_list_inputs():
+    """intersects, contains_all, subset, env_contains return False for non-list inputs."""
+    from json_logic import jsonLogic
+
+    import regis.rules.evaluator  # noqa: F401 — ensures operators are registered
+
+    # intersects: non-list inputs
+    assert jsonLogic({"intersects": ["not-a-list", ["a"]]}, {}) is False
+    assert jsonLogic({"intersects": [["a"], "not-a-list"]}, {}) is False
+
+    # contains_all: non-list inputs
+    assert jsonLogic({"contains_all": ["x", ["a"]]}, {}) is False
+
+    # subset: non-list inputs
+    assert jsonLogic({"subset": ["x", ["a"]]}, {}) is False
+
+    # env_contains: non-list inputs
+    assert jsonLogic({"env_contains": ["not-list", ["sub"]]}, {}) is False
+
+
+def test_keys_operator_with_non_dict_returns_empty():
+    """keys() returns [] for non-dict input."""
+    from json_logic import jsonLogic
+
+    import regis.rules.evaluator  # noqa: F401
+
+    assert jsonLogic({"keys": [{"var": "v"}]}, {"v": "not-a-dict"}) == []
+    assert jsonLogic({"keys": [{"var": "v"}]}, {"v": ["a", "b"]}) == []
+
+
+def test_get_operator_with_non_dict_returns_none():
+    """get() returns None for non-dict data."""
+    from json_logic import jsonLogic
+
+    import regis.rules.evaluator  # noqa: F401
+
+    assert jsonLogic({"get": [{"var": "v"}, "key"]}, {"v": "not-a-dict"}) is None
+
+
+# ---------------------------------------------------------------------------
+# resolve_rules — merge when same (provider, slug) appears twice
+# ---------------------------------------------------------------------------
+
+
+def test_resolve_rules_merges_duplicate_slug():
+    """Two declared rules with the same (provider, slug) merge messages and params."""
+    templates = []
+    declared = [
+        {
+            "provider": "custom",
+            "slug": "my-rule",
+            "condition": {"==": [1, 1]},
+            "messages": {"pass": "v1-pass", "fail": "v1-fail"},
+            "params": {"threshold": 10},
+        },
+        {
+            "provider": "custom",
+            "slug": "my-rule",
+            "messages": {"fail": "v2-fail"},
+            "params": {"extra": True},
+        },
+    ]
+    resolved = resolve_rules(templates, declared)
+    assert len(resolved) == 1
+    rule = resolved[0]
+    # Messages merged: v2-fail overrides v1-fail, v1-pass preserved
+    assert rule["messages"]["pass"] == "v1-pass"
+    assert rule["messages"]["fail"] == "v2-fail"
+    # Params merged
+    assert rule["params"]["threshold"] == 10
+    assert rule["params"]["extra"] is True
+
+
+# ---------------------------------------------------------------------------
+# resolve_rules — Case A: slug auto-generation
+# ---------------------------------------------------------------------------
+
+
+def test_resolve_rules_autogenerate_slug_with_level():
+    """When no slug is given and options contains 'level', slug becomes <template>.<level>."""
+    templates = [
+        {
+            "provider": "cve",
+            "slug": "cve-count",
+            "condition": {"==": [1, 1]},
+            "messages": {"pass": "ok", "fail": "err"},
+        }
+    ]
+    declared = [
+        {
+            "provider": "cve",
+            "criterion": "cve-count",
+            "options": {"level": "critical"},
+            # No slug provided
+        }
+    ]
+    resolved = resolve_rules(templates, declared)
+    assert len(resolved) == 1
+    assert resolved[0]["slug"] == "cve-count.critical"
+
+
+def test_resolve_rules_autogenerate_slug_without_level():
+    """When no slug and no 'level' in options, slug becomes <template>.<index>."""
+    templates = [
+        {
+            "provider": "cve",
+            "slug": "cve-count",
+            "condition": {"==": [1, 1]},
+            "messages": {"pass": "ok", "fail": "err"},
+        }
+    ]
+    declared = [
+        {
+            "provider": "cve",
+            "criterion": "cve-count",
+            # No slug, no level in options
+        }
+    ]
+    resolved = resolve_rules(templates, declared)
+    assert len(resolved) == 1
+    assert resolved[0]["slug"] == "cve-count.0"
+
+
+# ---------------------------------------------------------------------------
+# resolve_rules — Case A: template not found but slug provided
+# ---------------------------------------------------------------------------
+
+
+def test_resolve_rules_template_not_found_with_slug_appends_raw():
+    """When template is not found but a slug is given, the raw rule_def is kept."""
+    templates = []
+    declared = [
+        {
+            "provider": "nonexistent",
+            "criterion": "ghost-template",
+            "slug": "fallback-rule",
+            "condition": {"==": [1, 1]},
+            "messages": {"pass": "ok", "fail": "err"},
+        }
+    ]
+    resolved = resolve_rules(templates, declared)
+    assert len(resolved) == 1
+    assert resolved[0]["slug"] == "fallback-rule"
+    assert resolved[0]["provider"] == "nonexistent"
+
+
+# ---------------------------------------------------------------------------
+# resolve_rules — Case B: explicit provider on a standalone rule
+# ---------------------------------------------------------------------------
+
+
+def test_resolve_rules_case_b_explicit_provider():
+    """Case B with an explicit provider: provider and slug stay as given."""
+    templates = []
+    declared = [
+        {
+            "provider": "myteam",
+            "slug": "custom-check",
+            "condition": {"==": [1, 1]},
+            "messages": {"pass": "ok", "fail": "err"},
+        }
+    ]
+    resolved = resolve_rules(templates, declared)
+    assert len(resolved) == 1
+    assert resolved[0]["provider"] == "myteam"
+    assert resolved[0]["slug"] == "custom-check"
+
+
+def test_resolve_rules_case_b_no_rule_id_skipped():
+    """A declared rule with no criterion, rule, or slug is silently skipped."""
+    templates = []
+    declared = [{"condition": {"==": [1, 1]}}]
+    resolved = resolve_rules(templates, declared)
+    assert resolved == []
+
+
+# ---------------------------------------------------------------------------
+# resolve_rules — Case A fallback: template found via regis.analyzers.<provider>
+# ---------------------------------------------------------------------------
+
+
+def test_resolve_rules_fallback_prefixed_provider():
+    """A template registered under 'regis.analyzers.myprov' is found via plain 'myprov'."""
+    templates = [
+        {
+            "provider": "regis.analyzers.myprov",
+            "slug": "some-check",
+            "condition": {"==": [1, 1]},
+            "messages": {"pass": "ok", "fail": "err"},
+        }
+    ]
+    declared = [
+        {
+            "provider": "myprov",
+            "criterion": "some-check",
+            "slug": "my-check",
+        }
+    ]
+    resolved = resolve_rules(templates, declared)
+    assert len(resolved) == 1
+    assert resolved[0]["slug"] == "my-check"
+
+
+# ---------------------------------------------------------------------------
+# resolve_rules — last-resort: template loaded directly from the analyzer class
+# ---------------------------------------------------------------------------
+
+
+def test_resolve_rules_last_resort_loads_from_analyzer():
+    """When template is absent from catalogue, it is loaded directly from the analyzer."""
+    # The 'freshness' analyzer is present; its 'age' template should be found
+    # even when we pass an empty templates list.
+    resolved = resolve_rules(
+        [],
+        [
+            {
+                "provider": "freshness",
+                "criterion": "age",
+                "slug": "age-direct",
+            }
+        ],
+    )
+    assert len(resolved) == 1
+    assert resolved[0]["slug"] == "age-direct"
+    assert "condition" in resolved[0]
+
+
+# ---------------------------------------------------------------------------
+# evaluate_rules — exception in jsonLogic marks rule as failed
+# ---------------------------------------------------------------------------
+
+
+def test_evaluate_rules_condition_exception_marks_failed():
+    """A rule whose condition raises an exception is marked failed, not crashed."""
+    report = {"request": {"registry": "docker.io", "analyzers": []}, "results": {}}
+    rules_def = {
+        "rules": [
+            {
+                "slug": "bad-op",
+                "condition": {"__nonexistent_op__": [1, 2]},
+                "messages": {"pass": "ok", "fail": "err"},
+            }
+        ]
+    }
+    res = evaluate_rules(report, rules_def)
+    bad = next(r for r in res["rules"] if r["slug"] == "bad-op")
+    assert bad["passed"] is False
+    assert bad["status"] == "failed"
