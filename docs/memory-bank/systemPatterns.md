@@ -51,7 +51,6 @@ Backward compatibility: the legacy `rule:` entry key and `rule.*` condition name
 - **`ci-test.yml`** includes `pip-audit` and enforces a HIGH/CRITICAL severity gate via `scripts/enforce_pip_audit_severity.py` (severity is resolved from OSV metadata).
 - **`cd-docker.yml`** emits CycloneDX/SPDX SBOM artifacts and provenance attestations via `actions/attest-build-provenance`.
 - **GitHub App authentication**: All workflows use `actions/create-github-app-token@v1` with `REGIS_CI_APP_ID` + `REGIS_CI_APP_PRIVATE_KEY`. Never use `GITHUB_TOKEN` for checkouts that need to trigger downstream CI runs — it won't.
-- **`peaceiris/actions-gh-pages`** with the App token requires `personal_token:`, not `github_token:`.
 - **Trunk auto-fmt in CI**: the trunk workflow commits formatting fixes via `stefanzweifel/git-auto-commit-action`. The checkout must use the App token so the commit triggers a new workflow run.
 - **Trunk pre-commit**: locally, `trunk-check-fix-pre-commit` runs `trunk check --fix` on `git commit`. Commit the auto-fixed files it produces.
 - **Dependabot PRs + secrets**: workflows triggered by Dependabot via `pull_request` run with read-only `GITHUB_TOKEN` and no secrets. Use `pull_request_target` for any workflow that must act on Dependabot PRs (safe when no PR code is checked out).
@@ -70,7 +69,7 @@ output is **never committed** — `ci-lint.yml`'s `generated-artifacts-guard` jo
 fails any PR that tracks `**/search-index.json`, `docs/v*/**`, `_site/**`, or
 `docs/website/build/**`. Only the latest 3 doc versions + `next` are served
 (matching `release-snapshot.yml`'s 3-version source pruning). GitHub Pages
-**Source** must be set to *GitHub Actions* in repo Settings → Pages.
+**Source** must be set to _GitHub Actions_ in repo Settings → Pages.
 
 ## Mémoire & artefacts de planification — taxonomie
 
