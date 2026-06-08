@@ -114,16 +114,20 @@
               "description": "Conditional Cookiecutter templates surfaced to integrations.",
               "items": {
                 "type": "object",
-                "required": ["url"],
+                "anyOf": [{ "required": ["url"] }, { "required": ["package"] }],
                 "additionalProperties": false,
                 "properties": {
                   "url": {
                     "type": "string",
-                    "description": "Cookiecutter template URL or path."
+                    "description": "Cookiecutter template URL or local path (a git URL is cloned)."
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Installed Python package shipping the template (e.g. 'regis'); resolved to a local path with 'directory', so no clone is performed."
                   },
                   "directory": {
                     "type": "string",
-                    "description": "Optional subdirectory containing the template."
+                    "description": "Subdirectory containing the template (relative to the repo for 'url', or to the package root for 'package')."
                   },
                   "condition": {
                     "description": "JSON Logic expression to conditionally surface the template.",

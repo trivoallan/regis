@@ -112,18 +112,24 @@ def _resolve_templates(
     resolved_templates: list[dict[str, str]] = []
     for tmpl_def in template_defs:
         url = tmpl_def.get("url")
-        if not url:
+        package = tmpl_def.get("package")
+        if not url and not package:
             continue
 
+        label = url or package
         condition = tmpl_def.get("condition")
         if condition:
-            result = evaluate_condition(condition, full_context, label=url)
+            result = evaluate_condition(condition, full_context, label=label)
             if result is None:
                 pass  # no condition → include
             elif not result.passed or result.incomplete:
                 continue
 
-        resolved_tmpl: dict[str, str] = {"url": url}
+        resolved_tmpl: dict[str, str] = {}
+        if url:
+            resolved_tmpl["url"] = url
+        if package:
+            resolved_tmpl["package"] = package
         if tmpl_def.get("directory"):
             resolved_tmpl["directory"] = tmpl_def["directory"]
         resolved_templates.append(resolved_tmpl)

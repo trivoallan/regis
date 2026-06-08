@@ -185,8 +185,8 @@ spec:
       - cve-critical
       - cve-high
     templates:
-      - url: https://github.com/trivoallan/regis
-        directory: regis/cookiecutters/mr-evidence
+      - package: regis
+        directory: cookiecutters/mr-evidence
 
     checklists:
       - title: 📝 Review Checklist
