@@ -78,20 +78,23 @@ The following concepts are central to understanding and creating playbooks. For 
 
 ### Tiers
 
-Playbooks can define **Tiers** to categorize the overall quality of an image based on the compliance score. Each tier is defined by a name and a condition.
+Playbooks can define **Tiers** to categorize the overall quality of an image based on the compliance score. Each tier is defined by a name, a condition, and an optional `icon`.
 
 ```yaml
 spec:
   tiers:
     - name: Gold
+      icon: "🥇" # optional display icon (emoji)
       condition: { ">": [{ var: rules_summary.score }, 90] }
     - name: Silver
+      icon: "🥈"
       condition: { ">": [{ var: rules_summary.score }, 70] }
     - name: Bronze
+      icon: "🥉"
       condition: { ">": [{ var: rules_summary.score }, 50] }
 ```
 
-The evaluator checks tiers in the order they are defined. The first tier whose condition evaluates to truthy is assigned to the report.
+The evaluator checks tiers in the order they are defined. The first tier whose condition evaluates to truthy is assigned to the report. The `icon` is surfaced in the analyze verdict block and reports; a tier without an `icon` renders with a neutral marker.
 
 ### Badges
 
