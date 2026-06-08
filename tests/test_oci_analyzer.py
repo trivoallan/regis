@@ -392,6 +392,8 @@ def test_platform_criteria_are_opt_in_by_default():
     assert "platforms-whitelist" not in slugs
     assert "platforms-blacklist" not in slugs
     # Sanity: an always-active OCI criterion (platforms-count) is still present.
+    # (It evaluates as "incomplete" here since _oci_report omits results.oci.platforms,
+    # but incomplete rules still appear in res["rules"], so presence is what we assert.)
     assert "platforms-count" in slugs
 
 
