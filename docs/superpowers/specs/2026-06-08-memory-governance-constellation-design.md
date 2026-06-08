@@ -24,17 +24,17 @@ mémoire de projet souffre de quatre douleurs simultanées, toutes confirmées :
 
 - **`regis` (cœur)** porte DEUX systèmes qui se chevauchent :
   - `docs/memory-bank/` — protocole « Memory Bank » (RULES.md immuable + ~20 fichiers)
-    **+** `docs/memory-bank/plans/` (12 fichiers, mélange plans *et* designs).
+    **+** `docs/memory-bank/plans/` (12 fichiers, mélange plans _et_ designs).
   - `docs/superpowers/` — `specs/` (10 designs) **+** `plans/` (15 plans).
   - Incohérence figée : `CLAUDE.md` affirme « Plans live in
     `docs/memory-bank/plans/` » alors que la skill superpowers écrit dans
     `docs/superpowers/plans/`.
-- **Sous-projets** : `regis-backstage`, `regis-gitlab` n'ont que `docs/superpowers/`
-  + un `CLAUDE.md` (conventions partiellement copiées-collées). Pas de memory-bank.
-  `regis-action` absent du disque ; `regis-dashboard` abandonné.
+- **Sous-projets** : `regis-backstage` et `regis-gitlab` n'ont que `docs/superpowers/`
+  et un `CLAUDE.md` (conventions partiellement copiées-collées) — pas de memory-bank.
+  `regis-action` est absent du disque ; `regis-dashboard` est abandonné.
 - **Hébergement** : `regis` et `regis-backstage` sur GitHub ; `regis-gitlab` est
   **dual-host** (origin gitlab.com, miroir public github.com). Pas de monorepo.
-- **Mémoire commune *de fait*** : la mémoire auto Claude de l'utilisateur porte déjà
+- **Mémoire commune _de fait_** : la mémoire auto Claude de l'utilisateur porte déjà
   le savoir transverse (extraction GitLab, généralisation `spec.presentation`, abandon
   dashboard) — mais elle est privée à l'utilisateur, hors des dépôts.
 
@@ -43,28 +43,28 @@ mémoire de projet souffre de quatre douleurs simultanées, toutes confirmées :
 Le désordre vient de l'absence de grille. On range tout artefact de mémoire selon
 deux questions :
 
-|                          | **Durable** (vérité de référence)                                            | **Éphémère** (échafaudage de travail)                       |
-| ------------------------ | ---------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| **Local** (à un repo)    | memory-bank du repo (systemPatterns, decisionLog, techContext) + **specs**   | **plans d'exécution** → supprimés au merge                  |
-| **Constellation** (transverse) | **zone constellation** dans le cœur : contrat + conventions + glossaire | **état programme** cross-repo → mémoire auto Claude         |
+|                                | **Durable** (vérité de référence)                                          | **Éphémère** (échafaudage de travail)               |
+| ------------------------------ | -------------------------------------------------------------------------- | --------------------------------------------------- |
+| **Local** (à un repo)          | memory-bank du repo (systemPatterns, decisionLog, techContext) + **specs** | **plans d'exécution** → supprimés au merge          |
+| **Constellation** (transverse) | **zone constellation** dans le cœur : contrat + conventions + glossaire    | **état programme** cross-repo → mémoire auto Claude |
 
 Règle mentale, en une phrase :
 
-> *« Est-ce vrai pour toute la constellation ? → cœur. Est-ce que ça survit à la
-> PR ? → memory-bank/spec, sinon plan jetable. »*
+> _« Est-ce vrai pour toute la constellation ? → cœur. Est-ce que ça survit à la
+> PR ? → memory-bank/spec, sinon plan jetable. »_
 
 Correspondance douleurs → grille :
 
 - Duplication/dérive → colonne **Durable/Constellation** (source unique).
 - Encombrement + contexte lourd → colonne **Éphémère** (les plans ne survivent pas au merge).
-- Onboarding → la grille elle-même : on sait *où chaque chose vit*.
+- Onboarding → la grille elle-même : on sait _où chaque chose vit_.
 
 ## Décisions de design
 
 ### D1 — Mécanisme de distribution : le cœur `regis` est la source de vérité
 
 Pas de nouveau dépôt (`regis-memory` écarté par YAGNI), pas de submodule (douleur
-pour zéro bénéfice : on veut lire la cible *à jour*, pas une version pinnée). Le
+pour zéro bénéfice : on veut lire la cible _à jour_, pas une version pinnée). Le
 savoir transverse durable vit dans le cœur, dont les sous-projets dépendent déjà
 fonctionnellement. Les sous-projets y renvoient par un **lien HTTP absolu vers
 GitHub**, qui fonctionne depuis n'importe quel clone (y compris le clone gitlab.com
@@ -75,14 +75,14 @@ de `regis-gitlab`).
 Un sous-dossier dédié trace nettement la frontière « interne regis » vs « transverse ».
 Trois fichiers durables :
 
-- **`contract.md`** — *le normatif inter-repos.* `REPORT_SCHEMA_VERSION` courant +
+- **`contract.md`** — _le normatif inter-repos._ `REPORT_SCHEMA_VERSION` courant +
   politique de bump, schéma `spec.presentation`, entry-points `regis.analyzers`,
   contrat de compatibilité. **À lire avant toute modification touchant la
   sérialisation/consommation d'un report.**
-- **`conventions.md`** — *la partie partageable des CLAUDE.md.* Commit scopes,
+- **`conventions.md`** — _la partie partageable des CLAUDE.md._ Commit scopes,
   workflow de branches (rebase, jamais merge-back), stack de skills, style guides.
   Défini une fois ici ; les CLAUDE.md locaux ne gardent que le spécifique au repo.
-- **`glossary.md`** — *le modèle mental.* criterion vs rule, playbook, analyzer,
+- **`glossary.md`** — _le modèle mental._ criterion vs rule, playbook, analyzer,
   presentation, report ; + un C4 contexte d'ensemble (Mermaid) cœur ↔ intégrations.
 
 ### D3 — L'état programme vivant reste dans la mémoire auto Claude
@@ -97,9 +97,9 @@ versionné serait périmé en permanence et générerait des PR de pur statut. *
 
 On passe de trois lieux qui se chevauchent à deux :
 
-- **`docs/superpowers/specs/`** — *durable, local.* Le « quoi/pourquoi ». Conservé
+- **`docs/superpowers/specs/`** — _durable, local._ Le « quoi/pourquoi ». Conservé
   (convention de la skill brainstorming).
-- **`docs/superpowers/plans/`** — *éphémère, local.* Le « comment » d'exécution TDD.
+- **`docs/superpowers/plans/`** — _éphémère, local._ Le « comment » d'exécution TDD.
   **Supprimé au merge.** Vit sur la branche (exécution multi-session), retiré dans la
   PR qui livre. Avec le squash-merge du projet, `main` ne le porte jamais ; la trace
   reste consultable sur la PR.
@@ -107,8 +107,8 @@ On passe de trois lieux qui se chevauchent à deux :
 
 ### D5 — Plan jetable ≠ note de recherche durable
 
-Distinction à inscrire noir sur blanc : un *plan d'exécution* est jetable ; une *note
-de recherche* (un probe, un benchmark, un « pourquoi on a écarté X ») est durable.
+Distinction à inscrire noir sur blanc : un _plan d'exécution_ est jetable ; une _note
+de recherche_ (un probe, un benchmark, un « pourquoi on a écarté X ») est durable.
 Avant toute suppression, les notes de recherche (ex : `regctl-probe-notes`,
 `grype-probe-notes`) sont **promues** vers `decisionLog.md` ou un spec. **Ne jamais
 supprimer une conclusion sous prétexte qu'elle vivait dans un fichier de plan.**
@@ -119,6 +119,7 @@ Aucun sous-projet ne duplique la zone constellation. Chaque `CLAUDE.md` gagne un
 
 ```markdown
 ## Mémoire transverse (constellation Regis)
+
 Le contrat inter-repos, les conventions de travail et le glossaire vivent dans le cœur :
 https://github.com/trivoallan/regis/tree/main/docs/memory-bank/constellation/
 Lis `contract.md` AVANT toute modification touchant la sérialisation/consommation d'un report.
@@ -127,7 +128,7 @@ Ce CLAUDE.md ne contient que le spécifique à CE repo.
 
 On retire des CLAUDE.md sous-projets les conventions désormais centralisées (commit
 scopes, workflow branches, skill stack) pour ne pas re-créer la dérive. Le
-`regis/CLAUDE.md` *pointe* vers `constellation/conventions.md` plutôt que de le
+`regis/CLAUDE.md` _pointe_ vers `constellation/conventions.md` plutôt que de le
 dupliquer dans son corps.
 
 ## Plan de migration (exécuté dans le plan d'implémentation)
