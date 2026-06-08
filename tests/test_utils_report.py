@@ -260,3 +260,33 @@ def test_markdown_no_verdict_when_not_evaluated():
         {"request": {"registry": "r", "repository": "x", "tag": "t"}, "results": {}}
     )
     assert "Unrated" not in md  # no verdict header emitted
+
+
+def test_markdown_escapes_pipe_in_rule_message():
+    from regis.utils.report import _render_markdown
+
+    report = {
+        "request": {"registry": "r", "repository": "x", "tag": "t"},
+        "playbooks": [
+            {
+                "tier": "Bronze",
+                "tier_icon": "🥉",
+                "rules_summary": {"score": 60, "total": 1, "passed": 0},
+                "rules": [
+                    {
+                        "slug": "cve",
+                        "level": "warning",
+                        "passed": False,
+                        "status": "failed",
+                        "message": "found a|b in pkg",
+                    },
+                ],
+                "badge_labels": [],
+            }
+        ],
+    }
+    md = _render_markdown(report)
+    # The pipe inside the message must be escaped so the table row stays intact.
+    assert "found a\\|b in pkg" in md
+    # Counts line surfaces the singular failure (no trailing 's').
+    assert "1 échec " in md or md.rstrip().endswith("1 échec")

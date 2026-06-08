@@ -316,11 +316,21 @@ def _verdict_markdown(report: dict[str, Any]) -> list[str]:
         lines += [" · ".join(f"{badge_emoji(b.klass)} {b.label}" for b in v.badges), ""]
 
     if v.failures or v.incompletes:
+
+        def _cell(value: str) -> str:
+            # Rule messages are free-form interpolated text; escape pipes and
+            # collapse newlines so a row never breaks the table.
+            return value.replace("|", "\\|").replace("\n", " ")
+
         lines += ["| | Règle | Niveau | Résultat |", "| --- | --- | --- | --- |"]
         for f in v.failures:
-            lines.append(f"| ✗ | {f.slug} | {f.level} | {f.message} |")
+            lines.append(
+                f"| ✗ | {_cell(f.slug)} | {_cell(f.level)} | {_cell(f.message)} |"
+            )
         for i in v.incompletes:
-            lines.append(f"| ⚠ | {i.slug} | {i.level} | {i.message} |")
+            lines.append(
+                f"| ⚠ | {_cell(i.slug)} | {_cell(i.level)} | {_cell(i.message)} |"
+            )
         lines.append("")
 
     return lines
