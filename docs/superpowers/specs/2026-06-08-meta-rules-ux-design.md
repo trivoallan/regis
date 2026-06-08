@@ -42,14 +42,14 @@ testable sans `incomplete`, et validation well-known qui fonctionne réellement.
 
 ## Décisions (issues du brainstorming)
 
-| Sujet | Décision |
-|:--|:--|
-| Namespace meta | **Normaliser à la source** : un seul emplacement, top-level `metadata.*`. |
-| Emplacement canonique | **Top-level `metadata.*`** ; `request.metadata` supprimé. |
-| Helpers retenus | `is_true` / `is_false`, `is_url`, `is_empty` / `is_set`, `matches`. |
-| Helpers écartés | `is_semver`, `to_number` (YAGNI). |
-| Absence de meta | `metadata.*` est un **namespace optionnel** : clé manquante → `null` sans `incomplete`. |
-| Schéma well-known | **Corrigé dans ce lot** (structure imbriquée, enum/format réellement appliqués). |
+| Sujet                 | Décision                                                                                |
+| :-------------------- | :-------------------------------------------------------------------------------------- |
+| Namespace meta        | **Normaliser à la source** : un seul emplacement, top-level `metadata.*`.               |
+| Emplacement canonique | **Top-level `metadata.*`** ; `request.metadata` supprimé.                               |
+| Helpers retenus       | `is_true` / `is_false`, `is_url`, `is_empty` / `is_set`, `matches`.                     |
+| Helpers écartés       | `is_semver`, `to_number` (YAGNI).                                                       |
+| Absence de meta       | `metadata.*` est un **namespace optionnel** : clé manquante → `null` sans `incomplete`. |
+| Schéma well-known     | **Corrigé dans ce lot** (structure imbriquée, enum/format réellement appliqués).        |
 
 ## Design
 
@@ -76,14 +76,14 @@ Enregistrés dans `_add_custom_operations()` (`regis/rules/evaluator.py`), au
 même titre que `intersects` / `env_contains`. Génériques (s'appliquent à
 n'importe quel `var`), mais pensés pour les valeurs-chaînes du meta.
 
-| Opérateur | Arité | Sémantique |
-|:--|:--|:--|
-| `is_true` | `[x]` | `True` si `x` ∈ {`true`,`1`,`yes`,`on`} (casse ignorée) ou booléen `True`. Sinon `False`. |
-| `is_false` | `[x]` | `True` si `x` ∈ {`false`,`0`,`no`,`off`} (casse ignorée) ou booléen `False`. Sinon `False`. |
-| `is_url` | `[x]` | `True` si `x` est une URL `http`/`https` bien formée (`urllib.parse`, `scheme` ∈ {http,https} **et** `netloc` non vide). |
-| `is_empty` | `[x]` | `True` si `x` est `None`, `""`, ou chaîne de blancs. |
-| `is_set` | `[x]` | Complément de `is_empty` : `True` si `x` présent et non vide. |
-| `matches` | `[x, pattern]` | `re.search(pattern, x)` truthy. `x` non-string ou regex invalide → `False` (warning loggué). |
+| Opérateur  | Arité          | Sémantique                                                                                                               |
+| :--------- | :------------- | :----------------------------------------------------------------------------------------------------------------------- |
+| `is_true`  | `[x]`          | `True` si `x` ∈ {`true`,`1`,`yes`,`on`} (casse ignorée) ou booléen `True`. Sinon `False`.                                |
+| `is_false` | `[x]`          | `True` si `x` ∈ {`false`,`0`,`no`,`off`} (casse ignorée) ou booléen `False`. Sinon `False`.                              |
+| `is_url`   | `[x]`          | `True` si `x` est une URL `http`/`https` bien formée (`urllib.parse`, `scheme` ∈ {http,https} **et** `netloc` non vide). |
+| `is_empty` | `[x]`          | `True` si `x` est `None`, `""`, ou chaîne de blancs.                                                                     |
+| `is_set`   | `[x]`          | Complément de `is_empty` : `True` si `x` présent et non vide.                                                            |
+| `matches`  | `[x, pattern]` | `re.search(pattern, x)` truthy. `x` non-string ou regex invalide → `False` (warning loggué).                             |
 
 Règles transverses :
 
@@ -130,8 +130,15 @@ Règles transverses :
           "job": {
             "type": "object",
             "properties": {
-              "id": { "type": "string", "description": "Unique identifier of the CI job" },
-              "url": { "type": "string", "format": "uri", "description": "URL to the CI job run" }
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the CI job"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL to the CI job run"
+              }
             },
             "additionalProperties": true
           }

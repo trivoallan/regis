@@ -103,6 +103,14 @@ ignore_missing_imports = true
 # regis.analyzers.base is included because it imports the stdlib `warnings`
 # module (added for the default_rules deprecation shim), which trips the same
 # cross-ref AssertionError when downstream analyzer modules are linted alone.
+# regis.utils.predicates is included because it is imported by metadata.py and
+# evaluator.py (and reached transitively from analyze.py via the report engine),
+# which triggers the same cross-ref AssertionError when those importers are
+# linted in isolation.
 [[tool.mypy.overrides]]
-module = ["regis.playbook.schema_registry", "regis.analyzers.base"]
+module = [
+  "regis.playbook.schema_registry",
+  "regis.analyzers.base",
+  "regis.utils.predicates",
+]
 follow_imports = "skip"

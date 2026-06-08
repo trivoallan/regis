@@ -1050,7 +1050,7 @@ it (`request` is `additionalProperties: false`).
   will fail validation if re-validated; regenerate them with `regis analyze`.
 
 There is no automated migration: reports are generated output, not user config.
-````
+```
 
 - [ ] **Step 4: Vérifier le build doc (lien/markdown)**
 
