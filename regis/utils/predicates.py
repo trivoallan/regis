@@ -38,14 +38,21 @@ def is_falsy(value: Any) -> bool:
 
 
 def is_url(value: Any) -> bool:
-    """True if ``value`` is a well-formed http/https URL (scheme + netloc)."""
+    """True if ``value`` is a well-formed http/https URL (scheme + netloc).
+
+    Relies on ``urllib.parse.urlparse`` but additionally rejects a ``netloc``
+    containing whitespace (urlparse otherwise accepts such malformed values),
+    so it is suitable as a ``format: uri`` checker for well-formed URL fields.
+    """
     if not isinstance(value, str):
         return False
     try:
         parsed = urlparse(value)
     except (ValueError, AttributeError):
         return False
-    return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        return False
+    return not any(ch.isspace() for ch in parsed.netloc)
 
 
 def is_empty(value: Any) -> bool:

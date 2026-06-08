@@ -41,7 +41,18 @@ def test_is_url_true(value):
 
 
 @pytest.mark.parametrize(
-    "value", ["not a url", "ftp://x.io", "github.com", "", None, 123, "https://"]
+    "value",
+    [
+        "not a url",
+        "ftp://x.io",
+        "github.com",
+        "",
+        None,
+        123,
+        "https://",
+        "https://not a url",
+        "https://exa mple.com",
+    ],
 )
 def test_is_url_false(value):
     assert is_url(value) is False
