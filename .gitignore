@@ -40,6 +40,8 @@ thoughts/
 
 # Docusaurus
 .docusaurus
+# GitHub Pages assembly (built in CI, never committed)
+_site/
 regis-archive-ui/
 
 # Dashboard

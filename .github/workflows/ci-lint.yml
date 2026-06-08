@@ -120,3 +120,24 @@ jobs:
           fi
 
           echo "All top-level workflow actions are pinned by SHA."
+
+  generated-artifacts-guard:
+    name: No Generated Artifacts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Reject committed build artifacts
+        run: |
+          set -euo pipefail
+
+          matches="$(git ls-files -- '**/search-index.json' 'docs/v[0-9]*/**' '_site/**' 'docs/website/build/**')"
+          if [ -n "$matches" ]; then
+            echo "::error::Generated documentation artifacts must not be committed. GitHub Pages is served from a CI build artifact, not from tracked files."
+            echo "$matches"
+            exit 1
+          fi
+          echo "No generated documentation artifacts committed."
