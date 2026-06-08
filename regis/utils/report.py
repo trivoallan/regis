@@ -290,6 +290,42 @@ def validate_report(report: dict[str, Any]) -> None:
             ) from exc
 
 
+def _verdict_markdown(report: dict[str, Any]) -> list[str]:
+    """Render the verdict header (tier · score, badges, failed rules) as md lines."""
+    from regis.playbook.verdict import badge_emoji, build_verdict, tier_label
+
+    v = build_verdict(report)
+    if not v.evaluated:
+        return []
+
+    lines = [f"## {tier_label(v.tier, v.tier_icon)} · {v.score}/100", ""]
+
+    counts = f"**{v.passed}/{v.total} règles**"
+    if v.failed == 0 and v.incomplete == 0:
+        counts += " · tout passe ✓"
+    else:
+        if v.failed:
+            counts += f" · {v.failed} échec{'s' if v.failed > 1 else ''}"
+        if v.incomplete:
+            counts += f" · {v.incomplete} incomplète{'s' if v.incomplete > 1 else ''}"
+        if v.worst_level:
+            counts += f" · pire niveau : {v.worst_level}"
+    lines += [counts, ""]
+
+    if v.badges:
+        lines += [" · ".join(f"{badge_emoji(b.klass)} {b.label}" for b in v.badges), ""]
+
+    if v.failures or v.incompletes:
+        lines += ["| | Règle | Niveau | Résultat |", "| --- | --- | --- | --- |"]
+        for f in v.failures:
+            lines.append(f"| ✗ | {f.slug} | {f.level} | {f.message} |")
+        for i in v.incompletes:
+            lines.append(f"| ⚠ | {i.slug} | {i.level} | {i.message} |")
+        lines.append("")
+
+    return lines
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     """Render a Markdown summary from a regis report dict."""
     request = report.get("request", {})
@@ -297,6 +333,7 @@ def _render_markdown(report: dict[str, Any]) -> str:
         f"{request.get('registry', '')}/{request.get('repository', '')}:{request.get('tag', '')}"
     )
     lines: list[str] = [f"# {image_ref}", ""]
+    lines += _verdict_markdown(report)
 
     timestamp = request.get("timestamp") or report.get("timestamp")
     if timestamp:
