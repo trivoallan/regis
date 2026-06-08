@@ -49,20 +49,35 @@ class SecretsAnalyzer(BaseAnalyzer):
     def default_criteria(cls) -> list[dict[str, Any]]:
         return [
             {
-                "slug": "secret-scan",
-                "description": "No secrets or credentials should be embedded in the image.",
+                "slug": "verified-secrets",
+                "description": (
+                    "No verified, active credentials should be embedded in the image."
+                ),
                 "level": "critical",
                 "tags": ["security"],
-                "params": {"max_count": 0},
-                "condition": {
-                    "<=": [
-                        {"var": "results.secrets.secrets_count"},
-                        {"var": "criterion.params.max_count"},
-                    ]
+                "condition": {"==": [{"var": "results.secrets.verified_count"}, 0]},
+                "messages": {
+                    "pass": "No verified secrets detected in the image.",  # nosec B105
+                    "fail": (
+                        "TruffleHog verified ${results.secrets.verified_count} "
+                        "active credential(s) in the image."
+                    ),
                 },
+            },
+            {
+                "slug": "secret-scan",
+                "description": (
+                    "No secrets or credentials should be embedded in the image."
+                ),
+                "level": "warning",
+                "tags": ["security"],
+                "condition": {"==": [{"var": "results.secrets.secrets_count"}, 0]},
                 "messages": {
                     "pass": "No secrets detected in the image.",  # nosec B105
-                    "fail": "TruffleHog detected ${results.secrets.secrets_count} secrets in the image.",
+                    "fail": (
+                        "TruffleHog detected ${results.secrets.secrets_count} "
+                        "secret(s) in the image."
+                    ),
                 },
             },
         ]

@@ -3,6 +3,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+from json_logic import jsonLogic
 
 from regis.analyzers.base import AnalyzerError
 from regis.analyzers.secrets import SecretsAnalyzer, _scanner_version
@@ -29,9 +30,41 @@ def analyzer():
 
 
 class TestSecretsAnalyzer:
-    def test_default_criteria_slug(self, analyzer):
-        slugs = {r["slug"] for r in analyzer.default_criteria()}
-        assert "secret-scan" in slugs
+    def test_default_criteria_structure(self, analyzer):
+        criteria = {r["slug"]: r for r in analyzer.default_criteria()}
+        assert set(criteria) == {"verified-secrets", "secret-scan"}
+        assert criteria["verified-secrets"]["level"] == "critical"
+        assert criteria["secret-scan"]["level"] == "warning"
+        # The count threshold parameter is gone — these are pure booleans.
+        assert "params" not in criteria["verified-secrets"]
+        assert "params" not in criteria["secret-scan"]
+
+    @pytest.mark.parametrize(
+        "secrets_count, verified_count, verified_pass, scan_pass",
+        [
+            (0, 0, True, True),  # clean image: both pass
+            (1, 0, True, False),  # unverified only: critical passes, warning fails
+            (1, 1, False, False),  # verified secret: both fail
+            (3, 2, False, False),  # several, some verified: both fail
+        ],
+    )
+    def test_default_criteria_conditions(
+        self, analyzer, secrets_count, verified_count, verified_pass, scan_pass
+    ):
+        criteria = {r["slug"]: r for r in analyzer.default_criteria()}
+        ctx = {
+            "results": {
+                "secrets": {
+                    "secrets_count": secrets_count,
+                    "verified_count": verified_count,
+                }
+            }
+        }
+        assert (
+            bool(jsonLogic(criteria["verified-secrets"]["condition"], ctx))
+            is verified_pass
+        )
+        assert bool(jsonLogic(criteria["secret-scan"]["condition"], ctx)) is scan_pass
 
     @patch("regis.analyzers.secrets._scanner_version", return_value="3.95.3")
     @patch("regis.analyzers.secrets.run_trufflehog")
