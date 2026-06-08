@@ -255,8 +255,9 @@ def test_only_declared_rules_evaluated():
 
 def test_helper_operators_registered():
     """The new helper operators evaluate through json_logic."""
-    import regis.rules.evaluator  # noqa: F401  (registers operators on import)
     from json_logic import jsonLogic
+
+    import regis.rules.evaluator  # noqa: F401  (registers operators on import)
 
     assert jsonLogic({"is_true": [{"var": "v"}]}, {"v": "yes"}) is True
     assert jsonLogic({"is_true": [{"var": "v"}]}, {"v": "nope"}) is False
@@ -268,3 +269,65 @@ def test_helper_operators_registered():
     assert (
         jsonLogic({"matches": [{"var": "v"}, "^job-[0-9]+$"]}, {"v": "job-7"}) is True
     )
+
+
+def test_missing_metadata_does_not_mark_incomplete():
+    """A rule referencing an absent metadata.* key resolves to a clean fail/pass."""
+    report = {
+        "request": {"registry": "docker.io", "analyzers": ["metadata"]},
+        "results": {},
+        "metadata": {},
+    }
+    rules_def = {
+        "rules": [
+            {
+                "slug": "gate-must-be-set",
+                "condition": {"is_set": [{"var": "metadata.gate.enabled"}]},
+                "messages": {"pass": "set", "fail": "not set"},
+            }
+        ]
+    }
+    res = evaluate_rules(report, rules_def)
+    rule = next(r for r in res["rules"] if r["slug"] == "gate-must-be-set")
+    assert rule["status"] == "failed"  # absent -> failed, NOT incomplete
+    assert rule["passed"] is False
+
+
+def test_present_metadata_evaluates_normally():
+    report = {
+        "request": {"registry": "docker.io", "analyzers": ["metadata"]},
+        "results": {},
+        "metadata": {"ci": {"job": {"url": "https://ci.example/run/1"}}},
+    }
+    rules_def = {
+        "rules": [
+            {
+                "slug": "job-url-valid",
+                "condition": {"is_url": [{"var": "metadata.ci.job.url"}]},
+                "messages": {"pass": "ok", "fail": "bad"},
+            }
+        ]
+    }
+    res = evaluate_rules(report, rules_def)
+    rule = next(r for r in res["rules"] if r["slug"] == "job-url-valid")
+    assert rule["status"] == "passed"
+
+
+def test_missing_results_still_incomplete():
+    """Non-metadata missing data must still yield incomplete (no regression)."""
+    report = {
+        "request": {"registry": "docker.io", "analyzers": ["cve"]},
+        "results": {},
+    }
+    rules_def = {
+        "rules": [
+            {
+                "slug": "needs-cve",
+                "condition": {"==": [{"var": "results.cve.critical_count"}, 0]},
+                "messages": {"pass": "ok", "fail": "bad"},
+            }
+        ]
+    }
+    res = evaluate_rules(report, rules_def)
+    rule = next(r for r in res["rules"] if r["slug"] == "needs-cve")
+    assert rule["status"] == "incomplete"
