@@ -59,12 +59,10 @@ jobs:
 
           generate_reference=false
           refresh_badge=false
-          refresh_archive=false
 
           if [ "$EVENT_NAME" = "workflow_dispatch" ] || [ -z "$BEFORE_SHA" ]; then
             generate_reference=true
             refresh_badge=true
-            refresh_archive=true
           else
             changed_files_file="$(mktemp)"
             git diff --name-only "$BEFORE_SHA" "$GITHUB_SHA" | tee "$changed_files_file"
@@ -77,16 +75,11 @@ jobs:
               refresh_badge=true
             fi
 
-            if grep -Eq '^(regis/|Pipfile$|pyproject\.toml$|package\.json$|pnpm-lock\.yaml$|\.github/workflows/cd-docs\.yml$)' "$changed_files_file"; then
-              refresh_archive=true
-            fi
-
             rm -f "$changed_files_file"
           fi
 
           echo "generate_reference=$generate_reference" >> "$GITHUB_OUTPUT"
           echo "refresh_badge=$refresh_badge" >> "$GITHUB_OUTPUT"
-          echo "refresh_archive=$refresh_archive" >> "$GITHUB_OUTPUT"
 
       - name: Setup Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
@@ -214,22 +207,6 @@ jobs:
         run: |
           pipenv run pytest --cov --cov-report=xml -q --no-header
           pipenv run genbadge coverage -i coverage.xml -o coverage-badge.svg
-
-      - name: Generate Default Archive
-        if: steps.changes.outputs.refresh_archive == 'true'
-        run: |
-          mkdir -p docs/website/static/archives/default
-          pipenv run regis analyze --evaluate alpine:latest -A docs/website/static/archives/default/
-          pipenv run regis analyze --evaluate ghcr.io/trivoallan/regis:latest -A docs/website/static/archives/default/
-
-      - name: Validate Default Archive
-        if: steps.changes.outputs.refresh_archive == 'true'
-        run: |
-          if [ ! -d "docs/website/static/archives/default" ] || [ -z "$(ls -A docs/website/static/archives/default)" ]; then
-            echo "::error::Default archive directory is empty — archive generation failed"
-            exit 1
-          fi
-          echo "Default archive generated successfully: $(ls docs/website/static/archives/default | wc -l) entries"
 
       - name: Docusaurus build
         run: pnpm run build
