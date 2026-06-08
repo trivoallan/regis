@@ -30,6 +30,11 @@ spec:
       slug: no-root
       level: critical
 
+    - provider: secrets
+      criterion: verified-secrets
+      slug: verified-secrets
+      level: critical
+
     - provider: cve
       criterion: cve-count
       slug: cve-critical
