@@ -15,33 +15,34 @@ To ensure clean and readable changelogs, please use the following allowed scopes
 
 ### Core & Logic
 
-- `cli` : Changes to the command-line interface, argument parsing, or main console output.
-- `playbook` : The rule evaluation engine, section parsing, `jsonLogic` resolution, and context management.
-- `schema` : Data interfaces, structure definition, and JSON validation files (`*.schema.json`).
-- `registry` : The registry communication layer (HTTP requests, authentication, manifest fetching).
+- `cli` : Command-line interface, argument parsing, main console output.
+- `playbook` : Rule evaluation engine, section parsing, `jsonLogic`, context management.
+- `schema` : Data interfaces, structure definitions, JSON validation files (`*.schema.json`).
+- `registry` : Registry communication layer (HTTP, authentication, manifest fetching).
 
 ### Analyzers
 
-- `analyzer` : Changes to the base analyzer class or shared analyzer interfaces.
-- `analyzer/trivy` : Specific to vulnerability scanning and SBOM generation via Trivy.
-- `analyzer/sbom` : Specific to SBOM analysis and CycloneDX/SPDX generation.
-- `analyzer/hadolint` : Specific to Dockerfile linting.
-- `analyzer/skopeo` : Specific to base metadata extraction.
-
-- `analyzer/freshness` : Specific to image age and freshness score calculations.
-- `analyzer/size` : Specific to size and layer calculations.
-- `analyzer/popularity` : Specific to registry popularity metrics.
-- `analyzer/endoflife` : Specific to version support status.
-- `analyzer/scorecarddev` : Specific to OpenSSF Scorecard checks.
-- `analyzer/provenance` : Specific to provenance and supply chain evidence.
+- `analyzer` : Base analyzer class or shared analyzer interfaces.
+- `analyzer/cve` : Vulnerability (CVE) scanning via grype.
+- `analyzer/secrets` : Embedded secret detection via trufflehog.
+- `analyzer/sbom` : SBOM analysis and CycloneDX/SPDX generation via syft.
+- `analyzer/hadolint` : Dockerfile linting.
+- `analyzer/dockle` : Container image linting / best practices.
+- `analyzer/skopeo` : Base metadata extraction.
+- `analyzer/freshness` : Image age and freshness score.
+- `analyzer/size` : Size and layer calculations.
+- `analyzer/popularity` : Registry popularity metrics.
+- `analyzer/endoflife` : Version support status.
+- `analyzer/scorecarddev` : OpenSSF Scorecard checks.
+- `analyzer/provenance` : Provenance and supply-chain evidence.
 
 ### Rendering & Reporting
 
-- `report` : High-level report generation logic (folder creation, file writing).
-- `templates` (or `theme`) : Visual aspects, HTML structure, CSS stylesheets, and Jinja2 macros.
+- `report` : High-level report generation (folder creation, file writing).
+- `templates` (or `theme`) : Visual aspects, HTML, CSS, React/Docusaurus SPA.
 
 ### Tooling & CI
 
-- `ci` : GitHub Actions workflows (Super-Linter, release-please, etc.).
+- `ci` : GitHub Actions workflows.
 - `deps` (or `build`) : Environment management (Pipenv, pyproject.toml, Dockerfiles).
-- `docs` : Antora documentation, READMEs, and Memory Bank updates.
+- `docs` : Docusaurus documentation, READMEs, and Memory Bank updates.

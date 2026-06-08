@@ -2,6 +2,34 @@
 
 > Supplemental file: this records historical decisions that complement the core Memory Bank files.
 
+## 2026-05-30: Probe — grype/syft/trufflehog output shapes locked
+
+- **Decision**: Migration trivy→grype/syft/trufflehog parse des formes de sortie
+  vérifiées empiriquement. Versions figées : grype 0.112.0, syft 1.44.0,
+  trufflehog 3.95.3. Points critiques : `fix.state` grype émet `""` (pas
+  `unknown`) pour le cas inconnu — normaliser ; `metadata.tools` syft est un
+  **objet** `{ components: [...] }` (CycloneDX 1.6), non un tableau plat ; grype
+  et syft partagent le préfixe `SYFT_REGISTRY_AUTH_*` pour l'auth (pas
+  `GRYPE_REGISTRY_AUTH_*`) ; trufflehog sort 0 même quand des secrets sont
+  trouvés (sans `--fail`) — parser stdout NDJSON ; pour les images locales,
+  passer `--image docker://<ref>` (sinon trufflehog essaie une pull registry).
+  Fixtures de référence capturées sous `tests/fixtures/`.
+- **Reference**: notes de probe (supprimées au merge ; trace dans la PR de
+  migration grype).
+
+## 2026-05-29: Probe — regctl output shapes locked
+
+- **Decision**: Migration skopeo→regctl figée sur regctl v0.11.5 ; formes de
+  sortie (index multi-arch, config blob) verrouillées via fixtures
+  `tests/fixtures/regctl/`. Points critiques : `image inspect` émet du JSON
+  sans `--format` (supprimer le flag Go-template) ; les index multi-arch
+  contiennent des entrées d'attestation buildkit (`platform.os: "unknown"`) à
+  filtrer avant fan-out ; `tag ls` retourne du texte newline-séparé (pas de
+  pagination nécessaire) ; `regctl version` (sans `--`) exit 0, première ligne
+  `VCSTag: v0.11.5`.
+- **Reference**: notes de probe (supprimées au merge ; trace dans la PR de
+  migration regctl).
+
 ## 2026-06-05: Vocabulary — Disambiguate "rule" into a Four-Layer Model
 
 - **Decision**: Split the overloaded word "rule" into four named layers — **finding → metric → criterion → rule**. What an analyzer ships as a reusable, parameterized condition (e.g. `cve-count`, formerly a "default rule"/template) is now a **criterion**; "rule" is reserved for the playbook-bound policy decision (criterion + options + severity + tier).
