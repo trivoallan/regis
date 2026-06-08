@@ -670,7 +670,6 @@ spec:
 
 There is no automatic codemod: re-injecting former defaults would reintroduce the
 heuristics the default playbook intentionally dropped.
-
 ````
 
 - [ ] **Step 6 : Vérifier l'enregistrement du guide dans la navigation**
@@ -685,7 +684,7 @@ git add docs/website/docs/concepts/rules.md docs/website/docs/concepts/analyzers
 git commit -m "docs(rules): document criteria catalogue + implicit-defaults removal
 
 Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
-````
+```
 
 ---
 

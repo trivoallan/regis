@@ -23,22 +23,22 @@ Le playbook par défaut déclare ~10 critères, mais 9 `default_criteria` non
 déclarés sont aujourd'hui auto-injectés et évalués (params concrets, vrai verdict
 pass/fail qui compte dans le score/tier) :
 
-| Critère auto-injecté | Politique implicite actuelle |
-| --- | --- |
-| `dockle:severity-count` | 0 alerte FATAL |
-| `hadolint:severity-count` | 0 erreur Hadolint |
-| `secrets:secret-scan` | 0 secret (vérifié ou non) |
-| `oci:max-size` | ≤ 1000 Mo |
-| `oci:layers-count` | ≤ 30 couches |
-| `oci:platforms-count` | ≥ 2 plateformes |
-| `oci:exposed-ports-whitelist` | ports ∈ {80, 443} |
-| `oci:required-labels` | label `image.source` présent |
-| `oci:env-blacklist` | pas de `DEBUG`/`SECRET_KEY` |
+| Critère auto-injecté          | Politique implicite actuelle |
+| ----------------------------- | ---------------------------- |
+| `dockle:severity-count`       | 0 alerte FATAL               |
+| `hadolint:severity-count`     | 0 erreur Hadolint            |
+| `secrets:secret-scan`         | 0 secret (vérifié ou non)    |
+| `oci:max-size`                | ≤ 1000 Mo                    |
+| `oci:layers-count`            | ≤ 30 couches                 |
+| `oci:platforms-count`         | ≥ 2 plateformes              |
+| `oci:exposed-ports-whitelist` | ports ∈ {80, 443}            |
+| `oci:required-labels`         | label `image.source` présent |
+| `oci:env-blacklist`           | pas de `DEBUG`/`SECRET_KEY`  |
 
 ## Objectif
 
 **On n'hérite jamais des défauts.** Pas d'interrupteur, pas de champ de playbook :
-on retire purement l'auto-injection. Un playbook évalue *uniquement* ses règles
+on retire purement l'auto-injection. Un playbook évalue _uniquement_ ses règles
 déclarées. Les `default_criteria()` redeviennent un **catalogue de templates**,
 résolus seulement quand un playbook les instancie via `criterion:`.
 
@@ -58,11 +58,11 @@ Décisions de conception (toutes validées) :
 
 ### 1. Moteur d'évaluation — `regis/rules/evaluator.py`
 
-| Avant | Après |
-| --- | --- |
-| `get_default_rules(analyzers_present)` | **`get_criterion_templates(analyzers_present)`** — contenu identique (cœur `registry-domain-whitelist` + `default_criteria()` par analyzer présent), rôle clarifié : le catalogue. |
-| `merge_rules(defaults, custom)` réinjecte les défauts non instanciés | **`resolve_rules(templates, declared)`** — `final_dict` démarre **vide** ; le catalogue ne sert plus qu'à résoudre les instanciations `criterion:` (Case A) et les overrides par slug (Case B). Aucune inclusion implicite. |
-| `evaluate_rules` : `defaults = get_default_rules(…); final = merge_rules(defaults, custom)` | `templates = get_criterion_templates(…); final = resolve_rules(templates, declared)` — playbook sans règle ⇒ **0 règle évaluée**. |
+| Avant                                                                                       | Après                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `get_default_rules(analyzers_present)`                                                      | **`get_criterion_templates(analyzers_present)`** — contenu identique (cœur `registry-domain-whitelist` + `default_criteria()` par analyzer présent), rôle clarifié : le catalogue.                                          |
+| `merge_rules(defaults, custom)` réinjecte les défauts non instanciés                        | **`resolve_rules(templates, declared)`** — `final_dict` démarre **vide** ; le catalogue ne sert plus qu'à résoudre les instanciations `criterion:` (Case A) et les overrides par slug (Case B). Aucune inclusion implicite. |
+| `evaluate_rules` : `defaults = get_default_rules(…); final = merge_rules(defaults, custom)` | `templates = get_criterion_templates(…); final = resolve_rules(templates, declared)` — playbook sans règle ⇒ **0 règle évaluée**.                                                                                           |
 
 - Les corps de `default_criteria()` des analyzers **ne changent pas** : les 6
   heuristiques OCI restent définies et instanciables.
@@ -82,19 +82,19 @@ Décisions de conception (toutes validées) :
 Ajout des 3 critères sécurité désormais explicites :
 
 ```yaml
-  # --- Sécurité conteneur (Warning) — désormais explicites ---
-  - provider: dockle
-    criterion: severity-count
-    slug: dockle-fatal
-    level: warning
-  - provider: hadolint
-    criterion: severity-count
-    slug: hadolint-error
-    level: warning
-  - provider: secrets
-    criterion: secret-scan
-    slug: secret-scan
-    level: warning
+# --- Sécurité conteneur (Warning) — désormais explicites ---
+- provider: dockle
+  criterion: severity-count
+  slug: dockle-fatal
+  level: warning
+- provider: hadolint
+  criterion: severity-count
+  slug: hadolint-error
+  level: warning
+- provider: secrets
+  criterion: secret-scan
+  slug: secret-scan
+  level: warning
 ```
 
 Non ajoutés (abandonnés du run par défaut, toujours instanciables manuellement) :
