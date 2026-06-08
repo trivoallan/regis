@@ -120,7 +120,7 @@ Manage and evaluate rules against reports.
 
 ### `rules list`
 
-List all available default rules provided by analyzers, and optionally merge with overrides.
+List the available criteria catalogue (the reusable criterion templates you can bind from a playbook), and optionally merge with overrides.
 
 ```bash
 regis rules list [OPTIONS]

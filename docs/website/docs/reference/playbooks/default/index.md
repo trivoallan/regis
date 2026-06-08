@@ -24,11 +24,12 @@ Rules are evaluated automatically based on which analyzers are present in the re
 
 Failing any critical rule blocks the image from reaching a Gold or Silver tier.
 
-| Slug                        | Provider | Description                                                                          |
-| :-------------------------- | :------- | :----------------------------------------------------------------------------------- |
-| `registry-domain-whitelist` | `core`   | Image must originate from a trusted registry (docker.io, quay.io, ghcr.io, ghcr.io). |
-| `no-root`                   | `oci`    | Image must not be configured to run as the `root` user.                              |
-| `cve-critical`              | `cve`    | No `CRITICAL` CVEs allowed (max: 0).                                                 |
+| Slug                        | Provider  | Description                                                                                       |
+| :-------------------------- | :-------- | :------------------------------------------------------------------------------------------------ |
+| `registry-domain-whitelist` | `core`    | Image must originate from a trusted registry (docker.io, registry-1.docker.io, quay.io, ghcr.io). |
+| `no-root`                   | `oci`     | Image must not be configured to run as the `root` user.                                           |
+| `verified-secrets`          | `secrets` | No verified, active credentials may be embedded in the image.                                     |
+| `cve-critical`              | `cve`     | No `CRITICAL` CVEs allowed (max: 0).                                                              |
 
 ### Warning
 
