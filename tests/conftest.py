@@ -14,6 +14,8 @@ import cookiecutter.main as _cc_main
 import cookiecutter.repository as _cc_repo
 import pytest
 
+from tests import _per_file_coverage
+
 
 @pytest.fixture(autouse=True)
 def block_remote_cookiecutter(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -30,3 +32,10 @@ def block_remote_cookiecutter(monkeypatch: pytest.MonkeyPatch) -> None:
         return real(template, *args, **kwargs)
 
     monkeypatch.setattr(_cc_main, "cookiecutter", _guard)
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_sessionfinish(session: pytest.Session):
+    """Run the per-file coverage gate after pytest-cov writes its data."""
+    yield
+    _per_file_coverage.enforce(session)
