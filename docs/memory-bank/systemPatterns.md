@@ -66,10 +66,13 @@ artifact** (`actions/upload-pages-artifact` + `actions/deploy-pages` in
 `gh-pages` branch: it previously accumulated every deploy commit under
 `keep_files: true` and grew the default clone to ~326 MB. The Docusaurus build
 output is **never committed** — `ci-lint.yml`'s `generated-artifacts-guard` job
-fails any PR that tracks `**/search-index.json`, `docs/v*/**`, `_site/**`, or
+fails any PR that tracks `**/search-index.json`, `docs/v<N>*/`, `_site/**`, or
 `docs/website/build/**`. Only the latest 3 doc versions + `next` are served
 (matching `release-snapshot.yml`'s 3-version source pruning). GitHub Pages
 **Source** must be set to _GitHub Actions_ in repo Settings → Pages.
+`actions/upload-pages-artifact` strips dotfiles (e.g. `.nojekyll`) by default,
+which is harmless here because a GitHub Actions Pages source does not invoke
+Jekyll.
 
 ## Mémoire & artefacts de planification — taxonomie
 
