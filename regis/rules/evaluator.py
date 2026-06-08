@@ -11,6 +11,7 @@ import json_logic
 from json_logic import jsonLogic
 
 from regis.playbook.context import MissingDataTracker, _build_context
+from regis.utils.predicates import is_empty, is_falsy, is_truthy, is_url, matches
 
 logger = logging.getLogger(__name__)
 
@@ -340,6 +341,16 @@ def _add_custom_operations():
             else False
         ),
     )
+
+    # Meta/string helpers — meta values arrive as strings, so these make rule
+    # conditions over `metadata.*` ergonomic. All are defensive (falsy on
+    # unexpected input). See regis/utils/predicates.py.
+    json_logic.add_operation("is_true", is_truthy)
+    json_logic.add_operation("is_false", is_falsy)
+    json_logic.add_operation("is_url", is_url)
+    json_logic.add_operation("is_empty", is_empty)
+    json_logic.add_operation("is_set", lambda a: not is_empty(a))
+    json_logic.add_operation("matches", matches)
 
 
 _add_custom_operations()

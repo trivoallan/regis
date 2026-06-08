@@ -39,6 +39,17 @@ class TestReportSchemaVersion:
     def test_accepts_report_with_schema_version(self):
         jsonschema.validate(instance=_minimal_report(), schema=_report_schema())
 
+    def test_rejects_request_metadata(self):
+        """request.metadata was removed; request has additionalProperties:false."""
+        report = _minimal_report()
+        report["request"]["metadata"] = {"ci": {"platform": "github"}}
+        with pytest.raises(jsonschema.ValidationError):
+            jsonschema.validate(instance=report, schema=_report_schema())
+
+    def test_accepts_top_level_metadata(self):
+        report = _minimal_report(metadata={"ci": {"platform": "github"}})
+        jsonschema.validate(instance=report, schema=_report_schema())
+
     def test_rejects_report_missing_schema_version(self):
         report = _minimal_report()
         del report["schemaVersion"]
@@ -61,10 +72,10 @@ class TestReportSchemaVersion:
 
 
 class TestEnsureSchemaVersion:
-    def test_constant_is_two(self):
+    def test_constant_is_three(self):
         from regis.utils.report import REPORT_SCHEMA_VERSION
 
-        assert REPORT_SCHEMA_VERSION == 2
+        assert REPORT_SCHEMA_VERSION == 3
 
     def test_sets_when_missing(self):
         from regis.utils.report import REPORT_SCHEMA_VERSION, ensure_schema_version
@@ -92,10 +103,10 @@ class TestContractFixture:
 
         from regis.utils.report import validate_report
 
-        fixture = Path(__file__).parent / "fixtures" / "report.v2.json"
+        fixture = Path(__file__).parent / "fixtures" / "report.v3.json"
         report = json.loads(fixture.read_text(encoding="utf-8"))
 
-        assert report["schemaVersion"] == 2
+        assert report["schemaVersion"] == 3
         validate_report(report)  # must not raise
 
     def test_analyzer_blobs_match_their_schemas(self):
@@ -104,7 +115,7 @@ class TestContractFixture:
 
         import jsonschema
 
-        fixtures = Path(__file__).parent / "fixtures" / "report.v2.json"
+        fixtures = Path(__file__).parent / "fixtures" / "report.v3.json"
         report = json.loads(fixtures.read_text(encoding="utf-8"))
 
         schema_dir = importlib.resources.files("regis.schemas.analyzer")

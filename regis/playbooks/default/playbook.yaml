@@ -176,8 +176,8 @@ spec:
 
   links:
     - label: Return to Merge Request
-      url: "{{ request.metadata['gitlab.mr_url'] }}"
-      condition: { "!!": [var: request.metadata.gitlab.mr_url] }
+      url: "{{ metadata.gitlab.mr_url }}"
+      condition: { "!!": [var: metadata.gitlab.mr_url] }
   presentation:
     badges:
       - score

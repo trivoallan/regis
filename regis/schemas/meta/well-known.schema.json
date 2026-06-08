@@ -5,19 +5,32 @@
   "description": "Standard metadata fields recognized by regis across all playbooks.",
   "type": "object",
   "properties": {
-    "ci.platform": {
-      "type": "string",
-      "enum": ["github", "gitlab"],
-      "description": "CI platform running the analysis"
-    },
-    "ci.job.id": {
-      "type": "string",
-      "description": "Unique identifier of the CI job"
-    },
-    "ci.job.url": {
-      "type": "string",
-      "format": "uri",
-      "description": "URL to the CI job run"
+    "ci": {
+      "type": "object",
+      "description": "Continuous-integration context for the analysis run.",
+      "properties": {
+        "platform": {
+          "type": "string",
+          "enum": ["github", "gitlab"],
+          "description": "CI platform running the analysis"
+        },
+        "job": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier of the CI job"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to the CI job run"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     }
   },
   "additionalProperties": true

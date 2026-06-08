@@ -11,8 +11,45 @@ from typing import Any
 import jsonschema
 
 from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+from regis.utils.predicates import is_url
 
 logger = logging.getLogger(__name__)
+
+# A local format checker so `format: uri` is enforced deterministically
+# (jsonschema's default does nothing for "uri" without an optional dependency).
+_FORMAT_CHECKER = jsonschema.FormatChecker()
+
+
+@_FORMAT_CHECKER.checks("uri")
+def _check_uri(value: object) -> bool:
+    """Validate a `format: uri` field.
+
+    Deliberately narrowed to http/https URLs (via :func:`is_url`), which is the
+    intended shape for the well-known `ci.job.url` field. This is stricter than
+    RFC-3986 `uri` (no ftp/urn/mailto). Format checks run only on string
+    instances; non-strings are caught by the schema's `type`.
+    """
+    return is_url(value) if isinstance(value, str) else True
+
+
+def _collect_leaf_paths(schema: dict[str, Any], prefix: str = "") -> dict[str, Any]:
+    """Recursively collect dotted leaf paths from a schema's ``properties``.
+
+    A leaf is any property that is not an object-with-properties. Returns a mapping
+    of ``dotted.path -> subschema`` (subschema currently unused but kept for clarity).
+    """
+    paths: dict[str, Any] = {}
+    for name, sub in schema.get("properties", {}).items():
+        path = f"{prefix}.{name}" if prefix else name
+        if (
+            isinstance(sub, dict)
+            and sub.get("type") == "object"
+            and "properties" in sub
+        ):
+            paths.update(_collect_leaf_paths(sub, path))
+        else:
+            paths[path] = sub
+    return paths
 
 
 class MetadataAnalyzer(BaseAnalyzer):
@@ -67,67 +104,50 @@ class MetadataAnalyzer(BaseAnalyzer):
             and ``valid``.
         """
         combined_schema = self._build_combined_schema()
-        schema_properties: dict[str, Any] = {}
-        required_fields: set[str] = set()
+
+        # Known leaf fields (dotted) across the well-known + playbook schemas.
+        leaf_paths: dict[str, Any] = {}
         for sub in combined_schema.get("allOf", []):
-            schema_properties.update(sub.get("properties", {}))
-            required_fields.update(sub.get("required", []))
+            leaf_paths.update(_collect_leaf_paths(sub))
 
-        # Build per-field error map from jsonschema.
-        validator = jsonschema.Draft202012Validator(combined_schema)
-        field_errors: dict[str, str] = {}
-        for error in validator.iter_errors(self._metadata):
-            # Map the error back to the field it concerns.
-            if error.path:
-                field = str(error.path[0])
-            elif error.validator == "required":
-                # "required" errors report the missing field name in the message.
-                # Extract field name from the validator_value list when possible.
-                for missing in error.validator_value:
-                    if missing not in self._metadata:
-                        field_errors[missing] = error.message
-                        break
-                continue
+        validator = jsonschema.Draft202012Validator(
+            combined_schema, format_checker=_FORMAT_CHECKER
+        )
+        errors = list(validator.iter_errors(self._metadata))
+
+        # metadata_validation: one entry per known leaf path, valid by default.
+        metadata_validation: dict[str, Any] = {
+            path: {"valid": True} for path in leaf_paths
+        }
+        for error in errors:
+            if error.validator == "required":
+                base = list(error.absolute_path)
+                # Navigate to the object the `required` constraint applies to so we
+                # only flag fields that are genuinely absent (validator_value lists
+                # ALL required fields, including present ones).
+                obj: Any = self._metadata
+                for key in base:
+                    obj = obj.get(key, {}) if isinstance(obj, dict) else {}
+                for field in error.validator_value:
+                    if isinstance(obj, dict) and field in obj:
+                        continue
+                    dotted = ".".join([*map(str, base), str(field)])
+                    metadata_validation[dotted] = {
+                        "valid": False,
+                        "error": error.message,
+                    }
             else:
-                continue
-            field_errors[field] = error.message
-
-        # Build the output metadata dict: user-supplied values + null for schema
-        # properties that are absent.
-        out_metadata: dict[str, Any] = {}
-        for key, value in self._metadata.items():
-            out_metadata[key] = value
-        for field in schema_properties:
-            if field not in out_metadata:
-                out_metadata[field] = None
-
-        # Build per-field validation results — only for schema-defined properties.
-        metadata_validation: dict[str, Any] = {}
-        for field in schema_properties:
-            if field in field_errors:
-                metadata_validation[field] = {
+                dotted = ".".join(str(p) for p in error.absolute_path)
+                metadata_validation[dotted or "_schema"] = {
                     "valid": False,
-                    "error": field_errors[field],
+                    "error": error.message,
                 }
-            else:
-                metadata_validation[field] = {"valid": True}
-
-        # Also report errors for required fields that are missing (not in schema_properties
-        # explicitly but listed as required).
-        for field in required_fields:
-            if field not in metadata_validation and field in field_errors:
-                metadata_validation[field] = {
-                    "valid": False,
-                    "error": field_errors[field],
-                }
-
-        valid = len(field_errors) == 0
 
         return {
             "analyzer": self.name,
-            "metadata": out_metadata,
+            "metadata": dict(self._metadata),
             "metadata_validation": metadata_validation,
-            "valid": valid,
+            "valid": not errors,
         }
 
     def validate(self, report: dict[str, Any]) -> None:

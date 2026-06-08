@@ -219,6 +219,62 @@ spec:
         fail: "Missing 'my-company.owner' label."
 ```
 
+## Référencer le meta dans les règles
+
+Les valeurs passées via `regis analyze --meta <clé>=<valeur>` sont exposées aux
+règles sous le namespace **`metadata.*`** (chemin canonique). La notation pointée
+de la clé devient une structure imbriquée :
+
+```bash
+regis analyze nginx:latest \
+  --meta ci.platform=github \
+  --meta ci.job.url=https://github.com/org/repo/actions/runs/42
+```
+
+s'adresse en règle par `{"var": "metadata.ci.platform"}` et
+`{"var": "metadata.ci.job.url"}`.
+
+### Namespace optionnel
+
+Le meta est fourni par l'utilisateur : une clé `metadata.*` absente résout à
+`null` **sans** marquer la règle `incomplete` (contrairement à un `results.*`
+manquant, qui signifie « un analyzer n'a pas tourné »). On peut donc tester la
+présence d'un meta de façon fiable :
+
+```yaml
+spec:
+  rules:
+    - slug: ci-job-url-required
+      description: A CI job URL must be provided and well-formed.
+      level: warning
+      tags: [provenance]
+      condition:
+        and:
+          - { "is_set": [{ "var": "metadata.ci.job.url" }] }
+          - { "is_url": [{ "var": "metadata.ci.job.url" }] }
+      messages:
+        pass: "CI job URL is present and valid."
+        fail: "Provide a valid --meta ci.job.url."
+```
+
+Comme toutes les valeurs `--meta` sont des chaînes, les helpers `is_true` /
+`is_false` interprètent les drapeaux booléens :
+
+```yaml
+condition: { "is_true": [{ "var": "metadata.gate.enabled" }] }
+```
+
+### Champs well-known
+
+Regis reconnaît ces champs standard (validés contre
+`schemas/meta/well-known.schema.json`) ; tout autre champ est accepté tel quel :
+
+| Champ                  | Type         | Notes                  |
+| :--------------------- | :----------- | :--------------------- |
+| `metadata.ci.platform` | enum         | `github` ou `gitlab`.  |
+| `metadata.ci.job.id`   | string       | Identifiant du job CI. |
+| `metadata.ci.job.url`  | string (uri) | URL du run CI.         |
+
 ## Rule evaluation mechanics
 
 ### JSON Logic conditions
@@ -230,14 +286,20 @@ evaluation context exposes the full, flattened analysis report. Analyzer
 
 Regis adds several custom operators on top of the standard set:
 
-| Operator       | Description                                                      |
-| :------------- | :--------------------------------------------------------------- |
-| `intersects`   | `true` if any element of list _a_ is present in list _b_.        |
-| `contains_all` | `true` if all elements of list _b_ are present in list _a_.      |
-| `subset`       | `true` if all elements of list _a_ are also in list _b_.         |
-| `keys`         | Returns the keys of a dictionary.                                |
-| `get`          | Gets a value from a dictionary by a computed key.                |
-| `env_contains` | `true` if any string in _b_ is a substring of any string in _a_. |
+| Operator       | Description                                                                                         |
+| :------------- | :-------------------------------------------------------------------------------------------------- |
+| `intersects`   | `true` if any element of list _a_ is present in list _b_.                                           |
+| `contains_all` | `true` if all elements of list _b_ are present in list _a_.                                         |
+| `subset`       | `true` if all elements of list _a_ are also in list _b_.                                            |
+| `keys`         | Returns the keys of a dictionary.                                                                   |
+| `get`          | Gets a value from a dictionary by a computed key.                                                   |
+| `env_contains` | `true` if any string in _b_ is a substring of any string in _a_.                                    |
+| `is_true`      | `true` if the value is a truthy string (`true`/`1`/`yes`/`on`, case-insensitive) or boolean `true`. |
+| `is_false`     | `true` if the value is a falsy string (`false`/`0`/`no`/`off`) or boolean `false`.                  |
+| `is_url`       | `true` if the value is a well-formed `http`/`https` URL.                                            |
+| `is_empty`     | `true` if the value is null, empty, or whitespace-only.                                             |
+| `is_set`       | `true` if the value is present and non-empty (complement of `is_empty`).                            |
+| `matches`      | `true` if the string value matches a regex: `{"matches": [{"var": "..."}, "^pattern$"]}`.           |
 
 The bound criterion's options are accessible under `criterion.params.*` (for
 example, `{"var": "criterion.params.max_count"}`).

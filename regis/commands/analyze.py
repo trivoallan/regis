@@ -360,7 +360,6 @@ def analyze(
             if merge_meta and existing_report.get("metadata"):
                 metadata_dict = {**existing_report["metadata"], **metadata_dict}
             existing_report["metadata"] = metadata_dict
-            existing_report.setdefault("request", {})["metadata"] = metadata_dict
 
         formats = ["json"]
         if markdown:
@@ -582,7 +581,6 @@ def analyze(
         }
         if metadata_dict:
             analysis_report["metadata"] = metadata_dict
-            analysis_report["request"]["metadata"] = metadata_dict
 
         try:
             from importlib.resources import files as _res_files

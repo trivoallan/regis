@@ -14,7 +14,7 @@ import jsonschema
 
 logger = logging.getLogger(__name__)
 
-REPORT_SCHEMA_VERSION = 2
+REPORT_SCHEMA_VERSION = 3
 """Current report-structure contract version (see report.schema.json)."""
 
 

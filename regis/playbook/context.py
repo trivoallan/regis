@@ -79,6 +79,15 @@ class NamedList(list):
         return super().__getitem__(key)
 
 
+def _is_optional_namespace(full_key: str) -> bool:
+    """Keys under the user-supplied ``metadata`` namespace are optional.
+
+    Their absence is a legitimate, testable state (via is_set/is_empty), not a
+    "an analyzer did not run" condition, so it must not mark a rule incomplete.
+    """
+    return full_key == "metadata" or full_key.startswith("metadata.")
+
+
 class MissingDataTracker(dict):
     """A dictionary wrapper that tracks which keys were accessed and if they were missing."""
 
@@ -106,11 +115,13 @@ class MissingDataTracker(dict):
         try:
             val = super().__getitem__(key)
         except KeyError:
-            self.root.missing_accessed = True
+            if not _is_optional_namespace(full_key):
+                self.root.missing_accessed = True
             raise
 
         if val is None:
-            self.root.missing_accessed = True
+            if not _is_optional_namespace(full_key):
+                self.root.missing_accessed = True
             return None
 
         if isinstance(val, dict):
@@ -128,6 +139,10 @@ class MissingDataTracker(dict):
             full_key = f"{self.path}.{key}" if self.path else key
             self.accessed_keys.add(full_key)
         if not super().__contains__(key):
-            self.root.missing_accessed = True
+            if not (
+                isinstance(key, str)
+                and _is_optional_namespace(f"{self.path}.{key}" if self.path else key)
+            ):
+                self.root.missing_accessed = True
             return False
         return True
