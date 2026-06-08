@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from importlib import resources
 from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import jsonschema
@@ -297,14 +298,14 @@ def test_oci_report_includes_platforms_supported():
     assert len(supported) == 8
 
 
-def _oci_report(supported: list[str]) -> dict:
+def _oci_report(supported: list[str]) -> dict[str, Any]:
     return {
         "request": {"registry": "docker.io", "analyzers": ["oci"]},
         "results": {"oci": {"platforms_supported": supported}},
     }
 
 
-def _eval_oci_criterion(supported: list[str], criterion: str, platforms: list[str]):
+def _eval_oci_criterion(supported: list[str], criterion: str, platforms: list[str]) -> dict[str, Any]:
     rules_def = {
         "rules": [
             {
