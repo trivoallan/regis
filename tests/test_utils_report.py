@@ -249,6 +249,8 @@ def test_markdown_includes_verdict_header():
     md = _render_markdown(report)
     assert "## 🥈 Silver · 78/100" in md
     assert "🟥 CVE: Critical" in md
+    # Worst level carries the severity square — must match the terminal surface.
+    assert "pire niveau : 🟥 critical" in md
     assert "| ✗ | cve-critical | critical | 1 critical CVE (max 0) |" in md
     assert "| ⚠ | scorecard-min | warning | data unavailable |" in md
 

@@ -61,6 +61,7 @@ def test_verdict_block_headline_and_lines(capsys):
     out = _strip_ansi(capsys.readouterr().err)
     assert "🥈 Silver · 78/100" in out
     assert "17/20 règles" in out and "2 échecs" in out and "1 incomplète" in out
+    assert "pire niveau : 🟥 critical" in out
     assert "🟥 CVE: Critical" in out and "🟧 CVE: High" in out
     assert "[cve-critical]" in out and "1 critical CVE (max 0)" in out
     assert "[scorecard-min]" in out

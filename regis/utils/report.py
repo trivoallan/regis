@@ -292,7 +292,12 @@ def validate_report(report: dict[str, Any]) -> None:
 
 def _verdict_markdown(report: dict[str, Any]) -> list[str]:
     """Render the verdict header (tier · score, badges, failed rules) as md lines."""
-    from regis.playbook.verdict import badge_emoji, build_verdict, tier_label
+    from regis.playbook.verdict import (
+        badge_emoji,
+        build_verdict,
+        level_emoji,
+        tier_label,
+    )
 
     v = build_verdict(report)
     if not v.evaluated:
@@ -309,7 +314,7 @@ def _verdict_markdown(report: dict[str, Any]) -> list[str]:
         if v.incomplete:
             counts += f" · {v.incomplete} incomplète{'s' if v.incomplete > 1 else ''}"
         if v.worst_level:
-            counts += f" · pire niveau : {v.worst_level}"
+            counts += f" · pire niveau : {level_emoji(v.worst_level)} {v.worst_level}"
     lines += [counts, ""]
 
     if v.badges:
