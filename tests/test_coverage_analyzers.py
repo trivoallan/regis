@@ -113,7 +113,9 @@ class TestHadolintCoverage:
         cl = MagicMock(registry="r", username="u", password="p")
         sk = json.dumps({"history": [{"created_by": "RUN echo 1"}]})
         ha = json.dumps([{"level": "warning", "message": "m"}])
-        with patch("subprocess.run") as m:
+        with patch(
+            "regis.analyzers.hadolint.ensure_tool", return_value="/usr/bin/hadolint"
+        ), patch("subprocess.run") as m:
             m.side_effect = [MagicMock(stdout=sk), MagicMock(stdout=ha)]
             r = a.analyze(cl, "r", "t")
             assert r["issues_by_level"]["warning"] == 1

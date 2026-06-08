@@ -14,9 +14,10 @@ class MockRegistryClient:
 
 
 class TestHadolintAnalyzer:
+    @patch("regis.analyzers.hadolint.ensure_tool", return_value="/usr/bin/hadolint")
     @patch("regis.analyzers.hadolint.subprocess.run")
     @patch("regis.analyzers.hadolint.run_regctl")
-    def test_hadolint_passes(self, mock_regctl, mock_run):
+    def test_hadolint_passes(self, mock_regctl, mock_run, mock_ensure_tool):
         # The config fetch goes through regctl; the linter stays on subprocess.run.
         mock_regctl.return_value = json.dumps(
             {
@@ -39,9 +40,10 @@ class TestHadolintAnalyzer:
         assert report["issues_by_level"]["error"] == 0
         assert report["issues_by_level"]["warning"] == 0
 
+    @patch("regis.analyzers.hadolint.ensure_tool", return_value="/usr/bin/hadolint")
     @patch("regis.analyzers.hadolint.subprocess.run")
     @patch("regis.analyzers.hadolint.run_regctl")
-    def test_hadolint_fails(self, mock_regctl, mock_run):
+    def test_hadolint_fails(self, mock_regctl, mock_run, mock_ensure_tool):
         mock_regctl.return_value = json.dumps(
             {
                 "history": [
