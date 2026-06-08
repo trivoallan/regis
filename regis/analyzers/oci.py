@@ -31,7 +31,7 @@ def _platforms_supported(platforms: list[dict[str, Any]]) -> list[str]:
     Skips entries whose ``os`` or ``architecture`` is missing or ``"unknown"``.
     Deduplicates while preserving first-seen order.
     """
-    seen: list[str] = []
+    names: list[str] = []
     for platform in platforms:
         os_name = platform.get("os")
         arch = platform.get("architecture")
@@ -41,9 +41,8 @@ def _platforms_supported(platforms: list[dict[str, Any]]) -> list[str]:
         variant = platform.get("variant")
         if variant:
             name = f"{name}/{variant}"
-        if name not in seen:
-            seen.append(name)
-    return seen
+        names.append(name)
+    return list(dict.fromkeys(names))
 
 
 class OciAnalyzer(BaseAnalyzer):

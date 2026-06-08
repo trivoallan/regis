@@ -269,3 +269,7 @@ def test_platforms_supported_skips_unknown_and_missing():
         {"os": "linux", "architecture": "amd64"},
     ]
     assert _platforms_supported(platforms) == ["linux/amd64"]
+
+
+def test_platforms_supported_empty():
+    assert _platforms_supported([]) == []
