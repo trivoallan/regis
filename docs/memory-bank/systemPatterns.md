@@ -59,39 +59,25 @@ Backward compatibility: the legacy `rule:` entry key and `rule.*` condition name
 - **Auto-rebase + squash merge no-op**: if a fix branch is auto-rebased after `main` already contains the same change, the squash merge becomes a no-op. Always branch from the latest `main` immediately before committing.
 - **mypy** is excluded for `tests/**` (crashes on Linux CI with stale cache on `http.server`).
 
+## Mémoire & artefacts de planification — taxonomie
+
+Tout artefact de mémoire se range selon deux axes : **portée** (local à un repo /
+constellation transverse) et **durée de vie** (durable / éphémère).
+
+|                   | Durable                                                           | Éphémère                                 |
+| ----------------- | ----------------------------------------------------------------- | ---------------------------------------- |
+| **Local**         | memory-bank du repo + specs (`docs/superpowers/specs/`)           | plans d'exécution → supprimés au merge   |
+| **Constellation** | conventions (`.agent/rules/`) + `docs/memory-bank/constellation/` | état programme → mémoire auto de l'agent |
+
+Règle mentale : _« Est-ce vrai pour toute la constellation ? → cœur. Est-ce que ça
+survit à la PR ? → memory-bank/spec, sinon plan jetable. »_
+
+- Une **note de recherche** (probe, benchmark, « pourquoi on a écarté X ») est durable :
+  la promouvoir vers `decisionLog.md` avant de supprimer le plan qui l'hébergeait.
+- Les sous-projets ne dupliquent pas la zone constellation : ils y renvoient par lien.
+
 ## Commit Scopes (mandatory)
 
-Extrapolate the scope from the architectural component modified.
-
-### Core & Logic
-
-- `cli` — CLI, argument parsing, main console output
-- `playbook` — rule evaluation engine, section parsing, `jsonLogic`, context management
-- `schema` — data interfaces, structure definitions, JSON validation files
-- `registry` — registry communication (HTTP, auth, manifest fetching)
-
-### Analyzers
-
-- `analyzer` — base analyzer class or shared analyzer interfaces
-- `analyzer/cve` — vulnerability (CVE) scanning via grype
-- `analyzer/secrets` — embedded secret detection via trufflehog
-- `analyzer/sbom` — SBOM analysis and CycloneDX/SPDX generation via syft
-- `analyzer/hadolint` — Dockerfile linting
-- `analyzer/skopeo` — base metadata extraction
-- `analyzer/freshness` — image age and freshness score
-- `analyzer/size` — size and layer calculations
-- `analyzer/popularity` — registry popularity metrics
-- `analyzer/endoflife` — version support status
-- `analyzer/scorecarddev` — OpenSSF Scorecard checks
-- `analyzer/provenance` — provenance and supply chain evidence
-
-### Rendering & Reporting
-
-- `report` — high-level report generation (folder creation, file writing)
-- `templates` / `theme` — visual aspects, HTML, CSS, React/Docusaurus SPA
-
-### Tooling & CI
-
-- `ci` — GitHub Actions workflows
-- `deps` / `build` — environment management (Pipenv, pyproject.toml, Dockerfiles)
-- `docs` — Docusaurus documentation, READMEs, Memory Bank updates
+> Source de vérité unique : `.agent/rules/commitmessages.md` (auto-chargé par les
+> agents). Extrapoler le scope du composant architectural modifié. Ne pas redupliquer
+> la liste ici.
