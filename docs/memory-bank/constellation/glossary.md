@@ -27,12 +27,12 @@ C4Context
 Le mot « rule » était surchargé. Il est désormais désambiguïsé en quatre couches
 (décision 2026-06-05) :
 
-| Couche        | Sens                                                                                  |
-| ------------- | ------------------------------------------------------------------------------------- |
-| **finding**   | une détection locale d'un problème par un analyzer (terme local).                     |
-| **metric**    | un agrégat exposé par un analyzer (`results.*`), ce que les critères lisent.          |
+| Couche        | Sens                                                                                                                                                              |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **finding**   | une détection locale d'un problème par un analyzer (terme local).                                                                                                 |
+| **metric**    | un agrégat exposé par un analyzer (`results.*`), ce que les critères lisent.                                                                                      |
 | **criterion** | une condition réutilisable et paramétrée livrée par un analyzer (ex `cve-count`). Anciennement « default rule »/template. Espace JSON Logic : `criterion.params`. |
-| **rule**      | la décision de politique liée au playbook : criterion + options + severity + tier.    |
+| **rule**      | la décision de politique liée au playbook : criterion + options + severity + tier.                                                                                |
 
 Termes voisins :
 
