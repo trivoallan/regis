@@ -9,12 +9,12 @@
 Le clone par défaut du dépôt pèse **326 MB** (taille du `.git` packé), ce qui rend
 le clonage lourd. Diagnostic mesuré :
 
-| Périmètre | Poids objets (décompressé) |
-|---|---|
-| `main` seul | 138 MB |
-| Toutes refs **sauf** `gh-pages` | 143 MB |
-| `gh-pages` | **~8,5 GB** ← tout le poids est là |
-| `origin/docs/latest-generated` (branche générée) | 138 MB |
+| Périmètre                                        | Poids objets (décompressé)         |
+| ------------------------------------------------ | ---------------------------------- |
+| `main` seul                                      | 138 MB                             |
+| Toutes refs **sauf** `gh-pages`                  | 143 MB                             |
+| `gh-pages`                                       | **~8,5 GB** ← tout le poids est là |
+| `origin/docs/latest-generated` (branche générée) | 138 MB                             |
 
 **Cause racine n°1 — historique `gh-pages`.** La branche `gh-pages` accumule
 **284 commits de déploiement** (~8,5 GB d'objets, packés à ~290 MB). Un `git clone`
@@ -22,7 +22,7 @@ récupère toutes les branches, dont `gh-pages` → c'est l'essentiel du poids d
 
 **Cause racine n°2 — le robinet est ouvert.** `.github/workflows/cd-docs.yml` déploie
 avec `peaceiris/actions-gh-pages` en **`keep_files: true` et sans `force_orphan`** :
-chaque build **empile** un nouveau commit *et* conserve tous les anciens fichiers.
+chaque build **empile** un nouveau commit _et_ conserve tous les anciens fichiers.
 La branche grossit sans borne (ex. 226 versions de `search-index.json` empilées).
 
 **Cause racine n°2 bis — versions périmées.** L'arbre actuel de `gh-pages` (dernier
@@ -57,7 +57,7 @@ de docs** (`v0.19.0` → `v0.33.0` + `next`). Or `release-snapshot.yml` élague 
 Cible : `.github/workflows/cd-docs.yml`.
 
 - Remplacer les **deux** étapes `peaceiris/actions-gh-pages` (`Deploy docs to GitHub
-  Pages` et `Deploy root redirect to GitHub Pages`) par un déploiement basé artefact :
+Pages` et `Deploy root redirect to GitHub Pages`) par un déploiement basé artefact :
   1. Assembler un dossier unique `_site/` :
      - `docs/website/build/` → `_site/docs/`
      - `.github/pages-root/*` → `_site/` (préserver `CNAME`/redirect racine si présents)
@@ -72,7 +72,7 @@ Cible : `.github/workflows/cd-docs.yml`.
   versionner la source via `docusaurus docs:version`) → aucun changement attendu, à
   confirmer pendant l'implémentation.
 - **Étape manuelle (utilisateur, hors git)** : GitHub → Settings → Pages → Source =
-  *GitHub Actions*. À coordonner avant le premier déploiement artefact.
+  _GitHub Actions_. À coordonner avant le premier déploiement artefact.
 
 ### WS2 — Nettoyage curatif (l'allègement effectif)
 
@@ -88,7 +88,7 @@ Pré-condition : WS1 mergé **et** site vérifié live depuis l'artefact.
     `origin/copilot/fix-failing-checks`
 - Élaguer les branches locales `tritri/*` (39) mergées/abandonnées — **local only**,
   risque nul.
-- **Nuance à documenter** : le clone *vécu par les utilisateurs* maigrit **dès** la
+- **Nuance à documenter** : le clone _vécu par les utilisateurs_ maigrit **dès** la
   suppression de `gh-pages` (un client ne fetch pas une branche supprimée). Le **pack
   côté serveur** ne rétrécit qu'après le `gc` automatique de GitHub (quelques jours ;
   pas de `gc` manuel exposé). Optionnel : ouvrir un ticket GitHub Support pour forcer
