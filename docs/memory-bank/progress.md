@@ -94,6 +94,12 @@
   - Helper `_render_markdown()` et branche `elif fmt == 'md':` dans `regis/utils/report.py`.
   - 8 tests unitaires + script `scripts/verify_s02.py` (7/7 checks). 460 tests passent.
 
+- **M002/S05 — Dependency upgrade (2026-04-22)**:
+  - `pipenv update` : Pipfile.lock rafraîchi (marshmallow reste 3.26.2, pas de pin v4 nécessaire).
+  - `pnpm update` au workspace root : pnpm-lock.yaml root unique rafraîchi (15 paquets ajoutés, 2 retirés).
+  - `pinact 3.9.0 --exclude 'trivoallan/regis'` : 11 workflows mis à jour (SHA-pins), 3 major bumps acceptés (attest-build-provenance v2→v4, fetch-metadata v2→v3, paths-filter v3→v4).
+  - 460 tests passent, 90.74% coverage.
+
 - **Claude Workflows CI/CD Fixes (2026-04-22)**:
   - SHA-pinning des GitHub Actions, permissions workflow-level, corrections YAML linting.
   - Trunk checks passants, PR merged to main.
