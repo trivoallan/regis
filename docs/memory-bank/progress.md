@@ -12,6 +12,12 @@
 
 ## Completed (Recent)
 
+- **Règles d'identité de plateforme OCI (2026-06-08, [PR #661](https://github.com/trivoallan/regis/pull/661), `whats-new`)** — non cassant, opt-in (brainstorming → writing-plans → subagent-driven, 6 tâches, revue spec+qualité par tâche + revue finale holistique):
+  - 3 nouveaux criteria OCI sur _quelles_ plateformes (le `platforms-count` existant ne compte que le nombre) : `platforms-required` (`contains_all` = au moins), `platforms-whitelist` (`subset` = uniquement), `platforms-blacklist` (`!intersects` = aucune). Param uniforme `platforms` (cf. `required-labels`/`labels`). Opérateurs JSON Logic **existants** — aucun nouvel opérateur.
+  - Nouvelle projection plate `results.oci.platforms_supported` = liste dédupliquée de chaînes canoniques `os/arch[/variant]` (filtre `unknown`, ordre préservé via `dict.fromkeys`) ; champ **optionnel** ajouté à `oci.schema.json` (`additionalProperties:false`). Matching par égalité stricte (`linux/arm64` ≠ `linux/arm64/v8`).
+  - **Opt-in** (décision post-revue) : les 3 criteria sont `enable: false` (sinon bruyants par défaut — whitelist échoue sur une image multi-arch large, required sur toute image mono-arch). `merge_rules()` auto-active un criterion instancié via une liaison `criterion:` (un `enable: false` explicite reste prioritaire) ; un override par slug seul (Case B) **n'active pas** un criterion opt-in. C'est le **premier** criterion `enable:false` du cœur — le mécanisme d'auto-activation est nouveau dans le moteur.
+  - Pages de référence régénérées depuis `default_criteria()` ; note opt-in dans `reference/analyzers/oci.md` + le spec. Suite 543 PASS, couverture 92.14 %. Spec : `docs/superpowers/specs/2026-06-08-oci-platforms-whitelist-blacklist-design.md` ; plan : `docs/superpowers/plans/2026-06-08-oci-platforms-whitelist-blacklist.md`. **Reste** : merge de la PR (main protégée).
+
 - **Dégraissage pré-v1 — suppression de 3 features inutiles (2026-06-05)** — 3 PR distinctes (brainstorming → spec → plans → subagent-driven):
   - **PR #648** (`chore(skills)`, non cassant) — skill Claude `/create-playbook` retirée (chevauchait `regis bootstrap playbook`) ; `custom-playbook.md` + `CLAUDE.md` mis à jour ; porte les design docs partagés (spec + 3 plans).
   - **PR #649** (`feat(cli)!`, mineur) — commande `regis github` retirée (redondante depuis l'extraction de `trivoallan/regis-action`) ; `gitlab` conservé.

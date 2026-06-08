@@ -17,6 +17,11 @@ Voir `docs/memory-bank/roadmap.md` pour le détail complet.
 
 ## Recent Changes
 
+- [2026-06-08] **Règles d'identité de plateforme OCI** ([PR #661](https://github.com/trivoallan/regis/pull/661), `whats-new`, non cassant, opt-in):
+  - 3 criteria OCI (`platforms-required`/`-whitelist`/`-blacklist`) sur _quelles_ plateformes une image supporte, adossés à une nouvelle projection plate `results.oci.platforms_supported` (`os/arch[/variant]` canonique, dédupliquée). Réutilise `contains_all`/`subset`/`intersects` — aucun nouvel opérateur. Param uniforme `platforms`.
+  - **Premier criterion `enable:false` du cœur** : les 3 sont opt-in (désactivés par défaut, sinon bruyants) ; `merge_rules()` auto-active un criterion lié via `criterion:` (un `enable:false` explicite gagne ; un override par slug seul n'active pas). Détail dans `progress.md`. Pattern réutilisable pour de futures règles « politique » à ne pas activer par défaut.
+  - 6 tâches subagent-driven (revue spec+qualité par tâche + holistique). Suite 543 PASS, couverture 92.14 %. Spec/plan sous `docs/superpowers/`.
+
 - [2026-06-05] **Dégraissage pré-v1 : suppression de 3 features inutiles** (3 PR distinctes ; brainstorming → spec → plans → subagent-driven, revue conformité + qualité par PR):
   - **PR #648** (`chore(skills)`, non cassant) : suppression de la skill Claude `/create-playbook` (chevauchait `regis bootstrap playbook`). Doc `custom-playbook.md` recadrée sur le bootstrap CLI ; `/create-playbook` retiré de la liste project-skills de `CLAUDE.md`. Porte aussi les **design docs partagés** (spec + 3 plans). Résout le suivi « la skill émet encore `rule:` ».
   - **PR #649** (`feat(cli)!`, bump mineur) : suppression de la commande `regis github update-pr`, redondante depuis l'extraction de [`trivoallan/regis-action`](https://github.com/trivoallan/regis-action). Retrait `github_cli.py` + `test_github_cli.py` + wiring `cli.py` ; doc `integrations/github.md` / `roadmap.md` / `reference/cli.md` élaguée. `gitlab` **conservé** (extraction future notée).
