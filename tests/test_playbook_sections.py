@@ -28,7 +28,6 @@ from regis.playbook.sections import (
     resolve_widgets_final,
 )
 
-
 # ---------------------------------------------------------------------------
 # _evaluate_scorecards
 # ---------------------------------------------------------------------------
@@ -135,15 +134,13 @@ def test_evaluate_widgets_condition_error_with_missing_data_keeps_widget():
     We mock MissingDataTracker to force missing_accessed=True so that the except branch
     (line 166-168) takes the "keep" path rather than ``continue``.
     """
-    from unittest.mock import patch, MagicMock
+    from unittest.mock import MagicMock, patch
 
     mock_tracker = MagicMock()
     mock_tracker.missing_accessed = True  # simulate prior missing access
     mock_tracker.accessed_keys = set()
 
-    with patch(
-        "regis.playbook.sections.MissingDataTracker", return_value=mock_tracker
-    ):
+    with patch("regis.playbook.sections.MissingDataTracker", return_value=mock_tracker):
         # Use an invalid operator so jsonLogic raises
         widgets = [{"label": "w", "condition": {"$INVALID$": []}}]
         out = _evaluate_widgets(widgets, {"x": 1}, None)
@@ -250,7 +247,9 @@ def test_section_rule_reference_non_string_skipped():
 
 def test_section_hint_preserved():
     """Line 290: hint key from section dict is propagated to result."""
-    out = _evaluate_section({"name": "S", "hint": "read the docs", "scorecards": []}, {})
+    out = _evaluate_section(
+        {"name": "S", "hint": "read the docs", "scorecards": []}, {}
+    )
     assert out["hint"] == "read the docs"
 
 

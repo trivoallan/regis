@@ -1,4 +1,5 @@
 """Coverage for regis/playbook/conditions.py branches."""
+
 from regis.playbook.conditions import (
     ConditionResult,
     _stringify_condition,
@@ -69,7 +70,9 @@ def test_stringify_unknown_operator_fallback():
 
 
 def test_stringify_in_operator():
-    out = _stringify_condition({"in": [{"var": "x"}, {"var": "xs"}]}, {"x": "a", "xs": ["a"]})
+    out = _stringify_condition(
+        {"in": [{"var": "x"}, {"var": "xs"}]}, {"x": "a", "xs": ["a"]}
+    )
     assert " in " in out
 
 

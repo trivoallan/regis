@@ -125,7 +125,9 @@ def test_get_version_returns_output_line(monkeypatch):
     mock_result = MagicMock()
     mock_result.stdout = "grype 0.78.0\nextra line\n"
     mock_result.stderr = ""
-    monkeypatch.setattr("regis.commands.doctor.subprocess.run", lambda *a, **k: mock_result)
+    monkeypatch.setattr(
+        "regis.commands.doctor.subprocess.run", lambda *a, **k: mock_result
+    )
     assert _get_version("/usr/bin/grype", "version") == "grype 0.78.0"
 
 
@@ -136,7 +138,9 @@ def test_get_version_returns_none_when_output_empty(monkeypatch):
     mock_result = MagicMock()
     mock_result.stdout = ""
     mock_result.stderr = ""
-    monkeypatch.setattr("regis.commands.doctor.subprocess.run", lambda *a, **k: mock_result)
+    monkeypatch.setattr(
+        "regis.commands.doctor.subprocess.run", lambda *a, **k: mock_result
+    )
     assert _get_version("/usr/bin/grype", "version") is None
 
 

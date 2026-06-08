@@ -4,8 +4,12 @@ from __future__ import annotations
 
 import pytest
 
-from regis.playbook.evaluator import _evaluate_pages, _normalize_pages, _resolve_links, evaluate
-
+from regis.playbook.evaluator import (
+    _evaluate_pages,
+    _normalize_pages,
+    _resolve_links,
+    evaluate,
+)
 
 # ---------------------------------------------------------------------------
 # _normalize_pages
@@ -143,12 +147,16 @@ def test_resolve_links_format_from_report():
     playbook = {"links": [{"label": "Repo", "url": "https://github.com/{repo}"}]}
     result: dict = {}
     _resolve_links(playbook, result, {}, {"repo": "acme/regis"})
-    assert result["links"] == [{"label": "Repo", "url": "https://github.com/acme/regis"}]
+    assert result["links"] == [
+        {"label": "Repo", "url": "https://github.com/acme/regis"}
+    ]
 
 
 def test_resolve_links_missing_key_skipped():
     """URL referencing a missing key triggers exception → link is skipped."""
-    playbook = {"links": [{"label": "Missing", "url": "https://example.com/{no_such_key}"}]}
+    playbook = {
+        "links": [{"label": "Missing", "url": "https://example.com/{no_such_key}"}]
+    }
     result: dict = {}
     _resolve_links(playbook, result, {}, {})
     assert "links" not in result
@@ -170,7 +178,11 @@ def test_resolve_links_condition_exception_skipped():
     """Link whose condition raises is skipped."""
     playbook = {
         "links": [
-            {"label": "Bad", "url": "https://x.com", "condition": {"__bad_op__": [1, 2]}}
+            {
+                "label": "Bad",
+                "url": "https://x.com",
+                "condition": {"__bad_op__": [1, 2]},
+            }
         ]
     }
     result: dict = {}
@@ -207,7 +219,12 @@ def test_badge_condition_exception_is_skipped():
     pb = {
         "name": "x",
         "badges": [
-            {"slug": "bad", "scope": "T", "value": "X", "condition": {"__bad_op__": [1, 2]}},
+            {
+                "slug": "bad",
+                "scope": "T",
+                "value": "X",
+                "condition": {"__bad_op__": [1, 2]},
+            },
         ],
     }
     out = evaluate(pb, {})

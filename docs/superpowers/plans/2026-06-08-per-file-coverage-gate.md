@@ -4,7 +4,7 @@
 
 **Goal:** Make `pipenv run pytest` fail when any single file under `regis/` is below 90 % coverage, after first raising the 8 currently-below-threshold files to ≥ 90 %.
 
-**Architecture:** coverage.py only enforces a *global* `fail_under`. We add a small pytest plugin (`tests/_per_file_coverage.py`, wired via `tests/conftest.py`) that, after pytest-cov writes its data, loads the coverage data, computes per-file percentages, and fails the session if any file is below the same threshold read from `[tool.coverage.report].fail_under`. Tasks 1–8 raise the 8 legacy files first so the gate (Task 9) goes green immediately. Task 10 documents it.
+**Architecture:** coverage.py only enforces a _global_ `fail_under`. We add a small pytest plugin (`tests/_per_file_coverage.py`, wired via `tests/conftest.py`) that, after pytest-cov writes its data, loads the coverage data, computes per-file percentages, and fails the session if any file is below the same threshold read from `[tool.coverage.report].fail_under`. Tasks 1–8 raise the 8 legacy files first so the gate (Task 9) goes green immediately. Task 10 documents it.
 
 **Tech Stack:** Python 3.10+, pytest, pytest-cov, coverage.py 7.x, `tomllib`. Tests mock at source module locations (project convention).
 
@@ -36,6 +36,7 @@ gate), otherwise the suite goes red. Do them worst-file-first.
 ### Task 1: Raise `regis/tools/cosign.py` (73.3 % → ≥ 90 %)
 
 **Files:**
+
 - Test: `tests/tools/test_cosign.py` (extend)
 - Under test: `regis/tools/cosign.py` (uncovered lines **29–46**)
 
@@ -109,6 +110,7 @@ git commit -m "test(tools): cover cosign verify-blob success and failure paths"
 ### Task 2: Raise `regis/commands/doctor.py` (73.8 % → ≥ 90 %)
 
 **Files:**
+
 - Test: `tests/commands/test_doctor.py` (extend)
 - Under test: `regis/commands/doctor.py` (uncovered **30–31, 33–35, 45–56**)
 
@@ -169,6 +171,7 @@ git commit -m "test(commands): cover doctor sha256 branches and version error pa
 ### Task 3: Raise `regis/utils/process.py` (75.0 % → ≥ 90 %)
 
 **Files:**
+
 - Test: `tests/test_utils_process.py` (extend)
 - Under test: `regis/utils/process.py` (uncovered **33–38, 60–62, 67–69, 73, 94–95, 98**)
 
@@ -249,6 +252,7 @@ git commit -m "test(utils): cover run_cmd errors and ensure_tool fetch paths"
 ### Task 4: Raise `regis/playbook/sections.py` (78.6 % → ≥ 90 %)
 
 **Files:**
+
 - Test: `tests/test_playbook_sections.py` (**create** — no dedicated test today)
 - Under test: `regis/playbook/sections.py` (uncovered **33–47, 159–160, 180, 187, 217, 237–265, 290, 292, 328–332, 338–342, 365, 377**)
 
@@ -344,6 +348,7 @@ git commit -m "test(playbook): cover sections scorecards, rule refs and final re
 ### Task 5: Raise `regis/analyzers/endoflife.py` (79.4 % → ≥ 90 %)
 
 **Files:**
+
 - Test: `tests/test_endoflife.py` (extend)
 - Under test: `regis/analyzers/endoflife.py` (uncovered **76, 99–108, 125, 173, 177**)
 
@@ -396,6 +401,7 @@ git commit -m "test(analyzers): cover endoflife fetch errors and eol derivation"
 ### Task 6: Raise `regis/playbook/evaluator.py` (83.2 % → ≥ 90 %)
 
 **Files:**
+
 - Test: `tests/test_playbook_evaluator.py` (**create**)
 - Under test: `regis/playbook/evaluator.py` (uncovered **40, 68–82, 150, 154–155, 237–238, 255–257, 267–269, 286**)
 
@@ -466,6 +472,7 @@ git commit -m "test(playbook): cover evaluator pages, links, tiers and badges"
 ### Task 7: Raise `regis/rules/evaluator.py` (84.7 % → ≥ 90 %)
 
 **Files:**
+
 - Test: `tests/test_rules_evaluator.py` (extend)
 - Under test: `regis/rules/evaluator.py` (uncovered **43, 56–63, 165–166, 195, 212–221, 234, 261, 266–279, 398–402**)
 
@@ -535,6 +542,7 @@ git commit -m "test(rules): cover interpolation, custom operators and merge path
 ### Task 8: Raise `regis/playbook/conditions.py` (87.8 % → ≥ 90 %)
 
 **Files:**
+
 - Test: `tests/test_playbook_conditions.py` (**create**)
 - Under test: `regis/playbook/conditions.py` (uncovered **47, 52–54, 89, 93**)
 
@@ -593,12 +601,13 @@ git commit -m "test(playbook): cover condition falsy/exception and stringify bra
 ### Task 9: Add the per-file coverage gate plugin
 
 **Files:**
+
 - Create: `tests/_per_file_coverage.py`
 - Modify: `tests/conftest.py` (register the `pytest_sessionfinish` hookwrapper)
 - Test: `tests/test_per_file_coverage.py` (create)
 
 **Design notes (validated during brainstorming):** a hookwrapper
-`pytest_sessionfinish` runs *after* pytest-cov has written `.coverage`; loading a
+`pytest_sessionfinish` runs _after_ pytest-cov has written `.coverage`; loading a
 fresh `coverage.Coverage()` then yields the same per-file percentages as the CLI
 report. The `--no-cov` no-op is detected via `option.no_cov` / `option.cov_source`.
 The gate lives under `tests/` (not measured by coverage), so it is exempt from
@@ -812,29 +821,30 @@ git commit -m "test(coverage): fail the suite on any file below the per-file thr
 ### Task 10: Document the gate
 
 **Files:**
+
 - Modify: `CLAUDE.md` (Commands section)
 - Modify: `docs/memory-bank/systemPatterns.md` and/or `docs/memory-bank/techContext.md`
 
 - [ ] **Step 1: Update `CLAUDE.md`** — in the Commands block, annotate the test
-  commands to note the per-file gate. Add a line near the pytest commands, e.g.:
+      commands to note the per-file gate. Add a line near the pytest commands, e.g.:
 
 ```markdown
-pipenv run pytest             # Full run with coverage — fails if total < 90% OR any file < 90%
+pipenv run pytest # Full run with coverage — fails if total < 90% OR any file < 90%
 ```
 
-  And add a short note under the commands: "Coverage is enforced both globally
-  and **per file** (no file < 90 %) by `tests/_per_file_coverage.py`. Use
-  `--no-cov` for fast iteration (disables both gates)."
+And add a short note under the commands: "Coverage is enforced both globally
+and **per file** (no file < 90 %) by `tests/_per_file_coverage.py`. Use
+`--no-cov` for fast iteration (disables both gates)."
 
 - [ ] **Step 2: Update the memory bank** — add an entry to
-  `docs/memory-bank/systemPatterns.md` (and/or `techContext.md`) recording the
-  rule and mechanism: a hookwrapper `pytest_sessionfinish` in `tests/conftest.py`
-  delegating to `tests/_per_file_coverage.py`, threshold sourced from
-  `[tool.coverage.report].fail_under`, exempting `tests/` and zero-statement
-  files. Follow the existing taxonomy/format of that file.
+      `docs/memory-bank/systemPatterns.md` (and/or `techContext.md`) recording the
+      rule and mechanism: a hookwrapper `pytest_sessionfinish` in `tests/conftest.py`
+      delegating to `tests/_per_file_coverage.py`, threshold sourced from
+      `[tool.coverage.report].fail_under`, exempting `tests/` and zero-statement
+      files. Follow the existing taxonomy/format of that file.
 
 - [ ] **Step 3: Verify docs render / lint** — `trunk check --fix` on the changed
-  markdown; commit any auto-formatting.
+      markdown; commit any auto-formatting.
 
 - [ ] **Step 4: Commit**
 
@@ -848,6 +858,7 @@ git commit -m "docs(tests): document the per-file coverage gate"
 ## Self-Review
 
 **Spec coverage:**
+
 - Behaviour (single command fails on any file < 90 %, `--no-cov` no-op, new files auto-blocked) → Task 9 (`enforce`, `option.no_cov` guard, `_collect_stats` scans all measured files).
 - Plugin location/hook/data-source/threshold-source → Task 9 Steps 3 & 5 exactly as specified.
 - Edge cases (`--no-cov`, `omit`, zero-statement, failure output + exitstatus) → covered by `enforce`/`evaluate_coverage` and their unit tests in Task 9.

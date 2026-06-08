@@ -186,7 +186,12 @@ class TestEndOfLifeAnalyzer:
     def test_eol_false_is_not_eol(self, mock_fetch):
         """Cycle with eol=False → is_eol is False (not None)."""
         mock_fetch.return_value = [
-            {"cycle": "1.27", "releaseDate": "2024-01-01", "eol": False, "latest": "1.27.5"}
+            {
+                "cycle": "1.27",
+                "releaseDate": "2024-01-01",
+                "eol": False,
+                "latest": "1.27.5",
+            }
         ]
         client = MockRegistryClient()
         analyzer = EndOfLifeAnalyzer()
@@ -201,7 +206,12 @@ class TestEndOfLifeAnalyzer:
     def test_eol_bool_true_is_eol(self, mock_fetch):
         """Cycle with eol=True (boolean) → is_eol is True."""
         mock_fetch.return_value = [
-            {"cycle": "1.25", "releaseDate": "2023-01-01", "eol": True, "latest": "1.25.5"}
+            {
+                "cycle": "1.25",
+                "releaseDate": "2023-01-01",
+                "eol": True,
+                "latest": "1.25.5",
+            }
         ]
         client = MockRegistryClient()
         analyzer = EndOfLifeAnalyzer()
