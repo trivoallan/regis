@@ -8,7 +8,7 @@ This project uses a Memory Bank in `docs/memory-bank/`. At every session start:
 2. Read `docs/memory-bank/activeContext.md` and `docs/memory-bank/progress.md`.
 3. Read others as needed (`systemPatterns.md`, `techContext.md`, `productContext.md`, `projectbrief.md`).
 
-Plans live in `docs/memory-bank/plans/<task-slug>-plan.md` — never at repo root.
+Les **specs** vivent dans `docs/superpowers/specs/`, les **plans** d'exécution dans `docs/superpowers/plans/` — jamais à la racine. Les plans sont **supprimés au merge** (squash) ; seuls specs et notes de recherche promues survivent. Taxonomie : `docs/memory-bank/systemPatterns.md`.
 Never modify `RULES.md` or write secrets into any memory bank file.
 
 ## Commands
@@ -75,6 +75,8 @@ apps/dashboard/       # Docusaurus + Tremor report viewer (pnpm workspace)
 - Branch from the latest `main` immediately before committing (avoids the auto-rebase + squash no-op trap).
 
 ## Commit messages
+
+> Conventions transverses (scopes, branches, skills, style) : source unique dans `.agent/rules/` (auto-chargé) ; contrat + glossaire dans `docs/memory-bank/constellation/`. Ce `CLAUDE.md` ne garde que le détail propre au cœur.
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) with the [Angular type list](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#type).
 
