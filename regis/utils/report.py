@@ -431,9 +431,11 @@ def render_presentation_templates(
         else:
             for tmpl_def in valid_templates:
                 tmpl_url = tmpl_def.get("url")
+                tmpl_pkg = tmpl_def.get("package")
                 tmpl_dir = tmpl_def.get("directory")
+                label = tmpl_url or tmpl_pkg
                 click.echo(
-                    f"  Rendering presentation template: {tmpl_url}...", err=True
+                    f"  Rendering presentation template: {label}...", err=True
                 )
                 try:
                     out_dir = format_output_path(
@@ -447,12 +449,20 @@ def render_presentation_templates(
                         "output_dir": str(out_dir),
                         "overwrite_if_exists": True,
                     }
-                    if tmpl_dir:
-                        kwargs["directory"] = tmpl_dir
 
-                    cookiecutter(tmpl_url, **kwargs)
+                    if tmpl_pkg:
+                        # Packaged template: resolve to a local path so Cookiecutter
+                        # renders in-place (no git clone / network access).
+                        base = resources.files(tmpl_pkg)
+                        template_arg = str(base / tmpl_dir) if tmpl_dir else str(base)
+                    else:
+                        template_arg = tmpl_url
+                        if tmpl_dir:
+                            kwargs["directory"] = tmpl_dir
+
+                    cookiecutter(template_arg, **kwargs)
                 except Exception as exc:
                     click.echo(
-                        f"  Warning: Failed to render template '{tmpl_url}': {exc}",
+                        f"  Warning: Failed to render template '{label}': {exc}",
                         err=True,
                     )
