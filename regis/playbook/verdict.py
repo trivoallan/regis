@@ -125,12 +125,16 @@ def build_verdict(final_report: dict[str, Any]) -> Verdict:
         )
 
     summary = src.get("rules_summary") or {}
+    raw_total = summary.get("total", len(rules))
+    total_count = (
+        len(raw_total) if isinstance(raw_total, (list, tuple)) else int(raw_total)
+    )
     return Verdict(
         evaluated=True,
         tier=src.get("tier"),
         tier_icon=src.get("tier_icon"),
         score=int(summary.get("score", 0)),
-        total=int(summary.get("total", len(rules))),
+        total=total_count,
         passed=len(passed),
         failed=len(failed),
         incomplete=len(incomplete),
