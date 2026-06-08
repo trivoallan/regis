@@ -232,6 +232,7 @@ def evaluate(
                 try:
                     if jsonLogic(condition, full_context):
                         result["tier"] = tier.get("name")
+                        result["tier_icon"] = tier.get("icon")
                         break
                 except Exception as exc:  # noqa: BLE001
                     logger.warning("Tier condition evaluation failed: %s", exc)

@@ -9,12 +9,15 @@ metadata:
 spec:
   tiers:
     - name: Gold
+      icon: 🥇
       condition:
         ">": [var: rules_summary.score, 90]
     - name: Silver
+      icon: 🥈
       condition:
         ">": [var: rules_summary.score, 70]
     - name: Bronze
+      icon: 🥉
       condition:
         ">": [var: rules_summary.score, 50]
 
