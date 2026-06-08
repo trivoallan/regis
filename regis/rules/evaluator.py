@@ -73,8 +73,15 @@ def _interpolate_string(template: str, context: dict[str, Any]) -> str:
     return template
 
 
-def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
-    """Gather default rules from analyzers present in the report."""
+def get_criterion_templates(analyzers_present: list[str]) -> list[dict[str, Any]]:
+    """Gather the criterion template catalog from analyzers present in the report.
+
+    This is a *catalogue* of reusable, parameterized conditions (the core
+    ``registry-domain-whitelist`` plus each present analyzer's
+    ``default_criteria()``). Templates are resolved on reference by
+    :func:`resolve_rules`; they are never evaluated unless a playbook declares
+    them.
+    """
     from regis.analyzers.discovery import discover_analyzers
 
     analyzers = discover_analyzers()
@@ -115,25 +122,28 @@ def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
     return default_rules
 
 
-def merge_rules(
-    default_rules: list[dict[str, Any]], custom_rules: list[dict[str, Any]]
+def resolve_rules(
+    templates: list[dict[str, Any]], declared: list[dict[str, Any]]
 ) -> list[dict[str, Any]]:
-    """Merge custom rules over default rules. Supports slug-based overrides and template instantiation."""
+    """Resolve declared playbook rules against the criterion template catalogue.
+
+    The final set contains EXACTLY the declared rules: each is either an
+    instantiation of a catalogue template (Case A: ``provider`` + ``criterion``)
+    or a standalone/override rule (Case B). Catalogue templates that are not
+    referenced are intentionally NOT included — there is no implicit inheritance.
+    """
     # Internal map keyed by (provider, slug)
     merged: dict[tuple[str, str], dict[str, Any]] = {}
 
-    # 1. Map defaults by (provider, slug)
-    for rule in default_rules:
+    # 1. Map templates by (provider, slug)
+    for rule in templates:
         provider = rule.get("provider", "custom")
         slug = rule.get("slug", "unknown")
         merged[(provider, slug)] = rule.copy()
 
-    # 2. Process custom rules
+    # 2. Process declared rules
     processed_custom: list[dict[str, Any]] = []
-    # Track template keys that are explicitly instantiated under a new slug so that
-    # the original template entry can be removed from the final set (prevents duplicates).
-    instantiated_template_keys: set[tuple[str, str]] = set()
-    for rule_def in custom_rules:
+    for rule_def in declared:
         provider = rule_def.get("provider")
         # Prefer the new `criterion:` key; fall back to the legacy `rule:` key.
         template_name = rule_def.get("criterion") or rule_def.get("rule")
@@ -142,9 +152,9 @@ def merge_rules(
         options = rule_def.get("options", {})
         slug = rule_def.get("slug")
 
-        # Case A: Instantiation (provider + rule)
+        # Case A: Instantiation (provider + criterion)
         if provider and template_name:
-            # Find the template in default_rules
+            # Find the template in the catalogue (merged)
             template = merged.get((provider, template_name))
 
             # Fallback for legacy full slugs or different provider naming
@@ -197,9 +207,6 @@ def merge_rules(
                 }
                 instance.update(overrides)
                 processed_custom.append(instance)
-                # Mark the source template as consumed so it is not included twice
-                # in the final rule set (the instance takes its place).
-                instantiated_template_keys.add((provider, template_name))
             else:
                 logger.warning(
                     "Rule template '%s' not found for provider '%s'",
@@ -239,14 +246,10 @@ def merge_rules(
             rule_def["slug"] = rule_slug
             processed_custom.append(rule_def)
 
-    # 3. Merge processed custom rules into the final set
-    # Final result is still a list of rules with their (provider, slug) identity
+    # 3. Assemble the final set from DECLARED rules only.
+    # `merged` is the template catalogue, used above solely to resolve Case A
+    # instantiations. Unreferenced templates are never auto-included.
     final_dict: dict[tuple[str, str], dict[str, Any]] = {}
-    # Re-initialize with defaults, skipping templates that were explicitly
-    # instantiated under a new slug by a custom rule (avoids duplicates).
-    for k, v in merged.items():
-        if k not in instantiated_template_keys:
-            final_dict[k] = v
 
     for rule in processed_custom:
         # Provider and slug are now properly formatted thanks to previous loop
@@ -356,13 +359,13 @@ def evaluate_rules(
     request_info = report.get("request", {})
     analyzers_present = request_info.get("analyzers", [])
 
-    defaults = get_default_rules(analyzers_present)
+    templates = get_criterion_templates(analyzers_present)
 
-    custom = []
+    declared = []
     if rules_def and isinstance(rules_def.get("rules"), list):
-        custom = rules_def["rules"]
+        declared = rules_def["rules"]
 
-    final_rules = merge_rules(defaults, custom)
+    final_rules = resolve_rules(templates, declared)
 
     results = []
 

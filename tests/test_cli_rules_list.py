@@ -36,6 +36,15 @@ class TestCliRulesList:
             in result.output
         )
 
+    def test_rules_list_shows_full_catalogue_without_rules_file(self):
+        """Discovery surfaces analyzer templates the default playbook omits."""
+        result = CliRunner().invoke(main, ["rules", "list"])
+        assert result.exit_code == 0
+        # oci:max-size is a template the default playbook does NOT declare; the
+        # catalogue must still list it.
+        assert "max-size" in result.output
+        assert "registry-domain-whitelist" in result.output
+
     def test_rules_list_output_file(self):
         """Test writing to a file."""
         runner = CliRunner()

@@ -2,29 +2,55 @@
 
 import pytest
 
-from regis.rules.evaluator import evaluate_rules, get_default_rules, merge_rules
+from regis.rules.evaluator import (
+    evaluate_rules,
+    get_criterion_templates,
+    resolve_rules,
+)
 
 
-def test_get_default_rules():
-    rules = get_default_rules(["oci", "freshness"])
+def test_get_criterion_templates():
+    rules = get_criterion_templates(["oci", "freshness"])
     slugs = [r.get("slug") for r in rules]
     assert "registry-domain-whitelist" in slugs
     assert "user-blacklist" in slugs
     assert "age" in slugs
 
 
-def test_merge_rules():
-    defaults = [{"slug": "test-1", "description": "A", "messages": {"pass": "ok"}}]
-    custom = [{"slug": "test-1", "description": "B", "messages": {"fail": "bad"}}]
+def test_resolve_rules_instantiates_template():
+    templates = [
+        {
+            "provider": "freshness",
+            "slug": "age",
+            "description": "Age check",
+            "params": {"max_days": 30},
+            "condition": {"<": [{"var": "results.freshness.age_days"}, 30]},
+            "messages": {"pass": "fresh", "fail": "stale"},
+        }
+    ]
+    declared = [
+        {
+            "provider": "freshness",
+            "criterion": "age",
+            "slug": "age",
+            "options": {"max_days": 7},
+        }
+    ]
+    resolved = resolve_rules(templates, declared)
+    assert len(resolved) == 1
+    assert resolved[0]["slug"] == "age"
+    # Option override merged onto the template params.
+    assert resolved[0]["params"]["max_days"] == 7
+    # Template message preserved.
+    assert resolved[0]["messages"]["pass"] == "fresh"
 
-    merged = merge_rules(defaults, custom)
-    assert len(merged) == 1
-    assert merged[0]["description"] == "B"
-    assert merged[0]["messages"]["pass"] == "ok"
-    assert merged[0]["messages"]["fail"] == "bad"
 
-    # Deep merging didn't destroy existing properties that weren't overridden
-    assert merged[0]["slug"] == "test-1"
+def test_resolve_rules_drops_unreferenced_templates():
+    templates = [
+        {"provider": "oci", "slug": "max-size", "condition": {"==": [1, 1]}},
+    ]
+    # Nothing declared -> nothing resolved.
+    assert resolve_rules(templates, []) == []
 
 
 def test_evaluate_rules():
@@ -69,10 +95,9 @@ def test_evaluate_rules():
     }
     res2 = evaluate_rules(report, rules_def_broken)
 
-    # Disabled rule should not be in results
-    assert (
-        len(res2["rules"]) == 3
-    )  # core.registry-domain-whitelist + freshness.age + missing-data-rule
+    # Disabled rule should not be in results. Only declared rules are evaluated:
+    # rules_def_broken declares only missing-data-rule (disabled-rule is filtered).
+    assert len(res2["rules"]) == 1  # missing-data-rule only
     assert not any(r["slug"] == "disabled-rule" for r in res2["rules"])
 
 
@@ -82,13 +107,25 @@ def test_evaluate_rule_params():
         "results": {"freshness": {"age_days": 15}},
     }
 
-    # 1. Defaults: freshness max_days is 30. Age is 15. Condition: 15 < 30 -> Pass.
-    res1 = evaluate_rules(report)
+    # 1. Declare the age criterion; template default max_days is 30. Age is 15 -> Pass.
+    res1 = evaluate_rules(
+        report,
+        {"rules": [{"provider": "freshness", "criterion": "age", "slug": "age"}]},
+    )
     freshness = next(r for r in res1["rules"] if r["slug"] == "age")
     assert freshness["passed"] is True
 
-    # 2. Override configured param to 7. Condition 15 < 7 -> Fail.
-    rules_def = {"rules": [{"slug": "freshness.age", "params": {"max_days": 7}}]}
+    # 2. Declare the age criterion with max_days=7 override; 15 < 7 -> Fail.
+    rules_def = {
+        "rules": [
+            {
+                "provider": "freshness",
+                "criterion": "age",
+                "slug": "age",
+                "options": {"max_days": 7},
+            }
+        ]
+    }
     res2 = evaluate_rules(report, rules_def)
     freshness2 = next(r for r in res2["rules"] if r["slug"] == "age")
     assert freshness2["passed"] is False
@@ -182,3 +219,35 @@ def test_criterion_key_does_not_warn():
     with warnings.catch_warnings():
         warnings.simplefilter("error", DeprecationWarning)
         evaluate_rules(report, new_def)
+
+
+def test_unreferenced_template_not_evaluated():
+    """A default criterion not referenced by the playbook is never evaluated."""
+    report = {
+        "request": {"registry": "docker.io", "analyzers": ["oci"]},
+        "results": {"oci": {"size_mb": 50, "layers": 5}},
+    }
+    # The oci analyzer ships max-size / layers-count / ... criteria, but the
+    # playbook declares nothing: none of them must be evaluated.
+    res = evaluate_rules(report, {"rules": []})
+    assert res["rules"] == []
+
+
+def test_only_declared_rules_evaluated():
+    """The evaluated set equals exactly the declared rules (no inheritance)."""
+    report = {
+        "request": {"registry": "docker.io", "analyzers": ["oci", "freshness"]},
+        "results": {"oci": {"size_mb": 50}, "freshness": {"age_days": 10}},
+    }
+    rules_def = {
+        "rules": [
+            {
+                "provider": "freshness",
+                "criterion": "age",
+                "slug": "age",
+                "options": {"max_days": 30},
+            }
+        ]
+    }
+    res = evaluate_rules(report, rules_def)
+    assert [r["slug"] for r in res["rules"]] == ["age"]

@@ -166,7 +166,11 @@ class TestRulesEvaluate:
         assert "Failed to load rules file" in result.output
 
     def test_fail_flag_exits_nonzero_on_breach(self, tmp_path):
-        """--fail exits 1 when a failing rule meets the fail-level threshold."""
+        """--fail exits 1 when a failing rule meets the fail-level threshold.
+
+        registry-domain-whitelist is no longer auto-injected; a rules file that
+        declares it explicitly must be provided so the evaluator runs it.
+        """
         report_file = self._write_report(
             tmp_path,
             {
@@ -177,6 +181,14 @@ class TestRulesEvaluate:
                 },
             },
         )
+        rules_yaml = tmp_path / "rules.yaml"
+        rules_yaml.write_text(
+            "rules:\n"
+            "  - provider: core\n"
+            "    criterion: registry-domain-whitelist\n"
+            "    slug: registry-domain-whitelist\n",
+            encoding="utf-8",
+        )
         runner = CliRunner()
         result = runner.invoke(
             main,
@@ -184,6 +196,8 @@ class TestRulesEvaluate:
                 "rules",
                 "evaluate",
                 str(report_file),
+                "--rules",
+                str(rules_yaml),
                 "--fail",
                 "--fail-level",
                 "critical",
