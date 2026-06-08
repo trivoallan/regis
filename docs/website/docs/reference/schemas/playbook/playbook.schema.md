@@ -9,12 +9,12 @@
 
 **Description:** Schema for regis Playbook resources (Kubernetes-style envelope).
 
-| Property                     | Pattern | Type   | Deprecated | Definition | Title/Description                                                  |
-| ---------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------ |
-| + [apiVersion](#apiVersion ) | No      | const  | No         | -          | API group and version. Must equal 'regis.io/v1alpha1'. |
-| + [kind](#kind )             | No      | const  | No         | -          | Resource kind. Must equal 'Playbook'.                              |
-| + [metadata](#metadata )     | No      | object | No         | -          | -                                                                  |
-| + [spec](#spec )             | No      | object | No         | -          | Playbook body: rules, tiers, badges, presentation, links.          |
+| Property                     | Pattern | Type   | Deprecated | Definition | Title/Description                                         |
+| ---------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------- |
+| + [apiVersion](#apiVersion ) | No      | const  | No         | -          | API group and version. Must equal 'regis.io/v1alpha1'.    |
+| + [kind](#kind )             | No      | const  | No         | -          | Resource kind. Must equal 'Playbook'.                     |
+| + [metadata](#metadata )     | No      | object | No         | -          | -                                                         |
+| + [spec](#spec )             | No      | object | No         | -          | Playbook body: rules, tiers, badges, presentation, links. |
 
 ## <a name="apiVersion"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `apiVersion`
 
@@ -371,32 +371,66 @@ Specific value: `"Playbook"`
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
-| **Type**                  | `object`                                                       |
+| **Type**                  | `combining`                                                    |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                                                     | Pattern | Type                                           | Deprecated | Definition                                        | Title/Description                              |
-| ------------------------------------------------------------ | ------- | ---------------------------------------------- | ---------- | ------------------------------------------------- | ---------------------------------------------- |
-| + [url](#spec_presentation_templates_items_url )             | No      | string                                         | No         | -                                                 | Cookiecutter template URL or path.             |
-| - [directory](#spec_presentation_templates_items_directory ) | No      | string                                         | No         | -                                                 | Optional subdirectory containing the template. |
-| - [condition](#spec_presentation_templates_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#spec_links_items_condition ) | jsonlogic                                      |
+| Property                                                     | Pattern | Type                                           | Deprecated | Definition                                        | Title/Description                                                                                                                   |
+| ------------------------------------------------------------ | ------- | ---------------------------------------------- | ---------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| - [url](#spec_presentation_templates_items_url )             | No      | string                                         | No         | -                                                 | Cookiecutter template URL or local path (a git URL is cloned).                                                                      |
+| - [package](#spec_presentation_templates_items_package )     | No      | string                                         | No         | -                                                 | Installed Python package shipping the template (e.g. 'regis'); resolved to a local path with 'directory', so no clone is performed. |
+| - [directory](#spec_presentation_templates_items_directory ) | No      | string                                         | No         | -                                                 | Subdirectory containing the template (relative to the repo for 'url', or to the package root for 'package').                        |
+| - [condition](#spec_presentation_templates_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#spec_links_items_condition ) | jsonlogic                                                                                                                           |
 
-###### <a name="spec_presentation_templates_items_url"></a>4.2.3.1.1. Property `url`
+| Any of(Option)                                        |
+| ----------------------------------------------------- |
+| [item 0](#spec_presentation_templates_items_anyOf_i0) |
+| [item 1](#spec_presentation_templates_items_anyOf_i1) |
+
+###### <a name="spec_presentation_templates_items_anyOf_i0"></a>4.2.3.1.1. Property `item 0`
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+###### <a name="autogenerated_heading_2"></a>4.2.3.1.1.1. The following properties are required
+* url
+
+###### <a name="spec_presentation_templates_items_anyOf_i1"></a>4.2.3.1.2. Property `item 1`
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+###### <a name="autogenerated_heading_3"></a>4.2.3.1.2.1. The following properties are required
+* package
+
+###### <a name="spec_presentation_templates_items_url"></a>4.2.3.1.3. Property `url`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-**Description:** Cookiecutter template URL or path.
+**Description:** Cookiecutter template URL or local path (a git URL is cloned).
 
-###### <a name="spec_presentation_templates_items_directory"></a>4.2.3.1.2. Property `directory`
+###### <a name="spec_presentation_templates_items_package"></a>4.2.3.1.4. Property `package`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-**Description:** Optional subdirectory containing the template.
+**Description:** Installed Python package shipping the template (e.g. 'regis'); resolved to a local path with 'directory', so no clone is performed.
 
-###### <a name="spec_presentation_templates_items_condition"></a>4.2.3.1.3. Property `condition`
+###### <a name="spec_presentation_templates_items_directory"></a>4.2.3.1.5. Property `directory`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+**Description:** Subdirectory containing the template (relative to the repo for 'url', or to the package root for 'package').
+
+###### <a name="spec_presentation_templates_items_condition"></a>4.2.3.1.6. Property `condition`
 
 **Title:** jsonlogic
 
@@ -591,10 +625,11 @@ Must be one of:
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                                    | Pattern | Type                                           | Deprecated | Definition                                        | Title/Description                      |
-| ------------------------------------------- | ------- | ---------------------------------------------- | ---------- | ------------------------------------------------- | -------------------------------------- |
-| + [name](#spec_tiers_items_name )           | No      | string                                         | No         | -                                                 | Tier name (e.g. Gold, Silver, Bronze). |
-| + [condition](#spec_tiers_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#spec_links_items_condition ) | jsonlogic                              |
+| Property                                    | Pattern | Type                                           | Deprecated | Definition                                        | Title/Description                           |
+| ------------------------------------------- | ------- | ---------------------------------------------- | ---------- | ------------------------------------------------- | ------------------------------------------- |
+| + [name](#spec_tiers_items_name )           | No      | string                                         | No         | -                                                 | Tier name (e.g. Gold, Silver, Bronze).      |
+| - [icon](#spec_tiers_items_icon )           | No      | string                                         | No         | -                                                 | Optional display icon (emoji) for the tier. |
+| + [condition](#spec_tiers_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#spec_links_items_condition ) | jsonlogic                                   |
 
 ##### <a name="spec_tiers_items_name"></a>4.4.1.1. Property `name`
 
@@ -604,7 +639,15 @@ Must be one of:
 
 **Description:** Tier name (e.g. Gold, Silver, Bronze).
 
-##### <a name="spec_tiers_items_condition"></a>4.4.1.2. Property `condition`
+##### <a name="spec_tiers_items_icon"></a>4.4.1.2. Property `icon`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+**Description:** Optional display icon (emoji) for the tier.
+
+##### <a name="spec_tiers_items_condition"></a>4.4.1.3. Property `condition`
 
 **Title:** jsonlogic
 
@@ -700,4 +743,4 @@ Must be one of:
 * "information"
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-06 at 19:49:31 +0200
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-08 at 18:23:59 +0000

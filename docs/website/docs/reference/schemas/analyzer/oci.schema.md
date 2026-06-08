@@ -7,13 +7,14 @@
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                     | Pattern | Type            | Deprecated | Definition | Title/Description                                 |
-| ---------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------- |
-| + [analyzer](#analyzer )     | No      | const           | No         | -          | Unique identifier for the OCI metadata analyzer.  |
-| + [repository](#repository ) | No      | string          | No         | -          | The image repository that was analyzed.           |
-| + [tag](#tag )               | No      | string          | No         | -          | The image tag that was analyzed.                  |
-| + [platforms](#platforms )   | No      | array of object | No         | -          | List of platform variants available for this tag. |
-| - [tags](#tags )             | No      | array of string | No         | -          | Tags in the repository.                           |
+| Property                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                                                       |
+| ---------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------- |
+| + [analyzer](#analyzer )                       | No      | const           | No         | -          | Unique identifier for the OCI metadata analyzer.                                        |
+| + [repository](#repository )                   | No      | string          | No         | -          | The image repository that was analyzed.                                                 |
+| + [tag](#tag )                                 | No      | string          | No         | -          | The image tag that was analyzed.                                                        |
+| + [platforms](#platforms )                     | No      | array of object | No         | -          | List of platform variants available for this tag.                                       |
+| - [platforms_supported](#platforms_supported ) | No      | array of string | No         | -          | Deduplicated canonical platform identifiers (os/arch[/variant]) supported by the image. |
+| - [tags](#tags )                               | No      | array of string | No         | -          | Tags in the repository.                                                                 |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -225,7 +226,33 @@ Specific value: `"oci"`
 | -------- | -------- |
 | **Type** | `string` |
 
-## <a name="tags"></a>5. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `tags`
+## <a name="platforms_supported"></a>5. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `platforms_supported`
+
+|          |                   |
+| -------- | ----------------- |
+| **Type** | `array of string` |
+
+**Description:** Deduplicated canonical platform identifiers (os/arch[/variant]) supported by the image.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                         | Description |
+| ------------------------------------------------------- | ----------- |
+| [platforms_supported items](#platforms_supported_items) | -           |
+
+### <a name="platforms_supported_items"></a>5.1. platforms_supported items
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+## <a name="tags"></a>6. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `tags`
 
 |          |                   |
 | -------- | ----------------- |
@@ -245,11 +272,11 @@ Specific value: `"oci"`
 | ------------------------------- | ----------- |
 | [tags items](#tags_items)       | -           |
 
-### <a name="tags_items"></a>5.1. tags items
+### <a name="tags_items"></a>6.1. tags items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-06 at 19:49:31 +0200
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-08 at 18:23:57 +0000

@@ -403,9 +403,10 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["url"],
+        "anyOf": [{ "required": ["url"] }, { "required": ["package"] }],
         "properties": {
           "url": { "type": "string" },
+          "package": { "type": "string" },
           "directory": { "type": "string" }
         }
       },

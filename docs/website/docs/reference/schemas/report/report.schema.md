@@ -16,7 +16,7 @@
 | - [snapshot_date](#snapshot_date ) | No      | string          | No         | -                                            | ISO 8601 date when this version was snapshotted in the doc site.                                                              |
 | - [tier](#tier )                   | No      | string or null  | No         | -                                            | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.                                                     |
 | - [badges](#badges )               | No      | array of object | No         | -                                            | -                                                                                                                             |
-| - [metadata](#metadata )           | No      | object          | No         | -                                            | Arbitrary user-provided metadata.                                                                                             |
+| - [metadata](#metadata )           | No      | object          | No         | -                                            | Arbitrary user-provided metadata (from --meta). Optional namespace exposed to rules as metadata.*.                            |
 | - [links](#links )                 | No      | array of object | No         | -                                            | Custom templated links.                                                                                                       |
 | + [request](#request )             | No      | object          | No         | -                                            | Metadata describing the analysis request.                                                                                     |
 | + [results](#results )             | No      | object          | No         | -                                            | Analyzer results keyed by analyzer name.                                                                                      |
@@ -147,7 +147,7 @@ Must be one of:
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-**Description:** Arbitrary user-provided metadata.
+**Description:** Arbitrary user-provided metadata (from --meta). Optional namespace exposed to rules as metadata.*.
 
 | Property                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -219,7 +219,6 @@ Must be one of:
 | - [digest](#request_digest )         | No      | string or null  | No         | -          | Resolved image manifest digest (e.g. sha256-xxx), if available. |
 | + [analyzers](#request_analyzers )   | No      | array of string | No         | -          | List of analyzer names that were executed.                      |
 | + [timestamp](#request_timestamp )   | No      | string          | No         | -          | ISO 8601 UTC timestamp of the analysis.                         |
-| - [metadata](#request_metadata )     | No      | object          | No         | -          | Arbitrary user-provided metadata.                               |
 
 ### <a name="request_url"></a>8.1. ![Required](https://img.shields.io/badge/Required-blue) Property `url`
 
@@ -296,19 +295,6 @@ Must be one of:
 
 **Description:** ISO 8601 UTC timestamp of the analysis.
 
-### <a name="request_metadata"></a>8.8. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `metadata`
-
-|                           |                                                                             |
-| ------------------------- | --------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                    |
-| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
-
-**Description:** Arbitrary user-provided metadata.
-
-| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#request_metadata_additionalProperties ) | No      | object | No         | -          | -                 |
-
 ## <a name="results"></a>9. ![Required](https://img.shields.io/badge/Required-blue) Property `results`
 
 |                           |                                                                                                      |
@@ -361,24 +347,24 @@ Must be one of:
 
 **Description:** Final playbook result produced by regis, containing metadata and analyzer results.
 
-| Property                                                   | Pattern | Type            | Deprecated | Definition | Title/Description                                                                            |
-| ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------- |
-| + [playbook_name](#playbooks_items_playbook_name )         | No      | string          | No         | -          | Identifier of the playbook that was executed.                                                |
-| - [playbook_version](#playbooks_items_playbook_version )   | No      | string or null  | No         | -          | SemVer of the playbook that produced this report.                                            |
+| Property                                                   | Pattern | Type            | Deprecated | Definition | Title/Description                                                                |
+| ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------- |
+| + [playbook_name](#playbooks_items_playbook_name )         | No      | string          | No         | -          | Identifier of the playbook that was executed.                                    |
+| - [playbook_version](#playbooks_items_playbook_version )   | No      | string or null  | No         | -          | SemVer of the playbook that produced this report.                                |
 | - [api_version](#playbooks_items_api_version )             | No      | string or null  | No         | -          | apiVersion of the playbook that produced this result (e.g. "regis.io/v1alpha1"). |
-| - [sidebar](#playbooks_items_sidebar )                     | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                                               |
-| - [version](#playbooks_items_version )                     | No      | string or null  | No         | -          | Version of regis that generated this report.                                                 |
-| - [tier](#playbooks_items_tier )                           | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.                    |
-| - [badges](#playbooks_items_badges )                       | No      | array of object | No         | -          | -                                                                                            |
-| - [rules](#playbooks_items_rules )                         | No      | array of object | No         | -          | -                                                                                            |
-| - [rules_summary](#playbooks_items_rules_summary )         | No      | object          | No         | -          | -                                                                                            |
-| + [score](#playbooks_items_score )                         | No      | integer         | No         | -          | Overall percentage score for the playbook.                                                   |
-| + [total_scorecards](#playbooks_items_total_scorecards )   | No      | integer         | No         | -          | Total number of scorecards evaluated.                                                        |
-| + [passed_scorecards](#playbooks_items_passed_scorecards ) | No      | integer         | No         | -          | Number of scorecards that passed.                                                            |
-| - [links](#playbooks_items_links )                         | No      | array of object | No         | -          | External links associated with this playbook result.                                         |
-| + [pages](#playbooks_items_pages )                         | No      | array of object | No         | -          | -                                                                                            |
-| - [checklists](#playbooks_items_checklists )               | No      | array of object | No         | -          | Resolved checklists surfaced to downstream integrations.                                     |
-| - [templates](#playbooks_items_templates )                 | No      | array of object | No         | -          | Cookiecutter templates surfaced to downstream integrations.                                  |
+| - [sidebar](#playbooks_items_sidebar )                     | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                                   |
+| - [version](#playbooks_items_version )                     | No      | string or null  | No         | -          | Version of regis that generated this report.                                     |
+| - [tier](#playbooks_items_tier )                           | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.        |
+| - [badges](#playbooks_items_badges )                       | No      | array of object | No         | -          | -                                                                                |
+| - [rules](#playbooks_items_rules )                         | No      | array of object | No         | -          | -                                                                                |
+| - [rules_summary](#playbooks_items_rules_summary )         | No      | object          | No         | -          | -                                                                                |
+| + [score](#playbooks_items_score )                         | No      | integer         | No         | -          | Overall percentage score for the playbook.                                       |
+| + [total_scorecards](#playbooks_items_total_scorecards )   | No      | integer         | No         | -          | Total number of scorecards evaluated.                                            |
+| + [passed_scorecards](#playbooks_items_passed_scorecards ) | No      | integer         | No         | -          | Number of scorecards that passed.                                                |
+| - [links](#playbooks_items_links )                         | No      | array of object | No         | -          | External links associated with this playbook result.                             |
+| + [pages](#playbooks_items_pages )                         | No      | array of object | No         | -          | -                                                                                |
+| - [checklists](#playbooks_items_checklists )               | No      | array of object | No         | -          | Resolved checklists surfaced to downstream integrations.                         |
+| - [templates](#playbooks_items_templates )                 | No      | array of object | No         | -          | Cookiecutter templates surfaced to downstream integrations.                      |
 
 #### <a name="playbooks_items_playbook_name"></a>10.1.1. Property `playbook_name`
 
@@ -1534,21 +1520,53 @@ Must be one of:
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                    |
+| **Type**                  | `combining`                                                                 |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
 | Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [url](#playbooks_items_templates_items_url )             | No      | string | No         | -          | -                 |
+| - [url](#playbooks_items_templates_items_url )             | No      | string | No         | -          | -                 |
+| - [package](#playbooks_items_templates_items_package )     | No      | string | No         | -          | -                 |
 | - [directory](#playbooks_items_templates_items_directory ) | No      | string | No         | -          | -                 |
 
-###### <a name="playbooks_items_templates_items_url"></a>10.1.16.1.1. Property `url`
+| Any of(Option)                                      |
+| --------------------------------------------------- |
+| [item 0](#playbooks_items_templates_items_anyOf_i0) |
+| [item 1](#playbooks_items_templates_items_anyOf_i1) |
+
+###### <a name="playbooks_items_templates_items_anyOf_i0"></a>10.1.16.1.1. Property `item 0`
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+###### <a name="autogenerated_heading_2"></a>10.1.16.1.1.1. The following properties are required
+* url
+
+###### <a name="playbooks_items_templates_items_anyOf_i1"></a>10.1.16.1.2. Property `item 1`
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+###### <a name="autogenerated_heading_3"></a>10.1.16.1.2.1. The following properties are required
+* package
+
+###### <a name="playbooks_items_templates_items_url"></a>10.1.16.1.3. Property `url`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_templates_items_directory"></a>10.1.16.1.2. Property `directory`
+###### <a name="playbooks_items_templates_items_package"></a>10.1.16.1.4. Property `package`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+###### <a name="playbooks_items_templates_items_directory"></a>10.1.16.1.5. Property `directory`
 
 |          |          |
 | -------- | -------- |
@@ -1874,4 +1892,4 @@ Must be one of:
 | **Maximum**  | &le; 100 |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-06 at 19:49:32 +0200
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-08 at 18:23:59 +0000

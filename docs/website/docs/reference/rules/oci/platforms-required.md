@@ -8,21 +8,21 @@ tags:
 
 Image must support a required set of platforms.
 
-| Provider | Level   | Tags          |
-| :------- | :------ | :------------ |
-| oci      | Warning | compatibility |
+| Provider | Level | Tags |
+| :--- | :--- | :--- |
+| oci | Warning | compatibility |
 
 ## Parameters
 
-| Name        | Default Value                    | Description |
-| :---------- | :------------------------------- | :---------- |
-| `platforms` | `['linux/amd64', 'linux/arm64']` | n/a         |
+| Name | Default Value | Description |
+| :--- | :--- | :--- |
+| `platforms` | `['linux/amd64', 'linux/arm64']` | n/a |
 
 ## Messages
 
-| Type     | Message                                                                                                                       |
-| :------- | :---------------------------------------------------------------------------------------------------------------------------- |
-| **Pass** | Image supports all required platforms.                                                                                        |
+| Type | Message |
+| :--- | :--- |
+| **Pass** | Image supports all required platforms. |
 | **Fail** | Image is missing required platforms (supported: ${results.oci.platforms_supported}; required: ${criterion.params.platforms}). |
 
 ## Playbook Example
@@ -30,11 +30,11 @@ Image must support a required set of platforms.
 ```yaml
 rules:
   - provider: oci
-    rule: platforms-required
+    criterion: platforms-required
     options:
       platforms:
-        - linux/amd64
-        - linux/arm64
+      - linux/amd64
+      - linux/arm64
 ```
 
 ## Condition

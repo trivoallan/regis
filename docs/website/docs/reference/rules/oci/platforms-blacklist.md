@@ -8,21 +8,21 @@ tags:
 
 Image must not support forbidden platforms.
 
-| Provider | Level   | Tags          |
-| :------- | :------ | :------------ |
-| oci      | Warning | compatibility |
+| Provider | Level | Tags |
+| :--- | :--- | :--- |
+| oci | Warning | compatibility |
 
 ## Parameters
 
-| Name        | Default Value       | Description |
-| :---------- | :------------------ | :---------- |
-| `platforms` | `['windows/amd64']` | n/a         |
+| Name | Default Value | Description |
+| :--- | :--- | :--- |
+| `platforms` | `['windows/amd64']` | n/a |
 
 ## Messages
 
-| Type     | Message                                                                                                            |
-| :------- | :----------------------------------------------------------------------------------------------------------------- |
-| **Pass** | Image supports no forbidden platforms.                                                                             |
+| Type | Message |
+| :--- | :--- |
+| **Pass** | Image supports no forbidden platforms. |
 | **Fail** | Image supports forbidden platforms: ${results.oci.platforms_supported} (forbidden: ${criterion.params.platforms}). |
 
 ## Playbook Example
@@ -30,10 +30,10 @@ Image must not support forbidden platforms.
 ```yaml
 rules:
   - provider: oci
-    rule: platforms-blacklist
+    criterion: platforms-blacklist
     options:
       platforms:
-        - windows/amd64
+      - windows/amd64
 ```
 
 ## Condition
