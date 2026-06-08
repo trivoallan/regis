@@ -292,3 +292,5 @@ def test_oci_report_includes_platforms_supported():
     assert any(name.startswith("linux/arm64") for name in supported)
     # No "unknown" platforms leak into the projection.
     assert all("unknown" not in name for name in supported)
+    # The fixture resolves exactly 8 real platforms (8 unknown/unknown filtered out).
+    assert len(supported) == 8
