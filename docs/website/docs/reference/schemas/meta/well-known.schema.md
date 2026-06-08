@@ -9,14 +9,27 @@
 
 **Description:** Standard metadata fields recognized by regis across all playbooks.
 
-| Property                      | Pattern | Type             | Deprecated | Definition | Title/Description                |
-| ----------------------------- | ------- | ---------------- | ---------- | ---------- | -------------------------------- |
-| - [ci.platform](#ciplatform ) | No      | enum (of string) | No         | -          | CI platform running the analysis |
-| - [ci.job.id](#cijobid )      | No      | string           | No         | -          | Unique identifier of the CI job  |
-| - [ci.job.url](#cijoburl )    | No      | string           | No         | -          | URL to the CI job run            |
-| - [](#additionalProperties )  | No      | object           | No         | -          | -                                |
+| Property                     | Pattern | Type   | Deprecated | Definition | Title/Description                                    |
+| ---------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------- |
+| - [ci](#ci )                 | No      | object | No         | -          | Continuous-integration context for the analysis run. |
+| - [](#additionalProperties ) | No      | object | No         | -          | -                                                    |
 
-## <a name="ciplatform"></a>1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `ci.platform`
+## <a name="ci"></a>1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `ci`
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+**Description:** Continuous-integration context for the analysis run.
+
+| Property                        | Pattern | Type             | Deprecated | Definition | Title/Description                |
+| ------------------------------- | ------- | ---------------- | ---------- | ---------- | -------------------------------- |
+| - [platform](#ci_platform )     | No      | enum (of string) | No         | -          | CI platform running the analysis |
+| - [job](#ci_job )               | No      | object           | No         | -          | -                                |
+| - [](#ci_additionalProperties ) | No      | object           | No         | -          | -                                |
+
+### <a name="ci_platform"></a>1.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `platform`
 
 |          |                    |
 | -------- | ------------------ |
@@ -28,7 +41,20 @@ Must be one of:
 * "github"
 * "gitlab"
 
-## <a name="cijobid"></a>2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `ci.job.id`
+### <a name="ci_job"></a>1.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `job`
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description               |
+| ----------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------- |
+| - [id](#ci_job_id )                 | No      | string | No         | -          | Unique identifier of the CI job |
+| - [url](#ci_job_url )               | No      | string | No         | -          | URL to the CI job run           |
+| - [](#ci_job_additionalProperties ) | No      | object | No         | -          | -                               |
+
+#### <a name="ci_job_id"></a>1.2.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `id`
 
 |          |          |
 | -------- | -------- |
@@ -36,7 +62,7 @@ Must be one of:
 
 **Description:** Unique identifier of the CI job
 
-## <a name="cijoburl"></a>3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `ci.job.url`
+#### <a name="ci_job_url"></a>1.2.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `url`
 
 |            |          |
 | ---------- | -------- |
@@ -46,4 +72,4 @@ Must be one of:
 **Description:** URL to the CI job run
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-06 at 19:49:31 +0200
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-08 at 18:23:58 +0000

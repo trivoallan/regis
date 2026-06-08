@@ -30,7 +30,7 @@ Image must not support forbidden platforms.
 ```yaml
 rules:
   - provider: oci
-    rule: platforms-blacklist
+    criterion: platforms-blacklist
     options:
       platforms:
         - windows/amd64

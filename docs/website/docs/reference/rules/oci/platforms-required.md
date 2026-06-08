@@ -30,7 +30,7 @@ Image must support a required set of platforms.
 ```yaml
 rules:
   - provider: oci
-    rule: platforms-required
+    criterion: platforms-required
     options:
       platforms:
         - linux/amd64

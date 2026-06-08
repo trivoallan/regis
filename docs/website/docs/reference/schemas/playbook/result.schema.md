@@ -9,24 +9,24 @@
 
 **Description:** Final playbook result produced by regis, containing metadata and analyzer results.
 
-| Property                                   | Pattern | Type            | Deprecated | Definition | Title/Description                                                                            |
-| ------------------------------------------ | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------- |
-| + [playbook_name](#playbook_name )         | No      | string          | No         | -          | Identifier of the playbook that was executed.                                                |
-| - [playbook_version](#playbook_version )   | No      | string or null  | No         | -          | SemVer of the playbook that produced this report.                                            |
+| Property                                   | Pattern | Type            | Deprecated | Definition | Title/Description                                                                |
+| ------------------------------------------ | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------- |
+| + [playbook_name](#playbook_name )         | No      | string          | No         | -          | Identifier of the playbook that was executed.                                    |
+| - [playbook_version](#playbook_version )   | No      | string or null  | No         | -          | SemVer of the playbook that produced this report.                                |
 | - [api_version](#api_version )             | No      | string or null  | No         | -          | apiVersion of the playbook that produced this result (e.g. "regis.io/v1alpha1"). |
-| - [sidebar](#sidebar )                     | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                                               |
-| - [version](#version )                     | No      | string or null  | No         | -          | Version of regis that generated this report.                                                 |
-| - [tier](#tier )                           | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.                    |
-| - [badges](#badges )                       | No      | array of object | No         | -          | -                                                                                            |
-| - [rules](#rules )                         | No      | array of object | No         | -          | -                                                                                            |
-| - [rules_summary](#rules_summary )         | No      | object          | No         | -          | -                                                                                            |
-| + [score](#score )                         | No      | integer         | No         | -          | Overall percentage score for the playbook.                                                   |
-| + [total_scorecards](#total_scorecards )   | No      | integer         | No         | -          | Total number of scorecards evaluated.                                                        |
-| + [passed_scorecards](#passed_scorecards ) | No      | integer         | No         | -          | Number of scorecards that passed.                                                            |
-| - [links](#links )                         | No      | array of object | No         | -          | External links associated with this playbook result.                                         |
-| + [pages](#pages )                         | No      | array of object | No         | -          | -                                                                                            |
-| - [checklists](#checklists )               | No      | array of object | No         | -          | Resolved checklists surfaced to downstream integrations.                                     |
-| - [templates](#templates )                 | No      | array of object | No         | -          | Cookiecutter templates surfaced to downstream integrations.                                  |
+| - [sidebar](#sidebar )                     | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                                   |
+| - [version](#version )                     | No      | string or null  | No         | -          | Version of regis that generated this report.                                     |
+| - [tier](#tier )                           | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.        |
+| - [badges](#badges )                       | No      | array of object | No         | -          | -                                                                                |
+| - [rules](#rules )                         | No      | array of object | No         | -          | -                                                                                |
+| - [rules_summary](#rules_summary )         | No      | object          | No         | -          | -                                                                                |
+| + [score](#score )                         | No      | integer         | No         | -          | Overall percentage score for the playbook.                                       |
+| + [total_scorecards](#total_scorecards )   | No      | integer         | No         | -          | Total number of scorecards evaluated.                                            |
+| + [passed_scorecards](#passed_scorecards ) | No      | integer         | No         | -          | Number of scorecards that passed.                                                |
+| - [links](#links )                         | No      | array of object | No         | -          | External links associated with this playbook result.                             |
+| + [pages](#pages )                         | No      | array of object | No         | -          | -                                                                                |
+| - [checklists](#checklists )               | No      | array of object | No         | -          | Resolved checklists surfaced to downstream integrations.                         |
+| - [templates](#templates )                 | No      | array of object | No         | -          | Cookiecutter templates surfaced to downstream integrations.                      |
 
 ## <a name="playbook_name"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `playbook_name`
 
@@ -1182,25 +1182,57 @@ Must be one of:
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                    |
+| **Type**                  | `combining`                                                                 |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
 | Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| + [url](#templates_items_url )             | No      | string | No         | -          | -                 |
+| - [url](#templates_items_url )             | No      | string | No         | -          | -                 |
+| - [package](#templates_items_package )     | No      | string | No         | -          | -                 |
 | - [directory](#templates_items_directory ) | No      | string | No         | -          | -                 |
 
-#### <a name="templates_items_url"></a>16.1.1. Property `url`
+| Any of(Option)                      |
+| ----------------------------------- |
+| [item 0](#templates_items_anyOf_i0) |
+| [item 1](#templates_items_anyOf_i1) |
+
+#### <a name="templates_items_anyOf_i0"></a>16.1.1. Property `item 0`
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+##### <a name="autogenerated_heading_2"></a>16.1.1.1. The following properties are required
+* url
+
+#### <a name="templates_items_anyOf_i1"></a>16.1.2. Property `item 1`
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+##### <a name="autogenerated_heading_3"></a>16.1.2.1. The following properties are required
+* package
+
+#### <a name="templates_items_url"></a>16.1.3. Property `url`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-#### <a name="templates_items_directory"></a>16.1.2. Property `directory`
+#### <a name="templates_items_package"></a>16.1.4. Property `package`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+#### <a name="templates_items_directory"></a>16.1.5. Property `directory`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-06 at 19:49:31 +0200
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-08 at 18:23:59 +0000

@@ -30,7 +30,7 @@ Image must only support allowed platforms.
 ```yaml
 rules:
   - provider: oci
-    rule: platforms-whitelist
+    criterion: platforms-whitelist
     options:
       platforms:
         - linux/amd64
