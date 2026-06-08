@@ -434,9 +434,7 @@ def render_presentation_templates(
                 tmpl_pkg = tmpl_def.get("package")
                 tmpl_dir = tmpl_def.get("directory")
                 label = tmpl_url or tmpl_pkg
-                click.echo(
-                    f"  Rendering presentation template: {label}...", err=True
-                )
+                click.echo(f"  Rendering presentation template: {label}...", err=True)
                 try:
                     out_dir = format_output_path(
                         output_dir_template or ".", report, "json"
