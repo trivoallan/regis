@@ -1,10 +1,13 @@
 """Tests for the end-of-life analyzer."""
 
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
+
+import requests
 
 from regis.analyzers.endoflife import (
     EndOfLifeAnalyzer,
     _extract_version,
+    _fetch_cycles,
     _image_to_product,
     _match_cycle,
 )
@@ -34,6 +37,11 @@ class TestImageToProduct:
 
     def test_golang(self):
         assert _image_to_product("library/golang") == "go"
+
+    def test_short_name_fallback_via_org_prefix(self):
+        """Short name (last path segment) resolves to a known product slug."""
+        # "myorg/node" → full name not in map, short name "node" IS in map → "nodejs"
+        assert _image_to_product("myorg/node") == "nodejs"
 
 
 class TestExtractVersion:
@@ -83,6 +91,13 @@ class TestMatchCycle:
     def test_no_match(self):
         result = _match_cycle("2.0", self.CYCLES)
         assert result is None
+
+    def test_major_version_fallback_matches(self):
+        """When exact version misses, major component matches a cycle with that id."""
+        cycles = [{"cycle": "1", "eol": False, "latest": "1.5.0"}]
+        result = _match_cycle("1.5", cycles)
+        assert result is not None
+        assert result["cycle"] == "1"
 
 
 # ---------------------------------------------------------------------------
@@ -166,3 +181,75 @@ class TestEndOfLifeAnalyzer:
         assert report["product_found"] is True
         assert report["matched_cycle"] is None
         assert report["is_eol"] is None
+
+    @patch("regis.analyzers.endoflife._fetch_cycles")
+    def test_eol_false_is_not_eol(self, mock_fetch):
+        """Cycle with eol=False → is_eol is False (not None)."""
+        mock_fetch.return_value = [
+            {"cycle": "1.27", "releaseDate": "2024-01-01", "eol": False, "latest": "1.27.5"}
+        ]
+        client = MockRegistryClient()
+        analyzer = EndOfLifeAnalyzer()
+        report = analyzer.analyze(client, "library/nginx", "1.27")
+        analyzer.validate(report)
+
+        assert report["product_found"] is True
+        assert report["matched_cycle"] is not None
+        assert report["is_eol"] is False
+
+    @patch("regis.analyzers.endoflife._fetch_cycles")
+    def test_eol_bool_true_is_eol(self, mock_fetch):
+        """Cycle with eol=True (boolean) → is_eol is True."""
+        mock_fetch.return_value = [
+            {"cycle": "1.25", "releaseDate": "2023-01-01", "eol": True, "latest": "1.25.5"}
+        ]
+        client = MockRegistryClient()
+        analyzer = EndOfLifeAnalyzer()
+        report = analyzer.analyze(client, "library/nginx", "1.25")
+        analyzer.validate(report)
+
+        assert report["product_found"] is True
+        assert report["matched_cycle"] is not None
+        assert report["is_eol"] is True
+
+
+# ---------------------------------------------------------------------------
+# _fetch_cycles HTTP error handling
+# ---------------------------------------------------------------------------
+
+
+class TestFetchCycles:
+    """Test _fetch_cycles HTTP error handling (patches requests.get directly)."""
+
+    @patch("regis.analyzers.endoflife.requests.get")
+    def test_200_returns_cycle_list(self, mock_get):
+        """A 200 response should return the parsed JSON list."""
+        cycles = [{"cycle": "1.27", "eol": False}]
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = cycles
+        mock_get.return_value = mock_resp
+
+        result = _fetch_cycles("nginx")
+
+        assert result == cycles
+
+    @patch("regis.analyzers.endoflife.requests.get")
+    def test_non_200_returns_none(self, mock_get):
+        """A 404 response should return None."""
+        mock_resp = MagicMock()
+        mock_resp.status_code = 404
+        mock_get.return_value = mock_resp
+
+        result = _fetch_cycles("nonexistent-product")
+
+        assert result is None
+
+    @patch("regis.analyzers.endoflife.requests.get")
+    def test_request_exception_returns_none(self, mock_get):
+        """A network/timeout error should return None."""
+        mock_get.side_effect = requests.exceptions.ConnectionError("network error")
+
+        result = _fetch_cycles("someproduct")
+
+        assert result is None
