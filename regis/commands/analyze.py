@@ -67,55 +67,47 @@ def _info(msg: str, *, quiet: bool, err: bool = True) -> None:
         click.echo(msg, err=err)
 
 
-def _print_playbook_summary(final_report: dict[str, Any]) -> None:
-    """Print a one-line summary per playbook + a list of failed rules."""
-    # Respect the --quiet flag set on the root group.
-    ctx = click.get_current_context(silent=True)
-    if ctx and ctx.obj and ctx.obj.get("quiet"):
+def _render_verdict_block(final_report: dict[str, Any], *, quiet: bool) -> None:
+    """Print the evaluation verdict (tier · score, badges, failed rules) to stderr.
+
+    Multi-line block, click-coloured. Suppressed under --quiet. Prints nothing
+    when no playbook was evaluated.
+    """
+    if quiet:
         return
 
-    playbooks = final_report.get("playbooks") or []
-    if not playbooks:
+    from regis.playbook.verdict import (
+        LEVEL_STYLE,
+        badge_emoji,
+        build_verdict,
+        format_counts,
+        tier_label,
+    )
+
+    v = build_verdict(final_report)
+    if not v.evaluated:
         return
 
-    severity_order = {"critical": 0, "warning": 1, "info": 2}
-    for pb in playbooks:
-        rules = pb.get("rules", []) or []
-        if not rules:
-            continue
-        name = (
-            pb.get("playbook_name") or pb.get("name") or pb.get("source") or "playbook"
-        )
-        # Rules with status == "incomplete" did not evaluate cleanly; surface
-        # them separately rather than counting them as hard failures.
-        passed = [r for r in rules if r.get("passed")]
-        failed = [
-            r for r in rules if not r.get("passed") and r.get("status") != "incomplete"
-        ]
-        incomplete = [r for r in rules if r.get("status") == "incomplete"]
-        worst = None
-        if failed:
-            worst = min(
-                (r.get("level") or "info" for r in failed),
-                key=lambda lv: severity_order.get(str(lv).lower(), 99),
-            )
-        line = (
-            f"  Playbook · {name}  "
-            f"{len(rules)} rules · {len(passed)} passed · {len(failed)} failed"
-        )
-        if incomplete:
-            line += f" · {len(incomplete)} incomplete"
-        if worst:
-            line += f" ({worst})"
-        click.echo(line)
-        for r in failed:
-            slug = r.get("slug", "unknown")
-            msg = r.get("message", "")
-            click.echo(f"  ✗ [{slug}]   {msg}")
-        for r in incomplete:
-            slug = r.get("slug", "unknown")
-            msg = r.get("message", "")
-            click.echo(f"  ⚠ [{slug}]   {msg}")
+    # Headline: "🥈 Silver · 78/100"
+    headline = f"{tier_label(v.tier, v.tier_icon)} · {v.score}/100"
+    click.echo(f"  {click.style(headline, bold=True)}", err=True)
+
+    # Counts line (shared across surfaces)
+    click.echo(f"  {format_counts(v)}", err=True)
+
+    # Badges line
+    if v.badges:
+        chips = "   ".join(f"{badge_emoji(b.klass)} {b.label}" for b in v.badges)
+        click.echo(f"  {chips}", err=True)
+
+    # Failed rules
+    for f in v.failures:
+        colour = LEVEL_STYLE.get(f.level, None)
+        line = f"  ✗ [{f.slug}]   {f.message}"
+        click.echo(click.style(line, fg=colour) if colour else line, err=True)
+    # Incomplete rules
+    for i in v.incompletes:
+        click.echo(f"  ⚠ [{i.slug}]   {i.message}", err=True)
 
 
 def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
@@ -637,10 +629,8 @@ def analyze(
 
     render_presentation_templates(final_report, output_dir_template)
 
-    # Only print the summary when the user explicitly requested a playbook —
-    # avoids changing stdout for default runs that auto-load the built-in playbook.
-    if playbook_paths:
-        _print_playbook_summary(final_report)
+    # Surface the verdict (tier · score · badges) by default; --quiet suppresses it.
+    _render_verdict_block(final_report, quiet=quiet)
 
     if evaluate and fail:
         level_order = {"critical": 1, "warning": 2, "info": 3, "none": 4}

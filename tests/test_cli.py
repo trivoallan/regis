@@ -684,8 +684,8 @@ class TestQuietFlag:
         assert "✓ dummy" not in result.output
         assert "Analyzing" not in result.output
         assert "Report (json) written to" not in result.output
-        # --quiet also suppresses the post-run playbook summary
-        assert "Playbook · " not in result.output
+        # --quiet also suppresses the post-run verdict block
+        assert "/100" not in result.output
 
     @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze._discover_analyzers")
@@ -817,98 +817,99 @@ class TestAnalyzeSummary:
         DummyAnalyzer.name = name
         return DummyAnalyzer
 
-    def test_print_playbook_summary_passed_only(self):
-        from contextlib import redirect_stdout
-        from io import StringIO
+    def test_render_verdict_block_passed_only(self, capsys):
+        from regis.commands.analyze import _render_verdict_block
 
-        from regis.commands.analyze import _print_playbook_summary
+        _render_verdict_block(
+            {
+                "playbooks": [
+                    {
+                        "tier": "Gold",
+                        "tier_icon": "🥇",
+                        "rules_summary": {"score": 100, "total": 2, "passed": 2},
+                        "rules": [
+                            {
+                                "slug": "a",
+                                "passed": True,
+                                "level": "info",
+                                "status": "passed",
+                                "message": "",
+                            },
+                            {
+                                "slug": "b",
+                                "passed": True,
+                                "level": "info",
+                                "status": "passed",
+                                "message": "",
+                            },
+                        ],
+                        "badge_labels": [],
+                    }
+                ]
+            },
+            quiet=False,
+        )
+        import re
 
-        buf = StringIO()
-        with redirect_stdout(buf):
-            _print_playbook_summary(
-                {
-                    "playbooks": [
-                        {
-                            "playbook_name": "demo",
-                            "rules": [
-                                {
-                                    "slug": "a",
-                                    "passed": True,
-                                    "level": "info",
-                                    "message": "",
-                                },
-                                {
-                                    "slug": "b",
-                                    "passed": True,
-                                    "level": "info",
-                                    "message": "",
-                                },
-                            ],
-                        }
-                    ]
-                }
-            )
-        out = buf.getvalue()
-        assert "Playbook · demo" in out
-        assert "2 rules · 2 passed · 0 failed" in out
+        out = re.sub(r"\x1b\[[0-9;]*m", "", capsys.readouterr().err)
+        assert "🥇 Gold · 100/100" in out
+        assert "all pass ✓" in out
         assert "✗" not in out
 
-    def test_print_playbook_summary_failed_rules_listed(self):
-        from contextlib import redirect_stdout
-        from io import StringIO
+    def test_render_verdict_block_failed_rules_listed(self, capsys):
+        import re
 
-        from regis.commands.analyze import _print_playbook_summary
+        from regis.commands.analyze import _render_verdict_block
 
-        buf = StringIO()
-        with redirect_stdout(buf):
-            _print_playbook_summary(
-                {
-                    "playbooks": [
-                        {
-                            "playbook_name": "validation-import",
-                            "rules": [
-                                {
-                                    "slug": "a",
-                                    "passed": True,
-                                    "level": "info",
-                                    "message": "",
-                                },
-                                {
-                                    "slug": "trivy.no-critical-cves",
-                                    "passed": False,
-                                    "level": "critical",
-                                    "message": "2 critical CVEs found",
-                                },
-                                {
-                                    "slug": "freshness.max-age-days",
-                                    "passed": False,
-                                    "level": "warning",
-                                    "message": "Image is 120 days old (max: 90)",
-                                },
-                            ],
-                        }
-                    ]
-                }
-            )
-        out = buf.getvalue()
-        assert "Playbook · validation-import" in out
-        assert "3 rules · 1 passed · 2 failed" in out
-        assert "(critical)" in out
+        _render_verdict_block(
+            {
+                "playbooks": [
+                    {
+                        "tier": "Bronze",
+                        "tier_icon": "🥉",
+                        "rules_summary": {"score": 33, "total": 3, "passed": 1},
+                        "rules": [
+                            {
+                                "slug": "a",
+                                "passed": True,
+                                "level": "info",
+                                "status": "passed",
+                                "message": "",
+                            },
+                            {
+                                "slug": "trivy.no-critical-cves",
+                                "passed": False,
+                                "level": "critical",
+                                "status": "failed",
+                                "message": "2 critical CVEs found",
+                            },
+                            {
+                                "slug": "freshness.max-age-days",
+                                "passed": False,
+                                "level": "warning",
+                                "status": "failed",
+                                "message": "Image is 120 days old (max: 90)",
+                            },
+                        ],
+                        "badge_labels": [],
+                    }
+                ]
+            },
+            quiet=False,
+        )
+        out = re.sub(r"\x1b\[[0-9;]*m", "", capsys.readouterr().err)
+        assert "🥉 Bronze · 33/100" in out
+        assert "2 failed" in out
         assert "✗ [trivy.no-critical-cves]" in out
         assert "2 critical CVEs found" in out
         assert "✗ [freshness.max-age-days]" in out
 
-    def test_print_playbook_summary_no_playbooks_silent(self):
-        from contextlib import redirect_stdout
-        from io import StringIO
+    def test_render_verdict_block_no_playbooks_silent(self, capsys):
+        from regis.commands.analyze import _render_verdict_block
 
-        from regis.commands.analyze import _print_playbook_summary
-
-        buf = StringIO()
-        with redirect_stdout(buf):
-            _print_playbook_summary({})
-            _print_playbook_summary({"playbooks": []})
-        assert buf.getvalue() == ""
+        _render_verdict_block({}, quiet=False)
+        _render_verdict_block({"playbooks": []}, quiet=False)
+        assert capsys.readouterr().err == ""
 
     @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze._discover_analyzers")
@@ -928,7 +929,8 @@ class TestAnalyzeSummary:
                 ["analyze", "nginx:latest", "--playbook", str(pb)],
             )
         assert result.exit_code == 0
-        assert "Playbook · " in result.output
+        # The verdict block replaces the old "Playbook · " summary line.
+        assert "/100" in result.output
 
     @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze._discover_analyzers")
@@ -940,6 +942,6 @@ class TestAnalyzeSummary:
         with runner.isolated_filesystem():
             result = runner.invoke(main, ["analyze", "nginx:latest"])
         assert result.exit_code == 0
-        # No --playbook → no summary printed (default-playbook auto-load
-        # shouldn't change the stdout contract).
-        assert "Playbook · " not in result.output
+        # The verdict block is printed by default (even without explicit --playbook).
+        # The old "Playbook · " line is no longer used; the new block uses tier · score.
+        assert "/100" in result.output

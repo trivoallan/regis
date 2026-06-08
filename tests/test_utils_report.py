@@ -204,3 +204,91 @@ def test_result_schema_accepts_playbook_metadata() -> None:
         "pages": [],
     }
     jsonschema.validate(instance=report, schema=schema)  # must not raise
+
+
+def test_markdown_includes_verdict_header():
+    from regis.utils.report import _render_markdown
+
+    report = {
+        "request": {"registry": "r", "repository": "x", "tag": "t"},
+        "playbooks": [
+            {
+                "tier": "Silver",
+                "tier_icon": "🥈",
+                "rules_summary": {"score": 78, "total": 20, "passed": 17},
+                "rules": [
+                    {
+                        "slug": "cve-critical",
+                        "level": "critical",
+                        "passed": False,
+                        "status": "failed",
+                        "message": "1 critical CVE (max 0)",
+                    },
+                    {
+                        "slug": "scorecard-min",
+                        "level": "warning",
+                        "passed": False,
+                        "status": "incomplete",
+                        "message": "data unavailable",
+                    },
+                    *[
+                        {
+                            "slug": f"ok-{i}",
+                            "level": "info",
+                            "passed": True,
+                            "status": "passed",
+                            "message": "",
+                        }
+                        for i in range(17)
+                    ],
+                ],
+                "badge_labels": [{"name": "CVE: Critical", "class": "error"}],
+            }
+        ],
+    }
+    md = _render_markdown(report)
+    assert "## 🥈 Silver · 78/100" in md
+    assert "🟥 CVE: Critical" in md
+    # Worst level carries the severity square — must match the terminal surface.
+    assert "worst: 🟥 critical" in md
+    assert "| ✗ | cve-critical | critical | 1 critical CVE (max 0) |" in md
+    assert "| ⚠ | scorecard-min | warning | data unavailable |" in md
+
+
+def test_markdown_no_verdict_when_not_evaluated():
+    from regis.utils.report import _render_markdown
+
+    md = _render_markdown(
+        {"request": {"registry": "r", "repository": "x", "tag": "t"}, "results": {}}
+    )
+    assert "Unrated" not in md  # no verdict header emitted
+
+
+def test_markdown_escapes_pipe_in_rule_message():
+    from regis.utils.report import _render_markdown
+
+    report = {
+        "request": {"registry": "r", "repository": "x", "tag": "t"},
+        "playbooks": [
+            {
+                "tier": "Bronze",
+                "tier_icon": "🥉",
+                "rules_summary": {"score": 60, "total": 1, "passed": 0},
+                "rules": [
+                    {
+                        "slug": "cve",
+                        "level": "warning",
+                        "passed": False,
+                        "status": "failed",
+                        "message": "found a|b in pkg",
+                    },
+                ],
+                "badge_labels": [],
+            }
+        ],
+    }
+    md = _render_markdown(report)
+    # The pipe inside the message must be escaped so the table row stays intact.
+    assert "found a\\|b in pkg" in md
+    # Counts line surfaces the failure.
+    assert "1 failed" in md

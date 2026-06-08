@@ -290,6 +290,46 @@ def validate_report(report: dict[str, Any]) -> None:
             ) from exc
 
 
+def _verdict_markdown(report: dict[str, Any]) -> list[str]:
+    """Render the verdict header (tier · score, badges, failed rules) as md lines."""
+    from regis.playbook.verdict import (
+        badge_emoji,
+        build_verdict,
+        format_counts,
+        tier_label,
+    )
+
+    v = build_verdict(report)
+    if not v.evaluated:
+        return []
+
+    lines = [f"## {tier_label(v.tier, v.tier_icon)} · {v.score}/100", ""]
+    lines += [f"**{format_counts(v)}**", ""]
+
+    if v.badges:
+        lines += [" · ".join(f"{badge_emoji(b.klass)} {b.label}" for b in v.badges), ""]
+
+    if v.failures or v.incompletes:
+
+        def _cell(value: str) -> str:
+            # Rule messages are free-form interpolated text; escape pipes and
+            # collapse newlines so a row never breaks the table.
+            return value.replace("|", "\\|").replace("\n", " ")
+
+        lines += ["| | Rule | Level | Result |", "| --- | --- | --- | --- |"]
+        for f in v.failures:
+            lines.append(
+                f"| ✗ | {_cell(f.slug)} | {_cell(f.level)} | {_cell(f.message)} |"
+            )
+        for i in v.incompletes:
+            lines.append(
+                f"| ⚠ | {_cell(i.slug)} | {_cell(i.level)} | {_cell(i.message)} |"
+            )
+        lines.append("")
+
+    return lines
+
+
 def _render_markdown(report: dict[str, Any]) -> str:
     """Render a Markdown summary from a regis report dict."""
     request = report.get("request", {})
@@ -297,6 +337,7 @@ def _render_markdown(report: dict[str, Any]) -> str:
         f"{request.get('registry', '')}/{request.get('repository', '')}:{request.get('tag', '')}"
     )
     lines: list[str] = [f"# {image_ref}", ""]
+    lines += _verdict_markdown(report)
 
     timestamp = request.get("timestamp") or report.get("timestamp")
     if timestamp:

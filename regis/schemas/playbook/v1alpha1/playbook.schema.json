@@ -199,6 +199,10 @@
                 "type": "string",
                 "description": "Tier name (e.g. Gold, Silver, Bronze)."
               },
+              "icon": {
+                "type": "string",
+                "description": "Optional display icon (emoji) for the tier."
+              },
               "condition": {
                 "description": "JsonLogic expression evaluated against the report context.",
                 "$ref": "../jsonlogic.schema.json"

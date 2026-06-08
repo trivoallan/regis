@@ -77,6 +77,10 @@
     .badge-fail, .badge-failed { background: #fee2e2; color: #991b1b; }
     .badge-warn, .badge-warning, .badge-incomplete { background: #fef3c7; color: #92400e; }
     .badge-none { background: #f1f5f9; color: #64748b; }
+    .verdict { margin: 1rem 0; padding: .75rem 1rem; border: 1px solid #e2e8f0; border-radius: 6px; }
+    .verdict-headline { margin: 0 0 .25rem; font-size: 1.4rem; }
+    .verdict-badges { margin: .5rem 0 0; }
+    .verdict-rules { margin-top: .5rem; }
     em { color: #94a3b8; font-style: normal; }
     footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; }
   </style>
@@ -100,6 +104,33 @@
     {% endif %}
   </dl>
 </header>
+
+{% if verdict %}
+<section class="verdict">
+  <h2 class="verdict-headline">{{ verdict.headline }}</h2>
+  <p class="verdict-counts"><strong>{{ verdict.counts }}</strong></p>
+  {% if verdict.badges %}
+  <p class="verdict-badges">
+    {% for b in verdict.badges %}
+    <span class="badge badge-{{ b.css }}">{{ b.emoji }} {{ b.label }}</span>
+    {% endfor %}
+  </p>
+  {% endif %}
+  {% if verdict.failures or verdict.incompletes %}
+  <table class="verdict-rules">
+    <thead><tr><th></th><th>Rule</th><th>Level</th><th>Result</th></tr></thead>
+    <tbody>
+      {% for f in verdict.failures %}
+      <tr><td>✗</td><td>{{ f.slug }}</td><td>{{ f.level }}</td><td>{{ f.message }}</td></tr>
+      {% endfor %}
+      {% for i in verdict.incompletes %}
+      <tr><td>⚠</td><td>{{ i.slug }}</td><td>{{ i.level }}</td><td>{{ i.message }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</section>
+{% endif %}
 
 {% if report.playbooks %}
 <section id="playbooks">
