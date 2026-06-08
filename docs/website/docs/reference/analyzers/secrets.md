@@ -24,7 +24,7 @@ reports the total number of findings (`secrets_count`) and how many were verifie
 
 The following rules are provided by default:
 
-| Slug               | Title                                                       | Level      |
-| :----------------- | :---------------------------------------------------------- | :--------- |
+| Slug               | Title                                                            | Level      |
+| :----------------- | :--------------------------------------------------------------- | :--------- |
 | `verified-secrets` | No verified, active credentials should be embedded in the image. | `critical` |
-| `secret-scan`      | No secrets or credentials should be embedded in the image.  | `warning`  |
+| `secret-scan`      | No secrets or credentials should be embedded in the image.       | `warning`  |
