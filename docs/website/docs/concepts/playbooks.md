@@ -341,7 +341,7 @@ regis analyze myimage:latest \
   -m ci.platform=github
 ```
 
-Metadata is stored in the report under `metadata` and `request.metadata`, making it accessible in all rule conditions, badges, and template expressions.
+Metadata is stored in the report under the top-level `metadata` namespace, making it accessible in all rule conditions, badges, and template expressions (for example `{"var": "metadata.ci.platform"}`).
 
 ### Deferred metadata (--rerun)
 
