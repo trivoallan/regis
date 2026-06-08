@@ -46,6 +46,19 @@ Backward compatibility: the legacy `rule:` entry key and `rule.*` condition name
 - **Documentation**: Docusaurus for documentation as code.
 - **Aesthetics**: High priority on visual excellence for HTML reports.
 
+### Couverture de tests — double gate (global + par fichier)
+
+La suite `pipenv run pytest` applique deux niveaux de garde :
+
+1. **Global** : `--cov-fail-under=90` (paramètre pytest standard, lu depuis `pyproject.toml`).
+2. **Par fichier** : `tests/_per_file_coverage.py` — plugin pytest maison enregistré via un
+   hookwrapper `pytest_sessionfinish` dans `tests/conftest.py`. Il parcourt le rapport de
+   couverture et fait échouer la session si un fichier sous `regis/` est en-dessous du seuil.
+
+Les deux gates lisent le même seuil : `[tool.coverage.report].fail_under` dans `pyproject.toml`.
+`tests/` est exclu de la mesure (pas de récursion). Les fichiers sans aucune instruction sont
+ignorés. `--no-cov` désactive les deux gates.
+
 ## CI/CD Gotchas
 
 - **`ci-test.yml`** includes `pip-audit` and enforces a HIGH/CRITICAL severity gate via `scripts/enforce_pip_audit_severity.py` (severity is resolved from OSV metadata).
