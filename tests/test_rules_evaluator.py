@@ -251,3 +251,20 @@ def test_only_declared_rules_evaluated():
     }
     res = evaluate_rules(report, rules_def)
     assert [r["slug"] for r in res["rules"]] == ["age"]
+
+
+def test_helper_operators_registered():
+    """The new helper operators evaluate through json_logic."""
+    import regis.rules.evaluator  # noqa: F401  (registers operators on import)
+    from json_logic import jsonLogic
+
+    assert jsonLogic({"is_true": [{"var": "v"}]}, {"v": "yes"}) is True
+    assert jsonLogic({"is_true": [{"var": "v"}]}, {"v": "nope"}) is False
+    assert jsonLogic({"is_false": [{"var": "v"}]}, {"v": "off"}) is True
+    assert jsonLogic({"is_url": [{"var": "v"}]}, {"v": "https://x.io"}) is True
+    assert jsonLogic({"is_url": [{"var": "v"}]}, {"v": "x.io"}) is False
+    assert jsonLogic({"is_empty": [{"var": "v"}]}, {"v": ""}) is True
+    assert jsonLogic({"is_set": [{"var": "v"}]}, {"v": "x"}) is True
+    assert (
+        jsonLogic({"matches": [{"var": "v"}, "^job-[0-9]+$"]}, {"v": "job-7"}) is True
+    )
