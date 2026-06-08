@@ -135,8 +135,8 @@ class TestCliBasics:
             assert report["metadata"]["ci"]["job_id"] == "456"
             assert report["metadata"]["ci"]["url"] == "http://ci.com"
             assert report["metadata"]["project"] == "regis"
-            # Also check request metadata
-            assert report["request"]["metadata"]["ci"]["job_id"] == "456"
+            # request.metadata was removed (canonical location is top-level metadata)
+            assert "metadata" not in report["request"]
 
 
 class TestAnalyzeParallelism:
@@ -359,7 +359,7 @@ class TestAnalyzeCacheAndFail:
             # path must backfill it before validation, and the saved report
             # carries it.
             saved = json.loads((cache_dir / "report.json").read_text(encoding="utf-8"))
-            assert saved["schemaVersion"] == 2
+            assert saved["schemaVersion"] == 3
 
     @patch("regis.commands.analyze.render_presentation_templates")
     @patch("regis.commands.analyze.render_and_save_reports")

@@ -81,3 +81,5 @@ class TestGithubEnvironment:
                 == "https://github.com/org/repo/actions/runs/12345"
             )
             assert report["metadata"]["ci"]["job_id"] == "999"
+            # Canonical location only: request.metadata was removed.
+            assert "metadata" not in report["request"]
