@@ -305,7 +305,9 @@ def _oci_report(supported: list[str]) -> dict[str, Any]:
     }
 
 
-def _eval_oci_criterion(supported: list[str], criterion: str, platforms: list[str]) -> dict[str, Any]:
+def _eval_oci_criterion(
+    supported: list[str], criterion: str, platforms: list[str]
+) -> dict[str, Any]:
     rules_def = {
         "rules": [
             {

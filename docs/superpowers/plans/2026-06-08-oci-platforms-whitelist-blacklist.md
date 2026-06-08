@@ -11,6 +11,7 @@
 **Reference spec:** `docs/superpowers/specs/2026-06-08-oci-platforms-whitelist-blacklist-design.md`
 
 **Operator orientation (verified in `regis/rules/evaluator.py`):**
+
 - `contains_all([a], [b])` → all elements of `b` are in `a`.
 - `subset([a], [b])` → all elements of `a` are in `b`.
 - `intersects([a], [b])` → any element of `a` is in `b`.
@@ -32,6 +33,7 @@
 ## Task 1: Platform projection helper
 
 **Files:**
+
 - Modify: `regis/analyzers/oci.py` (add a module-level helper near the other module helpers, e.g. just above `class OciAnalyzer`)
 - Test: `tests/test_oci_analyzer.py`
 
@@ -120,6 +122,7 @@ git commit -m "feat(analyzer): add platforms_supported projection helper"
 ## Task 2: Emit `platforms_supported` in the analyzer output + schema
 
 **Files:**
+
 - Modify: `regis/analyzers/oci.py` (the `analyze()` return dict, currently `regis/analyzers/oci.py:253-258`)
 - Modify: `regis/schemas/analyzer/oci.schema.json`
 - Test: `tests/test_oci_analyzer.py`
@@ -196,6 +199,7 @@ git commit -m "feat(analyzer): emit platforms_supported on OCI report"
 ## Task 3: Three platform-identity criteria
 
 **Files:**
+
 - Modify: `regis/analyzers/oci.py` (`OciAnalyzer.default_criteria()`, insert after the `platforms-count` entry which ends at `regis/analyzers/oci.py:121`)
 - Test: `tests/test_oci_analyzer.py`
 
@@ -374,6 +378,7 @@ git commit -m "feat(analyzer): add platform required/whitelist/blacklist criteri
 ## Task 4: Documentation
 
 **Files:**
+
 - Modify: `docs/website/docs/reference/analyzers/oci.md`
 - Regenerate: `docs/website/docs/reference/rules/oci/*.md`
 
