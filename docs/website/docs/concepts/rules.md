@@ -74,8 +74,12 @@ high-severity CVEs.
 
 When `regis` runs an analysis, the rules engine:
 
-1. **Collects default rules** from every analyzer that participated in the run.
-2. **Merges playbook rules** on top — overriding defaults or instantiating new rules by binding a criterion.
+1. **Builds the criterion catalogue** — the reusable, parameterized conditions
+   shipped by every analyzer that participated in the run, plus the core
+   `registry-domain-whitelist`. The catalogue is _not_ evaluated on its own.
+2. **Resolves the playbook's declared rules** against that catalogue. The
+   evaluated set is exactly what the playbook declares: there is no implicit
+   inheritance of analyzer defaults.
 3. **Evaluates** each active rule's condition against the analysis report using [JSON Logic](https://jsonlogic.com/).
 4. **Interpolates** pass/fail messages with live report values.
 5. **Produces** a scored rules report.
@@ -84,9 +88,9 @@ When `regis` runs an analysis, the rules engine:
 flowchart TD
     A(["`**Analyzers**
     cve · oci · dockle …`"]) -->|expose metrics| B[(Analysis Report)]
+    A -->|ship criteria| D[(Criterion Catalogue)]
+    D --> C{Rules Engine}
     B --> C{Rules Engine}
-    D(["`**Default rules**
-    built-in per analyzer`"]) --> C
     E(["`**Playbook rules**
     your criterion bindings`"]) --> C
     C --> F{For each rule}
@@ -96,21 +100,22 @@ flowchart TD
     H & I --> J[(Rules Report\nscore · by_tag · results)]
 ```
 
-## Built-in default rules
+## The criterion catalogue
 
-Each analyzer ships its own built-in rules, automatically activated when that
-analyzer runs. You do not need to declare them in your playbook to benefit from
-them.
+Each analyzer ships reusable **criterion templates** (e.g. `cve:cve-count`,
+`oci:max-size`). These templates are a catalogue you bind from a playbook — they
+are **never evaluated unless a playbook declares them**. To evaluate one, add a
+rule under `spec.rules` that binds the criterion:
 
 :::tip
 For the full list of standard criteria, their parameters, and condition details,
 see the [Rules Reference](../reference/rules/).
 :::
 
-You can inspect them at any time from the CLI:
+You can inspect the catalogue at any time from the CLI:
 
 ```bash
-# List all default rules (table)
+# List all criteria in the catalogue (table)
 regis rules list
 
 # Show the full definition of a specific criterion
@@ -119,13 +124,13 @@ regis rules show cve-count
 
 ## Writing rules in a playbook
 
-Add a `rules` list under `spec` in your `playbook.yaml` to override defaults, bind
-criteria, or define brand-new rules.
+Add a `rules` list under `spec` in your `playbook.yaml` to declare, bind, or
+customize rules.
 
-### Overriding a default rule
+### Binding a catalogue criterion
 
-Match a default rule by its `provider` and the criterion it binds to change its
-level, options, or messages. Reference the criterion with the `criterion:` key:
+Reference a criterion from the catalogue by its `provider` and `criterion` key.
+Set the level, options, or messages you want to enforce:
 
 ```yaml
 spec:
@@ -264,7 +269,7 @@ current run.
 ## Evaluating rules from the CLI
 
 ```bash
-# Evaluate a report against the default rules
+# Evaluate a report against the default playbook rules
 regis rules evaluate report.json
 
 # Use a custom playbook

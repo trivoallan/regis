@@ -18,7 +18,7 @@ The default playbook categorizes reports into one of three tiers based on the ov
 
 ## Default Rules
 
-Rules are evaluated automatically based on which analyzers are present in the report. Custom rule instances can override defaults or add new checks.
+The default playbook declares the rules listed below. Only these rules are evaluated; there is no implicit inheritance of analyzer defaults.
 
 ### Critical
 
@@ -35,12 +35,15 @@ Failing any critical rule blocks the image from reaching a Gold or Silver tier.
 
 Warning-level failures reduce the compliance score but do not block promotion on their own.
 
-| Slug            | Provider       | Description                                      |
-| :-------------- | :------------- | :----------------------------------------------- |
-| `cve-high`      | `cve`          | No more than 10 `HIGH` CVEs.                     |
-| `cve-fixable`   | `cve`          | No unpatched CVEs with an available fix.         |
-| `has-sbom`      | `sbom`         | Image must provide a Software Bill of Materials. |
-| `scorecard-min` | `scorecarddev` | OpenSSF Scorecard score must be ≥ 5.0.           |
+| Slug             | Provider       | Description                                      |
+| :--------------- | :------------- | :----------------------------------------------- |
+| `cve-high`       | `cve`          | No more than 10 `HIGH` CVEs.                     |
+| `cve-fixable`    | `cve`          | No unpatched CVEs with an available fix.         |
+| `has-sbom`       | `sbom`         | Image must provide a Software Bill of Materials. |
+| `scorecard-min`  | `scorecarddev` | OpenSSF Scorecard score must be ≥ 5.0.           |
+| `dockle-fatal`   | `dockle`       | No `FATAL` Dockle findings.                      |
+| `hadolint-error` | `hadolint`     | No `error`-level Hadolint findings.              |
+| `secret-scan`    | `secrets`      | No secrets detected (verified or not).           |
 
 ### Info
 
