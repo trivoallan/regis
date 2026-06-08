@@ -273,3 +273,22 @@ def test_platforms_supported_skips_unknown_and_missing():
 
 def test_platforms_supported_empty():
     assert _platforms_supported([]) == []
+
+
+def test_oci_report_includes_platforms_supported():
+    with patch("regis.analyzers.oci.run_regctl", side_effect=_multiarch_dispatcher):
+        analyzer = OciAnalyzer()
+        report = analyzer.analyze(_client(), "library/alpine", "3.20.10")
+
+    # New field is present and schema-valid.
+    analyzer.validate(report)
+    assert "platforms_supported" in report
+    supported = report["platforms_supported"]
+    assert isinstance(supported, list)
+    assert all(isinstance(name, str) for name in supported)
+    # Multi-arch index resolves at least amd64 and arm64 linux platforms.
+    assert "linux/amd64" in supported
+    # arm64 entry in the fixture carries variant "v8", so expect the full form.
+    assert any(name.startswith("linux/arm64") for name in supported)
+    # No "unknown" platforms leak into the projection.
+    assert all("unknown" not in name for name in supported)

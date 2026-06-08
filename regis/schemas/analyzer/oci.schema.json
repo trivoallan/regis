@@ -76,6 +76,11 @@
         }
       }
     },
+    "platforms_supported": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Deduplicated canonical platform identifiers (os/arch[/variant]) supported by the image."
+    },
     "tags": {
       "type": "array",
       "items": { "type": "string" },

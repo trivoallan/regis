@@ -275,6 +275,7 @@ class OciAnalyzer(BaseAnalyzer):
             "repository": repository,
             "tag": tag,
             "platforms": platforms,
+            "platforms_supported": _platforms_supported(platforms),
             "tags": tags,
         }
 
