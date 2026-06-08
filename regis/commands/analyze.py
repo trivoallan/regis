@@ -640,12 +640,7 @@ def analyze(
     render_presentation_templates(final_report, output_dir_template)
 
     # Surface the verdict (tier · score · badges) by default; --quiet suppresses it.
-    quiet_flag = (
-        bool(ctx.obj.get("quiet"))
-        if (ctx := click.get_current_context(silent=True)) and ctx.obj
-        else False
-    )
-    _render_verdict_block(final_report, quiet=quiet_flag)
+    _render_verdict_block(final_report, quiet=quiet)
 
     if evaluate and fail:
         level_order = {"critical": 1, "warning": 2, "info": 3, "none": 4}
