@@ -22,7 +22,13 @@ _FORMAT_CHECKER = jsonschema.FormatChecker()
 
 @_FORMAT_CHECKER.checks("uri")
 def _check_uri(value: object) -> bool:
-    # Format checks run only on string instances; non-strings are caught by `type`.
+    """Validate a `format: uri` field.
+
+    Deliberately narrowed to http/https URLs (via :func:`is_url`), which is the
+    intended shape for the well-known `ci.job.url` field. This is stricter than
+    RFC-3986 `uri` (no ftp/urn/mailto). Format checks run only on string
+    instances; non-strings are caught by the schema's `type`.
+    """
     return is_url(value) if isinstance(value, str) else True
 
 
@@ -116,19 +122,26 @@ class MetadataAnalyzer(BaseAnalyzer):
         for error in errors:
             if error.validator == "required":
                 base = list(error.absolute_path)
-                for missing in error.validator_value:
-                    dotted = ".".join([*map(str, base), str(missing)])
+                # Navigate to the object the `required` constraint applies to so we
+                # only flag fields that are genuinely absent (validator_value lists
+                # ALL required fields, including present ones).
+                obj: Any = self._metadata
+                for key in base:
+                    obj = obj.get(key, {}) if isinstance(obj, dict) else {}
+                for field in error.validator_value:
+                    if isinstance(obj, dict) and field in obj:
+                        continue
+                    dotted = ".".join([*map(str, base), str(field)])
                     metadata_validation[dotted] = {
                         "valid": False,
                         "error": error.message,
                     }
             else:
                 dotted = ".".join(str(p) for p in error.absolute_path)
-                if dotted:
-                    metadata_validation[dotted] = {
-                        "valid": False,
-                        "error": error.message,
-                    }
+                metadata_validation[dotted or "_schema"] = {
+                    "valid": False,
+                    "error": error.message,
+                }
 
         return {
             "analyzer": self.name,

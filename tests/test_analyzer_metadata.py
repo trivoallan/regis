@@ -170,3 +170,43 @@ class TestMetadataAnalyzerWithPlaybookSchema:
         result = analyzer.analyze()
         assert result["valid"] is True
         assert result["metadata"] == {}
+
+    def test_required_field_partially_present(self, tmp_path):
+        """When some required fields are present, only the missing ones are invalid."""
+        schema = {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "required": ["FIELD_A", "FIELD_B"],
+            "properties": {
+                "FIELD_A": {"type": "string"},
+                "FIELD_B": {"type": "string"},
+            },
+        }
+        schema_path = self._write_schema(tmp_path, schema)
+        analyzer = MetadataAnalyzer(
+            metadata={"FIELD_A": "present"}, meta_schema_path=schema_path
+        )
+        result = analyzer.analyze()
+        assert result["valid"] is False
+        assert result["metadata_validation"]["FIELD_A"] == {"valid": True}
+        assert result["metadata_validation"]["FIELD_B"]["valid"] is False
+
+    def test_unexpected_key_rejected_by_strict_schema(self, tmp_path):
+        """A structural (no-path) error is surfaced, keeping valid and the map consistent."""
+        schema = {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {"KNOWN": {"type": "string"}},
+            "additionalProperties": False,
+        }
+        schema_path = self._write_schema(tmp_path, schema)
+        analyzer = MetadataAnalyzer(
+            metadata={"KNOWN": "ok", "SURPRISE": "x"}, meta_schema_path=schema_path
+        )
+        result = analyzer.analyze()
+        assert result["valid"] is False
+        # The structural error is recorded (not silently dropped).
+        invalid = [
+            k for k, v in result["metadata_validation"].items() if not v["valid"]
+        ]
+        assert invalid, "expected at least one invalid entry for the structural error"
