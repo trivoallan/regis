@@ -380,3 +380,32 @@ def test_platforms_required_fails_when_none_supported():
     # Empty projection cannot satisfy a required platform -> fail.
     failed = _eval_oci_criterion([], "platforms-required", ["linux/amd64"])
     assert failed["passed"] is False
+
+
+def test_platform_criteria_are_opt_in_by_default():
+    # With no playbook rules binding them, the three platform-identity criteria
+    # must NOT be evaluated (they ship with enable: False).
+    report = _oci_report(["linux/amd64"])
+    res = evaluate_rules(report)  # no rules_def -> only default-active rules run
+    slugs = {r["slug"] for r in res["rules"]}
+    assert "platforms-required" not in slugs
+    assert "platforms-whitelist" not in slugs
+    assert "platforms-blacklist" not in slugs
+    # Sanity: an always-active OCI criterion (platforms-count) is still present.
+    assert "platforms-count" in slugs
+
+
+def test_platforms_binding_can_be_explicitly_disabled():
+    rules_def = {
+        "rules": [
+            {
+                "provider": "oci",
+                "criterion": "platforms-required",
+                "slug": "under-test",
+                "enable": False,
+                "options": {"platforms": ["linux/amd64"]},
+            }
+        ]
+    }
+    res = evaluate_rules(_oci_report(["linux/amd64"]), rules_def)
+    assert not any(r["slug"] == "under-test" for r in res["rules"])

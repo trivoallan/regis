@@ -141,6 +141,7 @@ class OciAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "platforms-required",
+                "enable": False,
                 "description": "Image must support a required set of platforms.",
                 "level": "warning",
                 "tags": ["compatibility"],
@@ -158,6 +159,7 @@ class OciAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "platforms-whitelist",
+                "enable": False,
                 "description": "Image must only support allowed platforms.",
                 "level": "warning",
                 "tags": ["compatibility"],
@@ -175,6 +177,7 @@ class OciAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "platforms-blacklist",
+                "enable": False,
                 "description": "Image must not support forbidden platforms.",
                 "level": "warning",
                 "tags": ["compatibility"],
