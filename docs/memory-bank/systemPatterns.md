@@ -59,6 +59,19 @@ Backward compatibility: the legacy `rule:` entry key and `rule.*` condition name
 - **Auto-rebase + squash merge no-op**: if a fix branch is auto-rebased after `main` already contains the same change, the squash merge becomes a no-op. Always branch from the latest `main` immediately before committing.
 - **mypy** is excluded for `tests/**` (crashes on Linux CI with stale cache on `http.server`).
 
+### Docs hosting — Pages served from an artifact (no `gh-pages` branch)
+
+The published documentation site is deployed from a **GitHub Actions build
+artifact** (`actions/upload-pages-artifact` + `actions/deploy-pages` in
+`cd-docs.yml`), **not** from a `gh-pages` branch. There is intentionally no
+`gh-pages` branch: it previously accumulated every deploy commit under
+`keep_files: true` and grew the default clone to ~326 MB. The Docusaurus build
+output is **never committed** — `ci-lint.yml`'s `generated-artifacts-guard` job
+fails any PR that tracks `**/search-index.json`, `docs/v*/**`, `_site/**`, or
+`docs/website/build/**`. Only the latest 3 doc versions + `next` are served
+(matching `release-snapshot.yml`'s 3-version source pruning). GitHub Pages
+**Source** must be set to *GitHub Actions* in repo Settings → Pages.
+
 ## Mémoire & artefacts de planification — taxonomie
 
 Tout artefact de mémoire se range selon deux axes : **portée** (local à un repo /
