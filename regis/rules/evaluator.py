@@ -213,9 +213,9 @@ def merge_rules(
                     processed_custom.append(rule_def)
 
         # Case B: Standard override or new rule
-            # Note: a slug-only override here does NOT activate an opt-in
-            # criterion (one shipped with `enable: False`); only a `criterion:`
-            # binding (Case A) auto-enables. Use `criterion:` to bind + activate.
+        # Note: a slug-only override here does NOT activate an opt-in
+        # criterion (one shipped with `enable: False`); only a `criterion:`
+        # binding (Case A) auto-enables. Use `criterion:` to bind + activate.
         else:
             rule_id = (
                 rule_def.get("criterion")
