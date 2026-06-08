@@ -56,6 +56,37 @@ def render_html_single(report: dict[str, Any], sections: str = "all") -> str:
 
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
+    from regis.playbook.verdict import badge_emoji, build_verdict, tier_label
+
+    _v = build_verdict(report)
+    _BADGE_CSS = {"error": "failed", "warning": "warning", "success": "passed"}
+    verdict_view = None
+    if _v.evaluated:
+        verdict_view = {
+            "headline": f"{tier_label(_v.tier, _v.tier_icon)} · {_v.score}/100",
+            "passed": _v.passed,
+            "total": _v.total,
+            "failed": _v.failed,
+            "incomplete": _v.incomplete,
+            "worst_level": _v.worst_level,
+            "badges": [
+                {
+                    "label": b.label,
+                    "emoji": badge_emoji(b.klass),
+                    "css": _BADGE_CSS.get(b.klass, "none"),
+                }
+                for b in _v.badges
+            ],
+            "failures": [
+                {"slug": f.slug, "level": f.level, "message": f.message}
+                for f in _v.failures
+            ],
+            "incompletes": [
+                {"slug": i.slug, "level": i.level, "message": i.message}
+                for i in _v.incompletes
+            ],
+        }
+
     return template.render(
         report=report,
         image_ref=image_ref,
@@ -63,4 +94,5 @@ def render_html_single(report: dict[str, Any], sections: str = "all") -> str:
         filter_slugs=filter_slugs,
         regis_version=regis_version,
         generated_at=generated_at,
+        verdict=verdict_view,
     )
