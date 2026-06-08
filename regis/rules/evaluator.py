@@ -184,6 +184,11 @@ def merge_rules(
                         slug = f"{template_name}.{len(processed_custom)}"
 
                 instance["slug"] = slug
+                # Binding a criterion template in a playbook activates it by
+                # default; criteria shipped with `enable: False` (opt-in) become
+                # active when referenced. An explicit `enable: false` in the rule
+                # definition still wins via the overrides applied below.
+                instance["enable"] = True
                 # Merge overrides from the custom rule definition itself
                 overrides = {
                     k: v
@@ -208,6 +213,9 @@ def merge_rules(
                     processed_custom.append(rule_def)
 
         # Case B: Standard override or new rule
+        # Note: a slug-only override here does NOT activate an opt-in
+        # criterion (one shipped with `enable: False`); only a `criterion:`
+        # binding (Case A) auto-enables. Use `criterion:` to bind + activate.
         else:
             rule_id = (
                 rule_def.get("criterion")

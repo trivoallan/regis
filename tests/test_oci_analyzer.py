@@ -5,11 +5,13 @@ from __future__ import annotations
 import json
 from importlib import resources
 from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import jsonschema
 
-from regis.analyzers.oci import OciAnalyzer
+from regis.analyzers.oci import OciAnalyzer, _platforms_supported
+from regis.rules.evaluator import evaluate_rules
 
 _FIXTURES = Path(__file__).parent / "fixtures" / "regctl"
 
@@ -241,3 +243,171 @@ def test_oci_docker_hub_registry_normalized_in_tag_ls():
     assert tag_calls, "expected a tag ls call"
     # registry-1.docker.io must be normalized to docker.io.
     assert tag_calls[0][2] == "docker.io/library/nginx"
+
+
+def test_platforms_supported_dedup_and_order():
+    platforms = [
+        {"os": "linux", "architecture": "amd64"},
+        {"os": "linux", "architecture": "arm64"},
+        {"os": "linux", "architecture": "amd64"},  # duplicate
+    ]
+    assert _platforms_supported(platforms) == ["linux/amd64", "linux/arm64"]
+
+
+def test_platforms_supported_includes_variant():
+    platforms = [
+        {"os": "linux", "architecture": "arm64", "variant": "v8"},
+        {"os": "linux", "architecture": "arm", "variant": "v7"},
+    ]
+    assert _platforms_supported(platforms) == ["linux/arm64/v8", "linux/arm/v7"]
+
+
+def test_platforms_supported_skips_unknown_and_missing():
+    platforms = [
+        {"os": "unknown", "architecture": "unknown"},
+        {"os": "linux", "architecture": "unknown"},
+        {"os": "linux"},  # missing architecture
+        {"architecture": "amd64"},  # missing os
+        {"os": "linux", "architecture": "amd64"},
+    ]
+    assert _platforms_supported(platforms) == ["linux/amd64"]
+
+
+def test_platforms_supported_empty():
+    assert _platforms_supported([]) == []
+
+
+def test_oci_report_includes_platforms_supported():
+    with patch("regis.analyzers.oci.run_regctl", side_effect=_multiarch_dispatcher):
+        analyzer = OciAnalyzer()
+        report = analyzer.analyze(_client(), "library/alpine", "3.20.10")
+
+    # New field is present and schema-valid.
+    analyzer.validate(report)
+    assert "platforms_supported" in report
+    supported = report["platforms_supported"]
+    assert isinstance(supported, list)
+    assert all(isinstance(name, str) for name in supported)
+    # Multi-arch index resolves at least amd64 and arm64 linux platforms.
+    assert "linux/amd64" in supported
+    # arm64 entry in the fixture carries variant "v8", so expect the full form.
+    assert any(name.startswith("linux/arm64") for name in supported)
+    # No "unknown" platforms leak into the projection.
+    assert all("unknown" not in name for name in supported)
+    # The fixture resolves exactly 8 real platforms (8 unknown/unknown filtered out).
+    assert len(supported) == 8
+
+
+def _oci_report(supported: list[str]) -> dict[str, Any]:
+    return {
+        "request": {"registry": "docker.io", "analyzers": ["oci"]},
+        "results": {"oci": {"platforms_supported": supported}},
+    }
+
+
+def _eval_oci_criterion(
+    supported: list[str], criterion: str, platforms: list[str]
+) -> dict[str, Any]:
+    rules_def = {
+        "rules": [
+            {
+                "provider": "oci",
+                "criterion": criterion,
+                "slug": "under-test",
+                "options": {"platforms": platforms},
+            }
+        ]
+    }
+    res = evaluate_rules(_oci_report(supported), rules_def)
+    return next(r for r in res["rules"] if r["slug"] == "under-test")
+
+
+def test_platforms_required_pass_and_fail():
+    # All required platforms are supported (extras allowed) -> pass.
+    passed = _eval_oci_criterion(
+        ["linux/amd64", "linux/arm64", "windows/amd64"],
+        "platforms-required",
+        ["linux/amd64", "linux/arm64"],
+    )
+    assert passed["passed"] is True
+
+    # A required platform is missing -> fail.
+    failed = _eval_oci_criterion(
+        ["linux/amd64"],
+        "platforms-required",
+        ["linux/amd64", "linux/arm64"],
+    )
+    assert failed["passed"] is False
+
+
+def test_platforms_whitelist_pass_and_fail():
+    # Every supported platform is allowed -> pass.
+    passed = _eval_oci_criterion(
+        ["linux/amd64", "linux/arm64"],
+        "platforms-whitelist",
+        ["linux/amd64", "linux/arm64", "windows/amd64"],
+    )
+    assert passed["passed"] is True
+
+    # A supported platform is not in the allowed set -> fail.
+    failed = _eval_oci_criterion(
+        ["linux/amd64", "linux/arm64"],
+        "platforms-whitelist",
+        ["linux/amd64"],
+    )
+    assert failed["passed"] is False
+
+
+def test_platforms_blacklist_pass_and_fail():
+    # No forbidden platform is supported -> pass.
+    passed = _eval_oci_criterion(
+        ["linux/amd64", "linux/arm64"],
+        "platforms-blacklist",
+        ["windows/amd64"],
+    )
+    assert passed["passed"] is True
+
+    # A forbidden platform is supported -> fail.
+    failed = _eval_oci_criterion(
+        ["linux/amd64", "linux/arm64"],
+        "platforms-blacklist",
+        ["linux/arm64"],
+    )
+    assert failed["passed"] is False
+
+
+def test_platforms_required_fails_when_none_supported():
+    # Empty projection cannot satisfy a required platform -> fail.
+    failed = _eval_oci_criterion([], "platforms-required", ["linux/amd64"])
+    assert failed["passed"] is False
+
+
+def test_platform_criteria_are_opt_in_by_default():
+    # With no playbook rules binding them, the three platform-identity criteria
+    # must NOT be evaluated (they ship with enable: False).
+    report = _oci_report(["linux/amd64"])
+    res = evaluate_rules(report)  # no rules_def -> only default-active rules run
+    slugs = {r["slug"] for r in res["rules"]}
+    assert "platforms-required" not in slugs
+    assert "platforms-whitelist" not in slugs
+    assert "platforms-blacklist" not in slugs
+    # Sanity: an always-active OCI criterion (platforms-count) is still present.
+    # (It evaluates as "incomplete" here since _oci_report omits results.oci.platforms,
+    # but incomplete rules still appear in res["rules"], so presence is what we assert.)
+    assert "platforms-count" in slugs
+
+
+def test_platforms_binding_can_be_explicitly_disabled():
+    rules_def = {
+        "rules": [
+            {
+                "provider": "oci",
+                "criterion": "platforms-required",
+                "slug": "under-test",
+                "enable": False,
+                "options": {"platforms": ["linux/amd64"]},
+            }
+        ]
+    }
+    res = evaluate_rules(_oci_report(["linux/amd64"]), rules_def)
+    assert not any(r["slug"] == "under-test" for r in res["rules"])

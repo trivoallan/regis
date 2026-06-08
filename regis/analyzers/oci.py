@@ -25,6 +25,26 @@ def _norm(registry: str) -> str:
     return "docker.io" if registry == "registry-1.docker.io" else registry
 
 
+def _platforms_supported(platforms: list[dict[str, Any]]) -> list[str]:
+    """Project platform objects into canonical ``os/arch[/variant]`` strings.
+
+    Skips entries whose ``os`` or ``architecture`` is missing or ``"unknown"``.
+    Deduplicates while preserving first-seen order.
+    """
+    names: list[str] = []
+    for platform in platforms:
+        os_name = platform.get("os")
+        arch = platform.get("architecture")
+        if not os_name or not arch or os_name == "unknown" or arch == "unknown":
+            continue
+        name = f"{os_name}/{arch}"
+        variant = platform.get("variant")
+        if variant:
+            name = f"{name}/{variant}"
+        names.append(name)
+    return list(dict.fromkeys(names))
+
+
 class OciAnalyzer(BaseAnalyzer):
     """Fetch OCI metadata for an image using regctl: per-platform details and tags."""
 
@@ -117,6 +137,62 @@ class OciAnalyzer(BaseAnalyzer):
                 "messages": {
                     "pass": "Image supports ${results.oci.platforms.length} platforms.",  # nosec B105
                     "fail": "Image only supports ${results.oci.platforms.length} platforms (min required: ${criterion.params.min_platforms}).",
+                },
+            },
+            {
+                "slug": "platforms-required",
+                "enable": False,
+                "description": "Image must support a required set of platforms.",
+                "level": "warning",
+                "tags": ["compatibility"],
+                "params": {"platforms": ["linux/amd64", "linux/arm64"]},
+                "condition": {
+                    "contains_all": [
+                        {"var": "results.oci.platforms_supported"},
+                        {"var": "criterion.params.platforms"},
+                    ]
+                },
+                "messages": {
+                    "pass": "Image supports all required platforms.",  # nosec B105
+                    "fail": "Image is missing required platforms (supported: ${results.oci.platforms_supported}; required: ${criterion.params.platforms}).",
+                },
+            },
+            {
+                "slug": "platforms-whitelist",
+                "enable": False,
+                "description": "Image must only support allowed platforms.",
+                "level": "warning",
+                "tags": ["compatibility"],
+                "params": {"platforms": ["linux/amd64", "linux/arm64"]},
+                "condition": {
+                    "subset": [
+                        {"var": "results.oci.platforms_supported"},
+                        {"var": "criterion.params.platforms"},
+                    ]
+                },
+                "messages": {
+                    "pass": "All supported platforms are allowed.",  # nosec B105
+                    "fail": "Image supports disallowed platforms: ${results.oci.platforms_supported} (allowed: ${criterion.params.platforms}).",
+                },
+            },
+            {
+                "slug": "platforms-blacklist",
+                "enable": False,
+                "description": "Image must not support forbidden platforms.",
+                "level": "warning",
+                "tags": ["compatibility"],
+                "params": {"platforms": ["windows/amd64"]},
+                "condition": {
+                    "!": {
+                        "intersects": [
+                            {"var": "results.oci.platforms_supported"},
+                            {"var": "criterion.params.platforms"},
+                        ]
+                    }
+                },
+                "messages": {
+                    "pass": "Image supports no forbidden platforms.",  # nosec B105
+                    "fail": "Image supports forbidden platforms: ${results.oci.platforms_supported} (forbidden: ${criterion.params.platforms}).",
                 },
             },
             {
@@ -255,6 +331,7 @@ class OciAnalyzer(BaseAnalyzer):
             "repository": repository,
             "tag": tag,
             "platforms": platforms,
+            "platforms_supported": _platforms_supported(platforms),
             "tags": tags,
         }
 
