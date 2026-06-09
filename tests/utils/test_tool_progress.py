@@ -81,6 +81,24 @@ def test_quiet_level_silences_all_events(monkeypatch):
     assert lines == []
 
 
+def test_default_fetcher_is_wired_with_click_reporter(monkeypatch):
+    import regis.utils.process as process
+    import regis.utils.tool_progress as tp
+
+    process._default_fetcher.cache_clear()  # drop any lru_cached instance
+
+    captured = {}
+
+    class FakeFetcher:
+        def __init__(self, *a, on_event=None, **kw):  # noqa: ANN001
+            captured["on_event"] = on_event
+
+    monkeypatch.setattr("regis.tools.fetcher.ToolFetcher", FakeFetcher)
+    process._default_fetcher()
+    assert captured["on_event"] is tp.click_reporter
+    process._default_fetcher.cache_clear()
+
+
 def test_concurrent_calls_do_not_truncate_lines(monkeypatch):
     lines = _capture(monkeypatch)
 
