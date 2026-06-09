@@ -12,6 +12,14 @@ from jinja2 import BaseLoader, Environment
 
 _BADGE_CSS = {"error": "failed", "warning": "warning", "success": "passed"}
 
+# CVE severity strip: (display label / css class, source count key)
+_SEVERITY_SPEC = [
+    ("critical", "critical_count"),
+    ("high", "high_count"),
+    ("medium", "medium_count"),
+    ("low", "low_count"),
+]
+
 
 def _source_rules(report: dict[str, Any]) -> list[dict[str, Any]]:
     """Return the evaluated rules (playbooks[0] first, else top-level)."""
@@ -103,6 +111,14 @@ def _build_context(report: dict[str, Any], sections: str) -> dict[str, Any]:
         if filter_slugs is None or name in filter_slugs
     ]
 
+    cve_result = report.get("results", {}).get("cve")
+    severity = None
+    if cve_result is not None:
+        severity = [
+            {"label": label, "css": label, "count": cve_result.get(key, 0)}
+            for label, key in _SEVERITY_SPEC
+        ]
+
     return {
         "report": report,
         "image_ref": image_ref,
@@ -113,6 +129,7 @@ def _build_context(report: dict[str, Any], sections: str) -> dict[str, Any]:
         "verdict": verdict_view,
         "toc": toc,
         "failing_analyzers": failing_analyzers,
+        "severity": severity,
     }
 
 

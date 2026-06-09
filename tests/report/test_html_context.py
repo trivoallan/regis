@@ -126,3 +126,36 @@ class TestFailingAnalyzers:
         ctx = _build_context(report, "all")
         assert ctx["failing_analyzers"] == {"cve"}
         assert {e["slug"]: e["status"] for e in ctx["toc"]} == {"cve": "fail"}
+
+
+class TestSeverity:
+    def test_present_when_cve_analyzer(self):
+        ctx = _build_context(
+            _report(
+                results={
+                    "cve": {
+                        "critical_count": 0,
+                        "high_count": 1,
+                        "medium_count": 4,
+                        "low_count": 12,
+                    }
+                }
+            ),
+            "all",
+        )
+        sev = {c["css"]: c["count"] for c in ctx["severity"]}
+        assert sev == {"critical": 0, "high": 1, "medium": 4, "low": 12}
+        assert [c["label"] for c in ctx["severity"]] == [
+            "critical",
+            "high",
+            "medium",
+            "low",
+        ]
+
+    def test_absent_without_cve_analyzer(self):
+        ctx = _build_context(_report(results={"oci": {}}), "all")
+        assert ctx["severity"] is None
+
+    def test_missing_counts_default_to_zero(self):
+        ctx = _build_context(_report(results={"cve": {}}), "all")
+        assert all(c["count"] == 0 for c in ctx["severity"])
