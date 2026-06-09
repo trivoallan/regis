@@ -2,39 +2,37 @@
 
 ## [0.35.0](https://github.com/trivoallan/regis/compare/v0.34.0...v0.35.0) (2026-06-09)
 
-
 ### ⚠ BREAKING CHANGES
 
-* **rules:** first-class metadata.* namespace — helpers, optional namespace, real well-known validation ([#672](https://github.com/trivoallan/regis/issues/672))
-* **rules:** evaluate only declared playbook rules ([#666](https://github.com/trivoallan/regis/issues/666))
-* **analyzer:** secret-scan changes from critical/count to warning/boolean and no longer accepts max_count. Playbooks gating active credentials at critical must add the verified-secrets criterion.
-* **playbook:** the playbook `spec.integrations.gitlab` section is replaced by the platform-neutral `spec.presentation` (badges, checklists, templates). Run `regis playbook migrate` to update playbooks.
-* **playbook:** playbooks declaring `apiVersion: regis.trivoallan.dev/v1alpha1` are rejected by the loader. Update the `apiVersion` to `regis.io/v1alpha1`.
-* **cli:** \`regis gitlab create-request\` / \`regis gitlab update-mr\` are removed. Use the reusable template at trivoallan/regis-gitlab@v1.
-* **cli:** the `--archive` / `-A` option is removed. Use `--html` for a self-contained report, or the regis-backstage plugin for catalog integration.
-* **cli:** the `regis github` command is removed. Use `trivoallan/regis-action@v1` for PR integration.
-* **ci:** the action is no longer published from this repository. Consumers must replace `uses: trivoallan/regis@vX` with `uses: trivoallan/regis-action@v1`. The `version:` input (the regis Docker image tag) is unchanged.
+- **rules:** first-class metadata.\* namespace — helpers, optional namespace, real well-known validation ([#672](https://github.com/trivoallan/regis/issues/672))
+- **rules:** evaluate only declared playbook rules ([#666](https://github.com/trivoallan/regis/issues/666))
+- **analyzer:** secret-scan changes from critical/count to warning/boolean and no longer accepts max_count. Playbooks gating active credentials at critical must add the verified-secrets criterion.
+- **playbook:** the playbook `spec.integrations.gitlab` section is replaced by the platform-neutral `spec.presentation` (badges, checklists, templates). Run `regis playbook migrate` to update playbooks.
+- **playbook:** playbooks declaring `apiVersion: regis.trivoallan.dev/v1alpha1` are rejected by the loader. Update the `apiVersion` to `regis.io/v1alpha1`.
+- **cli:** \`regis gitlab create-request\` / \`regis gitlab update-mr\` are removed. Use the reusable template at trivoallan/regis-gitlab@v1.
+- **cli:** the `--archive` / `-A` option is removed. Use `--html` for a self-contained report, or the regis-backstage plugin for catalog integration.
+- **cli:** the `regis github` command is removed. Use `trivoallan/regis-action@v1` for PR integration.
+- **ci:** the action is no longer published from this repository. Consumers must replace `uses: trivoallan/regis@vX` with `uses: trivoallan/regis-action@v1`. The `version:` input (the regis Docker image tag) is unchanged.
 
 ### Features
 
-* **analyzer:** add OCI platform whitelist/blacklist rules ([#661](https://github.com/trivoallan/regis/issues/661)) ([2498d81](https://github.com/trivoallan/regis/commit/2498d81880bc05055f410ff5860733727a0a2461))
-* **analyzer:** split secret-scan into verified/any boolean criteria ([#660](https://github.com/trivoallan/regis/issues/660)) ([23b5bd5](https://github.com/trivoallan/regis/commit/23b5bd52c4b81e48491b740a0edb6e5d49de9d33))
-* **analyze:** surface evaluation verdict (tier, score, badges) by default ([#670](https://github.com/trivoallan/regis/issues/670)) ([44eda6b](https://github.com/trivoallan/regis/commit/44eda6b59b58b9bb0a185934e373bba14469170b))
-* **ci:** extract GitHub Action to dedicated repo ([#644](https://github.com/trivoallan/regis/issues/644)) ([c7dd437](https://github.com/trivoallan/regis/commit/c7dd437c5a099e3f99f4f7c2c41bfbf0ad89ae36))
-* **cli:** extract GitLab integration to regis-gitlab ([#652](https://github.com/trivoallan/regis/issues/652)) ([3c5ab6e](https://github.com/trivoallan/regis/commit/3c5ab6ede578ed450415b9ae5e5c46fdc4583960))
-* **cli:** remove the regis github command ([#649](https://github.com/trivoallan/regis/issues/649)) ([d184ce6](https://github.com/trivoallan/regis/commit/d184ce63fccb586974fa07bdb70b5a267b5dd9bf))
-* **cli:** remove the report archive feature ([#650](https://github.com/trivoallan/regis/issues/650)) ([fc10bb9](https://github.com/trivoallan/regis/commit/fc10bb992734dd35ff1f931240c462540ca18bee))
-* **playbook:** generalize integrations.gitlab into spec.presentation ([#654](https://github.com/trivoallan/regis/issues/654)) ([2a3e382](https://github.com/trivoallan/regis/commit/2a3e382cb946f11765f597813739bd0b51ce75c1))
-* **playbook:** introduce the criterion vocabulary and playbook migrate codemod ([#646](https://github.com/trivoallan/regis/issues/646)) ([dd8426b](https://github.com/trivoallan/regis/commit/dd8426b56d087ad6fea45cf47da030b2edbf1612))
-* **playbook:** rename API group to regis.io ([#653](https://github.com/trivoallan/regis/issues/653)) ([86934a5](https://github.com/trivoallan/regis/commit/86934a528f9ee46de3cce8dd5397295f452a9cec))
-* **rules:** evaluate only declared playbook rules ([#666](https://github.com/trivoallan/regis/issues/666)) ([f68a105](https://github.com/trivoallan/regis/commit/f68a105ea73d6f92268a784095122392f310aa70))
-* **rules:** first-class metadata.* namespace — helpers, optional namespace, real well-known validation ([#672](https://github.com/trivoallan/regis/issues/672)) ([12a6a81](https://github.com/trivoallan/regis/commit/12a6a81051f5adb4eeb2f7edf6803bb3ffbf283d))
-
+- **analyzer:** add OCI platform whitelist/blacklist rules ([#661](https://github.com/trivoallan/regis/issues/661)) ([2498d81](https://github.com/trivoallan/regis/commit/2498d81880bc05055f410ff5860733727a0a2461))
+- **analyzer:** split secret-scan into verified/any boolean criteria ([#660](https://github.com/trivoallan/regis/issues/660)) ([23b5bd5](https://github.com/trivoallan/regis/commit/23b5bd52c4b81e48491b740a0edb6e5d49de9d33))
+- **analyze:** surface evaluation verdict (tier, score, badges) by default ([#670](https://github.com/trivoallan/regis/issues/670)) ([44eda6b](https://github.com/trivoallan/regis/commit/44eda6b59b58b9bb0a185934e373bba14469170b))
+- **ci:** extract GitHub Action to dedicated repo ([#644](https://github.com/trivoallan/regis/issues/644)) ([c7dd437](https://github.com/trivoallan/regis/commit/c7dd437c5a099e3f99f4f7c2c41bfbf0ad89ae36))
+- **cli:** extract GitLab integration to regis-gitlab ([#652](https://github.com/trivoallan/regis/issues/652)) ([3c5ab6e](https://github.com/trivoallan/regis/commit/3c5ab6ede578ed450415b9ae5e5c46fdc4583960))
+- **cli:** remove the regis github command ([#649](https://github.com/trivoallan/regis/issues/649)) ([d184ce6](https://github.com/trivoallan/regis/commit/d184ce63fccb586974fa07bdb70b5a267b5dd9bf))
+- **cli:** remove the report archive feature ([#650](https://github.com/trivoallan/regis/issues/650)) ([fc10bb9](https://github.com/trivoallan/regis/commit/fc10bb992734dd35ff1f931240c462540ca18bee))
+- **playbook:** generalize integrations.gitlab into spec.presentation ([#654](https://github.com/trivoallan/regis/issues/654)) ([2a3e382](https://github.com/trivoallan/regis/commit/2a3e382cb946f11765f597813739bd0b51ce75c1))
+- **playbook:** introduce the criterion vocabulary and playbook migrate codemod ([#646](https://github.com/trivoallan/regis/issues/646)) ([dd8426b](https://github.com/trivoallan/regis/commit/dd8426b56d087ad6fea45cf47da030b2edbf1612))
+- **playbook:** rename API group to regis.io ([#653](https://github.com/trivoallan/regis/issues/653)) ([86934a5](https://github.com/trivoallan/regis/commit/86934a528f9ee46de3cce8dd5397295f452a9cec))
+- **rules:** evaluate only declared playbook rules ([#666](https://github.com/trivoallan/regis/issues/666)) ([f68a105](https://github.com/trivoallan/regis/commit/f68a105ea73d6f92268a784095122392f310aa70))
+- **rules:** first-class metadata.\* namespace — helpers, optional namespace, real well-known validation ([#672](https://github.com/trivoallan/regis/issues/672)) ([12a6a81](https://github.com/trivoallan/regis/commit/12a6a81051f5adb4eeb2f7edf6803bb3ffbf283d))
 
 ### Bug Fixes
 
-* **ci:** drop dead default-archive steps from docs deploy ([#682](https://github.com/trivoallan/regis/issues/682)) ([4d6d5b8](https://github.com/trivoallan/regis/commit/4d6d5b846d7a94aff9c7239b48f03a14db53d5fb))
-* **playbook:** render mr-evidence from packaged template, not a git clone ([#673](https://github.com/trivoallan/regis/issues/673)) ([317b5a2](https://github.com/trivoallan/regis/commit/317b5a2088f043ededa07cfc4c6a5cb74b5f30a2))
+- **ci:** drop dead default-archive steps from docs deploy ([#682](https://github.com/trivoallan/regis/issues/682)) ([4d6d5b8](https://github.com/trivoallan/regis/commit/4d6d5b846d7a94aff9c7239b48f03a14db53d5fb))
+- **playbook:** render mr-evidence from packaged template, not a git clone ([#673](https://github.com/trivoallan/regis/issues/673)) ([317b5a2](https://github.com/trivoallan/regis/commit/317b5a2088f043ededa07cfc4c6a5cb74b5f30a2))
 
 ## [0.34.0](https://github.com/trivoallan/regis/compare/v0.33.0...v0.34.0) (2026-06-01)
 
