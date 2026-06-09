@@ -408,3 +408,21 @@ def test_fetch_all_subset(monkeypatch, tmp_path):
         fetcher = ToolFetcher(cache_dir=tmp_path / "cache", arch="amd64")
         result = fetcher.fetch_all(names=["grype"])
         assert list(result) == ["grype"]
+
+
+def test_on_event_defaults_to_none_and_is_optional(fake_tool) -> None:
+    payload, sha, cache = fake_tool
+    binpath = cache / "grype" / "0.0.1" / "linux-amd64" / "grype"
+    _write_binary(binpath, payload)
+    # No on_event passed: constructing and using the fetcher must work unchanged.
+    fetcher = ToolFetcher(cache_dir=cache, arch="amd64", offline=True)
+    assert fetcher._on_event is None
+    assert fetcher.ensure("grype") == binpath  # cache hit, emits nothing
+
+
+def test_tool_event_is_frozen() -> None:
+    from regis.tools.fetcher import ToolEvent
+
+    ev = ToolEvent(kind="fetch_start", tool="grype", version="0.0.1", arch="amd64")
+    with pytest.raises(Exception):
+        ev.tool = "syft"  # type: ignore[misc]  # frozen dataclass
