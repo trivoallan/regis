@@ -26,11 +26,13 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      # contents: write is required so anchore/sbom-action can attach the
-      # generated SBOMs to the GitHub Release on tag builds. With contents:read
-      # that attach step fails ("Resource not accessible by integration") and
-      # releases ship without SBOM assets (regressed silently since v0.30.0).
-      contents: write
+      # SBOMs are published as workflow artifacts (see the Upload SBOM step),
+      # not attached to the GitHub Release: Release Please publishes the release
+      # before this tag build runs, and published releases are immutable, so an
+      # attach fails with "Cannot upload assets to an immutable release". The
+      # sbom-action steps therefore set upload-release-assets: false and only
+      # contents: read is needed here.
+      contents: read
       packages: write
       attestations: write
       id-token: write
@@ -144,6 +146,9 @@ jobs:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
           format: cyclonedx-json
           output-file: sbom.cyclonedx.json
+          # Release Please already published an immutable release for this tag;
+          # keep SBOMs as workflow artifacts instead of attaching them.
+          upload-release-assets: false
 
       - name: Generate SPDX SBOM
         if: github.ref_type == 'tag'
@@ -152,6 +157,8 @@ jobs:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
           format: spdx-json
           output-file: sbom.spdx.json
+          # See the CycloneDX step: avoid the immutable-release attach failure.
+          upload-release-assets: false
 
       - name: Upload SBOM release artifacts
         if: github.ref_type == 'tag'
