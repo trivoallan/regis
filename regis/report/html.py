@@ -10,17 +10,11 @@ from typing import Any
 import click
 from jinja2 import BaseLoader, Environment
 
+_BADGE_CSS = {"error": "failed", "warning": "warning", "success": "passed"}
 
-def render_html_single(report: dict[str, Any], sections: str = "all") -> str:
-    """Render a self-contained single-file HTML report.
 
-    Args:
-        report: Full regis report dict.
-        sections: "all" (default), "summary", or comma-separated analyzer slugs.
-
-    Returns:
-        Complete HTML string with inlined CSS, no external resources.
-    """
+def _build_context(report: dict[str, Any], sections: str) -> dict[str, Any]:
+    """Build the full template context for a report (pure: no template I/O)."""
     # Parse sections directive
     if sections == "all":
         show_details = True
@@ -34,14 +28,6 @@ def render_html_single(report: dict[str, Any], sections: str = "all") -> str:
         available = set(report.get("results", {}).keys())
         for slug in sorted(filter_slugs - available):
             click.echo(f"  Warning: unknown section '{slug}' (ignored)", err=True)
-
-    # Load template from package resources
-    tmpl_path = resources.files("regis") / "templates" / "html" / "report.html.j2"
-    tmpl_content = tmpl_path.read_text(encoding="utf-8")
-
-    env = Environment(autoescape=True, loader=BaseLoader())
-
-    template = env.from_string(tmpl_content)
 
     # Build image_ref string
     req = report.get("request", {})
@@ -64,11 +50,11 @@ def render_html_single(report: dict[str, Any], sections: str = "all") -> str:
     )
 
     _v = build_verdict(report)
-    _BADGE_CSS = {"error": "failed", "warning": "warning", "success": "passed"}
     verdict_view = None
     if _v.evaluated:
         verdict_view = {
             "headline": f"{tier_label(_v.tier, _v.tier_icon)} · {_v.score}/100",
+            "score": _v.score,
             "counts": format_counts(_v),
             "badges": [
                 {
@@ -88,12 +74,33 @@ def render_html_single(report: dict[str, Any], sections: str = "all") -> str:
             ],
         }
 
-    return template.render(
-        report=report,
-        image_ref=image_ref,
-        show_details=show_details,
-        filter_slugs=filter_slugs,
-        regis_version=regis_version,
-        generated_at=generated_at,
-        verdict=verdict_view,
-    )
+    return {
+        "report": report,
+        "image_ref": image_ref,
+        "show_details": show_details,
+        "filter_slugs": filter_slugs,
+        "regis_version": regis_version,
+        "generated_at": generated_at,
+        "verdict": verdict_view,
+    }
+
+
+def render_html_single(report: dict[str, Any], sections: str = "all") -> str:
+    """Render a self-contained single-file HTML report.
+
+    Args:
+        report: Full regis report dict.
+        sections: "all" (default), "summary", or comma-separated analyzer slugs.
+
+    Returns:
+        Complete HTML string with inlined CSS, no external resources.
+    """
+    context = _build_context(report, sections)
+
+    tmpl_path = resources.files("regis") / "templates" / "html" / "report.html.j2"
+    tmpl_content = tmpl_path.read_text(encoding="utf-8")
+
+    env = Environment(autoescape=True, loader=BaseLoader())
+    template = env.from_string(tmpl_content)
+
+    return template.render(**context)
