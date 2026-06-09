@@ -5,13 +5,7 @@
   "type": "object",
   "description": "Final playbook result produced by regis, containing metadata and analyzer results.",
 
-  "required": [
-    "playbook_name",
-    "score",
-    "total_scorecards",
-    "passed_scorecards",
-    "pages"
-  ],
+  "required": ["playbook_name", "score"],
   "properties": {
     "playbook_name": {
       "type": "string",
@@ -83,7 +77,7 @@
           },
           "level": {
             "type": "string",
-            "description": "Priority level (Gold, Silver, Bronze)."
+            "description": "Severity level of the rule (e.g. critical, warning, info). Distinct from the playbook tier."
           },
           "tags": {
             "type": "array",
@@ -139,17 +133,7 @@
       "type": "integer",
       "minimum": 0,
       "maximum": 100,
-      "description": "Overall percentage score for the playbook."
-    },
-    "total_scorecards": {
-      "type": "integer",
-      "minimum": 0,
-      "description": "Total number of scorecards evaluated."
-    },
-    "passed_scorecards": {
-      "type": "integer",
-      "minimum": 0,
-      "description": "Number of scorecards that passed."
+      "description": "Overall percentage of the playbook's rules that passed."
     },
     "links": {
       "type": "array",
@@ -165,211 +149,6 @@
           "url": {
             "type": "string",
             "description": "Target URL."
-          }
-        }
-      }
-    },
-    "pages": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": [
-          "title",
-          "score",
-          "total_scorecards",
-          "passed_scorecards",
-          "sections"
-        ],
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Page title."
-          },
-          "slug": {
-            "type": ["string", "null"],
-            "description": "URL-friendly identifier for the page."
-          },
-          "score": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 100,
-            "description": "Percentage score for this page."
-          },
-          "total_scorecards": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Total scorecards on this page."
-          },
-          "passed_scorecards": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Passed scorecards on this page."
-          },
-          "sections": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "required": [
-                "name",
-                "score",
-                "total_scorecards",
-                "passed_scorecards",
-                "scorecards"
-              ],
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "description": "Section name."
-                },
-                "hint": {
-                  "type": "string",
-                  "description": "Informative text for the section."
-                },
-                "score": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 100,
-                  "description": "Percentage score for this section."
-                },
-                "total_scorecards": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "description": "Total scorecards in this section."
-                },
-                "passed_scorecards": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "description": "Passed scorecards in this section."
-                },
-                "levels_summary": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "required": ["total", "passed", "percentage"],
-                    "properties": {
-                      "total": {
-                        "type": "integer",
-                        "minimum": 0
-                      },
-                      "passed": {
-                        "type": "integer",
-                        "minimum": 0
-                      },
-                      "percentage": {
-                        "type": "integer",
-                        "minimum": 0,
-                        "maximum": 100
-                      }
-                    }
-                  }
-                },
-                "tags_summary": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "required": ["total", "passed", "percentage"],
-                    "properties": {
-                      "total": {
-                        "type": "integer",
-                        "minimum": 0
-                      },
-                      "passed": {
-                        "type": "integer",
-                        "minimum": 0
-                      },
-                      "percentage": {
-                        "type": "integer",
-                        "minimum": 0,
-                        "maximum": 100
-                      }
-                    }
-                  }
-                },
-                "scorecards": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": ["name", "description", "passed"],
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "Unique scorecard identifier."
-                      },
-                      "description": {
-                        "type": "string",
-                        "description": "Display description."
-                      },
-                      "level": {
-                        "type": ["string", "null"],
-                        "description": "Assigned severity level name."
-                      },
-                      "tags": {
-                        "type": "array",
-                        "items": { "type": "string" },
-                        "description": "Associated search tags."
-                      },
-                      "analyzers": {
-                        "type": "array",
-                        "items": { "type": "string" },
-                        "description": "Analyzers used for this scorecard."
-                      },
-                      "passed": {
-                        "type": "boolean",
-                        "description": "True if condition was met."
-                      },
-                      "status": {
-                        "type": "string",
-                        "enum": ["passed", "failed", "incomplete"],
-                        "description": "Execution status."
-                      },
-                      "condition": {
-                        "type": "string",
-                        "description": "The JsonLogic expression evaluated."
-                      },
-                      "details": {
-                        "type": "string",
-                        "description": "Detailed explanation of calculated result."
-                      }
-                    }
-                  }
-                },
-                "display": {
-                  "type": "object",
-                  "properties": {
-                    "analyzers": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "widgets": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "label": {
-                            "type": "string",
-                            "description": "Widget display label."
-                          },
-                          "value": {
-                            "type": "string",
-                            "description": "Data resolution path."
-                          },
-                          "icon": {
-                            "type": "string",
-                            "description": "Icon identifier or emoji."
-                          },
-                          "resolved_value": {
-                            "description": "The actual value fetched after resolution."
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
           }
         }
       }
