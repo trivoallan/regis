@@ -184,7 +184,7 @@ from regis.report.html import _build_context
 def _report(results=None, rules=None, tier="Gold", score=92):
     rules = rules if rules is not None else []
     return {
-        "schemaVersion": 3,
+        "schemaVersion": 4,
         "request": {"registry": "r", "repository": "library/nginx", "tag": "1.27"},
         "results": results if results is not None else {},
         "tier": tier,
@@ -549,7 +549,7 @@ from regis.report.html import render_html_single
 def _report(results=None, rules=None, tier="Gold", score=92):
     rules = rules if rules is not None else []
     return {
-        "schemaVersion": 3,
+        "schemaVersion": 4,
         "request": {"registry": "r", "repository": "library/nginx", "tag": "1.27"},
         "results": results if results is not None else {},
         "tier": tier,
@@ -604,6 +604,7 @@ def test_triage_attention_when_failing():
         _report(results={"cve": {}}, rules=[_FAILING_CVE_RULE], score=80)
     )
     assert "Attention required" in html
+    assert "Severity" in html  # severity column, not "Level" (level vs tier, PR #703)
     assert "no-critical-cve" in html
 
 
@@ -747,6 +748,7 @@ Replace the entire content of `regis/templates/html/report.html.j2` with:
     .triage h2 { font-size:.95rem; margin-bottom:.4rem; }
     .triage table { width:100%; border-collapse:collapse; font-size:13px; margin:0; }
     .triage td { padding:.25rem .4rem; border:none; border-top:1px solid var(--line); vertical-align:top; background:transparent; }
+    .triage th { padding:.25rem .4rem; border:none; border-bottom:1px solid var(--line); text-align:left; font-size:11px; text-transform:uppercase; color:var(--muted); background:transparent; }
     .sev { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; margin:1rem 0; }
     .sev .cell { border:1px solid var(--line); border-radius:6px; text-align:center; padding:.5rem; }
     .sev .n { display:block; font-size:1.4rem; font-weight:800; line-height:1; }
@@ -836,6 +838,7 @@ Replace the entire content of `regis/templates/html/report.html.j2` with:
       <h2>{{ '✓ All checks passed' if triage.clear else '⚠ Attention required' }}</h2>
       {% if not triage.clear %}
       <table>
+        <thead><tr><th></th><th>Rule</th><th>Severity</th><th>Detail</th></tr></thead>
         <tbody>
           {% for f in triage.failures %}
           <tr><td>✗</td><td class="mono">{{ f.slug }}</td><td>{{ f.level }}</td><td>{{ f.message }}</td></tr>

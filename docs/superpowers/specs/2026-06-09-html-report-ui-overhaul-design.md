@@ -17,6 +17,21 @@ sections analyzer empilées au même niveau visuel, sans navigation ni
 priorisation. Quatre axes d'amélioration retenus : **lisibilité/hiérarchie**,
 **navigation/volume**, **branding/esthétique**, **densité/priorisation**.
 
+### Contrat amont (post-PR #703, contrat report v4)
+
+Conçu sur le contrat `REPORT_SCHEMA_VERSION = 4`. La
+[PR #703](https://github.com/trivoallan/regis/pull/703) (`refactor(playbook)!`,
+mergée) a deux conséquences pour ce travail :
+
+- **`level` est une _severity_** (`critical`/`warning`/`info`), explicitement
+  distincte du `tier` (score-based, noms configurables). Le panneau triage
+  affiche cette severity sous un libellé **« Severity »** — jamais « Level »
+  (qui rouvrirait la confusion level/tier corrigée par #703).
+- Les champs de présentation playbook supprimés
+  (`pages`/`sections`/`scorecards`/`widgets`/`tags_summary`/`levels`) **n'étaient
+  pas rendus** par le renderer HTML — **aucun impact**. Le verdict reste
+  rules-based (`build_verdict` dérive tout des `rules`), inchangé.
+
 ## Contrainte structurante
 
 **CSS pur, zéro JavaScript.** On reste mono-fichier self-contained. On s'appuie
