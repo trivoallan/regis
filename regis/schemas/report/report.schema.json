@@ -158,7 +158,7 @@
           },
           "level": {
             "type": "string",
-            "description": "Priority level (Gold, Silver, Bronze)."
+            "description": "Severity level of the rule (e.g. critical, warning, info). Distinct from the playbook tier."
           },
           "tags": {
             "type": "array",

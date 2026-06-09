@@ -72,10 +72,10 @@ class TestReportSchemaVersion:
 
 
 class TestEnsureSchemaVersion:
-    def test_constant_is_three(self):
+    def test_constant_is_four(self):
         from regis.utils.report import REPORT_SCHEMA_VERSION
 
-        assert REPORT_SCHEMA_VERSION == 3
+        assert REPORT_SCHEMA_VERSION == 4
 
     def test_sets_when_missing(self):
         from regis.utils.report import REPORT_SCHEMA_VERSION, ensure_schema_version
