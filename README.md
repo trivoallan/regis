@@ -7,9 +7,9 @@
 
 Regis provides unified container analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.
 
-[![Dashboard Overview](.github/assets/report-overview.png)](https://trivoallan.github.io/regis/regis/0.14.0/_attachments/examples/alpine/index.html)
+[![Dashboard Overview](.github/assets/report-overview.png)](https://trivoallan.github.io/regis/docs/reference/playbooks/default/examples/alpine)
 
-**[Explore the interactive example report →](https://trivoallan.github.io/regis/regis/0.14.0/_attachments/examples/alpine/index.html)**
+**[Explore the interactive example report →](https://trivoallan.github.io/regis/docs/reference/playbooks/default/examples/alpine)**
 
 ## Key Features
 
