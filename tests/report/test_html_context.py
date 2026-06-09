@@ -194,7 +194,33 @@ class TestTriage:
 
     def test_none_when_not_evaluated(self):
         ctx = _build_context(
-            {"request": {"registry": "r", "repository": "x", "tag": "t"}, "results": {}},
+            {
+                "request": {"registry": "r", "repository": "x", "tag": "t"},
+                "results": {},
+            },
             "all",
         )
         assert ctx["triage"] is None
+
+    def test_not_clear_when_only_incomplete(self):
+        ctx = _build_context(
+            _report(
+                results={"cve": {}},
+                rules=[
+                    {
+                        "slug": "cve-scan",
+                        "level": "warning",
+                        "passed": False,
+                        "status": "incomplete",
+                        "message": "scanner unavailable",
+                        "analyzers": ["cve"],
+                    }
+                ],
+                score=90,
+            ),
+            "all",
+        )
+        triage = ctx["triage"]
+        assert triage["failures"] == []
+        assert [i["slug"] for i in triage["incompletes"]] == ["cve-scan"]
+        assert triage["clear"] is False
