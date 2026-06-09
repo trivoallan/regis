@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.36.0](https://github.com/trivoallan/regis/compare/v0.35.0...v0.36.0) (2026-06-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **playbook:** result.schema.json is bumped to v4. The output keys `pages`, `sections`, `scorecards`, `widgets`, `tags_summary`, `total_scorecards` and `passed_scorecards` are removed, and `required` is reduced to `playbook_name` and `score`. Reading old v3 reports still validates (no field was added to `required`). Downstream consumers (regis-backstage, regis-gitlab, regis-action) must tolerate the v4 contract.
+
+### Features
+
+* **templates:** Carbon dashboard UI for the standalone HTML report ([#706](https://github.com/trivoallan/regis/issues/706)) ([b838c74](https://github.com/trivoallan/regis/commit/b838c740c503baf2c6e9a8622a08fb563f47d576))
+
+
+### Bug Fixes
+
+* **ci:** re-arm auto-merge after PR head force-push ([#697](https://github.com/trivoallan/regis/issues/697)) ([126f39d](https://github.com/trivoallan/regis/commit/126f39d3533c4daedab7dc46dc1a5d84fa73a18c))
+
+
+### Code Refactoring
+
+* **playbook:** remove legacy pages/sections report subsystem ([#703](https://github.com/trivoallan/regis/issues/703)) ([5f9d68e](https://github.com/trivoallan/regis/commit/5f9d68e41e18c630d36fc609d4bda498c5737014))
+
 ## [0.35.0](https://github.com/trivoallan/regis/compare/v0.34.0...v0.35.0) (2026-06-09)
 
 ### ⚠ BREAKING CHANGES
