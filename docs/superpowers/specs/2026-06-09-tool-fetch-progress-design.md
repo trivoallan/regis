@@ -31,7 +31,7 @@ concurrent worker threads).
 | 2 | Richness | **One-shot lines** (start + done/error), plain `click`, zero dependency. No live `%`/bar, no spinner. |
 | 3 | Emit mechanism | **Observer callback** — fetcher exposes an optional `on_event`; the CLI wires a default `click`-based reporter. Library stays pure & testable. |
 | 4 | Visibility | **Always on stderr, suppressed under `--quiet`**; emitted **only on a real cache miss** (never on cache hit or PATH short-circuit). |
-| — | `--quiet` gating | **Proxy on the effective log level** (`--quiet` already clamps the root logger to `ERROR`). The reporter prints only when `getEffectiveLevel() <= INFO`. |
+| — | `--quiet` gating | **Proxy on the effective log level** (`--quiet` already clamps the root logger to `ERROR`; default is `WARNING`, `--verbose` is `DEBUG`). The reporter prints only when `getEffectiveLevel() < ERROR` — i.e. always except under `--quiet`. |
 
 ## Architecture
 
@@ -63,9 +63,9 @@ New `regis/utils/tool_progress.py` exposing `click_reporter`:
   Style matches the existing `analyze` progress lines: 2-space indent, ✓/✗ glyphs;
   `✗` in red via `click.style(fg="red")`; `⬇`/`✓` uncolored. Bytes measured from
   actual bytes written, formatted MB/KB (no dependence on `Content-Length`).
-- **Gating:** prints only when `logging.getLogger("regis").getEffectiveLevel() <= logging.INFO`
-  (silent under `--quiet`, which sets `ERROR`). The reporter reads the log level
-  but never *emits* via logging.
+- **Gating:** prints only when `logging.getLogger("regis").getEffectiveLevel() < logging.ERROR`
+  (default `WARNING` and `--verbose` `DEBUG` both print; `--quiet` sets `ERROR` →
+  silent). The reporter reads the log level but never *emits* via logging.
 - **Thread-safety:** serializes writes behind a module-level `threading.Lock`.
   Each `click.echo` is a single write, so lines never interleave intra-line even
   with 4 concurrent workers.
@@ -108,7 +108,7 @@ file must stay covered.
 
 **Renderer (`tests/utils/test_tool_progress.py`, new):**
 - Each event kind → expected line (format, glyph, MB/KB, red on error) via stderr capture.
-- Gating: level `INFO` → prints; level `ERROR` (quiet) → total silence.
+- Gating: levels `WARNING` (default) and `INFO` → prints; level `ERROR` (quiet) → total silence.
 - Serialization: two concurrent threads produce no truncated line (lock).
 
 **Integration (light):**
