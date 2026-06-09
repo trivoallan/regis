@@ -95,3 +95,17 @@ def test_still_self_contained():
     assert "<script" not in html
     assert 'href="http' not in html
     assert 'src="http' not in html
+
+
+def test_renders_without_verdict_or_triage():
+    # A report with no tier/rules/playbooks is "not evaluated": the verdict
+    # hero and triage panel are skipped, but the page still renders.
+    html = render_html_single(
+        {
+            "request": {"registry": "r", "repository": "library/nginx", "tag": "1.27"},
+            "results": {"oci": {"analyzer": "oci"}},
+        }
+    )
+    assert 'id="verdict"' not in html
+    assert 'id="triage"' not in html
+    assert 'id="oci"' in html  # analyzer section still rendered
