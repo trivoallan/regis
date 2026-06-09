@@ -55,3 +55,55 @@ class TestToc:
             "cve",
         )
         assert [e["slug"] for e in ctx["toc"]] == ["cve"]
+
+
+class TestFailingAnalyzers:
+    def test_collects_analyzers_of_failed_rules(self):
+        ctx = _build_context(
+            _report(
+                results={"cve": {}, "oci": {}},
+                rules=[
+                    _FAILING_CVE_RULE,
+                    {
+                        "slug": "ok-rule",
+                        "level": "info",
+                        "passed": True,
+                        "status": "passed",
+                        "message": "",
+                        "analyzers": ["oci"],
+                    },
+                ],
+            ),
+            "all",
+        )
+        assert ctx["failing_analyzers"] == {"cve"}
+
+    def test_empty_when_all_pass(self):
+        ctx = _build_context(_report(results={"cve": {}}), "all")
+        assert ctx["failing_analyzers"] == set()
+
+    def test_sourced_from_playbooks_when_present(self):
+        report = {
+            "schemaVersion": 4,
+            "request": {"registry": "r", "repository": "x", "tag": "t"},
+            "results": {"cve": {}},
+            "playbooks": [
+                {
+                    "tier": "Gold",
+                    "rules_summary": {"score": 50, "total": ["a"], "passed": []},
+                    "rules": [
+                        {
+                            "slug": "a",
+                            "level": "critical",
+                            "passed": False,
+                            "status": "failed",
+                            "message": "boom",
+                            "analyzers": ["cve"],
+                        }
+                    ],
+                }
+            ],
+        }
+        ctx = _build_context(report, "all")
+        assert ctx["failing_analyzers"] == {"cve"}
+        assert {e["slug"]: e["status"] for e in ctx["toc"]} == {"cve": "fail"}
