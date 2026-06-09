@@ -165,7 +165,7 @@
     {% if verdict %}
     <section id="verdict" class="verdict">
       <div class="hero">
-        <div class="ring">{{ verdict.score }}</div>
+        <div class="ring" aria-label="Score {{ verdict.score }} out of 100">{{ verdict.score }}</div>
         <div>
           <h2 class="verdict-headline">{{ verdict.headline }}</h2>
           <p class="counts">{{ verdict.counts }}</p>
@@ -182,6 +182,7 @@
     {% endif %}
 
     {% if triage %}
+    {# subscript triage['clear']: dot-access triage.clear would resolve to the dict.clear() method (always truthy) #}
     <section id="triage" class="triage {{ 'clear' if triage['clear'] else '' }}">
       <h2>{{ '✓ All checks passed' if triage['clear'] else '⚠ Attention required' }}</h2>
       {% if not triage['clear'] %}
