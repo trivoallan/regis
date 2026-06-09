@@ -75,3 +75,5 @@ vendor/
 coverage/
 .cache/
 tmp/
+
+coverage.json

@@ -15,8 +15,8 @@ Never modify `RULES.md` or write secrets into any memory bank file.
 
 ```bash
 pipenv install --dev          # Install all dependencies
-pipenv run pytest             # Full run with coverage (fails if < 90%)
-pipenv run pytest --no-cov    # Fast loop — no coverage check
+pipenv run pytest             # Full run with coverage (fails if total < 90% OR any file < 90%)
+pipenv run pytest --no-cov    # Fast loop — disables both the global and per-file coverage gates
 pipenv run ruff check .       # Lint
 pipenv run ruff format .      # Format
 pipenv run regis --help       # Run CLI locally
@@ -27,6 +27,11 @@ pnpm --filter @regis/dashboard build   # Build viewer SPA
 ```
 
 Required external binaries (must be on `PATH`): `grype`, `syft`, `trufflehog`, `regctl`, `hadolint`, `dockle`.
+
+Coverage is enforced at two levels by `tests/_per_file_coverage.py` (loaded via `tests/conftest.py`): a global
+`--cov-fail-under=90` gate and a per-file gate that fails if any single source file under `regis/` is below 90%.
+The threshold for both is `[tool.coverage.report].fail_under` in `pyproject.toml`. `tests/` is excluded from
+measurement; zero-statement files are skipped. `--no-cov` disables both gates.
 
 Use `--no-cov` for fast iteration; run the full suite before opening a PR.
 
