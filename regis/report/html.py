@@ -21,18 +21,6 @@ _SEVERITY_SPEC = [
 ]
 
 
-def _source_rules(report: dict[str, Any]) -> list[dict[str, Any]]:
-    """Return the evaluated rules (playbooks[0] first, else top-level)."""
-    playbooks = report.get("playbooks") or []
-    if playbooks:
-        src = playbooks[0]
-    elif "tier" in report or "rules" in report:
-        src = report
-    else:
-        return []
-    return list(src.get("rules") or [])
-
-
 def _build_context(report: dict[str, Any], sections: str) -> dict[str, Any]:
     """Build the full template context for a report (pure: no template I/O)."""
     # Parse sections directive
@@ -102,12 +90,7 @@ def _build_context(report: dict[str, Any], sections: str) -> dict[str, Any]:
             "clear": not verdict_view["failures"] and not verdict_view["incompletes"],
         }
 
-    failing_analyzers: set[str] = {
-        a
-        for r in _source_rules(report)
-        if not r.get("passed") and r.get("status") != "incomplete"
-        for a in (r.get("analyzers") or [])
-    }
+    failing_analyzers: set[str] = {a for f in _v.failures for a in f.analyzers}
 
     toc = [
         {

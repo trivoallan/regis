@@ -31,6 +31,7 @@ class RuleLine:
     slug: str
     level: str
     message: str
+    analyzers: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -141,6 +142,7 @@ def build_verdict(final_report: dict[str, Any]) -> Verdict:
             slug=r.get("slug", "unknown"),
             level=str(r.get("level") or "info").lower(),
             message=r.get("message", ""),
+            analyzers=list(r.get("analyzers") or []),
         )
 
     summary = src.get("rules_summary") or {}
