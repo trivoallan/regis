@@ -82,6 +82,25 @@ class TestFailingAnalyzers:
         ctx = _build_context(_report(results={"cve": {}}), "all")
         assert ctx["failing_analyzers"] == set()
 
+    def test_excludes_incomplete_rules(self):
+        ctx = _build_context(
+            _report(
+                results={"cve": {}},
+                rules=[
+                    {
+                        "slug": "maybe-cve",
+                        "level": "critical",
+                        "passed": False,
+                        "status": "incomplete",
+                        "message": "",
+                        "analyzers": ["cve"],
+                    }
+                ],
+            ),
+            "all",
+        )
+        assert ctx["failing_analyzers"] == set()
+
     def test_sourced_from_playbooks_when_present(self):
         report = {
             "schemaVersion": 4,
