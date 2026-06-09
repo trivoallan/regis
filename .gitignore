@@ -77,3 +77,4 @@ coverage/
 tmp/
 
 coverage.json
+.superpowers/

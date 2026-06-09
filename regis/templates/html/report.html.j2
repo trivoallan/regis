@@ -53,137 +53,212 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ image_ref }} — regis report</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, -apple-system, sans-serif; font-size: 14px; line-height: 1.5; color: #1a1a1a; max-width: 1200px; margin: 0 auto; padding: 1rem 2rem; }
-    header { border-bottom: 2px solid #2563eb; padding-bottom: 1rem; margin-bottom: 2rem; }
-    h1 { font-size: 1.3rem; color: #1d4ed8; word-break: break-all; margin-bottom: .5rem; }
-    h2 { font-size: 1rem; margin: 2rem 0 .5rem; background: #f1f5f9; padding: .4rem .75rem; border-left: 3px solid #2563eb; }
-    section { margin-bottom: 1.5rem; }
-    dl.meta { display: grid; grid-template-columns: max-content 1fr; gap: .15rem .75rem; font-size: 13px; }
-    dt { font-weight: 600; color: #64748b; }
-    dd { color: #334155; word-break: break-all; }
-    table { border-collapse: collapse; width: 100%; margin: .5rem 0 1rem; font-size: 13px; }
-    th { background: #f8fafc; text-align: left; padding: .4rem .75rem; border: 1px solid #e2e8f0; font-weight: 600; color: #475569; }
-    td { padding: .35rem .75rem; border: 1px solid #e2e8f0; vertical-align: top; }
-    tr:nth-child(even) td { background: #f8fafc; }
-    ul { padding-left: 1.2rem; }
-    li { margin: .1rem 0; }
-    .badge { display: inline-block; padding: .1rem .4rem; border-radius: 3px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; }
-    .badge-critical { background: #fee2e2; color: #991b1b; }
-    .badge-high { background: #fef3c7; color: #92400e; }
-    .badge-medium { background: #fef9c3; color: #854d0e; }
-    .badge-low { background: #dcfce7; color: #166534; }
-    .badge-pass, .badge-passed { background: #dcfce7; color: #166534; }
-    .badge-fail, .badge-failed { background: #fee2e2; color: #991b1b; }
-    .badge-warn, .badge-warning, .badge-incomplete { background: #fef3c7; color: #92400e; }
-    .badge-none { background: #f1f5f9; color: #64748b; }
-    .verdict { margin: 1rem 0; padding: .75rem 1rem; border: 1px solid #e2e8f0; border-radius: 6px; }
-    .verdict-headline { margin: 0 0 .25rem; font-size: 1.4rem; }
-    .verdict-badges { margin: .5rem 0 0; }
-    .verdict-rules { margin-top: .5rem; }
-    em { color: #94a3b8; font-style: normal; }
-    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; }
+    :root {
+      --bg:#fff; --fg:#18181b; --muted:#71717a; --line:#e4e4e7; --panel:#fafafa;
+      --crit:#991b1b; --crit-bg:#fef2f2; --high:#c2410c; --high-bg:#fff7ed;
+      --med:#a16207; --low:#166534; --low-bg:#f0fdf4; --accent:#18181b;
+    }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:system-ui,-apple-system,sans-serif; font-size:14px; line-height:1.5; color:var(--fg); background:var(--bg); }
+    .mono { font-family:ui-monospace,"SF Mono",Menlo,monospace; }
+    a { color:inherit; }
+    .layout { display:grid; grid-template-columns:200px 1fr; max-width:1200px; margin:0 auto; min-height:100vh; }
+    .sidebar { position:sticky; top:0; align-self:start; max-height:100vh; overflow:auto; background:var(--panel); border-right:1px solid var(--line); padding:1.25rem 1rem; }
+    .brand { font-weight:800; letter-spacing:.05em; margin-bottom:1rem; }
+    .toc a { display:flex; justify-content:space-between; gap:.5rem; text-decoration:none; color:var(--muted); padding:.2rem 0; font-size:13px; }
+    .toc a:hover { color:var(--fg); }
+    .st-fail { color:var(--crit); font-weight:700; }
+    .st-pass { color:var(--low); }
+    main { padding:1.5rem 2rem; min-width:0; }
+    header.rep { border-bottom:1px solid var(--line); padding-bottom:1rem; margin-bottom:1.25rem; }
+    header.rep h1 { font-size:1.3rem; word-break:break-all; }
+    header.rep .meta { display:grid; grid-template-columns:max-content 1fr; gap:.1rem .75rem; font-size:13px; margin-top:.5rem; }
+    header.rep .meta dt { font-weight:600; color:var(--muted); }
+    header.rep .meta dd { color:var(--fg); word-break:break-all; }
+    .verdict { margin:1rem 0 1.25rem; }
+    .hero { display:flex; align-items:center; gap:1rem; }
+    .ring { width:64px; height:64px; border-radius:50%; border:5px solid var(--accent); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.3rem; flex:0 0 auto; }
+    .verdict-headline { font-size:1.2rem; margin:0; }
+    .counts { color:var(--muted); font-size:13px; margin-top:.15rem; }
+    .verdict-badges { margin-top:.5rem; }
+    .pill, .badge { display:inline-block; padding:.12rem .5rem; border-radius:999px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.02em; }
+    .badge { border-radius:3px; }
+    .badge-critical { background:var(--crit-bg); color:var(--crit); }
+    .badge-high { background:var(--high-bg); color:var(--high); }
+    .badge-medium { background:#fefce8; color:var(--med); }
+    .badge-low { background:var(--low-bg); color:var(--low); }
+    .badge-pass, .badge-passed { background:var(--low-bg); color:var(--low); }
+    .badge-fail, .badge-failed { background:var(--crit-bg); color:var(--crit); }
+    .badge-warn, .badge-warning, .badge-incomplete { background:var(--high-bg); color:var(--high); }
+    .badge-none { background:var(--panel); color:var(--muted); }
+    .triage { border:1px solid var(--line); border-left:3px solid var(--high); border-radius:6px; background:var(--panel); padding:.75rem 1rem; margin:1rem 0; }
+    .triage.clear { border-left-color:var(--low); }
+    .triage h2 { font-size:.95rem; margin-bottom:.4rem; }
+    .triage table { width:100%; border-collapse:collapse; font-size:13px; margin:0; }
+    .triage td { padding:.25rem .4rem; border:none; border-top:1px solid var(--line); vertical-align:top; background:transparent; }
+    .triage th { padding:.25rem .4rem; border:none; border-bottom:1px solid var(--line); text-align:left; font-size:11px; text-transform:uppercase; color:var(--muted); background:transparent; }
+    .sev { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; margin:1rem 0; }
+    .sev .cell { border:1px solid var(--line); border-radius:6px; text-align:center; padding:.5rem; }
+    .sev .n { display:block; font-size:1.4rem; font-weight:800; line-height:1; }
+    .sev .l { font-size:11px; text-transform:uppercase; color:var(--muted); }
+    .sev .critical .n { color:var(--crit); } .sev .high .n { color:var(--high); }
+    .sev .medium .n { color:var(--med); } .sev .low .n { color:var(--low); }
+    h2.section-title { font-size:1rem; margin:1.5rem 0 .5rem; }
+    details.an { border:1px solid var(--line); border-radius:6px; margin:.75rem 0; }
+    details.an > summary { cursor:pointer; padding:.5rem .75rem; font-weight:700; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+    details.an > summary::-webkit-details-marker { display:none; }
+    details.an > summary::before { content:"▸"; margin-right:.5rem; color:var(--muted); }
+    details.an[open] > summary::before { content:"▾"; }
+    details.an .an-body { padding:.25rem .75rem .75rem; }
+    details.an:target { border-color:var(--accent); }
+    table { border-collapse:collapse; width:100%; margin:.5rem 0; font-size:13px; }
+    th { background:var(--panel); text-align:left; padding:.4rem .75rem; border:1px solid var(--line); font-weight:600; color:#52525b; }
+    td { padding:.35rem .75rem; border:1px solid var(--line); vertical-align:top; }
+    ul { padding-left:1.2rem; } li { margin:.1rem 0; }
+    dl.scalars { display:grid; grid-template-columns:max-content 1fr; gap:.15rem .75rem; font-size:13px; }
+    dl.scalars dt { font-weight:600; color:var(--muted); }
+    em { color:var(--muted); font-style:normal; }
+    footer { margin-top:2rem; padding-top:1rem; border-top:1px solid var(--line); color:var(--muted); font-size:12px; }
+    @media (max-width:720px) {
+      .layout { grid-template-columns:1fr; }
+      .sidebar { position:sticky; top:0; max-height:none; height:auto; border-right:none; border-bottom:1px solid var(--line); padding:.6rem .75rem; z-index:5; }
+      .brand { display:inline-block; margin:0 .5rem 0 0; }
+      .toc { display:flex; gap:.4rem; overflow-x:auto; white-space:nowrap; }
+      .toc a { flex:0 0 auto; border:1px solid var(--line); border-radius:999px; padding:.2rem .6rem; }
+      .sev { grid-template-columns:repeat(2,1fr); }
+      main { padding:1rem; }
+    }
   </style>
 </head>
 <body>
-
-<header>
-  <h1>{{ image_ref }}</h1>
-  <dl class="meta">
-    <dt>Registry</dt><dd>{{ report.request.registry }}</dd>
-    <dt>Repository</dt><dd>{{ report.request.repository }}</dd>
-    <dt>Tag</dt><dd>{{ report.request.tag }}</dd>
-    {% if report.request.digest %}
-    <dt>Digest</dt><dd>{{ report.request.digest }}</dd>
-    {% endif %}
-    {% if report.request.timestamp %}
-    <dt>Analysis date</dt><dd>{{ report.request.timestamp }}</dd>
-    {% endif %}
-    {% if report.snapshot_date %}
-    <dt>Snapshot date</dt><dd>{{ report.snapshot_date }}</dd>
-    {% endif %}
-  </dl>
-</header>
-
-{% if verdict %}
-<section class="verdict">
-  <h2 class="verdict-headline">{{ verdict.headline }}</h2>
-  <p class="verdict-counts"><strong>{{ verdict.counts }}</strong></p>
-  {% if verdict.badges %}
-  <p class="verdict-badges">
-    {% for b in verdict.badges %}
-    <span class="badge badge-{{ b.css }}">{{ b.emoji }} {{ b.label }}</span>
-    {% endfor %}
-  </p>
-  {% endif %}
-  {% if verdict.failures or verdict.incompletes %}
-  <table class="verdict-rules">
-    <thead><tr><th></th><th>Rule</th><th>Level</th><th>Result</th></tr></thead>
-    <tbody>
-      {% for f in verdict.failures %}
-      <tr><td>✗</td><td>{{ f.slug }}</td><td>{{ f.level }}</td><td>{{ f.message }}</td></tr>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">regis</div>
+    <nav class="toc">
+      {% if verdict %}<a href="#verdict"><span>Verdict</span></a>{% endif %}
+      {% if triage %}<a href="#triage"><span>Triage</span></a>{% endif %}
+      {% for t in toc %}
+      <a href="#{{ t.slug }}"><span>{{ t.label }}</span><span class="st-{{ t.status }}">{{ '✗' if t.status == 'fail' else '✓' }}</span></a>
       {% endfor %}
-      {% for i in verdict.incompletes %}
-      <tr><td>⚠</td><td>{{ i.slug }}</td><td>{{ i.level }}</td><td>{{ i.message }}</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% endif %}
-</section>
-{% endif %}
+    </nav>
+  </aside>
 
-{% if report.playbooks %}
-<section id="playbooks">
-  <h2>Playbook results</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Playbook</th>
-        <th>Verdict</th>
-        <th>Score</th>
-        <th>Failing rules</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for pb in report.playbooks %}
-      <tr>
-        <td>{{ pb.name | default('—') }}</td>
-        <td>
-          {% set verdict = pb.verdict | default('') | lower %}
-          <span class="badge badge-{{ verdict }}">{{ pb.verdict | default('—') }}</span>
-        </td>
-        <td>{{ pb.score | default('—') }}{% if pb.score is not none %}%{% endif %}</td>
-        <td>{{ pb.rules | default([]) | selectattr('passed', 'equalto', false) | list | length }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</section>
-{% endif %}
+  <main>
+    <header class="rep" id="top">
+      <h1>{{ image_ref }}</h1>
+      <dl class="meta">
+        <dt>Registry</dt><dd>{{ report.request.registry }}</dd>
+        <dt>Repository</dt><dd>{{ report.request.repository }}</dd>
+        <dt>Tag</dt><dd class="mono">{{ report.request.tag }}</dd>
+        {% if report.request.digest %}
+        <dt>Digest</dt><dd class="mono">{{ report.request.digest }}</dd>
+        {% endif %}
+        {% if report.request.timestamp %}
+        <dt>Analysis date</dt><dd>{{ report.request.timestamp }}</dd>
+        {% endif %}
+        {% if report.snapshot_date %}
+        <dt>Snapshot date</dt><dd>{{ report.snapshot_date }}</dd>
+        {% endif %}
+      </dl>
+    </header>
 
-{% for analyzer_name, result in report.results.items() %}
-{% if filter_slugs is none or analyzer_name in filter_slugs %}
-<section id="{{ analyzer_name }}">
-  <h2>{{ analyzer_name }}</h2>
-  {% if not show_details %}
-    {# Summary mode: render only top-level scalar fields #}
-    <dl class="meta">
-      {% for k, v in result.items() %}
-      {% if v is not mapping and (v is not iterable or v is string) %}
-      <dt>{{ k }}</dt>
-      <dd>{{ render_scalar(v) }}</dd>
+    {% if verdict %}
+    <section id="verdict" class="verdict">
+      <div class="hero">
+        <div class="ring" aria-label="Score {{ verdict.score }} out of 100">{{ verdict.score }}</div>
+        <div>
+          <h2 class="verdict-headline">{{ verdict.headline }}</h2>
+          <p class="counts">{{ verdict.counts }}</p>
+        </div>
+      </div>
+      {% if verdict.badges %}
+      <p class="verdict-badges">
+        {% for b in verdict.badges %}
+        <span class="badge badge-{{ b.css }}">{{ b.emoji }} {{ b.label }}</span>
+        {% endfor %}
+      </p>
       {% endif %}
+    </section>
+    {% endif %}
+
+    {% if triage %}
+    {# subscript triage['clear']: dot-access triage.clear would resolve to the dict.clear() method (always truthy) #}
+    <section id="triage" class="triage {{ 'clear' if triage['clear'] else '' }}">
+      <h2>{{ '✓ All checks passed' if triage['clear'] else '⚠ Attention required' }}</h2>
+      {% if not triage['clear'] %}
+      <table>
+        <thead><tr><th></th><th>Rule</th><th>Severity</th><th>Detail</th></tr></thead>
+        <tbody>
+          {% for f in triage.failures %}
+          <tr><td>✗</td><td class="mono">{{ f.slug }}</td><td>{{ f.level }}</td><td>{{ f.message }}</td></tr>
+          {% endfor %}
+          {% for i in triage.incompletes %}
+          <tr><td>⚠</td><td class="mono">{{ i.slug }}</td><td>{{ i.level }}</td><td>{{ i.message }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    {% if severity %}
+    <section class="sev">
+      {% for s in severity %}
+      <div class="cell {{ s.css }}"><span class="n">{{ s.count }}</span><span class="l">{{ s.label }}</span></div>
       {% endfor %}
-    </dl>
-  {% else %}
-    {# Detail mode: render all fields #}
-    {{ render_detail(result) }}
-  {% endif %}
-</section>
-{% endif %}
-{% endfor %}
+    </section>
+    {% endif %}
 
-<footer>Generated by regis {{ regis_version }} on {{ generated_at }}</footer>
+    {% if report.playbooks %}
+    <section id="playbooks">
+      <h2 class="section-title">Playbook results</h2>
+      <table>
+        <thead>
+          <tr><th>Playbook</th><th>Verdict</th><th>Score</th><th>Failing rules</th></tr>
+        </thead>
+        <tbody>
+          {% for pb in report.playbooks %}
+          <tr>
+            <td>{{ pb.name | default('—') }}</td>
+            <td>
+              {% set pbv = pb.verdict | default('') | lower %}
+              <span class="badge badge-{{ pbv }}">{{ pb.verdict | default('—') }}</span>
+            </td>
+            <td>{{ pb.score | default('—') }}{% if pb.score is not none %}%{% endif %}</td>
+            <td>{{ pb.rules | default([]) | selectattr('passed', 'equalto', false) | list | length }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+    {% endif %}
 
+    {% for analyzer_name, result in report.results.items() %}
+    {% if filter_slugs is none or analyzer_name in filter_slugs %}
+    <details class="an" id="{{ analyzer_name }}"{% if not show_details or analyzer_name in failing_analyzers %} open{% endif %}>
+      <summary>
+        <span>{{ analyzer_name }}</span>
+        <span class="st-{{ 'fail' if analyzer_name in failing_analyzers else 'pass' }}">{{ '✗' if analyzer_name in failing_analyzers else '✓' }}</span>
+      </summary>
+      <div class="an-body">
+        {% if not show_details %}
+          <dl class="scalars">
+            {% for k, v in result.items() %}
+            {% if v is not mapping and (v is not iterable or v is string) %}
+            <dt>{{ k }}</dt><dd>{{ render_scalar(v) }}</dd>
+            {% endif %}
+            {% endfor %}
+          </dl>
+        {% else %}
+          {{ render_detail(result) }}
+        {% endif %}
+      </div>
+    </details>
+    {% endif %}
+    {% endfor %}
+
+    <footer>Generated by regis {{ regis_version }} on {{ generated_at }}</footer>
+  </main>
+</div>
 </body>
 </html>
