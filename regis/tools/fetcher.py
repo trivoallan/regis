@@ -10,6 +10,7 @@ import platform
 import shutil
 import tarfile
 import tempfile
+import time
 import urllib.request
 import zipfile
 from collections.abc import Callable
@@ -159,7 +160,18 @@ class ToolFetcher:
     ) -> None:
         """Download ``tool`` to ``target`` after sha256 verification."""
         url = self._resolve_url(tool)
+        self._emit(
+            ToolEvent(
+                kind="fetch_start",
+                tool=tool.name,
+                version=tool.version,
+                arch=self.arch,
+                url=url,
+            )
+        )
         logger.info("Fetching %s %s from %s", tool.name, tool.version, url)
+        started = time.monotonic()
+        downloaded = 0
         with tempfile.NamedTemporaryFile(
             dir=target.parent,
             prefix=f"{tool.name}.",
@@ -168,40 +180,53 @@ class ToolFetcher:
         ) as tmpf:
             partial = Path(tmpf.name)
         try:
-            with urllib.request.urlopen(  # nosec B310 — http(s) only, verified by sha256
-                url, timeout=DOWNLOAD_TIMEOUT_S
-            ) as resp:
-                with partial.open("wb") as out:
-                    shutil.copyfileobj(resp, out)
+            try:
+                with urllib.request.urlopen(  # nosec B310 — http(s) only, verified by sha256
+                    url, timeout=DOWNLOAD_TIMEOUT_S
+                ) as resp:
+                    with partial.open("wb") as out:
+                        shutil.copyfileobj(resp, out)
+                downloaded = partial.stat().st_size
 
-            extracted = self._maybe_extract(tool, partial)
-            actual = _sha256_file(extracted)
-            if actual != expected_sha:
-                raise ToolFetchError(
-                    f"{tool.name} sha256 mismatch: expected {expected_sha}, got {actual}"
-                )
-            if tool.cosign is not None:
-                try:
-                    verify_blob(extracted, url, tool.cosign)
-                    logger.info("cosign: verified %s", tool.name)
-                except CosignUnavailable as exc:
-                    if (
-                        self.require_cosign
-                        or os.environ.get("REGIS_REQUIRE_COSIGN") == "1"
-                    ):
-                        raise ToolFetchError(
-                            f"{tool.name}: cosign required but unavailable ({exc})"
-                        ) from exc
-                    logger.info(
-                        "cosign verification skipped for %s (binary not on PATH)",
-                        tool.name,
-                    )
-                except CosignVerificationFailed as exc:
+                extracted = self._maybe_extract(tool, partial)
+                actual = _sha256_file(extracted)
+                if actual != expected_sha:
                     raise ToolFetchError(
-                        f"{tool.name}: cosign verification failed: {exc}"
-                    ) from exc
-            extracted.replace(target)
-            os.chmod(target, 0o755)  # nosec B103 — tool binaries must be executable
+                        f"{tool.name} sha256 mismatch: expected {expected_sha}, got {actual}"
+                    )
+                if tool.cosign is not None:
+                    try:
+                        verify_blob(extracted, url, tool.cosign)
+                        logger.info("cosign: verified %s", tool.name)
+                    except CosignUnavailable as exc:
+                        if (
+                            self.require_cosign
+                            or os.environ.get("REGIS_REQUIRE_COSIGN") == "1"
+                        ):
+                            raise ToolFetchError(
+                                f"{tool.name}: cosign required but unavailable ({exc})"
+                            ) from exc
+                        logger.info(
+                            "cosign verification skipped for %s (binary not on PATH)",
+                            tool.name,
+                        )
+                    except CosignVerificationFailed as exc:
+                        raise ToolFetchError(
+                            f"{tool.name}: cosign verification failed: {exc}"
+                        ) from exc
+                extracted.replace(target)
+                os.chmod(target, 0o755)  # nosec B103 — tool binaries must be executable
+            except ToolFetchError as exc:
+                self._emit(
+                    ToolEvent(
+                        kind="fetch_error",
+                        tool=tool.name,
+                        version=tool.version,
+                        arch=self.arch,
+                        error=str(exc),
+                    )
+                )
+                raise
         finally:
             if partial.exists():
                 partial.unlink()
@@ -210,6 +235,16 @@ class ToolFetcher:
                 stray.unlink(missing_ok=True)
             for stray in target.parent.glob(f"{tool.name}.*.partial.extracted"):
                 stray.unlink(missing_ok=True)
+        self._emit(
+            ToolEvent(
+                kind="fetch_done",
+                tool=tool.name,
+                version=tool.version,
+                arch=self.arch,
+                bytes=downloaded,
+                elapsed_s=time.monotonic() - started,
+            )
+        )
 
     def _maybe_extract(self, tool: Tool, archive_path: Path) -> Path:
         """Extract ``tool.member`` from the archive, or return the input as-is."""
