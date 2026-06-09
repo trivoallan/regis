@@ -450,9 +450,7 @@ def test_ensure_emits_start_then_done_on_cache_miss(monkeypatch, tmp_path):
         }
         _patch_manifest(monkeypatch, tools)
         cache = tmp_path / "cache"
-        fetcher = ToolFetcher(
-            cache_dir=cache, arch="amd64", on_event=events.append
-        )
+        fetcher = ToolFetcher(cache_dir=cache, arch="amd64", on_event=events.append)
         fetcher.ensure("grype")
 
     kinds = [e.kind for e in events]
@@ -498,9 +496,7 @@ def test_sha_mismatch_emits_fetch_error_before_raising(monkeypatch, tmp_path):
         }
         _patch_manifest(monkeypatch, tools)
         cache = tmp_path / "cache"
-        fetcher = ToolFetcher(
-            cache_dir=cache, arch="amd64", on_event=events.append
-        )
+        fetcher = ToolFetcher(cache_dir=cache, arch="amd64", on_event=events.append)
         with pytest.raises(ToolFetchError, match="sha256 mismatch"):
             fetcher.ensure("grype")
 

@@ -31,7 +31,10 @@ def test_start_event_renders_download_line(monkeypatch):
     lines = _capture(monkeypatch)
     click_reporter(
         ToolEvent(
-            kind="fetch_start", tool="grype", version="0.74.7", arch="arm64",
+            kind="fetch_start",
+            tool="grype",
+            version="0.74.7",
+            arch="arm64",
             url="https://x/grype",
         )
     )
@@ -42,8 +45,12 @@ def test_done_event_renders_size_and_duration(monkeypatch):
     lines = _capture(monkeypatch)
     click_reporter(
         ToolEvent(
-            kind="fetch_done", tool="grype", version="0.74.7", arch="arm64",
-            bytes=13_002_342, elapsed_s=1.34,
+            kind="fetch_done",
+            tool="grype",
+            version="0.74.7",
+            arch="arm64",
+            bytes=13_002_342,
+            elapsed_s=1.34,
         )
     )
     assert lines == ["  ✓ Fetched grype (12.4 MB in 1.3s)"]
@@ -53,8 +60,12 @@ def test_done_event_formats_small_payload_in_kb(monkeypatch):
     lines = _capture(monkeypatch)
     click_reporter(
         ToolEvent(
-            kind="fetch_done", tool="syft", version="1.0.0", arch="amd64",
-            bytes=2048, elapsed_s=0.2,
+            kind="fetch_done",
+            tool="syft",
+            version="1.0.0",
+            arch="amd64",
+            bytes=2048,
+            elapsed_s=0.2,
         )
     )
     assert lines == ["  ✓ Fetched syft (2.0 KB in 0.2s)"]
@@ -64,7 +75,10 @@ def test_error_event_renders_red_failure_line(monkeypatch):
     lines = _capture(monkeypatch)
     click_reporter(
         ToolEvent(
-            kind="fetch_error", tool="grype", version="0.74.7", arch="arm64",
+            kind="fetch_error",
+            tool="grype",
+            version="0.74.7",
+            arch="arm64",
             error="sha256 mismatch",
         )
     )
@@ -104,9 +118,7 @@ def test_concurrent_calls_do_not_truncate_lines(monkeypatch):
 
     def emit(i: int) -> None:
         click_reporter(
-            ToolEvent(
-                kind="fetch_start", tool=f"t{i}", version="1", arch="amd64"
-            )
+            ToolEvent(kind="fetch_start", tool=f"t{i}", version="1", arch="amd64")
         )
 
     threads = [threading.Thread(target=emit, args=(i,)) for i in range(20)]
