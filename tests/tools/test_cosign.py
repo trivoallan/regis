@@ -31,14 +31,15 @@ def test_verify_blob_success(monkeypatch, tmp_path):
         verify_blob(blob, "https://r.example.com/bin.tar.gz", policy)
     cmd = run.call_args[0][0]
     assert cmd[1] == "verify-blob"
-    assert "--signature" in cmd
-    assert "https://r.example.com/bin.tar.gz.sig" in cmd
-    assert "--certificate" in cmd
-    assert "https://r.example.com/bin.tar.gz.pem" in cmd
-    assert "--certificate-oidc-issuer" in cmd
-    assert "https://token.actions.githubusercontent.com" in cmd
-    assert "--certificate-identity-regexp" in cmd
-    assert "^https://github\\.com/org/.*" in cmd
+
+    def _flag_value(flag: str) -> str:
+        """Return the argument immediately following *flag* in the command."""
+        return cmd[cmd.index(flag) + 1]
+
+    assert _flag_value("--certificate-oidc-issuer") == policy.issuer
+    assert _flag_value("--certificate-identity-regexp") == policy.identity_regex
+    assert _flag_value("--signature") == "https://r.example.com/bin.tar.gz.sig"
+    assert _flag_value("--certificate") == "https://r.example.com/bin.tar.gz.pem"
     assert str(blob) in cmd
 
 
