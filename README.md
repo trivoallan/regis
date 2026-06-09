@@ -7,19 +7,9 @@
 
 Regis provides unified container analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.
 
-## Documentation
+[![Dashboard Overview](.github/assets/report-overview.png)](https://trivoallan.github.io/regis/regis/0.14.0/_attachments/examples/alpine/index.html)
 
-Comprehensive documentation, including installation and usage guides, is available at:
-**[https://trivoallan.github.io/regis/](https://trivoallan.github.io/regis/)**
-
-## Image variants
-
-| Tag                             | Base               | Size     | Use case                                                       |
-| ------------------------------- | ------------------ | -------- | -------------------------------------------------------------- |
-| `:latest`, `:VERSION`           | python:3.11-alpine | ≈ 156 MB | Default — slim image, scanner binaries downloaded on first use |
-| `:latest-full`, `:VERSION-full` | python:3.11-alpine | ≈ 484 MB | Air-gapped or rate-limited — all scanners baked in             |
-
-The slim image lazy-loads scanner binaries (`grype`, `syft`, `trufflehog`, `hadolint`, `dockle`) to `~/.cache/regis/tools/` on first use, verified against pinned sha256s. See [Managing analyzer tools](https://trivoallan.github.io/regis/docs/usage/tools-management) for the cache pattern and air-gapped guidance.
+**[Explore the interactive example report →](https://trivoallan.github.io/regis/regis/0.14.0/_attachments/examples/alpine/index.html)**
 
 ## Key Features
 
@@ -30,169 +20,18 @@ The slim image lazy-loads scanner binaries (`grype`, `syft`, `trufflehog`, `hado
 - **CI/CD Native** — Designed to integrate seamlessly into GitHub Actions or GitLab CI pipelines with first-class support for MR/PR reporting.
 - **Efficient Caching** — Reuse existing analysis results to speed up repeated evaluations and report regeneration.
 
-## Built-in Analyzers
+## Documentation
 
-| Analyzer     | Description                                                                            |
-| ------------ | -------------------------------------------------------------------------------------- |
-| `oci`        | Extracts multi-arch metadata, OS/Architecture labels, layers, and root user detection. |
-| `trivy`      | Performs vulnerability scanning and generates Software Bill of Materials (SBOM).       |
-| `provenance` | Verifies image build provenance and SLSA metadata.                                     |
-| `endoflife`  | Checks for End-Of-Life (EOL) status of base images using `endoflife.date`.             |
-| `freshness`  | Calculates image age and identifies potential maintenance risks.                       |
-| `hadolint`   | Lints Dockerfiles for security and best practice violations.                           |
-| `size`       | Analyzes image size and layer distribution for optimization.                           |
-| `versioning` | Ensures semantic versioning consistency and tag validation.                            |
+Full documentation lives at **[trivoallan.github.io/regis](https://trivoallan.github.io/regis/)**:
 
----
-
-## Report Preview
-
-`regis` generates high-quality, interactive HTML dashboards.
-Below is a preview of the different sections available in a standard report.
-
-**[Explore the interactive Alpine example report here](https://trivoallan.github.io/regis/regis/0.14.0/_attachments/examples/alpine/index.html)**
-
-<details>
-<summary>📈 Dashboard Overview</summary>
-<br>
-<img src=".github/assets/report-overview.png" alt="Dashboard Overview" width="100%">
-</details>
-
-<details>
-<summary>✅ Compliance Analysis</summary>
-<br>
-<img src=".github/assets/report-compliance.png" alt="Compliance Analysis" width="100%">
-</details>
-
-<details>
-<summary>🛡️ Vulnerability & Security</summary>
-<br>
-<img src=".github/assets/report-security.png" alt="Vulnerability Security" width="100%">
-</details>
-
-<details>
-<summary>🔗 Supply Chain & Quality</summary>
-<br>
-<img src=".github/assets/report-supply-chain.png" alt="Supply Chain & Quality" width="100%">
-</details>
-
-<details>
-<summary>✨ Best Practices</summary>
-<br>
-<img src=".github/assets/report-best-practices.png" alt="Best Practices" width="100%">
-</details>
-
-<details>
-<summary>💡 Insights & Lifecycle</summary>
-<br>
-<img src=".github/assets/report-insights.png" alt="Insights & Lifecycle" width="100%">
-</details>
-
-<details>
-<summary>⚙️ Technical Details</summary>
-<br>
-<img src=".github/assets/report-technical-details.png" alt="Technical Details" width="100%">
-</details>
-
----
-
-## CI/CD Security & Supply Chain Integrity
-
-The GitHub Actions pipelines enforce layered security controls:
-
-- **Dependency auditing gate (`pip-audit`)** in CI with a fail threshold at **HIGH/CRITICAL** severity.
-- **Release SBOM generation** in both **CycloneDX JSON** and **SPDX JSON** formats (via `syft`/Anchore action).
-- **Provenance attestation** for published container images using GitHub Artifact Attestations (`actions/attest-build-provenance`).
-
-These artifacts are uploaded by the release/CD workflow as GitHub Actions workflow artifacts so consumers can inspect composition and verify origin before deployment.
-
----
-
-> **Breaking change in v0.33.0** — The interactive dashboard, the multi-report
-> archive browser, and archive-site scaffolding were removed from the core and
-> now live in the standalone
-> [regis-dashboard](https://github.com/trivoallan/regis-dashboard) project
-> (`regis-dashboard render|serve|archive add|archive configure|bootstrap archive`).
-> The `regis dashboard` command, the `regis archive add|configure` commands, the
-> `bootstrap archive` subcommand, and `analyze --site` (with `--base-url`/`--open`
-> and the `html-site` format) were removed. Use `regis analyze --json` (the
-> `report.json` contract), `regis analyze --html` (self-contained `report.html`),
-> and `regis analyze --archive <dir>` (archive data the standalone dashboard
-> consumes) instead.
+- 🚀 [Getting Started](https://trivoallan.github.io/regis/docs/usage/getting-started) — install Regis and run your first analysis.
+- 📚 [Concepts](https://trivoallan.github.io/regis/docs/concepts/introduction) — analyzers, playbooks, rules, and scoring.
+- 🛠️ [Usage Guides](https://trivoallan.github.io/regis/docs/usage/analyze-image) — analyze images, manage scanner tools, configure registries.
+- 📖 [CLI Reference](https://trivoallan.github.io/regis/docs/reference/cli) — every command and flag.
 
 ## GitHub Action
 
-The [**regis-security-analysis**](https://github.com/marketplace/actions/regis-security-analysis) GitHub Action runs a full Regis security analysis on any OCI image, uploads the HTML report as a workflow artifact, and optionally posts a summary comment on pull requests.
-
-The action lives in its own repository, [**trivoallan/regis-action**](https://github.com/trivoallan/regis-action), and is versioned independently from this core project. Reference it as `trivoallan/regis-action@v1`.
-
-> **Migrating from `trivoallan/regis@vX`?** The action used to be hosted in this
-> repository. It has moved to [`trivoallan/regis-action`](https://github.com/trivoallan/regis-action).
-> Replace `uses: trivoallan/regis@vX` with `uses: trivoallan/regis-action@v1`.
-> The `version:` input (the `regis` Docker image tag) is unchanged.
-
-### Inputs
-
-| Input             | Required | Default                 | Description                                                        |
-| ----------------- | -------- | ----------------------- | ------------------------------------------------------------------ |
-| `image-url`       | Yes      | —                       | Container image URL to analyze                                     |
-| `auth`            | No       | `""`                    | Registry credentials as `registry=user:pass`                       |
-| `playbook`        | No       | `""`                    | URL or path to a custom playbook YAML                              |
-| `report-url`      | No       | `""`                    | URL to the hosted report (used in the PR comment link)             |
-| `github-token`    | No       | `${{ github.token }}`   | Token for posting PR comments; requires `pull-requests: write`     |
-| `pr-url`          | No       | `""`                    | PR URL to comment on; auto-detected in `pull_request` context      |
-| `upload-artifact` | No       | `true`                  | Whether to upload the HTML report as a workflow artifact           |
-| `artifact-name`   | No       | `regis-security-report` | Name for the uploaded artifact                                     |
-| `version`         | No       | `latest`                | Regis Docker image tag to run (pin to a release tag in production) |
-
-### Outputs
-
-| Output        | Description                                         |
-| ------------- | --------------------------------------------------- |
-| `report-path` | Absolute path to the report directory on the runner |
-
-### Basic usage
-
-```yaml
-- uses: trivoallan/regis-action@v1
-  with:
-    image-url: ghcr.io/your-org/your-image:latest
-```
-
-### PR comment usage
-
-To post a comment with the analysis summary on a pull request, add `pull-requests: write` to your job permissions and supply `pr-url`:
-
-```yaml
-jobs:
-  security-scan:
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      - uses: trivoallan/regis-action@v1
-        with:
-          image-url: ghcr.io/your-org/your-image:latest
-          pr-url: ${{ github.event.pull_request.html_url }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-```
-
-The PR comment fires only when `pr-url` is set. The `github-token` always defaults to `GITHUB_TOKEN`; supplying it explicitly is optional.
-
-### Version pinning
-
-`@v1` tracks the latest stable v1.x of the action. For fully reproducible runs, pin an exact release and the Docker image tag:
-
-```yaml
-- uses: trivoallan/regis-action@v1.0.0
-  with:
-    image-url: ghcr.io/your-org/your-image:latest
-    version: "v0.34.0" # Docker image tag — independent from the action ref above
-```
-
-The `uses:` ref (action code, versioned in `trivoallan/regis-action`) and the `version:` input (the `regis` Docker image tag, released from this repository) are independent; pin both for a fully reproducible run.
-
----
+Run Regis in CI with the [**regis-security-analysis**](https://github.com/marketplace/actions/regis-security-analysis) GitHub Action. It is maintained in its own repository — [**trivoallan/regis-action**](https://github.com/trivoallan/regis-action) (`uses: trivoallan/regis-action@v1`) — where you will find its inputs, outputs, and usage examples.
 
 ## License
 
