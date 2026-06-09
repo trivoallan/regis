@@ -94,6 +94,14 @@ def _build_context(report: dict[str, Any], sections: str) -> dict[str, Any]:
             ],
         }
 
+    triage = None
+    if verdict_view is not None:
+        triage = {
+            "failures": verdict_view["failures"],
+            "incompletes": verdict_view["incompletes"],
+            "clear": not verdict_view["failures"] and not verdict_view["incompletes"],
+        }
+
     failing_analyzers: set[str] = {
         a
         for r in _source_rules(report)
@@ -127,6 +135,7 @@ def _build_context(report: dict[str, Any], sections: str) -> dict[str, Any]:
         "regis_version": regis_version,
         "generated_at": generated_at,
         "verdict": verdict_view,
+        "triage": triage,
         "toc": toc,
         "failing_analyzers": failing_analyzers,
         "severity": severity,

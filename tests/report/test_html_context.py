@@ -159,3 +159,42 @@ class TestSeverity:
     def test_missing_counts_default_to_zero(self):
         ctx = _build_context(_report(results={"cve": {}}), "all")
         assert all(c["count"] == 0 for c in ctx["severity"])
+
+
+class TestTriage:
+    def test_lists_failures_and_flags_not_clear(self):
+        ctx = _build_context(
+            _report(results={"cve": {}}, rules=[_FAILING_CVE_RULE], score=80),
+            "all",
+        )
+        triage = ctx["triage"]
+        assert triage["clear"] is False
+        assert [f["slug"] for f in triage["failures"]] == ["no-critical-cve"]
+
+    def test_clear_when_all_pass(self):
+        ctx = _build_context(
+            _report(
+                results={"cve": {}},
+                rules=[
+                    {
+                        "slug": "ok",
+                        "level": "info",
+                        "passed": True,
+                        "status": "passed",
+                        "message": "",
+                        "analyzers": ["cve"],
+                    }
+                ],
+                score=100,
+            ),
+            "all",
+        )
+        assert ctx["triage"]["clear"] is True
+        assert ctx["triage"]["failures"] == []
+
+    def test_none_when_not_evaluated(self):
+        ctx = _build_context(
+            {"request": {"registry": "r", "repository": "x", "tag": "t"}, "results": {}},
+            "all",
+        )
+        assert ctx["triage"] is None
