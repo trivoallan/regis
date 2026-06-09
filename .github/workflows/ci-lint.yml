@@ -141,3 +141,24 @@ jobs:
             exit 1
           fi
           echo "No generated documentation artifacts committed."
+
+  execution-plans-guard:
+    name: No Execution Plans
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Reject committed execution plans
+        run: |
+          set -euo pipefail
+
+          matches="$(git ls-files -- 'docs/superpowers/plans/**')"
+          if [ -n "$matches" ]; then
+            echo "::error::Execution plans are ephemeral and must not be merged to main. Delete docs/superpowers/plans/ before merging; only specs (docs/superpowers/specs/) are durable."
+            echo "$matches"
+            exit 1
+          fi
+          echo "No execution plans committed."
