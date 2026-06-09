@@ -95,4 +95,4 @@ Specific value: `"freshness"`
 **Description:** True if the current tag points to the same digest as the 'latest' tag.
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-08 at 18:23:57 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-09 at 05:48:06 +0000
