@@ -13,6 +13,18 @@ from jinja2 import BaseLoader, Environment
 _BADGE_CSS = {"error": "failed", "warning": "warning", "success": "passed"}
 
 
+def _source_rules(report: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return the evaluated rules (playbooks[0] first, else top-level)."""
+    playbooks = report.get("playbooks") or []
+    if playbooks:
+        src = playbooks[0]
+    elif "tier" in report or "rules" in report:
+        src = report
+    else:
+        return []
+    return list(src.get("rules") or [])
+
+
 def _build_context(report: dict[str, Any], sections: str) -> dict[str, Any]:
     """Build the full template context for a report (pure: no template I/O)."""
     # Parse sections directive
@@ -74,6 +86,23 @@ def _build_context(report: dict[str, Any], sections: str) -> dict[str, Any]:
             ],
         }
 
+    failing_analyzers: set[str] = {
+        a
+        for r in _source_rules(report)
+        if not r.get("passed") and r.get("status") != "incomplete"
+        for a in (r.get("analyzers") or [])
+    }
+
+    toc = [
+        {
+            "slug": name,
+            "label": name,
+            "status": "fail" if name in failing_analyzers else "pass",
+        }
+        for name in report.get("results", {})
+        if filter_slugs is None or name in filter_slugs
+    ]
+
     return {
         "report": report,
         "image_ref": image_ref,
@@ -82,6 +111,8 @@ def _build_context(report: dict[str, Any], sections: str) -> dict[str, Any]:
         "regis_version": regis_version,
         "generated_at": generated_at,
         "verdict": verdict_view,
+        "toc": toc,
+        "failing_analyzers": failing_analyzers,
     }
 
 
