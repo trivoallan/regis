@@ -2,13 +2,23 @@ name: Repo / Auto-merge
 
 on:
   pull_request_target:
-    types: [opened, ready_for_review]
+    # `synchronize` re-arms auto-merge after the PR head is updated. When `main`
+    # advances, repo-autorebase force-pushes open PR branches; a force-push that
+    # lands after auto-merge was first enabled can leave it armed but never
+    # re-evaluated, so the PR sits MERGEABLE/CLEAN without merging. Re-running on
+    # every head update keeps auto-merge bound to the current head.
+    types: [opened, ready_for_review, synchronize]
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
   contents: read
+
+# Coalesce the bursts of `synchronize` events an autorebase force-push produces.
+concurrency:
+  group: automerge-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   automerge:
