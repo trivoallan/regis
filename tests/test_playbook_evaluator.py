@@ -2,139 +2,30 @@
 
 from __future__ import annotations
 
-import pytest
-
 from regis.playbook.evaluator import (
-    _evaluate_pages,
-    _normalize_pages,
     _resolve_links,
     evaluate,
 )
 
 # ---------------------------------------------------------------------------
-# _normalize_pages
+# evaluate — score derives from rules
 # ---------------------------------------------------------------------------
 
 
-def test_normalize_pages_returns_explicit_pages():
-    pb = {"pages": [{"name": "P1", "sections": []}]}
-    assert _normalize_pages(pb) == pb["pages"]
-
-
-def test_normalize_pages_wraps_bare_sections():
-    pb = {"sections": [{"name": "S1"}]}
-    result = _normalize_pages(pb)
-    assert result == [{"name": "Default", "sections": [{"name": "S1"}]}]
-
-
-def test_normalize_pages_empty_when_neither():
-    assert _normalize_pages({}) == []
-
-
-# ---------------------------------------------------------------------------
-# _evaluate_pages — section condition branches
-# ---------------------------------------------------------------------------
-
-
-def _make_raw_ctx(data: dict) -> dict:
-    """Minimal raw_context helper (flat copy)."""
-    from regis.playbook.context import _flatten
-
-    ctx = _flatten(data)
-    ctx.update(data)
-    return ctx
-
-
-def test_evaluate_pages_section_false_condition_skipped():
-    """A section whose condition is False with no missing data is skipped."""
-    pages = [
-        {
-            "sections": [
-                {
-                    "name": "Skipped",
-                    # {"==": [1, 0]} is always False, no missing keys
-                    "condition": {"==": [1, 0]},
-                    "scorecards": [],
-                }
-            ]
-        }
-    ]
-    raw_ctx = _make_raw_ctx({})
-    pages_results, total, passed = _evaluate_pages(pages, raw_ctx, {})
-    assert total == 0
-    assert pages_results[0]["sections"] == []
-
-
-def test_evaluate_pages_section_condition_missing_data_kept():
-    """A condition referencing a None value marks section as incomplete (kept).
-
-    json_logic uses dict.get() so absent keys return None (not raising KeyError).
-    A None value accessed via __getitem__ triggers missing_accessed=True.
-    We need the condition to evaluate to False while missing_accessed is True,
-    which happens when a key is explicitly None in context.
-    """
-    pages = [
-        {
-            "sections": [
-                {
-                    "name": "MaybeActive",
-                    # score is None → missing_accessed=True; None == True → False
-                    "condition": {"==": [{"var": "score"}, True]},
-                    "scorecards": [],
-                }
-            ]
-        }
-    ]
-    # Include 'score' as None so tracker sees a None value → missing_accessed=True
-    raw_ctx = _make_raw_ctx({"score": None})
-    pages_results, total, passed = _evaluate_pages(pages, raw_ctx, {})
-    # Section must be kept because the None value triggered missing_accessed=True
-    section_names = [s["name"] for s in pages_results[0]["sections"]]
-    assert "MaybeActive" in section_names
-
-
-def test_evaluate_pages_section_condition_invalid_op_no_missing_skipped():
-    """Invalid json-logic operator with no missing keys → exception path → section skipped."""
-    pages = [
-        {
-            "sections": [
-                {
-                    "name": "Invalid",
-                    "condition": {"__bad_op__": [1, 2]},
-                    "scorecards": [],
-                }
-            ]
-        }
-    ]
-    raw_ctx = _make_raw_ctx({"some_key": "value"})
-    pages_results, total, passed = _evaluate_pages(pages, raw_ctx, {})
-    section_names = [s["name"] for s in pages_results[0]["sections"]]
-    assert "Invalid" not in section_names
-
-
-def test_evaluate_pages_section_condition_exception_missing_data_kept():
-    """Invalid op + None value accessed → exception path → section kept (incomplete).
-
-    json_logic evaluates var operands before the op check, so accessing a None
-    value via __getitem__ sets missing_accessed=True even when the op raises.
-    """
-    pages = [
-        {
-            "sections": [
-                {
-                    "name": "ExcButMissing",
-                    # 'score' is None → missing_accessed=True, then __bad_op__ raises
-                    "condition": {"__bad_op__": [{"var": "score"}, 1]},
-                    "scorecards": [],
-                }
-            ]
-        }
-    ]
-    raw_ctx = _make_raw_ctx({"score": None})
-    pages_results, total, passed = _evaluate_pages(pages, raw_ctx, {})
-    # Because 'score' is None, tracker.missing_accessed is True → section kept
-    section_names = [s["name"] for s in pages_results[0]["sections"]]
-    assert "ExcButMissing" in section_names
+def test_score_derives_from_rules():
+    """result['score'] mirrors the rules score (no scorecard subsystem)."""
+    pb = {
+        "name": "x",
+        "rules": [
+            {"slug": "a", "provider": "core", "rule": "always-true", "level": "info"},
+        ],
+    }
+    out = evaluate(pb, {})
+    assert out["score"] == out["rules_summary"]["score"]
+    # No scorecard-era keys remain on the result.
+    assert "pages" not in out
+    assert "total_scorecards" not in out
+    assert "passed_scorecards" not in out
 
 
 # ---------------------------------------------------------------------------

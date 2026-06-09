@@ -62,7 +62,6 @@ class TestRunPlaybooks:
             ]
         result = {
             "score": 100 if passed else 0,
-            "sections": [],
             "rules_summary": {
                 "passed": ["r1"] if passed else [],
                 "total": ["r1"],
@@ -199,11 +198,51 @@ def test_result_schema_accepts_playbook_metadata() -> None:
         "playbook_version": "1.2.3",
         "api_version": "regis.io/v1alpha1",
         "score": 100,
-        "total_scorecards": 1,
-        "passed_scorecards": 1,
-        "pages": [],
     }
     jsonschema.validate(instance=report, schema=schema)  # must not raise
+
+
+def test_result_schema_v4_still_accepts_legacy_v3_keys() -> None:
+    """A legacy v3 result carrying the removed pages/scorecard keys must still
+    validate against the v4 schema (read backward-compatibility)."""
+    import importlib.resources
+    import json
+
+    import jsonschema
+
+    schema = json.loads(
+        importlib.resources.files("regis.schemas.playbook")
+        .joinpath("result.schema.json")
+        .read_text(encoding="utf-8")
+    )
+
+    legacy_report = {
+        "playbook_name": "Legacy",
+        "score": 80,
+        # Keys dropped from the v4 contract — a v3 producer still emits them.
+        "total_scorecards": 3,
+        "passed_scorecards": 2,
+        "pages": [
+            {
+                "title": "Default",
+                "score": 67,
+                "total_scorecards": 3,
+                "passed_scorecards": 2,
+                "sections": [
+                    {
+                        "name": "Main",
+                        "score": 67,
+                        "total_scorecards": 3,
+                        "passed_scorecards": 2,
+                        "scorecards": [
+                            {"name": "sc1", "description": "SC1", "passed": True}
+                        ],
+                    }
+                ],
+            }
+        ],
+    }
+    jsonschema.validate(instance=legacy_report, schema=schema)  # must not raise
 
 
 def test_markdown_includes_verdict_header():

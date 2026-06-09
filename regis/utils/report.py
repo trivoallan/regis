@@ -14,8 +14,13 @@ import jsonschema
 
 logger = logging.getLogger(__name__)
 
-REPORT_SCHEMA_VERSION = 3
-"""Current report-structure contract version (see report.schema.json)."""
+REPORT_SCHEMA_VERSION = 4
+"""Current report-structure contract version (see report.schema.json).
+
+v4 removed the legacy ``pages``/``sections``/``scorecards``/``widgets`` rendering
+subsystem (and the per-section ``levels_summary``/``tags_summary``); playbook
+results are now rules-based only.
+"""
 
 
 def format_output_path(template: str, report: dict[str, Any], fmt: str) -> Path:
@@ -166,14 +171,6 @@ def evaluate_playbooks(
             )
             playbook_results.append(pb_result)
 
-            summary_parts = []
-            for section in pb_result.get("sections", []):
-                for lv_name, stats in section.get("levels_summary", {}).items():
-                    summary_parts.append(
-                        f"{lv_name}: {stats['passed']}/{stats['total']}"
-                    )
-
-            summary_str = " · ".join(summary_parts)
             rs = pb_result.get("rules_summary", {})
             passed_rules = rs.get("passed", [])
             total_rules = rs.get("total", [])
@@ -185,9 +182,7 @@ def evaluate_playbooks(
             )
             rules_score = rs.get("score", pb_result["score"])
             _echo_info(
-                f"    {summary_str} "
-                f"({passed_count}/{total_count} rules passed, "
-                f"{rules_score}%)\n",
+                f"    ({passed_count}/{total_count} rules passed, {rules_score}%)\n",
                 err=True,
             )
 

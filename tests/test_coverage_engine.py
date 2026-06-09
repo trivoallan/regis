@@ -74,22 +74,11 @@ def test_stringify_condition_edge_cases():
 
 
 def test_evaluate_errors_and_edge_cases(caplog):
-    # jsonLogic error in scorecard
+    # Exercise the link / sidebar error and edge-case branches of evaluate().
     playbook = {
         "schemaVersion": 1,
         "version": "1.0.0",
         "name": "Test",
-        "sections": [
-            {
-                "name": "S1",
-                "scorecards": [
-                    {"name": "Score1", "condition": {"/": [1, 0]}}
-                ],  # Division by zero
-                "widgets": [
-                    {"label": "W1", "condition": {"/": [1, 0]}},  # Division by zero
-                ],
-            }
-        ],
         "links": [
             "not a dict",
             {"label": "Link1", "condition": {"/": [1, 0]}},  # Condition error
@@ -103,29 +92,9 @@ def test_evaluate_errors_and_edge_cases(caplog):
 
     result = evaluate(playbook, report)
 
-    assert "Score1" in str(result)
     assert result["score"] == 0
     # Link3 failed to resolve but it seems it stayed in the list if the exception was in _resolve_template?
-    # Let's check what actually happened in the engine
-    # Line 643 calls _resolve_template. _resolve_template catches Exception and returns template_str.
-    # So the URL is "{{ 1/0 }}".
+    # _resolve_template catches Exception and returns the template_str unchanged,
+    # so the URL stays "{{ 1/0 }}".
     assert "links" in result
     assert result.get("badge_labels") is None  # No badges matched
-
-
-def test_render_order_tags_append():
-    playbook = {
-        "sections": [
-            {
-                "name": "S1",
-                "scorecards": [{"name": "Sc1", "condition": True, "tags": ["tag1"]}],
-                "display": {"analyzers": ["cve"]},
-            }
-        ]
-    }
-    # report with some tags to trigger tags_summary
-    report = {"results": {"cve": {"tags": {"high_vulns": 1}}}}
-    result = evaluate(playbook, report)
-    # Check that 'tags' was appended to render_order if not present
-    # Sections are now inside pages
-    assert "tags" in result["pages"][0]["sections"][0]["render_order"]
