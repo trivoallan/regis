@@ -3,6 +3,14 @@ name: Repo / Auto-rebase
 on:
   push:
     branches: [main]
+  # A PR created or marked ready AFTER the last push to main has no rebase
+  # trigger and sits BEHIND until an unrelated merge lands — and with the
+  # ruleset's strict status checks, auto-merge cannot fire on a BEHIND
+  # branch. Rebasing the PR on arrival closes that gap. This event never
+  # checks out or executes PR code (the action only runs git plumbing), so
+  # pull_request_target is safe here.
+  pull_request_target:
+    types: [opened, ready_for_review]
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -10,9 +18,19 @@ env:
 permissions:
   contents: read
 
+# Push runs rebase the whole fleet of open PRs; PR-scoped runs rebase a
+# single one. Keep the groups separate so a single-PR run never cancels a
+# fleet run, while bursts within each scope coalesce on the newest main.
+concurrency:
+  group: repo-autorebase-${{ github.event.pull_request.number || 'main' }}
+  cancel-in-progress: true
+
 jobs:
   rebase:
     runs-on: ubuntu-latest
+    # Fork heads cannot be force-pushed by the App token; only same-repo PRs
+    # are rebased on PR events (push runs are unaffected).
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     permissions:
       contents: write
       pull-requests: write
@@ -29,3 +47,7 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token }}
           exclude-drafts: true
+          # On PR events, restrict the run to the PR that triggered it; on
+          # push events the filter is empty and every open PR is rebased.
+          # The action skips heads that are already up to date with main.
+          head: ${{ github.event.pull_request && format('{0}:{1}', github.event.pull_request.head.repo.owner.login, github.event.pull_request.head.ref) || '' }}
