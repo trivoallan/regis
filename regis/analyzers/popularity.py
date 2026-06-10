@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime, timezone
 from typing import Any
 
 import requests
@@ -48,9 +49,16 @@ class PopularityAnalyzer(BaseAnalyzer):
             "pull_count": data.get("pull_count", 0),
             "star_count": data.get("star_count", 0),
             "description": data.get("description", ""),
-            "last_updated": data.get("last_updated"),
             "date_registered": data.get("date_registered"),
             "is_official": repository.startswith("library/"),
+            "source": {
+                "fetched_at": datetime.now(timezone.utc).isoformat(),
+                **(
+                    {"built_at": data["last_updated"]}
+                    if data.get("last_updated")
+                    else {}
+                ),
+            },
         }
 
     def _empty(self, repository: str) -> dict[str, Any]:
@@ -61,7 +69,6 @@ class PopularityAnalyzer(BaseAnalyzer):
             "pull_count": None,
             "star_count": None,
             "description": None,
-            "last_updated": None,
             "date_registered": None,
             "is_official": repository.startswith("library/"),
         }

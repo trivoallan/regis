@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime, timezone
 from typing import Any
+from urllib.parse import parse_qs, unquote, urlparse
 
 from regis.analyzers.base import BaseAnalyzer
 from regis.registry.client import RegistryClient
@@ -72,6 +74,24 @@ class CveAnalyzer(BaseAnalyzer):
             },
         ]
 
+    @staticmethod
+    def _source_from_descriptor(descriptor: dict[str, Any]) -> dict[str, Any]:
+        """Build the source freshness block from grype's descriptor.db.status."""
+        status = (descriptor.get("db") or {}).get("status") or {}
+        source: dict[str, Any] = {
+            "fetched_at": datetime.now(timezone.utc).isoformat(),
+        }
+        if status.get("built"):
+            source["built_at"] = status["built"]
+        if status.get("schemaVersion"):
+            source["version"] = status["schemaVersion"]
+        frm = status.get("from") or ""
+        if frm:
+            checksum = parse_qs(urlparse(frm).query).get("checksum", [None])[0]
+            if checksum:
+                source["checksum"] = unquote(checksum)
+        return source
+
     def analyze(
         self,
         client: RegistryClient,
@@ -136,4 +156,5 @@ class CveAnalyzer(BaseAnalyzer):
             **counts,
             "fixed_count": fixed_count,
             "targets": targets,
+            "source": self._source_from_descriptor(data.get("descriptor", {})),
         }

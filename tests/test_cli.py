@@ -359,7 +359,7 @@ class TestAnalyzeCacheAndFail:
             # path must backfill it before validation, and the saved report
             # carries it.
             saved = json.loads((cache_dir / "report.json").read_text(encoding="utf-8"))
-            assert saved["schemaVersion"] == 4
+            assert saved["schemaVersion"] == 5
 
     @patch("regis.commands.analyze.render_presentation_templates")
     @patch("regis.commands.analyze.render_and_save_reports")

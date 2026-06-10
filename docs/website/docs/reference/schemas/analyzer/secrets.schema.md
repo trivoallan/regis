@@ -18,6 +18,7 @@
 | + [secrets_count](#secrets_count )     | No      | integer         | No         | -          | -                                                |
 | + [verified_count](#verified_count )   | No      | integer         | No         | -          | Secrets TruffleHog verified as live credentials. |
 | + [findings](#findings )               | No      | array of object | No         | -          | -                                                |
+| - [source](#source )                   | No      | object          | No         | -          | -                                                |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -123,5 +124,45 @@ Specific value: `"secrets"`
 | -------- | -------- |
 | **Type** | `string` |
 
+## <a name="source"></a>8. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `source`
+
+|                           |                                                                |
+| ------------------------- | -------------------------------------------------------------- |
+| **Type**                  | `object`                                                       |
+| **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
+
+| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [fetched_at](#source_fetched_at ) | No      | string | No         | -          | -                 |
+| - [built_at](#source_built_at )     | No      | string | No         | -          | -                 |
+| - [version](#source_version )       | No      | string | No         | -          | -                 |
+| - [checksum](#source_checksum )     | No      | string | No         | -          | -                 |
+
+### <a name="source_fetched_at"></a>8.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `fetched_at`
+
+|            |             |
+| ---------- | ----------- |
+| **Type**   | `string`    |
+| **Format** | `date-time` |
+
+### <a name="source_built_at"></a>8.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `built_at`
+
+|            |             |
+| ---------- | ----------- |
+| **Type**   | `string`    |
+| **Format** | `date-time` |
+
+### <a name="source_version"></a>8.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `version`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+### <a name="source_checksum"></a>8.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checksum`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-09 at 12:37:23 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-10 at 13:27:01 +0200

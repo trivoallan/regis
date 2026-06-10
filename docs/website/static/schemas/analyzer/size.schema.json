@@ -115,6 +115,16 @@
         },
         "additionalProperties": false
       }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fetched_at": { "type": "string", "format": "date-time" },
+        "built_at": { "type": "string", "format": "date-time" },
+        "version": { "type": "string" },
+        "checksum": { "type": "string" }
+      }
     }
   },
   "additionalProperties": false

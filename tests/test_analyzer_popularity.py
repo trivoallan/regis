@@ -46,3 +46,29 @@ class TestPopularityAnalyzer:
         )
         report = analyzer.analyze(None, "timeout/repo", "latest")
         assert report["available"] is False
+
+
+def test_popularity_last_updated_migrated_to_source(monkeypatch):
+    import regis.analyzers.popularity as mod
+
+    class _Resp:
+        status_code = 200
+
+        @staticmethod
+        def json():
+            return {
+                "pull_count": 10,
+                "star_count": 2,
+                "description": "d",
+                "last_updated": "2026-06-05T12:00:00Z",
+                "date_registered": "2020-01-01T00:00:00Z",
+            }
+
+    monkeypatch.setattr(mod.requests, "get", lambda *a, **k: _Resp())
+
+    analyzer = mod.PopularityAnalyzer()
+    result = analyzer.analyze(client=None, repository="library/nginx", tag="latest")
+
+    assert "last_updated" not in result
+    assert result["source"]["built_at"] == "2026-06-05T12:00:00Z"
+    assert result["date_registered"] == "2020-01-01T00:00:00Z"

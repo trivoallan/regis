@@ -156,9 +156,6 @@
         {% if report.request.timestamp %}
         <dt>Analysis date</dt><dd>{{ report.request.timestamp }}</dd>
         {% endif %}
-        {% if report.snapshot_date %}
-        <dt>Snapshot date</dt><dd>{{ report.snapshot_date }}</dd>
-        {% endif %}
       </dl>
     </header>
 
@@ -249,6 +246,12 @@
             {% endif %}
             {% endfor %}
           </dl>
+          {% if result.source %}
+          <dl class="scalars source-meta">
+            {% if result.source.built_at %}<dt>Data built</dt><dd>{{ result.source.built_at }}</dd>{% endif %}
+            {% if result.source.version %}<dt>Source version</dt><dd>{{ result.source.version }}</dd>{% endif %}
+          </dl>
+          {% endif %}
         {% else %}
           {{ render_detail(result) }}
         {% endif %}

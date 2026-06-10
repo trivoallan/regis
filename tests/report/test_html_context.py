@@ -6,7 +6,7 @@ from regis.report.html import _build_context
 def _report(results=None, rules=None, tier="Gold", score=92):
     rules = rules if rules is not None else []
     return {
-        "schemaVersion": 4,
+        "schemaVersion": 5,
         "request": {"registry": "r", "repository": "library/nginx", "tag": "1.27"},
         "results": results if results is not None else {},
         "tier": tier,
@@ -103,7 +103,7 @@ class TestFailingAnalyzers:
 
     def test_sourced_from_playbooks_when_present(self):
         report = {
-            "schemaVersion": 4,
+            "schemaVersion": 5,
             "request": {"registry": "r", "repository": "x", "tag": "t"},
             "results": {"cve": {}},
             "playbooks": [

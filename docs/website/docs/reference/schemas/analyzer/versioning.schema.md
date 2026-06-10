@@ -20,6 +20,7 @@
 | + [semver_compliant_percentage](#semver_compliant_percentage ) | No      | number           | No         | -          | Percentage of tags that follow strict Semantic Versioning.                        |
 | + [patterns](#patterns )                                       | No      | array of object  | No         | -          | Frequency breakdown of tag naming patterns.                                       |
 | + [variants](#variants )                                       | No      | array of object  | No         | -          | Frequency breakdown of tag variants (e.g., -alpine, -slim).                       |
+| - [source](#source )                                           | No      | object           | No         | -          | -                                                                                 |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -331,5 +332,45 @@ Must be one of:
 | -------- | -------- |
 | **Type** | `string` |
 
+## <a name="source"></a>10. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `source`
+
+|                           |                                                                |
+| ------------------------- | -------------------------------------------------------------- |
+| **Type**                  | `object`                                                       |
+| **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
+
+| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [fetched_at](#source_fetched_at ) | No      | string | No         | -          | -                 |
+| - [built_at](#source_built_at )     | No      | string | No         | -          | -                 |
+| - [version](#source_version )       | No      | string | No         | -          | -                 |
+| - [checksum](#source_checksum )     | No      | string | No         | -          | -                 |
+
+### <a name="source_fetched_at"></a>10.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `fetched_at`
+
+|            |             |
+| ---------- | ----------- |
+| **Type**   | `string`    |
+| **Format** | `date-time` |
+
+### <a name="source_built_at"></a>10.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `built_at`
+
+|            |             |
+| ---------- | ----------- |
+| **Type**   | `string`    |
+| **Format** | `date-time` |
+
+### <a name="source_version"></a>10.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `version`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+### <a name="source_checksum"></a>10.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checksum`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-09 at 12:37:23 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-10 at 13:27:01 +0200

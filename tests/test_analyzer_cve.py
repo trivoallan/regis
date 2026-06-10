@@ -80,3 +80,30 @@ class TestCveAnalyzer:
         client.registry = "example.com"
         with pytest.raises(AnalyzerError, match="boom"):
             analyzer.analyze(client, "repo", "tag")
+
+
+class TestCveSourceFromDescriptor:
+    """Unit tests for CveAnalyzer._source_from_descriptor."""
+
+    def test_source_extracted_from_grype_db_status(self):
+        import json
+        from pathlib import Path
+
+        raw = json.loads(
+            (
+                Path(__file__).parent / "fixtures" / "grype" / "debian11_json.json"
+            ).read_text(encoding="utf-8")
+        )
+        source = CveAnalyzer._source_from_descriptor(raw.get("descriptor", {}))
+
+        assert source["built_at"] == "2026-05-30T07:21:01Z"
+        assert source["version"] == "v6.1.4"
+        assert source["checksum"] == (
+            "sha256:88f6f4182111eeb714982e5534be5bd8f1f478aafafe83ad6c6fcccf9d015d06"
+        )
+        assert isinstance(source["fetched_at"], str) and source["fetched_at"]
+
+    def test_source_tolerates_missing_db_status(self):
+        source = CveAnalyzer._source_from_descriptor({})
+        assert "built_at" not in source
+        assert isinstance(source["fetched_at"], str) and source["fetched_at"]
