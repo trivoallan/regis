@@ -2,7 +2,7 @@
 
 **Purpose**: CLI tool for analyzing Docker images and generating security/quality reports. Pluggable analyzer architecture with a playbook evaluation engine.
 
-**Tech stack**: Python (pipenv), Ruff (lint/format), pytest, Trunk (CI linter orchestrator), Docusaurus (docs), GitHub Actions (CI/CD), Release Please (releases).
+**Tech stack**: Python (uv), Ruff (lint/format), pytest, Trunk (CI linter orchestrator), Docusaurus (docs), GitHub Actions (CI/CD), Release Please (releases).
 
 **Key architecture**:
 

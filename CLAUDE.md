@@ -14,12 +14,12 @@ Never modify `RULES.md` or write secrets into any memory bank file.
 ## Commands
 
 ```bash
-pipenv install --dev          # Install all dependencies
-pipenv run pytest             # Full run with coverage (fails if total < 90% OR any file < 90%)
-pipenv run pytest --no-cov    # Fast loop — disables both the global and per-file coverage gates
-pipenv run ruff check .       # Lint
-pipenv run ruff format .      # Format
-pipenv run regis --help       # Run CLI locally
+uv sync                       # Install all dependencies (incl. dev group)
+uv run pytest                 # Full run with coverage (fails if total < 90% OR any file < 90%)
+uv run pytest --no-cov        # Fast loop — disables both the global and per-file coverage gates
+uv run ruff check .           # Lint
+uv run ruff format .          # Format
+uv run regis --help           # Run CLI locally
 trunk check                   # Run all linters
 trunk check --fix             # Auto-fix
 pnpm --filter @regis/dashboard start   # Launch report viewer (UI work)

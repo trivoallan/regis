@@ -38,7 +38,7 @@
 
 - `ruff` — linting and formatting
 - `trunk` — linter/formatter orchestrator (local + CI)
-- `pipenv` — Python dependency management
+- `uv` — Python dependency management (lockfile: `uv.lock`, dev deps in PEP 735 `[dependency-groups]`)
 - `setuptools-scm` — version from git tags
 
 ## External Binaries Required
@@ -59,25 +59,25 @@ These must be in `PATH` for the relevant analyzers to work:
 ### Prerequisites
 
 - Python 3.10+
-- `pipenv`
+- `uv`
 - Node.js + pnpm (for docs/dashboard work)
 
 ### Setup Commands
 
 ```bash
 # Python deps
-pipenv install --dev
+uv sync
 
 # CLI locally
-pipenv run regis --help
+uv run regis --help
 
 # Tests
-pipenv run pytest
-pipenv run pytest --no-cov
+uv run pytest
+uv run pytest --no-cov
 
 # Lint / format
-pipenv run ruff check .
-pipenv run ruff format .
+uv run ruff check .
+uv run ruff format .
 trunk check
 trunk check --fix
 
