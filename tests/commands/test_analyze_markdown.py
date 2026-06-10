@@ -30,21 +30,6 @@ def test_render_markdown_contains_header():
     assert "# " in md
 
 
-def test_render_markdown_includes_snapshot_date():
-    md = _render_markdown(_minimal_report(snapshot_date="2026-04-09"))
-    assert "2026-04-09" in md
-
-
-def test_render_markdown_omits_snapshot_date_when_empty():
-    md = _render_markdown(_minimal_report(snapshot_date=""))
-    assert "Snapshot date" not in md
-
-
-def test_render_markdown_omits_snapshot_date_when_absent():
-    md = _render_markdown(_minimal_report())
-    assert "Snapshot date" not in md
-
-
 def test_render_markdown_includes_playbook_table():
     report = _minimal_report(
         playbooks=[
@@ -67,14 +52,6 @@ def test_render_markdown_includes_playbook_table():
 def test_render_markdown_includes_timestamp():
     md = _render_markdown(_minimal_report())
     assert "2026-04-22" in md
-
-
-def test_render_markdown_no_snapshot_date_section_when_none():
-    """Ensure the Snapshot date line is absent when the field is None."""
-    report = _minimal_report()
-    report["snapshot_date"] = None
-    md = _render_markdown(report)
-    assert "Snapshot date" not in md
 
 
 # ---------------------------------------------------------------------------

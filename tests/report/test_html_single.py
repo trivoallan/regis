@@ -62,14 +62,6 @@ class TestRenderHtmlSingle:
         html = render_html_single(_minimal_report())
         assert "Playbook results" not in html
 
-    def test_snapshot_date_shown_when_present(self):
-        html = render_html_single(_minimal_report(snapshot_date="2026-04-09"))
-        assert "2026-04-09" in html
-
-    def test_snapshot_date_absent_when_missing(self):
-        html = render_html_single(_minimal_report())
-        assert "Snapshot date" not in html
-
     def test_sections_all_includes_analyzer(self):
         report = _minimal_report(results={"trivy": {"score": 80, "cves": []}})
         html = render_html_single(report, sections="all")

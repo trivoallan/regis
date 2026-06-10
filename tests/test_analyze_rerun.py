@@ -350,4 +350,4 @@ class TestRerunBackfillsSchemaVersion:
             updated = json.loads(
                 (report_dir / "report.json").read_text(encoding="utf-8")
             )
-            assert updated["schemaVersion"] == 4
+            assert updated["schemaVersion"] == 5

@@ -14,12 +14,14 @@ import jsonschema
 
 logger = logging.getLogger(__name__)
 
-REPORT_SCHEMA_VERSION = 4
+REPORT_SCHEMA_VERSION = 5
 """Current report-structure contract version (see report.schema.json).
 
-v4 removed the legacy ``pages``/``sections``/``scorecards``/``widgets`` rendering
-subsystem (and the per-section ``levels_summary``/``tags_summary``); playbook
-results are now rules-based only.
+v5 removed the ``snapshot_date`` field (an editorial doc-site marker, not a
+data-freshness indicator).  v4 removed the legacy
+``pages``/``sections``/``scorecards``/``widgets`` rendering subsystem (and the
+per-section ``levels_summary``/``tags_summary``); playbook results are now
+rules-based only.
 """
 
 
@@ -337,12 +339,6 @@ def _render_markdown(report: dict[str, Any]) -> str:
     timestamp = request.get("timestamp") or report.get("timestamp")
     if timestamp:
         lines += [f"**Analysis date:** {timestamp}", ""]
-
-    snapshot_date = report.get("snapshot_date") or report.get("request", {}).get(
-        "snapshot_date"
-    )
-    if snapshot_date:
-        lines += [f"**Snapshot date:** {snapshot_date}", ""]
 
     playbooks = report.get("playbooks", [])
     if playbooks:

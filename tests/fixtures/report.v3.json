@@ -2,7 +2,6 @@
   "schemaVersion": 3,
   "metadata": { "ci": { "platform": "github" } },
   "version": "0.33.0",
-  "snapshot_date": "2026-05-31",
   "tier": "Gold",
   "request": {
     "url": "registry-1.docker.io/library/nginx:1.27",

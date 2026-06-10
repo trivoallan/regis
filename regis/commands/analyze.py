@@ -590,22 +590,6 @@ def analyze(
         if metadata_dict:
             analysis_report["metadata"] = metadata_dict
 
-        try:
-            from importlib.resources import files as _res_files
-
-            _dates_text = (
-                _res_files("regis")
-                .joinpath("data/snapshot_dates.json")
-                .read_text(encoding="utf-8")
-            )
-            _dates = json.loads(_dates_text)
-            _pkg_version = version("regis")
-            _entry = _dates.get(f"v{_pkg_version}") or _dates.get(_pkg_version)
-            if _entry and _entry.get("date"):
-                analysis_report["snapshot_date"] = _entry["date"]
-        except Exception:
-            pass
-
     if not final_report or evaluate or playbook_paths:
         final_report = run_playbooks(
             playbook_paths, analysis_report, formats, show_rules=evaluate
@@ -619,9 +603,6 @@ def analyze(
         final_report["badges"] = pb0.get("badges", [])
 
     validate_report(final_report)
-
-    if final_report.get("snapshot_date"):
-        _info(f"  Snapshot date: {final_report['snapshot_date']}", quiet=quiet)
 
     render_and_save_reports(
         final_report,
