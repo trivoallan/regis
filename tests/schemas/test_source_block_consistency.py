@@ -3,11 +3,16 @@
 import json
 from importlib.resources import files
 
-ANALYZERS = [
-    "cve", "dockle", "endoflife", "freshness", "hadolint", "oci",
-    "popularity", "provenance", "sbom", "scorecarddev", "secrets",
-    "size", "versioning",
-]
+_ANALYZER_DIR = files("regis").joinpath("schemas/analyzer")
+ANALYZERS = sorted(
+    entry.name.removesuffix(".schema.json")
+    for entry in _ANALYZER_DIR.iterdir()
+    if entry.name.endswith(".schema.json")
+)
+assert len(ANALYZERS) >= 13, (
+    f"Dynamic discovery found only {len(ANALYZERS)} schemas — "
+    "check regis/schemas/analyzer/ for missing files"
+)
 
 SOURCE_BLOCK = {
     "type": "object",
@@ -39,6 +44,6 @@ def test_every_analyzer_schema_declares_source():
 def test_source_block_is_identical_everywhere():
     for name in ANALYZERS:
         schema = _schema(name)
-        assert schema["properties"]["source"] == SOURCE_BLOCK, (
-            f"{name} source block differs from canonical shape"
-        )
+        assert (
+            schema["properties"]["source"] == SOURCE_BLOCK
+        ), f"{name} source block differs from canonical shape"
