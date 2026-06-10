@@ -7,6 +7,7 @@ from pathlib import Path
 import click
 
 from regis.tools.fetcher import ToolFetcher, ToolFetchError
+from regis.utils.tool_progress import click_reporter
 
 
 @click.group(name="bootstrap")
@@ -64,7 +65,7 @@ def bootstrap_playbook(output_dir: str, no_input: bool) -> None:
 @click.option("--check", is_flag=True, help="Show status without downloading.")
 def bootstrap_tools(tool_name: str | None, check: bool) -> None:
     """Fetch (or check) tool binaries declared in the manifest."""
-    fetcher = ToolFetcher()
+    fetcher = ToolFetcher(on_event=click_reporter)
     if check:
         for status in fetcher.status():
             if status.cached and status.sha256_ok:

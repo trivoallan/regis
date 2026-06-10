@@ -58,8 +58,9 @@ def require_tool(name: str, install_hint: str | None = None) -> str:
 @lru_cache(maxsize=1)
 def _default_fetcher():
     from regis.tools.fetcher import ToolFetcher
+    from regis.utils.tool_progress import click_reporter
 
-    return ToolFetcher()
+    return ToolFetcher(on_event=click_reporter)
 
 
 @lru_cache(maxsize=1)

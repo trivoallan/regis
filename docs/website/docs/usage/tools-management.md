@@ -16,6 +16,15 @@ The default `regis:latest` image is **slim** — only the regis CLI and `regctl`
 - **Explicit pre-warm**: run `regis bootstrap tools` (recommended in CI for clean logs and predictable timing).
 - **Status check**: `regis bootstrap tools --check` or `regis doctor`.
 
+Whenever Regis fetches a tool — lazily during `regis analyze` or eagerly via `regis bootstrap tools` — it prints a one-line progress notice to stderr:
+
+```text
+⬇ Fetching grype 0.74.7 (linux-arm64)…
+✓ Fetched grype (12.4 MB in 1.3s)
+```
+
+Pass the global `--quiet` flag to suppress these notices.
+
 ## Cache location
 
 Resolved in order:

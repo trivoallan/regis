@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import http.server
 import os
+import socket
 import threading
 from contextlib import contextmanager
 from pathlib import Path
@@ -408,3 +410,130 @@ def test_fetch_all_subset(monkeypatch, tmp_path):
         fetcher = ToolFetcher(cache_dir=tmp_path / "cache", arch="amd64")
         result = fetcher.fetch_all(names=["grype"])
         assert list(result) == ["grype"]
+
+
+def test_on_event_defaults_to_none_and_is_optional(fake_tool) -> None:
+    payload, sha, cache = fake_tool
+    binpath = cache / "grype" / "0.0.1" / "linux-amd64" / "grype"
+    _write_binary(binpath, payload)
+    # No on_event passed: constructing and using the fetcher must work unchanged.
+    fetcher = ToolFetcher(cache_dir=cache, arch="amd64", offline=True)
+    assert fetcher._on_event is None
+    assert fetcher.ensure("grype") == binpath  # cache hit, emits nothing
+
+
+def test_tool_event_is_frozen() -> None:
+    from regis.tools.fetcher import ToolEvent
+
+    ev = ToolEvent(kind="fetch_start", tool="grype", version="0.0.1", arch="amd64")
+    with pytest.raises(dataclasses.FrozenInstanceError):
+        ev.tool = "syft"  # type: ignore[misc]  # frozen dataclass
+
+
+def test_ensure_emits_start_then_done_on_cache_miss(monkeypatch, tmp_path):
+    payload = b"binary-bytes-1234"
+    sha = hashlib.sha256(payload).hexdigest()
+    pub = tmp_path / "pub"
+    pub.mkdir()
+    (pub / "tool.bin").write_bytes(payload)
+
+    events = []
+    with _serve(pub) as base_url:
+        from regis.tools.manifest import Tool
+
+        tools = {
+            "grype": Tool(
+                name="grype",
+                version="0.0.1",
+                url_template=f"{base_url}/tool.bin",
+                archive="none",
+                sha256={"amd64": sha, "arm64": sha},
+            )
+        }
+        _patch_manifest(monkeypatch, tools)
+        cache = tmp_path / "cache"
+        fetcher = ToolFetcher(cache_dir=cache, arch="amd64", on_event=events.append)
+        fetcher.ensure("grype")
+
+    kinds = [e.kind for e in events]
+    assert kinds == ["fetch_start", "fetch_done"]
+    start, done = events
+    assert start.tool == "grype" and start.version == "0.0.1"
+    assert start.arch == "amd64" and start.url.endswith("/tool.bin")
+    assert done.bytes == len(payload)
+    assert done.elapsed_s is not None and done.elapsed_s >= 0.0
+
+
+def test_cache_hit_emits_no_events(fake_tool) -> None:
+    payload, sha, cache = fake_tool
+    binpath = cache / "grype" / "0.0.1" / "linux-amd64" / "grype"
+    _write_binary(binpath, payload)
+    events = []
+    fetcher = ToolFetcher(
+        cache_dir=cache, arch="amd64", offline=True, on_event=events.append
+    )
+    fetcher.ensure("grype")
+    assert events == []
+
+
+def test_sha_mismatch_emits_fetch_error_before_raising(monkeypatch, tmp_path):
+    payload = b"binary-bytes"
+    wrong_sha = hashlib.sha256(b"different").hexdigest()
+    pub = tmp_path / "pub"
+    pub.mkdir()
+    (pub / "tool.bin").write_bytes(payload)
+
+    events = []
+    with _serve(pub) as base_url:
+        from regis.tools.manifest import Tool
+
+        tools = {
+            "grype": Tool(
+                name="grype",
+                version="0.0.1",
+                url_template=f"{base_url}/tool.bin",
+                archive="none",
+                sha256={"amd64": wrong_sha, "arm64": wrong_sha},
+            )
+        }
+        _patch_manifest(monkeypatch, tools)
+        cache = tmp_path / "cache"
+        fetcher = ToolFetcher(cache_dir=cache, arch="amd64", on_event=events.append)
+        with pytest.raises(ToolFetchError, match="sha256 mismatch"):
+            fetcher.ensure("grype")
+
+    kinds = [e.kind for e in events]
+    assert kinds == ["fetch_start", "fetch_error"]
+    assert "sha256 mismatch" in events[-1].error
+
+
+def test_network_failure_emits_fetch_error_before_raising(monkeypatch, tmp_path):
+    # Bind then close a socket to obtain a port nothing is listening on, so the
+    # download fails fast with a connection-refused error.
+    probe = socket.socket()
+    probe.bind(("127.0.0.1", 0))
+    dead_port = probe.getsockname()[1]
+    probe.close()
+
+    sha = hashlib.sha256(b"never-arrives").hexdigest()
+    from regis.tools.manifest import Tool
+
+    tools = {
+        "grype": Tool(
+            name="grype",
+            version="0.0.1",
+            url_template=f"http://127.0.0.1:{dead_port}/tool.bin",
+            archive="none",
+            sha256={"amd64": sha, "arm64": sha},
+        )
+    }
+    _patch_manifest(monkeypatch, tools)
+    cache = tmp_path / "cache"
+    events = []
+    fetcher = ToolFetcher(cache_dir=cache, arch="amd64", on_event=events.append)
+    with pytest.raises(ToolFetchError, match="download failed"):
+        fetcher.ensure("grype")
+
+    kinds = [e.kind for e in events]
+    assert kinds == ["fetch_start", "fetch_error"]
+    assert "download failed" in events[-1].error
