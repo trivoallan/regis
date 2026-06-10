@@ -52,6 +52,44 @@ def test_packaged_template_resolved_to_local_path(
     assert Path(template_arg).is_dir()
 
 
+def test_mr_evidence_renders_with_v4_playbook_result(tmp_path: Path) -> None:
+    """The packaged mr-evidence template renders against a v4 playbook result.
+
+    Regression for the v4 schema bump (#703) that dropped ``passed_scorecards`` /
+    ``total_scorecards`` from the playbook result: the template still referenced
+    them, so Cookiecutter's StrictUndefined aborted the render with
+    ``'dict object' has no attribute 'passed_scorecards'``.
+    """
+    report = {
+        "request": {
+            "registry": "registry-1.docker.io",
+            "repository": "library/busybox",
+            "tag": "latest",
+            "digest": "sha256:fd8d9aa",
+            "timestamp": "2026-06-09",
+        },
+        "playbook": {"playbook_name": "regis", "score": 69},
+        "playbooks": [
+            {
+                "playbook_name": "regis",
+                "score": 69,
+                "templates": [
+                    {"package": "regis", "directory": "cookiecutters/mr-evidence"}
+                ],
+            }
+        ],
+        "results": {},
+    }
+
+    render_presentation_templates(report, str(tmp_path))
+
+    produced = list(tmp_path.rglob("SECURITY_EVIDENCE.md"))
+    assert produced, "mr-evidence template failed to produce SECURITY_EVIDENCE.md"
+    text = produced[0].read_text(encoding="utf-8")
+    assert "library/busybox" in text
+    assert "69%" in text
+
+
 def test_default_playbook_templates_are_packaged() -> None:
     """The shipped default playbook must not clone a remote template."""
     pb_path = resources.files("regis") / "playbooks" / "default" / "playbook.yaml"

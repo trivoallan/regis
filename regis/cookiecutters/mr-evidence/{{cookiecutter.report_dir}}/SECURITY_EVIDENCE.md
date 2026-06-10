@@ -13,7 +13,9 @@ Analysis performed on **{{ cookiecutter.regis.request.timestamp }}**.
 ## 📊 Playbook Results: {{ cookiecutter.regis.playbook.playbook_name }}
 
 - **Score**: `{{ cookiecutter.regis.playbook.score }}%`
-- **Passed Scorecards**: `{{ cookiecutter.regis.playbook.passed_scorecards }}/{{ cookiecutter.regis.playbook.total_scorecards }}`
+{% set tier = cookiecutter.regis.playbook.tier | default(None) %}
+{% if tier %}- **Tier**: `{{ tier }}`
+{% endif %}
 
 {% set cve = cookiecutter.regis.results.cve | default({}) %}
 {% if cve %}
