@@ -193,26 +193,6 @@ jobs:
           print(f"versions.json now contains {len(versions)} entries: {versions}")
           EOF
 
-      - name: Write snapshot-dates sidecars
-        env:
-          VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          python3 - <<'EOF'
-          import json, pathlib, datetime, os
-
-          version = os.environ["VERSION"]
-          today = datetime.date.today().isoformat()
-
-          web_file = pathlib.Path("docs/website/snapshot-dates.json")
-          dates = json.loads(web_file.read_text()) if web_file.exists() else {}
-          dates[version] = {"date": today}
-          web_file.write_text(json.dumps(dates, indent=2) + "\n")
-          print(f"Updated docs/website/snapshot-dates.json: {version} = {today}")
-
-          pkg_file = pathlib.Path("regis/data/snapshot_dates.json")
-          pkg_file.write_text(json.dumps(dates, indent=2) + "\n")
-          print(f"Updated regis/data/snapshot_dates.json: {version} = {today}")
-          EOF
 
       - name: Commit snapshot to branch and open PR
         env:
@@ -225,9 +205,7 @@ jobs:
           git add \
             docs/website/versioned_docs/ \
             docs/website/versioned_sidebars/ \
-            docs/website/versions.json \
-            docs/website/snapshot-dates.json \
-            regis/data/snapshot_dates.json
+            docs/website/versions.json
           if git diff --staged --quiet; then
             echo "No snapshot changes to commit."
             exit 0
