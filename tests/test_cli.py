@@ -900,9 +900,9 @@ class TestAnalyzeSummary:
         out = re.sub(r"\x1b\[[0-9;]*m", "", capsys.readouterr().err)
         assert "🥉 Bronze · 33/100" in out
         assert "2 failed" in out
-        assert "✗ [trivy.no-critical-cves]" in out
+        assert "[trivy.no-critical-cves]" in out
         assert "2 critical CVEs found" in out
-        assert "✗ [freshness.max-age-days]" in out
+        assert "[freshness.max-age-days]" in out
 
     def test_render_verdict_block_no_playbooks_silent(self, capsys):
         from regis.commands.analyze import _render_verdict_block
@@ -910,6 +910,90 @@ class TestAnalyzeSummary:
         _render_verdict_block({}, quiet=False)
         _render_verdict_block({"playbooks": []}, quiet=False)
         assert capsys.readouterr().err == ""
+
+    def test_render_verdict_block_aligns_messages(self, capsys):
+        """Messages line up regardless of differing slug lengths."""
+        import re
+
+        from regis.commands.analyze import _render_verdict_block
+
+        _render_verdict_block(
+            {
+                "playbooks": [
+                    {
+                        "tier": "Bronze",
+                        "tier_icon": "🥉",
+                        "rules_summary": {"score": 33, "total": 2, "passed": 0},
+                        "rules": [
+                            {
+                                "slug": "cve-high",
+                                "passed": False,
+                                "level": "high",
+                                "status": "failed",
+                                "message": "msg one",
+                            },
+                            {
+                                "slug": "scorecard-min",
+                                "passed": False,
+                                "level": "warning",
+                                "status": "failed",
+                                "message": "msg two",
+                            },
+                        ],
+                        "badge_labels": [],
+                    }
+                ]
+            },
+            quiet=False,
+        )
+        out = re.sub(r"\x1b\[[0-9;]*m", "", capsys.readouterr().err)
+        rule_lines = [ln for ln in out.splitlines() if ln.lstrip().startswith("✗")]
+        assert len(rule_lines) == 2
+        # The message text starts at the same column on every rule line.
+        cols = [ln.index("msg ") for ln in rule_lines]
+        assert cols[0] == cols[1]
+        # The slug tag likewise lines up under a fixed column.
+        slug_cols = [ln.index("[") for ln in rule_lines]
+        assert slug_cols[0] == slug_cols[1]
+
+    def test_render_verdict_block_shows_severity(self, capsys):
+        """Each rule line carries its severity (emoji + level word)."""
+        import re
+
+        from regis.commands.analyze import _render_verdict_block
+
+        _render_verdict_block(
+            {
+                "playbooks": [
+                    {
+                        "tier": "Bronze",
+                        "tier_icon": "🥉",
+                        "rules_summary": {"score": 33, "total": 2, "passed": 0},
+                        "rules": [
+                            {
+                                "slug": "cve-critical",
+                                "passed": False,
+                                "level": "critical",
+                                "status": "failed",
+                                "message": "boom",
+                            },
+                            {
+                                "slug": "age",
+                                "passed": False,
+                                "level": "warning",
+                                "status": "failed",
+                                "message": "old",
+                            },
+                        ],
+                        "badge_labels": [],
+                    }
+                ]
+            },
+            quiet=False,
+        )
+        out = re.sub(r"\x1b\[[0-9;]*m", "", capsys.readouterr().err)
+        assert "🟥 critical" in out
+        assert "🟧 warning" in out
 
     @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze._discover_analyzers")

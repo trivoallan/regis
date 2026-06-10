@@ -81,6 +81,7 @@ def _render_verdict_block(final_report: dict[str, Any], *, quiet: bool) -> None:
         badge_emoji,
         build_verdict,
         format_counts,
+        level_emoji,
         tier_label,
     )
 
@@ -100,14 +101,21 @@ def _render_verdict_block(final_report: dict[str, Any], *, quiet: bool) -> None:
         chips = "   ".join(f"{badge_emoji(b.klass)} {b.label}" for b in v.badges)
         click.echo(f"  {chips}", err=True)
 
-    # Failed rules
+    # Failed and incomplete rules — pad the severity and [slug] columns so the
+    # messages all line up. Each line reads: "<glyph> <emoji> <level>  [slug]  <msg>".
+    rules = (*v.failures, *v.incompletes)
+    tag_width = max((len(r.slug) + 2 for r in rules), default=0)
+    level_width = max((len(r.level) for r in rules), default=0)
     for f in v.failures:
         colour = LEVEL_STYLE.get(f.level, None)
-        line = f"  ✗ [{f.slug}]   {f.message}"
+        severity = f"{level_emoji(f.level) or '⬜'} {f.level:<{level_width}}"
+        line = f"  ✗ {severity}  {f'[{f.slug}]':<{tag_width}}   {f.message}"
         click.echo(click.style(line, fg=colour) if colour else line, err=True)
-    # Incomplete rules
     for i in v.incompletes:
-        click.echo(f"  ⚠ [{i.slug}]   {i.message}", err=True)
+        severity = f"{level_emoji(i.level) or '⬜'} {i.level:<{level_width}}"
+        click.echo(
+            f"  ⚠ {severity}  {f'[{i.slug}]':<{tag_width}}   {i.message}", err=True
+        )
 
 
 def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
