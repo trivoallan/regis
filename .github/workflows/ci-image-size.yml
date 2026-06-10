@@ -9,8 +9,7 @@ on:
       - Dockerfile
       - .dockerignore
       - pyproject.toml
-      - Pipfile
-      - Pipfile.lock
+      - uv.lock
       - .github/workflows/ci-image-size.yml
   workflow_dispatch:
 
