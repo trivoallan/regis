@@ -1,40 +1,19 @@
 name: Repo / Auto-merge
 
+# Arm native auto-merge once when a PR opens or becomes ready. With the merge
+# queue enabled on `main`, an armed PR is added to the queue automatically as
+# soon as the required checks pass — the queue owns serialization, so no
+# re-arming logic is needed. Release-please PRs flow through the queue like any
+# other PR (no `autorelease: pending` exclusion).
 on:
   pull_request_target:
-    # `synchronize` re-arms auto-merge after the PR head is updated. When `main`
-    # advances, repo-autorebase force-pushes open PR branches; a force-push that
-    # lands after auto-merge was first enabled can leave it armed but never
-    # re-evaluated, so the PR sits MERGEABLE/CLEAN without merging. Re-running on
-    # every head update keeps auto-merge bound to the current head.
-    types: [opened, ready_for_review, synchronize]
-  # Required-check workflows completing also re-arm auto-merge. Native auto-merge
-  # can be armed while checks are still running and then never re-evaluated once
-  # they pass — when the branch is already up to date with `main`, no
-  # `synchronize` follows to re-arm it, so the PR sits MERGEABLE/CLEAN without
-  # merging. Re-arming on CI completion closes that race. The workflows are
-  # listed by name (rather than the broad `check_suite` event) so this workflow
-  # never re-triggers on its own check suite.
-  workflow_run:
-    workflows: [CI / Test, CI / Lint]
-    types: [completed]
+    types: [opened, ready_for_review]
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
   contents: read
-
-# Coalesce the bursts of events a single PR produces (autorebase force-push
-# `synchronize`, plus one `workflow_run` per required-check workflow).
-concurrency:
-  group: >-
-    automerge-pr-${{
-      github.event.pull_request.number ||
-      github.event.workflow_run.pull_requests[0].number ||
-      github.run_id
-    }}
-  cancel-in-progress: true
 
 jobs:
   automerge:
@@ -47,58 +26,36 @@ jobs:
           client-id: ${{ secrets.REGIS_CI_APP_ID }}
           private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
 
-      - name: Re-arm auto-merge
+      - name: Enable auto-merge (enqueues when checks pass)
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
-            // Candidate PRs differ by event: pull_request_target carries one PR,
-            // workflow_run carries every PR its head commit belongs to.
-            const candidates =
-              context.eventName === 'pull_request_target'
-                ? [context.payload.pull_request.number]
-                : (context.payload.workflow_run.pull_requests || []).map((p) => p.number);
-
-            for (const number of candidates) {
-              const { data: pr } = await github.rest.pulls.get({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: number,
-              });
-              if (pr.state !== 'open' || pr.draft) continue;
-              if (pr.labels.some((l) => l.name === 'autorelease: pending')) continue;
-
-              try {
-                // Disable then re-enable so GitHub re-evaluates the merge:
-                // re-enabling an already-armed PR can otherwise no-op without
-                // merging, which is the stuck state we are recovering from.
-                await github.graphql(
-                  `mutation ($id: ID!) {
-                    disablePullRequestAutoMerge(input: { pullRequestId: $id }) { clientMutationId }
-                  }`,
-                  { id: pr.node_id },
-                ).catch((e) => core.info(`#${number}: nothing to disable (${e.message})`));
-
-                await github.graphql(
-                  `mutation ($id: ID!) {
-                    enablePullRequestAutoMerge(input: { pullRequestId: $id, mergeMethod: SQUASH }) {
-                      clientMutationId
-                    }
-                  }`,
-                  { id: pr.node_id },
+            const pr = context.payload.pull_request;
+            if (pr.draft) {
+              core.info(`#${pr.number}: draft, skipping`);
+              return;
+            }
+            try {
+              await github.graphql(
+                `mutation ($id: ID!) {
+                  enablePullRequestAutoMerge(input: { pullRequestId: $id, mergeMethod: SQUASH }) {
+                    clientMutationId
+                  }
+                }`,
+                { id: pr.node_id },
+              );
+              core.info(`#${pr.number}: auto-merge enabled (will enqueue when green)`);
+            } catch (e) {
+              // "Clean status" means the PR is already mergeable with no
+              // pending checks, so auto-merge cannot be armed — it only needs
+              // manual enqueuing. That is benign: warn, do not fail the run.
+              // Any other error (token, permissions) is real and must surface.
+              if (/clean status/i.test(e.message)) {
+                core.warning(
+                  `#${pr.number}: already mergeable — enqueue manually (${e.message})`,
                 );
-                core.info(`#${number}: auto-merge re-armed`);
-              } catch (e) {
-                // A PR that is already CLEAN with no pending checks cannot have
-                // auto-merge enabled ("Pull request is in clean status") — that
-                // is exactly the stuck case, so merge it directly instead.
-                core.info(`#${number}: enable failed (${e.message}); merging directly`);
-                await github.rest.pulls.merge({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  pull_number: number,
-                  merge_method: 'squash',
-                });
-                core.info(`#${number}: merged directly`);
+                return;
               }
+              throw e;
             }
