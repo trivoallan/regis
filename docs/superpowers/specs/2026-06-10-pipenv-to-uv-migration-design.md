@@ -73,7 +73,7 @@ on `uv.lock`, then `uv sync --locked`.
   as today: runtime dependencies only, project itself excluded). pip-audit
   invocation and `enforce_pip_audit_severity.py` unchanged.
 - **cd-docs.yml**: sync + `uv run generate-schema-doc`, `uv run regis rules
-  list …`, `uv run pytest`/`genbadge`; path filters and change-detection
+list …`, `uv run pytest`/`genbadge`; path filters and change-detection
   regexes referencing `Pipfile` switch to `uv.lock`.
 
 ### 3. Dockerfile (python-builder stage)
@@ -85,7 +85,7 @@ on `uv.lock`, then `uv sync --locked`.
   (exact version and digest resolved at implementation time, SHA-pinned like
   the other actions/images in this repo).
 - Install with `UV_PROJECT_ENVIRONMENT=/opt/venv uv sync --locked --no-dev
-  --no-editable`, keeping `SETUPTOOLS_SCM_PRETEND_VERSION` (same awk
+--no-editable`, keeping `SETUPTOOLS_SCM_PRETEND_VERSION` (same awk
   extraction) and the `__pycache__`/`*.pyc` prune.
 - Runtime stages (`final-slim`, `final-full`) unchanged; uv never reaches the
   final image, so the 200/520 MB size gates are unaffected.

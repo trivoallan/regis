@@ -58,6 +58,9 @@ dev = [
 ]
 
 [tool.uv]
+# Transitive security floors carried over from the former Pipfile. They only
+# apply when a dependency actually pulls the package (some, like chardet, are
+# dormant guards today).
 constraint-dependencies = [
   "urllib3>=2.7.0",
   "idna>=3.15",
