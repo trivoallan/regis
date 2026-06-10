@@ -55,7 +55,7 @@ The cache hit and PATH short-circuit paths emit nothing.
 New `regis/utils/tool_progress.py` exposing `click_reporter`:
 
 - Renders each event as a one-shot line on stderr (no `\r`, no rewrites — safe in CI logs):
-  ```
+  ```text
     ⬇ Fetching grype 0.74.7 (linux-arm64)…
     ✓ Fetched grype (12.4 MB in 1.3s)
     ✗ Failed to fetch grype — sha256 mismatch
@@ -81,7 +81,7 @@ The single `click_reporter` is wired at the two sites that download:
 
 ### Example: cold-cache `analyze`
 
-```
+```text
   Running 6 analyzer(s) with 4 worker(s)...
   ⬇ Fetching grype 0.74.7 (linux-arm64)…
   ⬇ Fetching syft 1.18.1 (linux-arm64)…

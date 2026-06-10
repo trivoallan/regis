@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import http.server
 import os
@@ -425,7 +426,7 @@ def test_tool_event_is_frozen() -> None:
     from regis.tools.fetcher import ToolEvent
 
     ev = ToolEvent(kind="fetch_start", tool="grype", version="0.0.1", arch="amd64")
-    with pytest.raises(Exception):
+    with pytest.raises(dataclasses.FrozenInstanceError):
         ev.tool = "syft"  # type: ignore[misc]  # frozen dataclass
 
 

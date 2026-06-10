@@ -18,7 +18,7 @@ The default `regis:latest` image is **slim** — only the regis CLI and `regctl`
 
 Whenever Regis fetches a tool — lazily during `regis analyze` or eagerly via `regis bootstrap tools` — it prints a one-line progress notice to stderr:
 
-```
+```text
 ⬇ Fetching grype 0.74.7 (linux-arm64)…
 ✓ Fetched grype (12.4 MB in 1.3s)
 ```
