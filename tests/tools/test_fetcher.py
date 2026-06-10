@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import http.server
 import os
+import socket
 import threading
 from contextlib import contextmanager
 from pathlib import Path
@@ -503,3 +504,35 @@ def test_sha_mismatch_emits_fetch_error_before_raising(monkeypatch, tmp_path):
     kinds = [e.kind for e in events]
     assert kinds == ["fetch_start", "fetch_error"]
     assert "sha256 mismatch" in events[-1].error
+
+
+def test_network_failure_emits_fetch_error_before_raising(monkeypatch, tmp_path):
+    # Bind then close a socket to obtain a port nothing is listening on, so the
+    # download fails fast with a connection-refused error.
+    probe = socket.socket()
+    probe.bind(("127.0.0.1", 0))
+    dead_port = probe.getsockname()[1]
+    probe.close()
+
+    sha = hashlib.sha256(b"never-arrives").hexdigest()
+    from regis.tools.manifest import Tool
+
+    tools = {
+        "grype": Tool(
+            name="grype",
+            version="0.0.1",
+            url_template=f"http://127.0.0.1:{dead_port}/tool.bin",
+            archive="none",
+            sha256={"amd64": sha, "arm64": sha},
+        )
+    }
+    _patch_manifest(monkeypatch, tools)
+    cache = tmp_path / "cache"
+    events = []
+    fetcher = ToolFetcher(cache_dir=cache, arch="amd64", on_event=events.append)
+    with pytest.raises(ToolFetchError, match="download failed"):
+        fetcher.ensure("grype")
+
+    kinds = [e.kind for e in events]
+    assert kinds == ["fetch_start", "fetch_error"]
+    assert "download failed" in events[-1].error

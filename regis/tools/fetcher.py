@@ -181,11 +181,17 @@ class ToolFetcher:
             partial = Path(tmpf.name)
         try:
             try:
-                with urllib.request.urlopen(  # nosec B310 — http(s) only, verified by sha256
-                    url, timeout=DOWNLOAD_TIMEOUT_S
-                ) as resp:
-                    with partial.open("wb") as out:
-                        shutil.copyfileobj(resp, out)
+                try:
+                    with urllib.request.urlopen(  # nosec B310 — http(s) only, verified by sha256
+                        url, timeout=DOWNLOAD_TIMEOUT_S
+                    ) as resp:
+                        with partial.open("wb") as out:
+                            shutil.copyfileobj(resp, out)
+                except OSError as exc:
+                    # URLError / socket.timeout / HTTPError all subclass OSError.
+                    raise ToolFetchError(
+                        f"{tool.name}: download failed: {exc}"
+                    ) from exc
                 downloaded = partial.stat().st_size
 
                 extracted = self._maybe_extract(tool, partial)
