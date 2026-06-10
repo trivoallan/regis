@@ -20,6 +20,7 @@
 | + [is_eol](#is_eol )                           | No      | boolean or null | No         | -          | Whether the matched cycle has reached end-of-life. Null if no match. |
 | + [active_cycles_count](#active_cycles_count ) | No      | integer or null | No         | -          | Number of currently supported release cycles.                        |
 | + [eol_cycles_count](#eol_cycles_count )       | No      | integer or null | No         | -          | Number of end-of-life release cycles.                                |
+| - [source](#source )                           | No      | object          | No         | -          | -                                                                    |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -160,5 +161,45 @@ Specific value: `"endoflife"`
 | ------------ | ------ |
 | **Minimum**  | &ge; 0 |
 
+## <a name="source"></a>10. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `source`
+
+|                           |                                                                |
+| ------------------------- | -------------------------------------------------------------- |
+| **Type**                  | `object`                                                       |
+| **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
+
+| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [fetched_at](#source_fetched_at ) | No      | string | No         | -          | -                 |
+| - [built_at](#source_built_at )     | No      | string | No         | -          | -                 |
+| - [version](#source_version )       | No      | string | No         | -          | -                 |
+| - [checksum](#source_checksum )     | No      | string | No         | -          | -                 |
+
+### <a name="source_fetched_at"></a>10.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `fetched_at`
+
+|            |             |
+| ---------- | ----------- |
+| **Type**   | `string`    |
+| **Format** | `date-time` |
+
+### <a name="source_built_at"></a>10.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `built_at`
+
+|            |             |
+| ---------- | ----------- |
+| **Type**   | `string`    |
+| **Format** | `date-time` |
+
+### <a name="source_version"></a>10.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `version`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+### <a name="source_checksum"></a>10.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checksum`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-09 at 12:37:23 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-10 at 13:27:01 +0200

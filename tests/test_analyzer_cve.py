@@ -90,8 +90,9 @@ class TestCveSourceFromDescriptor:
         from pathlib import Path
 
         raw = json.loads(
-            (Path(__file__).parent / "fixtures" / "grype" / "debian11_json.json")
-            .read_text(encoding="utf-8")
+            (
+                Path(__file__).parent / "fixtures" / "grype" / "debian11_json.json"
+            ).read_text(encoding="utf-8")
         )
         source = CveAnalyzer._source_from_descriptor(raw.get("descriptor", {}))
 

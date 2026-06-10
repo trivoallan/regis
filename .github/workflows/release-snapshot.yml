@@ -193,7 +193,6 @@ jobs:
           print(f"versions.json now contains {len(versions)} entries: {versions}")
           EOF
 
-
       - name: Commit snapshot to branch and open PR
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}

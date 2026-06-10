@@ -17,21 +17,25 @@
 ## File Structure
 
 **Schemas (declare `source`):**
+
 - `regis/schemas/analyzer/{cve,dockle,endoflife,freshness,hadolint,oci,popularity,provenance,sbom,scorecarddev,secrets,size,versioning}.schema.json` — add identical optional `source` property. `popularity` additionally drops `last_updated`.
 - `regis/schemas/report/report.schema.json` — remove `snapshot_date` property.
 
 **Analyzers (emit `source`):**
+
 - `regis/analyzers/cve.py` — emit `source` from `descriptor.db.status`.
 - `regis/analyzers/scorecarddev.py` — emit `source` from API `date` + `scorecard.version`.
 - `regis/analyzers/popularity.py` — emit `source.built_at` (migrated from `last_updated`), drop top-level `last_updated`.
 
 **Report core / rendering:**
+
 - `regis/utils/report.py` — bump `REPORT_SCHEMA_VERSION`; remove markdown `Snapshot date` line.
 - `regis/commands/analyze.py` — remove the `snapshot_date` injection block.
 - `regis/templates/html/report.html.j2` — remove `Snapshot date` header rows; add compact-mode per-analyzer source line.
 - `regis/data/snapshot_dates.json` — delete.
 
 **Tests:**
+
 - New: `tests/schemas/test_source_block_consistency.py`.
 - Modify: `tests/test_analyzer_cve.py` (or nearest cve test), `tests/test_scorecarddev.py`, `tests/test_analyzer_popularity.py` (or nearest), `tests/report/test_html_single.py`, `tests/commands/test_analyze_markdown.py`, `tests/test_report_schema_version.py`, `tests/test_analyze_rerun.py`, `tests/test_cli.py`.
 - Delete: `tests/commands/test_analyze_snapshot_date.py`.
@@ -41,6 +45,7 @@
 ## Task 1: The `source` block in every analyzer schema + consistency test
 
 **Files:**
+
 - Create: `tests/schemas/test_source_block_consistency.py`
 - Modify: all 13 `regis/schemas/analyzer/*.schema.json`
 
@@ -136,6 +141,7 @@ git commit -m "feat(analyzers): declare optional source freshness block in every
 ## Task 2: cve analyzer emits `source` from grype DB status
 
 **Files:**
+
 - Modify: `regis/analyzers/cve.py:128-139` (the `return { ... }` of `analyze`)
 - Test: `tests/test_analyzer_cve.py` (use the existing cve test module; if unsure, run `ls tests | grep -i cve` and pick the analyzer test file)
 
@@ -237,6 +243,7 @@ git commit -m "feat(analyzers): capture grype vuln-DB build date in cve source b
 ## Task 3: scorecarddev analyzer emits `source` from the API response
 
 **Files:**
+
 - Modify: `regis/analyzers/scorecarddev.py:214-221` (the available-result `return { ... }`)
 - Test: `tests/test_scorecarddev.py`
 
@@ -327,6 +334,7 @@ git commit -m "feat(analyzers): capture scorecard assessment date in source bloc
 ## Task 4: popularity migrates `last_updated` → `source.built_at`
 
 **Files:**
+
 - Modify: `regis/analyzers/popularity.py:43-54` (the `analyze` return) and `:56-67` (`_empty`)
 - Modify: `regis/schemas/analyzer/popularity.schema.json` (drop `last_updated` from `required` and `properties`)
 - Test: `tests/test_analyzer_popularity.py` (the popularity test module — confirm with `ls tests | grep -i popular`)
@@ -435,6 +443,7 @@ git commit -m "feat(analyzers): migrate popularity last_updated into source bloc
 ## Task 5: Remove `snapshot_date` and bump `REPORT_SCHEMA_VERSION` 4 → 5
 
 **Files:**
+
 - Delete: `regis/data/snapshot_dates.json`
 - Delete: `tests/commands/test_analyze_snapshot_date.py`
 - Modify: `regis/commands/analyze.py:585-599`, `regis/utils/report.py:17` and `:341-345`, `regis/schemas/report/report.schema.json`, `regis/templates/html/report.html.j2:159-161`
@@ -447,7 +456,9 @@ In `tests/test_report_schema_version.py:78`, change:
 ```python
         assert REPORT_SCHEMA_VERSION == 4
 ```
+
 to:
+
 ```python
         assert REPORT_SCHEMA_VERSION == 5
 ```
@@ -530,6 +541,7 @@ git commit -m "feat(report): drop snapshot_date marker and bump schema version t
 ## Task 6: Per-analyzer source freshness in the HTML report (compact mode)
 
 **Files:**
+
 - Modify: `regis/templates/html/report.html.j2:243-255` (analyzer `an-body`)
 - Test: `tests/report/test_html_single.py`
 
@@ -596,6 +608,7 @@ git commit -m "feat(report): show analyzer data-source freshness in HTML report"
 ## Task 7: Full suite, generated docs, and final verification
 
 **Files:**
+
 - Possibly regenerated: `docs/website/static/schemas/**`, `docs/website/docs/reference/schemas/**` (generated assets)
 
 - [ ] **Step 1: Run the full suite with coverage gates**
@@ -631,6 +644,7 @@ Expected: no matches.
 ## Cross-repo follow-up (NOT part of this plan — separate repos)
 
 After merge, coordinate in the three consumer repos (each gates on `schemaVersion` and/or reads `popularity.last_updated`):
+
 - `regis-gitlab`, `regis-backstage`, `regis-action`.
 
 Two breaking changes to handle there: (1) `schemaVersion` 4 → 5 (only breaks `==` gates); (2) `popularity.last_updated` is gone — read `popularity.source.built_at` instead. Track as issues in those repos.

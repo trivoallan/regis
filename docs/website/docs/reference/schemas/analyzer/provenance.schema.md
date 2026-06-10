@@ -19,6 +19,7 @@
 | + [source_tracked](#source_tracked )             | No      | boolean         | No         | -          | True if the source repository URL is tracked in metadata.                    |
 | + [indicators_count](#indicators_count )         | No      | integer         | No         | -          | Total number of supply-chain indicators found.                               |
 | + [indicators](#indicators )                     | No      | array of object | No         | -          | List of specific supply-chain evidence found (e.g., OCI labels, signatures). |
+| - [source](#source )                             | No      | object          | No         | -          | -                                                                            |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -139,5 +140,45 @@ Specific value: `"provenance"`
 
 **Description:** The value of the indicator.
 
+## <a name="source"></a>9. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `source`
+
+|                           |                                                                |
+| ------------------------- | -------------------------------------------------------------- |
+| **Type**                  | `object`                                                       |
+| **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
+
+| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [fetched_at](#source_fetched_at ) | No      | string | No         | -          | -                 |
+| - [built_at](#source_built_at )     | No      | string | No         | -          | -                 |
+| - [version](#source_version )       | No      | string | No         | -          | -                 |
+| - [checksum](#source_checksum )     | No      | string | No         | -          | -                 |
+
+### <a name="source_fetched_at"></a>9.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `fetched_at`
+
+|            |             |
+| ---------- | ----------- |
+| **Type**   | `string`    |
+| **Format** | `date-time` |
+
+### <a name="source_built_at"></a>9.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `built_at`
+
+|            |             |
+| ---------- | ----------- |
+| **Type**   | `string`    |
+| **Format** | `date-time` |
+
+### <a name="source_version"></a>9.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `version`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+### <a name="source_checksum"></a>9.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checksum`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-09 at 12:37:23 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-10 at 13:27:01 +0200

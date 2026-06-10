@@ -11,7 +11,6 @@
     "pull_count",
     "star_count",
     "description",
-    "last_updated",
     "date_registered",
     "is_official"
   ],
@@ -41,10 +40,6 @@
       "type": ["string", "null"],
       "description": "Short description of the repository from Docker Hub."
     },
-    "last_updated": {
-      "type": ["string", "null"],
-      "description": "ISO timestamp of the last repository update."
-    },
     "date_registered": {
       "type": ["string", "null"],
       "description": "ISO timestamp of when the repository was created."
@@ -52,6 +47,16 @@
     "is_official": {
       "type": "boolean",
       "description": "True if this is an official Docker Hub repository."
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fetched_at": { "type": "string", "format": "date-time" },
+        "built_at": { "type": "string", "format": "date-time" },
+        "version": { "type": "string" },
+        "checksum": { "type": "string" }
+      }
     }
   },
   "additionalProperties": false

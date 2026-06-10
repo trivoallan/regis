@@ -13,7 +13,6 @@
 | ---------------------------------- | ------- | --------------- | ---------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | + [schemaVersion](#schemaVersion ) | No      | integer         | No         | -                                            | Report-structure contract version. Downstream consumers gate rendering on this. Distinct from \`version\` (package/snapshot). |
 | + [version](#version )             | No      | string or null  | No         | -                                            | Version of regis that generated this report.                                                                                  |
-| - [snapshot_date](#snapshot_date ) | No      | string          | No         | -                                            | ISO 8601 date when this version was snapshotted in the doc site.                                                              |
 | - [tier](#tier )                   | No      | string or null  | No         | -                                            | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.                                                     |
 | - [badges](#badges )               | No      | array of object | No         | -                                            | -                                                                                                                             |
 | - [metadata](#metadata )           | No      | object          | No         | -                                            | Arbitrary user-provided metadata (from --meta). Optional namespace exposed to rules as metadata.*.                            |
@@ -45,15 +44,7 @@
 
 **Description:** Version of regis that generated this report.
 
-## <a name="snapshot_date"></a>3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `snapshot_date`
-
-|          |          |
-| -------- | -------- |
-| **Type** | `string` |
-
-**Description:** ISO 8601 date when this version was snapshotted in the doc site.
-
-## <a name="tier"></a>4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `tier`
+## <a name="tier"></a>3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `tier`
 
 |          |                  |
 | -------- | ---------------- |
@@ -61,7 +52,7 @@
 
 **Description:** The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.
 
-## <a name="badges"></a>5. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `badges`
+## <a name="badges"></a>4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `badges`
 
 |          |                   |
 | -------- | ----------------- |
@@ -79,7 +70,7 @@
 | ------------------------------- | ----------- |
 | [badges items](#badges_items)   | -           |
 
-### <a name="badges_items"></a>5.1. badges items
+### <a name="badges_items"></a>4.1. badges items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -94,7 +85,7 @@
 | + [class](#badges_items_class ) | No      | enum (of string) | No         | -          | Visual style indicator.                            |
 | - [label](#badges_items_label ) | No      | string           | No         | -          | The full label string (scope or scope: value).     |
 
-#### <a name="badges_items_slug"></a>5.1.1. Property `slug`
+#### <a name="badges_items_slug"></a>4.1.1. Property `slug`
 
 |          |          |
 | -------- | -------- |
@@ -102,7 +93,7 @@
 
 **Description:** Unique identifier for the badge.
 
-#### <a name="badges_items_scope"></a>5.1.2. Property `scope`
+#### <a name="badges_items_scope"></a>4.1.2. Property `scope`
 
 |          |          |
 | -------- | -------- |
@@ -110,7 +101,7 @@
 
 **Description:** Domain of the badge (e.g., 'security', 'hygiene').
 
-#### <a name="badges_items_value"></a>5.1.3. Property `value`
+#### <a name="badges_items_value"></a>4.1.3. Property `value`
 
 |          |                  |
 | -------- | ---------------- |
@@ -118,7 +109,7 @@
 
 **Description:** Display value or grade (e.g., 'A', '95%').
 
-#### <a name="badges_items_class"></a>5.1.4. Property `class`
+#### <a name="badges_items_class"></a>4.1.4. Property `class`
 
 |          |                    |
 | -------- | ------------------ |
@@ -132,7 +123,7 @@ Must be one of:
 * "error"
 * "information"
 
-#### <a name="badges_items_label"></a>5.1.5. Property `label`
+#### <a name="badges_items_label"></a>4.1.5. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -140,7 +131,7 @@ Must be one of:
 
 **Description:** The full label string (scope or scope: value).
 
-## <a name="metadata"></a>6. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `metadata`
+## <a name="metadata"></a>5. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `metadata`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -153,7 +144,7 @@ Must be one of:
 | ------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#metadata_additionalProperties ) | No      | object | No         | -          | -                 |
 
-## <a name="links"></a>7. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `links`
+## <a name="links"></a>6. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `links`
 
 |          |                   |
 | -------- | ----------------- |
@@ -173,7 +164,7 @@ Must be one of:
 | ------------------------------- | ----------- |
 | [links items](#links_items)     | -           |
 
-### <a name="links_items"></a>7.1. links items
+### <a name="links_items"></a>6.1. links items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -185,7 +176,7 @@ Must be one of:
 | + [label](#links_items_label ) | No      | string | No         | -          | Display label for the link. |
 | + [url](#links_items_url )     | No      | string | No         | -          | Target URL.                 |
 
-#### <a name="links_items_label"></a>7.1.1. Property `label`
+#### <a name="links_items_label"></a>6.1.1. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -193,7 +184,7 @@ Must be one of:
 
 **Description:** Display label for the link.
 
-#### <a name="links_items_url"></a>7.1.2. Property `url`
+#### <a name="links_items_url"></a>6.1.2. Property `url`
 
 |          |          |
 | -------- | -------- |
@@ -201,7 +192,7 @@ Must be one of:
 
 **Description:** Target URL.
 
-## <a name="request"></a>8. ![Required](https://img.shields.io/badge/Required-blue) Property `request`
+## <a name="request"></a>7. ![Required](https://img.shields.io/badge/Required-blue) Property `request`
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -220,7 +211,7 @@ Must be one of:
 | + [analyzers](#request_analyzers )   | No      | array of string | No         | -          | List of analyzer names that were executed.                      |
 | + [timestamp](#request_timestamp )   | No      | string          | No         | -          | ISO 8601 UTC timestamp of the analysis.                         |
 
-### <a name="request_url"></a>8.1. ![Required](https://img.shields.io/badge/Required-blue) Property `url`
+### <a name="request_url"></a>7.1. ![Required](https://img.shields.io/badge/Required-blue) Property `url`
 
 |          |          |
 | -------- | -------- |
@@ -228,7 +219,7 @@ Must be one of:
 
 **Description:** Original URL or image reference provided by the user.
 
-### <a name="request_registry"></a>8.2. ![Required](https://img.shields.io/badge/Required-blue) Property `registry`
+### <a name="request_registry"></a>7.2. ![Required](https://img.shields.io/badge/Required-blue) Property `registry`
 
 |          |          |
 | -------- | -------- |
@@ -236,7 +227,7 @@ Must be one of:
 
 **Description:** Resolved registry hostname (e.g. registry-1.docker.io).
 
-### <a name="request_repository"></a>8.3. ![Required](https://img.shields.io/badge/Required-blue) Property `repository`
+### <a name="request_repository"></a>7.3. ![Required](https://img.shields.io/badge/Required-blue) Property `repository`
 
 |          |          |
 | -------- | -------- |
@@ -244,7 +235,7 @@ Must be one of:
 
 **Description:** Full repository path (e.g. library/nginx).
 
-### <a name="request_tag"></a>8.4. ![Required](https://img.shields.io/badge/Required-blue) Property `tag`
+### <a name="request_tag"></a>7.4. ![Required](https://img.shields.io/badge/Required-blue) Property `tag`
 
 |          |          |
 | -------- | -------- |
@@ -252,7 +243,7 @@ Must be one of:
 
 **Description:** Image tag that was analyzed.
 
-### <a name="request_digest"></a>8.5. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `digest`
+### <a name="request_digest"></a>7.5. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `digest`
 
 |          |                  |
 | -------- | ---------------- |
@@ -260,7 +251,7 @@ Must be one of:
 
 **Description:** Resolved image manifest digest (e.g. sha256-xxx), if available.
 
-### <a name="request_analyzers"></a>8.6. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzers`
+### <a name="request_analyzers"></a>7.6. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzers`
 
 |          |                   |
 | -------- | ----------------- |
@@ -280,13 +271,13 @@ Must be one of:
 | ------------------------------------------- | ----------- |
 | [analyzers items](#request_analyzers_items) | -           |
 
-#### <a name="request_analyzers_items"></a>8.6.1. analyzers items
+#### <a name="request_analyzers_items"></a>7.6.1. analyzers items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-### <a name="request_timestamp"></a>8.7. ![Required](https://img.shields.io/badge/Required-blue) Property `timestamp`
+### <a name="request_timestamp"></a>7.7. ![Required](https://img.shields.io/badge/Required-blue) Property `timestamp`
 
 |            |             |
 | ---------- | ----------- |
@@ -295,7 +286,7 @@ Must be one of:
 
 **Description:** ISO 8601 UTC timestamp of the analysis.
 
-## <a name="results"></a>9. ![Required](https://img.shields.io/badge/Required-blue) Property `results`
+## <a name="results"></a>8. ![Required](https://img.shields.io/badge/Required-blue) Property `results`
 
 |                           |                                                                                                      |
 | ------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -308,14 +299,14 @@ Must be one of:
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#results_additionalProperties ) | No      | object | No         | -          | -                 |
 
-### <a name="results_additionalProperties"></a>9.1. Property `additionalProperties`
+### <a name="results_additionalProperties"></a>8.1. Property `additionalProperties`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-## <a name="playbooks"></a>10. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `playbooks`
+## <a name="playbooks"></a>9. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `playbooks`
 
 |          |         |
 | -------- | ------- |
@@ -335,7 +326,7 @@ Must be one of:
 | ----------------------------------- | ---------------------------------------------------------------------------------- |
 | [playbook.result](#playbooks_items) | Final playbook result produced by regis, containing metadata and analyzer results. |
 
-### <a name="playbooks_items"></a>10.1. playbook.result
+### <a name="playbooks_items"></a>9.1. playbook.result
 
 **Title:** playbook.result
 
@@ -363,7 +354,7 @@ Must be one of:
 | - [checklists](#playbooks_items_checklists )             | No      | array of object | No         | -          | Resolved checklists surfaced to downstream integrations.                         |
 | - [templates](#playbooks_items_templates )               | No      | array of object | No         | -          | Cookiecutter templates surfaced to downstream integrations.                      |
 
-#### <a name="playbooks_items_playbook_name"></a>10.1.1. Property `playbook_name`
+#### <a name="playbooks_items_playbook_name"></a>9.1.1. Property `playbook_name`
 
 |          |          |
 | -------- | -------- |
@@ -371,7 +362,7 @@ Must be one of:
 
 **Description:** Identifier of the playbook that was executed.
 
-#### <a name="playbooks_items_playbook_version"></a>10.1.2. Property `playbook_version`
+#### <a name="playbooks_items_playbook_version"></a>9.1.2. Property `playbook_version`
 
 |          |                  |
 | -------- | ---------------- |
@@ -379,7 +370,7 @@ Must be one of:
 
 **Description:** SemVer of the playbook that produced this report.
 
-#### <a name="playbooks_items_api_version"></a>10.1.3. Property `api_version`
+#### <a name="playbooks_items_api_version"></a>9.1.3. Property `api_version`
 
 |          |                  |
 | -------- | ---------------- |
@@ -387,7 +378,7 @@ Must be one of:
 
 **Description:** apiVersion of the playbook that produced this result (e.g. "regis.io/v1alpha1").
 
-#### <a name="playbooks_items_sidebar"></a>10.1.4. Property `sidebar`
+#### <a name="playbooks_items_sidebar"></a>9.1.4. Property `sidebar`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -396,7 +387,7 @@ Must be one of:
 
 **Description:** Sidebar navigation metadata for the report UI.
 
-#### <a name="playbooks_items_version"></a>10.1.5. Property `version`
+#### <a name="playbooks_items_version"></a>9.1.5. Property `version`
 
 |          |                  |
 | -------- | ---------------- |
@@ -404,7 +395,7 @@ Must be one of:
 
 **Description:** Version of regis that generated this report.
 
-#### <a name="playbooks_items_tier"></a>10.1.6. Property `tier`
+#### <a name="playbooks_items_tier"></a>9.1.6. Property `tier`
 
 |          |                  |
 | -------- | ---------------- |
@@ -412,7 +403,7 @@ Must be one of:
 
 **Description:** The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.
 
-#### <a name="playbooks_items_badges"></a>10.1.7. Property `badges`
+#### <a name="playbooks_items_badges"></a>9.1.7. Property `badges`
 
 |          |                   |
 | -------- | ----------------- |
@@ -430,7 +421,7 @@ Must be one of:
 | --------------------------------------------- | ----------- |
 | [badges items](#playbooks_items_badges_items) | -           |
 
-##### <a name="playbooks_items_badges_items"></a>10.1.7.1. badges items
+##### <a name="playbooks_items_badges_items"></a>9.1.7.1. badges items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -445,7 +436,7 @@ Must be one of:
 | + [class](#playbooks_items_badges_items_class ) | No      | enum (of string) | No         | -          | Visual style indicator.                            |
 | - [label](#playbooks_items_badges_items_label ) | No      | string           | No         | -          | The full label string (scope or scope: value).     |
 
-###### <a name="playbooks_items_badges_items_slug"></a>10.1.7.1.1. Property `slug`
+###### <a name="playbooks_items_badges_items_slug"></a>9.1.7.1.1. Property `slug`
 
 |          |          |
 | -------- | -------- |
@@ -453,7 +444,7 @@ Must be one of:
 
 **Description:** Unique identifier for the badge.
 
-###### <a name="playbooks_items_badges_items_scope"></a>10.1.7.1.2. Property `scope`
+###### <a name="playbooks_items_badges_items_scope"></a>9.1.7.1.2. Property `scope`
 
 |          |          |
 | -------- | -------- |
@@ -461,7 +452,7 @@ Must be one of:
 
 **Description:** Domain of the badge (e.g., 'security', 'hygiene').
 
-###### <a name="playbooks_items_badges_items_value"></a>10.1.7.1.3. Property `value`
+###### <a name="playbooks_items_badges_items_value"></a>9.1.7.1.3. Property `value`
 
 |          |                  |
 | -------- | ---------------- |
@@ -469,7 +460,7 @@ Must be one of:
 
 **Description:** Display value or grade (e.g., 'A', '95%').
 
-###### <a name="playbooks_items_badges_items_class"></a>10.1.7.1.4. Property `class`
+###### <a name="playbooks_items_badges_items_class"></a>9.1.7.1.4. Property `class`
 
 |          |                    |
 | -------- | ------------------ |
@@ -483,7 +474,7 @@ Must be one of:
 * "error"
 * "information"
 
-###### <a name="playbooks_items_badges_items_label"></a>10.1.7.1.5. Property `label`
+###### <a name="playbooks_items_badges_items_label"></a>9.1.7.1.5. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -491,7 +482,7 @@ Must be one of:
 
 **Description:** The full label string (scope or scope: value).
 
-#### <a name="playbooks_items_rules"></a>10.1.8. Property `rules`
+#### <a name="playbooks_items_rules"></a>9.1.8. Property `rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -509,7 +500,7 @@ Must be one of:
 | ------------------------------------------- | ----------- |
 | [rules items](#playbooks_items_rules_items) | -           |
 
-##### <a name="playbooks_items_rules_items"></a>10.1.8.1. rules items
+##### <a name="playbooks_items_rules_items"></a>9.1.8.1. rules items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -527,7 +518,7 @@ Must be one of:
 | + [message](#playbooks_items_rules_items_message )         | No      | string           | No         | -          | Reasoning or details for the rule result.                                                   |
 | - [analyzers](#playbooks_items_rules_items_analyzers )     | No      | array of string  | No         | -          | List of analyzers that contributed data to this rule.                                       |
 
-###### <a name="playbooks_items_rules_items_slug"></a>10.1.8.1.1. Property `slug`
+###### <a name="playbooks_items_rules_items_slug"></a>9.1.8.1.1. Property `slug`
 
 |          |          |
 | -------- | -------- |
@@ -535,7 +526,7 @@ Must be one of:
 
 **Description:** Unique identifier for the rule.
 
-###### <a name="playbooks_items_rules_items_description"></a>10.1.8.1.2. Property `description`
+###### <a name="playbooks_items_rules_items_description"></a>9.1.8.1.2. Property `description`
 
 |          |          |
 | -------- | -------- |
@@ -543,7 +534,7 @@ Must be one of:
 
 **Description:** Human-readable name of the rule.
 
-###### <a name="playbooks_items_rules_items_level"></a>10.1.8.1.3. Property `level`
+###### <a name="playbooks_items_rules_items_level"></a>9.1.8.1.3. Property `level`
 
 |          |          |
 | -------- | -------- |
@@ -551,7 +542,7 @@ Must be one of:
 
 **Description:** Severity level of the rule (e.g. critical, warning, info). Distinct from the playbook tier.
 
-###### <a name="playbooks_items_rules_items_tags"></a>10.1.8.1.4. Property `tags`
+###### <a name="playbooks_items_rules_items_tags"></a>9.1.8.1.4. Property `tags`
 
 |          |                   |
 | -------- | ----------------- |
@@ -571,13 +562,13 @@ Must be one of:
 | ----------------------------------------------------- | ----------- |
 | [tags items](#playbooks_items_rules_items_tags_items) | -           |
 
-###### <a name="playbooks_items_rules_items_tags_items"></a>10.1.8.1.4.1. tags items
+###### <a name="playbooks_items_rules_items_tags_items"></a>9.1.8.1.4.1. tags items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_rules_items_passed"></a>10.1.8.1.5. Property `passed`
+###### <a name="playbooks_items_rules_items_passed"></a>9.1.8.1.5. Property `passed`
 
 |          |           |
 | -------- | --------- |
@@ -585,7 +576,7 @@ Must be one of:
 
 **Description:** Whether the rule criteria were met.
 
-###### <a name="playbooks_items_rules_items_status"></a>10.1.8.1.6. Property `status`
+###### <a name="playbooks_items_rules_items_status"></a>9.1.8.1.6. Property `status`
 
 |          |                    |
 | -------- | ------------------ |
@@ -598,7 +589,7 @@ Must be one of:
 * "failed"
 * "incomplete"
 
-###### <a name="playbooks_items_rules_items_message"></a>10.1.8.1.7. Property `message`
+###### <a name="playbooks_items_rules_items_message"></a>9.1.8.1.7. Property `message`
 
 |          |          |
 | -------- | -------- |
@@ -606,7 +597,7 @@ Must be one of:
 
 **Description:** Reasoning or details for the rule result.
 
-###### <a name="playbooks_items_rules_items_analyzers"></a>10.1.8.1.8. Property `analyzers`
+###### <a name="playbooks_items_rules_items_analyzers"></a>9.1.8.1.8. Property `analyzers`
 
 |          |                   |
 | -------- | ----------------- |
@@ -626,13 +617,13 @@ Must be one of:
 | --------------------------------------------------------------- | ----------- |
 | [analyzers items](#playbooks_items_rules_items_analyzers_items) | -           |
 
-###### <a name="playbooks_items_rules_items_analyzers_items"></a>10.1.8.1.8.1. analyzers items
+###### <a name="playbooks_items_rules_items_analyzers_items"></a>9.1.8.1.8.1. analyzers items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-#### <a name="playbooks_items_rules_summary"></a>10.1.9. Property `rules_summary`
+#### <a name="playbooks_items_rules_summary"></a>9.1.9. Property `rules_summary`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -646,7 +637,7 @@ Must be one of:
 | + [passed](#playbooks_items_rules_summary_passed ) | No      | array of string | No         | -          | -                 |
 | - [by_tag](#playbooks_items_rules_summary_by_tag ) | No      | object          | No         | -          | -                 |
 
-##### <a name="playbooks_items_rules_summary_score"></a>10.1.9.1. Property `score`
+##### <a name="playbooks_items_rules_summary_score"></a>9.1.9.1. Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -657,7 +648,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-##### <a name="playbooks_items_rules_summary_total"></a>10.1.9.2. Property `total`
+##### <a name="playbooks_items_rules_summary_total"></a>9.1.9.2. Property `total`
 
 |          |                   |
 | -------- | ----------------- |
@@ -675,13 +666,13 @@ Must be one of:
 | --------------------------------------------------------- | ----------- |
 | [total items](#playbooks_items_rules_summary_total_items) | -           |
 
-###### <a name="playbooks_items_rules_summary_total_items"></a>10.1.9.2.1. total items
+###### <a name="playbooks_items_rules_summary_total_items"></a>9.1.9.2.1. total items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-##### <a name="playbooks_items_rules_summary_passed"></a>10.1.9.3. Property `passed`
+##### <a name="playbooks_items_rules_summary_passed"></a>9.1.9.3. Property `passed`
 
 |          |                   |
 | -------- | ----------------- |
@@ -699,13 +690,13 @@ Must be one of:
 | ----------------------------------------------------------- | ----------- |
 | [passed items](#playbooks_items_rules_summary_passed_items) | -           |
 
-###### <a name="playbooks_items_rules_summary_passed_items"></a>10.1.9.3.1. passed items
+###### <a name="playbooks_items_rules_summary_passed_items"></a>9.1.9.3.1. passed items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-##### <a name="playbooks_items_rules_summary_by_tag"></a>10.1.9.4. Property `by_tag`
+##### <a name="playbooks_items_rules_summary_by_tag"></a>9.1.9.4. Property `by_tag`
 
 |                           |                                                                                                                                   |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
@@ -716,7 +707,7 @@ Must be one of:
 | ----------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#playbooks_items_rules_summary_by_tag_additionalProperties ) | No      | object | No         | -          | -                 |
 
-###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties"></a>10.1.9.4.1. Property `additionalProperties`
+###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties"></a>9.1.9.4.1. Property `additionalProperties`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -729,7 +720,7 @@ Must be one of:
 | + [passed_rules](#playbooks_items_rules_summary_by_tag_additionalProperties_passed_rules ) | No      | array of string | No         | -          | -                 |
 | + [score](#playbooks_items_rules_summary_by_tag_additionalProperties_score )               | No      | integer         | No         | -          | -                 |
 
-###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_rules"></a>10.1.9.4.1.1. Property `rules`
+###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_rules"></a>9.1.9.4.1.1. Property `rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -747,13 +738,13 @@ Must be one of:
 | ------------------------------------------------------------------------------------- | ----------- |
 | [rules items](#playbooks_items_rules_summary_by_tag_additionalProperties_rules_items) | -           |
 
-###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_rules_items"></a>10.1.9.4.1.1.1. rules items
+###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_rules_items"></a>9.1.9.4.1.1.1. rules items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_passed_rules"></a>10.1.9.4.1.2. Property `passed_rules`
+###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_passed_rules"></a>9.1.9.4.1.2. Property `passed_rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -771,13 +762,13 @@ Must be one of:
 | --------------------------------------------------------------------------------------------------- | ----------- |
 | [passed_rules items](#playbooks_items_rules_summary_by_tag_additionalProperties_passed_rules_items) | -           |
 
-###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_passed_rules_items"></a>10.1.9.4.1.2.1. passed_rules items
+###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_passed_rules_items"></a>9.1.9.4.1.2.1. passed_rules items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_score"></a>10.1.9.4.1.3. Property `score`
+###### <a name="playbooks_items_rules_summary_by_tag_additionalProperties_score"></a>9.1.9.4.1.3. Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -788,7 +779,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-#### <a name="playbooks_items_score"></a>10.1.10. Property `score`
+#### <a name="playbooks_items_score"></a>9.1.10. Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -801,7 +792,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-#### <a name="playbooks_items_links"></a>10.1.11. Property `links`
+#### <a name="playbooks_items_links"></a>9.1.11. Property `links`
 
 |          |                   |
 | -------- | ----------------- |
@@ -821,7 +812,7 @@ Must be one of:
 | ------------------------------------------- | ----------- |
 | [links items](#playbooks_items_links_items) | -           |
 
-##### <a name="playbooks_items_links_items"></a>10.1.11.1. links items
+##### <a name="playbooks_items_links_items"></a>9.1.11.1. links items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -833,7 +824,7 @@ Must be one of:
 | + [label](#playbooks_items_links_items_label ) | No      | string | No         | -          | Display label for the link. |
 | + [url](#playbooks_items_links_items_url )     | No      | string | No         | -          | Target URL.                 |
 
-###### <a name="playbooks_items_links_items_label"></a>10.1.11.1.1. Property `label`
+###### <a name="playbooks_items_links_items_label"></a>9.1.11.1.1. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -841,7 +832,7 @@ Must be one of:
 
 **Description:** Display label for the link.
 
-###### <a name="playbooks_items_links_items_url"></a>10.1.11.1.2. Property `url`
+###### <a name="playbooks_items_links_items_url"></a>9.1.11.1.2. Property `url`
 
 |          |          |
 | -------- | -------- |
@@ -849,7 +840,7 @@ Must be one of:
 
 **Description:** Target URL.
 
-#### <a name="playbooks_items_checklists"></a>10.1.12. Property `checklists`
+#### <a name="playbooks_items_checklists"></a>9.1.12. Property `checklists`
 
 |          |                   |
 | -------- | ----------------- |
@@ -869,7 +860,7 @@ Must be one of:
 | ----------------------------------------------------- | ----------- |
 | [checklists items](#playbooks_items_checklists_items) | -           |
 
-##### <a name="playbooks_items_checklists_items"></a>10.1.12.1. checklists items
+##### <a name="playbooks_items_checklists_items"></a>9.1.12.1. checklists items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -881,7 +872,7 @@ Must be one of:
 | + [title](#playbooks_items_checklists_items_title ) | No      | string          | No         | -          | Display title for the checklist. |
 | + [items](#playbooks_items_checklists_items_items ) | No      | array of object | No         | -          | -                                |
 
-###### <a name="playbooks_items_checklists_items_title"></a>10.1.12.1.1. Property `title`
+###### <a name="playbooks_items_checklists_items_title"></a>9.1.12.1.1. Property `title`
 
 |          |          |
 | -------- | -------- |
@@ -889,7 +880,7 @@ Must be one of:
 
 **Description:** Display title for the checklist.
 
-###### <a name="playbooks_items_checklists_items_items"></a>10.1.12.1.2. Property `items`
+###### <a name="playbooks_items_checklists_items_items"></a>9.1.12.1.2. Property `items`
 
 |          |                   |
 | -------- | ----------------- |
@@ -907,7 +898,7 @@ Must be one of:
 | ------------------------------------------------------------ | ----------- |
 | [items items](#playbooks_items_checklists_items_items_items) | -           |
 
-###### <a name="playbooks_items_checklists_items_items_items"></a>10.1.12.1.2.1. items items
+###### <a name="playbooks_items_checklists_items_items_items"></a>9.1.12.1.2.1. items items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -919,19 +910,19 @@ Must be one of:
 | + [label](#playbooks_items_checklists_items_items_items_label )     | No      | string  | No         | -          | -                 |
 | + [checked](#playbooks_items_checklists_items_items_items_checked ) | No      | boolean | No         | -          | -                 |
 
-###### <a name="playbooks_items_checklists_items_items_items_label"></a>10.1.12.1.2.1.1. Property `label`
+###### <a name="playbooks_items_checklists_items_items_items_label"></a>9.1.12.1.2.1.1. Property `label`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_checklists_items_items_items_checked"></a>10.1.12.1.2.1.2. Property `checked`
+###### <a name="playbooks_items_checklists_items_items_items_checked"></a>9.1.12.1.2.1.2. Property `checked`
 
 |          |           |
 | -------- | --------- |
 | **Type** | `boolean` |
 
-#### <a name="playbooks_items_templates"></a>10.1.13. Property `templates`
+#### <a name="playbooks_items_templates"></a>9.1.13. Property `templates`
 
 |          |                   |
 | -------- | ----------------- |
@@ -951,7 +942,7 @@ Must be one of:
 | --------------------------------------------------- | ----------- |
 | [templates items](#playbooks_items_templates_items) | -           |
 
-##### <a name="playbooks_items_templates_items"></a>10.1.13.1. templates items
+##### <a name="playbooks_items_templates_items"></a>9.1.13.1. templates items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -969,45 +960,45 @@ Must be one of:
 | [item 0](#playbooks_items_templates_items_anyOf_i0) |
 | [item 1](#playbooks_items_templates_items_anyOf_i1) |
 
-###### <a name="playbooks_items_templates_items_anyOf_i0"></a>10.1.13.1.1. Property `item 0`
+###### <a name="playbooks_items_templates_items_anyOf_i0"></a>9.1.13.1.1. Property `item 0`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-###### <a name="autogenerated_heading_2"></a>10.1.13.1.1.1. The following properties are required
+###### <a name="autogenerated_heading_2"></a>9.1.13.1.1.1. The following properties are required
 * url
 
-###### <a name="playbooks_items_templates_items_anyOf_i1"></a>10.1.13.1.2. Property `item 1`
+###### <a name="playbooks_items_templates_items_anyOf_i1"></a>9.1.13.1.2. Property `item 1`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-###### <a name="autogenerated_heading_3"></a>10.1.13.1.2.1. The following properties are required
+###### <a name="autogenerated_heading_3"></a>9.1.13.1.2.1. The following properties are required
 * package
 
-###### <a name="playbooks_items_templates_items_url"></a>10.1.13.1.3. Property `url`
+###### <a name="playbooks_items_templates_items_url"></a>9.1.13.1.3. Property `url`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_templates_items_package"></a>10.1.13.1.4. Property `package`
+###### <a name="playbooks_items_templates_items_package"></a>9.1.13.1.4. Property `package`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="playbooks_items_templates_items_directory"></a>10.1.13.1.5. Property `directory`
+###### <a name="playbooks_items_templates_items_directory"></a>9.1.13.1.5. Property `directory`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-## <a name="playbook"></a>11. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `playbook`
+## <a name="playbook"></a>10. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `playbook`
 
 **Title:** playbook.result
 
@@ -1019,7 +1010,7 @@ Must be one of:
 
 **Description:** Primary playbook result (shorthand for playbooks[0]).
 
-## <a name="rules"></a>12. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `rules`
+## <a name="rules"></a>11. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1039,7 +1030,7 @@ Must be one of:
 | ------------------------------- | ----------- |
 | [rules items](#rules_items)     | -           |
 
-### <a name="rules_items"></a>12.1. rules items
+### <a name="rules_items"></a>11.1. rules items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -1057,7 +1048,7 @@ Must be one of:
 | + [message](#rules_items_message )         | No      | string           | No         | -          | Reasoning or details for the rule result.                                                   |
 | - [analyzers](#rules_items_analyzers )     | No      | array of string  | No         | -          | List of analyzers that contributed data to this rule.                                       |
 
-#### <a name="rules_items_slug"></a>12.1.1. Property `slug`
+#### <a name="rules_items_slug"></a>11.1.1. Property `slug`
 
 |          |          |
 | -------- | -------- |
@@ -1065,7 +1056,7 @@ Must be one of:
 
 **Description:** Unique identifier for the rule.
 
-#### <a name="rules_items_description"></a>12.1.2. Property `description`
+#### <a name="rules_items_description"></a>11.1.2. Property `description`
 
 |          |          |
 | -------- | -------- |
@@ -1073,7 +1064,7 @@ Must be one of:
 
 **Description:** Human-readable name of the rule.
 
-#### <a name="rules_items_level"></a>12.1.3. Property `level`
+#### <a name="rules_items_level"></a>11.1.3. Property `level`
 
 |          |          |
 | -------- | -------- |
@@ -1081,7 +1072,7 @@ Must be one of:
 
 **Description:** Severity level of the rule (e.g. critical, warning, info). Distinct from the playbook tier.
 
-#### <a name="rules_items_tags"></a>12.1.4. Property `tags`
+#### <a name="rules_items_tags"></a>11.1.4. Property `tags`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1101,13 +1092,13 @@ Must be one of:
 | ------------------------------------- | ----------- |
 | [tags items](#rules_items_tags_items) | -           |
 
-##### <a name="rules_items_tags_items"></a>12.1.4.1. tags items
+##### <a name="rules_items_tags_items"></a>11.1.4.1. tags items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-#### <a name="rules_items_passed"></a>12.1.5. Property `passed`
+#### <a name="rules_items_passed"></a>11.1.5. Property `passed`
 
 |          |           |
 | -------- | --------- |
@@ -1115,7 +1106,7 @@ Must be one of:
 
 **Description:** Whether the rule criteria were met.
 
-#### <a name="rules_items_status"></a>12.1.6. Property `status`
+#### <a name="rules_items_status"></a>11.1.6. Property `status`
 
 |          |                    |
 | -------- | ------------------ |
@@ -1128,7 +1119,7 @@ Must be one of:
 * "failed"
 * "incomplete"
 
-#### <a name="rules_items_message"></a>12.1.7. Property `message`
+#### <a name="rules_items_message"></a>11.1.7. Property `message`
 
 |          |          |
 | -------- | -------- |
@@ -1136,7 +1127,7 @@ Must be one of:
 
 **Description:** Reasoning or details for the rule result.
 
-#### <a name="rules_items_analyzers"></a>12.1.8. Property `analyzers`
+#### <a name="rules_items_analyzers"></a>11.1.8. Property `analyzers`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1156,13 +1147,13 @@ Must be one of:
 | ----------------------------------------------- | ----------- |
 | [analyzers items](#rules_items_analyzers_items) | -           |
 
-##### <a name="rules_items_analyzers_items"></a>12.1.8.1. analyzers items
+##### <a name="rules_items_analyzers_items"></a>11.1.8.1. analyzers items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-## <a name="rules_summary"></a>13. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `rules_summary`
+## <a name="rules_summary"></a>12. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `rules_summary`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -1178,7 +1169,7 @@ Must be one of:
 | - [passed](#rules_summary_passed ) | No      | array of string | No         | -          | -                 |
 | - [by_tag](#rules_summary_by_tag ) | No      | object          | No         | -          | -                 |
 
-### <a name="rules_summary_score"></a>13.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `score`
+### <a name="rules_summary_score"></a>12.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -1189,7 +1180,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-### <a name="rules_summary_total"></a>13.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `total`
+### <a name="rules_summary_total"></a>12.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `total`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1207,13 +1198,13 @@ Must be one of:
 | ----------------------------------------- | ----------- |
 | [total items](#rules_summary_total_items) | -           |
 
-#### <a name="rules_summary_total_items"></a>13.2.1. total items
+#### <a name="rules_summary_total_items"></a>12.2.1. total items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-### <a name="rules_summary_passed"></a>13.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `passed`
+### <a name="rules_summary_passed"></a>12.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `passed`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1231,13 +1222,13 @@ Must be one of:
 | ------------------------------------------- | ----------- |
 | [passed items](#rules_summary_passed_items) | -           |
 
-#### <a name="rules_summary_passed_items"></a>13.3.1. passed items
+#### <a name="rules_summary_passed_items"></a>12.3.1. passed items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-### <a name="rules_summary_by_tag"></a>13.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `by_tag`
+### <a name="rules_summary_by_tag"></a>12.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `by_tag`
 
 |                           |                                                                                                                   |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -1248,7 +1239,7 @@ Must be one of:
 | ------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#rules_summary_by_tag_additionalProperties ) | No      | object | No         | -          | -                 |
 
-#### <a name="rules_summary_by_tag_additionalProperties"></a>13.4.1. Property `additionalProperties`
+#### <a name="rules_summary_by_tag_additionalProperties"></a>12.4.1. Property `additionalProperties`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -1261,7 +1252,7 @@ Must be one of:
 | + [passed_rules](#rules_summary_by_tag_additionalProperties_passed_rules ) | No      | array of string | No         | -          | List of slugs for rules that passed. |
 | + [score](#rules_summary_by_tag_additionalProperties_score )               | No      | integer         | No         | -          | Percentage score for this group.     |
 
-##### <a name="rules_summary_by_tag_additionalProperties_rules"></a>13.4.1.1. ![Required](https://img.shields.io/badge/Required-blue) Property `rules`
+##### <a name="rules_summary_by_tag_additionalProperties_rules"></a>12.4.1.1. ![Required](https://img.shields.io/badge/Required-blue) Property `rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1281,13 +1272,13 @@ Must be one of:
 | --------------------------------------------------------------------- | ----------- |
 | [rules items](#rules_summary_by_tag_additionalProperties_rules_items) | -           |
 
-###### <a name="rules_summary_by_tag_additionalProperties_rules_items"></a>13.4.1.1.1. rules items
+###### <a name="rules_summary_by_tag_additionalProperties_rules_items"></a>12.4.1.1.1. rules items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-##### <a name="rules_summary_by_tag_additionalProperties_passed_rules"></a>13.4.1.2. ![Required](https://img.shields.io/badge/Required-blue) Property `passed_rules`
+##### <a name="rules_summary_by_tag_additionalProperties_passed_rules"></a>12.4.1.2. ![Required](https://img.shields.io/badge/Required-blue) Property `passed_rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -1307,13 +1298,13 @@ Must be one of:
 | ----------------------------------------------------------------------------------- | ----------- |
 | [passed_rules items](#rules_summary_by_tag_additionalProperties_passed_rules_items) | -           |
 
-###### <a name="rules_summary_by_tag_additionalProperties_passed_rules_items"></a>13.4.1.2.1. passed_rules items
+###### <a name="rules_summary_by_tag_additionalProperties_passed_rules_items"></a>12.4.1.2.1. passed_rules items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-##### <a name="rules_summary_by_tag_additionalProperties_score"></a>13.4.1.3. ![Required](https://img.shields.io/badge/Required-blue) Property `score`
+##### <a name="rules_summary_by_tag_additionalProperties_score"></a>12.4.1.3. ![Required](https://img.shields.io/badge/Required-blue) Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -1327,4 +1318,4 @@ Must be one of:
 | **Maximum**  | &le; 100 |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-09 at 12:37:26 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-10 at 13:27:03 +0200
