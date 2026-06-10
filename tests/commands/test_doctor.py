@@ -119,7 +119,6 @@ def test_doctor_lists_tools_section(monkeypatch, tmp_path):
 
 def test_get_version_returns_output_line(monkeypatch):
     """Normal success path: returns the first line of stdout."""
-    import subprocess as _sp
     from unittest.mock import MagicMock
 
     mock_result = MagicMock()
