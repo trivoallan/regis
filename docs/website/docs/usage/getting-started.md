@@ -36,8 +36,8 @@ pip install regis
 ```
 
 :::tip
-For developers wanting to contribute to the project, use **Pipenv**:
-`pipenv install --dev`
+For developers wanting to contribute to the project, use **[uv](https://docs.astral.sh/uv/)**:
+`uv sync`
 :::
 
 ## GitHub Repository Configuration

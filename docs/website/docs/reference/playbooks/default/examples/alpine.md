@@ -3,7 +3,7 @@
 ## Command
 
 ```bash
-pipenv run regis analyze alpine:latest --evaluate --html --output-dir docs/website/static/examples/playbooks/default/alpine
+uv run regis analyze alpine:latest --evaluate --html --output-dir docs/website/static/examples/playbooks/default/alpine
 ```
 
 ## Playbook used
