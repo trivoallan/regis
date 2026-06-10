@@ -2,12 +2,12 @@
 
 ## Development
 
-- `pipenv install --dev` — Install all dependencies
-- `pipenv run pytest` — Run tests with coverage (fails if < 90%)
-- `pipenv run pytest --no-cov` — Run tests without coverage check
-- `pipenv run ruff check .` — Lint
-- `pipenv run ruff format .` — Format
-- `pipenv run regis --help` — Run CLI locally
+- `uv sync` — Install all dependencies (incl. dev group)
+- `uv run pytest` — Run tests with coverage (fails if < 90%)
+- `uv run pytest --no-cov` — Run tests without coverage check
+- `uv run ruff check .` — Lint
+- `uv run ruff format .` — Format
+- `uv run regis --help` — Run CLI locally
 
 ## Linting / Formatting
 

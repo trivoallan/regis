@@ -169,19 +169,15 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}:latest
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8
 
       - name: Install regis
-        run: |
-          pip install pipenv
-          pipenv install --deploy
+        run: uv sync --locked --no-dev
 
       - name: Run Analysis
         run: |
-          pipenv run regis analyze ghcr.io/${{ github.repository }}:latest \
+          uv run regis analyze ghcr.io/${{ github.repository }}:latest \
             --auth ghcr.io=${{ github.actor }}:${{ secrets.GITHUB_TOKEN }} \
             --html \
             --meta "trigger.user=${{ github.actor }}" \

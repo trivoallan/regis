@@ -9,7 +9,7 @@ on:
       - regis/**
       - scripts/generate_whats_new.py
       - CHANGELOG.md
-      - Pipfile
+      - uv.lock
       - pyproject.toml
       - package.json
       - pnpm-lock.yaml
@@ -67,11 +67,11 @@ jobs:
             changed_files_file="$(mktemp)"
             git diff --name-only "$BEFORE_SHA" "$GITHUB_SHA" | tee "$changed_files_file"
 
-            if grep -Eq '^(regis/|scripts/generate_whats_new\.py$|CHANGELOG\.md$|Pipfile$|pyproject\.toml$|package\.json$|pnpm-lock\.yaml$|\.github/workflows/cd-docs\.yml$)' "$changed_files_file"; then
+            if grep -Eq '^(regis/|scripts/generate_whats_new\.py$|CHANGELOG\.md$|uv\.lock$|pyproject\.toml$|package\.json$|pnpm-lock\.yaml$|\.github/workflows/cd-docs\.yml$)' "$changed_files_file"; then
               generate_reference=true
             fi
 
-            if grep -Eq '^(regis/|tests/|Pipfile$|pyproject\.toml$|\.github/workflows/cd-docs\.yml$)' "$changed_files_file"; then
+            if grep -Eq '^(regis/|tests/|uv\.lock$|pyproject\.toml$|\.github/workflows/cd-docs\.yml$)' "$changed_files_file"; then
               refresh_badge=true
             fi
 
@@ -81,16 +81,13 @@ jobs:
           echo "generate_reference=$generate_reference" >> "$GITHUB_OUTPUT"
           echo "refresh_badge=$refresh_badge" >> "$GITHUB_OUTPUT"
 
-      - name: Setup Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - name: Setup uv
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
-          python-version: "3.13"
-          cache: pipenv
+          enable-cache: true
 
       - name: Install Python dependencies
-        run: |
-          pip install pipenv
-          pipenv sync --dev
+        run: uv sync --locked
 
       - name: Install Hadolint
         run: |
@@ -177,12 +174,12 @@ jobs:
           for cat in $(find regis/schemas/* -maxdepth 0 -type d); do
             cat=$(basename $cat);
             mkdir -p docs/website/docs/reference/schemas/$cat
-            pipenv run generate-schema-doc --config-file docs/website/json-schema-for-humans.config.json docs/website/static/schemas/$cat docs/website/docs/reference/schemas/$cat
+            uv run generate-schema-doc --config-file docs/website/json-schema-for-humans.config.json docs/website/static/schemas/$cat docs/website/docs/reference/schemas/$cat
           done
 
       - name: Generate Rules Reference
         if: steps.changes.outputs.generate_reference == 'true'
-        run: pipenv run regis rules list -f markdown -D docs/website/docs/reference/rules
+        run: uv run regis rules list -f markdown -D docs/website/docs/reference/rules
 
       - name: Ensure whats-new label exists
         if: steps.changes.outputs.generate_reference == 'true'
@@ -199,14 +196,14 @@ jobs:
         if: steps.changes.outputs.generate_reference == 'true'
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
-        run: python scripts/generate_whats_new.py
+        run: uv run python scripts/generate_whats_new.py
 
       - name: Generate coverage badge
         if: steps.changes.outputs.refresh_badge == 'true'
         continue-on-error: true
         run: |
-          pipenv run pytest --cov --cov-report=xml -q --no-header
-          pipenv run genbadge coverage -i coverage.xml -o coverage-badge.svg
+          uv run pytest --cov --cov-report=xml -q --no-header
+          uv run genbadge coverage -i coverage.xml -o coverage-badge.svg
 
       - name: Docusaurus build
         run: pnpm run build

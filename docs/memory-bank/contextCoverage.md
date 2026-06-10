@@ -7,12 +7,12 @@
 | projectbrief.md         | 🟢 Complete                         | 2026-04-21   | Filled from README and packaging metadata             |
 | productContext.md       | 🟢 Complete                         | 2026-04-21   | Filled from README and project structure              |
 | systemPatterns.md       | 🟢 Complete                         | 2026-04-21   | Derived from repository layout and CLAUDE.md          |
-| techContext.md          | 🟢 Complete                         | 2026-04-21   | Derived from `pyproject.toml`, `Pipfile`, and scripts |
+| techContext.md          | 🟢 Complete                         | 2026-04-21   | Derived from `pyproject.toml`, `uv.lock`, and scripts |
 | activeContext.md        | 🟢 Complete                         | 2026-04-21   | Captures setup state and current branch context       |
 | progress.md             | 🟢 Complete                         | 2026-04-21   | Captures initial project status                       |
 | businessLogic.md        | 🟡 Partial                          | 2026-04-21   | High-level rules only                                 |
 | dataModel.md            | 🟡 Partial                          | 2026-04-21   | No database schema identified                         |
-| dependencies.md         | 🟢 Complete                         | 2026-04-21   | Based on `pyproject.toml` and `Pipfile`               |
+| dependencies.md         | 🟢 Complete                         | 2026-04-21   | Based on `pyproject.toml` and `uv.lock`               |
 | events.md               | 🟡 Partial                          | 2026-04-21   | No dedicated event bus identified                     |
 | externalIntegrations.md | 🟡 Partial                          | 2026-04-21   | External services inferred from codebase              |
 | featureToggles.md       | ◻️ Empty / 🟡 Partial / 🟢 Complete | 2026-04-21   | No toggles identified                                 |

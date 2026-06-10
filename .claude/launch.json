@@ -15,7 +15,7 @@
     },
     {
       "name": "regis-viewer",
-      "runtimeExecutable": "pipenv",
+      "runtimeExecutable": "uv",
       "runtimeArgs": ["run", "regis", "viewer", "serve"],
       "port": 8000
     }

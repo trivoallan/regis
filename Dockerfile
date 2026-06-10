@@ -9,31 +9,37 @@ ARG VARIANT=slim
 # regis requires python>=3.10 per pyproject.toml.
 FROM python:3.11-alpine AS python-builder
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+    PYTHONUNBUFFERED=1
+
+# uv binary from the official distroless image — builder stage only, never
+# shipped in the runtime image.
+COPY --from=ghcr.io/astral-sh/uv:0.11.7@sha256:240fb85ab0f263ef12f492d8476aa3a2e4e1e333f7d67fbdd923d00a506a516a /uv /usr/local/bin/uv
 
 # build-base: gcc/musl-dev for any source-wheel fallback
 # linux-headers, libffi-dev, openssl-dev: required by cffi/cryptography-style
 # C extensions if PyPI has no musl wheel for the version we resolve.
-# Symlinked venv (no --copies): runtime base ships the matching python3.11
-# interpreter, so the symlink resolves and we save ~10 MB vs copying.
 # hadolint ignore=DL3018
-RUN apk add --no-cache build-base linux-headers libffi-dev openssl-dev && \
-    python -m venv /opt/venv
+RUN apk add --no-cache build-base linux-headers libffi-dev openssl-dev
+
+# uv targets /opt/venv directly; UV_PYTHON pins the image's CPython so uv
+# does not fetch a managed interpreter (the repo's .python-version pins 3.13
+# for dev, but the image intentionally stays on the 3.11 runtime base).
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv \
+    UV_PYTHON=/usr/local/bin/python3
 ENV PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /src
-COPY pyproject.toml Pipfile Pipfile.lock ./
+COPY pyproject.toml uv.lock ./
 COPY regis/ regis/
 
-# Core install only. The interactive dashboard + its FastAPI server moved to
-# the standalone regis-dashboard repo, so there is no Node build stage and no
-# dashboard_assets baked into the image.
-# --no-compile skips .pyc generation (PYTHONDONTWRITEBYTECODE keeps runtime
-# from regenerating them); prune any residual bytecode caches afterwards.
+# Core install only, pinned exactly to uv.lock — the same lock pip-audit
+# scans in CI. --no-editable bakes the package into site-packages; --no-dev
+# keeps the dev dependency group out of the runtime venv.
+# The bytecode prune is defense-in-depth: uv doesn't compile .pyc by default,
+# but a build-backend hook could still leave caches behind.
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 RUN VERSION=$(awk -F'"' '/^version = / { print $2; exit }' pyproject.toml) && \
-    SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" pip install --no-compile . && \
+    SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" uv sync --locked --no-dev --no-editable && \
     find /opt/venv -type d -name __pycache__ -prune -exec rm -rf {} + && \
     find /opt/venv -type f -name '*.pyc' -delete
 

@@ -41,14 +41,14 @@ Backward compatibility: the legacy `rule:` entry key and `rule.*` condition name
 
 ## Rules and Standards
 
-- **Python**: Use `pipenv` for dependency management.
+- **Python**: Use `uv` for dependency management.
 - **CI/CD**: GitHub Actions with Release Please and Trunk (see CI/CD Gotchas below for full details).
 - **Documentation**: Docusaurus for documentation as code.
 - **Aesthetics**: High priority on visual excellence for HTML reports.
 
 ### Couverture de tests — double gate (global + par fichier)
 
-La suite `pipenv run pytest` applique deux niveaux de garde :
+La suite `uv run pytest` applique deux niveaux de garde :
 
 1. **Global** : `--cov-fail-under=90` (paramètre pytest standard, lu depuis `pyproject.toml`).
 2. **Par fichier** : `tests/_per_file_coverage.py` — plugin pytest maison enregistré via un
@@ -61,7 +61,7 @@ ignorés. `--no-cov` désactive les deux gates.
 
 ## Dev Environment Gotchas
 
-- **Stale editable-install entry points**: the analyzer registry (`discover_analyzers()`) is resolved from `importlib.metadata` entry points, which are **frozen into `entry_points.txt` at `pip install -e` time** and do **not** update when `pyproject.toml`'s `[project.entry-points."regis.analyzers"]` changes. After any pull/branch switch that adds, removes, or renames an analyzer entry point, **re-run `pipenv install --dev`** (or `pipenv run pip install -e . --no-deps`) to regenerate the metadata. Symptom: `ModuleNotFoundError` warnings for removed/renamed analyzers (`skopeo`, `trivy`) **and**, more insidiously, **silent absence** of newly added analyzers (`oci`, `cve`) — `analyze` runs without them and emits no error. Verify with `pipenv run python -c "from importlib.metadata import entry_points; [print(ep.name) for ep in entry_points(group='regis.analyzers')]"` and compare against `pyproject.toml`.
+- **Stale editable-install entry points**: the analyzer registry (`discover_analyzers()`) is resolved from `importlib.metadata` entry points, which are **frozen into `entry_points.txt` at `pip install -e` time** and do **not** update when `pyproject.toml`'s `[project.entry-points."regis.analyzers"]` changes. After any pull/branch switch that adds, removes, or renames an analyzer entry point, **re-run `uv sync`** (or `uv run pip install -e . --no-deps`) to regenerate the metadata. Symptom: `ModuleNotFoundError` warnings for removed/renamed analyzers (`skopeo`, `trivy`) **and**, more insidiously, **silent absence** of newly added analyzers (`oci`, `cve`) — `analyze` runs without them and emits no error. Verify with `uv run python -c "from importlib.metadata import entry_points; [print(ep.name) for ep in entry_points(group='regis.analyzers')]"` and compare against `pyproject.toml`.
 
 ## CI/CD Gotchas
 
