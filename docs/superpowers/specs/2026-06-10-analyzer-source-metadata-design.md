@@ -8,8 +8,8 @@
 
 The report header shows two dates: **Analysis date** (when `regis analyze` ran) and
 **Snapshot date**. `snapshot_date` is read from `regis/data/snapshot_dates.json`,
-keyed by the installed Regis version, and only records *which doc-site snapshot /
-Regis release* produced the report (see `report.schema.json`: "ISO 8601 date when
+keyed by the installed Regis version, and only records _which doc-site snapshot /
+Regis release_ produced the report (see `report.schema.json`: "ISO 8601 date when
 this version was snapshotted in the doc site"). It is an **editorial/versioning
 marker**, not a data-freshness marker.
 
@@ -17,40 +17,40 @@ This is misleading. A vulnerability scan is only as good as the data it ran agai
 and that data freshness comes from the **tools and external sources the analyzers
 consume** — not from Regis. `snapshot_date` looks like it tells the reader how fresh
 the security data is, but it does not. Worse, the genuinely useful freshness signals
-that the sources *do* expose are currently discarded.
+that the sources _do_ expose are currently discarded.
 
 ## Findings — which analyzers consume a time-varying external source
 
 Audited every analyzer. Three expose a capturable source-freshness indicator; the
 rest read image/registry-embedded metadata or compute from scratch.
 
-| Analyzer          | Source                | Freshness field exposed                                  | Today          |
-| ----------------- | --------------------- | -------------------------------------------------------- | -------------- |
-| **cve** (grype)   | downloaded vuln DB    | `descriptor.db.status.built` (+ `schemaVersion`, checksum) | **dropped**    |
-| **scorecarddev**  | OpenSSF Scorecard API | `date` (when scorecard computed) + `scorecard.version`   | **dropped**    |
-| **popularity**    | Docker Hub API        | `last_updated`, `date_registered`                        | captured (own fields) |
-| endoflife         | endoflife.date API    | none (only product dates; no dataset timestamp)          | n/a            |
-| secrets, dockle, hadolint, sbom, freshness, oci, provenance, versioning, size | image / registry / pure computation | none | n/a |
+| Analyzer                                                                      | Source                              | Freshness field exposed                                    | Today                 |
+| ----------------------------------------------------------------------------- | ----------------------------------- | ---------------------------------------------------------- | --------------------- |
+| **cve** (grype)                                                               | downloaded vuln DB                  | `descriptor.db.status.built` (+ `schemaVersion`, checksum) | **dropped**           |
+| **scorecarddev**                                                              | OpenSSF Scorecard API               | `date` (when scorecard computed) + `scorecard.version`     | **dropped**           |
+| **popularity**                                                                | Docker Hub API                      | `last_updated`, `date_registered`                          | captured (own fields) |
+| endoflife                                                                     | endoflife.date API                  | none (only product dates; no dataset timestamp)            | n/a                   |
+| secrets, dockle, hadolint, sbom, freshness, oci, provenance, versioning, size | image / registry / pure computation | none                                                       | n/a                   |
 
-The three freshness signals are **semantically heterogeneous**: grype = *DB build
-date*, scorecard = *assessment computed date + tool version*, popularity = *repo last
-push*. A block named `db` would be a false friend. The shared concept is **"freshness
+The three freshness signals are **semantically heterogeneous**: grype = _DB build
+date_, scorecard = _assessment computed date + tool version_, popularity = _repo last
+push_. A block named `db` would be a false friend. The shared concept is **"freshness
 / provenance of the analyzer's external data source"**.
 
 ## Decisions (settled during brainstorming)
 
-| #   | Decision                          | Choice                                                                                                                                |
-| --- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | Generic block name & concept      | **`source`** — freshness/provenance of the external data source (not "db").                                                           |
-| 2   | Generic framing mechanism         | **Inline block in every analyzer schema + inter-schema consistency test** (Option B). No cross-file `$ref` (per-analyzer validation in `base.py` uses a bare `jsonschema.validate` with no registry). |
-| 3   | Block applies to                  | **All analyzer schemas** (optional, by convention). Only cve, scorecarddev, popularity populate it today.                            |
-| 4   | `snapshot_date`                   | **Removed entirely** — schema property, `snapshot_dates.json` data file, injection block, all rendering.                              |
-| 5   | `REPORT_SCHEMA_VERSION`           | **Bump 4 → 5.**                                                                                                                       |
-| 6   | Header rendering                  | Header loses `snapshot_date`, **nothing replaces it.** No global DB/freshness line.                                                   |
-| 7   | Per-analyzer rendering            | Each analyzer section shows its `source.built_at` / `source.version` when present.                                                    |
-| 8   | popularity migration              | **Migrate** `last_updated` → `source.built_at`. `date_registered` (repo creation = provenance, not freshness) **stays** popularity-specific. |
-| 9   | grype `scanner_version`           | **Stays** separate (grype CLI version); `source.version` = the **DB** schema version.                                                 |
-| 10  | endoflife / category B & C        | **No `source` block for now** (YAGNI). The block is optional, so they simply omit it.                                                 |
+| #   | Decision                     | Choice                                                                                                                                                                                                |
+| --- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Generic block name & concept | **`source`** — freshness/provenance of the external data source (not "db").                                                                                                                           |
+| 2   | Generic framing mechanism    | **Inline block in every analyzer schema + inter-schema consistency test** (Option B). No cross-file `$ref` (per-analyzer validation in `base.py` uses a bare `jsonschema.validate` with no registry). |
+| 3   | Block applies to             | **All analyzer schemas** (optional, by convention). Only cve, scorecarddev, popularity populate it today.                                                                                             |
+| 4   | `snapshot_date`              | **Removed entirely** — schema property, `snapshot_dates.json` data file, injection block, all rendering.                                                                                              |
+| 5   | `REPORT_SCHEMA_VERSION`      | **Bump 4 → 5.**                                                                                                                                                                                       |
+| 6   | Header rendering             | Header loses `snapshot_date`, **nothing replaces it.** No global DB/freshness line.                                                                                                                   |
+| 7   | Per-analyzer rendering       | Each analyzer section shows its `source.built_at` / `source.version` when present.                                                                                                                    |
+| 8   | popularity migration         | **Migrate** `last_updated` → `source.built_at`. `date_registered` (repo creation = provenance, not freshness) **stays** popularity-specific.                                                          |
+| 9   | grype `scanner_version`      | **Stays** separate (grype CLI version); `source.version` = the **DB** schema version.                                                                                                                 |
+| 10  | endoflife / category B & C   | **No `source` block for now** (YAGNI). The block is optional, so they simply omit it.                                                                                                                 |
 
 ## Architecture
 
@@ -85,11 +85,11 @@ is identical across all `analyzer/*.schema.json`.
 
 ### Population per analyzer
 
-| Analyzer         | `built_at`                          | `version`                       | `checksum`              | `fetched_at` |
-| ---------------- | ----------------------------------- | ------------------------------- | ----------------------- | ------------ |
-| **cve**          | `descriptor.db.status.built`        | `descriptor.db.status.schemaVersion` | `descriptor.db.status` checksum | now()  |
-| **scorecarddev** | API `date`                          | `scorecard.version`             | —                       | now()        |
-| **popularity**   | (migrated from) `last_updated`      | —                               | —                       | now()        |
+| Analyzer         | `built_at`                     | `version`                            | `checksum`                      | `fetched_at` |
+| ---------------- | ------------------------------ | ------------------------------------ | ------------------------------- | ------------ |
+| **cve**          | `descriptor.db.status.built`   | `descriptor.db.status.schemaVersion` | `descriptor.db.status` checksum | now()        |
+| **scorecarddev** | API `date`                     | `scorecard.version`                  | —                               | now()        |
+| **popularity**   | (migrated from) `last_updated` | —                                    | —                               | now()        |
 
 - **cve** (`regis/analyzers/cve.py`): alongside the existing `scanner_version`,
   read `descriptor.db.status.{built, schemaVersion}` and the DB checksum, emit a
@@ -102,8 +102,13 @@ is identical across all `analyzer/*.schema.json`.
 ### `snapshot_date` removal
 
 - `regis/schemas/report/report.schema.json` — delete the `snapshot_date` property.
-  (Root schema has no `additionalProperties: false`, so old reports carrying the
-  field still validate — removal is clean.)
+  (Correction: the root schema **does** set `additionalProperties: false`, so an old
+  report still carrying `snapshot_date` would fail validation against the v5 schema.
+  In practice `validate_report` runs only at generation time — nothing re-validates
+  archived reports on load — so the break is theoretical. Confirmed full removal is
+  the chosen approach; the historical `report.v3.json` fixture has its `snapshot_date`
+  dropped so the forward-compat contract test stays meaningful for the fields that
+  remain.)
 - `regis/data/snapshot_dates.json` — delete the file.
 - `regis/commands/analyze.py` — delete the injection block (the `importlib.resources`
   read + `analysis_report["snapshot_date"] = ...`).
