@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+from datetime import datetime, timezone
 from typing import Any
 
 import requests
@@ -211,6 +212,15 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
                 }
             )
 
+        source: dict[str, Any] = {
+            "fetched_at": datetime.now(timezone.utc).isoformat(),
+        }
+        if raw.get("date"):
+            source["built_at"] = raw["date"]
+        scorecard_version = (raw.get("scorecard") or {}).get("version")
+        if scorecard_version:
+            source["version"] = scorecard_version
+
         return {
             "analyzer": self.name,
             "repository": repository,
@@ -218,4 +228,5 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
             "scorecard_available": True,
             "score": raw.get("score"),
             "checks": checks,
+            "source": source,
         }

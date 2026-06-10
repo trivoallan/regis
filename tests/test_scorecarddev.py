@@ -119,3 +119,34 @@ class TestScorecardAnalyzerWithSource:
         assert report["source_repo"] == "https://github.com/nginx/docker-nginx"
         # scorecard_available depends on the actual API call, which may succeed
         # or fail in tests — we just verify the report schema is valid.
+
+
+# ---------------------------------------------------------------------------
+# Source metadata tests
+# ---------------------------------------------------------------------------
+
+
+def test_scorecard_source_extracted_from_raw(monkeypatch):
+    """Success path: source block is populated from the raw API response."""
+    from regis.analyzers import scorecarddev as mod
+
+    raw = {
+        "date": "2026-06-01T00:00:00Z",
+        "scorecard": {"version": "v5.0.0"},
+        "score": 7.5,
+        "checks": [],
+    }
+    monkeypatch.setattr(mod, "_fetch_scorecard", lambda *a, **k: raw)
+    monkeypatch.setattr(
+        mod,
+        "_resolve_source_repo",
+        lambda *a, **k: "https://github.com/owner/repo",
+    )
+
+    analyzer = mod.ScorecardDevAnalyzer()
+    result = analyzer.analyze(client=None, repository="library/nginx", tag="latest")
+
+    assert result["scorecard_available"] is True
+    assert result["source"]["built_at"] == "2026-06-01T00:00:00Z"
+    assert result["source"]["version"] == "v5.0.0"
+    assert isinstance(result["source"]["fetched_at"], str)
