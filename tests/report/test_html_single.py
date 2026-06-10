@@ -130,3 +130,18 @@ class TestRenderHtmlSingle:
         html = render_html_single(report, sections="summary")
         assert "Data built" in html
         assert "2026-05-30T07:21:01Z" in html
+        assert "Source version" in html
+        assert "v6.1.4" in html
+
+    def test_analyzer_source_block_absent_when_no_source(self):
+        report = _minimal_report(
+            results={
+                "size": {
+                    "analyzer": "size",
+                    "total_bytes": 123,
+                }
+            }
+        )
+        html = render_html_single(report, sections="summary")
+        assert "Data built" not in html
+        assert "Source version" not in html
