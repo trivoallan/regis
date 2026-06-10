@@ -11,7 +11,6 @@
     "pull_count",
     "star_count",
     "description",
-    "last_updated",
     "date_registered",
     "is_official"
   ],
@@ -40,10 +39,6 @@
     "description": {
       "type": ["string", "null"],
       "description": "Short description of the repository from Docker Hub."
-    },
-    "last_updated": {
-      "type": ["string", "null"],
-      "description": "ISO timestamp of the last repository update."
     },
     "date_registered": {
       "type": ["string", "null"],
