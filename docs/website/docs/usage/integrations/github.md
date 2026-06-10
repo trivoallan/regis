@@ -129,7 +129,7 @@ permissions:
 
 ### Complete Example
 
-The following example demonstrates a complete workflow that builds an image, pushes it to GHCR, and performs a security analysis.
+The following example demonstrates a complete workflow that builds an image, pushes it to GHCR, and performs a security analysis. It runs the `regis` CLI directly through the official Docker image — `regis` is distributed as a container image, not on PyPI — which gives access to flags the reusable action does not expose (such as `--meta`). If you don't need that control, prefer the [reusable action](#quick-start-with-the-reusable-action).
 
 ```yaml
 name: Build and Analyze
@@ -169,19 +169,17 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}:latest
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v8
-
-      - name: Install regis
-        run: uv sync --locked --no-dev
-
       - name: Run Analysis
         run: |
-          uv run regis analyze ghcr.io/${{ github.repository }}:latest \
-            --auth ghcr.io=${{ github.actor }}:${{ secrets.GITHUB_TOKEN }} \
-            --html \
-            --meta "trigger.user=${{ github.actor }}" \
-            --meta "trigger.url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          mkdir -p reports
+          docker run --rm \
+            -v "$PWD/reports:/home/regis/reports" \
+            ghcr.io/trivoallan/regis:latest \
+            analyze ghcr.io/${{ github.repository }}:latest \
+              --auth ghcr.io=${{ github.actor }}:${{ secrets.GITHUB_TOKEN }} \
+              --html \
+              --meta "trigger.user=${{ github.actor }}" \
+              --meta "trigger.url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Upload Report
         uses: actions/upload-artifact@v4
