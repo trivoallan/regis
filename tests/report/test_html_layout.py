@@ -6,7 +6,7 @@ from regis.report.html import render_html_single
 def _report(results=None, rules=None, tier="Gold", score=92):
     rules = rules if rules is not None else []
     return {
-        "schemaVersion": 4,
+        "schemaVersion": 5,
         "request": {"registry": "r", "repository": "library/nginx", "tag": "1.27"},
         "results": results if results is not None else {},
         "tier": tier,
