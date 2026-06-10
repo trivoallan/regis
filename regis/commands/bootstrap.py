@@ -6,7 +6,7 @@ from pathlib import Path
 
 import click
 
-from regis.tools.fetcher import ToolFetchError, ToolFetcher
+from regis.tools.fetcher import ToolFetcher, ToolFetchError
 from regis.utils.tool_progress import click_reporter
 
 

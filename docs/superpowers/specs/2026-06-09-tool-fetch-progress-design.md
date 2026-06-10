@@ -25,13 +25,13 @@ concurrent worker threads).
 
 ## Decisions (settled during brainstorming)
 
-| # | Decision | Choice |
-|---|----------|--------|
-| 1 | Where feedback applies | **Centralized in the fetcher layer** — every caller benefits (lazy `analyze`, eager `bootstrap tools`, any future caller). |
-| 2 | Richness | **One-shot lines** (start + done/error), plain `click`, zero dependency. No live `%`/bar, no spinner. |
-| 3 | Emit mechanism | **Observer callback** — fetcher exposes an optional `on_event`; the CLI wires a default `click`-based reporter. Library stays pure & testable. |
-| 4 | Visibility | **Always on stderr, suppressed under `--quiet`**; emitted **only on a real cache miss** (never on cache hit or PATH short-circuit). |
-| — | `--quiet` gating | **Proxy on the effective log level** (`--quiet` already clamps the root logger to `ERROR`; default is `WARNING`, `--verbose` is `DEBUG`). The reporter prints only when `getEffectiveLevel() < ERROR` — i.e. always except under `--quiet`. |
+| #   | Decision               | Choice                                                                                                                                                                                                                                      |
+| --- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Where feedback applies | **Centralized in the fetcher layer** — every caller benefits (lazy `analyze`, eager `bootstrap tools`, any future caller).                                                                                                                  |
+| 2   | Richness               | **One-shot lines** (start + done/error), plain `click`, zero dependency. No live `%`/bar, no spinner.                                                                                                                                       |
+| 3   | Emit mechanism         | **Observer callback** — fetcher exposes an optional `on_event`; the CLI wires a default `click`-based reporter. Library stays pure & testable.                                                                                              |
+| 4   | Visibility             | **Always on stderr, suppressed under `--quiet`**; emitted **only on a real cache miss** (never on cache hit or PATH short-circuit).                                                                                                         |
+| —   | `--quiet` gating       | **Proxy on the effective log level** (`--quiet` already clamps the root logger to `ERROR`; default is `WARNING`, `--verbose` is `DEBUG`). The reporter prints only when `getEffectiveLevel() < ERROR` — i.e. always except under `--quiet`. |
 
 ## Architecture
 
@@ -65,7 +65,7 @@ New `regis/utils/tool_progress.py` exposing `click_reporter`:
   actual bytes written, formatted MB/KB (no dependence on `Content-Length`).
 - **Gating:** prints only when `logging.getLogger("regis").getEffectiveLevel() < logging.ERROR`
   (default `WARNING` and `--verbose` `DEBUG` both print; `--quiet` sets `ERROR` →
-  silent). The reporter reads the log level but never *emits* via logging.
+  silent). The reporter reads the log level but never _emits_ via logging.
 - **Thread-safety:** serializes writes behind a module-level `threading.Lock`.
   Each `click.echo` is a single write, so lines never interleave intra-line even
   with 4 concurrent workers.
@@ -92,7 +92,7 @@ The single `click_reporter` is wired at the two sites that download:
 ```
 
 Start/done pairs from different threads interleave, but each line is atomic and
-readable — and it finally explains *why* an analyzer took time.
+readable — and it finally explains _why_ an analyzer took time.
 
 ## Testing
 
@@ -100,6 +100,7 @@ Coverage is enforced at two levels (global ≥ 90 % + per-file ≥ 90 %); every 
 file must stay covered.
 
 **Library (`tests/tools/test_fetcher.py`)** — assert on events, decoupled from rendering:
+
 - Cache miss emits `fetch_start` then `fetch_done` in order, with plausible `bytes`/`elapsed_s`.
 - Cache hit and PATH short-circuit → **no** events.
 - sha256 failure → `fetch_error` emitted **before** `ToolFetchError` is raised.
@@ -107,11 +108,13 @@ file must stay covered.
 - Reuses the existing mocked-download fixtures (the 12 current fetcher tests).
 
 **Renderer (`tests/utils/test_tool_progress.py`, new):**
+
 - Each event kind → expected line (format, glyph, MB/KB, red on error) via stderr capture.
 - Gating: levels `WARNING` (default) and `INFO` → prints; level `ERROR` (quiet) → total silence.
 - Serialization: two concurrent threads produce no truncated line (lock).
 
 **Integration (light):**
+
 - `bootstrap tools` and the `ensure_tool` path wire the reporter (a mocked fetch
   produces the lines). Patch at the source per project convention
   (`regis.utils.process._default_fetcher`, `regis.commands.bootstrap.ToolFetcher`).
@@ -119,11 +122,13 @@ file must stay covered.
 ## File scope
 
 **Modified:**
+
 - `regis/tools/fetcher.py` — `on_event` param, `ToolEvent` dataclass, byte measurement, start/done/error emission.
 - `regis/utils/process.py` — `_default_fetcher()` wires the reporter.
 - `regis/commands/bootstrap.py` — `ToolFetcher(on_event=…)` on `fetch_all`.
 
 **New:**
+
 - `regis/utils/tool_progress.py` — `click_reporter` (rendering + log-level gating + lock).
 - `tests/utils/test_tool_progress.py` — renderer tests.
 
