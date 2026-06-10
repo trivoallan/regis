@@ -33,29 +33,26 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token || github.token }}
 
-      - name: Setup Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - name: Setup uv
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
-          python-version: "3.13"
-          cache: pipenv
+          enable-cache: true
 
       - name: Install dependencies
-        run: |
-          pip install pipenv
-          pipenv sync --dev
+        run: uv sync --locked
 
       - name: Diagnostic - check environment
         run: |
-          pipenv run pip list
-          pipenv run python -c "import cookiecutter; print('cookiecutter import ok')"
+          uv pip list
+          uv run python -c "import cookiecutter; print('cookiecutter import ok')"
 
       - name: Run pytest
-        run: pipenv run pytest
+        run: uv run pytest
 
       - name: Generate coverage badge
         if: always()
         continue-on-error: true
-        run: pipenv run genbadge coverage -i coverage.xml -o coverage-badge.svg
+        run: uv run genbadge coverage -i coverage.xml -o coverage-badge.svg
 
       - name: Upload coverage report
         if: always()
