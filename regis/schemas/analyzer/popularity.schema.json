@@ -52,6 +52,16 @@
     "is_official": {
       "type": "boolean",
       "description": "True if this is an official Docker Hub repository."
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fetched_at": { "type": "string", "format": "date-time" },
+        "built_at": { "type": "string", "format": "date-time" },
+        "version": { "type": "string" },
+        "checksum": { "type": "string" }
+      }
     }
   },
   "additionalProperties": false
