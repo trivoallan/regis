@@ -40,7 +40,7 @@ jobs:
 
       - name: Run pip-audit (HIGH/CRITICAL gate)
         run: |
-          uv export --no-dev --no-emit-project --no-hashes -o requirements-ci.txt
+          uv export --locked --no-dev --no-emit-project --no-hashes -o requirements-ci.txt
           set +e
           # --python 3.13: align the audit env with the project pin so the
           # export's environment markers are evaluated consistently.

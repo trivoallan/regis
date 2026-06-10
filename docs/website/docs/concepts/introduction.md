@@ -136,7 +136,7 @@ It produces a structured `report.json` (see [Report Schema](../reference/schemas
 The project uses the following technologies:
 
 - **Language**: Python 3.13+
-- **Dependency Management**: Pipenv
+- **Dependency Management**: uv
 - **CLI Framework**: Click
 - **Templating**: Jinja2 (Data) & Docusaurus/React (UI)
 - **Linting/Formatting**: Ruff

@@ -44,5 +44,5 @@ To ensure clean and readable changelogs, please use the following allowed scopes
 ### Tooling & CI
 
 - `ci` : GitHub Actions workflows.
-- `deps` (or `build`) : Environment management (Pipenv, pyproject.toml, Dockerfiles).
+- `deps` (or `build`) : Environment management (uv, pyproject.toml, Dockerfiles).
 - `docs` : Docusaurus documentation, READMEs, and Memory Bank updates.
