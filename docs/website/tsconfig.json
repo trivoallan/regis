@@ -2,7 +2,13 @@
   // This file is not used in compilation. It is here just for a nice editor experience.
   "extends": "@docusaurus/tsconfig",
   "compilerOptions": {
-    "baseUrl": "."
+    // @docusaurus/tsconfig still sets the deprecated `baseUrl` (its `@site/*` path
+    // mapping relies on it), which TypeScript 6.0 flags as TS5101. We cannot unset an
+    // inherited option, so silence the deprecation until Docusaurus drops `baseUrl`
+    // upstream. `noEmit` keeps `tsc` (the typecheck script) from writing JS next to
+    // the TS sources — it is inherited from the base too, pinned here for safety.
+    "ignoreDeprecations": "6.0",
+    "noEmit": true
   },
   "exclude": [".docusaurus", "build"]
 }
