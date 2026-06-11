@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.37.0](https://github.com/trivoallan/regis/compare/v0.36.0...v0.37.0) (2026-06-11)
+
+### Features
+
+- **analyzers:** per-analyzer data-source freshness + drop snapshot_date ([#726](https://github.com/trivoallan/regis/issues/726)) ([b2e0020](https://github.com/trivoallan/regis/commit/b2e00203ccbefb60874c0474d3347d0598036d5f))
+- **cli:** align verdict rule lines and show per-rule severity ([#724](https://github.com/trivoallan/regis/issues/724)) ([3384dd1](https://github.com/trivoallan/regis/commit/3384dd12ff37fac34958778c171fe1124d85a049))
+- **cli:** show progress when tools download on first use ([#720](https://github.com/trivoallan/regis/issues/720)) ([b76a823](https://github.com/trivoallan/regis/commit/b76a8237766453f8903e31e3f7a2e5976ebc5b84))
+
+### Bug Fixes
+
+- **ci:** check out the real release branch in release-please ([#756](https://github.com/trivoallan/regis/issues/756)) ([05e0979](https://github.com/trivoallan/regis/commit/05e097999bf6557fe2256aa50eb965e5933ae3d8))
+- **ci:** re-arm auto-merge when required checks complete ([#725](https://github.com/trivoallan/regis/issues/725)) ([072fde4](https://github.com/trivoallan/regis/commit/072fde48da012ec6c46d27cf542db69ac0e96783))
+- **ci:** rebase newly opened PRs and serialize autorebase runs ([#735](https://github.com/trivoallan/regis/issues/735)) ([ecbc206](https://github.com/trivoallan/regis/commit/ecbc206086c189b57ba61274eece6d34f772e480))
+- **ci:** switch Dependabot Python ecosystem from pip to uv ([#733](https://github.com/trivoallan/regis/issues/733)) ([50f89bb](https://github.com/trivoallan/regis/commit/50f89bb32d032aaa294d54cfd3fb539aeb518893))
+- **ci:** sync uv.lock version on the release-please PR ([#746](https://github.com/trivoallan/regis/issues/746)) ([fc2fc27](https://github.com/trivoallan/regis/commit/fc2fc2743410697bbb847aa70f44c011edf9bca7))
+- **playbook:** render security evidence with v4 playbook result ([#723](https://github.com/trivoallan/regis/issues/723)) ([e43c3ff](https://github.com/trivoallan/regis/commit/e43c3ff243045b02c74f6b7ab130a02145cede91))
+
 ## [0.36.0](https://github.com/trivoallan/regis/compare/v0.35.0...v0.36.0) (2026-06-09)
 
 ### ⚠ BREAKING CHANGES
