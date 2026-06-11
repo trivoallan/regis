@@ -219,11 +219,11 @@ spec:
         fail: "Missing 'my-company.owner' label."
 ```
 
-## Référencer le meta dans les règles
+## Referencing meta in rules
 
-Les valeurs passées via `regis analyze --meta <clé>=<valeur>` sont exposées aux
-règles sous le namespace **`metadata.*`** (chemin canonique). La notation pointée
-de la clé devient une structure imbriquée :
+Values passed via `regis analyze --meta <key>=<value>` are exposed to rules under
+the **`metadata.*`** namespace (the canonical path). The key's dotted notation
+becomes a nested structure:
 
 ```bash
 regis analyze nginx:latest \
@@ -231,15 +231,15 @@ regis analyze nginx:latest \
   --meta ci.job.url=https://github.com/org/repo/actions/runs/42
 ```
 
-s'adresse en règle par `{"var": "metadata.ci.platform"}` et
+is addressed in a rule via `{"var": "metadata.ci.platform"}` and
 `{"var": "metadata.ci.job.url"}`.
 
-### Namespace optionnel
+### Optional namespace
 
-Le meta est fourni par l'utilisateur : une clé `metadata.*` absente résout à
-`null` **sans** marquer la règle `incomplete` (contrairement à un `results.*`
-manquant, qui signifie « un analyzer n'a pas tourné »). On peut donc tester la
-présence d'un meta de façon fiable :
+Meta is user-provided: a missing `metadata.*` key resolves to `null` **without**
+marking the rule `incomplete` (unlike a missing `results.*`, which means "an
+analyzer did not run"). You can therefore test for the presence of a meta value
+reliably:
 
 ```yaml
 spec:
@@ -257,23 +257,23 @@ spec:
         fail: "Provide a valid --meta ci.job.url."
 ```
 
-Comme toutes les valeurs `--meta` sont des chaînes, les helpers `is_true` /
-`is_false` interprètent les drapeaux booléens :
+Since all `--meta` values are strings, the `is_true` / `is_false` helpers
+interpret boolean flags:
 
 ```yaml
 condition: { "is_true": [{ "var": "metadata.gate.enabled" }] }
 ```
 
-### Champs well-known
+### Well-known fields
 
-Regis reconnaît ces champs standard (validés contre
-`schemas/meta/well-known.schema.json`) ; tout autre champ est accepté tel quel :
+Regis recognizes these standard fields (validated against
+`schemas/meta/well-known.schema.json`); any other field is accepted as-is:
 
-| Champ                  | Type         | Notes                  |
-| :--------------------- | :----------- | :--------------------- |
-| `metadata.ci.platform` | enum         | `github` ou `gitlab`.  |
-| `metadata.ci.job.id`   | string       | Identifiant du job CI. |
-| `metadata.ci.job.url`  | string (uri) | URL du run CI.         |
+| Field                  | Type         | Notes              |
+| :--------------------- | :----------- | :----------------- |
+| `metadata.ci.platform` | enum         | `github` or `gitlab`. |
+| `metadata.ci.job.id`   | string       | CI job identifier. |
+| `metadata.ci.job.url`  | string (uri) | CI run URL.        |
 
 ## Rule evaluation mechanics
 
