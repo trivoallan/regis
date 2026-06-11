@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+# syntax=docker/dockerfile:1.24@sha256:87999aa3d42bdc6bea60565083ee17e86d1f3339802f543c0d03998580f9cb89
 ARG VARIANT=slim
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -46,7 +46,7 @@ RUN VERSION=$(awk -F'"' '/^version = / { print $2; exit }' pyproject.toml) && \
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 3: tools-fetcher — downloads external analyzer binaries
 # ──────────────────────────────────────────────────────────────────────────────
-FROM curlimages/curl:8.10.1@sha256:d9b4541e214bcd85196d6e92e2753ac6d0ea699f0af5741f8c6cccbfcf00ef4b AS tools-fetcher
+FROM curlimages/curl:8.20.0@sha256:b3f1fb2a51d923260350d21b8654bbc607164a987e2f7c84a0ac199a67df812a AS tools-fetcher
 ARG TARGETARCH
 ENV HADOLINT_VERSION=2.12.0 \
     DOCKLE_VERSION=0.4.15 \
