@@ -22,8 +22,6 @@ uv run ruff format .          # Format
 uv run regis --help           # Run CLI locally
 trunk check                   # Run all linters
 trunk check --fix             # Auto-fix
-pnpm --filter @regis/dashboard start   # Launch report viewer (UI work)
-pnpm --filter @regis/dashboard build   # Build viewer SPA
 ```
 
 Required external binaries (must be on `PATH`): `grype`, `syft`, `trufflehog`, `regctl`, `hadolint`, `dockle`.

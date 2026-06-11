@@ -2,10 +2,6 @@
   "name": "regis",
   "private": true,
   "scripts": {
-    "build:ui": "pnpm --filter @regis/ui build",
-    "build:viewer": "pnpm --filter @regis/dashboard build",
-    "build": "pnpm run build:ui && pnpm run build:viewer",
-    "dev": "pnpm --filter @regis/dashboard dev",
     "typecheck": "pnpm -r typecheck"
   },
   "pnpm": {
@@ -13,10 +9,5 @@
       "serialize-javascript": "^7.0.5",
       "webpack": "<5.106.0"
     }
-  },
-  "dependencies": {
-    "gsd-pi": "^2.77.0",
-    "node-addon-api": "^8.7.0",
-    "node-gyp": "^12.3.0"
   }
 }
