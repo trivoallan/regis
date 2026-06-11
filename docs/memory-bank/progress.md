@@ -12,6 +12,10 @@
 
 ## Completed (Recent)
 
+- **Migration Dependabot → Renovate (2026-06-11)** — app Mend hébergée (brainstorming → spec → plan) :
+  - Preset constellation partagé `.github/renovate-constellation.json5` dans le cœur, étendu par `renovate.json5` (cœur) + les satellites. Updates non-major groupées par écosystème + automerge ; majors en draft (skippées par `repo-automerge.yml`) ; sécurité toutes sévérités automergée hors-schedule ; label `dependencies` exclu de `repo-autorebase.yml`.
+  - Suppression du workflow critical-only `repo-dependabot-critical-vulns.yml` + du `dependabot.yml` ; PR d'hygiène (surface JS racine morte purgée) ; doc memory-bank/tools-management/guides github-actions recadrés. Spec : `docs/superpowers/specs/2026-06-10-renovate-migration-design.md` ; plan : `docs/superpowers/plans/2026-06-10-renovate-migration.md`. **Reste** : étape manuelle mainteneur (app Mend + désactivation Dependabot security updates) + onboarding satellites.
+
 - **Règles d'identité de plateforme OCI (2026-06-08, [PR #661](https://github.com/trivoallan/regis/pull/661), `whats-new`)** — non cassant, opt-in (brainstorming → writing-plans → subagent-driven, 6 tâches, revue spec+qualité par tâche + revue finale holistique):
   - 3 nouveaux criteria OCI sur _quelles_ plateformes (le `platforms-count` existant ne compte que le nombre) : `platforms-required` (`contains_all` = au moins), `platforms-whitelist` (`subset` = uniquement), `platforms-blacklist` (`!intersects` = aucune). Param uniforme `platforms` (cf. `required-labels`/`labels`). Opérateurs JSON Logic **existants** — aucun nouvel opérateur.
   - Nouvelle projection plate `results.oci.platforms_supported` = liste dédupliquée de chaînes canoniques `os/arch[/variant]` (filtre `unknown`, ordre préservé via `dict.fromkeys`) ; champ **optionnel** ajouté à `oci.schema.json` (`additionalProperties:false`). Matching par égalité stricte (`linux/arm64` ≠ `linux/arm64/v8`).

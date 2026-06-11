@@ -39,6 +39,7 @@
 - `ruff` — linting and formatting
 - `trunk` — linter/formatter orchestrator (local + CI)
 - `uv` — Python dependency management (lockfile: `uv.lock`, dev deps in PEP 735 `[dependency-groups]`)
+- Renovate (Mend hosted app) — dependency updates across the constellation, driven by the shared `renovate-constellation.json5` preset (replaces Dependabot + manual `pinact` runs).
 - `setuptools-scm` — version from git tags
 
 ## External Binaries Required
@@ -60,7 +61,7 @@ These must be in `PATH` for the relevant analyzers to work:
 
 - Python 3.10+
 - `uv`
-- Node.js + pnpm (for docs/dashboard work)
+- Node.js + pnpm (for docs site work)
 
 ### Setup Commands
 
@@ -81,10 +82,10 @@ uv run ruff format .
 trunk check
 trunk check --fix
 
-# Dashboard dev server
-pnpm --filter @regis/dashboard dev
+# Docs site dev server
+pnpm --filter docs start
 
-# Build all Node packages
+# Build the docs site (run from docs/website, as CI does)
 pnpm run build
 ```
 

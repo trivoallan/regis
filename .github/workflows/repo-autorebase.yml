@@ -47,6 +47,9 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token }}
           exclude-drafts: true
+          # Renovate rebases its own branches; a third-party force-push would
+          # make it treat them as externally modified and abandon them.
+          exclude-labels: dependencies
           # On PR events, restrict the run to the PR that triggered it; on
           # push events the filter is empty and every open PR is rebased.
           # The action skips heads that are already up to date with main.

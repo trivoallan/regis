@@ -1,0 +1,48 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  // config:best-practices = config:recommended + docker:pinDigests
+  // + helpers:pinGitHubActionDigests + :configMigration + :pinDevDependencies
+  extends: ["config:best-practices", "schedule:weekly"],
+  timezone: "Europe/Paris",
+  labels: ["dependencies"], // keys the repo-autorebase exclusion
+  minimumReleaseAge: "3 days", // supply-chain guard: never take a <3-day-old release
+  semanticCommits: "enabled",
+  semanticCommitType: "build",
+  semanticCommitScope: "deps", // → "build(deps): …"
+  lockFileMaintenance: { enabled: true, automerge: true },
+  osvVulnerabilityAlerts: true,
+  // Off-schedule, all severities; null age so fresh security fixes are never delayed.
+  vulnerabilityAlerts: { automerge: true, minimumReleaseAge: null },
+  packageRules: [
+    // Workflow bumps use the ci type regardless of update type → "ci(deps): …".
+    { matchManagers: ["github-actions"], semanticCommitType: "ci" },
+    // Grouped non-major updates, automerged once CI is green.
+    {
+      matchManagers: ["pep621"],
+      matchUpdateTypes: ["minor", "patch", "pin", "digest"],
+      groupName: "python dependencies (non-major)",
+      automerge: true,
+    },
+    {
+      matchManagers: ["npm"],
+      matchUpdateTypes: ["minor", "patch", "pin", "digest"],
+      groupName: "js dependencies (non-major)",
+      automerge: true,
+    },
+    {
+      matchManagers: ["github-actions"],
+      matchUpdateTypes: ["minor", "patch", "pin", "digest"],
+      groupName: "github actions (non-major)",
+      automerge: true,
+    },
+    {
+      matchManagers: ["dockerfile"],
+      matchUpdateTypes: ["minor", "patch", "pin", "digest"],
+      groupName: "docker base images (non-major)",
+      automerge: true,
+    },
+    // Majors: individual DRAFT PRs, never automerged. Draft is the only signal
+    // repo-automerge.yml respects, so this is what stops a major from merging.
+    { matchUpdateTypes: ["major"], draftPR: true, automerge: false },
+  ],
+}

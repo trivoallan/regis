@@ -101,7 +101,7 @@ jobs:
   - Use `name` for each step for readability in logs and easier debugging.
   - Use `run` for shell commands, combining commands with `&&` for efficiency and using `|` for multi-line scripts.
   - Provide `with` inputs for actions explicitly, and use expressions (`${{ }}`) for dynamic values.
-- **Security Note:** Audit marketplace actions before use. Prefer actions from trusted sources (e.g., `actions/` organization) and review their source code if possible. Use `dependabot` for action version updates. **Never use mutable tag or branch references** (`@v4`, `@main`, `@latest`) — these are vulnerable to supply chain attacks where a compromised tag can execute malicious code in your CI/CD pipeline.
+- **Security Note:** Audit marketplace actions before use. Prefer actions from trusted sources (e.g., `actions/` organization) and review their source code if possible. Use Renovate for action version/SHA updates. **Never use mutable tag or branch references** (`@v4`, `@main`, `@latest`) — these are vulnerable to supply chain attacks where a compromised tag can execute malicious code in your CI/CD pipeline.
 
 ## Security Best Practices in GitHub Actions
 
