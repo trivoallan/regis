@@ -1,0 +1,4 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: ["local>trivoallan/regis//.github/renovate-constellation.json5"],
+}
