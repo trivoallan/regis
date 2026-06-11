@@ -269,11 +269,11 @@ condition: { "is_true": [{ "var": "metadata.gate.enabled" }] }
 Regis recognizes these standard fields (validated against
 `schemas/meta/well-known.schema.json`); any other field is accepted as-is:
 
-| Field                  | Type         | Notes              |
-| :--------------------- | :----------- | :----------------- |
+| Field                  | Type         | Notes                 |
+| :--------------------- | :----------- | :-------------------- |
 | `metadata.ci.platform` | enum         | `github` or `gitlab`. |
-| `metadata.ci.job.id`   | string       | CI job identifier. |
-| `metadata.ci.job.url`  | string (uri) | CI run URL.        |
+| `metadata.ci.job.id`   | string       | CI job identifier.    |
+| `metadata.ci.job.url`  | string (uri) | CI run URL.           |
 
 ## Rule evaluation mechanics
 
