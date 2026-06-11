@@ -17,6 +17,11 @@ Voir `docs/memory-bank/roadmap.md` pour le détail complet.
 
 ## Recent Changes
 
+- [2026-06-11] **Migration Dependabot → Renovate** (app Mend hébergée ; spec `docs/superpowers/specs/2026-06-10-renovate-migration-design.md`, plan `docs/superpowers/plans/2026-06-10-renovate-migration.md`):
+  - Preset constellation partagé `.github/renovate-constellation.json5` hébergé dans le cœur, étendu par `renovate.json5` (cœur) et les satellites. Updates non-major **groupées par écosystème + automerge** ; majors en **draft** (donc skippées par `repo-automerge.yml`) ; advisories de sécurité **toutes sévérités** automergées hors-schedule. Le `dependencies` label est **exclu** de `repo-autorebase.yml` (Renovate rebase ses propres branches).
+  - Suppression du workflow filtre critical-only `repo-dependabot-critical-vulns.yml` et du `dependabot.yml` ; PR d'hygiène (surface JS racine morte purgée). Doc memory-bank + tools-management + guides github-actions recadrés sur Renovate.
+  - **Reste** : étape manuelle mainteneur (installer l'app Mend + désactiver les Dependabot security updates) + onboarding des satellites.
+
 - [2026-06-08] **Règles d'identité de plateforme OCI** ([PR #661](https://github.com/trivoallan/regis/pull/661), `whats-new`, non cassant, opt-in):
   - 3 criteria OCI (`platforms-required`/`-whitelist`/`-blacklist`) sur _quelles_ plateformes une image supporte, adossés à une nouvelle projection plate `results.oci.platforms_supported` (`os/arch[/variant]` canonique, dédupliquée). Réutilise `contains_all`/`subset`/`intersects` — aucun nouvel opérateur. Param uniforme `platforms`.
   - **Premier criterion `enable:false` du cœur** : les 3 sont opt-in (désactivés par défaut, sinon bruyants) ; `merge_rules()` auto-active un criterion lié via `criterion:` (un `enable:false` explicite gagne ; un override par slug seul n'active pas). Détail dans `progress.md`. Pattern réutilisable pour de futures règles « politique » à ne pas activer par défaut.

@@ -39,6 +39,7 @@
 - `ruff` — linting and formatting
 - `trunk` — linter/formatter orchestrator (local + CI)
 - `uv` — Python dependency management (lockfile: `uv.lock`, dev deps in PEP 735 `[dependency-groups]`)
+- Renovate (Mend hosted app) — dependency updates across the constellation, driven by the shared `renovate-constellation.json5` preset (replaces Dependabot + manual `pinact` runs).
 - `setuptools-scm` — version from git tags
 
 ## External Binaries Required

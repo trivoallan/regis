@@ -17,7 +17,7 @@
 - `pip-audit` is enforced in CI with a HIGH/CRITICAL gate
 - Provenance attestation is generated for release artifacts
 - SBOM artifacts are produced in release/CD workflows
-- Dependabot-related workflow behavior is handled carefully in CI
+- Renovate-related workflow behavior (automerge, autorebase exclusion) is handled carefully in CI
 
 ## Vulnerability Tracking
 

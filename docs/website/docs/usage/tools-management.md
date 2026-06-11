@@ -98,7 +98,7 @@ docker run --rm -it --entrypoint /bin/sh ghcr.io/trivoallan/regis:latest
 
 ### Updating tool pins
 
-Tool versions and sha256s live in `regis/tools/manifest.yaml`. Renovate / Dependabot do not auto-update this file (Dependabot lacks regex-manager support). The bump workflow is manual:
+Tool versions and sha256s live in `regis/tools/manifest.yaml`. Renovate does not auto-update this file out of the box (per-arch sha256 pins need a bespoke custom manager, not yet configured). The bump workflow is manual:
 
 1. Edit `regis/tools/manifest.yaml`, bump the `version:` field for the tool.
 2. Recompute its sha256 for amd64 and arm64. Either re-run `scripts/compute_tool_hashes.sh` for the full set, or manually:

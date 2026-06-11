@@ -22,7 +22,7 @@
 
 - Some analyzers depend on external tools being available in `PATH`.
 - Registry access may require authentication.
-- Release workflows may behave differently for Dependabot or protected branches.
+- Release workflows may behave differently for bot-authored (Renovate) or protected branches.
 
 ## Domain Glossary
 
