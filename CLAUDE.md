@@ -97,6 +97,6 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) wi
 
 GitHub Actions + [Release Please](https://github.com/googleapis/release-please) + [Trunk](https://trunk.io). [Semantic Versioning](https://semver.org/). GitHub project config via the [Settings App](https://github.com/apps/settings).
 
-Workflow gotchas (App token wiring, Dependabot secret access, Release Please labels, gh-pages, Trunk auto-fmt, mypy/tests, rebase + squash) → `docs/memory-bank/systemPatterns.md`.
+Workflow gotchas (App token wiring, Renovate PR secrets, Release Please labels, gh-pages, Trunk auto-fmt, mypy/tests, rebase + squash) → `docs/memory-bank/systemPatterns.md`.
 
 Locally, Trunk's pre-commit hook auto-fixes on `git commit` — commit the produced changes.
