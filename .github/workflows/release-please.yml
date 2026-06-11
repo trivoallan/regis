@@ -36,6 +36,25 @@ jobs:
           ref: ${{ fromJson(steps.release.outputs.pr).head_branch }}
           token: ${{ steps.generate-token.outputs.token }}
 
+      - name: Install uv
+        if: ${{ steps.release.outputs.pr }}
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+
+      - name: Sync uv.lock to the released version
+        if: ${{ steps.release.outputs.pr }}
+        run: |
+          # release-please bumps the version in pyproject.toml but leaves uv.lock,
+          # which pins the project's own version, untouched. That desyncs the
+          # lockfile and fails every `uv ... --locked` step (pytest, pip-audit,
+          # image build) on the release PR. Re-lock only the `regis` package so
+          # no dependencies are upgraded as a side effect.
+          uv lock --upgrade-package regis
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add uv.lock
+          git commit -m "build(deps): sync uv.lock to the released version" || echo "No changes to commit"
+          git push
+
       - name: Install Trunk
         if: ${{ steps.release.outputs.pr }}
         uses: trunk-io/trunk-action/install@75699af9e26881e564e9d832ef7dc3af25ec031b # v1.2.4
