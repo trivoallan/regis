@@ -1,0 +1,19 @@
+"""ReportSink port — emission of analysis reports."""
+
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+from collections.abc import Sequence
+from pathlib import Path
+
+from regis.core.model.report import Report
+
+
+class ReportSink(ABC):
+    """Port for emitting a report in one or more formats to a destination."""
+
+    @abstractmethod
+    def emit(
+        self, report: Report, *, formats: Sequence[str], output_dir: Path
+    ) -> list[Path]:
+        """Emit *report* in *formats* under *output_dir*; return the written paths."""
