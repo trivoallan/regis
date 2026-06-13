@@ -55,6 +55,7 @@ dev = [
   "types-PyYAML",
   "types-requests",
   "types-jsonschema",
+  "import-linter>=2.11",
 ]
 
 [tool.uv]
@@ -103,6 +104,19 @@ exclude_lines = [
   "if TYPE_CHECKING:",
   "raise NotImplementedError",
   "@(abc\\.)?abstractmethod",
+]
+
+[tool.importlinter]
+root_package = "regis"
+
+[[tool.importlinter.contracts]]
+name = "Hexagonal layering"
+type = "layers"
+layers = [
+  "regis.adapters",
+  "regis.core.application",
+  "regis.core.domain",
+  "regis.core.ports",
 ]
 
 [tool.mypy]

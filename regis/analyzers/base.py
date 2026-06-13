@@ -11,13 +11,10 @@ from typing import Any
 
 import jsonschema
 
+from regis.core.domain.errors import AnalyzerError
 from regis.registry.client import RegistryClient
 
 logger = logging.getLogger(__name__)
-
-
-class AnalyzerError(Exception):
-    """Raised when an analyzer encounters an error."""
 
 
 def _overrides_legacy_default_rules(cls: type) -> bool:
