@@ -117,6 +117,7 @@ layers = [
   "regis.core.application",
   "regis.core.domain",
   "regis.core.ports",
+  "regis.core.model",
 ]
 
 [tool.mypy]
