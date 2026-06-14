@@ -78,8 +78,8 @@ def write_report(
     report: dict[str, Any],
     fmt: str,
     rendered: str,
-) -> None:
-    """Write the rendered report to disk, or fallback if permissions fail."""
+) -> Path:
+    """Write the rendered report to disk (or a cwd fallback); return the path written."""
     out_dir = format_output_path(dir_tmpl, report, fmt)
     out_file = format_output_path(file_tmpl, report, fmt)
     out_path = (out_dir / out_file).resolve()
@@ -88,6 +88,7 @@ def write_report(
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(rendered, encoding="utf-8")
         _echo_info(f"  Report ({fmt}) written to {out_path}", err=True)
+        return out_path
     except PermissionError as exc:
         fallback_path = Path.cwd() / f"report.{fmt}"
         # Permission warning is non-fatal but actionable — keep it visible.
@@ -98,6 +99,7 @@ def write_report(
         try:
             fallback_path.write_text(rendered, encoding="utf-8")
             _echo_info(f"  Report ({fmt}) written to {fallback_path}", err=True)
+            return fallback_path
         except PermissionError as inner_exc:
             raise click.ClickException(
                 f"Failed to write report: Permission denied for both {out_path} and fallback."
@@ -362,42 +364,50 @@ def render_and_save_reports(
     theme: str,
     pretty: bool,
     sections: str = "all",
-) -> None:
-    """Render and save reports in requested formats."""
+) -> list[Path]:
+    """Render and save reports in requested formats; return the written paths."""
+    paths: list[Path] = []
     for fmt in formats:
         if fmt == "html":
             from regis.report.html import render_html_single
 
             rendered = render_html_single(report, sections=sections)
             file_tmpl = output_template or "report.html"
-            write_report(
-                dir_tmpl=output_dir_template or ".",
-                file_tmpl=file_tmpl,
-                report=report,
-                fmt=fmt,
-                rendered=rendered,
+            paths.append(
+                write_report(
+                    dir_tmpl=output_dir_template or ".",
+                    file_tmpl=file_tmpl,
+                    report=report,
+                    fmt=fmt,
+                    rendered=rendered,
+                )
             )
         elif fmt == "md":
             rendered = _render_markdown(report)
             file_tmpl = output_template or "report.md"
-            write_report(
-                dir_tmpl=output_dir_template or ".",
-                file_tmpl=file_tmpl,
-                report=report,
-                fmt=fmt,
-                rendered=rendered,
+            paths.append(
+                write_report(
+                    dir_tmpl=output_dir_template or ".",
+                    file_tmpl=file_tmpl,
+                    report=report,
+                    fmt=fmt,
+                    rendered=rendered,
+                )
             )
         else:
             indent = 2 if pretty else None
             rendered = json.dumps(report, indent=indent, ensure_ascii=False)
             file_tmpl = output_template or f"report.{fmt}"
-            write_report(
-                dir_tmpl=output_dir_template or ".",
-                file_tmpl=file_tmpl,
-                report=report,
-                fmt=fmt,
-                rendered=rendered,
+            paths.append(
+                write_report(
+                    dir_tmpl=output_dir_template or ".",
+                    file_tmpl=file_tmpl,
+                    report=report,
+                    fmt=fmt,
+                    rendered=rendered,
+                )
             )
+    return paths
 
 
 def render_presentation_templates(
