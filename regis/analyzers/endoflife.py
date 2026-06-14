@@ -9,7 +9,7 @@ from typing import Any
 import requests
 
 from regis.analyzers.base import BaseAnalyzer
-from regis.registry.client import RegistryClient
+from regis.core.domain.context import AnalysisContext
 
 logger = logging.getLogger(__name__)
 
@@ -131,15 +131,12 @@ class EndOfLifeAnalyzer(BaseAnalyzer):
 
     name = "endoflife"
     schema_file = "analyzer/endoflife.schema.json"
+    uses_context = True
 
-    def analyze(
-        self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
-    ) -> dict[str, Any]:
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
         """Fetch lifecycle data and match against the image tag."""
+        repository = ctx.image.repository
+        tag = ctx.image.tag
         product = _image_to_product(repository)
         cycles = _fetch_cycles(product)
 
