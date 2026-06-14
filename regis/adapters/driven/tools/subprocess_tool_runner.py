@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess  # nosec B404
 from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
@@ -84,7 +85,28 @@ class SubprocessToolRunner(ToolRunner):
         return issues
 
     def audit_image(self, image: ImageReference) -> dict[str, Any]:
-        raise NotImplementedError  # Task 4
+        try:
+            binary = ensure_tool("dockle")
+        except click.ClickException as exc:
+            raise ToolError(str(exc)) from exc
+        env = os.environ.copy()
+        if self._username and self._password:
+            env["DOCKER_USER"] = self._username
+            env["DOCKER_PASSWORD"] = self._password
+        proc = subprocess.run(  # nosec B603
+            [binary, "-f", "json", self._full_ref(image)],
+            capture_output=True,
+            text=True,
+            check=False,
+            env=env,
+        )
+        if not proc.stdout.strip():
+            raise ToolError(f"dockle produced no output. stderr: {proc.stderr}")
+        try:
+            report: dict[str, Any] = json.loads(proc.stdout)
+        except json.JSONDecodeError as exc:
+            raise ToolError(f"dockle produced invalid JSON: {exc}") from exc
+        return report
 
     def run(
         self, tool: str, args: Sequence[str], *, timeout: int | None = None
