@@ -46,6 +46,11 @@ class BaseAnalyzer(ABC):
     #: Filename of the JSON Schema inside ``regis/reference/schemas/``.
     schema_file: str = ""
 
+    #: Bridge marker (P3): True once the analyzer consumes ``analyze(ctx)``.
+    #: The AnalyzeImage use-case dispatches on this during the migration; the
+    #: marker and the legacy branch are removed in P3d.
+    uses_context: bool = False
+
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
         """Return the default criteria (reusable, parameterized conditions).

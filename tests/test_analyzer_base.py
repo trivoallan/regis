@@ -95,3 +95,22 @@ def test_base_default_criteria_empty_without_override():
 
     # No infinite recursion, returns empty defaults.
     assert _Bare.default_criteria() == []
+
+
+def test_base_analyzer_uses_context_defaults_false():
+    from regis.analyzers.base import BaseAnalyzer
+
+    assert BaseAnalyzer.uses_context is False
+
+
+def test_subclass_can_opt_into_context():
+    from regis.analyzers.base import BaseAnalyzer
+
+    class CtxAnalyzer(BaseAnalyzer):
+        uses_context = True
+
+        def analyze(self, ctx):  # type: ignore[override]
+            return {}
+
+    assert CtxAnalyzer.uses_context is True
+    assert CtxAnalyzer().uses_context is True
