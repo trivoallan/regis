@@ -57,15 +57,15 @@ Deux PR courtes (préférence repo + machinerie autorebase), une par adaptateur 
 Touche du code P1 mergé, mais purement interne et pré-release. Aucun consommateur n'existe encore
 (les analyzers n'ont pas basculé sur `ctx` — P3).
 
-| Méthode | Type de retour | Wrapper / source |
-| --- | --- | --- |
-| `scan_vulnerabilities(image)` | `dict[str, Any]` | `run_grype` |
-| `generate_sbom(image)` | `dict[str, Any]` | `run_syft` |
-| `scan_secrets(image)` | **`list[dict[str, Any]]`** | `run_trufflehog` (pas d'arg `platform`) |
-| `lint_dockerfile(dockerfile: str)` | **`list[dict[str, Any]]`** | inline hadolint extrait |
-| `audit_image(image)` | `dict[str, Any]` | inline dockle extrait |
-| `run(tool, args, *, timeout=None)` | `ToolResult` | échappatoire plugins |
-| ~~`inspect_platforms`~~ | — | **supprimée** (partait sur regctl) |
+| Méthode                            | Type de retour             | Wrapper / source                        |
+| ---------------------------------- | -------------------------- | --------------------------------------- |
+| `scan_vulnerabilities(image)`      | `dict[str, Any]`           | `run_grype`                             |
+| `generate_sbom(image)`             | `dict[str, Any]`           | `run_syft`                              |
+| `scan_secrets(image)`              | **`list[dict[str, Any]]`** | `run_trufflehog` (pas d'arg `platform`) |
+| `lint_dockerfile(dockerfile: str)` | **`list[dict[str, Any]]`** | inline hadolint extrait                 |
+| `audit_image(image)`               | `dict[str, Any]`           | inline dockle extrait                   |
+| `run(tool, args, *, timeout=None)` | `ToolResult`               | échappatoire plugins                    |
+| ~~`inspect_platforms`~~            | —                          | **supprimée** (partait sur regctl)      |
 
 ### 4.2 `SubprocessToolRunner` (`regis/adapters/driven/tools/subprocess_tool_runner.py`)
 
@@ -77,12 +77,12 @@ Touche du code P1 mergé, mais purement interne et pré-release. Aucun consommat
   `run_grype`/`run_syft`/`run_trufflehog`.
 - `lint_dockerfile(contents)` : **réplique** la portion subprocess de `HadolintAnalyzer.analyze`
   (`regis/analyzers/hadolint.py:52`) — `ensure_tool("hadolint")` + `subprocess.run([…, "-f",
-  "json", "-"], input=contents)` + parse → **liste brute d'issues hadolint**. Ne fait QUE le
+"json", "-"], input=contents)` + parse → **liste brute d'issues hadolint**. Ne fait QUE le
   subprocess. La reconstruction du pseudo-Dockerfile depuis `config.history` et le mapping
   issues/`issues_by_level`/report **restent dans l'analyzer** (domaine, P3).
 - `audit_image(image)` : **réplique** la portion subprocess de `DockleAnalyzer.analyze`
   (`regis/analyzers/dockle.py:52`) — `ensure_tool("dockle")` + `subprocess.run([…, "-f", "json",
-  target])` (+ env `DOCKER_USER`/`DOCKER_PASSWORD`) + parse → **dict dockle brut**
+target])` (+ env `DOCKER_USER`/`DOCKER_PASSWORD`) + parse → **dict dockle brut**
   (`{summary, details}`). Le mapping vers le report reste dans l'analyzer (domaine, P3).
 
 > **Réplication, pas réécriture.** Il n'existe pas de wrapper `utils/{hadolint,dockle}.py` : le
@@ -91,6 +91,7 @@ Touche du code P1 mergé, mais purement interne et pré-release. Aucun consommat
 > inchangé** jusqu'à P3. L'adaptateur est construit mais **pas encore consommé** — exactement comme
 > `RegistryImageInspector` en P2a. La déduplication (l'analyzer délègue via `ctx.tools`) se fait en
 > P3, quand le contrat `analyze(ctx)` injecte enfin un `ToolRunner`.
+
 - `run(tool, args, timeout)` : échappatoire générique via `run_cmd`, renvoie un `ToolResult`.
 - **Erreurs** : lève `ToolError` (core). Traduit les échecs subprocess (non-zéro, timeout, JSON
   invalide, outil manquant).
@@ -100,12 +101,12 @@ Touche du code P1 mergé, mais purement interne et pré-release. Aucun consommat
 Seconde implémentation du port `ImageInspector` **inchangé**, backend regctl CLI
 (`regis/adapters/driven/registry/regctl_image_inspector.py`) :
 
-| Port (inchangé) | Appel regctl |
-| --- | --- |
-| `list_tags()` | `tag ls <reg>/<repo>` → `splitlines` |
+| Port (inchangé)           | Appel regctl                                  |
+| ------------------------- | --------------------------------------------- |
+| `list_tags()`             | `tag ls <reg>/<repo>` → `splitlines`          |
 | `get_manifest(reference)` | `manifest get <ref> --format raw-body` → JSON |
-| `get_blob(digest)` | `blob get <reg>/<repo> <digest>` → JSON |
-| `get_digest(reference)` | `manifest head <ref>` → `strip` |
+| `get_blob(digest)`        | `blob get <reg>/<repo> <digest>` → JSON       |
+| `get_digest(reference)`   | `manifest head <ref>` → `strip`               |
 
 - Construit `<ref>` via `image_ref(registry, repository, reference)` (`regis/utils/regctl.py`).
 - Réutilise `run_regctl(client, …)` pour les credentials + le docker-config temporaire (déjà
@@ -117,7 +118,7 @@ Seconde implémentation du port `ImageInspector` **inchangé**, backend regctl C
 
 ## 6. Gestion d'erreurs
 
-Les **nouveaux** adaptateurs lèvent les erreurs *core* (`ToolError` pour le runner, `RegistryError`
+Les **nouveaux** adaptateurs lèvent les erreurs _core_ (`ToolError` pour le runner, `RegistryError`
 pour l'inspector regctl). Les wrappers legacy `regis/utils/{grype,syft,trufflehog,regctl}.py`
 **conservent `AnalyzerError`** tant que les analyzers les appellent directement — leur migration
 vers `ToolError` est reportée en **P3** (sinon ripple sur le `except AnalyzerError: raise` de
@@ -152,5 +153,5 @@ vers `ToolError` est reportée en **P3** (sinon ripple sur le `except AnalyzerEr
       réplique mais ne rewire pas — dédup en P3). Suite d'analyzers existante toujours verte.
 - [ ] `lint-imports` vert ; suite verte ; couverture ≥ 90 % (double gate).
 - [ ] 2 PR mergées (P2b-1, P2b-2), branchées juste avant commit sur `main` à jour.
-</content>
-</invoke>
+      </content>
+      </invoke>
