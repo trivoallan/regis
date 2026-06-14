@@ -969,3 +969,15 @@ class TestAnalyzeSummary:
         # The verdict block is printed by default (even without explicit --playbook).
         # The old "Playbook · " line is no longer used; the new block uses tier · score.
         assert "/100" in result.output
+
+
+def test_cli_discovery_uses_entry_point_provider():
+    """The CLI consults the AnalyzerProvider port for discovery."""
+    from regis.adapters.driven.analyzers.entry_point_provider import (
+        EntryPointAnalyzerProvider,
+    )
+    from regis.analyzers.discovery import discover_analyzers
+    from regis.commands import analyze as analyze_mod
+
+    assert isinstance(analyze_mod._analyzer_provider, EntryPointAnalyzerProvider)
+    assert dict(analyze_mod._discover_analyzers()) == dict(discover_analyzers())
