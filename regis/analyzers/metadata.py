@@ -11,6 +11,7 @@ from typing import Any
 import jsonschema
 
 from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+from regis.core.domain.context import AnalysisContext
 from regis.utils.predicates import is_url
 
 logger = logging.getLogger(__name__)
@@ -63,6 +64,7 @@ class MetadataAnalyzer(BaseAnalyzer):
 
     name = "metadata"
     schema_file = ""  # MetadataAnalyzer validates metadata inputs, not its own output.
+    uses_context = True
 
     def __init__(
         self,
@@ -84,20 +86,14 @@ class MetadataAnalyzer(BaseAnalyzer):
     # BaseAnalyzer interface
     # ------------------------------------------------------------------
 
-    def analyze(
-        self,
-        client: Any = None,
-        repository: str = "",
-        tag: str = "",
-        platform: str | None = None,
-    ) -> dict[str, Any]:
+    def analyze(self, ctx: AnalysisContext | None = None) -> dict[str, Any]:  # type: ignore[override]
         """Validate metadata and return a result dict.
 
         Args:
-            client: Ignored — accepted for ``BaseAnalyzer`` compatibility.
-            repository: Ignored.
-            tag: Ignored.
-            platform: Ignored.
+            ctx: Ignored — accepted for the hexagonal ``analyze(ctx)`` contract.
+                MetadataAnalyzer's inputs come from ``__init__`` (``--meta`` values),
+                not the image context. The rerun path calls ``analyze()`` with no
+                argument, so ``ctx`` stays optional.
 
         Returns:
             A dict with keys ``analyzer``, ``metadata``, ``metadata_validation``,
