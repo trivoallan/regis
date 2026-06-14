@@ -12,10 +12,10 @@
 
 ## Completed (Recent)
 
-- **Migration hexagonale — P2b-1 (2026-06-14, [PR #762](https://github.com/trivoallan/regis/pull/762))** — refactor interne, non cassant (brainstorming → spec → plan → subagent-driven, 6 tâches TDD) :
+- **Migration hexagonale — P2b : P2b-1 + P2b-2 (2026-06-14, [PR #762](https://github.com/trivoallan/regis/pull/762) + PR suivante)** — refactor interne, non cassant (brainstorming → spec → plan → subagent-driven) :
   - **Décision** : regctl → 2ᵉ `ImageInspector` (pas un scanner ; même contrat que `RegistryClient`) ; `inspect_platforms` retirée de `ToolRunner`. Supersède §5.1 de la spec maîtresse.
   - Port `ToolRunner` resserré (types honnêtes `scan_secrets`/`lint_dockerfile` → `list[dict]`) + adaptateur driven `SubprocessToolRunner` (scanners grype/syft/trufflehog délégués + hadolint/dockle répliqués inline + escape hatch `run`) ; creds dans l'adaptateur, erreurs → `ToolError`. Analyzers inchangés (pas encore consommé).
-  - 798 tests / 95.77 % / adaptateur 100 % / layering KEPT. Spec : `docs/superpowers/specs/2026-06-14-hexagonal-p2b-subprocess-adapters-design.md`. Reste : P2b-2 (`RegctlImageInspector`), P2c (`FileReportSink`), P3/P4/P5.
+  - **P2b-1** : 798 tests / 95.77 % / adaptateur 100 % / layering KEPT. **P2b-2** : `RegctlImageInspector` — 2ᵉ `ImageInspector` via regctl CLI (`tag ls`/`manifest get raw-body`/`blob get <repo> <digest>`/`manifest head` ; réutilise `run_regctl`, traduit `AnalyzerError`/`CalledProcessError`/JSON → `RegistryError` ; port `ImageInspector` inchangé) ; 808 tests / 95.82 %, adaptateur 100 %. Spec : `docs/superpowers/specs/2026-06-14-hexagonal-p2b-subprocess-adapters-design.md`. Reste : P2c (`FileReportSink`), P3 (contrat `analyze(ctx)` + dédup hadolint/dockle + `utils → ToolError`), P4 (move), P5 (docs).
 
 - **Migration Dependabot → Renovate (2026-06-11)** — app Mend hébergée (brainstorming → spec → plan) :
   - Preset constellation partagé `.github/renovate-constellation.json5` dans le cœur, étendu par `renovate.json5` (cœur) + les satellites. Updates non-major groupées par écosystème + automerge ; majors en draft (skippées par `repo-automerge.yml`) ; sécurité toutes sévérités automergée hors-schedule ; label `dependencies` exclu de `repo-autorebase.yml`.
