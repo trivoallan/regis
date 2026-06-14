@@ -2,19 +2,10 @@
 
 from __future__ import annotations
 
-import json
-import logging
-import os
-import subprocess
 from typing import Any
 
-import click
-
-from regis.analyzers.base import AnalyzerError, BaseAnalyzer
-from regis.registry.client import RegistryClient
-from regis.utils.process import ensure_tool
-
-logger = logging.getLogger(__name__)
+from regis.analyzers.base import BaseAnalyzer
+from regis.core.domain.context import AnalysisContext
 
 
 class DockleAnalyzer(BaseAnalyzer):
@@ -22,6 +13,7 @@ class DockleAnalyzer(BaseAnalyzer):
 
     name = "dockle"
     schema_file = "analyzer/dockle.schema.json"
+    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -50,72 +42,11 @@ class DockleAnalyzer(BaseAnalyzer):
             },
         ]
 
-    def analyze(
-        self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
-    ) -> dict[str, Any]:
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
         """Return a report with dockle violations."""
-        registry = client.registry
-        if registry == "registry-1.docker.io":
-            registry = "docker.io"
-
-        target = f"{registry}/{repository}:{tag}"
-
-        try:
-            dockle_bin = ensure_tool("dockle")
-        except click.ClickException as exc:
-            raise AnalyzerError(str(exc)) from exc
-        cmd_dockle = [dockle_bin, "-f", "json", target]
-
-        # Setup environment variables for dockle authentication
-        env = os.environ.copy()
-        if client.username and client.password:
-            env["DOCKER_USER"] = client.username
-            env["DOCKER_PASSWORD"] = client.password
-
-        # Not all analyzers support platform properly with dockle, but we can pass it if we want
-        # Dockle does not have a native --platform flag out of the box like grype or regctl in the
-        # same easy way in old versions, but it usually inspects what docker/containerd pulls.
-        # Generally, it pulls the manifest. It doesn't strictly have a --platform.
-        # We'll omit platform for Dockle to avoid breaking if the CLI flags don't match.
-
-        try:
-            res_dockle = subprocess.run(
-                cmd_dockle,
-                capture_output=True,
-                text=True,
-                check=False,  # Dockle returns non-zero when fatals are found
-                env=env,
-            )
-        except Exception as e:
-            msg = "Dockle execution failed. Ensure dockle is installed and in PATH."
-            logger.error(msg)
-            raise AnalyzerError(msg) from e
-
-        if not res_dockle.stdout.strip():
-            # If stdout is empty, there might be an error in stderr
-            msg = f"Dockle produced no output. stderr: {res_dockle.stderr}"
-            logger.error(msg)
-            raise AnalyzerError(msg)
-
-        try:
-            output = json.loads(res_dockle.stdout)
-        except json.JSONDecodeError as e:
-            msg = f"Failed to parse dockle output: {res_dockle.stdout}"
-            logger.error(msg)
-            raise AnalyzerError(msg) from e
-
-        # Parse Dockle JSON output
-        # Dockle JSON format typically looks like:
-        # {
-        #   "summary": { "fatal": 1, "warn": 2, "info": 0, "skip": 0, "pass": 15 },
-        #   "details": [
-        #     { "code": "CIS-DI-0001", "title": "Create a user...", "level": "FATAL", "alerts": ["..."] }
-        #   ]
-        # }
+        output = ctx.tools.audit_image(ctx.image)
+        repository = ctx.image.repository
+        tag = ctx.image.tag
 
         details = output.get("details", [])
 
@@ -128,9 +59,6 @@ class DockleAnalyzer(BaseAnalyzer):
                 issues_by_level[level] += 1
             else:
                 issues_by_level[level] = issues_by_level.get(level, 0) + 1
-
-            # Only count relevant issues, PASS/SKIP might not be strictly "violations"
-            # but we list them if dockle returns them. Let's record them.
             mapped_issues.append(
                 {
                     "code": issue.get("code", "UNKNOWN"),
@@ -140,13 +68,7 @@ class DockleAnalyzer(BaseAnalyzer):
                 }
             )
 
-        # Is it a pass? Dockle defines "passed" usually when there are no FATAL errors (or WARN depending on run).
-        # To align with Hadolint, we could say passed if there are no FATAL and WARN,
-        # or we just rely on `issues_count` filtering for actual problems.
-        # Typically dockle exits with 0 if no FATAL.
         passed = issues_by_level.get("FATAL", 0) == 0
-
-        # Count total issues ignoring PASS
         issues_count = (
             issues_by_level.get("FATAL", 0)
             + issues_by_level.get("WARN", 0)
