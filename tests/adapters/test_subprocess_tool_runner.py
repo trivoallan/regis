@@ -38,12 +38,23 @@ def test_scan_vulnerabilities_delegates_to_grype(monkeypatch) -> None:
 
 
 def test_generate_sbom_delegates_to_syft(monkeypatch) -> None:
-    monkeypatch.setattr(
-        mod,
-        "run_syft",
-        lambda image, username, password, platform: {"bomFormat": "CycloneDX"},
-    )
-    assert SubprocessToolRunner().generate_sbom(IMAGE) == {"bomFormat": "CycloneDX"}
+    captured: dict[str, object] = {}
+
+    def fake_run_syft(image, username, password, platform):
+        captured.update(
+            image=image, username=username, password=password, platform=platform
+        )
+        return {"bomFormat": "CycloneDX"}
+
+    monkeypatch.setattr(mod, "run_syft", fake_run_syft)
+    runner = SubprocessToolRunner("alice", "s3cret")
+    assert runner.generate_sbom(IMAGE) == {"bomFormat": "CycloneDX"}
+    assert captured == {
+        "image": "docker.io/library/nginx:1.27",
+        "username": "alice",
+        "password": "s3cret",
+        "platform": "linux/amd64",
+    }
 
 
 def test_scan_secrets_delegates_to_trufflehog_without_platform(monkeypatch) -> None:
