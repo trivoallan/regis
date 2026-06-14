@@ -22,8 +22,9 @@ class ToolResult:
 class ToolRunner(ABC):
     """Port for running external scanners.
 
-    Capability methods return parsed output (a dict); ``run`` is a generic
-    escape hatch for plugin-supplied tools.
+    Capability methods return parsed output; ``run`` is a generic escape hatch
+    for plugin-supplied tools. Registry inspection (regctl) is NOT here — it is a
+    second ImageInspector (see RegctlImageInspector, P2b-2).
     """
 
     @abstractmethod
@@ -35,20 +36,16 @@ class ToolRunner(ABC):
         """Generate an SBOM for *image* (e.g. syft)."""
 
     @abstractmethod
-    def scan_secrets(self, image: ImageReference) -> dict[str, Any]:
-        """Scan *image* for embedded secrets (e.g. trufflehog)."""
+    def scan_secrets(self, image: ImageReference) -> list[dict[str, Any]]:
+        """Scan *image* for embedded secrets (e.g. trufflehog); one dict per finding."""
 
     @abstractmethod
-    def lint_dockerfile(self, dockerfile_contents: str) -> dict[str, Any]:
-        """Lint the given Dockerfile *contents* string (e.g. hadolint)."""
+    def lint_dockerfile(self, dockerfile: str) -> list[dict[str, Any]]:
+        """Lint a Dockerfile *contents* string (e.g. hadolint); one dict per issue."""
 
     @abstractmethod
     def audit_image(self, image: ImageReference) -> dict[str, Any]:
         """Audit *image* for best practices (e.g. dockle)."""
-
-    @abstractmethod
-    def inspect_platforms(self, image: ImageReference) -> dict[str, Any]:
-        """Inspect *image* manifest/platform data (e.g. regctl)."""
 
     @abstractmethod
     def run(

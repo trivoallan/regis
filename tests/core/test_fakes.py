@@ -55,3 +55,20 @@ def test_fake_image_inspector_copies_and_honors_sentinel() -> None:
     # digest sentinel honored (None is valid for str | None); default is "sha256:fake".
     assert inspector.get_digest("1.27") is None
     assert FakeImageInspector().get_digest("1.27") == "sha256:fake"
+
+
+def test_fake_tool_runner_uses_honest_collection_types() -> None:
+    runner = FakeToolRunner(
+        scan_secrets=[{"finding": 1}],
+        lint_dockerfile=[{"code": "DL3008"}],
+    )
+    assert runner.scan_secrets(IMG) == [{"finding": 1}]
+    assert runner.lint_dockerfile("FROM scratch") == [{"code": "DL3008"}]
+    # Defaults are empty collections of the right type.
+    assert FakeToolRunner().scan_secrets(IMG) == []
+    assert FakeToolRunner().lint_dockerfile("FROM scratch") == []
+
+
+def test_tool_runner_has_no_inspect_platforms() -> None:
+    # regctl moved to a 2nd ImageInspector (P2b-2); ToolRunner is scanners-only.
+    assert not hasattr(ToolRunner, "inspect_platforms")

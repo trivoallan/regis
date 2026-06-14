@@ -51,7 +51,7 @@ class FakeImageInspector(ImageInspector):
 class FakeToolRunner(ToolRunner):
     """Returns canned tool output per capability; no subprocess."""
 
-    def __init__(self, **canned: dict[str, Any]) -> None:
+    def __init__(self, **canned: Any) -> None:
         self._canned = canned
 
     def scan_vulnerabilities(self, image: ImageReference) -> dict[str, Any]:
@@ -60,17 +60,14 @@ class FakeToolRunner(ToolRunner):
     def generate_sbom(self, image: ImageReference) -> dict[str, Any]:
         return self._canned.get("generate_sbom", {})
 
-    def scan_secrets(self, image: ImageReference) -> dict[str, Any]:
-        return self._canned.get("scan_secrets", {})
+    def scan_secrets(self, image: ImageReference) -> list[dict[str, Any]]:
+        return self._canned.get("scan_secrets", [])
 
-    def lint_dockerfile(self, dockerfile_contents: str) -> dict[str, Any]:
-        return self._canned.get("lint_dockerfile", {})
+    def lint_dockerfile(self, dockerfile: str) -> list[dict[str, Any]]:
+        return self._canned.get("lint_dockerfile", [])
 
     def audit_image(self, image: ImageReference) -> dict[str, Any]:
         return self._canned.get("audit_image", {})
-
-    def inspect_platforms(self, image: ImageReference) -> dict[str, Any]:
-        return self._canned.get("inspect_platforms", {})
 
     def run(
         self, tool: str, args: Sequence[str], *, timeout: int | None = None
