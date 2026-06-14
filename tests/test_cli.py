@@ -57,7 +57,7 @@ class TestCliBasics:
         from regis.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
-            def analyze(self, client, repo, tag):
+            def analyze(self, client, repo, tag, platform=None):
                 return {"analyzer": "dummy", "repository": repo, "tag": tag}
 
             def validate(self, report):
@@ -92,6 +92,8 @@ class TestCliBasics:
             assert report["metadata"]["build"] == "123"
             assert report["metadata"]["env"] == "prod"
             assert report["metadata"]["flag_only"] == "true"
+            assert "error" not in report["results"]["dummy"]
+            assert report["results"]["dummy"]["analyzer"] == "dummy"
 
     @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze._discover_analyzers")
@@ -99,7 +101,7 @@ class TestCliBasics:
         from regis.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
-            def analyze(self, client, repo, tag):
+            def analyze(self, client, repo, tag, platform=None):
                 return {"analyzer": "dummy", "repository": repo, "tag": tag}
 
             def validate(self, report):
@@ -136,6 +138,8 @@ class TestCliBasics:
             assert report["metadata"]["project"] == "regis"
             # request.metadata was removed (canonical location is top-level metadata)
             assert "metadata" not in report["request"]
+            assert "error" not in report["results"]["dummy"]
+            assert report["results"]["dummy"]["analyzer"] == "dummy"
 
 
 class TestAnalyzeParallelism:
