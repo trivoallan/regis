@@ -5,17 +5,18 @@ from __future__ import annotations
 import json
 import logging
 import sys
-import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 import click
 
-from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+from regis.adapters.driving.cli.composition import build_analyze_image
+from regis.analyzers.base import BaseAnalyzer
 from regis.analyzers.discovery import discover_analyzers
-from regis.registry.client import RegistryClient, RegistryError
+from regis.core.application.analyze_image import AnalyzerOutcome
+from regis.core.model.image_reference import ImageReference
+from regis.registry.client import RegistryClient
 from regis.registry.parser import parse_image_url
 from regis.utils.report import (
     REPORT_SCHEMA_VERSION,
@@ -33,32 +34,13 @@ logger = logging.getLogger(__name__)
 # Alias kept for patch compatibility in tests
 _discover_analyzers = discover_analyzers
 
-
-def _run_analyzer(
-    analyzer_cls: type[BaseAnalyzer],
-    registry: str,
-    repository: str,
-    tag: str,
-    username: str | None,
-    password: str | None,
-    platform: str | None,
-) -> tuple[str, dict[str, Any]]:
-    """Run a single analyzer with its own registry client."""
-    analyzer = analyzer_cls()
-    name = analyzer.name
-    start = time.monotonic()
-    try:
-        client = RegistryClient(
-            registry=registry,
-            repository=repository,
-            username=username,
-            password=password,
-        )
-        report = analyzer.analyze(client, repository, tag, platform=platform)
-        analyzer.validate(report)
-        return name, report
-    finally:
-        logger.debug("analyzer %s finished in %.2fs", name, time.monotonic() - start)
+#: Maps an AnalyzerOutcome.error_type to its human-readable CLI label.
+_ERROR_LABEL: dict[str, str] = {
+    "registry": "registry error",
+    "analysis": "analysis error",
+    "tool": "tool error",
+    "unexpected": "unexpected error",
+}
 
 
 def _info(msg: str, *, quiet: bool, err: bool = True) -> None:
@@ -353,15 +335,14 @@ def analyze(
             username, password = resolve_credentials(
                 ref.registry, list(auth) if auth else None
             )
-            _, result = _run_analyzer(
-                all_analyzers[rerun],
-                ref.registry,
-                ref.repository,
-                ref.tag,
-                username,
-                password,
-                platform,
+            image = ImageReference(
+                registry=ref.registry,
+                repository=ref.repository,
+                tag=ref.tag,
+                platform=platform,
             )
+            use_case = build_analyze_image(username, password)
+            result = use_case.run_one(image, all_analyzers[rerun])
 
         existing_report.setdefault("results", {})[rerun] = result
         if metadata_dict:
@@ -492,79 +473,34 @@ def analyze(
             quiet=quiet,
         )
         name_width = max((len(n) for n in selected), default=12)
-        start_times: dict[str, float] = {}
-        reports: dict[str, Any] = {}
 
-        def _timed_run(
-            name: str, cls: type[BaseAnalyzer]
-        ) -> tuple[str, dict[str, Any]]:
-            # Capture start time *inside* the worker thread so queued analyzers
-            # don't inherit the wait-in-pool delay.
-            start_times[name] = time.monotonic()
-            return _run_analyzer(
-                cls,
-                ref.registry,
-                ref.repository,
-                ref.tag,
-                username,
-                password,
-                platform,
+        def _on_progress(outcome: AnalyzerOutcome) -> None:
+            timing = f"({outcome.elapsed:.1f}s)"
+            if outcome.error_type is None:
+                _info(f"  ✓ {outcome.name:<{name_width}}  {timing}", quiet=quiet)
+                return
+            label = _ERROR_LABEL.get(outcome.error_type, "error")
+            click.echo(
+                click.style(
+                    f"  ✗ {outcome.name:<{name_width}}  {timing}  {label} — {outcome.error_message}",
+                    fg="red",
+                ),
+                err=True,
             )
 
-        with ThreadPoolExecutor(max_workers=effective_workers) as executor:
-            futures = {
-                executor.submit(_timed_run, name, cls): name
-                for name, cls in selected.items()
-            }
-            for future in as_completed(futures):
-                name = futures[future]
-                # start_times may be missing if the worker raised before the
-                # first statement — fall back to "0.0s" rather than crashing.
-                elapsed = time.monotonic() - start_times.get(name, time.monotonic())
-                timing = f"({elapsed:.1f}s)"
-                try:
-                    _, report = future.result()
-                    reports[name] = report
-                    _info(
-                        f"  ✓ {name:<{name_width}}  {timing}",
-                        quiet=quiet,
-                    )
-                except RegistryError as exc:
-                    click.echo(
-                        click.style(
-                            f"  ✗ {name:<{name_width}}  {timing}  registry error — {exc}",
-                            fg="red",
-                        ),
-                        err=True,
-                    )
-                    reports[name] = {
-                        "analyzer": name,
-                        "error": {"type": "registry", "message": str(exc)},
-                    }
-                except AnalyzerError as exc:
-                    click.echo(
-                        click.style(
-                            f"  ✗ {name:<{name_width}}  {timing}  analysis error — {exc}",
-                            fg="red",
-                        ),
-                        err=True,
-                    )
-                    reports[name] = {
-                        "analyzer": name,
-                        "error": {"type": "analysis", "message": str(exc)},
-                    }
-                except Exception as exc:
-                    click.echo(
-                        click.style(
-                            f"  ✗ {name:<{name_width}}  {timing}  unexpected error — {exc}",
-                            fg="red",
-                        ),
-                        err=True,
-                    )
-                    reports[name] = {
-                        "analyzer": name,
-                        "error": {"type": "unexpected", "message": str(exc)},
-                    }
+        image = ImageReference(
+            registry=ref.registry,
+            repository=ref.repository,
+            tag=ref.tag,
+            platform=platform,
+        )
+        use_case = build_analyze_image(username, password)
+        reports = use_case.run(
+            image,
+            selected,
+            max_workers=effective_workers,
+            on_progress=_on_progress,
+        )
 
         if not reports:
             raise click.ClickException("All analyzers failed.")

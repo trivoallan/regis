@@ -6,8 +6,7 @@ import logging
 from typing import Any
 
 from regis.analyzers.base import BaseAnalyzer
-from regis.registry.client import RegistryClient
-from regis.utils.syft import run_syft
+from regis.core.domain.context import AnalysisContext
 
 logger = logging.getLogger(__name__)
 
@@ -87,6 +86,7 @@ class SbomAnalyzer(BaseAnalyzer):
 
     name = "sbom"
     schema_file = "analyzer/sbom.schema.json"
+    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -128,25 +128,10 @@ class SbomAnalyzer(BaseAnalyzer):
             },
         ]
 
-    def analyze(
-        self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
-    ) -> dict[str, Any]:
-        # Build full image reference — same logic as the vulnerability analyzer.
-        if client.registry in ("docker.io", "registry-1.docker.io"):
-            full_image = f"{repository}:{tag}"
-        else:
-            full_image = f"{client.registry}/{repository}:{tag}"
-
-        data = run_syft(
-            full_image,
-            username=client.username,
-            password=client.password,
-            platform=platform,
-        )
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+        data = ctx.tools.generate_sbom(ctx.image)
+        repository = ctx.image.repository
+        tag = ctx.image.tag
 
         # Parse CycloneDX structure.
         raw_components = data.get("components", [])

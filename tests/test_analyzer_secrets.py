@@ -5,8 +5,11 @@ from unittest.mock import MagicMock, patch
 import pytest
 from json_logic import jsonLogic
 
-from regis.analyzers.base import AnalyzerError
 from regis.analyzers.secrets import SecretsAnalyzer, _scanner_version
+from regis.core.domain.context import AnalysisContext
+from regis.core.domain.errors import ToolError
+from regis.core.model.image_reference import ImageReference
+from tests.fakes import FakeImageInspector, FakeToolRunner
 
 _FINDINGS = [
     {
@@ -22,6 +25,14 @@ _FINDINGS = [
         "SourceMetadata": {"Data": {"Docker": {"layer": "sha256:def"}}},
     },
 ]
+
+
+def _secrets_ctx(tools, *, repository="library/nginx", tag="1.27"):
+    return AnalysisContext(
+        image=ImageReference(registry="docker.io", repository=repository, tag=tag),
+        inspector=FakeImageInspector(),
+        tools=tools,
+    )
 
 
 @pytest.fixture
@@ -66,46 +77,50 @@ class TestSecretsAnalyzer:
         )
         assert bool(jsonLogic(criteria["secret-scan"]["condition"], ctx)) is scan_pass
 
-    @patch("regis.analyzers.secrets._scanner_version", return_value="3.95.3")
-    @patch("regis.analyzers.secrets.run_trufflehog")
-    def test_analyze_counts(self, mock_run, _mock_ver, analyzer):
-        mock_run.return_value = _FINDINGS
-        client = MagicMock()
-        client.registry = "docker.io"
-        client.username = None
-        client.password = None
+    def test_secrets_uses_context(self, analyzer):
+        assert SecretsAnalyzer.uses_context is True
 
-        report = analyzer.analyze(client, "library/alpine", "3.20")
+    @patch("regis.analyzers.secrets._scanner_version", return_value="3.95.3")
+    def test_analyze_counts(self, _mock_ver, analyzer):
+        ctx = _secrets_ctx(
+            FakeToolRunner(scan_secrets=_FINDINGS),
+            repository="library/alpine",
+            tag="3.20",
+        )
+        report = analyzer.analyze(ctx)
 
         assert report["analyzer"] == "secrets"
+        assert report["repository"] == "library/alpine"
+        assert report["tag"] == "3.20"
         assert report["scanner_version"] == "3.95.3"
         assert report["secrets_count"] == 2
         assert report["verified_count"] == 1
         assert report["findings"][0]["layer"] == "sha256:abc"
+        assert report["findings"][0]["DetectorName"] == "AWS"
+        assert report["findings"][0]["Verified"] is True
+        assert report["findings"][0]["Redacted"] == "AKIA..."
         analyzer.validate(report)
 
     @patch("regis.analyzers.secrets._scanner_version", return_value="3.95.3")
-    @patch("regis.analyzers.secrets.run_trufflehog")
-    def test_analyze_no_secrets(self, mock_run, _mock_ver, analyzer):
-        mock_run.return_value = []
-        client = MagicMock()
-        client.registry = "example.com"
-        client.username = None
-        client.password = None
-        report = analyzer.analyze(client, "repo", "tag")
+    def test_analyze_no_secrets(self, _mock_ver, analyzer):
+        ctx = _secrets_ctx(
+            FakeToolRunner(scan_secrets=[]), repository="repo", tag="tag"
+        )
+        report = analyzer.analyze(ctx)
+        assert report["repository"] == "repo"
+        assert report["tag"] == "tag"
         assert report["secrets_count"] == 0
         assert report["verified_count"] == 0
         assert report["findings"] == []
         analyzer.validate(report)
 
-    @patch("regis.analyzers.secrets._scanner_version", return_value="3.95.3")
-    @patch("regis.analyzers.secrets.run_trufflehog")
-    def test_analyze_forwards_error(self, mock_run, _mock_ver, analyzer):
-        mock_run.side_effect = AnalyzerError("boom")
-        client = MagicMock()
-        client.registry = "example.com"
-        with pytest.raises(AnalyzerError, match="boom"):
-            analyzer.analyze(client, "repo", "tag")
+    def test_analyze_propagates_tool_error(self):
+        class _Boom(FakeToolRunner):
+            def scan_secrets(self, image):
+                raise ToolError("trufflehog down")
+
+        with pytest.raises(ToolError, match="trufflehog down"):
+            SecretsAnalyzer().analyze(_secrets_ctx(_Boom()))
 
 
 class TestScannerVersion:

@@ -7,6 +7,8 @@ from typing import Any
 
 import requests
 
+from regis.core.domain.errors import RegistryError as _CoreRegistryError
+
 logger = logging.getLogger(__name__)
 
 # Docker Hub authentication endpoint.
@@ -14,8 +16,13 @@ _DOCKER_AUTH_URL = "https://auth.docker.io/token"
 _DOCKER_AUTH_SERVICE = "registry.docker.io"
 
 
-class RegistryError(Exception):
-    """Raised when a registry API call fails."""
+class RegistryError(_CoreRegistryError):
+    """Raised when a registry API call fails.
+
+    Subclasses the core :class:`regis.core.domain.errors.RegistryError` so the
+    hexagonal core can catch legacy-branch registry failures by their core type
+    during the P3 bridge (the core must not import this adapter module).
+    """
 
 
 class RegistryClient:

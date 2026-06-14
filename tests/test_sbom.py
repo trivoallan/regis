@@ -1,10 +1,12 @@
 """Tests for the SBOM analyzer."""
 
-from unittest.mock import MagicMock, patch
-
 import pytest
 
 from regis.analyzers.sbom import COPYLEFT_LICENSES, SbomAnalyzer
+from regis.core.domain.context import AnalysisContext
+from regis.core.domain.errors import ToolError
+from regis.core.model.image_reference import ImageReference
+from tests.fakes import FakeImageInspector, FakeToolRunner
 
 # -- CycloneDX fixtures -------------------------------------------------------
 
@@ -70,6 +72,17 @@ CYCLONEDX_SAMPLE = {
 }
 
 
+# -- Helpers ------------------------------------------------------------------
+
+
+def _sbom_ctx(tools, *, repository="library/nginx", tag="1.27"):
+    return AnalysisContext(
+        image=ImageReference(registry="docker.io", repository=repository, tag=tag),
+        inspector=FakeImageInspector(),
+        tools=tools,
+    )
+
+
 # -- SbomAnalyzer tests --------------------------------------------------------
 
 
@@ -78,17 +91,10 @@ class TestSbomAnalyzer:
     def analyzer(self):
         return SbomAnalyzer()
 
-    @pytest.fixture
-    def mock_client(self):
-        client = MagicMock()
-        client.registry = "registry-1.docker.io"
-        return client
+    def test_analyze_success(self, analyzer):
+        ctx = _sbom_ctx(FakeToolRunner(generate_sbom=CYCLONEDX_SAMPLE))
 
-    @patch("regis.analyzers.sbom.run_syft")
-    def test_analyze_success(self, mock_run_syft, analyzer, mock_client):
-        mock_run_syft.return_value = CYCLONEDX_SAMPLE
-
-        report = analyzer.analyze(mock_client, "library/alpine", "latest")
+        report = analyzer.analyze(ctx)
         analyzer.validate(report)
 
         assert report["analyzer"] == "sbom"
@@ -103,12 +109,13 @@ class TestSbomAnalyzer:
         assert "Apache-2.0" in report["licenses"]
         assert "Zlib" in report["licenses"]
         assert len(report["components"]) == 3
+        assert report["repository"] == "library/nginx"
+        assert report["tag"] == "1.27"
 
-    @patch("regis.analyzers.sbom.run_syft")
-    def test_copyleft_licenses_detected(self, mock_run_syft, analyzer, mock_client):
-        mock_run_syft.return_value = CYCLONEDX_COPYLEFT_SAMPLE
+    def test_copyleft_licenses_detected(self, analyzer):
+        ctx = _sbom_ctx(FakeToolRunner(generate_sbom=CYCLONEDX_COPYLEFT_SAMPLE))
 
-        report = analyzer.analyze(mock_client, "library/alpine", "latest")
+        report = analyzer.analyze(ctx)
         analyzer.validate(report)
 
         assert "GPL-3.0-only" in report["copyleft_licenses"]
@@ -116,13 +123,10 @@ class TestSbomAnalyzer:
         assert "Apache-2.0" not in report["copyleft_licenses"]
         assert report["copyleft_licenses"] == sorted(report["copyleft_licenses"])
 
-    @patch("regis.analyzers.sbom.run_syft")
-    def test_copyleft_licenses_empty_when_none(
-        self, mock_run_syft, analyzer, mock_client
-    ):
-        mock_run_syft.return_value = CYCLONEDX_SAMPLE
+    def test_copyleft_licenses_empty_when_none(self, analyzer):
+        ctx = _sbom_ctx(FakeToolRunner(generate_sbom=CYCLONEDX_SAMPLE))
 
-        report = analyzer.analyze(mock_client, "library/alpine", "latest")
+        report = analyzer.analyze(ctx)
 
         assert report["copyleft_licenses"] == []
 
@@ -145,81 +149,54 @@ class TestSbomAnalyzer:
         assert "condition" in rule
         assert "messages" in rule
 
-    @patch("regis.analyzers.sbom.run_syft")
-    def test_analyze_empty(self, mock_run_syft, analyzer, mock_client):
-        mock_run_syft.return_value = {
-            "bomFormat": "CycloneDX",
-            "specVersion": "1.5",
-            "metadata": {
-                "tools": {"components": [{"name": "syft", "version": "1.44.0"}]}
-            },
-            "components": [],
-            "dependencies": [],
-        }
+    def test_analyze_empty(self, analyzer):
+        ctx = _sbom_ctx(
+            FakeToolRunner(
+                generate_sbom={
+                    "bomFormat": "CycloneDX",
+                    "specVersion": "1.5",
+                    "metadata": {
+                        "tools": {"components": [{"name": "syft", "version": "1.44.0"}]}
+                    },
+                    "components": [],
+                    "dependencies": [],
+                }
+            ),
+            repository="library/scratch",
+        )
 
-        report = analyzer.analyze(mock_client, "library/scratch", "latest")
+        report = analyzer.analyze(ctx)
         analyzer.validate(report)
 
         assert report["has_sbom"] is False
         assert report["total_components"] == 0
         assert report["licenses"] == []
 
-    @patch("regis.analyzers.sbom.run_syft")
-    def test_analyze_scanner_version_unknown_when_metadata_absent(
-        self, mock_run_syft, analyzer, mock_client
-    ):
-        mock_run_syft.return_value = {
-            "bomFormat": "CycloneDX",
-            "specVersion": "1.6",
-            "components": [],
-        }
+    def test_analyze_scanner_version_unknown_when_metadata_absent(self, analyzer):
+        ctx = _sbom_ctx(
+            FakeToolRunner(
+                generate_sbom={
+                    "bomFormat": "CycloneDX",
+                    "specVersion": "1.6",
+                    "components": [],
+                }
+            ),
+            repository="library/alpine",
+            tag="3.20",
+        )
 
-        report = analyzer.analyze(mock_client, "library/alpine", "3.20")
+        report = analyzer.analyze(ctx)
         analyzer.validate(report)
 
         assert report["scanner_version"] == "unknown"
 
-    @patch("regis.analyzers.sbom.run_syft")
-    def test_analyze_custom_registry(self, mock_run_syft, analyzer):
-        client = MagicMock()
-        client.registry = "my.registry.com"
-        mock_run_syft.return_value = {
-            "bomFormat": "CycloneDX",
-            "specVersion": "1.5",
-            "metadata": {
-                "tools": {"components": [{"name": "syft", "version": "1.44.0"}]}
-            },
-            "components": [],
-            "dependencies": [],
-        }
+    def test_analyze_propagates_tool_error(self):
+        class _Boom(FakeToolRunner):
+            def generate_sbom(self, image):
+                raise ToolError("syft down")
 
-        analyzer.analyze(client, "my-repo", "v1")
+        with pytest.raises(ToolError, match="syft down"):
+            SbomAnalyzer().analyze(_sbom_ctx(_Boom()))
 
-        mock_run_syft.assert_called_with(
-            "my.registry.com/my-repo:v1",
-            username=client.username,
-            password=client.password,
-            platform=None,
-        )
-
-    @patch("regis.analyzers.sbom.run_syft")
-    def test_docker_hub_image_ref(self, mock_run_syft, analyzer, mock_client):
-        mock_run_syft.return_value = {
-            "bomFormat": "CycloneDX",
-            "specVersion": "1.5",
-            "metadata": {
-                "tools": {"components": [{"name": "syft", "version": "1.44.0"}]}
-            },
-            "components": [],
-            "dependencies": [],
-        }
-
-        analyzer.analyze(mock_client, "library/nginx", "1.25")
-
-        # Docker Hub should NOT include registry prefix.
-        mock_run_syft.assert_called_with(
-            "library/nginx:1.25",
-            username=mock_client.username,
-            password=mock_client.password,
-            platform=None,
-        )
+    def test_sbom_uses_context(self):
+        assert SbomAnalyzer.uses_context is True

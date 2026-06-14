@@ -1,97 +1,92 @@
-import json
-from unittest.mock import MagicMock, patch
+from typing import Any
 
 import pytest
 
-from regis.analyzers.base import AnalyzerError
 from regis.analyzers.dockle import DockleAnalyzer
+from regis.core.domain.context import AnalysisContext
+from regis.core.domain.errors import ToolError
+from regis.core.model.image_reference import ImageReference
+from tests.fakes import FakeImageInspector, FakeToolRunner
+
+_DOCKLE = {
+    "summary": {"fatal": 1, "warn": 1, "info": 0, "skip": 0, "pass": 3},
+    "details": [
+        {
+            "code": "CIS-DI-0001",
+            "title": "root user",
+            "level": "FATAL",
+            "alerts": ["a"],
+        },
+        {
+            "code": "CIS-DI-0005",
+            "title": "content trust",
+            "level": "WARN",
+            "alerts": [],
+        },
+    ],
+}
 
 
-@pytest.fixture(autouse=True)
-def _stub_ensure_tool(monkeypatch):
-    """Pin ensure_tool to the bare 'dockle' name so analyzer tests don't trigger
-    real fetcher downloads on CI hosts where the binary is not on PATH."""
-    monkeypatch.setattr(
-        "regis.analyzers.dockle.ensure_tool",
-        lambda _name: "dockle",
+def _dockle_ctx(tools, *, repository="library/nginx", tag="1.27"):
+    return AnalysisContext(
+        image=ImageReference(registry="docker.io", repository=repository, tag=tag),
+        inspector=FakeImageInspector(),
+        tools=tools,
     )
 
 
 class TestDockleAnalyzer:
-    @pytest.fixture
-    def analyzer(self):
-        return DockleAnalyzer()
-
-    def test_dockle_logic(self, analyzer):
-        cl = MagicMock(registry="registry-1.docker.io", username=None, password=None)
-
-        dockle_output = json.dumps(
-            {
-                "summary": {"fatal": 1, "warn": 0, "info": 0, "skip": 0, "pass": 1},
-                "details": [
-                    {
-                        "code": "CIS-DI-0001",
-                        "title": "Create a user for the container",
-                        "level": "FATAL",
-                        "alerts": ["Last user should not be root"],
-                    }
-                ],
-            }
+    def test_analyze_maps_levels_and_passed(self):
+        report = DockleAnalyzer().analyze(
+            _dockle_ctx(FakeToolRunner(audit_image=_DOCKLE))
         )
+        assert report["analyzer"] == "dockle"
+        assert report["issues_by_level"]["FATAL"] == 1
+        assert report["issues_by_level"]["WARN"] == 1
+        assert report["passed"] is False  # FATAL present
+        assert report["issues_count"] == 2  # FATAL + WARN + INFO
+        assert report["repository"] == "library/nginx"
+        assert report["tag"] == "1.27"
+        DockleAnalyzer().validate(report)
 
-        with patch(
-            "subprocess.run",
-            return_value=MagicMock(stdout=dockle_output, stderr="", returncode=1),
-        ):
-            res = analyzer.analyze(cl, "repo", "tag")
-            assert res["issues_count"] == 1
-            assert res["passed"] is False
-            assert res["issues_by_level"]["FATAL"] == 1
-            assert len(res["issues"]) == 1
-            assert res["issues"][0]["code"] == "CIS-DI-0001"
-
-    def test_dockle_pass(self, analyzer):
-        cl = MagicMock(registry="reg", username="user", password="pwd")
-
-        dockle_output = json.dumps(
-            {
-                "summary": {"fatal": 0, "warn": 0, "info": 0, "skip": 0, "pass": 5},
-                "details": [
-                    {
-                        "code": "CIS-DI-0005",
-                        "title": "Enable Content trust for Docker",
-                        "level": "PASS",
-                        "alerts": [],
-                    }
-                ],
-            }
+    def test_passed_true_without_fatal(self):
+        clean = {
+            "details": [{"code": "X", "title": "t", "level": "INFO", "alerts": []}]
+        }
+        report = DockleAnalyzer().analyze(
+            _dockle_ctx(FakeToolRunner(audit_image=clean))
         )
+        assert report["passed"] is True
 
-        with patch(
-            "subprocess.run",
-            return_value=MagicMock(stdout=dockle_output, stderr="", returncode=0),
-        ):
-            res = analyzer.analyze(cl, "repo", "tag")
-            assert res["passed"] is True
-            assert res["issues_count"] == 0
-            assert res["issues_by_level"]["PASS"] == 1
+    def test_propagates_tool_error(self):
+        class _Boom(FakeToolRunner):
+            def audit_image(self, image: ImageReference) -> dict[str, Any]:
+                raise ToolError("dockle missing")
 
-    def test_dockle_errors(self, analyzer):
-        cl = MagicMock(registry="reg")
+        with pytest.raises(ToolError, match="dockle missing"):
+            DockleAnalyzer().analyze(_dockle_ctx(_Boom()))
 
-        # Command failure completely
-        with patch("subprocess.run", side_effect=Exception("binary missing")):
-            with pytest.raises(AnalyzerError, match="Dockle execution failed"):
-                analyzer.analyze(cl, "r", "t")
+    def test_dockle_uses_context(self):
+        assert DockleAnalyzer.uses_context is True
 
-        # Empty output
-        with patch("subprocess.run", return_value=MagicMock(stdout="", stderr="err")):
-            with pytest.raises(AnalyzerError, match="Dockle produced no output"):
-                analyzer.analyze(cl, "r", "t")
+    def test_default_criteria(self):
+        criteria = DockleAnalyzer.default_criteria()
+        assert len(criteria) >= 1
+        assert criteria[0]["slug"] == "severity-count"
+        assert criteria[0]["params"]["level"] == "FATAL"
 
-        # Invalid json output
-        with patch(
-            "subprocess.run", return_value=MagicMock(stdout="invalid json", stderr="")
-        ):
-            with pytest.raises(AnalyzerError, match="Failed to parse dockle output"):
-                analyzer.analyze(cl, "r", "t")
+    def test_pass_and_unknown_levels_counted_but_excluded_from_issues_count(self):
+        data = {
+            "details": [
+                {"code": "P", "title": "ok", "level": "PASS", "alerts": []},
+                {"code": "D", "title": "dbg", "level": "DEBUG", "alerts": []},
+                {"code": "F", "title": "bad", "level": "FATAL", "alerts": ["x"]},
+            ]
+        }
+        report = DockleAnalyzer().analyze(_dockle_ctx(FakeToolRunner(audit_image=data)))
+        # PASS is counted in its bucket; DEBUG is an unknown level (else branch).
+        assert report["issues_by_level"]["PASS"] == 1
+        assert report["issues_by_level"]["DEBUG"] == 1
+        # issues_count sums only FATAL+WARN+INFO → PASS and DEBUG are excluded.
+        assert report["issues_count"] == 1
+        assert report["passed"] is False
