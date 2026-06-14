@@ -1,5 +1,8 @@
 """SubprocessToolRunner delegates to scanner wrappers and raises ToolError."""
 
+from types import SimpleNamespace
+
+import click
 import pytest
 
 from regis.adapters.driven.tools import subprocess_tool_runner as mod
@@ -84,3 +87,50 @@ def test_scanner_translates_analyzer_error_to_tool_error(monkeypatch) -> None:
         SubprocessToolRunner().scan_vulnerabilities(IMAGE)
     assert "grype failed: boom" in str(exc_info.value)
     assert isinstance(exc_info.value.__cause__, AnalyzerError)
+
+
+def test_lint_dockerfile_parses_issue_list(monkeypatch) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_run(cmd, **kwargs):
+        captured["cmd"] = cmd
+        captured["input"] = kwargs.get("input")
+        return SimpleNamespace(stdout='[{"code": "DL3008"}]', stderr="", returncode=1)
+
+    monkeypatch.setattr(mod, "ensure_tool", lambda name: f"/usr/bin/{name}")
+    monkeypatch.setattr(mod.subprocess, "run", fake_run)
+    assert SubprocessToolRunner().lint_dockerfile("FROM scratch") == [
+        {"code": "DL3008"}
+    ]
+    assert captured["cmd"] == ["/usr/bin/hadolint", "-f", "json", "-"]
+    assert captured["input"] == "FROM scratch"
+
+
+def test_lint_dockerfile_empty_output_is_empty_list(monkeypatch) -> None:
+    monkeypatch.setattr(mod, "ensure_tool", lambda name: "/usr/bin/hadolint")
+    monkeypatch.setattr(
+        mod.subprocess,
+        "run",
+        lambda *a, **k: SimpleNamespace(stdout="  \n", stderr="", returncode=0),
+    )
+    assert SubprocessToolRunner().lint_dockerfile("FROM scratch") == []
+
+
+def test_lint_dockerfile_invalid_json_raises_tool_error(monkeypatch) -> None:
+    monkeypatch.setattr(mod, "ensure_tool", lambda name: "/usr/bin/hadolint")
+    monkeypatch.setattr(
+        mod.subprocess,
+        "run",
+        lambda *a, **k: SimpleNamespace(stdout="not json", stderr="", returncode=0),
+    )
+    with pytest.raises(ToolError):
+        SubprocessToolRunner().lint_dockerfile("FROM scratch")
+
+
+def test_lint_dockerfile_missing_tool_raises_tool_error(monkeypatch) -> None:
+    def boom(name):
+        raise click.ClickException("hadolint not available")
+
+    monkeypatch.setattr(mod, "ensure_tool", boom)
+    with pytest.raises(ToolError):
+        SubprocessToolRunner().lint_dockerfile("FROM scratch")

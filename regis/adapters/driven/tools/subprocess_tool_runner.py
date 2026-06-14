@@ -2,14 +2,19 @@
 
 from __future__ import annotations
 
+import json
+import subprocess  # nosec B404
 from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
 from typing import Any
+
+import click
 
 from regis.core.domain.errors import AnalyzerError, ToolError
 from regis.core.model.image_reference import ImageReference
 from regis.core.ports.tool_runner import ToolResult, ToolRunner
 from regis.utils.grype import run_grype
+from regis.utils.process import ensure_tool
 from regis.utils.syft import run_syft
 from regis.utils.trufflehog import run_trufflehog
 
@@ -58,7 +63,25 @@ class SubprocessToolRunner(ToolRunner):
             return run_trufflehog(self._full_ref(image), self._username, self._password)
 
     def lint_dockerfile(self, dockerfile: str) -> list[dict[str, Any]]:
-        raise NotImplementedError  # Task 3
+        try:
+            binary = ensure_tool("hadolint")
+        except click.ClickException as exc:
+            raise ToolError(str(exc)) from exc
+        proc = subprocess.run(  # nosec B603
+            [binary, "-f", "json", "-"],
+            input=dockerfile,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        stdout = proc.stdout.strip()
+        if not stdout:
+            return []
+        try:
+            issues: list[dict[str, Any]] = json.loads(stdout)
+        except json.JSONDecodeError as exc:
+            raise ToolError(f"hadolint produced invalid JSON: {exc}") from exc
+        return issues
 
     def audit_image(self, image: ImageReference) -> dict[str, Any]:
         raise NotImplementedError  # Task 4
