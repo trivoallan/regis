@@ -8,8 +8,7 @@ from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
 from regis.analyzers.base import BaseAnalyzer
-from regis.registry.client import RegistryClient
-from regis.utils.grype import run_grype
+from regis.core.domain.context import AnalysisContext
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +28,7 @@ class CveAnalyzer(BaseAnalyzer):
 
     name = "cve"
     schema_file = "analyzer/cve.schema.json"
+    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -92,25 +92,11 @@ class CveAnalyzer(BaseAnalyzer):
                 source["checksum"] = unquote(checksum)
         return source
 
-    def analyze(
-        self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
-    ) -> dict[str, Any]:
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
         """Run grype analysis and return a report dict."""
-        if client.registry in ("docker.io", "registry-1.docker.io"):
-            full_image = f"{repository}:{tag}"
-        else:
-            full_image = f"{client.registry}/{repository}:{tag}"
-
-        data = run_grype(
-            full_image,
-            username=client.username,
-            password=client.password,
-            platform=platform,
-        )
+        data = ctx.tools.scan_vulnerabilities(ctx.image)
+        repository = ctx.image.repository
+        tag = ctx.image.tag
 
         counts = {field: 0 for field in _SEVERITY_FIELD.values()}
         fixed_count = 0

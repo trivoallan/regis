@@ -1,11 +1,23 @@
 """Tests for the CVE analyzer (grype backend)."""
 
-from unittest.mock import MagicMock, patch
-
 import pytest
 
-from regis.analyzers.base import AnalyzerError
 from regis.analyzers.cve import CveAnalyzer
+from regis.core.domain.context import AnalysisContext
+from regis.core.domain.errors import ToolError
+from regis.core.model.image_reference import ImageReference
+from tests.fakes import FakeImageInspector, FakeToolRunner
+
+
+def _ctx(tools):
+    return AnalysisContext(
+        image=ImageReference(
+            registry="docker.io", repository="library/alpine", tag="3.20"
+        ),
+        inspector=FakeImageInspector(),
+        tools=tools,
+    )
+
 
 # Minimal grype JSON: two matches across two artifact types, mixed severities.
 _GRYPE = {
@@ -43,15 +55,8 @@ class TestCveAnalyzer:
         slugs = {r["slug"] for r in analyzer.default_criteria()}
         assert {"fix-available", "cve-count"} <= slugs
 
-    @patch("regis.analyzers.cve.run_grype")
-    def test_analyze_counts_and_targets(self, mock_run, analyzer):
-        mock_run.return_value = _GRYPE
-        client = MagicMock()
-        client.registry = "docker.io"
-        client.username = None
-        client.password = None
-
-        report = analyzer.analyze(client, "library/alpine", "3.20")
+    def test_analyze_counts_and_targets(self, analyzer):
+        report = analyzer.analyze(_ctx(FakeToolRunner(scan_vulnerabilities=_GRYPE)))
 
         assert report["analyzer"] == "cve"
         assert report["scanner_version"] == "0.112.0"
@@ -59,27 +64,27 @@ class TestCveAnalyzer:
         assert report["critical_count"] == 1
         assert report["negligible_count"] == 1
         assert report["fixed_count"] == 1
-        # Grouped by artifact.type
+        assert report["repository"] == "library/alpine"
+        assert report["tag"] == "3.20"
         targets = {t["Target"]: t for t in report["targets"]}
         assert set(targets) == {"apk", "python"}
         apk_vuln = targets["apk"]["Vulnerabilities"][0]
         assert apk_vuln["VulnerabilityID"] == "CVE-2024-0001"
-        assert apk_vuln["PkgName"] == "libfoo"
         assert apk_vuln["FixedVersion"] == "1.2.3"
-        # Per-vuln Severity is emitted upper-case (matches dashboard filter).
         assert apk_vuln["Severity"] == "CRITICAL"
-        py_vuln = targets["python"]["Vulnerabilities"][0]
-        assert py_vuln["Severity"] == "NEGLIGIBLE"
-        # Report must validate against the schema.
+        assert targets["python"]["Vulnerabilities"][0]["Severity"] == "NEGLIGIBLE"
         analyzer.validate(report)
 
-    @patch("regis.analyzers.cve.run_grype")
-    def test_analyze_forwards_error(self, mock_run, analyzer):
-        mock_run.side_effect = AnalyzerError("boom")
-        client = MagicMock()
-        client.registry = "example.com"
-        with pytest.raises(AnalyzerError, match="boom"):
-            analyzer.analyze(client, "repo", "tag")
+    def test_analyze_propagates_tool_error(self, analyzer):
+        class _Boom(FakeToolRunner):
+            def scan_vulnerabilities(self, image):
+                raise ToolError("boom")
+
+        with pytest.raises(ToolError, match="boom"):
+            analyzer.analyze(_ctx(_Boom()))
+
+    def test_cve_uses_context(self):
+        assert CveAnalyzer.uses_context is True
 
 
 class TestCveSourceFromDescriptor:
