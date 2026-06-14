@@ -9,7 +9,7 @@ from typing import Any
 import requests
 
 from regis.analyzers.base import BaseAnalyzer
-from regis.registry.client import RegistryClient
+from regis.core.domain.context import AnalysisContext
 
 logger = logging.getLogger(__name__)
 
@@ -21,14 +21,10 @@ class PopularityAnalyzer(BaseAnalyzer):
 
     name = "popularity"
     schema_file = "analyzer/popularity.schema.json"
+    uses_context = True
 
-    def analyze(
-        self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
-    ) -> dict[str, Any]:
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+        repository = ctx.image.repository
         url = f"{_DOCKERHUB_API}/{repository}"
         logger.debug("Fetching Docker Hub stats: %s", url)
 
