@@ -12,6 +12,11 @@
 
 ## Completed (Recent)
 
+- **Migration hexagonale — P2b-1 (2026-06-14, [PR #762](https://github.com/trivoallan/regis/pull/762))** — refactor interne, non cassant (brainstorming → spec → plan → subagent-driven, 6 tâches TDD) :
+  - **Décision** : regctl → 2ᵉ `ImageInspector` (pas un scanner ; même contrat que `RegistryClient`) ; `inspect_platforms` retirée de `ToolRunner`. Supersède §5.1 de la spec maîtresse.
+  - Port `ToolRunner` resserré (types honnêtes `scan_secrets`/`lint_dockerfile` → `list[dict]`) + adaptateur driven `SubprocessToolRunner` (scanners grype/syft/trufflehog délégués + hadolint/dockle répliqués inline + escape hatch `run`) ; creds dans l'adaptateur, erreurs → `ToolError`. Analyzers inchangés (pas encore consommé).
+  - 798 tests / 95.77 % / adaptateur 100 % / layering KEPT. Spec : `docs/superpowers/specs/2026-06-14-hexagonal-p2b-subprocess-adapters-design.md`. Reste : P2b-2 (`RegctlImageInspector`), P2c (`FileReportSink`), P3/P4/P5.
+
 - **Migration Dependabot → Renovate (2026-06-11)** — app Mend hébergée (brainstorming → spec → plan) :
   - Preset constellation partagé `.github/renovate-constellation.json5` dans le cœur, étendu par `renovate.json5` (cœur) + les satellites. Updates non-major groupées par écosystème + automerge ; majors en draft (skippées par `repo-automerge.yml`) ; sécurité toutes sévérités automergée hors-schedule ; label `dependencies` exclu de `repo-autorebase.yml`.
   - Suppression du workflow critical-only `repo-dependabot-critical-vulns.yml` + du `dependabot.yml` ; PR d'hygiène (surface JS racine morte purgée) ; doc memory-bank/tools-management/guides github-actions recadrés. Spec : `docs/superpowers/specs/2026-06-10-renovate-migration-design.md` ; plan : `docs/superpowers/plans/2026-06-10-renovate-migration.md`. App Mend **installée** (onboarding #741, `renovate.json` racine `config:recommended`) ; PR de suivi le **supersède** (racine prioritaire → masquait `.github/renovate.json5`, retiré). **Reste** : désactiver Dependabot security updates + retirer le check requis orphelin `Repo / Dependabot critical vulns` + onboarding satellites.
