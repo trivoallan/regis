@@ -1,6 +1,9 @@
 """Tests for the provenance analyzer."""
 
 from regis.analyzers.provenance import ProvenanceAnalyzer
+from regis.core.domain.context import AnalysisContext
+from regis.core.model.image_reference import ImageReference
+from tests.fakes import FakeToolRunner
 
 
 class MockRegistryClient:
@@ -20,6 +23,14 @@ class MockRegistryClient:
         return self._blobs.get(digest, {})
 
 
+def _ctx(inspector, *, repository="my-repo", tag="latest"):
+    return AnalysisContext(
+        image=ImageReference(registry="docker.io", repository=repository, tag=tag),
+        inspector=inspector,
+        tools=FakeToolRunner(),
+    )
+
+
 class TestProvenanceAnalyzer:
     def test_with_oci_labels(self):
         manifest = {
@@ -36,7 +47,7 @@ class TestProvenanceAnalyzer:
         }
         client = MockRegistryClient(manifest=manifest, blobs={"sha256:cfg1": config})
         analyzer = ProvenanceAnalyzer()
-        report = analyzer.analyze(client, "library/test", "latest")
+        report = analyzer.analyze(_ctx(client, repository="library/test", tag="latest"))
         analyzer.validate(report)
 
         assert report["has_provenance"] is True
@@ -51,7 +62,9 @@ class TestProvenanceAnalyzer:
         config = {"config": {"Labels": {}}}
         client = MockRegistryClient(manifest=manifest, blobs={"sha256:cfg1": config})
         analyzer = ProvenanceAnalyzer()
-        report = analyzer.analyze(client, "fakens/noinfo", "latest")
+        report = analyzer.analyze(
+            _ctx(client, repository="fakens/noinfo", tag="latest")
+        )
         analyzer.validate(report)
 
         assert report["has_provenance"] is False

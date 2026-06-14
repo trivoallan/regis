@@ -6,7 +6,7 @@ import logging
 from typing import Any
 
 from regis.analyzers.base import BaseAnalyzer
-from regis.registry.client import RegistryClient
+from regis.core.domain.context import AnalysisContext
 
 logger = logging.getLogger(__name__)
 
@@ -23,27 +23,24 @@ class ProvenanceAnalyzer(BaseAnalyzer):
 
     name = "provenance"
     schema_file = "analyzer/provenance.schema.json"
+    uses_context = True
 
-    def analyze(
-        self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
-    ) -> dict[str, Any]:
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+        repository = ctx.image.repository
+        tag = ctx.image.tag
         labels: dict[str, str] = {}
         image_digest: str | None = None
 
         # Fetch manifest and config to extract labels and digest.
         try:
-            manifest = client.get_manifest(tag)
+            manifest = ctx.inspector.get_manifest(tag)
             media_type = manifest.get("mediaType", "")
 
             if "list" in media_type or "index" in media_type:
                 entries = manifest.get("manifests", [])
                 if entries:
                     image_digest = entries[0].get("digest")
-                    manifest = client.get_manifest(image_digest)
+                    manifest = ctx.inspector.get_manifest(image_digest)
                 else:
                     manifest = {}
 
@@ -52,7 +49,7 @@ class ProvenanceAnalyzer(BaseAnalyzer):
                 image_digest = config_digest
 
             if config_digest:
-                config = client.get_blob(config_digest)
+                config = ctx.inspector.get_blob(config_digest)
                 labels = config.get("config", {}).get("Labels") or {}
         except Exception:
             logger.debug("Could not fetch manifest for provenance", exc_info=True)
@@ -117,7 +114,7 @@ class ProvenanceAnalyzer(BaseAnalyzer):
         if image_digest:
             cosign_tag = image_digest.replace(":", "-") + ".sig"
             try:
-                sig_manifest = client.get_manifest(cosign_tag)
+                sig_manifest = ctx.inspector.get_manifest(cosign_tag)
                 if sig_manifest.get("layers") or sig_manifest.get("manifests"):
                     has_cosign_signature = True
                     provenance_indicators.append(
