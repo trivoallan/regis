@@ -8,8 +8,7 @@ import subprocess  # nosec B404
 from typing import Any
 
 from regis.analyzers.base import BaseAnalyzer
-from regis.registry.client import RegistryClient
-from regis.utils.trufflehog import run_trufflehog
+from regis.core.domain.context import AnalysisContext
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +43,7 @@ class SecretsAnalyzer(BaseAnalyzer):
 
     name = "secrets"
     schema_file = "analyzer/secrets.schema.json"
+    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -82,24 +82,11 @@ class SecretsAnalyzer(BaseAnalyzer):
             },
         ]
 
-    def analyze(
-        self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
-    ) -> dict[str, Any]:
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
         """Run trufflehog analysis and return a report dict."""
-        if client.registry in ("docker.io", "registry-1.docker.io"):
-            full_image = f"{repository}:{tag}"
-        else:
-            full_image = f"{client.registry}/{repository}:{tag}"
-
-        raw = run_trufflehog(
-            full_image,
-            username=client.username,
-            password=client.password,
-        )
+        raw = ctx.tools.scan_secrets(ctx.image)
+        repository = ctx.image.repository
+        tag = ctx.image.tag
 
         findings = [
             {
