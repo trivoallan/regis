@@ -111,4 +111,20 @@ class SubprocessToolRunner(ToolRunner):
     def run(
         self, tool: str, args: Sequence[str], *, timeout: int | None = None
     ) -> ToolResult:
-        raise NotImplementedError  # Task 5
+        try:
+            binary = ensure_tool(tool)
+        except click.ClickException as exc:
+            raise ToolError(str(exc)) from exc
+        try:
+            proc = subprocess.run(  # nosec B603
+                [binary, *args],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=timeout,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise ToolError(f"{tool} timed out after {timeout}s") from exc
+        return ToolResult(
+            stdout=proc.stdout, stderr=proc.stderr, exit_code=proc.returncode
+        )

@@ -9,7 +9,7 @@ from regis.adapters.driven.tools import subprocess_tool_runner as mod
 from regis.adapters.driven.tools.subprocess_tool_runner import SubprocessToolRunner
 from regis.core.domain.errors import AnalyzerError, ToolError
 from regis.core.model.image_reference import ImageReference
-from regis.core.ports.tool_runner import ToolRunner
+from regis.core.ports.tool_runner import ToolResult, ToolRunner
 
 IMAGE = ImageReference(
     registry="docker.io", repository="library/nginx", tag="1.27", platform="linux/amd64"
@@ -207,3 +207,41 @@ def test_audit_image_invalid_json_raises_tool_error(monkeypatch) -> None:
     )
     with pytest.raises(ToolError):
         SubprocessToolRunner().audit_image(IMAGE)
+
+
+def test_run_returns_tool_result_with_exit_code(monkeypatch) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_run(cmd, **kwargs):
+        captured["cmd"] = cmd
+        captured["timeout"] = kwargs.get("timeout")
+        return SimpleNamespace(stdout="out", stderr="err", returncode=3)
+
+    monkeypatch.setattr(mod, "ensure_tool", lambda name: f"/usr/bin/{name}")
+    monkeypatch.setattr(mod.subprocess, "run", fake_run)
+    result = SubprocessToolRunner().run("cosign", ["version"], timeout=5)
+    assert result == ToolResult(stdout="out", stderr="err", exit_code=3)
+    assert captured["cmd"] == ["/usr/bin/cosign", "version"]
+    assert captured["timeout"] == 5
+
+
+def test_run_missing_tool_raises_tool_error(monkeypatch) -> None:
+    def boom(name):
+        raise click.ClickException("cosign not available")
+
+    monkeypatch.setattr(mod, "ensure_tool", boom)
+    with pytest.raises(ToolError) as exc_info:
+        SubprocessToolRunner().run("cosign", ["version"])
+    assert "cosign not available" in str(exc_info.value)
+
+
+def test_run_timeout_raises_tool_error(monkeypatch) -> None:
+    monkeypatch.setattr(mod, "ensure_tool", lambda name: "/usr/bin/cosign")
+
+    def boom(*a, **k):
+        raise mod.subprocess.TimeoutExpired(cmd="cosign", timeout=5)
+
+    monkeypatch.setattr(mod.subprocess, "run", boom)
+    with pytest.raises(ToolError) as exc_info:
+        SubprocessToolRunner().run("cosign", ["version"], timeout=5)
+    assert "cosign timed out" in str(exc_info.value)
