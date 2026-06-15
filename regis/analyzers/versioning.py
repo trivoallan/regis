@@ -9,8 +9,7 @@ from typing import Any
 import semver
 
 from regis.analyzers.base import AnalyzerError, BaseAnalyzer
-from regis.registry.client import RegistryClient
-from regis.utils.regctl import run_regctl
+from regis.core.domain.context import AnalysisContext
 
 logger = logging.getLogger(__name__)
 
@@ -181,25 +180,19 @@ class VersioningAnalyzer(BaseAnalyzer):
 
     name = "versioning"
     schema_file = "analyzer/versioning.schema.json"
+    uses_context = True
 
-    def analyze(
+    def analyze(  # type: ignore[override]
         self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
+        ctx: AnalysisContext,
     ) -> dict[str, Any]:
-        """Classify all tags and summarize versioning patterns using regctl."""
-        registry = client.registry
-        repo_ref = (
-            f"{'docker.io' if registry == 'registry-1.docker.io' else registry}"
-            f"/{repository}"
-        )
+        """Classify all tags and summarize versioning patterns."""
+        repository = ctx.image.repository
+        tag = ctx.image.tag
         try:
-            tags_out = run_regctl(client, ["tag", "ls", repo_ref])
-            tags = [t for t in tags_out.splitlines() if t.strip()]
+            tags = ctx.inspector.list_tags()
         except Exception as e:
-            msg = f"Failed to list tags via regctl for {repo_ref}: {e}"
+            msg = f"Failed to list tags: {e}"
             logger.error(msg)
             raise AnalyzerError(msg) from e
 
