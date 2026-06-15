@@ -1,10 +1,9 @@
-import json
-from unittest.mock import MagicMock, patch
-
 import pytest
 
 from regis.analyzers.base import AnalyzerError
 from regis.analyzers.size import SizeAnalyzer, _human_size
+
+from .fakes import FakeImageInspector, make_ctx
 
 
 class TestSizeAnalyzer:
@@ -13,93 +12,96 @@ class TestSizeAnalyzer:
         return SizeAnalyzer()
 
     def test_human_size_exhaustive(self):
-        # coverage for units and fallback (21-22)
+        # coverage for units and fallback
         assert "1024.0 TB" in _human_size(1024.0**5)
         assert "1.0 MB" in _human_size(1024.0**2)
 
     def test_size_exhaustive(self, analyzer):
-        cl = MagicMock(registry="registry-1.docker.io")
-        # 50 (registry norm), 61-64 (exc), 74 (analyze_single), 122-135 (platform list filter), 144 (variant), 149 (skip), 161 (worker fallback)
+        # 1. Single arch
+        single = {
+            "mediaType": "manifest",
+            "layers": [{"size": 100}],
+            "config": {"size": 50},
+        }
+        ctx = make_ctx(inspector=FakeImageInspector(manifests={"1.0": single}))
+        res = analyzer.analyze(ctx)
+        assert res["total_compressed_bytes"] == 150
 
-        # 1. Single arch (74)
-        raw_s = json.dumps(
-            {"mediaType": "manifest", "layers": [{"size": 100}], "config": {"size": 50}}
-        )
-        with patch("regis.analyzers.size.run_regctl", return_value=raw_s):
-            res = analyzer.analyze(cl, "r", "t")
-            assert res["total_compressed_bytes"] == 150
-
-        # 2. Multi arch index with filter and variant (122-135, 144)
-        m_list = json.dumps(
-            {
-                "mediaType": "index",
-                "manifests": [
-                    {
-                        "digest": "s1",
-                        "platform": {
-                            "os": "linux",
-                            "architecture": "arm64",
-                            "variant": "v8",
-                        },
+        # 2. Multi arch index with filter and variant
+        index = {
+            "mediaType": "index",
+            "manifests": [
+                {
+                    "digest": "s1",
+                    "platform": {
+                        "os": "linux",
+                        "architecture": "arm64",
+                        "variant": "v8",
                     },
-                    {
-                        "digest": "s2",
-                        "platform": {"os": "linux", "architecture": "amd64"},
-                    },
-                ],
-            }
-        )
-        ins = json.dumps({"layers": [{"size": 50}], "config": {"size": 10}})
-        with patch(
-            "regis.analyzers.size.run_regctl",
-            side_effect=[m_list, ins],
-        ):
-            res = analyzer.analyze(cl, "r", "t", platform="linux/arm64")
-            assert res["platforms"][0]["platform"] == "linux/arm64/v8"
-            assert res["total_compressed_bytes"] == 60
+                },
+                {
+                    "digest": "s2",
+                    "platform": {"os": "linux", "architecture": "amd64"},
+                },
+            ],
+        }
+        arm64_manifest = {"layers": [{"size": 50}], "config": {"size": 10}}
+        inspector = FakeImageInspector(manifests={"1.0": index, "s1": arm64_manifest})
+        ctx = make_ctx(inspector=inspector, platform="linux/arm64")
+        res = analyzer.analyze(ctx)
+        assert res["platforms"][0]["platform"] == "linux/arm64/v8"
+        assert res["total_compressed_bytes"] == 60
 
-        # 3. Aggregation failure (161-164) and Missing digest (149)
-        m_list_err = json.dumps(
-            {
-                "mediaType": "index",
-                "manifests": [
-                    {
-                        "digest": "",
-                        "platform": {"os": "linux", "architecture": "amd64"},
-                    },  # line 149
-                    {
-                        "digest": "s1",
-                        "platform": {"os": "linux", "architecture": "arm64"},
-                        "size": 100,
-                    },  # line 162 fallback
-                ],
-            }
+        # 3. Aggregation failure (fallback) and Missing digest (skip)
+        index_err = {
+            "mediaType": "index",
+            "manifests": [
+                {
+                    "digest": "",  # empty digest → skip
+                    "platform": {"os": "linux", "architecture": "amd64"},
+                },
+                {
+                    "digest": "s1",
+                    "platform": {"os": "linux", "architecture": "arm64"},
+                    "size": 100,  # entry-level fallback
+                },
+            ],
+        }
+
+        class _BrokenInspector(FakeImageInspector):
+            def get_manifest(self, reference: str) -> dict:
+                if reference == "s1":
+                    raise OSError("fail")
+                return super().get_manifest(reference)
+
+        ctx = make_ctx(
+            inspector=_BrokenInspector(manifests={"1.0": index_err}),
         )
-        with patch(
-            "regis.analyzers.size.run_regctl",
-            side_effect=[m_list_err, Exception("fail")],
-        ):
-            res = analyzer.analyze(cl, "r", "t")
-            assert res["platforms"][0]["compressed_bytes"] == 100
+        res = analyzer.analyze(ctx)
+        assert res["platforms"][0]["compressed_bytes"] == 100
 
     def test_size_errors_exhaustive(self, analyzer):
-        cl = MagicMock(registry="r")
-        # 61-64 exc
-        with patch(
-            "regis.analyzers.size.run_regctl", side_effect=Exception("parse fail")
-        ):
-            with pytest.raises(AnalyzerError):
-                analyzer.analyze(cl, "r", "t")
-        # 192 _empty
+        # Inspector raises on get_manifest → AnalyzerError
+
+        class _RaisingInspector(FakeImageInspector):
+            def get_manifest(self, reference: str) -> dict:
+                raise OSError("parse fail")
+
+        ctx = make_ctx(inspector=_RaisingInspector())
+        with pytest.raises(AnalyzerError):
+            analyzer.analyze(ctx)
+
+        # _empty helper
         assert analyzer._empty("r", "t")["layer_count"] == 0
 
-        # 135 warning
-        m_list = json.dumps(
-            {
-                "mediaType": "index",
-                "manifests": [{"platform": {"os": "l", "architecture": "a"}}],
-            }
+        # Platform override with no matching platform → empty platforms list
+        index = {
+            "mediaType": "index",
+            "manifests": [{"platform": {"os": "l", "architecture": "a"}}],
+        }
+        ctx = make_ctx(
+            inspector=FakeImageInspector(manifests={"1.0": index}),
+            platform="w/x",
         )
-        with patch("regis.analyzers.size.run_regctl", return_value=m_list):
-            res = analyzer.analyze(cl, "r", "t", platform="w/x")
-            assert len(res["platforms"]) == 0
+        res = analyzer.analyze(ctx)
+        assert len(res["platforms"]) == 0
