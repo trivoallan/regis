@@ -7,7 +7,7 @@ ARG VARIANT=slim
 # Alpine 3.11 builder paired with Alpine 3.11 runtime — matching musl libc and
 # CPython ABIs so the venv's symlinked interpreter resolves cleanly at runtime.
 # regis requires python>=3.10 per pyproject.toml.
-FROM python:3.11-alpine@sha256:ea767546c5a20b90094516b942212a645974f3872814762973cf99a487fe0ffa AS python-builder
+FROM python:3.14-alpine@sha256:003970a263347645cd23d4f90929ad16ba7ce7d808ee4674ffcc93cb21cc289f AS python-builder
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
@@ -133,7 +133,7 @@ USER curl_user
 # PyYAML, MarkupSafe, and other C-extension deps have musl wheels on PyPI;
 # the Anchore Go scanners are CGO-free and run cleanly on musl; hadolint
 # (Haskell) needs Alpine's gcompat glibc shim in the full variant.
-FROM python:3.11-alpine@sha256:ea767546c5a20b90094516b942212a645974f3872814762973cf99a487fe0ffa AS final-slim
+FROM python:3.14-alpine@sha256:003970a263347645cd23d4f90929ad16ba7ce7d808ee4674ffcc93cb21cc289f AS final-slim
 
 LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.description="Regis — Slim variant (scanners lazy-loaded at first use)." \
@@ -176,7 +176,7 @@ CMD ["--help"]
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 4b: final-full — minimal runtime with all scanners baked
 # ──────────────────────────────────────────────────────────────────────────────
-FROM python:3.11-alpine@sha256:ea767546c5a20b90094516b942212a645974f3872814762973cf99a487fe0ffa AS final-full
+FROM python:3.14-alpine@sha256:003970a263347645cd23d4f90929ad16ba7ce7d808ee4674ffcc93cb21cc289f AS final-full
 
 LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.description="Regis — Full variant (all scanners baked)." \
