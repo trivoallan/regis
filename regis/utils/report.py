@@ -10,19 +10,13 @@ from pathlib import Path
 from typing import Any
 
 import click
-import jsonschema
+
+from regis.core.domain.errors import PlaybookError
+from regis.core.model.report import REPORT_SCHEMA_VERSION  # re-export for back-compat
+
+__all__ = ["REPORT_SCHEMA_VERSION"]
 
 logger = logging.getLogger(__name__)
-
-REPORT_SCHEMA_VERSION = 5
-"""Current report-structure contract version (see report.schema.json).
-
-v5 removed the ``snapshot_date`` field (an editorial doc-site marker, not a
-data-freshness indicator).  v4 removed the legacy
-``pages``/``sections``/``scorecards``/``widgets`` rendering subsystem (and the
-per-section ``levels_summary``/``tags_summary``); playbook results are now
-rules-based only.
-"""
 
 
 def format_output_path(template: str, report: dict[str, Any], fmt: str) -> Path:
@@ -70,6 +64,11 @@ def _echo_info(msg: str, **kwargs) -> None:
     """click.echo wrapper that respects the active --quiet flag."""
     if not _quiet():
         click.echo(msg, **kwargs)
+
+
+def _echo_progress(msg: str) -> None:
+    """Progress sink for the core playbook runner — echoes to stderr."""
+    _echo_info(msg, err=True)
 
 
 def write_report(
@@ -135,99 +134,29 @@ def escape_jinja(obj: Any) -> Any:
     return obj
 
 
-def evaluate_playbooks(
-    playbook_paths: tuple[str, ...],
-    analysis_report: dict[str, Any],
-    formats: list[str],
-    show_rules: bool = False,
-) -> list[dict[str, Any]]:
-    """Load and evaluate playbooks, returning the list of results."""
-    from regis.playbook.engine import evaluate, load_playbook
-    from regis.playbook.loader import PlaybookVersionError
-
-    playbook_results = []
-    if not playbook_paths:
-        import importlib.resources
-
-        default_pb = importlib.resources.files("regis") / "playbooks" / "default"
-        if default_pb.is_dir():
-            playbook_paths = (str(default_pb),)
-
-    if playbook_paths:
-        for pb_path in playbook_paths:
-            is_remote = isinstance(pb_path, str) and (
-                pb_path.startswith("http://") or pb_path.startswith("https://")
-            )
-            action = "Downloading" if is_remote else "Evaluating"
-            _echo_info(f"  {action} playbook: {pb_path}...", err=True)
-            try:
-                pb_def = load_playbook(pb_path)
-            except PlaybookVersionError as exc:
-                raise click.ClickException(
-                    f"Failed to load playbook '{pb_path}': {exc}"
-                ) from exc
-            except jsonschema.ValidationError as exc:
-                raise click.ClickException(
-                    f"Playbook '{pb_path}' failed schema validation: {exc.message}"
-                ) from exc
-            pb_result = evaluate(
-                pb_def, analysis_report, source_name=Path(pb_path).stem
-            )
-            playbook_results.append(pb_result)
-
-            rs = pb_result.get("rules_summary", {})
-            passed_rules = rs.get("passed", [])
-            total_rules = rs.get("total", [])
-            passed_count = (
-                len(passed_rules) if isinstance(passed_rules, list) else passed_rules
-            )
-            total_count = (
-                len(total_rules) if isinstance(total_rules, list) else total_rules
-            )
-            rules_score = rs.get("score", pb_result["score"])
-            _echo_info(
-                f"    ({passed_count}/{total_count} rules passed, {rules_score}%)\n",
-                err=True,
-            )
-
-            if show_rules and pb_result.get("rules"):
-                _echo_info("    Rules Evaluation Summary:", err=True)
-                for r in pb_result["rules"]:
-                    icon = "✅" if r["passed"] else "❌"
-                    if r["status"] == "incomplete":
-                        icon = "⚠️"
-                    _echo_info(f"      {icon} [{r['slug']}] {r['message']}")
-                _echo_info("", err=True)
-
-    return playbook_results
-
-
 def run_playbooks(
     playbook_paths: tuple[str, ...],
     analysis_report: dict[str, Any],
     formats: list[str],
     show_rules: bool = False,
 ) -> dict[str, Any]:
-    """Load and evaluate playbooks against an analysis report."""
-    playbook_results = evaluate_playbooks(
-        playbook_paths, analysis_report, formats, show_rules
-    )
+    """Load and evaluate playbooks against an analysis report.
 
-    final_report = {**analysis_report}
-    if playbook_results:
-        final_report["playbooks"] = playbook_results
-        final_report["playbook"] = playbook_results[0]
+    Delegates to the click-free core implementation and translates
+    :class:`~regis.core.domain.errors.PlaybookError` into
+    ``click.ClickException`` at the CLI boundary.
+    """
+    from regis.core.application.playbook_runner import run_playbooks as _core_run
 
-    all_links = []
-    for pb_res in playbook_results:
-        for link_def in pb_res.get("links", []):
-            if link_def not in all_links:
-                all_links.append(link_def)
-
-    if all_links:
-        final_report["links"] = all_links
-
-    return final_report
+    try:
+        return _core_run(
+            playbook_paths,
+            analysis_report,
+            show_rules=show_rules,
+            on_progress=_echo_progress,
+        )
+    except PlaybookError as exc:
+        raise click.ClickException(str(exc)) from exc
 
 
 def ensure_schema_version(report: dict[str, Any]) -> dict[str, Any]:
@@ -241,52 +170,18 @@ def ensure_schema_version(report: dict[str, Any]) -> dict[str, Any]:
 
 
 def validate_report(report: dict[str, Any]) -> None:
-    """Validate a final report against its schema."""
-    from referencing import Registry, Resource
+    """Validate a final report against its schema.
 
-    schemas_dir = resources.files("regis.schemas")
-    registry = Registry()
-    report_schema = None
-    base_uri = "https://trivoallan.github.io/regis/schemas/"
+    Delegates to the click-free core implementation and translates
+    :class:`~regis.core.domain.errors.PlaybookError` into
+    ``click.ClickException`` at the CLI boundary.
+    """
+    from regis.core.application.playbook_runner import validate_report as _core_validate
 
-    def _get_all_schemas(node: Any, prefix: str = "") -> list[tuple[str, Any]]:
-        found = []
-        for item in node.iterdir():
-            rel_path = f"{prefix}/{item.name}" if prefix else item.name
-            if item.is_dir():
-                found.extend(_get_all_schemas(item, rel_path))
-            elif item.name.endswith(".json"):
-                found.append((rel_path, item))
-        return found
-
-    for rel_path, schema_file in _get_all_schemas(schemas_dir):
-        schema_data = json.loads(schema_file.read_text(encoding="utf-8"))
-        resource = Resource.from_contents(schema_data)
-
-        registry = registry.with_resource(uri=rel_path, resource=resource)
-        registry = registry.with_resource(uri=schema_file.name, resource=resource)
-        registry = registry.with_resource(uri=base_uri + rel_path, resource=resource)
-        registry = registry.with_resource(
-            uri=base_uri + schema_file.name, resource=resource
-        )
-
-        if "$id" in schema_data:
-            registry = registry.with_resource(uri=schema_data["$id"], resource=resource)
-
-        if schema_file.name == "report.schema.json":
-            report_schema = schema_data
-
-    if report_schema:
-        from jsonschema.validators import validator_for
-
-        try:
-            validator_cls = validator_for(report_schema)
-            validator = validator_cls(report_schema, registry=registry)
-            validator.validate(instance=report)
-        except jsonschema.ValidationError as exc:
-            raise click.ClickException(
-                f"Report schema validation failed: {exc.message}"
-            ) from exc
+    try:
+        _core_validate(report)
+    except PlaybookError as exc:
+        raise click.ClickException(str(exc)) from exc
 
 
 def _verdict_markdown(report: dict[str, Any]) -> list[str]:
