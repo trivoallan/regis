@@ -72,3 +72,46 @@ def test_fake_tool_runner_uses_honest_collection_types() -> None:
 def test_tool_runner_has_no_inspect_platforms() -> None:
     # regctl moved to a 2nd ImageInspector (P2b-2); ToolRunner is scanners-only.
     assert not hasattr(ToolRunner, "inspect_platforms")
+
+
+def test_fake_image_inspector_per_reference_maps():
+    from tests.fakes import FakeImageInspector
+
+    insp = FakeImageInspector(
+        manifests={
+            "sha256:a": {"mediaType": "single", "config": {"digest": "sha256:c"}}
+        },
+        blobs={"sha256:c": {"created": "2024-01-01T00:00:00Z"}},
+        manifest={"mediaType": "fallback"},
+        blob={"created": "fallback"},
+    )
+    assert insp.get_manifest("sha256:a")["mediaType"] == "single"
+    assert insp.get_manifest("other")["mediaType"] == "fallback"
+    assert insp.get_blob("sha256:c")["created"] == "2024-01-01T00:00:00Z"
+    assert insp.get_blob("sha256:zzz")["created"] == "fallback"
+
+
+def test_make_ctx_defaults_and_overrides():
+    from regis.core.domain.context import AnalysisContext
+    from tests.fakes import FakeImageInspector, FakeToolRunner, make_ctx
+
+    ctx = make_ctx()
+    assert isinstance(ctx, AnalysisContext)
+    assert ctx.image.registry == "docker.io"
+    assert ctx.image.repository == "library/nginx"
+    assert ctx.image.tag == "1.0"
+    assert isinstance(ctx.inspector, FakeImageInspector)
+    assert isinstance(ctx.tools, FakeToolRunner)
+
+    insp = FakeImageInspector(tags=["a"])
+    tools = FakeToolRunner(lint_dockerfile=[{"code": "DL3000"}])
+    ctx2 = make_ctx(
+        inspector=insp,
+        tools=tools,
+        repository="ns/app",
+        tag="2.0",
+        platform="linux/arm64",
+    )
+    assert ctx2.inspector is insp and ctx2.tools is tools
+    assert ctx2.image.repository == "ns/app" and ctx2.image.tag == "2.0"
+    assert ctx2.image.platform == "linux/arm64"

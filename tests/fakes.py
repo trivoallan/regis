@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from regis.core.application.analyzer_provider import AnalyzerProvider
+from regis.core.domain.context import AnalysisContext
 from regis.core.model.image_reference import ImageReference
 from regis.core.model.report import Report
 from regis.core.ports.image_inspector import ImageInspector
@@ -29,20 +30,24 @@ class FakeImageInspector(ImageInspector):
         manifest: dict[str, Any] | None = None,
         blob: dict[str, Any] | None = None,
         digest: str | None = "sha256:fake",
+        manifests: Mapping[str, dict[str, Any]] | None = None,
+        blobs: Mapping[str, dict[str, Any]] | None = None,
     ) -> None:
         self._tags = tags or []
         self._manifest = manifest or {}
         self._blob = blob or {}
         self._digest = digest
+        self._manifests: dict[str, dict[str, Any]] = dict(manifests or {})
+        self._blobs: dict[str, dict[str, Any]] = dict(blobs or {})
 
     def list_tags(self) -> list[str]:
         return list(self._tags)
 
     def get_manifest(self, reference: str) -> dict[str, Any]:
-        return dict(self._manifest)
+        return dict(self._manifests.get(reference, self._manifest))
 
     def get_blob(self, digest: str) -> dict[str, Any]:
-        return dict(self._blob)
+        return dict(self._blobs.get(digest, self._blob))
 
     def get_digest(self, reference: str) -> str | None:
         return self._digest
@@ -97,3 +102,22 @@ class StubAnalyzerProvider(AnalyzerProvider):
 
     def available(self) -> Mapping[str, type]:
         return dict(self._analyzers)
+
+
+def make_ctx(
+    *,
+    inspector: ImageInspector | None = None,
+    tools: ToolRunner | None = None,
+    registry: str = "docker.io",
+    repository: str = "library/nginx",
+    tag: str = "1.0",
+    platform: str | None = None,
+) -> AnalysisContext:
+    """Build an AnalysisContext with fake ports for analyzer tests."""
+    return AnalysisContext(
+        image=ImageReference(
+            registry=registry, repository=repository, tag=tag, platform=platform
+        ),
+        inspector=inspector if inspector is not None else FakeImageInspector(),
+        tools=tools if tools is not None else FakeToolRunner(),
+    )
