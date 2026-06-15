@@ -1,15 +1,15 @@
-"""OCI analyzer — per-platform image metadata and tag listing using regctl."""
+"""OCI analyzer — per-platform image metadata and tag listing via ImageInspector."""
 
 from __future__ import annotations
 
-import json
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 from regis.analyzers.base import BaseAnalyzer
-from regis.registry.client import RegistryClient
-from regis.utils.regctl import image_ref, run_regctl
+from regis.core.domain.context import AnalysisContext
+from regis.core.domain.manifest import filter_real_platforms, pick_platform_digest
+from regis.core.ports.image_inspector import ImageInspector
 
 logger = logging.getLogger(__name__)
 
@@ -18,11 +18,6 @@ _INDEX_TYPES = {
     "application/vnd.docker.distribution.manifest.list.v2+json",
     "application/vnd.oci.image.index.v1+json",
 }
-
-
-def _norm(registry: str) -> str:
-    """Normalize the Docker Hub API host to its canonical name."""
-    return "docker.io" if registry == "registry-1.docker.io" else registry
 
 
 def _platforms_supported(platforms: list[dict[str, Any]]) -> list[str]:
@@ -46,10 +41,11 @@ def _platforms_supported(platforms: list[dict[str, Any]]) -> list[str]:
 
 
 class OciAnalyzer(BaseAnalyzer):
-    """Fetch OCI metadata for an image using regctl: per-platform details and tags."""
+    """Fetch OCI metadata for an image using the ImageInspector port."""
 
     name = "oci"
     schema_file = "analyzer/oci.schema.json"
+    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -250,58 +246,40 @@ class OciAnalyzer(BaseAnalyzer):
             },
         ]
 
-    def analyze(
+    def analyze(  # type: ignore[override]
         self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
+        ctx: AnalysisContext,
     ) -> dict[str, Any]:
         """Return per-platform OCI metadata and the repository tag list."""
-        registry = client.registry
-        raw = run_regctl(
-            client,
-            [
-                "manifest",
-                "get",
-                image_ref(registry, repository, tag),
-                "--format",
-                "raw-body",
-            ],
-        )
-        manifest = json.loads(raw)
-        media_type = manifest.get("mediaType", "")
+        tag = ctx.image.tag
+        repository = ctx.image.repository
+        platform_override = ctx.image.platform
+
+        top = ctx.inspector.get_manifest(tag)
+        media_type = top.get("mediaType", "")
         platforms: list[dict[str, Any]] = []
 
-        if platform:
+        if platform_override:
             os_name, arch = (
-                platform.split("/", 1) if "/" in platform else ("linux", platform)
+                platform_override.split("/", 1)
+                if "/" in platform_override
+                else ("linux", platform_override)
             )
             platforms.append(
                 self._inspect_platform(
-                    client,
-                    registry,
-                    repository,
+                    ctx.inspector,
                     tag,
                     {"os": os_name, "architecture": arch},
                 )
             )
         elif media_type in _INDEX_TYPES:
-            # Skip buildkit attestation manifests (platform os/arch == "unknown").
-            entries = [
-                e
-                for e in manifest.get("manifests", [])
-                if e.get("platform", {}).get("architecture") not in (None, "unknown")
-                and e.get("platform", {}).get("os") not in (None, "unknown")
-            ]
+            entries = filter_real_platforms(top.get("manifests", []))
             max_workers = min(10, len(entries) or 1)
             with ThreadPoolExecutor(max_workers=max_workers) as executor:
                 futures = [
                     executor.submit(
                         self._inspect_platform,
-                        client,
-                        registry,
-                        repository,
+                        ctx.inspector,
                         e.get("digest", ""),
                         e.get("platform", {}),
                     )
@@ -313,16 +291,11 @@ class OciAnalyzer(BaseAnalyzer):
                     except Exception as exc:
                         logger.error("Failed to inspect platform: %s", exc)
         else:
-            platforms.append(
-                self._inspect_platform(client, registry, repository, tag, {})
-            )
+            platforms.append(self._inspect_platform(ctx.inspector, tag, {}))
 
         tags: list[str] = []
         try:
-            tags_out = run_regctl(
-                client, ["tag", "ls", f"{_norm(registry)}/{repository}"]
-            )
-            tags = [t for t in tags_out.splitlines() if t.strip()]
+            tags = [t for t in ctx.inspector.list_tags() if t.strip()]
         except Exception as exc:
             logger.warning("Could not fetch tag list for %s: %s", repository, exc)
 
@@ -341,9 +314,7 @@ class OciAnalyzer(BaseAnalyzer):
 
     def _inspect_platform(
         self,
-        client: RegistryClient,
-        registry: str,
-        repository: str,
+        inspector: ImageInspector,
         ref: str,
         platform_info: dict[str, Any],
     ) -> dict[str, Any]:
@@ -355,72 +326,67 @@ class OciAnalyzer(BaseAnalyzer):
         if "variant" in platform_info:
             result["variant"] = platform_info["variant"]
 
-        image_reference = image_ref(registry, repository, ref)
-        plat: str | None = None
-        if result["architecture"] != "unknown" and result["os"] != "unknown":
-            plat = f"{result['os']}/{result['architecture']}"
-            if result.get("variant"):
-                plat = f"{plat}/{result['variant']}"
-
         # 1. Config blob: created, labels, user, env, exposed_ports, arch, os.
         try:
-            args = ["image", "inspect", image_reference]  # default output is JSON
-            if plat:
-                args += ["--platform", plat]
-            config = json.loads(run_regctl(client, args))
-            cfg = config.get("config", {}) or {}
-            result["created"] = config.get("created")
+            m = inspector.get_manifest(ref)
+            # If the ref resolved to an index (tag + platform override path),
+            # pick the matching platform entry and fetch its manifest.
+            if m.get("mediaType", "") in _INDEX_TYPES:
+                platform_digest = pick_platform_digest(
+                    m,
+                    result["os"],
+                    result["architecture"],
+                )
+                ref = platform_digest
+                m = inspector.get_manifest(ref)
+
+            cfg_digest = (m.get("config") or {}).get("digest", "")
+            cfg_blob = inspector.get_blob(cfg_digest) if cfg_digest else {}
+            cfg = cfg_blob.get("config", {}) or {}
+            result["created"] = cfg_blob.get("created")
             result["labels"] = cfg.get("Labels") or {}
             result["user"] = cfg.get("User", "") or ""
             result["env"] = cfg.get("Env", []) or []
             result["exposed_ports"] = list((cfg.get("ExposedPorts") or {}).keys())
             if result["architecture"] == "unknown":
-                result["architecture"] = config.get("architecture", "unknown")
+                result["architecture"] = cfg_blob.get("architecture", "unknown")
             if result["os"] == "unknown":
-                result["os"] = config.get("os", "unknown")
+                result["os"] = cfg_blob.get("os", "unknown")
         except Exception:
             logger.debug(
-                "regctl image inspect failed for %s", image_reference, exc_info=True
+                "inspector get_blob/get_manifest failed for %s", ref, exc_info=True
             )
             result.setdefault("labels", {})
             result.setdefault("user", "unknown")
             result.setdefault("env", [])
             result.setdefault("exposed_ports", [])
 
-        # 2. Manifest: layers_count, size, digest.
+        # 2. Manifest: layers_count, size.
         try:
-            m_args = ["manifest", "get", image_reference, "--format", "raw-body"]
-            if plat:
-                m_args += ["--platform", plat]
-            manifest = json.loads(run_regctl(client, m_args))
+            manifest = inspector.get_manifest(ref)
             layers = manifest.get("layers", [])
             result["layers_count"] = len(layers)
             config_size = (manifest.get("config", {}) or {}).get("size", 0)
             result["size"] = config_size + sum(layer.get("size", 0) for layer in layers)
         except Exception:
             logger.debug(
-                "regctl manifest get failed for %s", image_reference, exc_info=True
+                "inspector get_manifest (layers) failed for %s", ref, exc_info=True
             )
             result.setdefault("layers_count", 0)
             result.setdefault("size", 0)
 
         # 3. Digest: use the ref directly when it is already a digest; otherwise
-        #    fetch it via `manifest head` so single-arch images are not left with
-        #    an empty digest (raw manifest body has no top-level "digest" field).
+        #    fetch it via get_digest so single-arch images are not left with
+        #    an empty digest.
         if not result.get("digest"):
             if ref.startswith("sha256:"):
                 result["digest"] = ref
             else:
                 try:
-                    head_args = ["manifest", "head", image_reference]
-                    if plat:
-                        head_args += ["--platform", plat]
-                    result["digest"] = run_regctl(client, head_args).strip()
+                    result["digest"] = inspector.get_digest(ref) or ""
                 except Exception:
                     logger.debug(
-                        "regctl manifest head failed for %s",
-                        image_reference,
-                        exc_info=True,
+                        "inspector get_digest failed for %s", ref, exc_info=True
                     )
                     result["digest"] = ""
 
