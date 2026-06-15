@@ -5,28 +5,16 @@ from __future__ import annotations
 import json
 import os
 import subprocess  # nosec B404
-from collections.abc import Iterator, Sequence
-from contextlib import contextmanager
+from collections.abc import Sequence
 from typing import Any
 
-import click
-
-from regis.core.domain.errors import AnalyzerError, ToolError
+from regis.core.domain.errors import ToolError
 from regis.core.model.image_reference import ImageReference
 from regis.core.ports.tool_runner import ToolResult, ToolRunner
 from regis.utils.grype import run_grype
 from regis.utils.process import ensure_tool
 from regis.utils.syft import run_syft
 from regis.utils.trufflehog import run_trufflehog
-
-
-@contextmanager
-def _as_tool_error() -> Iterator[None]:
-    """Translate a legacy AnalyzerError raised by a wrapper into the core ToolError."""
-    try:
-        yield
-    except AnalyzerError as exc:
-        raise ToolError(str(exc)) from exc
 
 
 class SubprocessToolRunner(ToolRunner):
@@ -48,26 +36,20 @@ class SubprocessToolRunner(ToolRunner):
         return f"{image.registry}/{image.repository}:{image.tag}"
 
     def scan_vulnerabilities(self, image: ImageReference) -> dict[str, Any]:
-        with _as_tool_error():
-            return run_grype(
-                self._full_ref(image), self._username, self._password, image.platform
-            )
+        return run_grype(
+            self._full_ref(image), self._username, self._password, image.platform
+        )
 
     def generate_sbom(self, image: ImageReference) -> dict[str, Any]:
-        with _as_tool_error():
-            return run_syft(
-                self._full_ref(image), self._username, self._password, image.platform
-            )
+        return run_syft(
+            self._full_ref(image), self._username, self._password, image.platform
+        )
 
     def scan_secrets(self, image: ImageReference) -> list[dict[str, Any]]:
-        with _as_tool_error():
-            return run_trufflehog(self._full_ref(image), self._username, self._password)
+        return run_trufflehog(self._full_ref(image), self._username, self._password)
 
     def lint_dockerfile(self, dockerfile: str) -> list[dict[str, Any]]:
-        try:
-            binary = ensure_tool("hadolint")
-        except click.ClickException as exc:
-            raise ToolError(str(exc)) from exc
+        binary = ensure_tool("hadolint")
         proc = subprocess.run(  # nosec B603
             [binary, "-f", "json", "-"],
             input=dockerfile,
@@ -85,10 +67,7 @@ class SubprocessToolRunner(ToolRunner):
         return issues
 
     def audit_image(self, image: ImageReference) -> dict[str, Any]:
-        try:
-            binary = ensure_tool("dockle")
-        except click.ClickException as exc:
-            raise ToolError(str(exc)) from exc
+        binary = ensure_tool("dockle")
         env = os.environ.copy()
         if self._username and self._password:
             env["DOCKER_USER"] = self._username
@@ -111,10 +90,7 @@ class SubprocessToolRunner(ToolRunner):
     def run(
         self, tool: str, args: Sequence[str], *, timeout: int | None = None
     ) -> ToolResult:
-        try:
-            binary = ensure_tool(tool)
-        except click.ClickException as exc:
-            raise ToolError(str(exc)) from exc
+        binary = ensure_tool(tool)
         try:
             proc = subprocess.run(  # nosec B603
                 [binary, *args],

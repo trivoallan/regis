@@ -2,17 +2,17 @@
 
 import base64
 import json
+import subprocess
 from unittest.mock import MagicMock, patch
 
-import click
 import pytest
 
-from regis.analyzers.base import AnalyzerError
+from regis.core.domain.errors import ToolError
 from regis.utils.trufflehog import run_trufflehog
 
 
 def _missing(_name):
-    raise click.ClickException("trufflehog not found")
+    raise ToolError("trufflehog not found")
 
 
 # NDJSON: one finding per line, plus a blank line that must be ignored.
@@ -28,7 +28,7 @@ _NDJSON = (
 class TestRunTrufflehog:
     def test_not_found(self):
         with patch("regis.utils.trufflehog.ensure_tool", _missing):
-            with pytest.raises(AnalyzerError, match="not found"):
+            with pytest.raises(ToolError, match="not found"):
                 run_trufflehog("alpine:3.20")
 
     @patch("regis.utils.trufflehog.ensure_tool")
@@ -60,7 +60,15 @@ class TestRunTrufflehog:
     def test_invalid_json_line_raises(self, mock_run, mock_ensure):
         mock_ensure.return_value = "/usr/local/bin/trufflehog"
         mock_run.return_value = MagicMock(stdout="not-json\n", returncode=0)
-        with pytest.raises(AnalyzerError, match="trufflehog produced invalid"):
+        with pytest.raises(ToolError, match="trufflehog produced invalid"):
+            run_trufflehog("alpine:3.20")
+
+    @patch("regis.utils.trufflehog.ensure_tool")
+    @patch("regis.utils.trufflehog.subprocess.run")
+    def test_timeout_raises_tool_error(self, mock_run, mock_ensure):
+        mock_ensure.return_value = "/usr/local/bin/trufflehog"
+        mock_run.side_effect = subprocess.TimeoutExpired(cmd="trufflehog", timeout=300)
+        with pytest.raises(ToolError, match="trufflehog timed out after 300s"):
             run_trufflehog("alpine:3.20")
 
     @patch("regis.utils.trufflehog.ensure_tool")

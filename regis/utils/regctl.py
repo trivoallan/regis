@@ -16,9 +16,7 @@ import subprocess  # nosec B404
 import tempfile
 from typing import TYPE_CHECKING
 
-import click
-
-from regis.analyzers.base import AnalyzerError
+from regis.core.domain.errors import RegistryError, ToolError
 from regis.utils.process import ensure_tool
 
 if TYPE_CHECKING:
@@ -85,13 +83,13 @@ def run_regctl(
         The command's stdout.
 
     Raises:
-        AnalyzerError: if regctl is not installed or the call times out.
-        subprocess.CalledProcessError: if regctl exits non-zero.
+        RegistryError: if regctl is not installed, the call times out, or exits
+            non-zero.
     """
     try:
         regctl_bin = ensure_tool("regctl")
-    except click.ClickException as exc:
-        raise AnalyzerError(str(exc)) from exc
+    except ToolError as exc:
+        raise RegistryError(str(exc)) from exc
     cmd = [regctl_bin]
     env = dict(os.environ)
     docker_config_dir: str | None = None
@@ -121,11 +119,11 @@ def run_regctl(
         )
         return result.stdout
     except FileNotFoundError:
-        raise AnalyzerError(
+        raise RegistryError(
             "regctl not found. Ensure it is installed and in PATH."
         ) from None
     except subprocess.TimeoutExpired:
-        raise AnalyzerError(f"regctl timed out after {timeout}s.") from None
+        raise RegistryError(f"regctl timed out after {timeout}s.") from None
     finally:
         if docker_config_dir is not None:
             shutil.rmtree(docker_config_dir, ignore_errors=True)

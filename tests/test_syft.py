@@ -3,15 +3,14 @@
 import subprocess
 from unittest.mock import MagicMock, patch
 
-import click
 import pytest
 
-from regis.analyzers.base import AnalyzerError
+from regis.core.domain.errors import ToolError
 from regis.utils.syft import run_syft
 
 
 def _missing(_name):
-    raise click.ClickException("syft not found")
+    raise ToolError("syft not found")
 
 
 _SAMPLE = '{"bomFormat": "CycloneDX", "specVersion": "1.6", "components": []}'
@@ -20,7 +19,7 @@ _SAMPLE = '{"bomFormat": "CycloneDX", "specVersion": "1.6", "components": []}'
 class TestRunSyft:
     def test_not_found(self):
         with patch("regis.utils.syft.ensure_tool", _missing):
-            with pytest.raises(AnalyzerError, match="not found"):
+            with pytest.raises(ToolError, match="not found"):
                 run_syft("alpine:3.20")
 
     @patch("regis.utils.syft.ensure_tool")
@@ -72,7 +71,7 @@ class TestRunSyft:
     def test_called_process_error(self, mock_run, mock_ensure):
         mock_ensure.return_value = "/usr/local/bin/syft"
         mock_run.side_effect = subprocess.CalledProcessError(1, ["syft"], stderr="boom")
-        with pytest.raises(AnalyzerError, match="syft failed: boom"):
+        with pytest.raises(ToolError, match="syft failed: boom"):
             run_syft("alpine:3.20")
 
     @patch("regis.utils.syft.ensure_tool")
@@ -80,5 +79,5 @@ class TestRunSyft:
     def test_invalid_json(self, mock_run, mock_ensure):
         mock_ensure.return_value = "/usr/local/bin/syft"
         mock_run.return_value = MagicMock(stdout="not-json")
-        with pytest.raises(AnalyzerError, match="syft produced invalid"):
+        with pytest.raises(ToolError, match="syft produced invalid"):
             run_syft("alpine:3.20")

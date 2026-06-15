@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import shutil
 
-import click
 import pytest
+
+from regis.core.domain.errors import ToolError
 
 
 def test_ensure_tool_returns_path_when_on_path(monkeypatch):
@@ -34,10 +35,10 @@ def test_ensure_tool_delegates_to_fetcher_when_in_manifest(monkeypatch, tmp_path
     assert calls["name"] == "grype"
 
 
-def test_ensure_tool_unknown_tool_raises_click_exception(monkeypatch):
+def test_ensure_tool_unknown_tool_raises_tool_error(monkeypatch):
     monkeypatch.setattr(shutil, "which", lambda _n: None)
     from regis.utils import process as proc
 
     monkeypatch.setattr(proc, "_in_manifest", lambda n: False)
-    with pytest.raises(click.ClickException, match="not found"):
+    with pytest.raises(ToolError, match="not found"):
         proc.ensure_tool("zorglub")

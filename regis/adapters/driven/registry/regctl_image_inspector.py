@@ -8,7 +8,7 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from typing import Any
 
-from regis.core.domain.errors import AnalyzerError, RegistryError
+from regis.core.domain.errors import RegistryError
 from regis.core.ports.image_inspector import ImageInspector
 from regis.registry.client import RegistryClient
 from regis.utils.regctl import image_ref, run_regctl
@@ -16,10 +16,10 @@ from regis.utils.regctl import image_ref, run_regctl
 
 @contextmanager
 def _as_registry_error() -> Iterator[None]:
-    """Translate legacy regctl failures into the core RegistryError."""
+    """Translate regctl failures into the core RegistryError."""
     try:
         yield
-    except (AnalyzerError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
         raise RegistryError(str(exc)) from exc
 
 

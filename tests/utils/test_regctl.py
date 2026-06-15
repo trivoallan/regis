@@ -10,7 +10,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from regis.analyzers.base import AnalyzerError
+from regis.core.domain.errors import RegistryError
 from regis.registry.client import RegistryClient
 from regis.utils.regctl import image_ref, run_regctl
 
@@ -94,7 +94,7 @@ def test_run_regctl_comma_password_uses_docker_config(mock_run):
 
 @patch("regis.utils.regctl.subprocess.run", side_effect=FileNotFoundError())
 def test_run_regctl_missing_binary_raises(mock_run):
-    with pytest.raises(AnalyzerError, match="regctl not found"):
+    with pytest.raises(RegistryError, match="regctl not found"):
         run_regctl(_client(), ["version"])
 
 
@@ -102,8 +102,8 @@ def test_run_regctl_missing_binary_raises(mock_run):
     "regis.utils.regctl.subprocess.run",
     side_effect=subprocess.TimeoutExpired(cmd="regctl", timeout=60),
 )
-def test_run_regctl_timeout_raises_analyzer_error(mock_run):
-    with pytest.raises(AnalyzerError, match="timed out"):
+def test_run_regctl_timeout_raises_registry_error(mock_run):
+    with pytest.raises(RegistryError, match="timed out"):
         run_regctl(_client(), ["version"])
 
 
@@ -121,3 +121,16 @@ def test_run_regctl_comma_password_temp_dir_cleaned_up(mock_run):
 
     assert recorded_dir, "side_effect was not called"
     assert not os.path.exists(recorded_dir[0]), "temp dir was not cleaned up"
+
+
+def test_run_regctl_ensure_tool_failure_raises_registry_error(monkeypatch):
+    """ToolError from ensure_tool is re-raised as RegistryError (choice-b contract)."""
+    from regis.core.domain.errors import ToolError
+
+    def _boom(_name):
+        raise ToolError("regctl not found")
+
+    monkeypatch.setattr("regis.utils.regctl.ensure_tool", _boom)
+    client = _client()
+    with pytest.raises(RegistryError, match="regctl not found"):
+        run_regctl(client, ["tag", "ls", "docker.io/library/nginx"])

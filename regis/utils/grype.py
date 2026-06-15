@@ -12,9 +12,7 @@ import os
 import subprocess  # nosec B404
 from typing import Any
 
-import click
-
-from regis.analyzers.base import AnalyzerError
+from regis.core.domain.errors import ToolError
 from regis.utils.process import ensure_tool
 
 logger = logging.getLogger(__name__)
@@ -43,12 +41,9 @@ def run_grype(
         The parsed grype JSON document.
 
     Raises:
-        AnalyzerError: if grype is missing, fails, or emits invalid JSON.
+        ToolError: if grype is missing, fails, or emits invalid JSON.
     """
-    try:
-        grype_path = ensure_tool("grype")
-    except click.ClickException as exc:
-        raise AnalyzerError(str(exc)) from exc
+    grype_path = ensure_tool("grype")
 
     env = os.environ.copy()
     user = username or env.get("REGIS_USERNAME")
@@ -75,8 +70,8 @@ def run_grype(
         )
         return json.loads(result.stdout)  # type: ignore[no-any-return]
     except subprocess.CalledProcessError as exc:
-        raise AnalyzerError(f"grype failed: {exc.stderr}") from exc
+        raise ToolError(f"grype failed: {exc.stderr}") from exc
     except subprocess.TimeoutExpired as exc:
-        raise AnalyzerError(f"grype timed out after {timeout}s") from exc
+        raise ToolError(f"grype timed out after {timeout}s") from exc
     except json.JSONDecodeError as exc:
-        raise AnalyzerError(f"grype produced invalid JSON: {exc}") from exc
+        raise ToolError(f"grype produced invalid JSON: {exc}") from exc
