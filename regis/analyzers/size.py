@@ -163,17 +163,3 @@ class SizeAnalyzer(BaseAnalyzer):
             "layers": [],
             "platforms": platforms,
         }
-
-    def _empty(self, repository: str, tag: str) -> dict[str, Any]:
-        return {
-            "analyzer": self.name,
-            "repository": repository,
-            "tag": tag,
-            "multi_arch": False,
-            "total_compressed_bytes": 0,
-            "total_compressed_human": "0.0 B",
-            "layer_count": 0,
-            "config_size_bytes": 0,
-            "layers": [],
-            "platforms": None,
-        }

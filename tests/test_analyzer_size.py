@@ -91,9 +91,6 @@ class TestSizeAnalyzer:
         with pytest.raises(AnalyzerError):
             analyzer.analyze(ctx)
 
-        # _empty helper
-        assert analyzer._empty("r", "t")["layer_count"] == 0
-
         # Platform override with no matching platform → empty platforms list
         index = {
             "mediaType": "index",
