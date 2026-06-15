@@ -83,5 +83,3 @@ def test_popularity_last_updated_migrated_to_source(monkeypatch):
     assert "last_updated" not in result
     assert result["source"]["built_at"] == "2026-06-05T12:00:00Z"
     assert result["date_registered"] == "2020-01-01T00:00:00Z"
-
-

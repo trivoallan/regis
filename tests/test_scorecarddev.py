@@ -168,5 +168,3 @@ def test_scorecard_source_extracted_from_raw(monkeypatch):
     assert result["source"]["built_at"] == "2026-06-01T00:00:00Z"
     assert result["source"]["version"] == "v5.0.0"
     assert isinstance(result["source"]["fetched_at"], str)
-
-

@@ -212,8 +212,6 @@ class TestMetadataAnalyzerWithPlaybookSchema:
         assert invalid, "expected at least one invalid entry for the structural error"
 
 
-
-
 def test_metadata_analyze_ignores_context():
     """analyze accepts a context but ignores it; result depends only on __init__ data."""
     from regis.analyzers.metadata import MetadataAnalyzer

@@ -240,8 +240,6 @@ def test_oci_name_and_schema():
     assert analyzer.schema_file == "analyzer/oci.schema.json"
 
 
-
-
 def test_oci_default_criteria_use_oci_paths():
     serialized = json.dumps(OciAnalyzer.default_criteria())
     assert "results.oci." in serialized
