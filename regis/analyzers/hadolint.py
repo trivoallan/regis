@@ -2,17 +2,12 @@
 
 from __future__ import annotations
 
-import json
 import logging
-import subprocess
 from typing import Any
 
-import click
-
-from regis.analyzers.base import AnalyzerError, BaseAnalyzer
-from regis.registry.client import RegistryClient
-from regis.utils.process import ensure_tool
-from regis.utils.regctl import image_ref, run_regctl
+from regis.analyzers.base import BaseAnalyzer
+from regis.core.domain.context import AnalysisContext
+from regis.core.domain.manifest import get_image_config
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +17,7 @@ class HadolintAnalyzer(BaseAnalyzer):
 
     name = "hadolint"
     schema_file = "analyzer/hadolint.schema.json"
+    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -50,44 +46,20 @@ class HadolintAnalyzer(BaseAnalyzer):
             },
         ]
 
-    def analyze(
-        self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
-    ) -> dict[str, Any]:
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
         """Return a report with hadolint violations."""
-        registry = client.registry
-        if registry == "registry-1.docker.io":
-            registry = "docker.io"
-
-        # 1. Fetch image configuration using regctl
-        if platform:
-            if "/" in platform:
-                os_name, arch = platform.split("/", 1)
-            else:
-                os_name, arch = "linux", platform
+        # 1. Resolve platform
+        platform = ctx.image.platform or "linux/amd64"
+        if "/" in platform:
+            os_name, arch = platform.split("/", 1)
         else:
-            # Fallback for Hadolint to ensure we get something coherent if not specified
-            os_name, arch = "linux", "amd64"
+            os_name, arch = "linux", platform
 
-        ref = image_ref(registry, repository, tag)
-        try:
-            out = run_regctl(
-                client, ["image", "inspect", ref, "--platform", f"{os_name}/{arch}"]
-            )
-            config = json.loads(out)
-        except AnalyzerError:
-            raise
-        except Exception as e:
-            msg = f"Failed to fetch config for {ref}: {e}"
-            logger.error(msg)
-            raise AnalyzerError(msg) from e
-
+        # 2. Fetch image configuration via the inspector port
+        config = get_image_config(ctx.inspector, ctx.image.tag, os_name, arch)
         history = config.get("history", [])
 
-        # 2. Build pseudo-Dockerfile
+        # 3. Build pseudo-Dockerfile
         dockerfile_lines = ["FROM scratch"]
         for entry in history:
             created_by = entry.get("created_by", "").strip()
@@ -113,40 +85,24 @@ class HadolintAnalyzer(BaseAnalyzer):
                     dockerfile_lines.append(f"RUN {cmd}")
 
         pseudo_dockerfile = "\n".join(dockerfile_lines)
-        logger.debug("Pseudo-Dockerfile for %s:\n%s", ref, pseudo_dockerfile)
+        logger.debug(
+            "Pseudo-Dockerfile for %s:%s:\n%s",
+            ctx.image.repository,
+            ctx.image.tag,
+            pseudo_dockerfile,
+        )
 
-        # 3. Pipe to Hadolint
-        try:
-            hadolint_bin = ensure_tool("hadolint")
-        except click.ClickException as exc:
-            raise AnalyzerError(str(exc)) from exc
-        cmd_hadolint = [hadolint_bin, "-f", "json", "-"]
-        try:
-            res_hadolint = subprocess.run(
-                cmd_hadolint,
-                input=pseudo_dockerfile,
-                capture_output=True,
-                text=True,
-                check=False,  # hadolint returns non-zero on violations, we handle that
-            )
-        except FileNotFoundError as e:
-            msg = "hadolint not found. Ensure it is installed and in PATH."
-            logger.error(msg)
-            raise AnalyzerError(msg) from e
+        # 4. Lint via the tool runner port (raises ToolError on missing binary / bad output)
+        issues = ctx.tools.lint_dockerfile(pseudo_dockerfile)
 
-        # 4. Parse Hadolint JSON output
-        try:
-            issues = (
-                json.loads(res_hadolint.stdout) if res_hadolint.stdout.strip() else []
-            )
-        except json.JSONDecodeError as e:
-            msg = f"Failed to parse hadolint output: {res_hadolint.stdout}"
-            logger.error(msg)
-            raise AnalyzerError(msg) from e
-
-        # Basic filtering and mapping
+        # 5. Map issues into by-level counts
         mapped_issues = []
-        issues_by_level = {"error": 0, "warning": 0, "info": 0, "style": 0}
+        issues_by_level: dict[str, int] = {
+            "error": 0,
+            "warning": 0,
+            "info": 0,
+            "style": 0,
+        }
 
         for issue in issues:
             level = issue.get("level", "info")
@@ -167,8 +123,8 @@ class HadolintAnalyzer(BaseAnalyzer):
 
         return {
             "analyzer": self.name,
-            "repository": repository,
-            "tag": tag,
+            "repository": ctx.image.repository,
+            "tag": ctx.image.tag,
             "passed": len(mapped_issues) == 0,
             "issues_count": len(mapped_issues),
             "issues_by_level": issues_by_level,
