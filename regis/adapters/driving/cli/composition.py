@@ -11,6 +11,7 @@ from regis.adapters.driven.registry.regctl_image_inspector import RegctlImageIns
 from regis.adapters.driven.report.file_report_sink import FileReportSink
 from regis.adapters.driven.tools.subprocess_tool_runner import SubprocessToolRunner
 from regis.core.application.analyze_image import AnalyzeImage
+from regis.core.application.evaluate import Evaluate
 from regis.core.model.image_reference import ImageReference
 from regis.core.ports.image_inspector import ImageInspector
 from regis.registry.client import RegistryClient
@@ -57,3 +58,26 @@ def build_analyze_image(
         inspector_factory=_inspector,
         sink=sink,
     )
+
+
+def build_evaluate(
+    *,
+    output_dir_template: str = "reports/dry-run/{timestamp}",
+    output_template: str | None = None,
+    theme: str = "default",
+    pretty: bool = True,
+    sections: str = "all",
+) -> Evaluate:
+    """Wire an Evaluate use-case with a FileReportSink for the dry-run path.
+
+    No registry credentials are needed: ``evaluate`` re-reads a local report
+    file rather than hitting a registry.
+    """
+    sink = FileReportSink(
+        output_dir_template=output_dir_template,
+        output_template=output_template,
+        theme=theme,
+        pretty=pretty,
+        sections=sections,
+    )
+    return Evaluate(sink=sink)

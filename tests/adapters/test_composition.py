@@ -35,3 +35,19 @@ def test_build_captures_custom_output_dir_template():
     uc = build_analyze_image("user", "pass", output_dir_template="reports/custom")
     assert isinstance(uc._sink, FileReportSink)
     assert uc._sink._output_dir_template == "reports/custom"
+
+
+def test_build_evaluate_returns_wired_evaluate():
+    from regis.adapters.driving.cli.composition import build_evaluate
+    from regis.core.application.evaluate import Evaluate
+
+    ev = build_evaluate()
+    assert isinstance(ev, Evaluate)
+    assert isinstance(ev._sink, FileReportSink)
+
+
+def test_build_evaluate_captures_custom_output_dir_template():
+    from regis.adapters.driving.cli.composition import build_evaluate
+
+    ev = build_evaluate(output_dir_template="reports/dry-run/custom")
+    assert ev._sink._output_dir_template == "reports/dry-run/custom"
