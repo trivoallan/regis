@@ -2,29 +2,25 @@
 
 from __future__ import annotations
 
-import json
 import logging
 from datetime import datetime, timezone
 from typing import Any
 
 from regis.analyzers.base import BaseAnalyzer
-from regis.registry.client import RegistryClient
-from regis.utils.regctl import image_ref, run_regctl
+from regis.core.domain.context import AnalysisContext
+from regis.core.domain.manifest import get_image_config
+from regis.core.ports.image_inspector import ImageInspector
 
 logger = logging.getLogger(__name__)
 
 
-def _get_created_date(client: RegistryClient, repository: str, tag: str) -> str | None:
-    """Extract the creation date from an image config using regctl."""
-    ref = image_ref(client.registry, repository, tag)
+def _get_created_date(inspector: ImageInspector, reference: str) -> str | None:
+    """Extract the creation date from an image config using the domain helper."""
     try:
-        out = run_regctl(
-            client,
-            ["image", "inspect", ref, "--platform", "linux/amd64"],
-        )
-        return json.loads(out).get("created")  # type: ignore[no-any-return]
+        config = get_image_config(inspector, reference, "linux", "amd64")
+        return config.get("created")  # type: ignore[no-any-return]
     except Exception:
-        logger.debug("regctl image inspect failed for %s", ref, exc_info=True)
+        logger.debug("get_image_config failed for %s", reference, exc_info=True)
         return None
 
 
@@ -33,6 +29,7 @@ class FreshnessAnalyzer(BaseAnalyzer):
 
     name = "freshness"
     schema_file = "analyzer/freshness.schema.json"
+    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -56,20 +53,17 @@ class FreshnessAnalyzer(BaseAnalyzer):
             }
         ]
 
-    def analyze(
-        self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
-    ) -> dict[str, Any]:
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+        repository = ctx.image.repository
+        tag = ctx.image.tag
+
         # Get creation date for the analyzed tag.
-        tag_created = _get_created_date(client, repository, tag)
+        tag_created = _get_created_date(ctx.inspector, tag)
 
         # Get creation date for "latest".
         latest_created = None
         if tag != "latest":
-            latest_created = _get_created_date(client, repository, "latest")
+            latest_created = _get_created_date(ctx.inspector, "latest")
 
         # Compute age and delta.
         age_days: int | None = None
