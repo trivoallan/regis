@@ -47,9 +47,26 @@ def runner():
 
 @pytest.fixture()
 def _mock_analyze_infra(tmp_path):
-    """Patch all infrastructure needed to run analyze without real analyzers."""
+    """Patch all infrastructure needed to run analyze without real analyzers.
+
+    After the hexagonal refactor the normal-flow post-loop is owned by
+    ``AnalyzeImage.run_and_evaluate``.  We mock ``build_analyze_image`` so
+    the returned use-case captures what ``formats`` and ``sections`` were
+    passed.  The fixture yields a dict with the key ``"build"`` (the
+    ``build_analyze_image`` mock) and ``"use_case"`` (its return value).
+    """
     dummy_client = MagicMock()
     dummy_client.get_digest.return_value = "sha256:abc"
+
+    from regis.core.application.analyze_image import AnalysisResult
+
+    mock_use_case = MagicMock()
+    mock_use_case.run_and_evaluate.return_value = AnalysisResult(
+        report=_MINIMAL_REPORT,
+        has_breaches=False,
+        breach_count=0,
+        breached_slugs=[],
+    )
 
     with (
         patch("regis.commands.analyze.RegistryClient", return_value=dummy_client),
@@ -57,27 +74,27 @@ def _mock_analyze_infra(tmp_path):
             "regis.commands.analyze._discover_analyzers",
             return_value={"dummy": _DummyAnalyzer},
         ),
-        patch("regis.commands.analyze.run_playbooks", return_value=_MINIMAL_REPORT),
-        patch("regis.commands.analyze.validate_report"),
+        patch(
+            "regis.commands.analyze.build_analyze_image", return_value=mock_use_case
+        ) as mock_build,
         patch("regis.commands.analyze.render_presentation_templates"),
-        patch("regis.commands.analyze.render_and_save_reports") as mock_render,
     ):
-        yield mock_render
+        yield {"build": mock_build, "use_case": mock_use_case}
 
 
 def test_html_flag_adds_html_format(runner, tmp_path, _mock_analyze_infra):
-    """--html passes 'html' in formats to render_and_save_reports."""
+    """--html passes 'html' in the formats argument to run_and_evaluate."""
     result = runner.invoke(
         analyze,
         ["nginx:latest", "--html", "--output-dir", str(tmp_path)],
     )
     assert result.exit_code == 0, result.output
-    formats = _mock_analyze_infra.call_args[0][1]
-    assert "html" in formats
+    _, call_kwargs = _mock_analyze_infra["use_case"].run_and_evaluate.call_args
+    assert "html" in call_kwargs["formats"]
 
 
 def test_sections_forwarded_to_render(runner, tmp_path, _mock_analyze_infra):
-    """--sections value is forwarded to render_and_save_reports as sections kwarg."""
+    """--sections value is forwarded to build_analyze_image as sections kwarg."""
     result = runner.invoke(
         analyze,
         [
@@ -90,8 +107,9 @@ def test_sections_forwarded_to_render(runner, tmp_path, _mock_analyze_infra):
         ],
     )
     assert result.exit_code == 0, result.output
-    call_kwargs = _mock_analyze_infra.call_args[1]
-    assert call_kwargs.get("sections") == "summary"
+    # sections is wired into the FileReportSink constructor via build_analyze_image
+    _, build_kwargs = _mock_analyze_infra["build"].call_args
+    assert build_kwargs.get("sections") == "summary"
 
 
 def test_evaluate_cmd_html_flag(runner, tmp_path):
@@ -163,11 +181,11 @@ def test_render_and_save_html_writes_file(tmp_path):
 
 
 def test_html_not_in_formats_without_flag(runner, tmp_path, _mock_analyze_infra):
-    """Without --html flag, 'html' is NOT in formats passed to render."""
+    """Without --html flag, 'html' is NOT in formats passed to run_and_evaluate."""
     result = runner.invoke(
         analyze,
         ["nginx:latest", "--output-dir", str(tmp_path)],
     )
     assert result.exit_code == 0, result.output
-    formats = _mock_analyze_infra.call_args[0][1]
-    assert "html" not in formats
+    _, call_kwargs = _mock_analyze_infra["use_case"].run_and_evaluate.call_args
+    assert "html" not in call_kwargs["formats"]
