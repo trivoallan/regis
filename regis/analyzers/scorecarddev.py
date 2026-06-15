@@ -134,7 +134,6 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
 
     name = "scorecarddev"
     schema_file = "analyzer/scorecarddev.schema.json"
-    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -158,7 +157,7 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
             },
         ]
 
-    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:
         """Resolve the source repo and fetch its OpenSSF Scorecard."""
         repository = ctx.image.repository
         source_url = _resolve_source_repo(ctx.inspector, repository, ctx.image.tag)

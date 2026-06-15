@@ -23,9 +23,8 @@ class ProvenanceAnalyzer(BaseAnalyzer):
 
     name = "provenance"
     schema_file = "analyzer/provenance.schema.json"
-    uses_context = True
 
-    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:
         repository = ctx.image.repository
         tag = ctx.image.tag
         labels: dict[str, str] = {}

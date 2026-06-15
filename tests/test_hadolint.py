@@ -26,9 +26,6 @@ class TestHadolintAnalyzer:
         tools = FakeToolRunner(lint_dockerfile=issues)
         return make_ctx(inspector=inspector, tools=tools, platform=platform)
 
-    def test_hadolint_uses_context(self, analyzer):
-        assert HadolintAnalyzer.uses_context is True
-
     def test_hadolint_passes(self, analyzer):
         ctx = self._make_ctx(_HISTORY_WITH_ENTRIES, [])
         report = analyzer.analyze(ctx)

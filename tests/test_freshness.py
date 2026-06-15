@@ -29,6 +29,3 @@ class TestFreshnessAnalyzer:
         assert report["age_days"] is not None
         assert report["behind_latest_days"] == 1
         assert report["is_latest"] is False
-
-    def test_freshness_uses_context(self):
-        assert FreshnessAnalyzer.uses_context is True

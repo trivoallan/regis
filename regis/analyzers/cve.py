@@ -28,7 +28,6 @@ class CveAnalyzer(BaseAnalyzer):
 
     name = "cve"
     schema_file = "analyzer/cve.schema.json"
-    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -92,7 +91,7 @@ class CveAnalyzer(BaseAnalyzer):
                 source["checksum"] = unquote(checksum)
         return source
 
-    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:
         """Run grype analysis and return a report dict."""
         data = ctx.tools.scan_vulnerabilities(ctx.image)
         repository = ctx.image.repository

@@ -2,7 +2,7 @@
 
 This is the one place that knows the concrete adapter types. It hands the
 use-case **callables** (not adapter types) so ``core/application`` stays free of
-adapter imports. The legacy-client factory is temporary (removed in P3d).
+adapter imports.
 """
 
 from __future__ import annotations
@@ -20,7 +20,6 @@ def build_analyze_image(username: str | None, password: str | None) -> AnalyzeIm
 
     - ``tools``: a shared, stateless SubprocessToolRunner (creds live here).
     - ``inspector_factory``: a fresh regctl ImageInspector per image (creds captured).
-    - ``legacy_client_factory``: a fresh RegistryClient per image (P3 bridge only).
     """
 
     def _client(image: ImageReference) -> RegistryClient:
@@ -37,5 +36,4 @@ def build_analyze_image(username: str | None, password: str | None) -> AnalyzeIm
     return AnalyzeImage(
         tools=SubprocessToolRunner(username, password),
         inspector_factory=_inspector,
-        legacy_client_factory=_client,
     )

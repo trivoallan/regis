@@ -13,7 +13,6 @@ class DockleAnalyzer(BaseAnalyzer):
 
     name = "dockle"
     schema_file = "analyzer/dockle.schema.json"
-    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -42,7 +41,7 @@ class DockleAnalyzer(BaseAnalyzer):
             },
         ]
 
-    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:
         """Return a report with dockle violations."""
         output = ctx.tools.audit_image(ctx.image)
         repository = ctx.image.repository

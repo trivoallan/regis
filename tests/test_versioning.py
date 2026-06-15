@@ -126,9 +126,6 @@ class TestClassifyTag:
 class TestVersioningAnalyzer:
     """Test the versioning analyzer end-to-end."""
 
-    def test_uses_context(self):
-        assert VersioningAnalyzer.uses_context is True
-
     def test_semver_dominant(self):
         tags = ["1.0.0", "1.1.0", "1.2.0", "2.0.0", "2.0.0-rc.1", "latest"]
         ctx = make_ctx(

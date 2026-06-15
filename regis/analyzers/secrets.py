@@ -43,7 +43,6 @@ class SecretsAnalyzer(BaseAnalyzer):
 
     name = "secrets"
     schema_file = "analyzer/secrets.schema.json"
-    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -82,7 +81,7 @@ class SecretsAnalyzer(BaseAnalyzer):
             },
         ]
 
-    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:
         """Run trufflehog analysis and return a report dict."""
         raw = ctx.tools.scan_secrets(ctx.image)
         repository = ctx.image.repository

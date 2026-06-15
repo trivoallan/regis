@@ -8,6 +8,7 @@ from unittest.mock import patch
 from click.testing import CliRunner
 
 from regis.cli import main
+from regis.core.domain.context import AnalysisContext
 
 
 class TestCliBasics:
@@ -57,8 +58,12 @@ class TestCliBasics:
         from regis.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
-            def analyze(self, client, repo, tag, platform=None):
-                return {"analyzer": "dummy", "repository": repo, "tag": tag}
+            def analyze(self, ctx: AnalysisContext) -> dict:
+                return {
+                    "analyzer": "dummy",
+                    "repository": ctx.image.repository,
+                    "tag": ctx.image.tag,
+                }
 
             def validate(self, report):
                 pass
@@ -104,8 +109,12 @@ class TestCliBasics:
         from regis.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
-            def analyze(self, client, repo, tag, platform=None):
-                return {"analyzer": "dummy", "repository": repo, "tag": tag}
+            def analyze(self, ctx: AnalysisContext) -> dict:
+                return {
+                    "analyzer": "dummy",
+                    "repository": ctx.image.repository,
+                    "tag": ctx.image.tag,
+                }
 
             def validate(self, report):
                 pass
@@ -158,8 +167,12 @@ class TestAnalyzeParallelism:
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
 
-            def analyze(self, client, repo, tag, platform=None):
-                return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
+            def analyze(self, ctx: AnalysisContext) -> dict:
+                return {
+                    "analyzer": self.analyzer_name,
+                    "repository": ctx.image.repository,
+                    "tag": ctx.image.tag,
+                }
 
             def validate(self, report):
                 pass
@@ -223,7 +236,7 @@ class TestAnalyzeParallelism:
         class FailingAnalyzer(BaseAnalyzer):
             name = "failing"
 
-            def analyze(self, client, repo, tag, platform=None):
+            def analyze(self, ctx: AnalysisContext) -> dict:
                 raise AnalyzerError("boom")
 
             def validate(self, report):
@@ -388,7 +401,7 @@ class TestAnalyzeCacheAndFail:
         from regis.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
-            def analyze(self, client, repo, tag, platform=None):
+            def analyze(self, ctx: AnalysisContext) -> dict:
                 return {"analyzer": "dummy"}
 
             def validate(self, report):
@@ -430,8 +443,12 @@ class TestAnalyzeSkip:
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
 
-            def analyze(self, client, repo, tag, platform=None):
-                return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
+            def analyze(self, ctx: AnalysisContext) -> dict:
+                return {
+                    "analyzer": self.analyzer_name,
+                    "repository": ctx.image.repository,
+                    "tag": ctx.image.tag,
+                }
 
             def validate(self, report):
                 pass
@@ -514,9 +531,13 @@ class TestAnalyzeEnvVars:
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
 
-            def analyze(self, client, repo, tag, platform=None):
-                DummyAnalyzer.last_platform = platform
-                return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
+            def analyze(self, ctx: AnalysisContext) -> dict:
+                DummyAnalyzer.last_platform = ctx.image.platform
+                return {
+                    "analyzer": self.analyzer_name,
+                    "repository": ctx.image.repository,
+                    "tag": ctx.image.tag,
+                }
 
             def validate(self, report):
                 pass
@@ -595,8 +616,12 @@ class TestQuietFlag:
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
 
-            def analyze(self, client, repo, tag, platform=None):
-                return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
+            def analyze(self, ctx: AnalysisContext) -> dict:
+                return {
+                    "analyzer": self.analyzer_name,
+                    "repository": ctx.image.repository,
+                    "tag": ctx.image.tag,
+                }
 
             def validate(self, report):
                 pass
@@ -653,7 +678,7 @@ class TestQuietFlag:
         class FailingAnalyzer(BaseAnalyzer):
             name = "failing"
 
-            def analyze(self, client, repo, tag, platform=None):
+            def analyze(self, ctx: AnalysisContext) -> dict:
                 raise AnalyzerError("boom")
 
             def validate(self, report):
@@ -679,8 +704,12 @@ class TestAnalyzerProgressFeedback:
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
 
-            def analyze(self, client, repo, tag, platform=None):
-                return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
+            def analyze(self, ctx: AnalysisContext) -> dict:
+                return {
+                    "analyzer": self.analyzer_name,
+                    "repository": ctx.image.repository,
+                    "tag": ctx.image.tag,
+                }
 
             def validate(self, report):
                 pass
@@ -726,7 +755,7 @@ class TestAnalyzerProgressFeedback:
         class FailingAnalyzer(BaseAnalyzer):
             name = "failing"
 
-            def analyze(self, client, repo, tag, platform=None):
+            def analyze(self, ctx: AnalysisContext) -> dict:
                 raise AnalyzerError("boom")
 
             def validate(self, report):
@@ -754,8 +783,12 @@ class TestAnalyzeSummary:
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
 
-            def analyze(self, client, repo, tag, platform=None):
-                return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
+            def analyze(self, ctx: AnalysisContext) -> dict:
+                return {
+                    "analyzer": self.analyzer_name,
+                    "repository": ctx.image.repository,
+                    "tag": ctx.image.tag,
+                }
 
             def validate(self, report):
                 pass

@@ -76,6 +76,3 @@ class TestProvenanceAnalyzer:
         mock_inspector.get_blob.return_value = {"config": {"Labels": {}}}
         res = analyzer.analyze(_ctx(mock_inspector, repository="r", tag="t"))
         assert res["has_cosign_signature"] is False
-
-    def test_provenance_uses_context(self):
-        assert ProvenanceAnalyzer.uses_context is True

@@ -77,9 +77,6 @@ class TestSecretsAnalyzer:
         )
         assert bool(jsonLogic(criteria["secret-scan"]["condition"], ctx)) is scan_pass
 
-    def test_secrets_uses_context(self, analyzer):
-        assert SecretsAnalyzer.uses_context is True
-
     @patch("regis.analyzers.secrets._scanner_version", return_value="3.95.3")
     def test_analyze_counts(self, _mock_ver, analyzer):
         ctx = _secrets_ctx(

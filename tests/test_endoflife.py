@@ -135,9 +135,6 @@ class TestEndOfLifeAnalyzer:
         },
     ]
 
-    def test_endoflife_uses_context(self):
-        assert EndOfLifeAnalyzer.uses_context is True
-
     @patch("regis.analyzers.endoflife._fetch_cycles")
     def test_known_product(self, mock_fetch):
         """Test with nginx which is known on endoflife.date."""

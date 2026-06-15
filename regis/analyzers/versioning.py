@@ -180,9 +180,8 @@ class VersioningAnalyzer(BaseAnalyzer):
 
     name = "versioning"
     schema_file = "analyzer/versioning.schema.json"
-    uses_context = True
 
-    def analyze(  # type: ignore[override]
+    def analyze(
         self,
         ctx: AnalysisContext,
     ) -> dict[str, Any]:

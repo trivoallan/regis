@@ -83,9 +83,6 @@ class TestCveAnalyzer:
         with pytest.raises(ToolError, match="boom"):
             analyzer.analyze(_ctx(_Boom()))
 
-    def test_cve_uses_context(self):
-        assert CveAnalyzer.uses_context is True
-
 
 class TestCveSourceFromDescriptor:
     """Unit tests for CveAnalyzer._source_from_descriptor."""
