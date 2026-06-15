@@ -18,9 +18,10 @@ from regis.core.ports.tool_runner import ToolResult, ToolRunner
 class FakeImageInspector(ImageInspector):
     """Returns canned registry data; no network.
 
-    Limitation: ``get_manifest``/``get_blob`` ignore their reference/digest
-    argument and return the single canned value. Extend with a per-reference
-    map if a test must distinguish multiple references (e.g. a multi-arch path).
+    ``get_manifest``/``get_blob`` consult the optional per-reference ``manifests``/
+    ``blobs`` maps first (keyed by reference/digest), falling back to the single
+    canned ``manifest``/``blob`` value when a key is absent — so a multi-arch path
+    can return distinct manifests/configs per reference.
     """
 
     def __init__(
