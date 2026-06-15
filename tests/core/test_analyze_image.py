@@ -15,27 +15,19 @@ from tests.fakes import FakeImageInspector, FakeToolRunner
 
 IMAGE = ImageReference(registry="reg.example", repository="ns/app", tag="1.0")
 
-_SENTINEL_CLIENT = object()
-
 
 def _make_use_case(*, tools=None):
-    """Build an AnalyzeImage with in-memory factories.
-
-    inspector_factory returns a FakeImageInspector; legacy_client_factory
-    returns a sentinel so legacy analyzers can assert what they receive.
-    """
+    """Build an AnalyzeImage with in-memory factories."""
     return AnalyzeImage(
         tools=tools or FakeToolRunner(),
         inspector_factory=lambda image: FakeImageInspector(),
-        legacy_client_factory=lambda image: _SENTINEL_CLIENT,
     )
 
 
 class _CtxAnalyzer:
-    """uses_context=True analyzer; reads tools + image from the context."""
+    """Ctx-based analyzer; reads tools + image from the context."""
 
     name = "ctxone"
-    uses_context = True
 
     def analyze(self, ctx: AnalysisContext) -> dict:
         assert isinstance(ctx, AnalysisContext)
@@ -49,20 +41,13 @@ class _CtxAnalyzer:
         pass
 
 
-class _LegacyAnalyzer:
-    """uses_context defaults False; old positional signature."""
+class _SimpleAnalyzer:
+    """Minimal ctx-based analyzer returning a fixed report."""
 
-    name = "legacyone"
-    uses_context = False
+    name = "simpleone"
 
-    def analyze(self, client, repository, tag, platform=None) -> dict:
-        assert client is _SENTINEL_CLIENT
-        return {
-            "analyzer": self.name,
-            "repository": repository,
-            "tag": tag,
-            "platform": platform,
-        }
+    def analyze(self, ctx: AnalysisContext) -> dict:
+        return {"analyzer": self.name, "repository": ctx.image.repository}
 
     def validate(self, report: dict) -> None:
         pass
@@ -70,8 +55,6 @@ class _LegacyAnalyzer:
 
 def _raiser(name, exc):
     class _Boom:
-        uses_context = True
-
         def analyze(self, ctx):
             raise exc
 
@@ -92,28 +75,15 @@ def test_dispatch_context_branch_uses_tools_and_image():
     }
 
 
-def test_dispatch_legacy_branch_passes_client_repo_tag_platform():
-    uc = _make_use_case()
-    image = ImageReference("reg.example", "ns/app", "1.0", platform="linux/arm64")
-    reports = uc.run(image, {"legacyone": _LegacyAnalyzer})
-    assert reports["legacyone"] == {
-        "analyzer": "legacyone",
-        "repository": "ns/app",
-        "tag": "1.0",
-        "platform": "linux/arm64",
-    }
-
-
 def test_run_collects_multiple_and_keys_by_selected_name():
     uc = _make_use_case(tools=FakeToolRunner(scan_vulnerabilities={"count": 1}))
-    reports = uc.run(IMAGE, {"a": _CtxAnalyzer, "b": _LegacyAnalyzer})
+    reports = uc.run(IMAGE, {"a": _CtxAnalyzer, "b": _SimpleAnalyzer})
     assert set(reports) == {"a", "b"}
 
 
 def test_validate_is_called_and_failure_is_captured():
     class _BadValidate:
         name = "bad"
-        uses_context = True
 
         def analyze(self, ctx):
             return {"x": 1}
@@ -148,16 +118,16 @@ def test_errors_are_classified_into_stubs(exc, etype):
 
 def test_failing_analyzer_does_not_abort_others():
     uc = _make_use_case()
-    selected = {"ok": _LegacyAnalyzer, "boom": _raiser("boom", ToolError("x"))}
+    selected = {"ok": _SimpleAnalyzer, "boom": _raiser("boom", ToolError("x"))}
     reports = uc.run(IMAGE, selected)
-    assert reports["ok"]["analyzer"] == "legacyone"
+    assert reports["ok"]["analyzer"] == "simpleone"
     assert reports["boom"]["error"]["type"] == "tool"
 
 
 def test_on_progress_receives_one_outcome_per_analyzer():
     uc = _make_use_case()
     seen: list[AnalyzerOutcome] = []
-    selected = {"ok": _LegacyAnalyzer, "boom": _raiser("boom", ToolError("x"))}
+    selected = {"ok": _SimpleAnalyzer, "boom": _raiser("boom", ToolError("x"))}
     uc.run(IMAGE, selected, on_progress=seen.append)
     by_name = {o.name: o for o in seen}
     assert set(by_name) == {"ok", "boom"}
@@ -177,11 +147,11 @@ def test_run_one_returns_report_and_reraises():
 def test_run_one_logs_debug_timing(caplog):
     uc = _make_use_case()
     with caplog.at_level(logging.DEBUG, logger="regis.core.application.analyze_image"):
-        uc.run_one(IMAGE, _LegacyAnalyzer)
+        uc.run_one(IMAGE, _SimpleAnalyzer)
     recs = [
         r
         for r in caplog.records
-        if "legacyone" in r.getMessage() and "finished in" in r.getMessage()
+        if "simpleone" in r.getMessage() and "finished in" in r.getMessage()
     ]
     assert len(recs) == 1
     assert recs[0].levelno == logging.DEBUG
@@ -203,11 +173,11 @@ def test_run_logs_timing_even_on_failure(caplog):
 def test_run_caps_workers_at_selection_size_and_runs_serially():
     # max_workers larger than selection must still succeed (no crash, all run).
     uc = _make_use_case()
-    reports = uc.run(IMAGE, {"a": _LegacyAnalyzer}, max_workers=10)
+    reports = uc.run(IMAGE, {"a": _SimpleAnalyzer}, max_workers=10)
     assert set(reports) == {"a"}
-    reports = uc.run(IMAGE, {"a": _LegacyAnalyzer}, max_workers=1)
+    reports = uc.run(IMAGE, {"a": _SimpleAnalyzer}, max_workers=1)
     assert set(reports) == {"a"}
-    reports = uc.run(IMAGE, {"a": _LegacyAnalyzer}, max_workers=0)
+    reports = uc.run(IMAGE, {"a": _SimpleAnalyzer}, max_workers=0)
     assert set(reports) == {"a"}
 
 

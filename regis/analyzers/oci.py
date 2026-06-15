@@ -45,7 +45,6 @@ class OciAnalyzer(BaseAnalyzer):
 
     name = "oci"
     schema_file = "analyzer/oci.schema.json"
-    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -246,7 +245,7 @@ class OciAnalyzer(BaseAnalyzer):
             },
         ]
 
-    def analyze(  # type: ignore[override]
+    def analyze(
         self,
         ctx: AnalysisContext,
     ) -> dict[str, Any]:

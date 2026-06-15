@@ -1,14 +1,12 @@
 """AnalyzeImage — application use-case running the analyzer loop.
 
 Owns *only* the analyzer loop: it builds a ThreadPoolExecutor, dispatches each
-analyzer (bridging the legacy ``analyze(client, repo, tag, platform)`` contract
-and the hexagonal ``analyze(ctx)`` contract via the ``uses_context`` marker),
-validates each report, captures errors into stubs, and reports progress.
+analyzer via the hexagonal ``analyze(ctx)`` contract, validates each report,
+captures errors into stubs, and reports progress.
 
-Layering: this module imports ``regis.core.*`` only. The legacy ``RegistryClient``
+Layering: this module imports ``regis.core.*`` only. The ``RegistryClient``
 and the regctl ``ImageInspector`` are supplied as **injected callables** by the
-CLI composition root, so the core references no adapter type. The legacy branch
-and ``legacy_client_factory`` are removed in P3d.
+CLI composition root, so the core references no adapter type.
 """
 
 from __future__ import annotations
@@ -30,8 +28,6 @@ logger = logging.getLogger(__name__)
 
 #: Factory producing a per-image ImageInspector (regctl-backed in production).
 InspectorFactory = Callable[[ImageReference], ImageInspector]
-#: Temporary (P3 bridge) factory producing the per-image legacy registry client.
-LegacyClientFactory = Callable[[ImageReference], Any]
 
 
 @dataclass(frozen=True)
@@ -73,26 +69,18 @@ class AnalyzeImage:
         *,
         tools: ToolRunner,
         inspector_factory: InspectorFactory,
-        legacy_client_factory: LegacyClientFactory,
     ) -> None:
         self._tools = tools
         self._inspector_factory = inspector_factory
-        self._legacy_client_factory = legacy_client_factory
 
     # ------------------------------------------------------------------
-    # Dispatch (bridge)
+    # Dispatch
     # ------------------------------------------------------------------
 
     def _dispatch(self, analyzer: Any, image: ImageReference) -> dict[str, Any]:
         """Run one analyzer instance and validate its report."""
-        if getattr(analyzer, "uses_context", False):
-            ctx = AnalysisContext(image, self._inspector_factory(image), self._tools)
-            report = analyzer.analyze(ctx)
-        else:
-            client = self._legacy_client_factory(image)
-            report = analyzer.analyze(
-                client, image.repository, image.tag, platform=image.platform
-            )
+        ctx = AnalysisContext(image, self._inspector_factory(image), self._tools)
+        report = analyzer.analyze(ctx)
         analyzer.validate(report)
         return report
 

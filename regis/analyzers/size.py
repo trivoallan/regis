@@ -27,9 +27,8 @@ class SizeAnalyzer(BaseAnalyzer):
 
     name = "size"
     schema_file = "analyzer/size.schema.json"
-    uses_context = True
 
-    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:
         try:
             manifest = ctx.inspector.get_manifest(ctx.image.tag)
         except Exception as e:

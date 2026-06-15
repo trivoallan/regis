@@ -29,7 +29,6 @@ class FreshnessAnalyzer(BaseAnalyzer):
 
     name = "freshness"
     schema_file = "analyzer/freshness.schema.json"
-    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -53,7 +52,7 @@ class FreshnessAnalyzer(BaseAnalyzer):
             }
         ]
 
-    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:
         repository = ctx.image.repository
         tag = ctx.image.tag
 

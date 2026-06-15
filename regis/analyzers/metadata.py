@@ -64,7 +64,6 @@ class MetadataAnalyzer(BaseAnalyzer):
 
     name = "metadata"
     schema_file = ""  # MetadataAnalyzer validates metadata inputs, not its own output.
-    uses_context = True
 
     def __init__(
         self,
@@ -86,7 +85,7 @@ class MetadataAnalyzer(BaseAnalyzer):
     # BaseAnalyzer interface
     # ------------------------------------------------------------------
 
-    def analyze(self, ctx: AnalysisContext | None = None) -> dict[str, Any]:  # type: ignore[override]
+    def analyze(self, ctx: AnalysisContext | None = None) -> dict[str, Any]:
         """Validate metadata and return a result dict.
 
         Args:

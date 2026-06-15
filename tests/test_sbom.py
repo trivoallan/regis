@@ -197,6 +197,3 @@ class TestSbomAnalyzer:
 
         with pytest.raises(ToolError, match="syft down"):
             SbomAnalyzer().analyze(_sbom_ctx(_Boom()))
-
-    def test_sbom_uses_context(self):
-        assert SbomAnalyzer.uses_context is True

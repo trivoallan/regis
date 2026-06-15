@@ -11,8 +11,8 @@ from typing import Any
 
 import jsonschema
 
+from regis.core.domain.context import AnalysisContext
 from regis.core.domain.errors import AnalyzerError
-from regis.registry.client import RegistryClient
 
 logger = logging.getLogger(__name__)
 
@@ -45,11 +45,6 @@ class BaseAnalyzer(ABC):
 
     #: Filename of the JSON Schema inside ``regis/reference/schemas/``.
     schema_file: str = ""
-
-    #: Bridge marker (P3): True once the analyzer consumes ``analyze(ctx)``.
-    #: The AnalyzeImage use-case dispatches on this during the migration; the
-    #: marker and the legacy branch are removed in P3d.
-    uses_context: bool = False
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -99,23 +94,8 @@ class BaseAnalyzer(ABC):
         return cls.default_criteria()
 
     @abstractmethod
-    def analyze(
-        self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
-    ) -> dict[str, Any]:
-        """Run the analysis and return a report dict.
-
-        Args:
-            client: An authenticated :class:`RegistryClient`.
-            repository: Full repository path (e.g. ``library/nginx``).
-            tag: The image tag to analyze.
-
-        Returns:
-            A dict conforming to the analyzer's JSON Schema.
-        """
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:
+        """Run the analysis and return a report dict conforming to the JSON Schema."""
 
     # ------------------------------------------------------------------
     # Validation

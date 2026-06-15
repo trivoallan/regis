@@ -66,9 +66,6 @@ class TestDockleAnalyzer:
         with pytest.raises(ToolError, match="dockle missing"):
             DockleAnalyzer().analyze(_dockle_ctx(_Boom()))
 
-    def test_dockle_uses_context(self):
-        assert DockleAnalyzer.uses_context is True
-
     def test_default_criteria(self):
         criteria = DockleAnalyzer.default_criteria()
         assert len(criteria) >= 1

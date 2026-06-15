@@ -22,8 +22,6 @@ class TestHumanSize:
 
 
 class TestSizeAnalyzer:
-    def test_size_uses_context(self):
-        assert SizeAnalyzer.uses_context is True
 
     def test_single_manifest(self):
         single_manifest = {

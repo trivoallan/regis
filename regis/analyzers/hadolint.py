@@ -17,7 +17,6 @@ class HadolintAnalyzer(BaseAnalyzer):
 
     name = "hadolint"
     schema_file = "analyzer/hadolint.schema.json"
-    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -46,7 +45,7 @@ class HadolintAnalyzer(BaseAnalyzer):
             },
         ]
 
-    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:
         """Return a report with hadolint violations."""
         # 1. Resolve platform
         platform = ctx.image.platform or "linux/amd64"

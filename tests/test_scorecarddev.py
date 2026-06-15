@@ -170,6 +170,3 @@ def test_scorecard_source_extracted_from_raw(monkeypatch):
     assert isinstance(result["source"]["fetched_at"], str)
 
 
-def test_uses_context_flag():
-    """ScorecardDevAnalyzer must declare uses_context = True."""
-    assert ScorecardDevAnalyzer.uses_context is True

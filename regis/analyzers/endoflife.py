@@ -131,9 +131,8 @@ class EndOfLifeAnalyzer(BaseAnalyzer):
 
     name = "endoflife"
     schema_file = "analyzer/endoflife.schema.json"
-    uses_context = True
 
-    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:
         """Fetch lifecycle data and match against the image tag."""
         repository = ctx.image.repository
         tag = ctx.image.tag

@@ -85,5 +85,3 @@ def test_popularity_last_updated_migrated_to_source(monkeypatch):
     assert result["date_registered"] == "2020-01-01T00:00:00Z"
 
 
-def test_popularity_uses_context():
-    assert PopularityAnalyzer.uses_context is True

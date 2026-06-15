@@ -21,9 +21,8 @@ class PopularityAnalyzer(BaseAnalyzer):
 
     name = "popularity"
     schema_file = "analyzer/popularity.schema.json"
-    uses_context = True
 
-    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:
         repository = ctx.image.repository
         url = f"{_DOCKERHUB_API}/{repository}"
         logger.debug("Fetching Docker Hub stats: %s", url)

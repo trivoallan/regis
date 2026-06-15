@@ -212,10 +212,6 @@ class TestMetadataAnalyzerWithPlaybookSchema:
         assert invalid, "expected at least one invalid entry for the structural error"
 
 
-def test_metadata_uses_context():
-    from regis.analyzers.metadata import MetadataAnalyzer
-
-    assert MetadataAnalyzer.uses_context is True
 
 
 def test_metadata_analyze_ignores_context():
