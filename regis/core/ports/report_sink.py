@@ -13,7 +13,5 @@ class ReportSink(ABC):
     """Port for emitting a report in one or more formats to a destination."""
 
     @abstractmethod
-    def emit(
-        self, report: Report, *, formats: Sequence[str], output_dir: Path
-    ) -> list[Path]:
-        """Emit *report* in *formats* under *output_dir*; return the written paths."""
+    def emit(self, report: Report, *, formats: Sequence[str]) -> list[Path]:
+        """Emit *report* in *formats* to this sink's configured destination; return the written paths."""

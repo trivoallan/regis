@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 import logging
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -14,14 +13,15 @@ import click
 from regis.adapters.driven.analyzers.entry_point_provider import (
     EntryPointAnalyzerProvider,
 )
+from regis.adapters.driven.report.file_report_sink import FileReportSink
 from regis.adapters.driving.cli.composition import build_analyze_image
 from regis.analyzers.base import BaseAnalyzer
 from regis.core.application.analyze_image import AnalyzerOutcome
 from regis.core.model.image_reference import ImageReference
+from regis.core.model.report import Report
 from regis.registry.client import RegistryClient
 from regis.registry.parser import parse_image_url
 from regis.utils.report import (
-    REPORT_SCHEMA_VERSION,
     ensure_schema_version,
     format_output_path,
     render_and_save_reports,
@@ -415,19 +415,17 @@ def analyze(
     dir_tmpl = output_dir_template or "reports/{registry}/{repository}/{digest}"
     file_tmpl = output_template or "report.{format}"
 
-    final_report = None
+    final_report: dict[str, Any] | None = None
     if cache:
-        dummy_report = {
-            "request": {
-                "registry": ref.registry,
-                "repository": ref.repository,
-                "tag": ref.tag,
-                "digest": digest,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            }
-        }
-
         try:
+            dummy_report: dict[str, Any] = {
+                "request": {
+                    "registry": ref.registry,
+                    "repository": ref.repository,
+                    "tag": ref.tag,
+                    "digest": digest,
+                }
+            }
             cache_dir = format_output_path(dir_tmpl, dummy_report, "json")
             cache_file = format_output_path(file_tmpl, dummy_report, "json")
             cache_path = cache_dir / cache_file
@@ -439,144 +437,151 @@ def analyze(
         except Exception as exc:
             logger.debug("Cache lookup failed: %s", exc)
 
-    analysis_report = final_report
-
-    if not analysis_report:
-        all_analyzers = _discover_analyzers()
-        if not all_analyzers:
-            raise click.ClickException(
-                "No analyzers found. Is regis installed correctly?"
+    if final_report is not None:
+        if evaluate or playbook_paths:
+            final_report = run_playbooks(
+                playbook_paths, final_report, formats, show_rules=evaluate
             )
+            if evaluate and final_report.get("playbooks"):
+                pb0 = final_report["playbooks"][0]
+                final_report["rules"] = pb0.get("rules", [])
+                final_report["rules_summary"] = pb0.get("rules_summary", {})
+                final_report["tier"] = pb0.get("tier")
+                final_report["badges"] = pb0.get("badges", [])
+            validate_report(final_report)
 
-        if analyzer_names:
-            selected: dict[str, type[BaseAnalyzer]] = {}
-            for name in analyzer_names:
-                if name not in all_analyzers:
-                    available = ", ".join(sorted(all_analyzers))
-                    raise click.ClickException(
-                        f"Unknown analyzer '{name}'. Available: {available}"
-                    )
-                selected[name] = all_analyzers[name]
-        else:
-            selected = dict(all_analyzers)
-
-        for skip_name in skip_analyzers:
-            if skip_name not in all_analyzers:
+        FileReportSink(
+            output_dir_template=dir_tmpl,
+            output_template=output_template,
+            theme=theme,
+            pretty=pretty,
+            sections=sections,
+        ).emit(Report(final_report), formats=formats)
+        render_presentation_templates(final_report, output_dir_template)
+        _render_verdict_block(final_report, quiet=quiet)
+        if evaluate and fail:
+            level_order = {"critical": 1, "warning": 2, "info": 3}
+            threshold = level_order.get(fail_level.lower())
+            breached = (
+                [
+                    r.get("slug", "unknown")
+                    for r in final_report.get("rules", [])
+                    if not r.get("passed", False)
+                    and level_order.get(r.get("level", "info").lower(), 3) <= threshold
+                ]
+                if threshold is not None
+                else []
+            )
+            if breached:
                 click.echo(
-                    f"  Warning: --skip references unknown analyzer '{skip_name}'",
+                    f"\nError: Analysis failed due to {len(breached)} rule breaches "
+                    f"at level '{fail_level}' or above.",
                     err=True,
                 )
-                continue
-            selected.pop(skip_name, None)
+                sys.exit(1)
+        return
 
-        if not selected:
-            raise click.ClickException("All analyzers were skipped — nothing to run.")
+    all_analyzers = _discover_analyzers()
+    if not all_analyzers:
+        raise click.ClickException("No analyzers found. Is regis installed correctly?")
 
-        effective_workers = min(max_workers, len(selected))
-        _info(
-            f"  Running {len(selected)} analyzer(s) with {effective_workers} worker(s)...",
-            quiet=quiet,
-        )
-        name_width = max((len(n) for n in selected), default=12)
+    if analyzer_names:
+        selected: dict[str, type[BaseAnalyzer]] = {}
+        for name in analyzer_names:
+            if name not in all_analyzers:
+                available = ", ".join(sorted(all_analyzers))
+                raise click.ClickException(
+                    f"Unknown analyzer '{name}'. Available: {available}"
+                )
+            selected[name] = all_analyzers[name]
+    else:
+        selected = dict(all_analyzers)
 
-        def _on_progress(outcome: AnalyzerOutcome) -> None:
-            timing = f"({outcome.elapsed:.1f}s)"
-            if outcome.error_type is None:
-                _info(f"  ✓ {outcome.name:<{name_width}}  {timing}", quiet=quiet)
-                return
-            label = _ERROR_LABEL.get(outcome.error_type, "error")
+    for skip_name in skip_analyzers:
+        if skip_name not in all_analyzers:
             click.echo(
-                click.style(
-                    f"  ✗ {outcome.name:<{name_width}}  {timing}  {label} — {outcome.error_message}",
-                    fg="red",
-                ),
+                f"  Warning: --skip references unknown analyzer '{skip_name}'",
                 err=True,
             )
+            continue
+        selected.pop(skip_name, None)
 
-        image = ImageReference(
-            registry=ref.registry,
-            repository=ref.repository,
-            tag=ref.tag,
-            platform=platform,
-        )
-        use_case = build_analyze_image(username, password)
-        reports = use_case.run(
-            image,
-            selected,
-            max_workers=effective_workers,
-            on_progress=_on_progress,
-        )
+    if not selected:
+        raise click.ClickException("All analyzers were skipped — nothing to run.")
 
-        if not reports:
-            raise click.ClickException("All analyzers failed.")
+    effective_workers = min(max_workers, len(selected))
+    _info(
+        f"  Running {len(selected)} analyzer(s) with {effective_workers} worker(s)...",
+        quiet=quiet,
+    )
+    name_width = max((len(n) for n in selected), default=12)
 
-        from importlib.metadata import version
-
-        metadata_dict = _parse_meta(meta)
-
-        analysis_report = {
-            "schemaVersion": REPORT_SCHEMA_VERSION,
-            "version": version("regis"),
-            "request": {
-                "url": url,
-                "registry": ref.registry,
-                "repository": ref.repository,
-                "tag": ref.tag,
-                "digest": digest,
-                "analyzers": sorted(reports.keys()),
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            },
-            "results": reports,
-        }
-        if metadata_dict:
-            analysis_report["metadata"] = metadata_dict
-
-    if not final_report or evaluate or playbook_paths:
-        final_report = run_playbooks(
-            playbook_paths, analysis_report, formats, show_rules=evaluate
+    def _on_progress(outcome: AnalyzerOutcome) -> None:
+        timing = f"({outcome.elapsed:.1f}s)"
+        if outcome.error_type is None:
+            _info(f"  ✓ {outcome.name:<{name_width}}  {timing}", quiet=quiet)
+            return
+        label = _ERROR_LABEL.get(outcome.error_type, "error")
+        click.echo(
+            click.style(
+                f"  ✗ {outcome.name:<{name_width}}  {timing}  {label} — {outcome.error_message}",
+                fg="red",
+            ),
+            err=True,
         )
 
-    if evaluate and "playbooks" in final_report and final_report["playbooks"]:
-        pb0 = final_report["playbooks"][0]
-        final_report["rules"] = pb0.get("rules", [])
-        final_report["rules_summary"] = pb0.get("rules_summary", {})
-        final_report["tier"] = pb0.get("tier")
-        final_report["badges"] = pb0.get("badges", [])
+    image = ImageReference(
+        registry=ref.registry,
+        repository=ref.repository,
+        tag=ref.tag,
+        platform=platform,
+    )
 
-    validate_report(final_report)
-
-    render_and_save_reports(
-        final_report,
-        formats,
-        output_template,
-        output_dir_template,
-        theme,
-        pretty,
+    use_case = build_analyze_image(
+        username,
+        password,
+        output_dir_template=dir_tmpl,
+        output_template=output_template,
+        theme=theme,
+        pretty=pretty,
         sections=sections,
     )
 
-    render_presentation_templates(final_report, output_dir_template)
+    def _on_playbook_progress(msg: str) -> None:
+        _info(msg, quiet=quiet, err=True)
 
-    # Surface the verdict (tier · score · badges) by default; --quiet suppresses it.
-    _render_verdict_block(final_report, quiet=quiet)
+    from regis.core.application.analyze_image import AnalysisResult
+    from regis.core.domain.errors import AnalyzerError, PlaybookError
 
-    if evaluate and fail:
-        level_order = {"critical": 1, "warning": 2, "info": 3, "none": 4}
-        threshold = level_order.get(fail_level.lower(), 1)
-        breached_rules = []
-        rules = final_report.get("rules", [])
-        for r in rules:
-            if not r.get("passed", False):
-                lvl = r.get("level", "info").lower()
-                if level_order.get(lvl, 3) <= threshold:
-                    breached_rules.append(r.get("slug", "unknown"))
+    analysis: AnalysisResult
+    try:
+        analysis = use_case.run_and_evaluate(
+            image,
+            selected,
+            url=url,
+            digest=digest,
+            formats=formats,
+            metadata=_parse_meta(meta) or None,
+            playbook_paths=playbook_paths,
+            show_rules=evaluate,
+            on_playbook_progress=_on_playbook_progress,
+            fail_level=fail_level,
+            max_workers=effective_workers,
+            on_progress=_on_progress,
+        )
+    except (AnalyzerError, PlaybookError) as exc:
+        raise click.ClickException(str(exc)) from exc
 
-        if breached_rules:
-            click.echo(
-                f"\nError: Analysis failed due to {len(breached_rules)} rule breaches at level '{fail_level}' or above.",
-                err=True,
-            )
-            sys.exit(1)
+    render_presentation_templates(analysis.report, output_dir_template)
+    _render_verdict_block(analysis.report, quiet=quiet)
+    if evaluate and fail and analysis.has_breaches:
+        click.echo(
+            f"\nError: Analysis failed due to {analysis.breach_count} rule breaches "
+            f"at level '{fail_level}' or above.",
+            err=True,
+        )
+        sys.exit(1)
+    return
 
 
 @click.command(name="evaluate")

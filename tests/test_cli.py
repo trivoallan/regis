@@ -383,22 +383,83 @@ class TestAnalyzeCacheAndFail:
             saved = json.loads((cache_dir / "report.json").read_text(encoding="utf-8"))
             assert saved["schemaVersion"] == 5
 
-    @patch("regis.commands.analyze.render_presentation_templates")
-    @patch("regis.commands.analyze.render_and_save_reports")
+    @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze.validate_report")
     @patch("regis.commands.analyze.run_playbooks")
+    def test_analyze_cache_hit_evaluate_fail_exits_on_breach(
+        self,
+        mock_run_playbooks,
+        mock_validate_report,
+        mock_client,
+    ):
+        """--cache --evaluate --fail must exit 1 when a cached report has breached rules."""
+        mock_client.return_value.get_digest.return_value = "sha256:abc123"
+        # run_playbooks returns a report with a breached critical rule
+        mock_run_playbooks.return_value = {
+            "version": "0.22.0",
+            "schemaVersion": 5,
+            "request": {
+                "url": "nginx:latest",
+                "registry": "registry-1.docker.io",
+                "repository": "library/nginx",
+                "tag": "latest",
+                "digest": "sha256-abc123",
+                "analyzers": [],
+                "timestamp": "2024-01-01T00:00:00+00:00",
+            },
+            "results": {},
+            "playbooks": [
+                {
+                    "rules": [
+                        {"slug": "x", "passed": False, "level": "critical"},
+                    ],
+                    "rules_summary": {},
+                    "tier": None,
+                    "badges": [],
+                }
+            ],
+        }
+        mock_validate_report.return_value = None
+
+        cached_report = {
+            "version": "0.22.0",
+            "request": {
+                "url": "nginx:latest",
+                "registry": "registry-1.docker.io",
+                "repository": "library/nginx",
+                "tag": "latest",
+                "digest": "sha256-abc123",
+                "analyzers": [],
+                "timestamp": "2024-01-01T00:00:00+00:00",
+            },
+            "results": {},
+        }
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            cache_dir = Path("reports/registry-1.docker.io/library-nginx/sha256-abc123")
+            cache_dir.mkdir(parents=True)
+            (cache_dir / "report.json").write_text(json.dumps(cached_report))
+
+            result = runner.invoke(
+                main, ["analyze", "nginx:latest", "--cache", "--evaluate", "--fail"]
+            )
+
+        assert result.exit_code == 1
+        assert "rule breaches" in result.output
+
     @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.commands.analyze.build_analyze_image")
     def test_analyze_fail_exits_on_breached_rules(
         self,
+        mock_build,
         mock_discover,
         mock_client,
-        mock_playbooks,
-        mock_validate,
-        mock_render,
-        mock_mr,
     ):
+        from unittest.mock import MagicMock
+
         from regis.analyzers.base import BaseAnalyzer
+        from regis.core.application.analyze_image import AnalysisResult
 
         class DummyAnalyzer(BaseAnalyzer):
             def analyze(self, ctx: AnalysisContext) -> dict:
@@ -409,20 +470,21 @@ class TestAnalyzeCacheAndFail:
 
         mock_discover.return_value = {"dummy": DummyAnalyzer}
         mock_client.return_value.get_digest.return_value = None
-        mock_playbooks.return_value = {
+
+        fake_report = {
             "version": "0.22.0",
             "request": {},
             "results": {},
-            "playbooks": [
-                {
-                    "rules": [{"passed": False, "level": "critical", "slug": "rule-x"}],
-                    "rules_summary": {},
-                    "tier": None,
-                    "badges": [],
-                }
-            ],
             "rules": [{"passed": False, "level": "critical", "slug": "rule-x"}],
         }
+        mock_use_case = MagicMock()
+        mock_use_case.run_and_evaluate.return_value = AnalysisResult(
+            report=fake_report,
+            has_breaches=True,
+            breach_count=1,
+            breached_slugs=["rule-x"],
+        )
+        mock_build.return_value = mock_use_case
 
         runner = CliRunner()
         with runner.isolated_filesystem():

@@ -2,6 +2,8 @@
 
 from unittest.mock import patch
 
+import pytest
+
 from regis.utils.report import escape_jinja, run_playbooks
 
 
@@ -166,17 +168,26 @@ class TestRunPlaybooks:
 
 
 def test_run_playbooks_surfaces_friendly_error_for_legacy_playbook(tmp_path) -> None:
-    """A playbook without schemaVersion should produce a Click error, not a traceback."""
+    """A PlaybookError from the core is translated to a Click error, not a traceback."""
     import pytest
     from click.exceptions import ClickException
 
-    from regis.utils.report import evaluate_playbooks
+    from regis.core.domain.errors import PlaybookError
+    from regis.utils.report import run_playbooks
 
     legacy = tmp_path / "playbook.yaml"
     legacy.write_text("name: Legacy\n", encoding="utf-8")
 
-    with pytest.raises(ClickException) as exc_info:
-        evaluate_playbooks((str(legacy),), {"results": {}}, formats=["json"])
+    with (
+        pytest.raises(ClickException) as exc_info,
+        patch(
+            "regis.playbook.engine.load_playbook",
+            side_effect=PlaybookError(
+                f"Failed to load playbook '{legacy}': missing apiVersion"
+            ),
+        ),
+    ):
+        run_playbooks((str(legacy),), {"results": {}}, formats=["json"])
     assert "apiVersion" in str(exc_info.value.message)
 
 
@@ -331,3 +342,60 @@ def test_markdown_escapes_pipe_in_rule_message():
     assert "found a\\|b in pkg" in md
     # Counts line surfaces the failure.
     assert "1 failed" in md
+
+
+class TestWriteReportFallback:
+    """Cover the PermissionError fallback paths in write_report."""
+
+    _REPORT = {"request": {"registry": "r", "repository": "x", "tag": "t"}}
+
+    def test_fallback_on_permission_error(self, tmp_path):
+        """When primary write raises PermissionError, fallback to cwd succeeds."""
+        from regis.utils.report import write_report
+
+        with (
+            patch("pathlib.Path.mkdir", side_effect=[None, None]),
+            patch(
+                "pathlib.Path.write_text",
+                side_effect=[PermissionError("denied"), None],
+            ),
+            patch("regis.utils.report.Path.cwd", return_value=tmp_path),
+        ):
+            result = write_report(".", "out.json", self._REPORT, "json", '{"a":1}')
+        # Returns the fallback path (cwd / report.json)
+        assert result == tmp_path / "report.json"
+
+    def test_double_permission_error_raises_click_exception(self, tmp_path):
+        """When both primary and fallback writes fail, a ClickException is raised."""
+        import click
+
+        from regis.utils.report import write_report
+
+        with (
+            patch("pathlib.Path.mkdir", side_effect=[None, None]),
+            patch(
+                "pathlib.Path.write_text",
+                side_effect=[PermissionError("denied"), PermissionError("also denied")],
+            ),
+            patch("regis.utils.report.Path.cwd", return_value=tmp_path),
+        ):
+            with pytest.raises(click.ClickException, match="Permission denied"):
+                write_report(".", "out.json", self._REPORT, "json", '{"a":1}')
+
+
+def test_render_and_save_reports_md_format(tmp_path):
+    """render_and_save_reports with fmt=md writes a markdown report."""
+    from regis.utils.report import render_and_save_reports
+
+    report = {"request": {"registry": "r", "repository": "x", "tag": "t"}}
+    paths = render_and_save_reports(
+        report,
+        formats=["md"],
+        output_template=str(tmp_path / "report.md"),
+        output_dir_template=".",
+        theme="default",
+        pretty=False,
+    )
+    assert len(paths) == 1
+    assert paths[0].suffix == ".md"
+    assert paths[0].read_text(encoding="utf-8").startswith("#")

@@ -16,12 +16,16 @@ import time
 from collections.abc import Callable, Mapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from typing import Any
 
+from regis.core.application.playbook_runner import run_playbooks, validate_report
 from regis.core.domain.context import AnalysisContext
 from regis.core.domain.errors import AnalyzerError, RegistryError, ToolError
 from regis.core.model.image_reference import ImageReference
+from regis.core.model.report import REPORT_SCHEMA_VERSION, Report
 from regis.core.ports.image_inspector import ImageInspector
+from regis.core.ports.report_sink import ReportSink
 from regis.core.ports.tool_runner import ToolRunner
 
 logger = logging.getLogger(__name__)
@@ -46,6 +50,17 @@ class AnalyzerOutcome:
 
 ProgressCallback = Callable[[AnalyzerOutcome], None]
 
+
+@dataclass(frozen=True)
+class AnalysisResult:
+    """Outcome of a full analyze-and-evaluate run."""
+
+    report: dict[str, Any]
+    has_breaches: bool
+    breach_count: int
+    breached_slugs: list[str]
+
+
 # Maps a caught exception to (error stub "type", AnalyzerOutcome error_type).
 _ERROR_KIND: tuple[tuple[type[BaseException], str], ...] = (
     (RegistryError, "registry"),
@@ -69,9 +84,11 @@ class AnalyzeImage:
         *,
         tools: ToolRunner,
         inspector_factory: InspectorFactory,
+        sink: ReportSink,
     ) -> None:
         self._tools = tools
         self._inspector_factory = inspector_factory
+        self._sink = sink
 
     # ------------------------------------------------------------------
     # Dispatch
@@ -158,3 +175,104 @@ class AnalyzeImage:
                     if on_progress is not None:
                         on_progress(AnalyzerOutcome(name, elapsed, kind, str(exc)))
         return reports
+
+    # ------------------------------------------------------------------
+    # Full pipeline: analyze + playbooks + emit
+    # ------------------------------------------------------------------
+
+    def run_and_evaluate(
+        self,
+        image: ImageReference,
+        selected: Mapping[str, type],
+        *,
+        url: str,
+        digest: str,
+        formats: list[str],
+        metadata: dict[str, Any] | None = None,
+        playbook_paths: tuple[str, ...] = (),
+        show_rules: bool = False,
+        on_playbook_progress: Callable[[str], None] | None = None,
+        fail_level: str = "critical",
+        max_workers: int = 4,
+        on_progress: ProgressCallback | None = None,
+    ) -> AnalysisResult:
+        """Run analyzers, assemble the envelope, evaluate playbooks, validate, emit.
+
+        Args:
+            image: The image reference to analyze.
+            selected: Mapping of analyzer name to class.
+            url: The image URL string (for the request envelope).
+            digest: The resolved image digest.
+            formats: Output formats to emit (e.g. ``["json"]``).
+            metadata: Optional arbitrary metadata to embed in the report envelope.
+            playbook_paths: Paths to playbook files/dirs; uses built-in default when
+                empty.
+            show_rules: When ``True``, progress messages include per-rule icons.
+            on_playbook_progress: Optional callback invoked with progress messages
+                during playbook evaluation.
+            fail_level: Severity threshold for breach detection
+                (``"critical"`` | ``"warning"`` | ``"info"`` | ``"none"``).
+            max_workers: Maximum threads for the analyzer loop.
+            on_progress: Optional callback invoked once per analyzer completion.
+
+        Returns:
+            An :class:`AnalysisResult` with the final report and breach summary.
+
+        Raises:
+            AnalyzerError: When ``selected`` is empty (no analyzers to run).
+            PlaybookError: When report schema validation fails.
+        """
+        from importlib.metadata import version as _pkg_version
+
+        reports = self.run(
+            image, selected, max_workers=max_workers, on_progress=on_progress
+        )
+        if not reports:
+            raise AnalyzerError("All analyzers failed.")
+
+        envelope: dict[str, Any] = {
+            "schemaVersion": REPORT_SCHEMA_VERSION,
+            "version": _pkg_version("regis"),
+            "request": {
+                "url": url,
+                "registry": image.registry,
+                "repository": image.repository,
+                "tag": image.tag,
+                "digest": digest,
+                "analyzers": sorted(reports.keys()),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            },
+            "results": reports,
+        }
+        if metadata:
+            envelope["metadata"] = metadata
+
+        final_report = run_playbooks(
+            playbook_paths,
+            envelope,
+            show_rules=show_rules,
+            on_progress=on_playbook_progress,
+        )
+        if show_rules and final_report.get("playbooks"):
+            pb0 = final_report["playbooks"][0]
+            final_report["rules"] = pb0.get("rules", [])
+            final_report["rules_summary"] = pb0.get("rules_summary", {})
+            final_report["tier"] = pb0.get("tier")
+            final_report["badges"] = pb0.get("badges", [])
+
+        validate_report(final_report)
+        self._sink.emit(Report(final_report), formats=formats)
+
+        level_order = {"critical": 1, "warning": 2, "info": 3}
+        threshold = level_order.get(fail_level.lower(), None)
+        if threshold is None:
+            # "none" or unknown level — nothing breaches.
+            breached: list[str] = []
+        else:
+            breached = [
+                r.get("slug", "unknown")
+                for r in final_report.get("rules", [])
+                if not r.get("passed", False)
+                and level_order.get(r.get("level", "info").lower(), 3) <= threshold
+            ]
+        return AnalysisResult(final_report, bool(breached), len(breached), breached)

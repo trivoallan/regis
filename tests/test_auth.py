@@ -96,7 +96,7 @@ class TestRegistryAuth:
         assert args[0] == "https://auth.docker.io/token"
         assert kwargs["auth"] == ("myuser", "mypassword")
 
-    @patch("regis.utils.report.jsonschema")
+    @patch("regis.utils.report.validate_report")
     @patch("regis.commands.analyze._discover_analyzers")
     @patch("regis.commands.analyze.RegistryClient")
     def test_cli_passes_credentials(
@@ -186,7 +186,7 @@ class TestRegistryAuth:
                     assert user == "docker_user"
                     assert pwd == "docker_pass"
 
-    @patch("regis.utils.report.jsonschema")
+    @patch("regis.utils.report.validate_report")
     @patch("regis.commands.analyze._discover_analyzers")
     @patch("regis.commands.analyze.RegistryClient")
     def test_cli_passes_cli_auth_override(
