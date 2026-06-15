@@ -1,8 +1,8 @@
-from unittest.mock import patch
-
 import pytest
 
+from regis.analyzers.base import AnalyzerError
 from regis.analyzers.versioning import VersioningAnalyzer, _classify_tag
+from tests.fakes import FakeImageInspector, make_ctx
 
 # ---------------------------------------------------------------------------
 # Tag classification unit tests
@@ -119,20 +119,6 @@ class TestClassifyTag:
 
 
 # ---------------------------------------------------------------------------
-# Mock client
-# ---------------------------------------------------------------------------
-
-
-class MockRegistryClient:
-    """Minimal mock for RegistryClient."""
-
-    def __init__(self):
-        self.registry = "registry-1.docker.io"
-        self.username = None
-        self.password = None
-
-
-# ---------------------------------------------------------------------------
 # Full analyzer tests
 # ---------------------------------------------------------------------------
 
@@ -140,13 +126,18 @@ class MockRegistryClient:
 class TestVersioningAnalyzer:
     """Test the versioning analyzer end-to-end."""
 
-    @patch("regis.analyzers.versioning.run_regctl")
-    def test_semver_dominant(self, mock_regctl):
+    def test_uses_context(self):
+        assert VersioningAnalyzer.uses_context is True
+
+    def test_semver_dominant(self):
         tags = ["1.0.0", "1.1.0", "1.2.0", "2.0.0", "2.0.0-rc.1", "latest"]
-        mock_regctl.return_value = "\n".join(tags)
-        client = MockRegistryClient()
+        ctx = make_ctx(
+            inspector=FakeImageInspector(tags=tags),
+            repository="library/myapp",
+            tag="latest",
+        )
         analyzer = VersioningAnalyzer()
-        report = analyzer.analyze(client, "library/myapp", "latest")
+        report = analyzer.analyze(ctx)  # type: ignore[arg-type]
         analyzer.validate(report)
 
         assert report["dominant_pattern"] == "semver"
@@ -154,25 +145,29 @@ class TestVersioningAnalyzer:
         # 4 semver + 1 prerelease = 5/6 ≈ 83.3%
         assert report["semver_compliant_percentage"] == pytest.approx(83.3, abs=0.1)
 
-    @patch("regis.analyzers.versioning.run_regctl")
-    def test_named_dominant(self, mock_regctl):
+    def test_named_dominant(self):
         tags = ["latest", "alpine", "bookworm", "slim"]
-        mock_regctl.return_value = "\n".join(tags)
-        client = MockRegistryClient()
+        ctx = make_ctx(
+            inspector=FakeImageInspector(tags=tags),
+            repository="library/python",
+            tag="latest",
+        )
         analyzer = VersioningAnalyzer()
-        report = analyzer.analyze(client, "library/python", "latest")
+        report = analyzer.analyze(ctx)  # type: ignore[arg-type]
         analyzer.validate(report)
 
         assert report["dominant_pattern"] == "named"
         assert report["semver_compliant_percentage"] == 0
 
-    @patch("regis.analyzers.versioning.run_regctl")
-    def test_mixed_patterns(self, mock_regctl):
+    def test_mixed_patterns(self):
         tags = ["1.0.0", "1.1.0", "latest", "alpine", "2024.01", "abc1234"]
-        mock_regctl.return_value = "\n".join(tags)
-        client = MockRegistryClient()
+        ctx = make_ctx(
+            inspector=FakeImageInspector(tags=tags),
+            repository="test/app",
+            tag="latest",
+        )
         analyzer = VersioningAnalyzer()
-        report = analyzer.analyze(client, "test/app", "latest")
+        report = analyzer.analyze(ctx)  # type: ignore[arg-type]
         analyzer.validate(report)
 
         pattern_names = {p["pattern"] for p in report["patterns"]}
@@ -181,20 +176,21 @@ class TestVersioningAnalyzer:
         assert "calver" in pattern_names
         assert "hash" in pattern_names
 
-    @patch("regis.analyzers.versioning.run_regctl")
-    def test_empty_tags(self, mock_regctl):
-        mock_regctl.return_value = ""
-        client = MockRegistryClient()
+    def test_empty_tags(self):
+        ctx = make_ctx(
+            inspector=FakeImageInspector(tags=[]),
+            repository="test/empty",
+            tag="latest",
+        )
         analyzer = VersioningAnalyzer()
-        report = analyzer.analyze(client, "test/empty", "latest")
+        report = analyzer.analyze(ctx)  # type: ignore[arg-type]
         analyzer.validate(report)
 
         assert report["total_tags"] == 0
         assert report["dominant_pattern"] == "unknown"
         assert report["patterns"] == []
 
-    @patch("regis.analyzers.versioning.run_regctl")
-    def test_variant_detection(self, mock_regctl):
+    def test_variant_detection(self):
         """Test detection and counting of variants."""
         tags = [
             "1.0.0-alpine",
@@ -204,10 +200,13 @@ class TestVersioningAnalyzer:
             "1.0.3-slim-bookworm",
             "latest",
         ]
-        mock_regctl.return_value = "\n".join(tags)
-        client = MockRegistryClient()
+        ctx = make_ctx(
+            inspector=FakeImageInspector(tags=tags),
+            repository="library/test",
+            tag="latest",
+        )
         analyzer = VersioningAnalyzer()
-        report = analyzer.analyze(client, "library/test", "latest")
+        report = analyzer.analyze(ctx)  # type: ignore[arg-type]
         analyzer.validate(report)
 
         variants = report["variants"]
@@ -223,8 +222,7 @@ class TestVersioningAnalyzer:
         alpine_entry = next(v for v in variants if v["name"] == "alpine")
         assert "1.0.0-alpine" in alpine_entry["examples"]
 
-    @patch("regis.analyzers.versioning.run_regctl")
-    def test_subvariant_detection(self, mock_regctl):
+    def test_subvariant_detection(self):
         """Test detection of subvariants like cli, fpm, apache."""
         tags = [
             "8.1-fpm-alpine",
@@ -233,10 +231,13 @@ class TestVersioningAnalyzer:
             "8.1-zts-bullseye",
             "latest",
         ]
-        mock_regctl.return_value = "\n".join(tags)
-        client = MockRegistryClient()
+        ctx = make_ctx(
+            inspector=FakeImageInspector(tags=tags),
+            repository="library/php",
+            tag="latest",
+        )
         analyzer = VersioningAnalyzer()
-        report = analyzer.analyze(client, "library/php", "latest")
+        report = analyzer.analyze(ctx)  # type: ignore[arg-type]
         analyzer.validate(report)
 
         variants = report["variants"]
@@ -250,8 +251,7 @@ class TestVersioningAnalyzer:
         assert v_map["buster"] == 1
         assert v_map["bullseye"] == 1
 
-    @patch("regis.analyzers.versioning.run_regctl")
-    def test_ubi_detection(self, mock_regctl):
+    def test_ubi_detection(self):
         """Test detection of RedHat UBI images."""
         tags = [
             "8.5-ubi8",
@@ -261,10 +261,13 @@ class TestVersioningAnalyzer:
             "7-rhel",
             "8-ubi-init",
         ]
-        mock_regctl.return_value = "\n".join(tags)
-        client = MockRegistryClient()
+        ctx = make_ctx(
+            inspector=FakeImageInspector(tags=tags),
+            repository="library/redhat",
+            tag="latest",
+        )
         analyzer = VersioningAnalyzer()
-        report = analyzer.analyze(client, "library/redhat", "latest")
+        report = analyzer.analyze(ctx)  # type: ignore[arg-type]
         analyzer.validate(report)
 
         variants = report["variants"]
@@ -278,32 +281,46 @@ class TestVersioningAnalyzer:
         assert v_map["init"] == 1
         assert v_map["rhel"] == 1
 
-    @patch("regis.analyzers.versioning.run_regctl")
-    def test_release_line_detection_for_alias(self, mock_regctl):
+    def test_release_line_detection_for_alias(self):
         """Test detection of release_lines and aliases for alias tags."""
-        # A single regctl call lists the full repo tag set; RepoTags == tags.
-        mock_regctl.return_value = "\n".join(["1", "1.10", "1.10.4", "latest"])
-
-        client = MockRegistryClient()
+        tags = ["1", "1.10", "1.10.4", "latest"]
+        ctx = make_ctx(
+            inspector=FakeImageInspector(tags=tags),
+            repository="library/test",
+            tag="1",
+        )
         analyzer = VersioningAnalyzer()
-        report = analyzer.analyze(client, "library/test", "1")
+        report = analyzer.analyze(ctx)  # type: ignore[arg-type]
         analyzer.validate(report)
 
         assert report["release_lines"] == ["1", "1.10", "1.10.4"]
         assert report["aliases"] == ["1.10", "1.10.4", "latest"]
-        assert mock_regctl.call_count == 1
 
-    @patch("regis.analyzers.versioning.run_regctl")
-    def test_aliases_for_semver_tag(self, mock_regctl):
+    def test_aliases_for_semver_tag(self):
         """Aliases are detected even when the analyzed tag is a strict semver."""
-        mock_regctl.return_value = "\n".join(["1", "1.10", "1.10.4", "latest"])
-
-        client = MockRegistryClient()
+        tags = ["1", "1.10", "1.10.4", "latest"]
+        ctx = make_ctx(
+            inspector=FakeImageInspector(tags=tags),
+            repository="library/test",
+            tag="1.10.4",
+        )
         analyzer = VersioningAnalyzer()
-        report = analyzer.analyze(client, "library/test", "1.10.4")
+        report = analyzer.analyze(ctx)  # type: ignore[arg-type]
         analyzer.validate(report)
 
         assert report["aliases"] == ["1", "1.10", "latest"]
         # release_lines must be empty: 1.10.4 is semver, not a floating alias
         assert report["release_lines"] == []
-        assert mock_regctl.call_count == 1
+
+    def test_list_tags_failure_raises_analyzer_error(self):
+        """When list_tags() raises, analyze() wraps it in AnalyzerError."""
+
+        class FailingInspector(FakeImageInspector):
+            def list_tags(self) -> list[str]:
+                raise RuntimeError("network error")
+
+        ctx = make_ctx(
+            inspector=FailingInspector(), repository="test/fail", tag="latest"
+        )
+        with pytest.raises(AnalyzerError):
+            VersioningAnalyzer().analyze(ctx)  # type: ignore[arg-type]

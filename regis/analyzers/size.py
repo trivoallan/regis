@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
-import json
 import logging
-import subprocess
 from typing import Any
 
 from regis.analyzers.base import AnalyzerError, BaseAnalyzer
-from regis.registry.client import RegistryClient
-from regis.utils.regctl import image_ref, run_regctl
+from regis.core.domain.context import AnalysisContext
+from regis.core.domain.manifest import filter_real_platforms
+from regis.core.ports.image_inspector import ImageInspector
 
 logger = logging.getLogger(__name__)
 
@@ -28,28 +27,13 @@ class SizeAnalyzer(BaseAnalyzer):
 
     name = "size"
     schema_file = "analyzer/size.schema.json"
+    uses_context = True
 
-    def analyze(
-        self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
-    ) -> dict[str, Any]:
-        registry = client.registry
-        ref = image_ref(registry, repository, tag)
-
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
         try:
-            raw_stdout = run_regctl(
-                client, ["manifest", "get", ref, "--format", "raw-body"]
-            )
-            manifest = json.loads(raw_stdout)
-        except subprocess.CalledProcessError as e:
-            msg = f"regctl manifest get failed for {ref}: {e.stderr}"
-            logger.error(msg)
-            raise AnalyzerError(msg) from e
+            manifest = ctx.inspector.get_manifest(ctx.image.tag)
         except Exception as e:
-            msg = f"Failed to parse regctl output for {ref}: {e}"
+            msg = f"Failed to fetch manifest for {ctx.image.tag}: {e}"
             logger.error(msg)
             raise AnalyzerError(msg) from e
 
@@ -58,10 +42,14 @@ class SizeAnalyzer(BaseAnalyzer):
         # Handle manifest list / OCI index.
         if "list" in media_type or "index" in media_type:
             return self._analyze_multiarch(
-                client, registry, repository, tag, manifest, platform=platform
+                ctx.inspector,
+                ctx.image.repository,
+                ctx.image.tag,
+                manifest,
+                platform=ctx.image.platform,
             )
 
-        return self._analyze_single(repository, tag, manifest)
+        return self._analyze_single(ctx.image.repository, ctx.image.tag, manifest)
 
     def _analyze_single(
         self,
@@ -98,26 +86,13 @@ class SizeAnalyzer(BaseAnalyzer):
 
     def _analyze_multiarch(
         self,
-        client: RegistryClient,
-        registry: str,
+        inspector: ImageInspector,
         repository: str,
         tag: str,
         manifest_list: dict[str, Any],
         platform: str | None = None,
     ) -> dict[str, Any]:
-        entries = manifest_list.get("manifests", [])
-
-        # Skip buildkit attestation manifests (platform os/arch == "unknown");
-        # consistent with the oci analyzer.
-        entries = [
-            e
-            for e in entries
-            if isinstance(e, dict)
-            and e.get("platform", {}).get("architecture") not in (None, "unknown")
-            and e.get("platform", {}).get("os") not in (None, "unknown")
-        ]
-
-        platforms = []
+        entries = filter_real_platforms(manifest_list.get("manifests", []))
 
         # Filter platforms if override is provided
         if platform:
@@ -126,7 +101,6 @@ class SizeAnalyzer(BaseAnalyzer):
             else:
                 os_override, arch_override = "linux", platform
 
-            # Filter entries to find matching platform
             entries = [
                 e
                 for e in entries
@@ -136,12 +110,10 @@ class SizeAnalyzer(BaseAnalyzer):
             if not entries:
                 logger.warning(f"Platform {platform} not found in manifest index")
 
+        platforms = []
+
         for entry in entries:
-            if not isinstance(entry, dict):
-                continue
-            plat_info = entry.get("platform")
-            if not isinstance(plat_info, dict):
-                plat_info = {}
+            plat_info = entry.get("platform", {})
 
             arch = plat_info.get("architecture", "unknown")
             os_name = plat_info.get("os", "unknown")
@@ -156,17 +128,7 @@ class SizeAnalyzer(BaseAnalyzer):
                 continue
 
             try:
-                raw_stdout = run_regctl(
-                    client,
-                    [
-                        "manifest",
-                        "get",
-                        image_ref(registry, repository, digest),
-                        "--format",
-                        "raw-body",
-                    ],
-                )
-                plat_manifest = json.loads(raw_stdout)
+                plat_manifest = inspector.get_manifest(digest)
 
                 plat_layers = plat_manifest.get("layers", [])
                 plat_config_size = plat_manifest.get("config", {}).get("size", 0)
