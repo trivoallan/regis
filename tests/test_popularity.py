@@ -6,23 +6,22 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from regis.analyzers.popularity import PopularityAnalyzer
+from regis.core.domain.context import AnalysisContext
+from regis.core.model.image_reference import ImageReference
+from tests.fakes import FakeImageInspector, FakeToolRunner
 
 
-class MockRegistryClient:
-    def list_tags(self):
-        return []
-
-    def get_manifest(self, tag):
-        return {}
-
-    def get_blob(self, digest):
-        return {}
+def _ctx(*, repository="library/nginx", tag="latest"):
+    return AnalysisContext(
+        image=ImageReference(registry="docker.io", repository=repository, tag=tag),
+        inspector=FakeImageInspector(),
+        tools=FakeToolRunner(),
+    )
 
 
 class TestPopularityAnalyzer:
     def test_official_image(self):
         """Docker Hub stats are parsed for an official image (mocked response)."""
-        client = MockRegistryClient()
         analyzer = PopularityAnalyzer()
         with patch("requests.get") as m:
             m.return_value = MagicMock(status_code=200)
@@ -33,7 +32,7 @@ class TestPopularityAnalyzer:
                 "last_updated": "2026-01-01T00:00:00Z",
                 "date_registered": "2014-06-05T00:00:00Z",
             }
-            report = analyzer.analyze(client, "library/nginx", "latest")
+            report = analyzer.analyze(_ctx(repository="library/nginx", tag="latest"))
         analyzer.validate(report)
 
         assert report["available"] is True
@@ -43,11 +42,12 @@ class TestPopularityAnalyzer:
 
     def test_nonexistent_image(self):
         """A 404 from Docker Hub yields an unavailable report (mocked response)."""
-        client = MockRegistryClient()
         analyzer = PopularityAnalyzer()
         with patch("requests.get") as m:
             m.return_value = MagicMock(status_code=404)
-            report = analyzer.analyze(client, "fakens/nonexistent-xyz", "latest")
+            report = analyzer.analyze(
+                _ctx(repository="fakens/nonexistent-xyz", tag="latest")
+            )
         analyzer.validate(report)
 
         assert report["available"] is False
@@ -55,10 +55,9 @@ class TestPopularityAnalyzer:
 
     def test_request_failure_is_handled(self):
         """A network exception yields an unavailable report, never raising."""
-        client = MockRegistryClient()
         analyzer = PopularityAnalyzer()
         with patch("requests.get", side_effect=Exception("network down")):
-            report = analyzer.analyze(client, "library/nginx", "latest")
+            report = analyzer.analyze(_ctx(repository="library/nginx", tag="latest"))
         analyzer.validate(report)
 
         assert report["available"] is False
@@ -70,9 +69,8 @@ class TestPopularityAnalyzer:
     )
     def test_official_image_live(self):
         """Opt-in live test — hits Docker Hub for library/nginx."""
-        client = MockRegistryClient()
         analyzer = PopularityAnalyzer()
-        report = analyzer.analyze(client, "library/nginx", "latest")
+        report = analyzer.analyze(_ctx(repository="library/nginx", tag="latest"))
         analyzer.validate(report)
 
         assert report["available"] is True

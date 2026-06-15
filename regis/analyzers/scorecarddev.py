@@ -10,7 +10,8 @@ from typing import Any
 import requests
 
 from regis.analyzers.base import BaseAnalyzer
-from regis.registry.client import RegistryClient
+from regis.core.domain.context import AnalysisContext
+from regis.core.ports.image_inspector import ImageInspector
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ _GIT_REPO_RE = re.compile(
 
 
 def _source_repo_from_labels(
-    client: RegistryClient,
+    inspector: ImageInspector,
     tag: str,
 ) -> str | None:
     """Try to extract the source repository from OCI image labels.
@@ -36,7 +37,7 @@ def _source_repo_from_labels(
     - ``org.label-schema.vcs-url``
     """
     try:
-        manifest = client.get_manifest(tag)
+        manifest = inspector.get_manifest(tag)
         media_type = manifest.get("mediaType", "")
 
         # If it's a manifest list, pick the first platform manifest.
@@ -44,13 +45,13 @@ def _source_repo_from_labels(
             entries = manifest.get("manifests", [])
             if not entries:
                 return None
-            manifest = client.get_manifest(entries[0]["digest"])
+            manifest = inspector.get_manifest(entries[0]["digest"])
 
         config_digest = manifest.get("config", {}).get("digest")
         if not config_digest:
             return None
 
-        config = client.get_blob(config_digest)
+        config = inspector.get_blob(config_digest)
         labels: dict[str, str] = config.get("config", {}).get("Labels") or {}
 
         for label_key in (
@@ -85,7 +86,7 @@ def _source_repo_from_dockerhub(repository: str) -> str | None:
 
 
 def _resolve_source_repo(
-    client: RegistryClient,
+    inspector: ImageInspector,
     repository: str,
     tag: str,
 ) -> str | None:
@@ -95,7 +96,7 @@ def _resolve_source_repo(
     1. OCI image labels (org.opencontainers.image.source)
     2. Docker Hub API metadata
     """
-    url = _source_repo_from_labels(client, tag)
+    url = _source_repo_from_labels(inspector, tag)
     if url:
         return url
 
@@ -133,6 +134,7 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
 
     name = "scorecarddev"
     schema_file = "analyzer/scorecarddev.schema.json"
+    uses_context = True
 
     @classmethod
     def default_criteria(cls) -> list[dict[str, Any]]:
@@ -156,15 +158,10 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
             },
         ]
 
-    def analyze(
-        self,
-        client: RegistryClient,
-        repository: str,
-        tag: str,
-        platform: str | None = None,
-    ) -> dict[str, Any]:
+    def analyze(self, ctx: AnalysisContext) -> dict[str, Any]:  # type: ignore[override]
         """Resolve the source repo and fetch its OpenSSF Scorecard."""
-        source_url = _resolve_source_repo(client, repository, tag)
+        repository = ctx.image.repository
+        source_url = _resolve_source_repo(ctx.inspector, repository, ctx.image.tag)
 
         if not source_url:
             return {

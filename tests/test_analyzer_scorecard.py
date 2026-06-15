@@ -9,9 +9,20 @@ from regis.analyzers.scorecarddev import (
     _source_repo_from_dockerhub,
     _source_repo_from_labels,
 )
+from regis.core.domain.context import AnalysisContext
+from regis.core.model.image_reference import ImageReference
+from tests.fakes import FakeToolRunner
 
 INDEX_TYPE = "application/vnd.oci.image.index.v1+json"
 MANIFEST_TYPE = "application/vnd.oci.image.manifest.v1+json"
+
+
+def _ctx(inspector, *, repository="library/nginx", tag="latest"):
+    return AnalysisContext(
+        image=ImageReference(registry="docker.io", repository=repository, tag=tag),
+        inspector=inspector,
+        tools=FakeToolRunner(),
+    )
 
 
 class TestScorecardAnalyzer:
@@ -20,36 +31,36 @@ class TestScorecardAnalyzer:
         return ScorecardDevAnalyzer()
 
     def test_labels_recursion_exhaustive(self):
-        cl = MagicMock()
+        inspector = MagicMock()
         # 45, 50, 62 recursion loop
         m_list = {"mediaType": INDEX_TYPE, "manifests": [{"digest": "s1"}]}
         m_single = {"mediaType": MANIFEST_TYPE, "config": {"digest": "c1"}}
-        cl.get_manifest.side_effect = [
+        inspector.get_manifest.side_effect = [
             m_list,
             m_manifest_without_config := {"mediaType": MANIFEST_TYPE},
             m_list,
             m_single,
         ]
-        cl.get_blob.return_value = {
+        inspector.get_blob.return_value = {
             "config": {"Labels": {"org.opencontainers.image.source": "o/r"}}
         }
 
         # 45 Empty manifests
         m_empty = {"mediaType": INDEX_TYPE, "manifests": []}
-        cl.get_manifest.side_effect = [m_empty]
-        assert _source_repo_from_labels(cl, "t") is None
+        inspector.get_manifest.side_effect = [m_empty]
+        assert _source_repo_from_labels(inspector, "t") is None
 
         # 50 No config
-        cl.get_manifest.side_effect = [m_manifest_without_config]
-        assert _source_repo_from_labels(cl, "t") is None
+        inspector.get_manifest.side_effect = [m_manifest_without_config]
+        assert _source_repo_from_labels(inspector, "t") is None
 
         # 62 Exception
-        cl.get_manifest.side_effect = Exception("fail")
-        assert _source_repo_from_labels(cl, "t") is None
+        inspector.get_manifest.side_effect = Exception("fail")
+        assert _source_repo_from_labels(inspector, "t") is None
 
         # Recursion SUCCESS
-        cl.get_manifest.side_effect = [m_list, m_single]
-        assert _source_repo_from_labels(cl, "t") == "o/r"
+        inspector.get_manifest.side_effect = [m_list, m_single]
+        assert _source_repo_from_labels(inspector, "t") == "o/r"
 
     def test_dockerhub_exhaustive(self):
         # 80-83 (source vs desc)
@@ -67,12 +78,12 @@ class TestScorecardAnalyzer:
 
     def test_resolve_and_search_exhaustive(self):
         # 99 search logic
-        cl = MagicMock()
+        inspector = MagicMock()
         with patch(
             "regis.analyzers.scorecarddev._source_repo_from_labels",
             return_value="https://github.com/a/b",
         ):
-            assert _resolve_source_repo(cl, "r", "t") == "https://github.com/a/b"
+            assert _resolve_source_repo(inspector, "r", "t") == "https://github.com/a/b"
 
         with patch(
             "regis.analyzers.scorecarddev._source_repo_from_labels",
@@ -82,7 +93,7 @@ class TestScorecardAnalyzer:
                 "regis.analyzers.scorecarddev._source_repo_from_dockerhub",
                 return_value=None,
             ):
-                assert _resolve_source_repo(cl, "r", "t") is None
+                assert _resolve_source_repo(inspector, "r", "t") is None
 
     def test_fetch_errors_exhaustive(self):
         # 111 (git strip), 113 (scheme), 123 (fetch), 126 (404)
@@ -93,18 +104,23 @@ class TestScorecardAnalyzer:
             assert _fetch_scorecard("gh", "o", "r") is None
 
     def test_analyze_logic_exhaustive(self, analyzer):
-        cl = MagicMock()
+        inspector = MagicMock()
         # 147, 158, 171
         with patch(
             "regis.analyzers.scorecarddev._resolve_source_repo",
             side_effect=[None, "https://github.com/o/r"],
         ):
-            assert analyzer.analyze(cl, "r", "t")["source_repo"] is None
+            assert (
+                analyzer.analyze(_ctx(inspector, repository="r", tag="t"))[
+                    "source_repo"
+                ]
+                is None
+            )
 
             with patch(
                 "regis.analyzers.scorecarddev._fetch_scorecard",
                 return_value={"score": 5},
             ):
-                res = analyzer.analyze(cl, "r", "t")
+                res = analyzer.analyze(_ctx(inspector, repository="r", tag="t"))
                 assert res["score"] == 5
                 assert res["checks"] == []

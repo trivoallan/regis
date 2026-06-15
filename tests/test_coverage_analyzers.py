@@ -14,7 +14,18 @@ from regis.analyzers.scorecarddev import (
     _source_repo_from_dockerhub,
 )
 from regis.analyzers.size import SizeAnalyzer, _human_size
+from regis.core.domain.context import AnalysisContext
+from regis.core.model.image_reference import ImageReference
 from regis.utils.regctl import run_regctl
+from tests.fakes import FakeToolRunner
+
+
+def _prov_ctx(inspector, *, repository="r", tag="t"):
+    return AnalysisContext(
+        image=ImageReference(registry="docker.io", repository=repository, tag=tag),
+        inspector=inspector,
+        tools=FakeToolRunner(),
+    )
 
 
 class TestOciCoverage:
@@ -185,7 +196,7 @@ class TestProvenanceCoverage:
         cl.get_blob.return_value = {
             "config": {"Labels": {"org.opencontainers.image.source": "s"}}
         }
-        r = a.analyze(cl, "r", "t")
+        r = a.analyze(_prov_ctx(cl))
         assert r["indicators_count"] == 2
-        assert a.analyze(cl, "r", "t")["indicators_count"] == 0
-        a.analyze(cl, "r", "t")
+        assert a.analyze(_prov_ctx(cl))["indicators_count"] == 0
+        a.analyze(_prov_ctx(cl))

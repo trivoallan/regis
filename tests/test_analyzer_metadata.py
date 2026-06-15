@@ -64,8 +64,8 @@ class TestMetadataAnalyzerWellKnownOnly:
 
     def test_analyze_ignores_positional_args(self):
         analyzer = MetadataAnalyzer(metadata={"ci": {"job": {"id": "123"}}})
-        client = MagicMock()
-        result = analyzer.analyze(client, "repo/name", "latest", "linux/amd64")
+        ctx = MagicMock()
+        result = analyzer.analyze(ctx)
         assert result["valid"] is True
         assert result["metadata"]["ci"]["job"]["id"] == "123"
 
@@ -210,3 +210,20 @@ class TestMetadataAnalyzerWithPlaybookSchema:
             k for k, v in result["metadata_validation"].items() if not v["valid"]
         ]
         assert invalid, "expected at least one invalid entry for the structural error"
+
+
+def test_metadata_uses_context():
+    from regis.analyzers.metadata import MetadataAnalyzer
+
+    assert MetadataAnalyzer.uses_context is True
+
+
+def test_metadata_analyze_ignores_context():
+    """analyze accepts a context but ignores it; result depends only on __init__ data."""
+    from regis.analyzers.metadata import MetadataAnalyzer
+
+    a = MetadataAnalyzer(metadata={"ci": {"job": {"id": "1"}}})
+    via_none = a.analyze()  # rerun-style no-arg call must still work
+    via_ctx = a.analyze(object())  # loop-style call with an (ignored) ctx
+    assert via_none == via_ctx
+    assert via_none["metadata"] == {"ci": {"job": {"id": "1"}}}

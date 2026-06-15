@@ -11,6 +11,18 @@ from regis.analyzers.endoflife import (
     _image_to_product,
     _match_cycle,
 )
+from regis.core.domain.context import AnalysisContext
+from regis.core.model.image_reference import ImageReference
+from tests.fakes import FakeImageInspector, FakeToolRunner
+
+
+def _eol_ctx(*, repository="library/nginx", tag="latest"):
+    return AnalysisContext(
+        image=ImageReference(registry="docker.io", repository=repository, tag=tag),
+        inspector=FakeImageInspector(),
+        tools=FakeToolRunner(),
+    )
+
 
 # ---------------------------------------------------------------------------
 # Unit tests
@@ -101,24 +113,6 @@ class TestMatchCycle:
 
 
 # ---------------------------------------------------------------------------
-# Mock client
-# ---------------------------------------------------------------------------
-
-
-class MockRegistryClient:
-    """Minimal mock for RegistryClient."""
-
-    def list_tags(self):
-        return []
-
-    def get_manifest(self, tag):
-        return {}
-
-    def get_blob(self, digest):
-        return {}
-
-
-# ---------------------------------------------------------------------------
 # Full analyzer tests
 # ---------------------------------------------------------------------------
 
@@ -141,13 +135,15 @@ class TestEndOfLifeAnalyzer:
         },
     ]
 
+    def test_endoflife_uses_context(self):
+        assert EndOfLifeAnalyzer.uses_context is True
+
     @patch("regis.analyzers.endoflife._fetch_cycles")
     def test_known_product(self, mock_fetch):
         """Test with nginx which is known on endoflife.date."""
         mock_fetch.return_value = self.MOCK_CYCLES
-        client = MockRegistryClient()
         analyzer = EndOfLifeAnalyzer()
-        report = analyzer.analyze(client, "library/nginx", "1.27")
+        report = analyzer.analyze(_eol_ctx(repository="library/nginx", tag="1.27"))
         analyzer.validate(report)
 
         assert report["analyzer"] == "endoflife"
@@ -160,9 +156,10 @@ class TestEndOfLifeAnalyzer:
     def test_unknown_product(self, mock_fetch):
         """Test with a product not on endoflife.date."""
         mock_fetch.return_value = None
-        client = MockRegistryClient()
         analyzer = EndOfLifeAnalyzer()
-        report = analyzer.analyze(client, "library/nonexistent-xyz", "latest")
+        report = analyzer.analyze(
+            _eol_ctx(repository="library/nonexistent-xyz", tag="latest")
+        )
         analyzer.validate(report)
 
         assert report["product_found"] is False
@@ -173,9 +170,8 @@ class TestEndOfLifeAnalyzer:
     def test_named_tag_no_match(self, mock_fetch):
         """Named tags like 'latest' cannot match a cycle."""
         mock_fetch.return_value = self.MOCK_CYCLES
-        client = MockRegistryClient()
         analyzer = EndOfLifeAnalyzer()
-        report = analyzer.analyze(client, "library/nginx", "latest")
+        report = analyzer.analyze(_eol_ctx(repository="library/nginx", tag="latest"))
         analyzer.validate(report)
 
         assert report["product_found"] is True
@@ -193,9 +189,8 @@ class TestEndOfLifeAnalyzer:
                 "latest": "1.27.5",
             }
         ]
-        client = MockRegistryClient()
         analyzer = EndOfLifeAnalyzer()
-        report = analyzer.analyze(client, "library/nginx", "1.27")
+        report = analyzer.analyze(_eol_ctx(repository="library/nginx", tag="1.27"))
         analyzer.validate(report)
 
         assert report["product_found"] is True
@@ -213,9 +208,8 @@ class TestEndOfLifeAnalyzer:
                 "latest": "1.25.5",
             }
         ]
-        client = MockRegistryClient()
         analyzer = EndOfLifeAnalyzer()
-        report = analyzer.analyze(client, "library/nginx", "1.25")
+        report = analyzer.analyze(_eol_ctx(repository="library/nginx", tag="1.25"))
         analyzer.validate(report)
 
         assert report["product_found"] is True

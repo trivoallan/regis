@@ -4,6 +4,18 @@ from regis.analyzers.scorecarddev import (
     ScorecardDevAnalyzer,
     _parse_git_url,
 )
+from regis.core.domain.context import AnalysisContext
+from regis.core.model.image_reference import ImageReference
+from tests.fakes import FakeImageInspector, FakeToolRunner
+
+
+def _ctx(inspector, *, repository="library/nginx", tag="latest"):
+    return AnalysisContext(
+        image=ImageReference(registry="docker.io", repository=repository, tag=tag),
+        inspector=inspector,
+        tools=FakeToolRunner(),
+    )
+
 
 # ---------------------------------------------------------------------------
 # Git URL parsing tests
@@ -76,12 +88,14 @@ class TestScorecardAnalyzerNoSource:
         config = {
             "config": {"Labels": {}},
         }
-        client = MockRegistryClient(
+        inspector = MockRegistryClient(
             manifest=manifest,
             blobs={"sha256:cfg1": config},
         )
         analyzer = ScorecardDevAnalyzer()
-        report = analyzer.analyze(client, "fakens/nonexistent-image-xyz", "latest")
+        report = analyzer.analyze(
+            _ctx(inspector, repository="fakens/nonexistent-image-xyz", tag="latest")
+        )
         analyzer.validate(report)
 
         assert report["analyzer"] == "scorecarddev"
@@ -108,12 +122,14 @@ class TestScorecardAnalyzerWithSource:
                 }
             },
         }
-        client = MockRegistryClient(
+        inspector = MockRegistryClient(
             manifest=manifest,
             blobs={"sha256:cfg1": config},
         )
         analyzer = ScorecardDevAnalyzer()
-        report = analyzer.analyze(client, "library/nginx", "latest")
+        report = analyzer.analyze(
+            _ctx(inspector, repository="library/nginx", tag="latest")
+        )
         analyzer.validate(report)
 
         assert report["source_repo"] == "https://github.com/nginx/docker-nginx"
@@ -144,9 +160,16 @@ def test_scorecard_source_extracted_from_raw(monkeypatch):
     )
 
     analyzer = mod.ScorecardDevAnalyzer()
-    result = analyzer.analyze(client=None, repository="library/nginx", tag="latest")
+    result = analyzer.analyze(
+        _ctx(FakeImageInspector(), repository="library/nginx", tag="latest")
+    )
 
     assert result["scorecard_available"] is True
     assert result["source"]["built_at"] == "2026-06-01T00:00:00Z"
     assert result["source"]["version"] == "v5.0.0"
     assert isinstance(result["source"]["fetched_at"], str)
+
+
+def test_uses_context_flag():
+    """ScorecardDevAnalyzer must declare uses_context = True."""
+    assert ScorecardDevAnalyzer.uses_context is True

@@ -3,6 +3,17 @@ import requests
 import responses
 
 from regis.analyzers.popularity import PopularityAnalyzer
+from regis.core.domain.context import AnalysisContext
+from regis.core.model.image_reference import ImageReference
+from tests.fakes import FakeImageInspector, FakeToolRunner
+
+
+def _ctx(*, repository="library/nginx", tag="latest"):
+    return AnalysisContext(
+        image=ImageReference(registry="docker.io", repository=repository, tag=tag),
+        inspector=FakeImageInspector(),
+        tools=FakeToolRunner(),
+    )
 
 
 class TestPopularityAnalyzer:
@@ -18,7 +29,7 @@ class TestPopularityAnalyzer:
             json={"pull_count": 1000, "star_count": 50, "description": "some desc"},
             status=200,
         )
-        report = analyzer.analyze(None, "library/nginx", "latest")
+        report = analyzer.analyze(_ctx(repository="library/nginx", tag="latest"))
         assert report["pull_count"] == 1000
         assert report["star_count"] == 50
         assert report["available"] is True
@@ -31,7 +42,7 @@ class TestPopularityAnalyzer:
             "https://hub.docker.com/v2/repositories/private/repo",
             status=404,
         )
-        report = analyzer.analyze(None, "private/repo", "latest")
+        report = analyzer.analyze(_ctx(repository="private/repo", tag="latest"))
         assert report["available"] is False
         assert report["pull_count"] is None
         assert report["is_official"] is False
@@ -44,7 +55,7 @@ class TestPopularityAnalyzer:
             "https://hub.docker.com/v2/repositories/timeout/repo",
             body=requests.exceptions.Timeout("Timeout"),
         )
-        report = analyzer.analyze(None, "timeout/repo", "latest")
+        report = analyzer.analyze(_ctx(repository="timeout/repo", tag="latest"))
         assert report["available"] is False
 
 
@@ -67,8 +78,12 @@ def test_popularity_last_updated_migrated_to_source(monkeypatch):
     monkeypatch.setattr(mod.requests, "get", lambda *a, **k: _Resp())
 
     analyzer = mod.PopularityAnalyzer()
-    result = analyzer.analyze(client=None, repository="library/nginx", tag="latest")
+    result = analyzer.analyze(_ctx(repository="library/nginx", tag="latest"))
 
     assert "last_updated" not in result
     assert result["source"]["built_at"] == "2026-06-05T12:00:00Z"
     assert result["date_registered"] == "2020-01-01T00:00:00Z"
+
+
+def test_popularity_uses_context():
+    assert PopularityAnalyzer.uses_context is True

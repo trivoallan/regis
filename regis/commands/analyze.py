@@ -11,9 +11,11 @@ from typing import Any
 
 import click
 
+from regis.adapters.driven.analyzers.entry_point_provider import (
+    EntryPointAnalyzerProvider,
+)
 from regis.adapters.driving.cli.composition import build_analyze_image
 from regis.analyzers.base import BaseAnalyzer
-from regis.analyzers.discovery import discover_analyzers
 from regis.core.application.analyze_image import AnalyzerOutcome
 from regis.core.model.image_reference import ImageReference
 from regis.registry.client import RegistryClient
@@ -31,8 +33,11 @@ from regis.utils.report import (
 
 logger = logging.getLogger(__name__)
 
-# Alias kept for patch compatibility in tests
-_discover_analyzers = discover_analyzers
+# Analyzer discovery goes through the AnalyzerProvider port. The module-level
+# instance + the `_discover_analyzers` binding are kept as the test patch seam
+# (`regis.commands.analyze._discover_analyzers`).
+_analyzer_provider = EntryPointAnalyzerProvider()
+_discover_analyzers = _analyzer_provider.available
 
 #: Maps an AnalyzerOutcome.error_type to its human-readable CLI label.
 _ERROR_LABEL: dict[str, str] = {
