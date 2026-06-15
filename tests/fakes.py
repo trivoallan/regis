@@ -86,13 +86,11 @@ class FakeReportSink(ReportSink):
     """Records emissions in memory; writes nothing to disk."""
 
     def __init__(self) -> None:
-        self.emitted: list[tuple[Report, tuple[str, ...], Path]] = []
+        self.emitted: list[tuple[Report, tuple[str, ...]]] = []
 
-    def emit(
-        self, report: Report, *, formats: Sequence[str], output_dir: Path
-    ) -> list[Path]:
-        self.emitted.append((report, tuple(formats), output_dir))
-        return [output_dir / f"report.{fmt}" for fmt in formats]
+    def emit(self, report: Report, *, formats: Sequence[str]) -> list[Path]:
+        self.emitted.append((report, tuple(formats)))
+        return [Path(f"report.{fmt}") for fmt in formats]
 
 
 class StubAnalyzerProvider(AnalyzerProvider):

@@ -33,10 +33,8 @@ def test_fake_tool_runner_returns_canned() -> None:
 
 def test_fake_report_sink_records_emissions() -> None:
     sink = FakeReportSink()
-    paths = sink.emit(
-        Report(payload={}), formats=["json", "html"], output_dir=Path("/out")
-    )
-    assert paths == [Path("/out/report.json"), Path("/out/report.html")]
+    paths = sink.emit(Report(payload={}), formats=["json", "html"])
+    assert paths == [Path("report.json"), Path("report.html")]
     assert len(sink.emitted) == 1
 
 
