@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 import click
 import pytest
 
+from regis.core.domain.errors import ToolError
 from regis.utils.process import (
     _default_fetcher,
     _manifest_names,
@@ -139,7 +140,7 @@ class TestEnsureTool:
             result = ensure_tool("grype")
         assert result == "/cache/grype"
 
-    def test_wraps_fetch_error_as_click_exception(self):
+    def test_wraps_fetch_error_as_tool_error(self):
         from regis.tools.fetcher import ToolFetchError
 
         mock_fetcher = MagicMock()
@@ -151,24 +152,24 @@ class TestEnsureTool:
             ),
             patch("regis.utils.process._default_fetcher", return_value=mock_fetcher),
         ):
-            with pytest.raises(click.ClickException) as exc:
+            with pytest.raises(ToolError) as exc:
                 ensure_tool("grype")
-        assert "dl failed" in exc.value.message
+        assert "dl failed" in str(exc.value)
 
     def test_raises_when_not_in_path_and_not_in_manifest(self):
         with (
             patch("regis.utils.process.shutil.which", return_value=None),
             patch("regis.utils.process._manifest_names", return_value=frozenset()),
         ):
-            with pytest.raises(click.ClickException) as exc:
+            with pytest.raises(ToolError) as exc:
                 ensure_tool("ghost")
-        assert "not found in PATH" in exc.value.message
+        assert "not found in PATH" in str(exc.value)
 
     def test_raises_with_install_hint_when_not_in_manifest(self):
         with (
             patch("regis.utils.process.shutil.which", return_value=None),
             patch("regis.utils.process._manifest_names", return_value=frozenset()),
         ):
-            with pytest.raises(click.ClickException) as exc:
+            with pytest.raises(ToolError) as exc:
                 ensure_tool("ghost", install_hint="brew install ghost")
-        assert "brew install ghost" in exc.value.message
+        assert "brew install ghost" in str(exc.value)

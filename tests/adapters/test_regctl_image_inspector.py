@@ -7,7 +7,7 @@ import pytest
 
 from regis.adapters.driven.registry import regctl_image_inspector as mod
 from regis.adapters.driven.registry.regctl_image_inspector import RegctlImageInspector
-from regis.core.domain.errors import AnalyzerError, RegistryError
+from regis.core.domain.errors import RegistryError
 from regis.core.ports.image_inspector import ImageInspector
 from regis.registry.client import RegistryClient
 
@@ -115,16 +115,15 @@ def test_normalizes_docker_hub_host(monkeypatch) -> None:
     assert captured["args"] == ["tag", "ls", "docker.io/library/nginx"]
 
 
-def test_translates_analyzer_error(monkeypatch) -> None:
+def test_run_regctl_registry_error_propagates(monkeypatch) -> None:
     def boom(client, args):
-        raise AnalyzerError("regctl not found")
+        raise RegistryError("regctl not found")
 
     monkeypatch.setattr(mod, "run_regctl", boom)
     inspector, _ = _inspector()
     with pytest.raises(RegistryError) as exc_info:
         inspector.list_tags()
     assert "regctl not found" in str(exc_info.value)
-    assert isinstance(exc_info.value.__cause__, AnalyzerError)
 
 
 def test_translates_called_process_error(monkeypatch) -> None:

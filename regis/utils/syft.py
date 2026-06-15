@@ -12,9 +12,7 @@ import os
 import subprocess  # nosec B404
 from typing import Any
 
-import click
-
-from regis.analyzers.base import AnalyzerError
+from regis.core.domain.errors import ToolError
 from regis.utils.process import ensure_tool
 
 logger = logging.getLogger(__name__)
@@ -43,12 +41,9 @@ def run_syft(
         The parsed syft CycloneDX-JSON document.
 
     Raises:
-        AnalyzerError: if syft is missing, fails, or emits invalid JSON.
+        ToolError: if syft is missing, fails, or emits invalid JSON.
     """
-    try:
-        syft_path = ensure_tool("syft")
-    except click.ClickException as exc:
-        raise AnalyzerError(str(exc)) from exc
+    syft_path = ensure_tool("syft")
 
     env = os.environ.copy()
     user = username or env.get("REGIS_USERNAME")
@@ -73,8 +68,8 @@ def run_syft(
         )
         return json.loads(result.stdout)  # type: ignore[no-any-return]
     except subprocess.CalledProcessError as exc:
-        raise AnalyzerError(f"syft failed: {exc.stderr}") from exc
+        raise ToolError(f"syft failed: {exc.stderr}") from exc
     except subprocess.TimeoutExpired as exc:
-        raise AnalyzerError(f"syft timed out after {timeout}s") from exc
+        raise ToolError(f"syft timed out after {timeout}s") from exc
     except json.JSONDecodeError as exc:
-        raise AnalyzerError(f"syft produced invalid JSON: {exc}") from exc
+        raise ToolError(f"syft produced invalid JSON: {exc}") from exc

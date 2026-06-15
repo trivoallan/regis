@@ -2,12 +2,11 @@
 
 from types import SimpleNamespace
 
-import click
 import pytest
 
 from regis.adapters.driven.tools import subprocess_tool_runner as mod
 from regis.adapters.driven.tools.subprocess_tool_runner import SubprocessToolRunner
-from regis.core.domain.errors import AnalyzerError, ToolError
+from regis.core.domain.errors import ToolError
 from regis.core.model.image_reference import ImageReference
 from regis.core.ports.tool_runner import ToolResult, ToolRunner
 
@@ -78,15 +77,14 @@ def test_scan_secrets_delegates_to_trufflehog_without_platform(monkeypatch) -> N
     }
 
 
-def test_scanner_translates_analyzer_error_to_tool_error(monkeypatch) -> None:
+def test_scanner_raises_tool_error_directly(monkeypatch) -> None:
     def boom(*args, **kwargs):
-        raise AnalyzerError("grype failed: boom")
+        raise ToolError("grype failed: boom")
 
     monkeypatch.setattr(mod, "run_grype", boom)
     with pytest.raises(ToolError) as exc_info:
         SubprocessToolRunner().scan_vulnerabilities(IMAGE)
     assert "grype failed: boom" in str(exc_info.value)
-    assert isinstance(exc_info.value.__cause__, AnalyzerError)
 
 
 def test_lint_dockerfile_parses_issue_list(monkeypatch) -> None:
@@ -129,7 +127,7 @@ def test_lint_dockerfile_invalid_json_raises_tool_error(monkeypatch) -> None:
 
 def test_lint_dockerfile_missing_tool_raises_tool_error(monkeypatch) -> None:
     def boom(name):
-        raise click.ClickException("hadolint not available")
+        raise ToolError("hadolint not available")
 
     monkeypatch.setattr(mod, "ensure_tool", boom)
     with pytest.raises(ToolError):
@@ -190,7 +188,7 @@ def test_audit_image_no_output_raises_tool_error(monkeypatch) -> None:
 
 def test_audit_image_missing_tool_raises_tool_error(monkeypatch) -> None:
     def boom(name):
-        raise click.ClickException("dockle not available")
+        raise ToolError("dockle not available")
 
     monkeypatch.setattr(mod, "ensure_tool", boom)
     with pytest.raises(ToolError) as exc_info:
@@ -227,7 +225,7 @@ def test_run_returns_tool_result_with_exit_code(monkeypatch) -> None:
 
 def test_run_missing_tool_raises_tool_error(monkeypatch) -> None:
     def boom(name):
-        raise click.ClickException("cosign not available")
+        raise ToolError("cosign not available")
 
     monkeypatch.setattr(mod, "ensure_tool", boom)
     with pytest.raises(ToolError) as exc_info:

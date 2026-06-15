@@ -22,9 +22,7 @@ import subprocess  # nosec B404
 import tempfile
 from typing import Any
 
-import click
-
-from regis.analyzers.base import AnalyzerError
+from regis.core.domain.errors import ToolError
 from regis.utils.process import ensure_tool
 
 logger = logging.getLogger(__name__)
@@ -77,13 +75,10 @@ def run_trufflehog(
         A list of finding dicts (one per NDJSON line).
 
     Raises:
-        AnalyzerError: if trufflehog is missing, times out, or emits a line
+        ToolError: if trufflehog is missing, times out, or emits a line
             that is not valid JSON.
     """
-    try:
-        th_path = ensure_tool("trufflehog")
-    except click.ClickException as exc:
-        raise AnalyzerError(str(exc)) from exc
+    th_path = ensure_tool("trufflehog")
 
     env = os.environ.copy()
     user = username or env.get("REGIS_USERNAME")
@@ -106,7 +101,7 @@ def run_trufflehog(
             env=env,
         )
     except subprocess.TimeoutExpired as exc:
-        raise AnalyzerError(f"trufflehog timed out after {timeout}s") from exc
+        raise ToolError(f"trufflehog timed out after {timeout}s") from exc
     finally:
         if docker_config_dir:
             shutil.rmtree(docker_config_dir, ignore_errors=True)
@@ -119,5 +114,5 @@ def run_trufflehog(
         try:
             findings.append(json.loads(line))
         except json.JSONDecodeError as exc:
-            raise AnalyzerError(f"trufflehog produced invalid JSON: {exc}") from exc
+            raise ToolError(f"trufflehog produced invalid JSON: {exc}") from exc
     return findings

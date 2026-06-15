@@ -9,6 +9,8 @@ from pathlib import Path
 
 import click
 
+from regis.core.domain.errors import ToolError
+
 
 def run_cmd(
     args: list[str],
@@ -81,8 +83,7 @@ def ensure_tool(name: str, install_hint: str | None = None) -> str:
       1. ``shutil.which(name)`` (host PATH, full image, dev install).
       2. If *name* is in the tools manifest, delegate to
          :class:`regis.tools.fetcher.ToolFetcher`.
-      3. Otherwise raise :class:`click.ClickException` (same shape as
-         :func:`require_tool`).
+      3. Otherwise raise :class:`~regis.core.domain.errors.ToolError`.
     """
     found = shutil.which(name)
     if found:
@@ -93,8 +94,8 @@ def ensure_tool(name: str, install_hint: str | None = None) -> str:
         try:
             return str(_default_fetcher().ensure(name))
         except ToolFetchError as exc:
-            raise click.ClickException(str(exc)) from exc
+            raise ToolError(str(exc)) from exc
     message = f"'{name}' not found in PATH. Please install it."
     if install_hint:
         message = f"{message}\n\n{install_hint}"
-    raise click.ClickException(message)
+    raise ToolError(message)
