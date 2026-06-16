@@ -12,6 +12,10 @@
 
 ## Completed (Recent)
 
+- **Migration hexagonale — P3d-4 (2026-06-16, branche `tritri/hexagonal-p3d4-evaluate`, 3 commits)** — **use-case `Evaluate` ⇒ DoD P3 atteinte**, non cassant côté user (subagent-driven + revue holistique `READY TO MERGE`, ponytail) :
+  - Use-case click-free `core/application/evaluate.py` : `Evaluate(*, sink).run(report, *, formats, playbook_paths=(), on_playbook_progress=None)` = trio `run_playbooks → validate_report → sink.emit` (miroir de `run_and_evaluate` sans boucle/enveloppe/breach — dry-run). `build_evaluate(...)` câble un `FileReportSink` (sans creds). `evaluate_cmd` aminci → adaptateur driving fin (garde load + guard `results` + `ensure_schema_version` ; délègue émission via `ReportSink` ; `PlaybookError → ClickException` ; `_echo_progress` préservé) ; `render_and_save_reports` retiré de `commands/analyze.py`. **⇒ `AnalyzeImage`/`Evaluate` orchestrent tous deux, CLI = adaptateur driving fin (DoD P3).**
+  - **Régression rattrapée en revue** : le retrait de l'import `render_and_save_reports` cassait 2 tests `evaluate` HTML/sections (patchaient l'attribut supprimé) → migrés sur le seam `build_evaluate`. 878 PASS / 96.63 % (double gate ; `evaluate.py` 100 %) / `lint-imports` KEPT / 0 `click` dans `core/`. **Reste** : P4 (move + port presentation-template + `AnalyzerProvider → core/ports`), P5 (docs).
+
 - **Migration hexagonale — P3d (2026-06-15)** — **le cœur est foldé**, non cassant côté user (subagent-driven), livré en 3 PR :
   - **P3d-1** ([#774](https://github.com/trivoallan/regis/pull/774), `da4ab45`) : retrait du pont `uses_context` (+ `legacy_client_factory` + flip `abstractmethod` `base.py` + drop `type: ignore[override]`). `analyze(ctx)` = **le** contrat unique des 14 analyzers.
   - **P3d-2** (`39d3c88`) : `utils/{grype,syft,trufflehog,regctl,process}` lèvent le `ToolError`/`RegistryError` du cœur ; **`click` retiré des utils** (traduction `→ ClickException` repoussée à la CLI).
