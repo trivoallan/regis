@@ -14,7 +14,7 @@ from regis.adapters.driven.analyzers.entry_point_provider import (
     EntryPointAnalyzerProvider,
 )
 from regis.adapters.driven.report.file_report_sink import FileReportSink
-from regis.adapters.driving.cli.composition import build_analyze_image
+from regis.adapters.driving.cli.composition import build_analyze_image, build_evaluate
 from regis.analyzers.base import BaseAnalyzer
 from regis.core.application.analyze_image import AnalyzerOutcome
 from regis.core.model.image_reference import ImageReference
@@ -24,7 +24,6 @@ from regis.registry.parser import parse_image_url
 from regis.utils.report import (
     ensure_schema_version,
     format_output_path,
-    render_and_save_reports,
     render_presentation_templates,
     run_playbooks,
     set_nested_value,
@@ -669,18 +668,24 @@ def evaluate_cmd(
     if sections != "all" and not html_single:
         click.echo("  Warning: --sections has no effect without --html.", err=True)
 
-    final_report = run_playbooks(playbook_paths, analysis_report, formats)
-    validate_report(final_report)
+    from regis.core.domain.errors import PlaybookError
+    from regis.utils.report import _echo_progress
 
-    render_and_save_reports(
-        final_report,
-        formats,
-        output_template,
-        output_dir_template,
-        theme,
-        pretty,
-        sections=sections,
-    )
+    try:
+        final_report = build_evaluate(
+            output_dir_template=output_dir_template or "reports/dry-run/{timestamp}",
+            output_template=output_template,
+            theme=theme,
+            pretty=pretty,
+            sections=sections,
+        ).run(
+            analysis_report,
+            formats=formats,
+            playbook_paths=playbook_paths,
+            on_playbook_progress=_echo_progress,
+        )
+    except PlaybookError as exc:
+        raise click.ClickException(str(exc)) from exc
 
     render_presentation_templates(final_report, output_dir_template)
 

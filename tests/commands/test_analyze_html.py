@@ -113,34 +113,30 @@ def test_sections_forwarded_to_render(runner, tmp_path, _mock_analyze_infra):
 
 
 def test_evaluate_cmd_html_flag(runner, tmp_path):
-    """evaluate --html passes 'html' in formats."""
+    """evaluate --html passes 'html' in the formats handed to the use-case."""
     report_file = tmp_path / "report.json"
     report_file.write_text(json.dumps(_MINIMAL_REPORT), encoding="utf-8")
 
     with (
-        patch("regis.commands.analyze.run_playbooks", return_value=_MINIMAL_REPORT),
-        patch("regis.commands.analyze.validate_report"),
+        patch("regis.commands.analyze.build_evaluate") as mock_build,
         patch("regis.commands.analyze.render_presentation_templates"),
-        patch("regis.commands.analyze.render_and_save_reports") as mock_render,
     ):
         result = runner.invoke(
             evaluate_cmd,
             [str(report_file), "--html", "--output-dir", str(tmp_path)],
         )
         assert result.exit_code == 0, result.output
-        formats = mock_render.call_args[0][1]
-        assert "html" in formats
+        run_kwargs = mock_build.return_value.run.call_args.kwargs
+        assert "html" in run_kwargs["formats"]
 
 
 def test_evaluate_sections_forwarded_to_render(runner, tmp_path):
-    """evaluate --sections value is forwarded to render_and_save_reports."""
+    """evaluate --sections value is forwarded to build_evaluate as sections kwarg."""
     report_file = tmp_path / "report.json"
     report_file.write_text(json.dumps(_MINIMAL_REPORT), encoding="utf-8")
 
     with (
-        patch("regis.commands.analyze.run_playbooks", return_value=_MINIMAL_REPORT),
-        patch("regis.commands.analyze.validate_report"),
-        patch("regis.commands.analyze.render_and_save_reports") as mock_render,
+        patch("regis.commands.analyze.build_evaluate") as mock_build,
         patch("regis.commands.analyze.render_presentation_templates"),
     ):
         result = runner.invoke(
@@ -155,8 +151,8 @@ def test_evaluate_sections_forwarded_to_render(runner, tmp_path):
             ],
         )
         assert result.exit_code == 0, result.output
-        call_kwargs = mock_render.call_args[1]
-        assert call_kwargs.get("sections") == "trivy"
+        _, build_kwargs = mock_build.call_args
+        assert build_kwargs.get("sections") == "trivy"
 
 
 def test_render_and_save_html_writes_file(tmp_path):

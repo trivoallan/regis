@@ -347,6 +347,42 @@ class TestEvaluateCmd:
         assert result.exit_code != 0
         assert "Failed to load" in result.output
 
+    @patch("regis.commands.analyze.build_evaluate")
+    def test_evaluate_emits_through_use_case(self, mock_build, tmp_path):
+        """evaluate_cmd routes emission through the Evaluate use-case."""
+        from regis.core.application.evaluate import Evaluate
+        from tests.fakes import FakeReportSink
+
+        sink = FakeReportSink()
+        mock_build.return_value = Evaluate(sink=sink)
+
+        report = {
+            "version": "0.22.0",
+            "schemaVersion": 5,
+            "request": {
+                "url": "nginx:latest",
+                "registry": "registry-1.docker.io",
+                "repository": "library/nginx",
+                "tag": "latest",
+                "digest": "latest",
+                "analyzers": [],
+                "timestamp": "2024-01-01T00:00:00+00:00",
+            },
+            "results": {},
+        }
+        report_file = tmp_path / "report.json"
+        report_file.write_text(json.dumps(report))
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(main, ["evaluate", str(report_file)])
+
+        assert result.exit_code == 0
+        mock_build.assert_called_once()
+        assert len(sink.emitted) == 1
+        _, emitted_formats = sink.emitted[0]
+        assert emitted_formats == ("json",)
+
 
 class TestAnalyzeCacheAndFail:
     """Tests for --cache and --fail options of the `analyze` command."""
