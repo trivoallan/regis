@@ -25,6 +25,7 @@ from regis.core.domain.errors import AnalyzerError, RegistryError, ToolError
 from regis.core.model.image_reference import ImageReference
 from regis.core.model.report import REPORT_SCHEMA_VERSION, Report
 from regis.core.ports.image_inspector import ImageInspector
+from regis.core.ports.presentation_renderer import PresentationRenderer
 from regis.core.ports.report_sink import ReportSink
 from regis.core.ports.tool_runner import ToolRunner
 
@@ -85,10 +86,12 @@ class AnalyzeImage:
         tools: ToolRunner,
         inspector_factory: InspectorFactory,
         sink: ReportSink,
+        presentation: PresentationRenderer,
     ) -> None:
         self._tools = tools
         self._inspector_factory = inspector_factory
         self._sink = sink
+        self._presentation = presentation
 
     # ------------------------------------------------------------------
     # Dispatch
@@ -262,6 +265,7 @@ class AnalyzeImage:
 
         validate_report(final_report)
         self._sink.emit(Report(final_report), formats=formats)
+        self._presentation.render(Report(final_report))
 
         level_order = {"critical": 1, "warning": 2, "info": 3}
         threshold = level_order.get(fail_level.lower(), None)

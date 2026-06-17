@@ -353,8 +353,12 @@ class TestEvaluateCmd:
         from regis.core.application.evaluate import Evaluate
         from tests.fakes import FakeReportSink
 
+        from tests.fakes import FakePresentationRenderer
+
         sink = FakeReportSink()
-        mock_build.return_value = Evaluate(sink=sink)
+        mock_build.return_value = Evaluate(
+            sink=sink, presentation=FakePresentationRenderer()
+        )
 
         report = {
             "version": "0.22.0",

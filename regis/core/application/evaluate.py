@@ -16,14 +16,16 @@ from typing import Any
 
 from regis.core.application.playbook_runner import run_playbooks, validate_report
 from regis.core.model.report import Report
+from regis.core.ports.presentation_renderer import PresentationRenderer
 from regis.core.ports.report_sink import ReportSink
 
 
 class Evaluate:
     """Evaluate playbooks against an existing report and emit the result."""
 
-    def __init__(self, *, sink: ReportSink) -> None:
+    def __init__(self, *, sink: ReportSink, presentation: PresentationRenderer) -> None:
         self._sink = sink
+        self._presentation = presentation
 
     def run(
         self,
@@ -54,4 +56,5 @@ class Evaluate:
         )
         validate_report(final_report)
         self._sink.emit(Report(final_report), formats=formats)
+        self._presentation.render(Report(final_report))
         return final_report
