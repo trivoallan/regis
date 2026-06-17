@@ -21,10 +21,12 @@ from regis.core.model.image_reference import ImageReference
 from regis.core.model.report import Report
 from regis.registry.client import RegistryClient
 from regis.registry.parser import parse_image_url
+from regis.adapters.driven.report.presentation_renderer import (
+    CookiecutterPresentationRenderer,
+)
 from regis.utils.report import (
     ensure_schema_version,
     format_output_path,
-    render_presentation_templates,
     run_playbooks,
     set_nested_value,
     validate_report,
@@ -456,7 +458,9 @@ def analyze(
             pretty=pretty,
             sections=sections,
         ).emit(Report(final_report), formats=formats)
-        render_presentation_templates(final_report, output_dir_template)
+        CookiecutterPresentationRenderer(output_dir_template=dir_tmpl).render(
+            Report(final_report)
+        )
         _render_verdict_block(final_report, quiet=quiet)
         if evaluate and fail:
             level_order = {"critical": 1, "warning": 2, "info": 3}
@@ -571,7 +575,6 @@ def analyze(
     except (AnalyzerError, PlaybookError) as exc:
         raise click.ClickException(str(exc)) from exc
 
-    render_presentation_templates(analysis.report, output_dir_template)
     _render_verdict_block(analysis.report, quiet=quiet)
     if evaluate and fail and analysis.has_breaches:
         click.echo(
@@ -672,7 +675,7 @@ def evaluate_cmd(
     from regis.utils.report import _echo_progress
 
     try:
-        final_report = build_evaluate(
+        build_evaluate(
             output_dir_template=output_dir_template or "reports/dry-run/{timestamp}",
             output_template=output_template,
             theme=theme,
@@ -686,8 +689,6 @@ def evaluate_cmd(
         )
     except PlaybookError as exc:
         raise click.ClickException(str(exc)) from exc
-
-    render_presentation_templates(final_report, output_dir_template)
 
 
 @click.command(name="list")
