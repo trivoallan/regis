@@ -351,9 +351,7 @@ class TestEvaluateCmd:
     def test_evaluate_emits_through_use_case(self, mock_build, tmp_path):
         """evaluate_cmd routes emission through the Evaluate use-case."""
         from regis.core.application.evaluate import Evaluate
-        from tests.fakes import FakeReportSink
-
-        from tests.fakes import FakePresentationRenderer
+        from tests.fakes import FakePresentationRenderer, FakeReportSink
 
         sink = FakeReportSink()
         mock_build.return_value = Evaluate(

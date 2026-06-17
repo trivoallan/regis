@@ -14,6 +14,9 @@ from regis.adapters.driven.analyzers.entry_point_provider import (
     EntryPointAnalyzerProvider,
 )
 from regis.adapters.driven.report.file_report_sink import FileReportSink
+from regis.adapters.driven.report.presentation_renderer import (
+    CookiecutterPresentationRenderer,
+)
 from regis.adapters.driving.cli.composition import build_analyze_image, build_evaluate
 from regis.analyzers.base import BaseAnalyzer
 from regis.core.application.analyze_image import AnalyzerOutcome
@@ -21,9 +24,6 @@ from regis.core.model.image_reference import ImageReference
 from regis.core.model.report import Report
 from regis.registry.client import RegistryClient
 from regis.registry.parser import parse_image_url
-from regis.adapters.driven.report.presentation_renderer import (
-    CookiecutterPresentationRenderer,
-)
 from regis.utils.report import (
     ensure_schema_version,
     format_output_path,
