@@ -20,17 +20,23 @@ from regis.core.domain.errors import (
     ToolError,
 )
 from regis.core.model.image_reference import ImageReference
-from tests.fakes import FakeImageInspector, FakeReportSink, FakeToolRunner
+from tests.fakes import (
+    FakeImageInspector,
+    FakePresentationRenderer,
+    FakeReportSink,
+    FakeToolRunner,
+)
 
 IMAGE = ImageReference(registry="reg.example", repository="ns/app", tag="1.0")
 
 
-def _make_use_case(*, tools=None, sink=None):
+def _make_use_case(*, tools=None, sink=None, presentation=None):
     """Build an AnalyzeImage with in-memory factories."""
     return AnalyzeImage(
         tools=tools or FakeToolRunner(),
         inspector_factory=lambda image: FakeImageInspector(),
         sink=sink or FakeReportSink(),
+        presentation=presentation or FakePresentationRenderer(),
     )
 
 
@@ -216,7 +222,8 @@ class _SimpleCtxAnalyzer:
 def test_run_and_evaluate_happy_path(monkeypatch):
     """Happy path: run_and_evaluate returns an AnalysisResult with correct shape."""
     sink = FakeReportSink()
-    uc = _make_use_case(sink=sink)
+    presentation = FakePresentationRenderer()
+    uc = _make_use_case(sink=sink, presentation=presentation)
 
     # Monkeypatch validate_report to be a no-op (avoids schema validation).
     monkeypatch.setattr(
@@ -250,6 +257,8 @@ def test_run_and_evaluate_happy_path(monkeypatch):
     assert len(sink.emitted) == 1
     _report_obj, fmt_tuple = sink.emitted[0]
     assert fmt_tuple == ("json",)
+    # Presentation renderer was invoked once after emission.
+    assert len(presentation.rendered) == 1
 
 
 def test_run_and_evaluate_metadata_included(monkeypatch):

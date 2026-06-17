@@ -11,6 +11,7 @@ from regis.core.domain.context import AnalysisContext
 from regis.core.model.image_reference import ImageReference
 from regis.core.model.report import Report
 from regis.core.ports.image_inspector import ImageInspector
+from regis.core.ports.presentation_renderer import PresentationRenderer
 from regis.core.ports.report_sink import ReportSink
 from regis.core.ports.tool_runner import ToolResult, ToolRunner
 
@@ -91,6 +92,16 @@ class FakeReportSink(ReportSink):
     def emit(self, report: Report, *, formats: Sequence[str]) -> list[Path]:
         self.emitted.append((report, tuple(formats)))
         return [Path(f"report.{fmt}") for fmt in formats]
+
+
+class FakePresentationRenderer(PresentationRenderer):
+    """Records render calls in memory; renders nothing."""
+
+    def __init__(self) -> None:
+        self.rendered: list[Report] = []
+
+    def render(self, report: Report) -> None:
+        self.rendered.append(report)
 
 
 class StubAnalyzerProvider(AnalyzerProvider):

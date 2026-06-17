@@ -51,3 +51,24 @@ def test_build_evaluate_captures_custom_output_dir_template():
 
     ev = build_evaluate(output_dir_template="reports/dry-run/custom")
     assert ev._sink._output_dir_template == "reports/dry-run/custom"
+
+
+def test_build_analyze_image_wires_presentation_renderer():
+    from regis.adapters.driven.report.presentation_renderer import (
+        CookiecutterPresentationRenderer,
+    )
+
+    uc = build_analyze_image("user", "pass", output_dir_template="reports/custom")
+    assert isinstance(uc._presentation, CookiecutterPresentationRenderer)
+    assert uc._presentation._output_dir_template == "reports/custom"
+
+
+def test_build_evaluate_wires_presentation_renderer():
+    from regis.adapters.driven.report.presentation_renderer import (
+        CookiecutterPresentationRenderer,
+    )
+    from regis.adapters.driving.cli.composition import build_evaluate
+
+    ev = build_evaluate(output_dir_template="reports/dry-run/custom")
+    assert isinstance(ev._presentation, CookiecutterPresentationRenderer)
+    assert ev._presentation._output_dir_template == "reports/dry-run/custom"

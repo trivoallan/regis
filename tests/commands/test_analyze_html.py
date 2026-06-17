@@ -77,7 +77,6 @@ def _mock_analyze_infra(tmp_path):
         patch(
             "regis.commands.analyze.build_analyze_image", return_value=mock_use_case
         ) as mock_build,
-        patch("regis.commands.analyze.render_presentation_templates"),
     ):
         yield {"build": mock_build, "use_case": mock_use_case}
 
@@ -117,10 +116,7 @@ def test_evaluate_cmd_html_flag(runner, tmp_path):
     report_file = tmp_path / "report.json"
     report_file.write_text(json.dumps(_MINIMAL_REPORT), encoding="utf-8")
 
-    with (
-        patch("regis.commands.analyze.build_evaluate") as mock_build,
-        patch("regis.commands.analyze.render_presentation_templates"),
-    ):
+    with patch("regis.commands.analyze.build_evaluate") as mock_build:
         result = runner.invoke(
             evaluate_cmd,
             [str(report_file), "--html", "--output-dir", str(tmp_path)],
@@ -135,10 +131,7 @@ def test_evaluate_sections_forwarded_to_render(runner, tmp_path):
     report_file = tmp_path / "report.json"
     report_file.write_text(json.dumps(_MINIMAL_REPORT), encoding="utf-8")
 
-    with (
-        patch("regis.commands.analyze.build_evaluate") as mock_build,
-        patch("regis.commands.analyze.render_presentation_templates"),
-    ):
+    with patch("regis.commands.analyze.build_evaluate") as mock_build:
         result = runner.invoke(
             evaluate_cmd,
             [

@@ -9,6 +9,9 @@ from __future__ import annotations
 
 from regis.adapters.driven.registry.regctl_image_inspector import RegctlImageInspector
 from regis.adapters.driven.report.file_report_sink import FileReportSink
+from regis.adapters.driven.report.presentation_renderer import (
+    CookiecutterPresentationRenderer,
+)
 from regis.adapters.driven.tools.subprocess_tool_runner import SubprocessToolRunner
 from regis.core.application.analyze_image import AnalyzeImage
 from regis.core.application.evaluate import Evaluate
@@ -52,11 +55,15 @@ def build_analyze_image(
         pretty=pretty,
         sections=sections,
     )
+    presentation = CookiecutterPresentationRenderer(
+        output_dir_template=output_dir_template
+    )
 
     return AnalyzeImage(
         tools=SubprocessToolRunner(username, password),
         inspector_factory=_inspector,
         sink=sink,
+        presentation=presentation,
     )
 
 
@@ -80,4 +87,7 @@ def build_evaluate(
         pretty=pretty,
         sections=sections,
     )
-    return Evaluate(sink=sink)
+    presentation = CookiecutterPresentationRenderer(
+        output_dir_template=output_dir_template
+    )
+    return Evaluate(sink=sink, presentation=presentation)
