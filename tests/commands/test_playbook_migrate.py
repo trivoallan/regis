@@ -26,7 +26,7 @@ from regis.commands.playbook import (
     _migrate_var_path,
     playbook_group,
 )
-from regis.rules.evaluator import evaluate_rules
+from regis.core.domain.rules.evaluator import evaluate_rules
 
 # --------------------------------------------------------------------------- #
 # Fixtures

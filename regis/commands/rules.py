@@ -161,7 +161,7 @@ def list_rules(
     """List the available criteria catalogue (or the resolved set for a rules file)."""
     import yaml
 
-    from regis.rules.evaluator import get_criterion_templates, resolve_rules
+    from regis.core.domain.rules.evaluator import get_criterion_templates, resolve_rules
 
     analyzers = discover_analyzers()
     templates = get_criterion_templates(list(analyzers.keys()))
@@ -293,7 +293,7 @@ def show_rule(slug: str, rules_path: str | None, output_format: str) -> None:
     """Display the full definition of a specific rule."""
     import yaml
 
-    from regis.rules.evaluator import get_criterion_templates, resolve_rules
+    from regis.core.domain.rules.evaluator import get_criterion_templates, resolve_rules
 
     analyzers = discover_analyzers()
     templates = get_criterion_templates(list(analyzers.keys()))
@@ -356,7 +356,7 @@ def eval_rules(
     """Evaluate a regis JSON report against rules."""
     import yaml
 
-    from regis.rules.evaluator import evaluate_rules
+    from regis.core.domain.rules.evaluator import evaluate_rules
 
     try:
         report_data = json.loads(Path(input_path).read_text(encoding="utf-8"))
