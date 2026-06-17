@@ -210,7 +210,7 @@ class TestRulesEvaluate:
         # Use docker.io which passes the whitelist check
         report_file = self._write_report(tmp_path)
         runner = CliRunner()
-        with patch("regis.rules.evaluator.evaluate_rules") as mock_eval:
+        with patch("regis.core.domain.rules.evaluator.evaluate_rules") as mock_eval:
             mock_eval.return_value = {
                 "score": 100,
                 "all_rules": ["r1"],

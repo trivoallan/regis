@@ -4,7 +4,7 @@ import warnings
 
 import pytest
 
-from regis.rules.evaluator import (
+from regis.core.domain.rules.evaluator import (
     _interpolate_string,
     evaluate_rules,
     get_criterion_templates,
@@ -258,7 +258,7 @@ def test_helper_operators_registered():
     """The new helper operators evaluate through json_logic."""
     from json_logic import jsonLogic
 
-    import regis.rules.evaluator  # noqa: F401  (registers operators on import)
+    import regis.core.domain.rules.evaluator  # noqa: F401  (registers operators on import)
 
     assert jsonLogic({"is_true": [{"var": "v"}]}, {"v": "yes"}) is True
     assert jsonLogic({"is_true": [{"var": "v"}]}, {"v": "nope"}) is False
@@ -380,7 +380,7 @@ def test_custom_operators_with_non_list_inputs():
     """intersects, contains_all, subset, env_contains return False for non-list inputs."""
     from json_logic import jsonLogic
 
-    import regis.rules.evaluator  # noqa: F401 — ensures operators are registered
+    import regis.core.domain.rules.evaluator  # noqa: F401 — ensures operators are registered
 
     # intersects: non-list inputs
     assert jsonLogic({"intersects": ["not-a-list", ["a"]]}, {}) is False
@@ -400,7 +400,7 @@ def test_keys_operator_with_non_dict_returns_empty():
     """keys() returns [] for non-dict input."""
     from json_logic import jsonLogic
 
-    import regis.rules.evaluator  # noqa: F401
+    import regis.core.domain.rules.evaluator  # noqa: F401
 
     assert jsonLogic({"keys": [{"var": "v"}]}, {"v": "not-a-dict"}) == []
     assert jsonLogic({"keys": [{"var": "v"}]}, {"v": ["a", "b"]}) == []
@@ -410,7 +410,7 @@ def test_get_operator_with_non_dict_returns_none():
     """get() returns None for non-dict data."""
     from json_logic import jsonLogic
 
-    import regis.rules.evaluator  # noqa: F401
+    import regis.core.domain.rules.evaluator  # noqa: F401
 
     assert jsonLogic({"get": [{"var": "v"}, "key"]}, {"v": "not-a-dict"}) is None
 
