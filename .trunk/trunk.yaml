@@ -65,7 +65,14 @@ actions:
     - id: trunk-check-fix-pre-commit
       triggers:
         - git_hooks: [pre-commit]
-      run: trunk check --fix
+      # ponytail: clear mypy's incremental cache before linting. mypy 1.19.1
+      # crashes (AssertionError in fix_cross_refs: "Cannot find module ...",
+      # reported as "No diagnostics found ... exit code non-zero") on a warm but
+      # stale cache after a symbol is relocated between modules — a per-file
+      # false positive that forced `git commit --no-verify`. A cold cache never
+      # hits it (CI starts cold and is unaffected); clearing it here makes each
+      # commit's mypy as reliable as CI, at the cost of a few seconds re-check.
+      run: rm -rf .mypy_cache && trunk check --fix
   disabled:
     - trunk-announce
     - trunk-check-pre-push
