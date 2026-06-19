@@ -11,8 +11,6 @@ on:
       - CHANGELOG.md
       - uv.lock
       - pyproject.toml
-      - package.json
-      - pnpm-lock.yaml
       - .github/pages-root/**
       - .github/workflows/cd-docs.yml
   workflow_dispatch:
@@ -67,7 +65,7 @@ jobs:
             changed_files_file="$(mktemp)"
             git diff --name-only "$BEFORE_SHA" "$GITHUB_SHA" | tee "$changed_files_file"
 
-            if grep -Eq '^(regis/|scripts/generate_whats_new\.py$|CHANGELOG\.md$|uv\.lock$|pyproject\.toml$|package\.json$|pnpm-lock\.yaml$|\.github/workflows/cd-docs\.yml$)' "$changed_files_file"; then
+            if grep -Eq '^(regis/|scripts/generate_whats_new\.py$|CHANGELOG\.md$|uv\.lock$|pyproject\.toml$|\.github/workflows/cd-docs\.yml$)' "$changed_files_file"; then
               generate_reference=true
             fi
 
@@ -139,8 +137,10 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+        working-directory: docs/website
 
       - name: Audit Node dependencies (CRITICAL gate)
+        working-directory: docs/website
         run: |
           set +e
           pnpm audit --audit-level=critical --json > npm-audit-report.json 2>&1
@@ -157,7 +157,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: npm-audit-report
-          path: npm-audit-report.json
+          path: docs/website/npm-audit-report.json
           retention-days: 14
           if-no-files-found: warn
 
