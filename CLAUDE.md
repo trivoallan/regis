@@ -35,28 +35,38 @@ Use `--no-cov` for fast iteration; run the full suite before opening a PR.
 
 ## Architecture
 
+Hexagonal (ports & adapters). The dependency rule — `adapters > core.application > core.domain > core.ports > core.model` — is enforced in CI by **import-linter** (job `hexagonal-layers`). The core is Click-free; driven adapters own all I/O. Full layer table + diagram: `docs/memory-bank/systemPatterns.md` § Architecture.
+
 ```
 regis/
-  cli.py              # `regis` console script entry point
-  analyzers/          # Pluggable analyzers (entry points in pyproject.toml)
-  analyzers/discovery.py  # discover_analyzers() — entry point loader
-  commands/           # CLI commands (analyze, archive, bootstrap, check, rules)
-  utils/process.py    # run_cmd(), require_tool() — subprocess helpers
-  utils/report.py     # write_report, run_playbooks, validate_report, render_*
-  playbook/           # Playbook evaluation engine (context, sections, evaluator)
-  rules/              # JSON Logic rule evaluation and merging
-  registry/           # Registry client, auth, URL parser
-  report/             # Report generation (Docusaurus SPA builder)
-  schemas/            # JSON Schema files for analyzer outputs and playbooks
-  playbooks/          # Built-in default playbook (default.yaml)
-apps/dashboard/       # Docusaurus + Tremor report viewer (pnpm workspace)
+  core/                 # Click-free hexagonal core
+    model/              #   value objects: ImageReference, Report, REPORT_SCHEMA_VERSION
+    ports/              #   driven interfaces: ImageInspector, ToolRunner, ReportSink, PresentationRenderer
+    domain/
+      analyzers/        #     BaseAnalyzer + discovery.py (entry-point loader) + 14 analyzers
+      playbook/         #     playbook engine (loader, evaluator, conditions, context, verdict)
+      rules/            #     JSON Logic criterion evaluation and merging
+      manifest.py · context.py (AnalysisContext) · errors.py
+    application/        #   use-cases: AnalyzeImage, Evaluate, playbook_runner, AnalyzerProvider (port)
+  adapters/
+    driven/
+      registry/         #     RegistryClient, auth, URL parser; Registry/Regctl ImageInspectors
+      tools/            #     SubprocessToolRunner + tool-fetch infra (manifest/fetcher/cosign + manifest.yaml)
+      report/           #     FileReportSink, CookiecutterPresentationRenderer, html report
+      analyzers/        #     EntryPointAnalyzerProvider
+    driving/
+      cli/              #     cli.py (`regis` console script), commands/, composition.py (wiring root)
+  utils/                # unlayered: process (run_cmd/require_tool), report shim, predicates, scanner wrappers
+  schemas/              # JSON Schema files for analyzer outputs and playbooks
+  playbooks/            # Built-in default playbook (default.yaml)
+  templates/ · cookiecutters/ · data/   # report template, scaffolds, static data
 ```
 
 ## Agent patterns (Regis-specific)
 
-- **Analyzer plugins**: subclass `BaseAnalyzer`, implement `analyze()`, `validate()`, `default_rules()`. Register via `project.entry-points."regis.analyzers"` in `pyproject.toml`.
-- **Rule templates**: `default_rules()` can return both concrete rules and slug-identified templates; playbooks instantiate them via `rule: <slug>` + `options:`.
-- **JSON Logic operators**: custom ops (`intersects`, `contains_all`, `subset`, `keys`, `get`, `env_contains`) registered in `rules/evaluator.py`.
+- **Analyzer plugins**: subclass `BaseAnalyzer` (in `regis/core/domain/analyzers/`), implement `analyze(self, ctx: AnalysisContext)` (external access via `ctx.tools` / `ctx.inspector`), `validate()`, `default_criteria()`. Register via `[project.entry-points."regis.analyzers"]` in `pyproject.toml` pointing at `regis.core.domain.analyzers.<mod>:<Cls>` — re-run `uv sync` after changing entry points (the group key `"regis.analyzers"` is the discovery contract, not a module path).
+- **Rule templates**: `default_criteria()` can return both concrete criteria and slug-identified templates; playbooks instantiate them via `criterion: <slug>` + `options:`.
+- **JSON Logic operators**: custom ops (`intersects`, `contains_all`, `subset`, `keys`, `get`, `env_contains`) registered in `core/domain/rules/evaluator.py`.
 - **Parallel analysis**: `ThreadPoolExecutor`, default 4 workers (`--max-workers` overrides). Each thread gets its own `RegistryClient`.
 - **Test patch targets**: patch at the _new_ module location after the CLI split — `regis.adapters.driving.cli.commands.analyze.{RegistryClient,_discover_analyzers}`, `regis.adapters.driving.cli.commands.check.{RegistryClient,version}`, `regis.utils.process.{shutil,subprocess}`, `regis.utils.report.jsonschema`. **Not** `regis.adapters.driving.cli.cli.*`.
 - **Lazy imports**: `from module import X` inside a function body — patch at the source (`module.X`), not the importing module.

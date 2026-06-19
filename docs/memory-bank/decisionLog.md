@@ -2,6 +2,42 @@
 
 > Supplemental file: this records historical decisions that complement the core Memory Bank files.
 
+## 2026-06: Hexagonal architecture migration (ports & adapters)
+
+- **Decision**: Restructurer le cœur `regis` en **ports & adapters** stricts,
+  avec la règle de dépendance imposée par **import-linter** en CI (contrat
+  _"Hexagonal layering"_, job `hexagonal-layers`) plutôt que par convention.
+  Cible : `regis/core/{model,ports,domain,application}` + `regis/adapters/{driven,driving}`.
+  Le cœur devient **Click-free** (Click confiné à l'adaptateur CLI driving) ; les
+  adaptateurs driven possèdent toute l'I/O (subprocess, HTTP registry, écritures
+  fichier, credentials). Voir `systemPatterns.md` § Architecture pour le schéma et
+  la table des couches.
+- **Contrat analyzer (cassant pour plugins tiers)** : `BaseAnalyzer.analyze(self,
+ctx: AnalysisContext)` remplace l'ancienne signature `analyze(client, repo, tag,
+platform=…)` ; les capacités externes passent par `ctx.tools` (`ToolRunner`) et
+  `ctx.inspector` (`ImageInspector`). `default_rules()` → `default_criteria()`
+  (shim de dépréciation conservé). Les entry-points `[project.entry-points."regis.analyzers"]`
+  pointent désormais vers `regis.core.domain.analyzers.<mod>:<Cls>` (la **clé de
+  groupe** `"regis.analyzers"` et le lookup `entry_points(group="regis.analyzers")`
+  sont inchangés — c'est le contrat de discovery, pas un module path).
+- **Phasage strangler P0→P5** : P0 squelette + contrat import-linter ; P1 value
+  objects + ports + `AnalysisContext` ; P2 adaptateurs driven (`SubprocessToolRunner`,
+  `RegctlImageInspector`, `FileReportSink`) ; P3 bascule du contrat `analyze(ctx)`
+  (14/14) + use-cases `AnalyzeImage`/`Evaluate` orchestrant boucle/playbooks/émission ;
+  P4a port `PresentationRenderer` puis **P4 sweep** = déménagement physique des
+  modules (`git mv` sous-arbre par sous-arbre, cosmétique car l'archi était déjà
+  imposée par import-linter) ; P5 docs (cette entrée). Un **plan éphémère par phase**
+  (jamais commité — `execution-plans-guard` rejette `docs/superpowers/plans/**`).
+- **Différé (à trancher)** : déplacer `AnalyzerProvider` vers `core/ports/` **et**
+  binder `available() -> type[BaseAnalyzer]` sont **incompatibles** sous l'ordre des
+  couches — binder le type domaine est légal depuis `core.application` (foyer actuel)
+  mais illégal depuis `core.ports` (ports ne peut importer domain). Laissé en
+  `application` avec retour `type` nu.
+- **Reference**: spec maîtresse `docs/superpowers/specs/2026-06-13-hexagonal-architecture-design.md`
+  (+ raffinements P2b/P3 specs) ; PRs sweep #780 (rules) / #781 (report) / #782
+  (registry) / #783 (tools) / #784 (playbook) / #785 (analyzers) / #786 (cli) ;
+  plans éphémères supprimés au merge.
+
 ## 2026-05-30: Probe — grype/syft/trufflehog output shapes locked
 
 - **Decision**: Migration trivy→grype/syft/trufflehog parse des formes de sortie
