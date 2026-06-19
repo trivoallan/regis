@@ -6,7 +6,7 @@ from unittest.mock import patch
 from click.testing import CliRunner
 
 from regis.adapters.driven.registry.auth import resolve_credentials
-from regis.cli import main
+from regis.adapters.driving.cli.cli import main
 
 
 class TestGithubEnvironment:
@@ -35,8 +35,8 @@ class TestGithubEnvironment:
             assert user == "global"
             assert pwd == "secret"
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_cli_with_mocked_gh_metadata(self, mock_discover, mock_client):
         """Test the CLI when called with GitHub-like environment variables via --meta."""
         from regis.core.domain.analyzers.base import BaseAnalyzer

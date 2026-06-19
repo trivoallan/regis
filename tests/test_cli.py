@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from regis.cli import main
+from regis.adapters.driving.cli.cli import main
 from regis.core.domain.context import AnalysisContext
 
 
@@ -52,8 +52,8 @@ class TestCliBasics:
         assert result.exit_code != 0
         assert "Unknown analyzer" in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_analyze_with_metadata(self, mock_discover, mock_client):
         from regis.core.domain.analyzers.base import BaseAnalyzer
 
@@ -103,8 +103,8 @@ class TestCliBasics:
                 "tag": "latest",
             }
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_analyze_with_nested_metadata(self, mock_discover, mock_client):
         from regis.core.domain.analyzers.base import BaseAnalyzer
 
@@ -180,8 +180,8 @@ class TestAnalyzeParallelism:
         DummyAnalyzer.name = name
         return DummyAnalyzer
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_parallel_analyzers_all_succeed(self, mock_discover, mock_client):
         analyzers = {
             f"dummy{i}": self._make_dummy_analyzer(f"dummy{i}") for i in range(3)
@@ -198,8 +198,8 @@ class TestAnalyzeParallelism:
         for i in range(3):
             assert f"dummy{i}" in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_max_workers_capped_at_analyzer_count(self, mock_discover, mock_client):
         """max_workers should not exceed the number of selected analyzers."""
         mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
@@ -213,8 +213,8 @@ class TestAnalyzeParallelism:
         assert result.exit_code == 0
         assert "1 worker(s)" in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_serial_execution_with_max_workers_1(self, mock_discover, mock_client):
         mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
         mock_client.return_value.get_digest.return_value = None
@@ -227,8 +227,8 @@ class TestAnalyzeParallelism:
         assert result.exit_code == 0
         assert "1 worker(s)" in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_analyzer_failure_does_not_abort_others(self, mock_discover, mock_client):
         """A failing analyzer should be recorded as an error, not abort the run."""
         from regis.core.domain.analyzers.base import AnalyzerError, BaseAnalyzer
@@ -259,7 +259,7 @@ class TestAnalyzeParallelism:
 class TestCliCheck:
     """Test the check command."""
 
-    @patch("regis.commands.check.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.check.RegistryClient")
     def test_check_success(self, mock_client_class):
         mock_client = mock_client_class.return_value
         mock_client.get_manifest.return_value = {"schemaVersion": 2}
@@ -272,7 +272,7 @@ class TestCliCheck:
         assert "Success! Manifest is accessible." in result.output
         mock_client.get_manifest.assert_called_once_with("latest")
 
-    @patch("regis.commands.check.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.check.RegistryClient")
     def test_check_registry_error(self, mock_client_class):
         from regis.adapters.driven.registry.client import RegistryError
 
@@ -285,7 +285,7 @@ class TestCliCheck:
         assert result.exit_code != 0
         assert "Registry error: Not found" in result.output
 
-    @patch("regis.commands.check.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.check.RegistryClient")
     def test_check_empty_manifest(self, mock_client_class):
         mock_client = mock_client_class.return_value
         mock_client.get_manifest.return_value = {}
@@ -347,7 +347,7 @@ class TestEvaluateCmd:
         assert result.exit_code != 0
         assert "Failed to load" in result.output
 
-    @patch("regis.commands.analyze.build_evaluate")
+    @patch("regis.adapters.driving.cli.commands.analyze.build_evaluate")
     def test_evaluate_emits_through_use_case(self, mock_build, tmp_path):
         """evaluate_cmd routes emission through the Evaluate use-case."""
         from regis.core.application.evaluate import Evaluate
@@ -389,7 +389,7 @@ class TestEvaluateCmd:
 class TestAnalyzeCacheAndFail:
     """Tests for --cache and --fail options of the `analyze` command."""
 
-    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
     def test_analyze_cache_hit_skips_analyzers(self, mock_client):
         mock_client.return_value.get_digest.return_value = "sha256:abc123"
         cached_report = {
@@ -421,9 +421,9 @@ class TestAnalyzeCacheAndFail:
             saved = json.loads((cache_dir / "report.json").read_text(encoding="utf-8"))
             assert saved["schemaVersion"] == 5
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze.validate_report")
-    @patch("regis.commands.analyze.run_playbooks")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze.validate_report")
+    @patch("regis.adapters.driving.cli.commands.analyze.run_playbooks")
     def test_analyze_cache_hit_evaluate_fail_exits_on_breach(
         self,
         mock_run_playbooks,
@@ -485,9 +485,9 @@ class TestAnalyzeCacheAndFail:
         assert result.exit_code == 1
         assert "rule breaches" in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
-    @patch("regis.commands.analyze.build_analyze_image")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.build_analyze_image")
     def test_analyze_fail_exits_on_breached_rules(
         self,
         mock_build,
@@ -556,8 +556,8 @@ class TestAnalyzeSkip:
         DummyAnalyzer.name = name
         return DummyAnalyzer
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_skip_excludes_named_analyzer(self, mock_discover, mock_client):
         mock_discover.return_value = {
             "a": self._make_dummy_analyzer("a"),
@@ -579,8 +579,8 @@ class TestAnalyzeSkip:
         assert "b" not in completed_names
         assert "a" in completed_names and "c" in completed_names
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_skip_repeatable(self, mock_discover, mock_client):
         mock_discover.return_value = {
             "a": self._make_dummy_analyzer("a"),
@@ -597,8 +597,8 @@ class TestAnalyzeSkip:
         assert result.exit_code == 0
         assert "Running 1 analyzer(s)" in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_skip_unknown_warns_but_succeeds(self, mock_discover, mock_client):
         mock_discover.return_value = {"a": self._make_dummy_analyzer("a")}
         mock_client.return_value.get_digest.return_value = None
@@ -609,8 +609,8 @@ class TestAnalyzeSkip:
         assert result.exit_code == 0
         assert "unknown analyzer 'nope'" in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_skip_all_fails(self, mock_discover, mock_client):
         mock_discover.return_value = {"a": self._make_dummy_analyzer("a")}
         mock_client.return_value.get_digest.return_value = None
@@ -655,8 +655,8 @@ class TestAnalyzeEnvVars:
         assert "REGIS_OUTPUT_DIR" in result.output
         assert "REGIS_MAX_WORKERS" in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_regis_platform_env(self, mock_discover, mock_client):
         cls = self._make_dummy_analyzer("dummy")
         mock_discover.return_value = {"dummy": cls}
@@ -672,8 +672,8 @@ class TestAnalyzeEnvVars:
         assert result.exit_code == 0
         assert cls.last_platform == "linux/arm64"
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_cli_flag_overrides_env(self, mock_discover, mock_client):
         cls = self._make_dummy_analyzer("dummy")
         mock_discover.return_value = {"dummy": cls}
@@ -689,8 +689,8 @@ class TestAnalyzeEnvVars:
         assert result.exit_code == 0
         assert cls.last_platform == "linux/amd64"
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_regis_max_workers_env(self, mock_discover, mock_client):
         cls = self._make_dummy_analyzer("dummy")
         mock_discover.return_value = {"dummy": cls}
@@ -735,8 +735,8 @@ class TestQuietFlag:
         assert result.exit_code == 0
         assert "--quiet" in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_quiet_suppresses_progress_lines(self, mock_discover, mock_client):
         mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
         mock_client.return_value.get_digest.return_value = None
@@ -758,8 +758,8 @@ class TestQuietFlag:
         # --quiet also suppresses the post-run verdict block
         assert "/100" not in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_default_keeps_progress_lines(self, mock_discover, mock_client):
         mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
         mock_client.return_value.get_digest.return_value = None
@@ -770,8 +770,8 @@ class TestQuietFlag:
         assert result.exit_code == 0
         assert "Analyzing" in result.output or "Running" in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_quiet_still_emits_analyzer_failure(self, mock_discover, mock_client):
         from regis.core.domain.analyzers.base import AnalyzerError, BaseAnalyzer
 
@@ -817,8 +817,8 @@ class TestAnalyzerProgressFeedback:
         DummyAnalyzer.name = name
         return DummyAnalyzer
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_success_lines_include_timing(self, mock_discover, mock_client):
         mock_discover.return_value = {
             "alpha": self._make_dummy_analyzer("alpha"),
@@ -835,8 +835,8 @@ class TestAnalyzerProgressFeedback:
         for line in success_lines:
             assert re.search(r"\(\d+\.\d+s\)", line)
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_running_banner_present(self, mock_discover, mock_client):
         mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
         mock_client.return_value.get_digest.return_value = None
@@ -847,8 +847,8 @@ class TestAnalyzerProgressFeedback:
         assert result.exit_code == 0
         assert "Running 1 analyzer(s)" in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_failure_line_also_shows_timing(self, mock_discover, mock_client):
         from regis.core.domain.analyzers.base import AnalyzerError, BaseAnalyzer
 
@@ -897,7 +897,7 @@ class TestAnalyzeSummary:
         return DummyAnalyzer
 
     def test_render_verdict_block_passed_only(self, capsys):
-        from regis.commands.analyze import _render_verdict_block
+        from regis.adapters.driving.cli.commands.analyze import _render_verdict_block
 
         _render_verdict_block(
             {
@@ -938,7 +938,7 @@ class TestAnalyzeSummary:
     def test_render_verdict_block_failed_rules_listed(self, capsys):
         import re
 
-        from regis.commands.analyze import _render_verdict_block
+        from regis.adapters.driving.cli.commands.analyze import _render_verdict_block
 
         _render_verdict_block(
             {
@@ -984,7 +984,7 @@ class TestAnalyzeSummary:
         assert "[freshness.max-age-days]" in out
 
     def test_render_verdict_block_no_playbooks_silent(self, capsys):
-        from regis.commands.analyze import _render_verdict_block
+        from regis.adapters.driving.cli.commands.analyze import _render_verdict_block
 
         _render_verdict_block({}, quiet=False)
         _render_verdict_block({"playbooks": []}, quiet=False)
@@ -994,7 +994,7 @@ class TestAnalyzeSummary:
         """Messages line up regardless of differing slug lengths."""
         import re
 
-        from regis.commands.analyze import _render_verdict_block
+        from regis.adapters.driving.cli.commands.analyze import _render_verdict_block
 
         _render_verdict_block(
             {
@@ -1039,7 +1039,7 @@ class TestAnalyzeSummary:
         """Each rule line carries its severity (emoji + level word)."""
         import re
 
-        from regis.commands.analyze import _render_verdict_block
+        from regis.adapters.driving.cli.commands.analyze import _render_verdict_block
 
         _render_verdict_block(
             {
@@ -1074,8 +1074,8 @@ class TestAnalyzeSummary:
         assert "🟥 critical" in out
         assert "🟧 warning" in out
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_analyze_prints_summary_when_playbook_given(
         self, mock_discover, mock_client
     ):
@@ -1095,8 +1095,8 @@ class TestAnalyzeSummary:
         # The verdict block replaces the old "Playbook · " summary line.
         assert "/100" in result.output
 
-    @patch("regis.commands.analyze.RegistryClient")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_analyze_silent_without_playbook(self, mock_discover, mock_client):
         mock_discover.return_value = {"dummy": self._make_dummy_analyzer("dummy")}
         mock_client.return_value.get_digest.return_value = None
@@ -1115,7 +1115,7 @@ def test_cli_discovery_uses_entry_point_provider():
     from regis.adapters.driven.analyzers.entry_point_provider import (
         EntryPointAnalyzerProvider,
     )
-    from regis.commands import analyze as analyze_mod
+    from regis.adapters.driving.cli.commands import analyze as analyze_mod
     from regis.core.domain.analyzers.discovery import discover_analyzers
 
     assert isinstance(analyze_mod._analyzer_provider, EntryPointAnalyzerProvider)

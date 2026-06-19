@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from click.testing import CliRunner
 
-from regis.commands.analyze import analyze, evaluate_cmd
+from regis.adapters.driving.cli.commands.analyze import analyze, evaluate_cmd
 from regis.core.domain.analyzers.base import BaseAnalyzer
 
 _MINIMAL_REPORT = {
@@ -69,13 +69,17 @@ def _mock_analyze_infra(tmp_path):
     )
 
     with (
-        patch("regis.commands.analyze.RegistryClient", return_value=dummy_client),
         patch(
-            "regis.commands.analyze._discover_analyzers",
+            "regis.adapters.driving.cli.commands.analyze.RegistryClient",
+            return_value=dummy_client,
+        ),
+        patch(
+            "regis.adapters.driving.cli.commands.analyze._discover_analyzers",
             return_value={"dummy": _DummyAnalyzer},
         ),
         patch(
-            "regis.commands.analyze.build_analyze_image", return_value=mock_use_case
+            "regis.adapters.driving.cli.commands.analyze.build_analyze_image",
+            return_value=mock_use_case,
         ) as mock_build,
     ):
         yield {"build": mock_build, "use_case": mock_use_case}
@@ -116,7 +120,9 @@ def test_evaluate_cmd_html_flag(runner, tmp_path):
     report_file = tmp_path / "report.json"
     report_file.write_text(json.dumps(_MINIMAL_REPORT), encoding="utf-8")
 
-    with patch("regis.commands.analyze.build_evaluate") as mock_build:
+    with patch(
+        "regis.adapters.driving.cli.commands.analyze.build_evaluate"
+    ) as mock_build:
         result = runner.invoke(
             evaluate_cmd,
             [str(report_file), "--html", "--output-dir", str(tmp_path)],
@@ -131,7 +137,9 @@ def test_evaluate_sections_forwarded_to_render(runner, tmp_path):
     report_file = tmp_path / "report.json"
     report_file.write_text(json.dumps(_MINIMAL_REPORT), encoding="utf-8")
 
-    with patch("regis.commands.analyze.build_evaluate") as mock_build:
+    with patch(
+        "regis.adapters.driving.cli.commands.analyze.build_evaluate"
+    ) as mock_build:
         result = runner.invoke(
             evaluate_cmd,
             [

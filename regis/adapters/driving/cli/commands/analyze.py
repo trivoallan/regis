@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 # Analyzer discovery goes through the AnalyzerProvider port. The module-level
 # instance + the `_discover_analyzers` binding are kept as the test patch seam
-# (`regis.commands.analyze._discover_analyzers`).
+# (`regis.adapters.driving.cli.commands.analyze._discover_analyzers`).
 _analyzer_provider = EntryPointAnalyzerProvider()
 _discover_analyzers = _analyzer_provider.available
 

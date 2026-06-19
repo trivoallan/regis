@@ -7,7 +7,7 @@ from pathlib import Path
 
 from click.testing import CliRunner
 
-from regis.cli import main
+from regis.adapters.driving.cli.cli import main
 
 # Minimal valid envelope fixture (reused across tests).
 _VALID_ENVELOPE = (
@@ -131,7 +131,7 @@ class TestPlaybookValidate:
 def test_validate_prints_api_version(tmp_path) -> None:
     from click.testing import CliRunner
 
-    from regis.commands.playbook import playbook_group
+    from regis.adapters.driving.cli.commands.playbook import playbook_group
 
     pb = tmp_path / "playbook.yaml"
     pb.write_text(

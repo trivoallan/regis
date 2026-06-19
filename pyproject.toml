@@ -24,7 +24,7 @@ dependencies = [
 ]
 
 [project.scripts]
-regis = "regis.cli:main"
+regis = "regis.adapters.driving.cli.cli:main"
 
 [project.entry-points."regis.analyzers"]
 versioning = "regis.core.domain.analyzers.versioning:VersioningAnalyzer"

@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 from click.testing import CliRunner
 
 from regis.adapters.driven.registry.client import RegistryClient
-from regis.cli import main
+from regis.adapters.driving.cli.cli import main
 
 
 class TestRegistryAuth:
@@ -97,8 +97,8 @@ class TestRegistryAuth:
         assert kwargs["auth"] == ("myuser", "mypassword")
 
     @patch("regis.utils.report.validate_report")
-    @patch("regis.commands.analyze._discover_analyzers")
-    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
     def test_cli_passes_credentials(
         self, mock_client_cls, mock_discover, mock_validate
     ):
@@ -189,8 +189,8 @@ class TestRegistryAuth:
                     assert pwd == "docker_pass"
 
     @patch("regis.utils.report.validate_report")
-    @patch("regis.commands.analyze._discover_analyzers")
-    @patch("regis.commands.analyze.RegistryClient")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
     def test_cli_passes_cli_auth_override(
         self, mock_client_cls, mock_discover, mock_validate
     ):

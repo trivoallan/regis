@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from regis.cli import main
+from regis.adapters.driving.cli.cli import main
 
 # Minimal analysis report that satisfies the evaluator
 _MINIMAL_REPORT = {
