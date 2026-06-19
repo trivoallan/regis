@@ -11,9 +11,9 @@ in `decisionLog.md`.
 ```mermaid
 flowchart TB
     CLI["Driving adapter — adapters/driving/cli<br/>cli.py · commands/ · composition.py"]
-    APP["core.application<br/>AnalyzeImage · Evaluate · playbook_runner · AnalyzerProvider"]
+    APP["core.application<br/>AnalyzeImage · Evaluate · playbook_runner"]
     DOM["core.domain<br/>analyzers/ · playbook/ · rules/ · manifest · context · errors"]
-    PORTS["core.ports<br/>ImageInspector · ToolRunner · ReportSink · PresentationRenderer"]
+    PORTS["core.ports<br/>ImageInspector · ToolRunner · ReportSink · PresentationRenderer · AnalyzerProvider"]
     MODEL["core.model<br/>ImageReference · Report"]
     DRIVEN["Driven adapters — adapters/driven<br/>registry/ · tools/ · report/ · analyzers/"]
 
@@ -30,9 +30,9 @@ flowchart TB
 | Layer               | Package                       | Holds                                                                                                                                                                                                             |
 | ------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Driving adapter** | `regis/adapters/driving/cli/` | `cli.py`, `commands/`, the composition root (`composition.py`) that wires use-cases to driven adapters                                                                                                            |
-| **Application**     | `regis/core/application/`     | use-cases `AnalyzeImage` / `Evaluate` (own the loop, playbooks, emission), `playbook_runner`, `AnalyzerProvider` port                                                                                             |
+| **Application**     | `regis/core/application/`     | use-cases `AnalyzeImage` / `Evaluate` (own the loop, playbooks, emission), `playbook_runner`                                                                                                                      |
 | **Domain**          | `regis/core/domain/`          | `analyzers/` (base + discovery + 14 analyzers), `playbook/` engine, `rules/` (JSON Logic), `manifest`, `context` (`AnalysisContext`), `errors`                                                                    |
-| **Ports**           | `regis/core/ports/`           | driven-side interfaces: `ImageInspector`, `ToolRunner`, `ReportSink`, `PresentationRenderer`                                                                                                                      |
+| **Ports**           | `regis/core/ports/`           | `ImageInspector`, `ToolRunner`, `ReportSink`, `PresentationRenderer` (driven-side interfaces) + `AnalyzerProvider` (analyzer discovery)                                                                           |
 | **Model**           | `regis/core/model/`           | value objects `ImageReference`, `Report`, `REPORT_SCHEMA_VERSION`                                                                                                                                                 |
 | **Driven adapters** | `regis/adapters/driven/`      | `registry/` (HTTP + regctl inspectors, auth, URL parser), `tools/` (subprocess runner + tool-fetch infra), `report/` (`FileReportSink`, cookiecutter renderer, html), `analyzers/` (`EntryPointAnalyzerProvider`) |
 

@@ -28,11 +28,12 @@ platform=…)` ; les capacités externes passent par `ctx.tools` (`ToolRunner`) 
   modules (`git mv` sous-arbre par sous-arbre, cosmétique car l'archi était déjà
   imposée par import-linter) ; P5 docs (cette entrée). Un **plan éphémère par phase**
   (jamais commité — `execution-plans-guard` rejette `docs/superpowers/plans/**`).
-- **Différé (à trancher)** : déplacer `AnalyzerProvider` vers `core/ports/` **et**
-  binder `available() -> type[BaseAnalyzer]` sont **incompatibles** sous l'ordre des
-  couches — binder le type domaine est légal depuis `core.application` (foyer actuel)
-  mais illégal depuis `core.ports` (ports ne peut importer domain). Laissé en
-  `application` avec retour `type` nu.
+- **Résolu — `AnalyzerProvider` déplacé vers `core/ports/`** (le choix entre « move
+  to ports » et « bind `type[BaseAnalyzer]` » était exclusif sous l'ordre des couches :
+  binder le type domaine est légal depuis `core.application` mais illégal depuis
+  `core.ports`, qui ne peut importer `core.domain`). Le port atterrit dans
+  `core.ports` avec un retour `Mapping[str, type]` nu ; les classes concrètes sont
+  fournies par l'adaptateur driven `EntryPointAnalyzerProvider`.
 - **Reference**: spec maîtresse `docs/superpowers/specs/2026-06-13-hexagonal-architecture-design.md`
   (+ raffinements P2b/P3 specs) ; PRs sweep #780 (rules) / #781 (report) / #782
   (registry) / #783 (tools) / #784 (playbook) / #785 (analyzers) / #786 (cli) ;

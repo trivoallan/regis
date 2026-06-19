@@ -1,8 +1,8 @@
-"""AnalyzerProvider is an abstract, application-facing port."""
+"""AnalyzerProvider is an abstract driven port (core.ports)."""
 
 import pytest
 
-from regis.core.application.analyzer_provider import AnalyzerProvider
+from regis.core.ports.analyzer_provider import AnalyzerProvider
 
 
 def test_analyzer_provider_is_abstract() -> None:

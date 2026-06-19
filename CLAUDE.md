@@ -41,13 +41,13 @@ Hexagonal (ports & adapters). The dependency rule — `adapters > core.applicati
 regis/
   core/                 # Click-free hexagonal core
     model/              #   value objects: ImageReference, Report, REPORT_SCHEMA_VERSION
-    ports/              #   driven interfaces: ImageInspector, ToolRunner, ReportSink, PresentationRenderer
+    ports/              #   ImageInspector, ToolRunner, ReportSink, PresentationRenderer, AnalyzerProvider
     domain/
       analyzers/        #     BaseAnalyzer + discovery.py (entry-point loader) + 14 analyzers
       playbook/         #     playbook engine (loader, evaluator, conditions, context, verdict)
       rules/            #     JSON Logic criterion evaluation and merging
       manifest.py · context.py (AnalysisContext) · errors.py
-    application/        #   use-cases: AnalyzeImage, Evaluate, playbook_runner, AnalyzerProvider (port)
+    application/        #   use-cases: AnalyzeImage, Evaluate, playbook_runner
   adapters/
     driven/
       registry/         #     RegistryClient, auth, URL parser; Registry/Regctl ImageInspectors
