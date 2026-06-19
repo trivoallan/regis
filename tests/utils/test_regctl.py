@@ -10,8 +10,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from regis.adapters.driven.registry.client import RegistryClient
 from regis.core.domain.errors import RegistryError
-from regis.registry.client import RegistryClient
 from regis.utils.regctl import image_ref, run_regctl
 
 

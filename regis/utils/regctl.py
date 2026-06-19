@@ -20,7 +20,7 @@ from regis.core.domain.errors import RegistryError, ToolError
 from regis.utils.process import ensure_tool
 
 if TYPE_CHECKING:
-    from regis.registry.client import RegistryClient
+    from regis.adapters.driven.registry.client import RegistryClient
 
 logger = logging.getLogger(__name__)
 

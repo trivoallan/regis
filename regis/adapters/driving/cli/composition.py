@@ -7,6 +7,7 @@ adapter imports.
 
 from __future__ import annotations
 
+from regis.adapters.driven.registry.client import RegistryClient
 from regis.adapters.driven.registry.regctl_image_inspector import RegctlImageInspector
 from regis.adapters.driven.report.file_report_sink import FileReportSink
 from regis.adapters.driven.report.presentation_renderer import (
@@ -17,7 +18,6 @@ from regis.core.application.analyze_image import AnalyzeImage
 from regis.core.application.evaluate import Evaluate
 from regis.core.model.image_reference import ImageReference
 from regis.core.ports.image_inspector import ImageInspector
-from regis.registry.client import RegistryClient
 
 
 def build_analyze_image(

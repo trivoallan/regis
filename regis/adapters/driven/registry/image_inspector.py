@@ -6,10 +6,10 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from typing import Any
 
+from regis.adapters.driven.registry.client import RegistryClient
+from regis.adapters.driven.registry.client import RegistryError as _ClientRegistryError
 from regis.core.domain.errors import RegistryError
 from regis.core.ports.image_inspector import ImageInspector
-from regis.registry.client import RegistryClient
-from regis.registry.client import RegistryError as _ClientRegistryError
 
 
 @contextmanager

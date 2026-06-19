@@ -1,12 +1,12 @@
 """The legacy registry RegistryError must be a core RegistryError subtype.
 
-Lets the hexagonal core (which may not import regis.registry) catch
+Lets the hexagonal core (which may not import regis.adapters.driven.registry) catch
 legacy-branch registry failures by their core type during the P3 bridge.
 """
 
+from regis.adapters.driven.registry.client import RegistryError as LegacyRegistryError
 from regis.core.domain.errors import RegisError
 from regis.core.domain.errors import RegistryError as CoreRegistryError
-from regis.registry.client import RegistryError as LegacyRegistryError
 
 
 def test_legacy_registry_error_is_core_registry_error():

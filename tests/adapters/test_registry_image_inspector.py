@@ -4,11 +4,11 @@ from unittest.mock import create_autospec
 
 import pytest
 
+from regis.adapters.driven.registry.client import RegistryClient
+from regis.adapters.driven.registry.client import RegistryError as ClientRegistryError
 from regis.adapters.driven.registry.image_inspector import RegistryImageInspector
 from regis.core.domain.errors import RegistryError
 from regis.core.ports.image_inspector import ImageInspector
-from regis.registry.client import RegistryClient
-from regis.registry.client import RegistryError as ClientRegistryError
 
 
 def _inspector() -> tuple[RegistryImageInspector, RegistryClient]:
