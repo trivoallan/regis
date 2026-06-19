@@ -4,7 +4,7 @@ from regis.adapters.driven.analyzers import entry_point_provider
 from regis.adapters.driven.analyzers.entry_point_provider import (
     EntryPointAnalyzerProvider,
 )
-from regis.core.application.analyzer_provider import AnalyzerProvider
+from regis.core.ports.analyzer_provider import AnalyzerProvider
 
 
 def test_is_an_analyzer_provider() -> None:

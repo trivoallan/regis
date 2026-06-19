@@ -6,10 +6,10 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
-from regis.core.application.analyzer_provider import AnalyzerProvider
 from regis.core.domain.context import AnalysisContext
 from regis.core.model.image_reference import ImageReference
 from regis.core.model.report import Report
+from regis.core.ports.analyzer_provider import AnalyzerProvider
 from regis.core.ports.image_inspector import ImageInspector
 from regis.core.ports.presentation_renderer import PresentationRenderer
 from regis.core.ports.report_sink import ReportSink

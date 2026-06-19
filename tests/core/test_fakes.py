@@ -2,9 +2,9 @@
 
 from pathlib import Path
 
-from regis.core.application.analyzer_provider import AnalyzerProvider
 from regis.core.model.image_reference import ImageReference
 from regis.core.model.report import Report
+from regis.core.ports.analyzer_provider import AnalyzerProvider
 from regis.core.ports.image_inspector import ImageInspector
 from regis.core.ports.report_sink import ReportSink
 from regis.core.ports.tool_runner import ToolRunner

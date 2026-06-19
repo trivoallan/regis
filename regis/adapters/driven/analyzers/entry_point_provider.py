@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from regis.core.application.analyzer_provider import AnalyzerProvider
 from regis.core.domain.analyzers.discovery import discover_analyzers
+from regis.core.ports.analyzer_provider import AnalyzerProvider
 
 
 class EntryPointAnalyzerProvider(AnalyzerProvider):
