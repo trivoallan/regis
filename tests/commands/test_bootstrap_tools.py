@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from regis.cli import main
+from regis.adapters.driving.cli.cli import main
 
 
 def test_bootstrap_tools_check_lists_status(monkeypatch, tmp_path):
@@ -39,7 +39,9 @@ def test_bootstrap_tools_wires_click_reporter():
         def fetch_all(self, names=None):  # noqa: ANN001
             return {}
 
-    with patch("regis.commands.bootstrap.ToolFetcher", FakeFetcher):
+    with patch(
+        "regis.adapters.driving.cli.commands.bootstrap.ToolFetcher", FakeFetcher
+    ):
         result = CliRunner().invoke(main, ["bootstrap", "tools"])
 
     assert result.exit_code == 0, result.output

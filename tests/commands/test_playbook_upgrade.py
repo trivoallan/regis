@@ -5,7 +5,7 @@ from __future__ import annotations
 import yaml
 from click.testing import CliRunner
 
-from regis.commands.playbook import playbook_group
+from regis.adapters.driving.cli.commands.playbook import playbook_group
 from regis.core.domain.playbook.loader import load_playbook
 
 

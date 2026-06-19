@@ -2,7 +2,7 @@
 
 from click.testing import CliRunner
 
-from regis.commands.analyze import analyze
+from regis.adapters.driving.cli.commands.analyze import analyze
 from regis.utils.report import _render_markdown
 
 # ---------------------------------------------------------------------------

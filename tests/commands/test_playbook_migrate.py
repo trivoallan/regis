@@ -19,7 +19,7 @@ import pytest
 import yaml
 from click.testing import CliRunner
 
-from regis.commands.playbook import (
+from regis.adapters.driving.cli.commands.playbook import (
     _migrate_condition_tree,
     _migrate_message,
     _migrate_playbook_data,
@@ -422,7 +422,7 @@ def test_migrate_presentation_is_idempotent():
 
 
 def test_migrate_leaves_non_gitlab_integration_untouched():
-    from regis.commands.playbook import _migrate_playbook_data
+    from regis.adapters.driving.cli.commands.playbook import _migrate_playbook_data
 
     data = {
         "apiVersion": "regis.io/v1alpha1",

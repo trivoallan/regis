@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from regis.cli import main
+from regis.adapters.driving.cli.cli import main
 from regis.core.domain.analyzers.metadata import MetadataAnalyzer
 
 
@@ -36,7 +36,7 @@ class TestRerunReportFlagValidation:
 class TestRerunUnknownAnalyzer:
     """Error handling for unrecognised analyzer names."""
 
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_rerun_unknown_analyzer(self, mock_discover):
         mock_discover.return_value = {"metadata": MetadataAnalyzer}
 
@@ -55,7 +55,7 @@ class TestRerunUnknownAnalyzer:
 class TestRerunReportNotFound:
     """Error when the report directory exists but contains no report.json."""
 
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_rerun_report_not_found(self, mock_discover):
         mock_discover.return_value = {"metadata": MetadataAnalyzer}
 
@@ -75,8 +75,8 @@ class TestRerunReportNotFound:
 class TestRerunMetadataUpdatesReport:
     """Happy-path: metadata analyzer patches an existing report on disk."""
 
-    @patch("regis.commands.analyze.validate_report")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.validate_report")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_rerun_metadata_updates_report(self, mock_discover, mock_validate):
         mock_discover.return_value = {"metadata": MetadataAnalyzer}
 
@@ -120,8 +120,8 @@ class TestRerunMetadataUpdatesReport:
             assert "metadata" in updated["results"]
             assert updated["metadata"]["PROJECT_ID"] == "PROJ-42"
 
-    @patch("regis.commands.analyze.validate_report")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.validate_report")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_rerun_metadata_result_contains_analyzer_key(
         self, mock_discover, mock_validate
     ):
@@ -170,9 +170,9 @@ class TestRerunMetadataUpdatesReport:
 class TestRerunReplaysPlaybookEvaluation:
     """Playbook re-evaluation must run during --rerun."""
 
-    @patch("regis.commands.analyze.validate_report")
-    @patch("regis.commands.analyze.run_playbooks")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.validate_report")
+    @patch("regis.adapters.driving.cli.commands.analyze.run_playbooks")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_rerun_replays_playbook_evaluation(
         self, mock_discover, mock_run_playbooks, mock_validate
     ):
@@ -236,8 +236,8 @@ class TestRerunMergeMeta:
         }
         (report_dir / "report.json").write_text(json.dumps(report), encoding="utf-8")
 
-    @patch("regis.commands.analyze.validate_report")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.validate_report")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_merge_meta_preserves_existing_keys(self, mock_discover, mock_validate):
         mock_discover.return_value = {"metadata": MetadataAnalyzer}
 
@@ -273,8 +273,8 @@ class TestRerunMergeMeta:
             assert updated["metadata"]["SHARED_KEY"] == "new"
             assert updated["metadata"]["NEW_KEY"] == "added"
 
-    @patch("regis.commands.analyze.validate_report")
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze.validate_report")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_without_merge_meta_replaces_metadata(self, mock_discover, mock_validate):
         mock_discover.return_value = {"metadata": MetadataAnalyzer}
 
@@ -308,7 +308,7 @@ class TestRerunMergeMeta:
 class TestRerunBackfillsSchemaVersion:
     """A legacy report (no schemaVersion) flows through --rerun under real validation."""
 
-    @patch("regis.commands.analyze._discover_analyzers")
+    @patch("regis.adapters.driving.cli.commands.analyze._discover_analyzers")
     def test_rerun_backfills_schema_version(self, mock_discover):
         mock_discover.return_value = {"metadata": MetadataAnalyzer}
 

@@ -1,6 +1,6 @@
 import re
 
-from regis.commands.analyze import _render_verdict_block
+from regis.adapters.driving.cli.commands.analyze import _render_verdict_block
 
 
 def _strip_ansi(s: str) -> str:

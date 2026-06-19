@@ -58,7 +58,7 @@ apps/dashboard/       # Docusaurus + Tremor report viewer (pnpm workspace)
 - **Rule templates**: `default_rules()` can return both concrete rules and slug-identified templates; playbooks instantiate them via `rule: <slug>` + `options:`.
 - **JSON Logic operators**: custom ops (`intersects`, `contains_all`, `subset`, `keys`, `get`, `env_contains`) registered in `rules/evaluator.py`.
 - **Parallel analysis**: `ThreadPoolExecutor`, default 4 workers (`--max-workers` overrides). Each thread gets its own `RegistryClient`.
-- **Test patch targets**: patch at the _new_ module location after the CLI split — `regis.commands.analyze.{RegistryClient,_discover_analyzers}`, `regis.commands.check.{RegistryClient,version}`, `regis.utils.process.{shutil,subprocess}`, `regis.utils.report.jsonschema`. **Not** `regis.cli.*`.
+- **Test patch targets**: patch at the _new_ module location after the CLI split — `regis.adapters.driving.cli.commands.analyze.{RegistryClient,_discover_analyzers}`, `regis.adapters.driving.cli.commands.check.{RegistryClient,version}`, `regis.utils.process.{shutil,subprocess}`, `regis.utils.report.jsonschema`. **Not** `regis.adapters.driving.cli.cli.*`.
 - **Lazy imports**: `from module import X` inside a function body — patch at the source (`module.X`), not the importing module.
 
 ## Craftsmanship

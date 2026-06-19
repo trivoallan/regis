@@ -4,7 +4,7 @@ from pathlib import Path
 
 from click.testing import CliRunner
 
-from regis.cli import main
+from regis.adapters.driving.cli.cli import main
 
 
 class TestCliRulesList:
