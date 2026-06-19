@@ -1,16 +1,45 @@
 # System Patterns
 
-## Architecture
+## Architecture — hexagonal (ports & adapters)
 
-`regis` follows a modular, pluggable architecture.
+`regis` follows a strict **ports & adapters** layout. The dependency rule is
+enforced in CI by **import-linter** (`[tool.importlinter]` in `pyproject.toml`,
+contract _"Hexagonal layering"_, job `hexagonal-layers`): a layer may import only
+the layers below it. The migration that landed this (P0→P5, 2026-06) is recorded
+in `decisionLog.md`.
 
-### Key Components
+```mermaid
+flowchart TB
+    CLI["Driving adapter — adapters/driving/cli<br/>cli.py · commands/ · composition.py"]
+    APP["core.application<br/>AnalyzeImage · Evaluate · playbook_runner · AnalyzerProvider"]
+    DOM["core.domain<br/>analyzers/ · playbook/ · rules/ · manifest · context · errors"]
+    PORTS["core.ports<br/>ImageInspector · ToolRunner · ReportSink · PresentationRenderer"]
+    MODEL["core.model<br/>ImageReference · Report"]
+    DRIVEN["Driven adapters — adapters/driven<br/>registry/ · tools/ · report/ · analyzers/"]
 
-- **CLI (Click)**: Entry point for user interaction.
-- **Engine**: Orchestrates analysis and playbook evaluation.
-- **Analyzers**: Pluggable modules that extract specific data (e.g., regctl, grype, Hadolint).
-- **Playbook Engine**: Evaluates JSON logic rules against analyzer results.
-- **Report Generators**: Produces interactive SPA dashboards and machine-readable JSON.
+    CLI -->|may import| APP
+    APP -->|may import| DOM
+    DOM -->|may import| PORTS
+    PORTS -->|may import| MODEL
+    DRIVEN -->|implement| PORTS
+    CLI -->|composition root wires| DRIVEN
+```
+
+### Layers (top → bottom; each imports only those below)
+
+| Layer               | Package                       | Holds                                                                                                                                                                                                             |
+| ------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Driving adapter** | `regis/adapters/driving/cli/` | `cli.py`, `commands/`, the composition root (`composition.py`) that wires use-cases to driven adapters                                                                                                            |
+| **Application**     | `regis/core/application/`     | use-cases `AnalyzeImage` / `Evaluate` (own the loop, playbooks, emission), `playbook_runner`, `AnalyzerProvider` port                                                                                             |
+| **Domain**          | `regis/core/domain/`          | `analyzers/` (base + discovery + 14 analyzers), `playbook/` engine, `rules/` (JSON Logic), `manifest`, `context` (`AnalysisContext`), `errors`                                                                    |
+| **Ports**           | `regis/core/ports/`           | driven-side interfaces: `ImageInspector`, `ToolRunner`, `ReportSink`, `PresentationRenderer`                                                                                                                      |
+| **Model**           | `regis/core/model/`           | value objects `ImageReference`, `Report`, `REPORT_SCHEMA_VERSION`                                                                                                                                                 |
+| **Driven adapters** | `regis/adapters/driven/`      | `registry/` (HTTP + regctl inspectors, auth, URL parser), `tools/` (subprocess runner + tool-fetch infra), `report/` (`FileReportSink`, cookiecutter renderer, html), `analyzers/` (`EntryPointAnalyzerProvider`) |
+
+The core is **Click-free** — Click lives only in the driving CLI adapter; driven
+adapters own all I/O (subprocesses, registry HTTP, file writes, credentials).
+Unlayered support packages (`utils/`, `schemas/`, `templates/`, `playbooks/`,
+`cookiecutters/`, `data/`) sit outside the contract.
 
 ## Report Output Format Extension Pattern
 

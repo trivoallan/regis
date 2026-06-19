@@ -32,8 +32,8 @@ Provide a single orchestration layer for container security, supply-chain eviden
 
 ### In Scope
 
-- CLI commands under `regis/commands/`
-- Analyzer plugins under `regis/analyzers/`
+- CLI commands under `regis/adapters/driving/cli/commands/`
+- Analyzer plugins under `regis/core/domain/analyzers/`
 - Playbook evaluation and rule logic
 - Registry integrations and report generation
 - Docusaurus documentation and dashboard UI
