@@ -13,7 +13,7 @@ TOOLS=(
 for entry in "${TOOLS[@]}"; do
   IFS='|' read -r name version tpl <<<"$entry"
   # Determine extraction policy: archive type and member name.
-  # The ToolFetcher in regis/tools/fetcher.py verifies the sha256 of the
+  # The ToolFetcher in regis/adapters/driven/tools/fetcher.py verifies the sha256 of the
   # EXTRACTED binary (after unpacking the archive), not the archive itself,
   # so we must extract and hash the inner member for archive=tar.gz tools.
   case "$name" in

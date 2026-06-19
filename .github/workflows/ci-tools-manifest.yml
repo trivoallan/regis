@@ -3,7 +3,7 @@ name: CI / Tools Manifest
 on:
   pull_request:
     paths:
-      - regis/tools/manifest.yaml
+      - regis/adapters/driven/tools/manifest.yaml
       - regis/schemas/tools-manifest.schema.json
       - .github/workflows/ci-tools-manifest.yml
   schedule:
@@ -31,7 +31,7 @@ jobs:
           import json, yaml, jsonschema
           from pathlib import Path
           s = json.loads(Path('regis/schemas/tools-manifest.schema.json').read_text())
-          d = yaml.safe_load(Path('regis/tools/manifest.yaml').read_text())
+          d = yaml.safe_load(Path('regis/adapters/driven/tools/manifest.yaml').read_text())
           jsonschema.validate(d, s)
           print('schema OK')
           PY
@@ -41,7 +41,7 @@ jobs:
           python - <<'PY'
           import hashlib, io, sys, tarfile, urllib.request, yaml, zipfile
           from pathlib import Path
-          tools = yaml.safe_load(Path('regis/tools/manifest.yaml').read_text())['tools']
+          tools = yaml.safe_load(Path('regis/adapters/driven/tools/manifest.yaml').read_text())['tools']
           bad = []
           for name, t in tools.items():
               for arch in ('amd64', 'arm64'):

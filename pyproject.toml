@@ -82,7 +82,7 @@ regis = [
   "playbooks/**/*",
   "data/*.json",
 ]
-"regis.tools" = ["manifest.yaml"]
+"regis.adapters.driven.tools" = ["manifest.yaml"]
 
 [tool.setuptools_scm]
 # Enable setuptools_scm, though version is manually set to 0.20.0 for now.

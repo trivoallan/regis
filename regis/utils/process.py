@@ -59,7 +59,7 @@ def require_tool(name: str, install_hint: str | None = None) -> str:
 
 @lru_cache(maxsize=1)
 def _default_fetcher():
-    from regis.tools.fetcher import ToolFetcher
+    from regis.adapters.driven.tools.fetcher import ToolFetcher
     from regis.utils.tool_progress import click_reporter
 
     return ToolFetcher(on_event=click_reporter)
@@ -67,7 +67,7 @@ def _default_fetcher():
 
 @lru_cache(maxsize=1)
 def _manifest_names() -> frozenset[str]:
-    from regis.tools.manifest import load_manifest
+    from regis.adapters.driven.tools.manifest import load_manifest
 
     return frozenset(load_manifest().keys())
 
@@ -82,14 +82,14 @@ def ensure_tool(name: str, install_hint: str | None = None) -> str:
     Resolution:
       1. ``shutil.which(name)`` (host PATH, full image, dev install).
       2. If *name* is in the tools manifest, delegate to
-         :class:`regis.tools.fetcher.ToolFetcher`.
+         :class:`regis.adapters.driven.tools.fetcher.ToolFetcher`.
       3. Otherwise raise :class:`~regis.core.domain.errors.ToolError`.
     """
     found = shutil.which(name)
     if found:
         return found
     if _in_manifest(name):
-        from regis.tools.fetcher import ToolFetchError
+        from regis.adapters.driven.tools.fetcher import ToolFetchError
 
         try:
             return str(_default_fetcher().ensure(name))

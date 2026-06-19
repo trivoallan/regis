@@ -7,7 +7,7 @@ import subprocess  # nosec B404
 
 import click
 
-from regis.tools.fetcher import ToolFetcher
+from regis.adapters.driven.tools.fetcher import ToolFetcher
 
 # Tools required by regis analyzers, in display order.
 _REQUIRED_TOOLS: list[tuple[str, str]] = [

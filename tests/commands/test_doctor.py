@@ -9,9 +9,9 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
+from regis.adapters.driven.tools.fetcher import ToolStatus
 from regis.cli import main
 from regis.commands.doctor import _get_version, doctor
-from regis.tools.fetcher import ToolStatus
 
 
 def _which_all(name: str) -> str:

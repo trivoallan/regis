@@ -6,7 +6,7 @@ from pathlib import Path
 import jsonschema
 import pytest
 
-from regis.tools.manifest import Tool, load_manifest
+from regis.adapters.driven.tools.manifest import Tool, load_manifest
 
 SCHEMA_PATH = Path("regis/schemas/tools-manifest.schema.json")
 

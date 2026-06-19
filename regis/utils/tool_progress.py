@@ -7,7 +7,7 @@ import threading
 
 import click
 
-from regis.tools.fetcher import ToolEvent
+from regis.adapters.driven.tools.fetcher import ToolEvent
 
 logger = logging.getLogger("regis")
 _write_lock = threading.Lock()
