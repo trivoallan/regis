@@ -88,6 +88,11 @@ def build_sarif(
         result: dict[str, Any] = {
             "ruleId": slug,
             "ruleIndex": index[slug],
+            # kind="fail" marks this as a governance verdict, not a vulnerability:
+            # houba keys on result.kind to bucket it under policy.* instead of
+            # vuln.*. ponytail: only breaches are emitted, so no "pass" branch
+            # (add kind="pass" + level="none" if passing checks ever become results).
+            "kind": "fail",
             "level": level,
             "message": {"text": text, "markdown": markdown},
             "partialFingerprints": {"regisRuleRepo/v1": _fingerprint(slug, req)},

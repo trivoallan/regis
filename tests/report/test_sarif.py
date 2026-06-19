@@ -49,6 +49,25 @@ def test_emits_one_result_per_breach():
     assert [r["ruleId"] for r in s["runs"][0]["results"]] == ["a", "c"]
 
 
+def test_every_result_is_kind_fail():
+    # houba keys on result.kind to classify a verdict as a governance breach
+    # (policy.*) rather than a vulnerability (vuln.*); regis only emits breaches.
+    s = json.loads(
+        render_sarif(
+            _report(
+                [
+                    _rule("a", "critical", "failed"),
+                    _rule("b", "warning", "passed"),
+                    _rule("c", "info", "failed"),
+                ]
+            )
+        )
+    )
+    results = s["runs"][0]["results"]
+    assert results  # sanity: breaches present
+    assert all(r["kind"] == "fail" for r in results)
+
+
 def test_maps_severity_to_level_and_security_severity():
     s = json.loads(
         render_sarif(
