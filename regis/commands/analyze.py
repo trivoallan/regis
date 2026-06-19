@@ -64,7 +64,7 @@ def _render_verdict_block(final_report: dict[str, Any], *, quiet: bool) -> None:
     if quiet:
         return
 
-    from regis.playbook.verdict import (
+    from regis.core.domain.playbook.verdict import (
         LEVEL_STYLE,
         badge_emoji,
         build_verdict,

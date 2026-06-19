@@ -8,8 +8,12 @@ from pathlib import Path
 import pytest
 import yaml
 
-from regis.playbook.engine import bundle_meta_schema_path, is_bundle, load_playbook
-from regis.playbook.loader import PlaybookVersionError
+from regis.core.domain.playbook.engine import (
+    bundle_meta_schema_path,
+    is_bundle,
+    load_playbook,
+)
+from regis.core.domain.playbook.loader import PlaybookVersionError
 
 MINIMAL_PLAYBOOK = {
     "apiVersion": "regis.io/v1alpha1",

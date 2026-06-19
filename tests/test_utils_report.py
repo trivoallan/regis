@@ -76,8 +76,8 @@ class TestRunPlaybooks:
             result["links"] = [{"url": "https://example.com", "label": "Docs"}]
         return result
 
-    @patch("regis.playbook.engine.load_playbook")
-    @patch("regis.playbook.engine.evaluate")
+    @patch("regis.core.domain.playbook.engine.load_playbook")
+    @patch("regis.core.domain.playbook.engine.evaluate")
     def test_remote_path_shows_downloading(self, mock_eval, mock_load, capsys):
         mock_load.return_value = {}
         mock_eval.return_value = self._make_pb_result()
@@ -91,8 +91,8 @@ class TestRunPlaybooks:
             calls = [str(c) for c in mock_echo.call_args_list]
             assert any("Downloading" in c for c in calls)
 
-    @patch("regis.playbook.engine.load_playbook")
-    @patch("regis.playbook.engine.evaluate")
+    @patch("regis.core.domain.playbook.engine.load_playbook")
+    @patch("regis.core.domain.playbook.engine.evaluate")
     def test_local_path_shows_evaluating(self, mock_eval, mock_load, tmp_path):
         mock_load.return_value = {}
         mock_eval.return_value = self._make_pb_result()
@@ -106,8 +106,8 @@ class TestRunPlaybooks:
             calls = [str(c) for c in mock_echo.call_args_list]
             assert any("Evaluating" in c for c in calls)
 
-    @patch("regis.playbook.engine.load_playbook")
-    @patch("regis.playbook.engine.evaluate")
+    @patch("regis.core.domain.playbook.engine.load_playbook")
+    @patch("regis.core.domain.playbook.engine.evaluate")
     def test_show_rules_prints_icons(self, mock_eval, mock_load):
         mock_load.return_value = {}
         mock_eval.return_value = self._make_pb_result(with_rules=True)
@@ -124,8 +124,8 @@ class TestRunPlaybooks:
             assert "❌" in all_output
             assert "⚠️" in all_output
 
-    @patch("regis.playbook.engine.load_playbook")
-    @patch("regis.playbook.engine.evaluate")
+    @patch("regis.core.domain.playbook.engine.load_playbook")
+    @patch("regis.core.domain.playbook.engine.evaluate")
     def test_links_accumulated_in_final_report(self, mock_eval, mock_load):
         mock_load.return_value = {}
         mock_eval.return_value = self._make_pb_result(with_links=True)
@@ -138,8 +138,8 @@ class TestRunPlaybooks:
         assert "links" in result
         assert result["links"][0]["url"] == "https://example.com"
 
-    @patch("regis.playbook.engine.load_playbook")
-    @patch("regis.playbook.engine.evaluate")
+    @patch("regis.core.domain.playbook.engine.load_playbook")
+    @patch("regis.core.domain.playbook.engine.evaluate")
     def test_links_deduplicated(self, mock_eval, mock_load):
         mock_load.return_value = {}
         link = {"url": "https://example.com", "label": "Docs"}
@@ -157,8 +157,8 @@ class TestRunPlaybooks:
     def test_no_playbook_paths_uses_default(self):
         """When no paths given, default playbook is loaded (if it exists)."""
         with (
-            patch("regis.playbook.engine.load_playbook") as mock_load,
-            patch("regis.playbook.engine.evaluate") as mock_eval,
+            patch("regis.core.domain.playbook.engine.load_playbook") as mock_load,
+            patch("regis.core.domain.playbook.engine.evaluate") as mock_eval,
         ):
             mock_load.return_value = {}
             mock_eval.return_value = self._make_pb_result()
@@ -181,7 +181,7 @@ def test_run_playbooks_surfaces_friendly_error_for_legacy_playbook(tmp_path) -> 
     with (
         pytest.raises(ClickException) as exc_info,
         patch(
-            "regis.playbook.engine.load_playbook",
+            "regis.core.domain.playbook.engine.load_playbook",
             side_effect=PlaybookError(
                 f"Failed to load playbook '{legacy}': missing apiVersion"
             ),

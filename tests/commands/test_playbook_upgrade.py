@@ -6,7 +6,7 @@ import yaml
 from click.testing import CliRunner
 
 from regis.commands.playbook import playbook_group
-from regis.playbook.loader import load_playbook
+from regis.core.domain.playbook.loader import load_playbook
 
 
 def _run(path) -> str:

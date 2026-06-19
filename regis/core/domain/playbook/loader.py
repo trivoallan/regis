@@ -21,7 +21,7 @@ import jsonschema
 import yaml
 from referencing import Registry, Resource
 
-from regis.playbook import schema_registry
+from regis.core.domain.playbook import schema_registry
 
 
 class PlaybookVersionError(ValueError):

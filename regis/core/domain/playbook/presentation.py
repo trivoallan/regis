@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from regis.playbook.conditions import evaluate_condition
+from regis.core.domain.playbook.conditions import evaluate_condition
 
 logger = logging.getLogger(__name__)
 

@@ -142,7 +142,7 @@ ignore_missing_imports = true
 # linted in isolation.
 [[tool.mypy.overrides]]
 module = [
-  "regis.playbook.schema_registry",
+  "regis.core.domain.playbook.schema_registry",
   "regis.analyzers.base",
   "regis.utils.predicates",
 ]

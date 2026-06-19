@@ -1,6 +1,6 @@
-"""Coverage for regis/playbook/conditions.py branches."""
+"""Coverage for regis/core/domain/playbook/conditions.py branches."""
 
-from regis.playbook.conditions import (
+from regis.core.domain.playbook.conditions import (
     ConditionResult,
     _stringify_condition,
     evaluate_condition,

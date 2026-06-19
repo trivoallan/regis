@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import importlib.resources
 
-from regis.playbook.engine import load_playbook
-from regis.playbook.evaluator import _resolve_links
+from regis.core.domain.playbook.engine import load_playbook
+from regis.core.domain.playbook.evaluator import _resolve_links
 
 
 def _load_default_playbook() -> dict:

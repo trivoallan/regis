@@ -186,7 +186,7 @@ def validate_report(report: dict[str, Any]) -> None:
 
 def _verdict_markdown(report: dict[str, Any]) -> list[str]:
     """Render the verdict header (tier · score, badges, failed rules) as md lines."""
-    from regis.playbook.verdict import (
+    from regis.core.domain.playbook.verdict import (
         badge_emoji,
         build_verdict,
         format_counts,

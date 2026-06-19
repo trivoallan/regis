@@ -46,8 +46,8 @@ def run_playbooks(
         PlaybookError: When a playbook cannot be loaded, fails schema
             validation, or the path does not exist.
     """
-    from regis.playbook.engine import evaluate, load_playbook
-    from regis.playbook.loader import PlaybookVersionError
+    from regis.core.domain.playbook.engine import evaluate, load_playbook
+    from regis.core.domain.playbook.loader import PlaybookVersionError
 
     def _progress(msg: str) -> None:
         if on_progress is not None:

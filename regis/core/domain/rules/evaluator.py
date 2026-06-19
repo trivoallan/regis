@@ -10,7 +10,7 @@ from typing import Any
 import json_logic
 from json_logic import jsonLogic
 
-from regis.playbook.context import MissingDataTracker, _build_context
+from regis.core.domain.playbook.context import MissingDataTracker, _build_context
 from regis.utils.predicates import is_empty, is_falsy, is_truthy, is_url, matches
 
 logger = logging.getLogger(__name__)
