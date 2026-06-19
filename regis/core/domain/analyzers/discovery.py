@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from importlib.metadata import entry_points
 
-from regis.analyzers.base import BaseAnalyzer
+from regis.core.domain.analyzers.base import BaseAnalyzer
 
 logger = logging.getLogger(__name__)
 

@@ -1,7 +1,7 @@
 import pytest
 
-from regis.analyzers.base import AnalyzerError
-from regis.analyzers.size import SizeAnalyzer, _human_size
+from regis.core.domain.analyzers.base import AnalyzerError
+from regis.core.domain.analyzers.size import SizeAnalyzer, _human_size
 
 from .fakes import FakeImageInspector, make_ctx
 

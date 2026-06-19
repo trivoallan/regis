@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from regis.analyzers.base import BaseAnalyzer
+from regis.core.domain.analyzers.base import BaseAnalyzer
 from regis.core.domain.context import AnalysisContext
 
 

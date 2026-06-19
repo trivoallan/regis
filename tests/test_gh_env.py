@@ -39,7 +39,7 @@ class TestGithubEnvironment:
     @patch("regis.commands.analyze._discover_analyzers")
     def test_cli_with_mocked_gh_metadata(self, mock_discover, mock_client):
         """Test the CLI when called with GitHub-like environment variables via --meta."""
-        from regis.analyzers.base import BaseAnalyzer
+        from regis.core.domain.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
             def analyze(self, client, repo, tag, platform=None):

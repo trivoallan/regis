@@ -9,9 +9,12 @@ from collections.abc import Mapping
 class AnalyzerProvider(ABC):
     """Application-facing port: discovers/provides the analyzer classes to run.
 
-    Returns analyzer *types*. The concrete bound (``type[BaseAnalyzer]``) is
-    deferred to P4 when analyzers move into ``regis.core.domain``; typed as
-    ``type`` here so the core stays free of legacy ``regis.analyzers`` imports.
+    Returns analyzer *types*, typed as bare ``type`` rather than
+    ``type[BaseAnalyzer]``. Now that analyzers live in
+    ``regis.core.domain.analyzers``, binding the concrete class is layer-legal
+    from here (application may import domain) — but it would block the mooted
+    move of this provider into ``core.ports`` (ports may not import domain).
+    Left as ``type`` pending that decision.
     """
 
     @abstractmethod

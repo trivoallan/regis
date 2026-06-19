@@ -10,7 +10,7 @@ from typing import Any
 
 import jsonschema
 
-from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+from regis.core.domain.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis.core.domain.context import AnalysisContext
 from regis.utils.predicates import is_url
 

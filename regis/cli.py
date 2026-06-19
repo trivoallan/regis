@@ -7,13 +7,13 @@ import sys
 
 import click
 
-from regis.analyzers.discovery import discover_analyzers
 from regis.commands.analyze import analyze, evaluate_cmd, list_analyzers
 from regis.commands.bootstrap import bootstrap
 from regis.commands.check import check, version_cmd
 from regis.commands.doctor import doctor
 from regis.commands.playbook import playbook_group
 from regis.commands.rules import rules_group
+from regis.core.domain.analyzers.discovery import discover_analyzers
 from regis.utils.process import require_tool, run_cmd
 from regis.utils.report import (
     escape_jinja,

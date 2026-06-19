@@ -8,7 +8,7 @@ from typing import Any
 
 import semver
 
-from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+from regis.core.domain.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis.core.domain.context import AnalysisContext
 
 logger = logging.getLogger(__name__)

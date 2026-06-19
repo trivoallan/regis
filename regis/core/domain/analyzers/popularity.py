@@ -8,7 +8,7 @@ from typing import Any
 
 import requests
 
-from regis.analyzers.base import BaseAnalyzer
+from regis.core.domain.analyzers.base import BaseAnalyzer
 from regis.core.domain.context import AnalysisContext
 
 logger = logging.getLogger(__name__)

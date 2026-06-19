@@ -2,8 +2,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from regis.analyzers.base import AnalyzerError
-from regis.analyzers.oci import OciAnalyzer
+from regis.core.domain.analyzers.base import AnalyzerError
+from regis.core.domain.analyzers.oci import OciAnalyzer
 
 # ---------------------------------------------------------------------------
 # Fixtures — mock RegistryClient
@@ -23,13 +23,15 @@ class TestDiscoverAnalyzers:
 
     def test_skips_failed_entry_points(self) -> None:
         """A broken entry point is logged and skipped, not raised."""
-        from regis.analyzers.discovery import discover_analyzers
+        from regis.core.domain.analyzers.discovery import discover_analyzers
 
         bad_ep = MagicMock()
         bad_ep.name = "broken"
         bad_ep.load.side_effect = ImportError("missing dep")
 
-        with patch("regis.analyzers.discovery.entry_points", return_value=[bad_ep]):
+        with patch(
+            "regis.core.domain.analyzers.discovery.entry_points", return_value=[bad_ep]
+        ):
             result = discover_analyzers()
 
         assert "broken" not in result

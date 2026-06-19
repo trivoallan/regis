@@ -2,7 +2,7 @@
 
 import pytest
 
-from regis.analyzers.hadolint import HadolintAnalyzer
+from regis.core.domain.analyzers.hadolint import HadolintAnalyzer
 from tests.fakes import FakeImageInspector, FakeToolRunner, make_ctx
 
 _HISTORY_WITH_ENTRIES = [

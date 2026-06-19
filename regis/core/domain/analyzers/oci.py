@@ -6,7 +6,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
-from regis.analyzers.base import BaseAnalyzer
+from regis.core.domain.analyzers.base import BaseAnalyzer
 from regis.core.domain.context import AnalysisContext
 from regis.core.domain.manifest import filter_real_platforms, pick_platform_digest
 from regis.core.ports.image_inspector import ImageInspector

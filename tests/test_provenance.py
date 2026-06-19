@@ -1,6 +1,6 @@
 """Tests for the provenance analyzer."""
 
-from regis.analyzers.provenance import ProvenanceAnalyzer
+from regis.core.domain.analyzers.provenance import ProvenanceAnalyzer
 from regis.core.domain.context import AnalysisContext
 from regis.core.model.image_reference import ImageReference
 from tests.fakes import FakeToolRunner

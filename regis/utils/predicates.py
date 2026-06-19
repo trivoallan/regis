@@ -1,7 +1,7 @@
 """Pure predicate helpers shared by rule operators and meta validation.
 
 These functions are intentionally free of any ``json_logic`` dependency so they
-can be reused by :mod:`regis.analyzers.metadata` (format checking) and unit-tested
+can be reused by :mod:`regis.core.domain.analyzers.metadata` (format checking) and unit-tested
 in isolation. They follow a defensive style: unexpected input types yield a falsy
 result rather than raising.
 """

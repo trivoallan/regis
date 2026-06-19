@@ -1,6 +1,6 @@
 """Tests for the freshness analyzer."""
 
-from regis.analyzers.freshness import FreshnessAnalyzer
+from regis.core.domain.analyzers.freshness import FreshnessAnalyzer
 
 from .fakes import FakeImageInspector, make_ctx
 

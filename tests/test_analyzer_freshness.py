@@ -1,6 +1,6 @@
 """Tests for the freshness analyzer — edge cases."""
 
-from regis.analyzers.freshness import FreshnessAnalyzer, _get_created_date
+from regis.core.domain.analyzers.freshness import FreshnessAnalyzer, _get_created_date
 
 from .fakes import FakeImageInspector, make_ctx
 

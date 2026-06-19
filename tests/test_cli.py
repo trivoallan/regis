@@ -55,7 +55,7 @@ class TestCliBasics:
     @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze._discover_analyzers")
     def test_analyze_with_metadata(self, mock_discover, mock_client):
-        from regis.analyzers.base import BaseAnalyzer
+        from regis.core.domain.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
             def analyze(self, ctx: AnalysisContext) -> dict:
@@ -106,7 +106,7 @@ class TestCliBasics:
     @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze._discover_analyzers")
     def test_analyze_with_nested_metadata(self, mock_discover, mock_client):
-        from regis.analyzers.base import BaseAnalyzer
+        from regis.core.domain.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
             def analyze(self, ctx: AnalysisContext) -> dict:
@@ -162,7 +162,7 @@ class TestAnalyzeParallelism:
 
     def _make_dummy_analyzer(self, name: str):
         """Return a DummyAnalyzer class with the given name."""
-        from regis.analyzers.base import BaseAnalyzer
+        from regis.core.domain.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
@@ -231,7 +231,7 @@ class TestAnalyzeParallelism:
     @patch("regis.commands.analyze._discover_analyzers")
     def test_analyzer_failure_does_not_abort_others(self, mock_discover, mock_client):
         """A failing analyzer should be recorded as an error, not abort the run."""
-        from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+        from regis.core.domain.analyzers.base import AnalyzerError, BaseAnalyzer
 
         class FailingAnalyzer(BaseAnalyzer):
             name = "failing"
@@ -496,8 +496,8 @@ class TestAnalyzeCacheAndFail:
     ):
         from unittest.mock import MagicMock
 
-        from regis.analyzers.base import BaseAnalyzer
         from regis.core.application.analyze_image import AnalysisResult
+        from regis.core.domain.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
             def analyze(self, ctx: AnalysisContext) -> dict:
@@ -538,7 +538,7 @@ class TestAnalyzeSkip:
     """--skip option on regis analyze (issue #582)."""
 
     def _make_dummy_analyzer(self, name: str):
-        from regis.analyzers.base import BaseAnalyzer
+        from regis.core.domain.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
@@ -626,7 +626,7 @@ class TestAnalyzeEnvVars:
     """Environment variable support on regis analyze (issue #583)."""
 
     def _make_dummy_analyzer(self, name: str):
-        from regis.analyzers.base import BaseAnalyzer
+        from regis.core.domain.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
@@ -711,7 +711,7 @@ class TestQuietFlag:
     """Top-level --quiet / -q flag (issue #584)."""
 
     def _make_dummy_analyzer(self, name: str):
-        from regis.analyzers.base import BaseAnalyzer
+        from regis.core.domain.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
@@ -773,7 +773,7 @@ class TestQuietFlag:
     @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze._discover_analyzers")
     def test_quiet_still_emits_analyzer_failure(self, mock_discover, mock_client):
-        from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+        from regis.core.domain.analyzers.base import AnalyzerError, BaseAnalyzer
 
         class FailingAnalyzer(BaseAnalyzer):
             name = "failing"
@@ -799,7 +799,7 @@ class TestAnalyzerProgressFeedback:
     """Per-analyzer progress with timing (issue #581)."""
 
     def _make_dummy_analyzer(self, name: str):
-        from regis.analyzers.base import BaseAnalyzer
+        from regis.core.domain.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
@@ -850,7 +850,7 @@ class TestAnalyzerProgressFeedback:
     @patch("regis.commands.analyze.RegistryClient")
     @patch("regis.commands.analyze._discover_analyzers")
     def test_failure_line_also_shows_timing(self, mock_discover, mock_client):
-        from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+        from regis.core.domain.analyzers.base import AnalyzerError, BaseAnalyzer
 
         class FailingAnalyzer(BaseAnalyzer):
             name = "failing"
@@ -878,7 +878,7 @@ class TestAnalyzeSummary:
     """One-line analysis summary printed after run (issue #585)."""
 
     def _make_dummy_analyzer(self, name: str):
-        from regis.analyzers.base import BaseAnalyzer
+        from regis.core.domain.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
@@ -1115,8 +1115,8 @@ def test_cli_discovery_uses_entry_point_provider():
     from regis.adapters.driven.analyzers.entry_point_provider import (
         EntryPointAnalyzerProvider,
     )
-    from regis.analyzers.discovery import discover_analyzers
     from regis.commands import analyze as analyze_mod
+    from regis.core.domain.analyzers.discovery import discover_analyzers
 
     assert isinstance(analyze_mod._analyzer_provider, EntryPointAnalyzerProvider)
     assert dict(analyze_mod._discover_analyzers()) == dict(discover_analyzers())

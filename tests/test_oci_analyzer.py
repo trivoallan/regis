@@ -8,7 +8,7 @@ from typing import Any
 
 import jsonschema
 
-from regis.analyzers.oci import OciAnalyzer, _platforms_supported
+from regis.core.domain.analyzers.oci import OciAnalyzer, _platforms_supported
 from regis.core.domain.rules.evaluator import evaluate_rules
 from tests.fakes import FakeImageInspector, make_ctx
 

@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from regis.analyzers.dockle import DockleAnalyzer
+from regis.core.domain.analyzers.dockle import DockleAnalyzer
 from regis.core.domain.context import AnalysisContext
 from regis.core.domain.errors import ToolError
 from regis.core.model.image_reference import ImageReference

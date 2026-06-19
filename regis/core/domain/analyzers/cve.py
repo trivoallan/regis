@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
-from regis.analyzers.base import BaseAnalyzer
+from regis.core.domain.analyzers.base import BaseAnalyzer
 from regis.core.domain.context import AnalysisContext
 
 logger = logging.getLogger(__name__)

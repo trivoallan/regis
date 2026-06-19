@@ -6,8 +6,8 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from regis.analyzers.metadata import MetadataAnalyzer
 from regis.cli import main
+from regis.core.domain.analyzers.metadata import MetadataAnalyzer
 
 
 class TestRerunReportFlagValidation:

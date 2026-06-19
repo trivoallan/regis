@@ -1,7 +1,7 @@
 import pytest
 
-from regis.analyzers.base import AnalyzerError
-from regis.analyzers.versioning import VersioningAnalyzer, _classify_tag
+from regis.core.domain.analyzers.base import AnalyzerError
+from regis.core.domain.analyzers.versioning import VersioningAnalyzer, _classify_tag
 from tests.fakes import FakeImageInspector, make_ctx
 
 # ---------------------------------------------------------------------------

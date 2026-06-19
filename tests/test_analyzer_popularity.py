@@ -2,7 +2,7 @@ import pytest
 import requests
 import responses
 
-from regis.analyzers.popularity import PopularityAnalyzer
+from regis.core.domain.analyzers.popularity import PopularityAnalyzer
 from regis.core.domain.context import AnalysisContext
 from regis.core.model.image_reference import ImageReference
 from tests.fakes import FakeImageInspector, FakeToolRunner
@@ -60,7 +60,7 @@ class TestPopularityAnalyzer:
 
 
 def test_popularity_last_updated_migrated_to_source(monkeypatch):
-    import regis.analyzers.popularity as mod
+    import regis.core.domain.analyzers.popularity as mod
 
     class _Resp:
         status_code = 200

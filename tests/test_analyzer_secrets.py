@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from json_logic import jsonLogic
 
-from regis.analyzers.secrets import SecretsAnalyzer, _scanner_version
+from regis.core.domain.analyzers.secrets import SecretsAnalyzer, _scanner_version
 from regis.core.domain.context import AnalysisContext
 from regis.core.domain.errors import ToolError
 from regis.core.model.image_reference import ImageReference
@@ -77,7 +77,9 @@ class TestSecretsAnalyzer:
         )
         assert bool(jsonLogic(criteria["secret-scan"]["condition"], ctx)) is scan_pass
 
-    @patch("regis.analyzers.secrets._scanner_version", return_value="3.95.3")
+    @patch(
+        "regis.core.domain.analyzers.secrets._scanner_version", return_value="3.95.3"
+    )
     def test_analyze_counts(self, _mock_ver, analyzer):
         ctx = _secrets_ctx(
             FakeToolRunner(scan_secrets=_FINDINGS),
@@ -98,7 +100,9 @@ class TestSecretsAnalyzer:
         assert report["findings"][0]["Redacted"] == "AKIA..."
         analyzer.validate(report)
 
-    @patch("regis.analyzers.secrets._scanner_version", return_value="3.95.3")
+    @patch(
+        "regis.core.domain.analyzers.secrets._scanner_version", return_value="3.95.3"
+    )
     def test_analyze_no_secrets(self, _mock_ver, analyzer):
         ctx = _secrets_ctx(
             FakeToolRunner(scan_secrets=[]), repository="repo", tag="tag"
@@ -121,39 +125,43 @@ class TestSecretsAnalyzer:
 
 
 class TestScannerVersion:
-    @patch("regis.analyzers.secrets.shutil.which", return_value=None)
+    @patch("regis.core.domain.analyzers.secrets.shutil.which", return_value=None)
     def test_missing_binary_returns_unknown(self, _mock_which):
         assert _scanner_version() == "unknown"
 
     @patch(
-        "regis.analyzers.secrets.shutil.which", return_value="/usr/local/bin/trufflehog"
+        "regis.core.domain.analyzers.secrets.shutil.which",
+        return_value="/usr/local/bin/trufflehog",
     )
-    @patch("regis.analyzers.secrets.subprocess.run")
+    @patch("regis.core.domain.analyzers.secrets.subprocess.run")
     def test_parses_first_line_from_stderr(self, mock_run, _mock_which):
         mock_run.return_value = MagicMock(stderr="trufflehog 3.95.3\n", stdout="")
         assert _scanner_version() == "trufflehog 3.95.3"
 
     @patch(
-        "regis.analyzers.secrets.shutil.which", return_value="/usr/local/bin/trufflehog"
+        "regis.core.domain.analyzers.secrets.shutil.which",
+        return_value="/usr/local/bin/trufflehog",
     )
-    @patch("regis.analyzers.secrets.subprocess.run")
+    @patch("regis.core.domain.analyzers.secrets.subprocess.run")
     def test_falls_back_to_stdout_when_no_stderr(self, mock_run, _mock_which):
         mock_run.return_value = MagicMock(stderr="", stdout="trufflehog 3.95.3\n")
         assert _scanner_version() == "trufflehog 3.95.3"
 
     @patch(
-        "regis.analyzers.secrets.shutil.which", return_value="/usr/local/bin/trufflehog"
+        "regis.core.domain.analyzers.secrets.shutil.which",
+        return_value="/usr/local/bin/trufflehog",
     )
-    @patch("regis.analyzers.secrets.subprocess.run")
+    @patch("regis.core.domain.analyzers.secrets.subprocess.run")
     def test_empty_output_returns_unknown(self, mock_run, _mock_which):
         mock_run.return_value = MagicMock(stderr="", stdout="")
         assert _scanner_version() == "unknown"
 
     @patch(
-        "regis.analyzers.secrets.shutil.which", return_value="/usr/local/bin/trufflehog"
+        "regis.core.domain.analyzers.secrets.shutil.which",
+        return_value="/usr/local/bin/trufflehog",
     )
     @patch(
-        "regis.analyzers.secrets.subprocess.run",
+        "regis.core.domain.analyzers.secrets.subprocess.run",
         side_effect=__import__("subprocess").TimeoutExpired("trufflehog", 5),
     )
     def test_timeout_returns_unknown(self, _mock_run, _mock_which):
