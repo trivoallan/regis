@@ -553,15 +553,15 @@ def test_resolve_rules_case_b_no_rule_id_skipped():
 
 
 # ---------------------------------------------------------------------------
-# resolve_rules — Case A fallback: template found via regis.analyzers.<provider>
+# resolve_rules — Case A fallback: template found via regis.core.domain.analyzers.<provider>
 # ---------------------------------------------------------------------------
 
 
 def test_resolve_rules_fallback_prefixed_provider():
-    """A template registered under 'regis.analyzers.myprov' is found via plain 'myprov'."""
+    """A template registered under 'regis.core.domain.analyzers.myprov' is found via plain 'myprov'."""
     templates = [
         {
-            "provider": "regis.analyzers.myprov",
+            "provider": "regis.core.domain.analyzers.myprov",
             "slug": "some-check",
             "condition": {"==": [1, 1]},
             "messages": {"pass": "ok", "fail": "err"},

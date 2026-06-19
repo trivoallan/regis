@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from regis.analyzers.discovery import discover_analyzers
 from regis.core.application.analyzer_provider import AnalyzerProvider
+from regis.core.domain.analyzers.discovery import discover_analyzers
 
 
 class EntryPointAnalyzerProvider(AnalyzerProvider):
-    """Adapts ``regis.analyzers`` entry-point discovery to the AnalyzerProvider port."""
+    """Adapts ``regis.core.domain.analyzers`` entry-point discovery to the AnalyzerProvider port."""
 
     def available(self) -> Mapping[str, type]:
         return discover_analyzers()

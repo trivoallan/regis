@@ -1,6 +1,6 @@
 """Tests for the scorecard analyzer."""
 
-from regis.analyzers.scorecarddev import (
+from regis.core.domain.analyzers.scorecarddev import (
     ScorecardDevAnalyzer,
     _parse_git_url,
 )
@@ -144,7 +144,7 @@ class TestScorecardAnalyzerWithSource:
 
 def test_scorecard_source_extracted_from_raw(monkeypatch):
     """Success path: source block is populated from the raw API response."""
-    from regis.analyzers import scorecarddev as mod
+    from regis.core.domain.analyzers import scorecarddev as mod
 
     raw = {
         "date": "2026-06-01T00:00:00Z",

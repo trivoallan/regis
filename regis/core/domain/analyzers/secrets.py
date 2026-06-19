@@ -7,7 +7,7 @@ import shutil
 import subprocess  # nosec B404
 from typing import Any
 
-from regis.analyzers.base import BaseAnalyzer
+from regis.core.domain.analyzers.base import BaseAnalyzer
 from regis.core.domain.context import AnalysisContext
 
 logger = logging.getLogger(__name__)

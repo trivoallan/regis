@@ -20,8 +20,8 @@ from regis.adapters.driven.report.presentation_renderer import (
     CookiecutterPresentationRenderer,
 )
 from regis.adapters.driving.cli.composition import build_analyze_image, build_evaluate
-from regis.analyzers.base import BaseAnalyzer
 from regis.core.application.analyze_image import AnalyzerOutcome
+from regis.core.domain.analyzers.base import BaseAnalyzer
 from regis.core.model.image_reference import ImageReference
 from regis.core.model.report import Report
 from regis.utils.report import (
@@ -309,7 +309,7 @@ def analyze(
 
     # --rerun: patch an existing report and replay playbook evaluation
     if rerun and report_dir:
-        from regis.analyzers.metadata import MetadataAnalyzer
+        from regis.core.domain.analyzers.metadata import MetadataAnalyzer
 
         if rerun != MetadataAnalyzer.name:
             all_analyzers = _discover_analyzers()

@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
 
-from regis.analyzers.provenance import ProvenanceAnalyzer
-from regis.analyzers.scorecarddev import (
+from regis.core.domain.analyzers.provenance import ProvenanceAnalyzer
+from regis.core.domain.analyzers.scorecarddev import (
     _fetch_scorecard,
     _resolve_source_repo,
     _source_repo_from_dockerhub,

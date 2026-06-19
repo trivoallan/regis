@@ -83,7 +83,7 @@ def get_criterion_templates(analyzers_present: list[str]) -> list[dict[str, Any]
     :func:`resolve_rules`; they are never evaluated unless a playbook declares
     them.
     """
-    from regis.analyzers.discovery import discover_analyzers
+    from regis.core.domain.analyzers.discovery import discover_analyzers
 
     analyzers = discover_analyzers()
     default_rules = []
@@ -160,7 +160,7 @@ def resolve_rules(
 
             # Fallback for legacy full slugs or different provider naming
             if not template:
-                for p_name in [provider, f"regis.analyzers.{provider}"]:
+                for p_name in [provider, f"regis.core.domain.analyzers.{provider}"]:
                     if (p_name, template_name) in merged:
                         template = merged[(p_name, template_name)]
                         break
@@ -168,7 +168,7 @@ def resolve_rules(
             # Last resort: load template directly from the analyzer class (handles the
             # case where the analyzer was not run but a custom rule references its template)
             if not template:
-                from regis.analyzers.discovery import discover_analyzers
+                from regis.core.domain.analyzers.discovery import discover_analyzers
 
                 all_analyzers = discover_analyzers()
                 prov_cls = all_analyzers.get(provider)

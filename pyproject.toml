@@ -27,20 +27,20 @@ dependencies = [
 regis = "regis.cli:main"
 
 [project.entry-points."regis.analyzers"]
-versioning = "regis.analyzers.versioning:VersioningAnalyzer"
-scorecarddev = "regis.analyzers.scorecarddev:ScorecardDevAnalyzer"
-oci = "regis.analyzers.oci:OciAnalyzer"
-cve = "regis.analyzers.cve:CveAnalyzer"
-endoflife = "regis.analyzers.endoflife:EndOfLifeAnalyzer"
-popularity = "regis.analyzers.popularity:PopularityAnalyzer"
-size = "regis.analyzers.size:SizeAnalyzer"
-freshness = "regis.analyzers.freshness:FreshnessAnalyzer"
-provenance = "regis.analyzers.provenance:ProvenanceAnalyzer"
-sbom = "regis.analyzers.sbom:SbomAnalyzer"
-hadolint = "regis.analyzers.hadolint:HadolintAnalyzer"
-dockle = "regis.analyzers.dockle:DockleAnalyzer"
-metadata = "regis.analyzers.metadata:MetadataAnalyzer"
-secrets = "regis.analyzers.secrets:SecretsAnalyzer"
+versioning = "regis.core.domain.analyzers.versioning:VersioningAnalyzer"
+scorecarddev = "regis.core.domain.analyzers.scorecarddev:ScorecardDevAnalyzer"
+oci = "regis.core.domain.analyzers.oci:OciAnalyzer"
+cve = "regis.core.domain.analyzers.cve:CveAnalyzer"
+endoflife = "regis.core.domain.analyzers.endoflife:EndOfLifeAnalyzer"
+popularity = "regis.core.domain.analyzers.popularity:PopularityAnalyzer"
+size = "regis.core.domain.analyzers.size:SizeAnalyzer"
+freshness = "regis.core.domain.analyzers.freshness:FreshnessAnalyzer"
+provenance = "regis.core.domain.analyzers.provenance:ProvenanceAnalyzer"
+sbom = "regis.core.domain.analyzers.sbom:SbomAnalyzer"
+hadolint = "regis.core.domain.analyzers.hadolint:HadolintAnalyzer"
+dockle = "regis.core.domain.analyzers.dockle:DockleAnalyzer"
+metadata = "regis.core.domain.analyzers.metadata:MetadataAnalyzer"
+secrets = "regis.core.domain.analyzers.secrets:SecretsAnalyzer"
 
 [dependency-groups]
 dev = [
@@ -133,7 +133,7 @@ ignore_missing_imports = true
 # downstream importers in isolation. follow_imports=skip avoids the
 # cross-ref lookup that crashes, without silencing type errors in the
 # module itself (which is still checked when targeted directly).
-# regis.analyzers.base is included because it imports the stdlib `warnings`
+# regis.core.domain.analyzers.base is included because it imports the stdlib `warnings`
 # module (added for the default_rules deprecation shim), which trips the same
 # cross-ref AssertionError when downstream analyzer modules are linted alone.
 # regis.utils.predicates is included because it is imported by metadata.py and
@@ -143,7 +143,7 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = [
   "regis.core.domain.playbook.schema_registry",
-  "regis.analyzers.base",
+  "regis.core.domain.analyzers.base",
   "regis.utils.predicates",
 ]
 follow_imports = "skip"

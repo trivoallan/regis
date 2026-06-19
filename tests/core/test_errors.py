@@ -1,6 +1,6 @@
 """The core exception hierarchy and the AnalyzerError re-home."""
 
-from regis.analyzers.base import AnalyzerError as ReexportedAnalyzerError
+from regis.core.domain.analyzers.base import AnalyzerError as ReexportedAnalyzerError
 from regis.core.domain.errors import (
     AnalyzerError,
     PlaybookError,

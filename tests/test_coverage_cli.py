@@ -47,7 +47,7 @@ def test_bootstrap_no_cookiecutter():
 @patch("regis.commands.analyze.RegistryClient")
 @patch("regis.commands.analyze._discover_analyzers")
 def test_analyze_schema_validation_error(mock_discover, mock_client):
-    from regis.analyzers.base import BaseAnalyzer
+    from regis.core.domain.analyzers.base import BaseAnalyzer
 
     runner = CliRunner()
     with runner.isolated_filesystem():
@@ -55,7 +55,9 @@ def test_analyze_schema_validation_error(mock_discover, mock_client):
         import jsonschema
 
         # Patch BaseAnalyzer.validate to avoid hitting the mock early
-        with patch("regis.analyzers.base.BaseAnalyzer.validate", return_value=None):
+        with patch(
+            "regis.core.domain.analyzers.base.BaseAnalyzer.validate", return_value=None
+        ):
             with patch("jsonschema.validators.validator_for") as mock_val_for:
                 mock_v_inst = MagicMock()
                 mock_v_inst.validate.side_effect = jsonschema.ValidationError(
@@ -91,7 +93,7 @@ def test_analyze_schema_validation_error(mock_discover, mock_client):
 @patch("regis.commands.analyze.RegistryClient")
 @patch("regis.commands.analyze._discover_analyzers")
 def test_analyze_all_failed(mock_discover, mock_client):
-    from regis.analyzers.base import BaseAnalyzer
+    from regis.core.domain.analyzers.base import BaseAnalyzer
 
     class Fail(BaseAnalyzer):
         def analyze(self, *args):

@@ -2,7 +2,7 @@
 
 import pytest
 
-from regis.analyzers.sbom import COPYLEFT_LICENSES, SbomAnalyzer
+from regis.core.domain.analyzers.sbom import COPYLEFT_LICENSES, SbomAnalyzer
 from regis.core.domain.context import AnalysisContext
 from regis.core.domain.errors import ToolError
 from regis.core.model.image_reference import ImageReference

@@ -9,7 +9,7 @@ from typing import Any
 
 import click
 
-from regis.analyzers.discovery import discover_analyzers
+from regis.core.domain.analyzers.discovery import discover_analyzers
 
 
 def _render_rule_markdown(rule: dict[str, Any]) -> str:

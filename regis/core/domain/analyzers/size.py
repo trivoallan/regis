@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from regis.analyzers.base import AnalyzerError, BaseAnalyzer
+from regis.core.domain.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis.core.domain.context import AnalysisContext
 from regis.core.domain.manifest import filter_real_platforms
 from regis.core.ports.image_inspector import ImageInspector

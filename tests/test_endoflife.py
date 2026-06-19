@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import requests
 
-from regis.analyzers.endoflife import (
+from regis.core.domain.analyzers.endoflife import (
     EndOfLifeAnalyzer,
     _extract_version,
     _fetch_cycles,
@@ -135,7 +135,7 @@ class TestEndOfLifeAnalyzer:
         },
     ]
 
-    @patch("regis.analyzers.endoflife._fetch_cycles")
+    @patch("regis.core.domain.analyzers.endoflife._fetch_cycles")
     def test_known_product(self, mock_fetch):
         """Test with nginx which is known on endoflife.date."""
         mock_fetch.return_value = self.MOCK_CYCLES
@@ -149,7 +149,7 @@ class TestEndOfLifeAnalyzer:
         assert report["matched_cycle"] is not None
         assert report["matched_cycle"]["cycle"] == "1.27"
 
-    @patch("regis.analyzers.endoflife._fetch_cycles")
+    @patch("regis.core.domain.analyzers.endoflife._fetch_cycles")
     def test_unknown_product(self, mock_fetch):
         """Test with a product not on endoflife.date."""
         mock_fetch.return_value = None
@@ -163,7 +163,7 @@ class TestEndOfLifeAnalyzer:
         assert report["matched_cycle"] is None
         assert report["is_eol"] is None
 
-    @patch("regis.analyzers.endoflife._fetch_cycles")
+    @patch("regis.core.domain.analyzers.endoflife._fetch_cycles")
     def test_named_tag_no_match(self, mock_fetch):
         """Named tags like 'latest' cannot match a cycle."""
         mock_fetch.return_value = self.MOCK_CYCLES
@@ -175,7 +175,7 @@ class TestEndOfLifeAnalyzer:
         assert report["matched_cycle"] is None
         assert report["is_eol"] is None
 
-    @patch("regis.analyzers.endoflife._fetch_cycles")
+    @patch("regis.core.domain.analyzers.endoflife._fetch_cycles")
     def test_eol_false_is_not_eol(self, mock_fetch):
         """Cycle with eol=False → is_eol is False (not None)."""
         mock_fetch.return_value = [
@@ -194,7 +194,7 @@ class TestEndOfLifeAnalyzer:
         assert report["matched_cycle"] is not None
         assert report["is_eol"] is False
 
-    @patch("regis.analyzers.endoflife._fetch_cycles")
+    @patch("regis.core.domain.analyzers.endoflife._fetch_cycles")
     def test_eol_bool_true_is_eol(self, mock_fetch):
         """Cycle with eol=True (boolean) → is_eol is True."""
         mock_fetch.return_value = [
@@ -222,7 +222,7 @@ class TestEndOfLifeAnalyzer:
 class TestFetchCycles:
     """Test _fetch_cycles HTTP error handling (patches requests.get directly)."""
 
-    @patch("regis.analyzers.endoflife.requests.get")
+    @patch("regis.core.domain.analyzers.endoflife.requests.get")
     def test_200_returns_cycle_list(self, mock_get):
         """A 200 response should return the parsed JSON list."""
         cycles = [{"cycle": "1.27", "eol": False}]
@@ -235,7 +235,7 @@ class TestFetchCycles:
 
         assert result == cycles
 
-    @patch("regis.analyzers.endoflife.requests.get")
+    @patch("regis.core.domain.analyzers.endoflife.requests.get")
     def test_non_200_returns_none(self, mock_get):
         """A 404 response should return None."""
         mock_resp = MagicMock()
@@ -246,7 +246,7 @@ class TestFetchCycles:
 
         assert result is None
 
-    @patch("regis.analyzers.endoflife.requests.get")
+    @patch("regis.core.domain.analyzers.endoflife.requests.get")
     def test_request_exception_returns_none(self, mock_get):
         """A network/timeout error should return None."""
         mock_get.side_effect = requests.exceptions.ConnectionError("network error")

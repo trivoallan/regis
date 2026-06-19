@@ -6,7 +6,7 @@ from typing import Any
 
 import pytest
 
-from regis.analyzers.hadolint import HadolintAnalyzer
+from regis.core.domain.analyzers.hadolint import HadolintAnalyzer
 from regis.core.domain.errors import ToolError
 from tests.fakes import FakeImageInspector, FakeToolRunner, make_ctx
 

@@ -6,8 +6,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 from click.testing import CliRunner
 
-from regis.analyzers.base import BaseAnalyzer
 from regis.commands.analyze import analyze, evaluate_cmd
+from regis.core.domain.analyzers.base import BaseAnalyzer
 
 _MINIMAL_REPORT = {
     "request": {

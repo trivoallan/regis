@@ -8,8 +8,8 @@ from typing import Any
 
 import pytest
 
-from regis.analyzers.base import BaseAnalyzer
-from regis.analyzers.cve import CveAnalyzer
+from regis.core.domain.analyzers.base import BaseAnalyzer
+from regis.core.domain.analyzers.cve import CveAnalyzer
 
 
 def _criterion() -> dict[str, Any]:

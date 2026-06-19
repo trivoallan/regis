@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from regis.analyzers.metadata import MetadataAnalyzer
+from regis.core.domain.analyzers.metadata import MetadataAnalyzer
 
 
 class TestMetadataAnalyzerWellKnownOnly:
@@ -214,7 +214,7 @@ class TestMetadataAnalyzerWithPlaybookSchema:
 
 def test_metadata_analyze_ignores_context():
     """analyze accepts a context but ignores it; result depends only on __init__ data."""
-    from regis.analyzers.metadata import MetadataAnalyzer
+    from regis.core.domain.analyzers.metadata import MetadataAnalyzer
 
     a = MetadataAnalyzer(metadata={"ci": {"job": {"id": "1"}}})
     via_none = a.analyze()  # rerun-style no-arg call must still work

@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from regis.analyzers.popularity import PopularityAnalyzer
+from regis.core.domain.analyzers.popularity import PopularityAnalyzer
 from regis.core.domain.context import AnalysisContext
 from regis.core.model.image_reference import ImageReference
 from tests.fakes import FakeImageInspector, FakeToolRunner
