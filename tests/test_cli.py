@@ -274,7 +274,7 @@ class TestCliCheck:
 
     @patch("regis.commands.check.RegistryClient")
     def test_check_registry_error(self, mock_client_class):
-        from regis.registry.client import RegistryError
+        from regis.adapters.driven.registry.client import RegistryError
 
         mock_client = mock_client_class.return_value
         mock_client.get_manifest.side_effect = RegistryError("Not found")

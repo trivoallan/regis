@@ -13,6 +13,8 @@ import click
 from regis.adapters.driven.analyzers.entry_point_provider import (
     EntryPointAnalyzerProvider,
 )
+from regis.adapters.driven.registry.client import RegistryClient
+from regis.adapters.driven.registry.parser import parse_image_url
 from regis.adapters.driven.report.file_report_sink import FileReportSink
 from regis.adapters.driven.report.presentation_renderer import (
     CookiecutterPresentationRenderer,
@@ -22,8 +24,6 @@ from regis.analyzers.base import BaseAnalyzer
 from regis.core.application.analyze_image import AnalyzerOutcome
 from regis.core.model.image_reference import ImageReference
 from regis.core.model.report import Report
-from regis.registry.client import RegistryClient
-from regis.registry.parser import parse_image_url
 from regis.utils.report import (
     ensure_schema_version,
     format_output_path,
@@ -331,7 +331,7 @@ def analyze(
             meta_analyzer = MetadataAnalyzer(metadata=metadata_dict)
             result = meta_analyzer.analyze()
         else:
-            from regis.registry.auth import resolve_credentials
+            from regis.adapters.driven.registry.auth import resolve_credentials
 
             ref = parse_image_url(url) if url else None
             if ref is None:
@@ -387,7 +387,7 @@ def analyze(
         quiet=quiet,
     )
 
-    from regis.registry.auth import resolve_credentials
+    from regis.adapters.driven.registry.auth import resolve_credentials
 
     username, password = resolve_credentials(ref.registry, list(auth) if auth else None)
     client = RegistryClient(

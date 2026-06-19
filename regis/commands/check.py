@@ -6,8 +6,8 @@ from importlib.metadata import version
 
 import click
 
-from regis.registry.client import RegistryClient, RegistryError
-from regis.registry.parser import parse_image_url
+from regis.adapters.driven.registry.client import RegistryClient, RegistryError
+from regis.adapters.driven.registry.parser import parse_image_url
 
 
 @click.command(name="check")
@@ -29,7 +29,7 @@ def check(url: str, auth: tuple[str, ...]) -> None:
     except ValueError as exc:
         raise click.ClickException(str(exc)) from exc
 
-    from regis.registry.auth import resolve_credentials
+    from regis.adapters.driven.registry.auth import resolve_credentials
 
     username, password = resolve_credentials(ref.registry, list(auth) if auth else None)
     client = RegistryClient(

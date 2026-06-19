@@ -5,8 +5,8 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
+from regis.adapters.driven.registry.auth import resolve_credentials
 from regis.cli import main
-from regis.registry.auth import resolve_credentials
 
 
 class TestGithubEnvironment:
