@@ -289,6 +289,20 @@ def render_and_save_reports(
                     rendered=rendered,
                 )
             )
+        elif fmt == "sarif":
+            from regis.adapters.driven.report.sarif import render_sarif
+
+            rendered = render_sarif(report)
+            file_tmpl = output_template or "report.sarif"
+            paths.append(
+                write_report(
+                    dir_tmpl=output_dir_template or ".",
+                    file_tmpl=file_tmpl,
+                    report=report,
+                    fmt=fmt,
+                    rendered=rendered,
+                )
+            )
         else:
             indent = 2 if pretty else None
             rendered = json.dumps(report, indent=indent, ensure_ascii=False)

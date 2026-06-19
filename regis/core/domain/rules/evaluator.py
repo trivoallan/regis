@@ -195,6 +195,9 @@ def resolve_rules(
                         slug = f"{template_name}.{len(processed_custom)}"
 
                 instance["slug"] = slug
+                # Remember which criterion template this instance came from, so
+                # downstream (e.g. SARIF help_uri) can link to its docs.
+                instance["criterion"] = template_name
                 # Binding a criterion template in a playbook activates it by
                 # default; criteria shipped with `enable: False` (opt-in) become
                 # active when referenced. An explicit `enable: false` in the rule
@@ -418,18 +421,19 @@ def evaluate_rules(
                 if len(parts) > 1:
                     involved_analyzers.add(parts[1])
 
-        results.append(
-            {
-                "slug": rule.get("slug", ""),
-                "description": rule.get("description", ""),
-                "level": rule.get("level", "info"),
-                "tags": rule.get("tags", []),
-                "passed": passed,
-                "status": status,
-                "message": message_resolved,
-                "analyzers": sorted(involved_analyzers),
-            }
-        )
+        entry = {
+            "slug": rule.get("slug", ""),
+            "description": rule.get("description", ""),
+            "level": rule.get("level", "info"),
+            "tags": rule.get("tags", []),
+            "passed": passed,
+            "status": status,
+            "message": message_resolved,
+            "analyzers": sorted(involved_analyzers),
+        }
+        if rule.get("criterion"):
+            entry["criterion"] = rule["criterion"]
+        results.append(entry)
 
     # Sort results to be deterministic: failures first over passes, then by level, then slug
     # Levels ordered by severity
