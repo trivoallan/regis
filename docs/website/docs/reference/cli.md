@@ -37,6 +37,7 @@ _Output options:_
 - `--html`: Generate a self-contained single-file `report.html`.
 - `--sections all|summary|<slugs>`: Sections to include in the HTML report. Only applies to `--html`.
 - `--markdown`: Also emit a Markdown summary report (`report.md`).
+- `--sarif`: Also emit a SARIF report of playbook verdicts (`report.sarif`) for upload to GitHub Code Scanning (or any SARIF consumer). Each breached rule becomes a SARIF result anchored at the `Dockerfile`, with a `security-severity` mapped from the rule level and a `helpUri` to the criterion's docs.
 - `--pretty/--no-pretty`: Pretty-print the JSON output (default: on).
 
 _Evaluation options:_
@@ -110,6 +111,7 @@ _Options:_
 
 - `-p, --playbook PATH`: Path or URL to custom playbook YAML/JSON file(s).
 - `--html`: Generate a self-contained single-file `report.html`.
+- `--sarif`: Also emit a SARIF report of playbook verdicts (`report.sarif`).
 
 ### `check`
 

@@ -399,3 +399,39 @@ def test_render_and_save_reports_md_format(tmp_path):
     assert len(paths) == 1
     assert paths[0].suffix == ".md"
     assert paths[0].read_text(encoding="utf-8").startswith("#")
+
+
+def test_render_and_save_reports_sarif_format(tmp_path):
+    """render_and_save_reports with fmt=sarif writes a SARIF file (not raw report)."""
+    import json
+
+    from regis.utils.report import render_and_save_reports
+
+    report = {
+        "version": "0.37.0",
+        "request": {"registry": "r", "repository": "x", "tag": "t", "url": "x:t"},
+        "rules": [
+            {
+                "slug": "cve-critical",
+                "level": "critical",
+                "status": "failed",
+                "message": "boom",
+                "analyzers": ["cve"],
+                "criterion": "cve-count",
+            },
+        ],
+    }
+    paths = render_and_save_reports(
+        report,
+        formats=["sarif"],
+        output_template=str(tmp_path / "report.sarif"),
+        output_dir_template=".",
+        theme="default",
+        pretty=False,
+    )
+    assert len(paths) == 1
+    assert paths[0].suffix == ".sarif"
+    doc = json.loads(paths[0].read_text(encoding="utf-8"))
+    assert doc["version"] == "2.1.0"
+    assert doc["runs"][0]["tool"]["driver"]["name"] == "Regis"
+    assert [r["ruleId"] for r in doc["runs"][0]["results"]] == ["cve-critical"]

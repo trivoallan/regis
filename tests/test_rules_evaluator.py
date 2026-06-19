@@ -48,6 +48,52 @@ def test_resolve_rules_instantiates_template():
     assert resolved[0]["messages"]["pass"] == "fresh"
 
 
+def test_resolve_rules_stamps_criterion_name():
+    # A rule whose slug differs from the criterion it instantiates must remember
+    # which criterion it came from (needed to link to per-criterion docs).
+    templates = [
+        {
+            "provider": "cve",
+            "slug": "cve-count",
+            "description": "CVE count",
+            "params": {},
+            "condition": {"==": [1, 1]},
+            "messages": {"pass": "ok", "fail": "no"},
+        }
+    ]
+    declared = [
+        {
+            "provider": "cve",
+            "criterion": "cve-count",
+            "slug": "cve-critical",
+            "options": {},
+        }
+    ]
+    resolved = resolve_rules(templates, declared)
+    assert resolved[0]["slug"] == "cve-critical"
+    assert resolved[0]["criterion"] == "cve-count"
+
+
+def test_evaluate_rules_result_carries_criterion():
+    report = {
+        "request": {"analyzers": ["freshness"]},
+        "results": {"freshness": {"age_days": 10}},
+    }
+    rules_def = {
+        "rules": [
+            {
+                "provider": "freshness",
+                "criterion": "age",
+                "slug": "my-age",
+                "options": {},
+            }
+        ]
+    }
+    res = evaluate_rules(report, rules_def)
+    rule = next(r for r in res["rules"] if r["slug"] == "my-age")
+    assert rule["criterion"] == "age"
+
+
 def test_resolve_rules_drops_unreferenced_templates():
     templates = [
         {"provider": "oci", "slug": "max-size", "condition": {"==": [1, 1]}},

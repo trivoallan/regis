@@ -261,6 +261,13 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     help="Also emit a Markdown summary report (report.md).",
 )
 @click.option(
+    "--sarif",
+    "sarif",
+    is_flag=True,
+    default=False,
+    help="Also emit a SARIF report of playbook verdicts (report.sarif).",
+)
+@click.option(
     "--merge-meta",
     "merge_meta",
     is_flag=True,
@@ -291,6 +298,7 @@ def analyze(
     rerun: str | None = None,
     report_dir: Path | None = None,
     markdown: bool = False,
+    sarif: bool = False,
     merge_meta: bool = False,
 ) -> None:
     """Analyze a Docker image and evaluate playbooks.
@@ -359,6 +367,8 @@ def analyze(
         formats = ["json"]
         if markdown:
             formats.append("md")
+        if sarif:
+            formats.append("sarif")
         rerun_report = run_playbooks(
             playbook_paths, existing_report, formats, show_rules=evaluate
         )
@@ -409,6 +419,8 @@ def analyze(
         formats.append("html")
     if markdown:
         formats.append("md")
+    if sarif:
+        formats.append("sarif")
 
     if sections != "all" and not html_single:
         _info("  Warning: --sections has no effect without --html.", quiet=quiet)
@@ -636,6 +648,13 @@ def analyze(
     type=click.Choice(["default"], case_sensitive=False),
     help="Theme to use for HTML report (default: default).",
 )
+@click.option(
+    "--sarif",
+    "sarif",
+    is_flag=True,
+    default=False,
+    help="Also emit a SARIF report of playbook verdicts (report.sarif).",
+)
 def evaluate_cmd(
     input_path: str,
     playbook_paths: tuple[str, ...],
@@ -645,6 +664,7 @@ def evaluate_cmd(
     theme: str,
     html_single: bool = False,
     sections: str = "all",
+    sarif: bool = False,
 ) -> None:
     """Evaluate playbooks against an existing analysis report (dry-run).
 
@@ -667,6 +687,8 @@ def evaluate_cmd(
     formats = ["json"]
     if html_single:
         formats.append("html")
+    if sarif:
+        formats.append("sarif")
 
     if sections != "all" and not html_single:
         click.echo("  Warning: --sections has no effect without --html.", err=True)
