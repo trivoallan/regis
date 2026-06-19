@@ -31,8 +31,8 @@
     "@docusaurus/module-type-aliases": "3.10.1",
     "@docusaurus/tsconfig": "3.10.1",
     "@docusaurus/types": "3.10.1",
-    "@easyops-cn/docusaurus-search-local": "^0.55.1",
-    "typescript": "~6.0.3"
+    "@easyops-cn/docusaurus-search-local": "0.55.2",
+    "typescript": "6.0.3"
   },
   "browserslist": {
     "production": [
