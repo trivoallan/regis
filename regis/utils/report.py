@@ -264,7 +264,7 @@ def render_and_save_reports(
     paths: list[Path] = []
     for fmt in formats:
         if fmt == "html":
-            from regis.report.html import render_html_single
+            from regis.adapters.driven.report.html import render_html_single
 
             rendered = render_html_single(report, sections=sections)
             file_tmpl = output_template or "report.html"

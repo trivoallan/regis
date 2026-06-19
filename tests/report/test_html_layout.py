@@ -1,6 +1,6 @@
 """Integration tests for the redesigned single-file HTML layout."""
 
-from regis.report.html import render_html_single
+from regis.adapters.driven.report.html import render_html_single
 
 
 def _report(results=None, rules=None, tier="Gold", score=92):

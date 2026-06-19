@@ -1,6 +1,6 @@
-"""Tests for render_html_single in regis.report.html."""
+"""Tests for render_html_single in regis.adapters.driven.report.html."""
 
-from regis.report.html import render_html_single
+from regis.adapters.driven.report.html import render_html_single
 
 
 def _minimal_report(**extra) -> dict:
