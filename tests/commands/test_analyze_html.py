@@ -152,7 +152,10 @@ def test_render_and_save_html_writes_file(tmp_path):
     """render_and_save_reports with fmt=html writes report.html to disk."""
     from regis.utils.report import render_and_save_reports
 
-    with patch("regis.report.html.render_html_single", return_value="<html>ok</html>"):
+    with patch(
+        "regis.adapters.driven.report.html.render_html_single",
+        return_value="<html>ok</html>",
+    ):
         # Plain strings without {format} placeholders: format_output_path returns them as-is.
         render_and_save_reports(
             _MINIMAL_REPORT,

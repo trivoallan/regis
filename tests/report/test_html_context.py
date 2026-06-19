@@ -1,6 +1,6 @@
 """Unit tests for the pure view-model builder _build_context."""
 
-from regis.report.html import _build_context
+from regis.adapters.driven.report.html import _build_context
 
 
 def _report(results=None, rules=None, tier="Gold", score=92):
