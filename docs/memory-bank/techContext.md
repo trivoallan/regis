@@ -82,8 +82,8 @@ uv run ruff format .
 trunk check
 trunk check --fix
 
-# Docs site dev server
-pnpm --filter docs start
+# Docs site dev server (run from docs/website)
+pnpm start
 
 # Build the docs site (run from docs/website, as CI does)
 pnpm run build

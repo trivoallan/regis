@@ -140,7 +140,8 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install docs dependencies
-        run: pnpm install --filter docs --frozen-lockfile
+        run: pnpm install --frozen-lockfile
+        working-directory: docs/website
 
       - name: Create version snapshot
         working-directory: docs/website
