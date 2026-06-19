@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from regis.tools.fetcher import ToolFetcher, ToolFetchError
+from regis.adapters.driven.tools.fetcher import ToolFetcher, ToolFetchError
 
 
 def _write_binary(path: Path, content: bytes) -> str:
@@ -23,7 +23,7 @@ def _write_binary(path: Path, content: bytes) -> str:
 
 def _patch_manifest(monkeypatch, tools: dict) -> None:
     """Replace the loader with a controlled in-memory manifest."""
-    from regis.tools import manifest as m
+    from regis.adapters.driven.tools import manifest as m
 
     monkeypatch.setattr(m, "load_manifest", lambda path=None: tools)
 
@@ -33,7 +33,7 @@ def fake_tool(monkeypatch, tmp_path):
     """A manifest with a single 'grype' entry whose sha matches a tiny payload."""
     payload = b"hello-grype"
     sha = hashlib.sha256(payload).hexdigest()
-    from regis.tools.manifest import Tool
+    from regis.adapters.driven.tools.manifest import Tool
 
     tools = {
         "grype": Tool(
@@ -108,7 +108,7 @@ def test_ensure_downloads_when_missing(monkeypatch, tmp_path):
     (pub / "tool.bin").write_bytes(payload)
 
     with _serve(pub) as base_url:
-        from regis.tools.manifest import Tool
+        from regis.adapters.driven.tools.manifest import Tool
 
         tools = {
             "grype": Tool(
@@ -136,7 +136,7 @@ def test_sha256_mismatch_raises_and_cleans_partial(monkeypatch, tmp_path):
     (pub / "tool.bin").write_bytes(payload)
 
     with _serve(pub) as base_url:
-        from regis.tools.manifest import Tool
+        from regis.adapters.driven.tools.manifest import Tool
 
         tools = {
             "grype": Tool(
@@ -174,7 +174,7 @@ def test_archive_targz_extracts_member(monkeypatch, tmp_path):
         tar.add(bin_path, arcname="grype")
 
     with _serve(pub) as base_url:
-        from regis.tools.manifest import Tool
+        from regis.adapters.driven.tools.manifest import Tool
 
         tools = {
             "grype": Tool(
@@ -222,7 +222,7 @@ def test_concurrent_ensure_downloads_only_once(monkeypatch, tmp_path):
     base_url = f"http://127.0.0.1:{server.server_address[1]}"
 
     try:
-        from regis.tools.manifest import Tool
+        from regis.adapters.driven.tools.manifest import Tool
 
         tools = {
             "grype": Tool(
@@ -263,7 +263,7 @@ def test_mirror_overrides_manifest_url(monkeypatch, tmp_path):
     (target_dir / "grype_0.0.1_linux_amd64").write_bytes(payload)
 
     with _serve(pub) as base_url:
-        from regis.tools.manifest import Tool
+        from regis.adapters.driven.tools.manifest import Tool
 
         tools = {
             "grype": Tool(
@@ -283,7 +283,7 @@ def test_mirror_overrides_manifest_url(monkeypatch, tmp_path):
 
 def test_mirror_env_var_is_picked_up(monkeypatch, tmp_path):
     monkeypatch.setenv("REGIS_TOOLS_MIRROR", "https://nope.invalid")
-    from regis.tools.manifest import Tool
+    from regis.adapters.driven.tools.manifest import Tool
 
     tools = {
         "grype": Tool(
@@ -306,7 +306,7 @@ def test_cosign_required_but_missing_raises(monkeypatch, tmp_path):
     pub.mkdir()
     (pub / "tool.bin").write_bytes(payload)
     with _serve(pub) as base_url:
-        from regis.tools.manifest import CosignPolicy, Tool
+        from regis.adapters.driven.tools.manifest import CosignPolicy, Tool
 
         tools = {
             "grype": Tool(
@@ -320,7 +320,9 @@ def test_cosign_required_but_missing_raises(monkeypatch, tmp_path):
         }
         _patch_manifest(monkeypatch, tools)
         monkeypatch.setenv("REGIS_REQUIRE_COSIGN", "1")
-        monkeypatch.setattr("regis.tools.cosign.shutil.which", lambda _: None)
+        monkeypatch.setattr(
+            "regis.adapters.driven.tools.cosign.shutil.which", lambda _: None
+        )
         fetcher = ToolFetcher(cache_dir=tmp_path / "cache", arch="amd64")
         with pytest.raises(ToolFetchError, match="cosign required but unavailable"):
             fetcher.ensure("grype")
@@ -333,7 +335,7 @@ def test_cosign_missing_is_silently_skipped_by_default(monkeypatch, tmp_path, ca
     pub.mkdir()
     (pub / "tool.bin").write_bytes(payload)
     with _serve(pub) as base_url:
-        from regis.tools.manifest import CosignPolicy, Tool
+        from regis.adapters.driven.tools.manifest import CosignPolicy, Tool
 
         tools = {
             "grype": Tool(
@@ -347,7 +349,9 @@ def test_cosign_missing_is_silently_skipped_by_default(monkeypatch, tmp_path, ca
         }
         _patch_manifest(monkeypatch, tools)
         monkeypatch.delenv("REGIS_REQUIRE_COSIGN", raising=False)
-        monkeypatch.setattr("regis.tools.cosign.shutil.which", lambda _: None)
+        monkeypatch.setattr(
+            "regis.adapters.driven.tools.cosign.shutil.which", lambda _: None
+        )
         fetcher = ToolFetcher(cache_dir=tmp_path / "cache", arch="amd64")
         with caplog.at_level("INFO"):
             fetcher.ensure("grype")
@@ -362,7 +366,7 @@ def test_fetch_all_downloads_each_tool(monkeypatch, tmp_path):
     for n, p in payloads.items():
         (pub / f"{n}.bin").write_bytes(p)
     with _serve(pub) as base_url:
-        from regis.tools.manifest import Tool
+        from regis.adapters.driven.tools.manifest import Tool
 
         tools = {
             n: Tool(
@@ -388,7 +392,7 @@ def test_fetch_all_subset(monkeypatch, tmp_path):
     pub.mkdir()
     (pub / "grype.bin").write_bytes(payload)
     with _serve(pub) as base_url:
-        from regis.tools.manifest import Tool
+        from regis.adapters.driven.tools.manifest import Tool
 
         tools = {
             "grype": Tool(
@@ -423,7 +427,7 @@ def test_on_event_defaults_to_none_and_is_optional(fake_tool) -> None:
 
 
 def test_tool_event_is_frozen() -> None:
-    from regis.tools.fetcher import ToolEvent
+    from regis.adapters.driven.tools.fetcher import ToolEvent
 
     ev = ToolEvent(kind="fetch_start", tool="grype", version="0.0.1", arch="amd64")
     with pytest.raises(dataclasses.FrozenInstanceError):
@@ -439,7 +443,7 @@ def test_ensure_emits_start_then_done_on_cache_miss(monkeypatch, tmp_path):
 
     events = []
     with _serve(pub) as base_url:
-        from regis.tools.manifest import Tool
+        from regis.adapters.driven.tools.manifest import Tool
 
         tools = {
             "grype": Tool(
@@ -485,7 +489,7 @@ def test_sha_mismatch_emits_fetch_error_before_raising(monkeypatch, tmp_path):
 
     events = []
     with _serve(pub) as base_url:
-        from regis.tools.manifest import Tool
+        from regis.adapters.driven.tools.manifest import Tool
 
         tools = {
             "grype": Tool(
@@ -516,7 +520,7 @@ def test_network_failure_emits_fetch_error_before_raising(monkeypatch, tmp_path)
     probe.close()
 
     sha = hashlib.sha256(b"never-arrives").hexdigest()
-    from regis.tools.manifest import Tool
+    from regis.adapters.driven.tools.manifest import Tool
 
     tools = {
         "grype": Tool(

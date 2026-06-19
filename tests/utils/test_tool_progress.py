@@ -5,7 +5,7 @@ import threading
 
 import pytest
 
-from regis.tools.fetcher import ToolEvent
+from regis.adapters.driven.tools.fetcher import ToolEvent
 from regis.utils.tool_progress import click_reporter
 
 
@@ -107,7 +107,7 @@ def test_default_fetcher_is_wired_with_click_reporter(monkeypatch):
         def __init__(self, *a, on_event=None, **kw):  # noqa: ANN001
             captured["on_event"] = on_event
 
-    monkeypatch.setattr("regis.tools.fetcher.ToolFetcher", FakeFetcher)
+    monkeypatch.setattr("regis.adapters.driven.tools.fetcher.ToolFetcher", FakeFetcher)
     process._default_fetcher()
     assert captured["on_event"] is tp.click_reporter
     process._default_fetcher.cache_clear()

@@ -18,13 +18,13 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 
-from regis.tools import manifest as _manifest
-from regis.tools.cosign import (
+from regis.adapters.driven.tools import manifest as _manifest
+from regis.adapters.driven.tools.cosign import (
     CosignUnavailable,
     CosignVerificationFailed,
     verify_blob,
 )
-from regis.tools.manifest import Tool
+from regis.adapters.driven.tools.manifest import Tool
 
 logger = logging.getLogger(__name__)
 

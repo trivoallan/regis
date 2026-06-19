@@ -6,7 +6,7 @@ import shutil
 import subprocess  # nosec B404
 from pathlib import Path
 
-from regis.tools.manifest import CosignPolicy
+from regis.adapters.driven.tools.manifest import CosignPolicy
 
 
 class CosignUnavailable(RuntimeError):

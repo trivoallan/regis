@@ -3,7 +3,7 @@ name: CI / Tools Fetch Smoke
 on:
   pull_request:
     paths:
-      - regis/tools/**
+      - regis/adapters/driven/tools/**
       - regis/utils/process.py
       - regis/utils/grype.py
       - regis/utils/syft.py

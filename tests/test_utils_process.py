@@ -101,13 +101,14 @@ class TestLazyHelpers:
         mock_fetcher_cls = MagicMock()
         mock_instance = MagicMock()
         mock_fetcher_cls.return_value = mock_instance
-        with patch("regis.tools.fetcher.ToolFetcher", mock_fetcher_cls):
+        with patch("regis.adapters.driven.tools.fetcher.ToolFetcher", mock_fetcher_cls):
             fetcher = _default_fetcher()
         assert fetcher is mock_instance
 
     def test_manifest_names_returns_frozenset(self):
         with patch(
-            "regis.tools.manifest.load_manifest", return_value={"grype": {}, "syft": {}}
+            "regis.adapters.driven.tools.manifest.load_manifest",
+            return_value={"grype": {}, "syft": {}},
         ):
             names = _manifest_names()
         assert isinstance(names, frozenset)
@@ -141,7 +142,7 @@ class TestEnsureTool:
         assert result == "/cache/grype"
 
     def test_wraps_fetch_error_as_tool_error(self):
-        from regis.tools.fetcher import ToolFetchError
+        from regis.adapters.driven.tools.fetcher import ToolFetchError
 
         mock_fetcher = MagicMock()
         mock_fetcher.ensure.side_effect = ToolFetchError("dl failed")

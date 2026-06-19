@@ -1,4 +1,4 @@
-"""Typed view over regis/tools/manifest.yaml."""
+"""Typed view over regis/adapters/driven/tools/manifest.yaml."""
 
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ def _load_schema() -> dict:
 def load_manifest(path: Path | None = None) -> dict[str, Tool]:
     """Load and validate the tools manifest. Returns name -> Tool."""
     if path is None:
-        resource = files("regis.tools").joinpath(MANIFEST_RESOURCE)
+        resource = files("regis.adapters.driven.tools").joinpath(MANIFEST_RESOURCE)
         raw = resource.read_text(encoding="utf-8")
     else:
         raw = Path(path).read_text(encoding="utf-8")
