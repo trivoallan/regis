@@ -188,6 +188,7 @@ Must be one of:
 | + [status](#rules_items_status )           | No      | enum (of string) | No         | -          | Detailed execution status.                                                                  |
 | + [message](#rules_items_message )         | No      | string           | No         | -          | Reasoning or details for the rule result.                                                   |
 | - [analyzers](#rules_items_analyzers )     | No      | array of string  | No         | -          | List of analyzers that contributed data to this rule.                                       |
+| - [criterion](#rules_items_criterion )     | No      | string           | No         | -          | Slug of the criterion template this rule instantiated, when applicable.                     |
 
 #### <a name="rules_items_slug"></a>8.1.1. Property `slug`
 
@@ -293,6 +294,14 @@ Must be one of:
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
+
+#### <a name="rules_items_criterion"></a>8.1.9. Property `criterion`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+**Description:** Slug of the criterion template this rule instantiated, when applicable.
 
 ## <a name="rules_summary"></a>9. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `rules_summary`
 
@@ -670,4 +679,4 @@ Must be one of:
 | **Type** | `string` |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-10 at 13:27:02 +0200
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-19 at 19:15:13 +0000

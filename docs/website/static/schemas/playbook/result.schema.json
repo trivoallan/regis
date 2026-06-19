@@ -101,6 +101,10 @@
             "type": "array",
             "items": { "type": "string" },
             "description": "List of analyzers that contributed data to this rule."
+          },
+          "criterion": {
+            "type": "string",
+            "description": "Slug of the criterion template this rule instantiated, when applicable."
           }
         }
       }
