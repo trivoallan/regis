@@ -3,7 +3,7 @@
 All symbols are now implemented in the sub-modules of this package.
 This file re-exports them so that existing imports of the form::
 
-    from regis.playbook.engine import evaluate, load_playbook, _flatten, ...
+    from regis.core.domain.playbook.engine import evaluate, load_playbook, _flatten, ...
 
 continue to work without modification.
 """
@@ -11,23 +11,27 @@ continue to work without modification.
 from __future__ import annotations
 
 # Condition helpers
-from regis.playbook.conditions import _stringify_condition
+from regis.core.domain.playbook.conditions import _stringify_condition
 
 # Context helpers
-from regis.playbook.context import (
+from regis.core.domain.playbook.context import (
     MissingDataTracker,
     NamedList,
     _flatten,
 )
 
 # Top-level orchestrator
-from regis.playbook.evaluator import evaluate
+from regis.core.domain.playbook.evaluator import evaluate
 
 # Loader
-from regis.playbook.loader import bundle_meta_schema_path, is_bundle, load_playbook
+from regis.core.domain.playbook.loader import (
+    bundle_meta_schema_path,
+    is_bundle,
+    load_playbook,
+)
 
 # Template helpers
-from regis.playbook.templates import (
+from regis.core.domain.playbook.templates import (
     _format_date,
     _format_datetime,
     _format_number,

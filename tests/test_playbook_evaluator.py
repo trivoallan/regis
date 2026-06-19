@@ -1,8 +1,8 @@
-"""Coverage for regis/playbook/evaluator.py branches."""
+"""Coverage for regis/core/domain/playbook/evaluator.py branches."""
 
 from __future__ import annotations
 
-from regis.playbook.evaluator import (
+from regis.core.domain.playbook.evaluator import (
     _resolve_links,
     evaluate,
 )

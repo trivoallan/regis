@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import importlib.resources
 
-from regis.playbook.loader import load_playbook
+from regis.core.domain.playbook.loader import load_playbook
 
 
 def test_default_playbook_loads_as_envelope() -> None:

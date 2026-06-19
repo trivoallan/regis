@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from regis.playbook import schema_registry
+from regis.core.domain.playbook import schema_registry
 
 
 def test_supported_versions_lists_v1alpha1() -> None:

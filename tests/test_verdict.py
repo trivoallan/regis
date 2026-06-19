@@ -1,4 +1,4 @@
-from regis.playbook.verdict import (
+from regis.core.domain.playbook.verdict import (
     Verdict,
     VerdictBadge,
     badge_emoji,

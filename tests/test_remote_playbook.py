@@ -6,7 +6,7 @@ import pytest
 import responses
 import yaml
 
-from regis.playbook.engine import load_playbook
+from regis.core.domain.playbook.engine import load_playbook
 
 
 @responses.activate

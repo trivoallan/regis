@@ -1,7 +1,7 @@
 import pytest
 from json_logic import jsonLogic
 
-from regis.playbook.engine import NamedList, _resolve_path
+from regis.core.domain.playbook.engine import NamedList, _resolve_path
 
 
 def test_namedlist_access():

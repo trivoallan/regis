@@ -12,10 +12,10 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from regis.core.domain.playbook.context import NamedList
+from regis.core.domain.playbook.presentation import resolve_presentation
+from regis.core.domain.playbook.templates import _resolve_template
 from regis.core.domain.rules.evaluator import evaluate_rules
-from regis.playbook.context import NamedList
-from regis.playbook.presentation import resolve_presentation
-from regis.playbook.templates import _resolve_template
 
 logger = logging.getLogger(__name__)
 
@@ -139,7 +139,7 @@ def evaluate(
 
         from json_logic import jsonLogic
 
-        from regis.playbook.templates import _resolve_path
+        from regis.core.domain.playbook.templates import _resolve_path
 
         # Regex for ${var.path} interpolation
         interp_re = re.compile(r"\$\{([^}]+)\}")

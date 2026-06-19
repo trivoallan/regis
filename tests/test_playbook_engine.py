@@ -6,7 +6,7 @@ from typing import Any
 
 import yaml
 
-from regis.playbook.engine import _flatten, evaluate, load_playbook
+from regis.core.domain.playbook.engine import _flatten, evaluate, load_playbook
 
 
 class TestFlatten:
@@ -353,7 +353,7 @@ class TestPresentationTemplates:
 
 
 def test_evaluate_propagates_playbook_metadata() -> None:
-    from regis.playbook.evaluator import evaluate
+    from regis.core.domain.playbook.evaluator import evaluate
 
     playbook = {
         "apiVersion": "regis.io/v1alpha1",
@@ -371,7 +371,7 @@ def test_evaluate_propagates_playbook_metadata() -> None:
 
 
 def test_evaluate_propagates_api_version() -> None:
-    from regis.playbook.evaluator import evaluate
+    from regis.core.domain.playbook.evaluator import evaluate
 
     playbook = {
         "apiVersion": "regis.io/v1alpha1",

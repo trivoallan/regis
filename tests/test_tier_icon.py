@@ -6,7 +6,7 @@ import jsonschema
 import yaml
 from referencing import Registry, Resource
 
-from regis.playbook.evaluator import evaluate
+from regis.core.domain.playbook.evaluator import evaluate
 
 
 def _schema_validator() -> jsonschema.Draft202012Validator:

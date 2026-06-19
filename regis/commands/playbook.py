@@ -221,7 +221,7 @@ def validate_playbook(path: Path) -> None:
     """Validate a playbook YAML/JSON file (or bundle directory) against the schema."""
     import jsonschema
 
-    from regis.playbook.loader import PlaybookVersionError, load_playbook
+    from regis.core.domain.playbook.loader import PlaybookVersionError, load_playbook
 
     try:
         playbook = load_playbook(path)

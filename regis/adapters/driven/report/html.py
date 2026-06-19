@@ -50,7 +50,7 @@ def _build_context(report: dict[str, Any], sections: str) -> dict[str, Any]:
 
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
-    from regis.playbook.verdict import (
+    from regis.core.domain.playbook.verdict import (
         badge_emoji,
         build_verdict,
         format_counts,

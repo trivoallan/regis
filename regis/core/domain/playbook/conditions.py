@@ -13,7 +13,7 @@ from typing import Any
 
 from json_logic import jsonLogic
 
-from regis.playbook.context import MissingDataTracker
+from regis.core.domain.playbook.context import MissingDataTracker
 
 logger = logging.getLogger(__name__)
 

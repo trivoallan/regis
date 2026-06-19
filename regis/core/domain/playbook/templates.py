@@ -14,7 +14,7 @@ from typing import Any
 
 from jinja2 import BaseLoader, ChainableUndefined, Environment
 
-from regis.playbook.context import NamedList
+from regis.core.domain.playbook.context import NamedList
 
 logger = logging.getLogger(__name__)
 
