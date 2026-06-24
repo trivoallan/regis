@@ -9,21 +9,22 @@
 
 **Description:** Final playbook result produced by regis, containing metadata and analyzer results.
 
-| Property                                 | Pattern | Type            | Deprecated | Definition | Title/Description                                                                |
-| ---------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------- |
-| + [playbook_name](#playbook_name )       | No      | string          | No         | -          | Identifier of the playbook that was executed.                                    |
-| - [playbook_version](#playbook_version ) | No      | string or null  | No         | -          | SemVer of the playbook that produced this report.                                |
-| - [api_version](#api_version )           | No      | string or null  | No         | -          | apiVersion of the playbook that produced this result (e.g. "regis.io/v1alpha1"). |
-| - [sidebar](#sidebar )                   | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                                   |
-| - [version](#version )                   | No      | string or null  | No         | -          | Version of regis that generated this report.                                     |
-| - [tier](#tier )                         | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.        |
-| - [badges](#badges )                     | No      | array of object | No         | -          | -                                                                                |
-| - [rules](#rules )                       | No      | array of object | No         | -          | -                                                                                |
-| - [rules_summary](#rules_summary )       | No      | object          | No         | -          | -                                                                                |
-| + [score](#score )                       | No      | integer         | No         | -          | Overall percentage of the playbook's rules that passed.                          |
-| - [links](#links )                       | No      | array of object | No         | -          | External links associated with this playbook result.                             |
-| - [checklists](#checklists )             | No      | array of object | No         | -          | Resolved checklists surfaced to downstream integrations.                         |
-| - [templates](#templates )               | No      | array of object | No         | -          | Cookiecutter templates surfaced to downstream integrations.                      |
+| Property                                 | Pattern | Type            | Deprecated | Definition | Title/Description                                                                   |
+| ---------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------- |
+| + [playbook_name](#playbook_name )       | No      | string          | No         | -          | Identifier of the playbook that was executed.                                       |
+| - [playbook_version](#playbook_version ) | No      | string or null  | No         | -          | SemVer of the playbook that produced this report.                                   |
+| - [ruleset_hash](#ruleset_hash )         | No      | string          | No         | -          | Tamper-evident sha256 fingerprint of the resolved, enforced ruleset (sha256:<hex>). |
+| - [api_version](#api_version )           | No      | string or null  | No         | -          | apiVersion of the playbook that produced this result (e.g. "regis.io/v1alpha1").    |
+| - [sidebar](#sidebar )                   | No      | object          | No         | -          | Sidebar navigation metadata for the report UI.                                      |
+| - [version](#version )                   | No      | string or null  | No         | -          | Version of regis that generated this report.                                        |
+| - [tier](#tier )                         | No      | string or null  | No         | -          | The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.           |
+| - [badges](#badges )                     | No      | array of object | No         | -          | -                                                                                   |
+| - [rules](#rules )                       | No      | array of object | No         | -          | -                                                                                   |
+| - [rules_summary](#rules_summary )       | No      | object          | No         | -          | -                                                                                   |
+| + [score](#score )                       | No      | integer         | No         | -          | Overall percentage of the playbook's rules that passed.                             |
+| - [links](#links )                       | No      | array of object | No         | -          | External links associated with this playbook result.                                |
+| - [checklists](#checklists )             | No      | array of object | No         | -          | Resolved checklists surfaced to downstream integrations.                            |
+| - [templates](#templates )               | No      | array of object | No         | -          | Cookiecutter templates surfaced to downstream integrations.                         |
 
 ## <a name="playbook_name"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `playbook_name`
 
@@ -41,7 +42,15 @@
 
 **Description:** SemVer of the playbook that produced this report.
 
-## <a name="api_version"></a>3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `api_version`
+## <a name="ruleset_hash"></a>3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `ruleset_hash`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+**Description:** Tamper-evident sha256 fingerprint of the resolved, enforced ruleset (sha256:<hex>).
+
+## <a name="api_version"></a>4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `api_version`
 
 |          |                  |
 | -------- | ---------------- |
@@ -49,7 +58,7 @@
 
 **Description:** apiVersion of the playbook that produced this result (e.g. "regis.io/v1alpha1").
 
-## <a name="sidebar"></a>4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `sidebar`
+## <a name="sidebar"></a>5. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `sidebar`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -58,7 +67,7 @@
 
 **Description:** Sidebar navigation metadata for the report UI.
 
-## <a name="version"></a>5. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `version`
+## <a name="version"></a>6. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `version`
 
 |          |                  |
 | -------- | ---------------- |
@@ -66,7 +75,7 @@
 
 **Description:** Version of regis that generated this report.
 
-## <a name="tier"></a>6. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `tier`
+## <a name="tier"></a>7. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `tier`
 
 |          |                  |
 | -------- | ---------------- |
@@ -74,7 +83,7 @@
 
 **Description:** The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions.
 
-## <a name="badges"></a>7. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `badges`
+## <a name="badges"></a>8. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `badges`
 
 |          |                   |
 | -------- | ----------------- |
@@ -92,7 +101,7 @@
 | ------------------------------- | ----------- |
 | [badges items](#badges_items)   | -           |
 
-### <a name="badges_items"></a>7.1. badges items
+### <a name="badges_items"></a>8.1. badges items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -107,7 +116,7 @@
 | + [class](#badges_items_class ) | No      | enum (of string) | No         | -          | Visual style indicator.                            |
 | - [label](#badges_items_label ) | No      | string           | No         | -          | The full label string (scope or scope: value).     |
 
-#### <a name="badges_items_slug"></a>7.1.1. Property `slug`
+#### <a name="badges_items_slug"></a>8.1.1. Property `slug`
 
 |          |          |
 | -------- | -------- |
@@ -115,7 +124,7 @@
 
 **Description:** Unique identifier for the badge.
 
-#### <a name="badges_items_scope"></a>7.1.2. Property `scope`
+#### <a name="badges_items_scope"></a>8.1.2. Property `scope`
 
 |          |          |
 | -------- | -------- |
@@ -123,7 +132,7 @@
 
 **Description:** Domain of the badge (e.g., 'security', 'hygiene').
 
-#### <a name="badges_items_value"></a>7.1.3. Property `value`
+#### <a name="badges_items_value"></a>8.1.3. Property `value`
 
 |          |                  |
 | -------- | ---------------- |
@@ -131,7 +140,7 @@
 
 **Description:** Display value or grade (e.g., 'A', '95%').
 
-#### <a name="badges_items_class"></a>7.1.4. Property `class`
+#### <a name="badges_items_class"></a>8.1.4. Property `class`
 
 |          |                    |
 | -------- | ------------------ |
@@ -145,7 +154,7 @@ Must be one of:
 * "error"
 * "information"
 
-#### <a name="badges_items_label"></a>7.1.5. Property `label`
+#### <a name="badges_items_label"></a>8.1.5. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -153,7 +162,7 @@ Must be one of:
 
 **Description:** The full label string (scope or scope: value).
 
-## <a name="rules"></a>8. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `rules`
+## <a name="rules"></a>9. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -171,7 +180,7 @@ Must be one of:
 | ------------------------------- | ----------- |
 | [rules items](#rules_items)     | -           |
 
-### <a name="rules_items"></a>8.1. rules items
+### <a name="rules_items"></a>9.1. rules items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -190,7 +199,7 @@ Must be one of:
 | - [analyzers](#rules_items_analyzers )     | No      | array of string  | No         | -          | List of analyzers that contributed data to this rule.                                       |
 | - [criterion](#rules_items_criterion )     | No      | string           | No         | -          | Slug of the criterion template this rule instantiated, when applicable.                     |
 
-#### <a name="rules_items_slug"></a>8.1.1. Property `slug`
+#### <a name="rules_items_slug"></a>9.1.1. Property `slug`
 
 |          |          |
 | -------- | -------- |
@@ -198,7 +207,7 @@ Must be one of:
 
 **Description:** Unique identifier for the rule.
 
-#### <a name="rules_items_description"></a>8.1.2. Property `description`
+#### <a name="rules_items_description"></a>9.1.2. Property `description`
 
 |          |          |
 | -------- | -------- |
@@ -206,7 +215,7 @@ Must be one of:
 
 **Description:** Human-readable name of the rule.
 
-#### <a name="rules_items_level"></a>8.1.3. Property `level`
+#### <a name="rules_items_level"></a>9.1.3. Property `level`
 
 |          |          |
 | -------- | -------- |
@@ -214,7 +223,7 @@ Must be one of:
 
 **Description:** Severity level of the rule (e.g. critical, warning, info). Distinct from the playbook tier.
 
-#### <a name="rules_items_tags"></a>8.1.4. Property `tags`
+#### <a name="rules_items_tags"></a>9.1.4. Property `tags`
 
 |          |                   |
 | -------- | ----------------- |
@@ -234,13 +243,13 @@ Must be one of:
 | ------------------------------------- | ----------- |
 | [tags items](#rules_items_tags_items) | -           |
 
-##### <a name="rules_items_tags_items"></a>8.1.4.1. tags items
+##### <a name="rules_items_tags_items"></a>9.1.4.1. tags items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-#### <a name="rules_items_passed"></a>8.1.5. Property `passed`
+#### <a name="rules_items_passed"></a>9.1.5. Property `passed`
 
 |          |           |
 | -------- | --------- |
@@ -248,7 +257,7 @@ Must be one of:
 
 **Description:** Whether the rule criteria were met.
 
-#### <a name="rules_items_status"></a>8.1.6. Property `status`
+#### <a name="rules_items_status"></a>9.1.6. Property `status`
 
 |          |                    |
 | -------- | ------------------ |
@@ -261,7 +270,7 @@ Must be one of:
 * "failed"
 * "incomplete"
 
-#### <a name="rules_items_message"></a>8.1.7. Property `message`
+#### <a name="rules_items_message"></a>9.1.7. Property `message`
 
 |          |          |
 | -------- | -------- |
@@ -269,7 +278,7 @@ Must be one of:
 
 **Description:** Reasoning or details for the rule result.
 
-#### <a name="rules_items_analyzers"></a>8.1.8. Property `analyzers`
+#### <a name="rules_items_analyzers"></a>9.1.8. Property `analyzers`
 
 |          |                   |
 | -------- | ----------------- |
@@ -289,13 +298,13 @@ Must be one of:
 | ----------------------------------------------- | ----------- |
 | [analyzers items](#rules_items_analyzers_items) | -           |
 
-##### <a name="rules_items_analyzers_items"></a>8.1.8.1. analyzers items
+##### <a name="rules_items_analyzers_items"></a>9.1.8.1. analyzers items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-#### <a name="rules_items_criterion"></a>8.1.9. Property `criterion`
+#### <a name="rules_items_criterion"></a>9.1.9. Property `criterion`
 
 |          |          |
 | -------- | -------- |
@@ -303,7 +312,7 @@ Must be one of:
 
 **Description:** Slug of the criterion template this rule instantiated, when applicable.
 
-## <a name="rules_summary"></a>9. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `rules_summary`
+## <a name="rules_summary"></a>10. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `rules_summary`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -317,7 +326,7 @@ Must be one of:
 | + [passed](#rules_summary_passed ) | No      | array of string | No         | -          | -                 |
 | - [by_tag](#rules_summary_by_tag ) | No      | object          | No         | -          | -                 |
 
-### <a name="rules_summary_score"></a>9.1. ![Required](https://img.shields.io/badge/Required-blue) Property `score`
+### <a name="rules_summary_score"></a>10.1. ![Required](https://img.shields.io/badge/Required-blue) Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -328,7 +337,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-### <a name="rules_summary_total"></a>9.2. ![Required](https://img.shields.io/badge/Required-blue) Property `total`
+### <a name="rules_summary_total"></a>10.2. ![Required](https://img.shields.io/badge/Required-blue) Property `total`
 
 |          |                   |
 | -------- | ----------------- |
@@ -346,13 +355,13 @@ Must be one of:
 | ----------------------------------------- | ----------- |
 | [total items](#rules_summary_total_items) | -           |
 
-#### <a name="rules_summary_total_items"></a>9.2.1. total items
+#### <a name="rules_summary_total_items"></a>10.2.1. total items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-### <a name="rules_summary_passed"></a>9.3. ![Required](https://img.shields.io/badge/Required-blue) Property `passed`
+### <a name="rules_summary_passed"></a>10.3. ![Required](https://img.shields.io/badge/Required-blue) Property `passed`
 
 |          |                   |
 | -------- | ----------------- |
@@ -370,13 +379,13 @@ Must be one of:
 | ------------------------------------------- | ----------- |
 | [passed items](#rules_summary_passed_items) | -           |
 
-#### <a name="rules_summary_passed_items"></a>9.3.1. passed items
+#### <a name="rules_summary_passed_items"></a>10.3.1. passed items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-### <a name="rules_summary_by_tag"></a>9.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `by_tag`
+### <a name="rules_summary_by_tag"></a>10.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `by_tag`
 
 |                           |                                                                                                                   |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -387,7 +396,7 @@ Must be one of:
 | ------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#rules_summary_by_tag_additionalProperties ) | No      | object | No         | -          | -                 |
 
-#### <a name="rules_summary_by_tag_additionalProperties"></a>9.4.1. Property `additionalProperties`
+#### <a name="rules_summary_by_tag_additionalProperties"></a>10.4.1. Property `additionalProperties`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -400,7 +409,7 @@ Must be one of:
 | + [passed_rules](#rules_summary_by_tag_additionalProperties_passed_rules ) | No      | array of string | No         | -          | -                 |
 | + [score](#rules_summary_by_tag_additionalProperties_score )               | No      | integer         | No         | -          | -                 |
 
-##### <a name="rules_summary_by_tag_additionalProperties_rules"></a>9.4.1.1. ![Required](https://img.shields.io/badge/Required-blue) Property `rules`
+##### <a name="rules_summary_by_tag_additionalProperties_rules"></a>10.4.1.1. ![Required](https://img.shields.io/badge/Required-blue) Property `rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -418,13 +427,13 @@ Must be one of:
 | --------------------------------------------------------------------- | ----------- |
 | [rules items](#rules_summary_by_tag_additionalProperties_rules_items) | -           |
 
-###### <a name="rules_summary_by_tag_additionalProperties_rules_items"></a>9.4.1.1.1. rules items
+###### <a name="rules_summary_by_tag_additionalProperties_rules_items"></a>10.4.1.1.1. rules items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-##### <a name="rules_summary_by_tag_additionalProperties_passed_rules"></a>9.4.1.2. ![Required](https://img.shields.io/badge/Required-blue) Property `passed_rules`
+##### <a name="rules_summary_by_tag_additionalProperties_passed_rules"></a>10.4.1.2. ![Required](https://img.shields.io/badge/Required-blue) Property `passed_rules`
 
 |          |                   |
 | -------- | ----------------- |
@@ -442,13 +451,13 @@ Must be one of:
 | ----------------------------------------------------------------------------------- | ----------- |
 | [passed_rules items](#rules_summary_by_tag_additionalProperties_passed_rules_items) | -           |
 
-###### <a name="rules_summary_by_tag_additionalProperties_passed_rules_items"></a>9.4.1.2.1. passed_rules items
+###### <a name="rules_summary_by_tag_additionalProperties_passed_rules_items"></a>10.4.1.2.1. passed_rules items
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-##### <a name="rules_summary_by_tag_additionalProperties_score"></a>9.4.1.3. ![Required](https://img.shields.io/badge/Required-blue) Property `score`
+##### <a name="rules_summary_by_tag_additionalProperties_score"></a>10.4.1.3. ![Required](https://img.shields.io/badge/Required-blue) Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -459,7 +468,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-## <a name="score"></a>10. ![Required](https://img.shields.io/badge/Required-blue) Property `score`
+## <a name="score"></a>11. ![Required](https://img.shields.io/badge/Required-blue) Property `score`
 
 |          |           |
 | -------- | --------- |
@@ -472,7 +481,7 @@ Must be one of:
 | **Minimum**  | &ge; 0   |
 | **Maximum**  | &le; 100 |
 
-## <a name="links"></a>11. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `links`
+## <a name="links"></a>12. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `links`
 
 |          |                   |
 | -------- | ----------------- |
@@ -492,7 +501,7 @@ Must be one of:
 | ------------------------------- | ----------- |
 | [links items](#links_items)     | -           |
 
-### <a name="links_items"></a>11.1. links items
+### <a name="links_items"></a>12.1. links items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -504,7 +513,7 @@ Must be one of:
 | + [label](#links_items_label ) | No      | string | No         | -          | Display label for the link. |
 | + [url](#links_items_url )     | No      | string | No         | -          | Target URL.                 |
 
-#### <a name="links_items_label"></a>11.1.1. Property `label`
+#### <a name="links_items_label"></a>12.1.1. Property `label`
 
 |          |          |
 | -------- | -------- |
@@ -512,7 +521,7 @@ Must be one of:
 
 **Description:** Display label for the link.
 
-#### <a name="links_items_url"></a>11.1.2. Property `url`
+#### <a name="links_items_url"></a>12.1.2. Property `url`
 
 |          |          |
 | -------- | -------- |
@@ -520,7 +529,7 @@ Must be one of:
 
 **Description:** Target URL.
 
-## <a name="checklists"></a>12. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checklists`
+## <a name="checklists"></a>13. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checklists`
 
 |          |                   |
 | -------- | ----------------- |
@@ -540,7 +549,7 @@ Must be one of:
 | ------------------------------------- | ----------- |
 | [checklists items](#checklists_items) | -           |
 
-### <a name="checklists_items"></a>12.1. checklists items
+### <a name="checklists_items"></a>13.1. checklists items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -552,7 +561,7 @@ Must be one of:
 | + [title](#checklists_items_title ) | No      | string          | No         | -          | Display title for the checklist. |
 | + [items](#checklists_items_items ) | No      | array of object | No         | -          | -                                |
 
-#### <a name="checklists_items_title"></a>12.1.1. Property `title`
+#### <a name="checklists_items_title"></a>13.1.1. Property `title`
 
 |          |          |
 | -------- | -------- |
@@ -560,7 +569,7 @@ Must be one of:
 
 **Description:** Display title for the checklist.
 
-#### <a name="checklists_items_items"></a>12.1.2. Property `items`
+#### <a name="checklists_items_items"></a>13.1.2. Property `items`
 
 |          |                   |
 | -------- | ----------------- |
@@ -578,7 +587,7 @@ Must be one of:
 | -------------------------------------------- | ----------- |
 | [items items](#checklists_items_items_items) | -           |
 
-##### <a name="checklists_items_items_items"></a>12.1.2.1. items items
+##### <a name="checklists_items_items_items"></a>13.1.2.1. items items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -590,19 +599,19 @@ Must be one of:
 | + [label](#checklists_items_items_items_label )     | No      | string  | No         | -          | -                 |
 | + [checked](#checklists_items_items_items_checked ) | No      | boolean | No         | -          | -                 |
 
-###### <a name="checklists_items_items_items_label"></a>12.1.2.1.1. Property `label`
+###### <a name="checklists_items_items_items_label"></a>13.1.2.1.1. Property `label`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-###### <a name="checklists_items_items_items_checked"></a>12.1.2.1.2. Property `checked`
+###### <a name="checklists_items_items_items_checked"></a>13.1.2.1.2. Property `checked`
 
 |          |           |
 | -------- | --------- |
 | **Type** | `boolean` |
 
-## <a name="templates"></a>13. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `templates`
+## <a name="templates"></a>14. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `templates`
 
 |          |                   |
 | -------- | ----------------- |
@@ -622,7 +631,7 @@ Must be one of:
 | ----------------------------------- | ----------- |
 | [templates items](#templates_items) | -           |
 
-### <a name="templates_items"></a>13.1. templates items
+### <a name="templates_items"></a>14.1. templates items
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
@@ -640,43 +649,43 @@ Must be one of:
 | [item 0](#templates_items_anyOf_i0) |
 | [item 1](#templates_items_anyOf_i1) |
 
-#### <a name="templates_items_anyOf_i0"></a>13.1.1. Property `item 0`
+#### <a name="templates_items_anyOf_i0"></a>14.1.1. Property `item 0`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-##### <a name="autogenerated_heading_2"></a>13.1.1.1. The following properties are required
+##### <a name="autogenerated_heading_2"></a>14.1.1.1. The following properties are required
 * url
 
-#### <a name="templates_items_anyOf_i1"></a>13.1.2. Property `item 1`
+#### <a name="templates_items_anyOf_i1"></a>14.1.2. Property `item 1`
 
 |                           |                                                                             |
 | ------------------------- | --------------------------------------------------------------------------- |
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-##### <a name="autogenerated_heading_3"></a>13.1.2.1. The following properties are required
+##### <a name="autogenerated_heading_3"></a>14.1.2.1. The following properties are required
 * package
 
-#### <a name="templates_items_url"></a>13.1.3. Property `url`
+#### <a name="templates_items_url"></a>14.1.3. Property `url`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-#### <a name="templates_items_package"></a>13.1.4. Property `package`
+#### <a name="templates_items_package"></a>14.1.4. Property `package`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-#### <a name="templates_items_directory"></a>13.1.5. Property `directory`
+#### <a name="templates_items_directory"></a>14.1.5. Property `directory`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-22 at 01:48:29 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-06-24 at 11:25:10 +0000
