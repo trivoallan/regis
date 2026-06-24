@@ -6,17 +6,17 @@
 
 ## 1. Contexte
 
-#797 a réglé l'ambiguïté *absence* (clean vs jamais-scanné) en émettant un reçu positif
+#797 a réglé l'ambiguïté _absence_ (clean vs jamais-scanné) en émettant un reçu positif
 `kind:"pass"` keyé au digest. Reste une faille de **substance** : le reçu dit « gouverné »,
 pas « gouverné **contre quel** ruleset ». Un reçu obtenu contre un playbook trivial — ou contre
 un playbook trafiqué qui garde le même nom/version mais **desserre un seuil** (`cve-count.max`
 0 → 9999) — est gouverné sur le papier. Par l'identité seule (`slug`+`version`, déjà présente),
-c'est indétectable : l'identité est *gameable*.
+c'est indétectable : l'identité est _gameable_.
 
 L'identité déclarative est insuffisante car le report ne porte **pas** les `options` des règles :
 l'entry d'issue est `{slug, description, level, tags, passed, status, message, analyzers,
 criterion}` ([`evaluator.py:424-436`](../../../regis/core/domain/rules/evaluator.py)), où
-`criterion` est le seul *nom* du template. Le seuil n'y figure jamais → hasher les rules d'issue
+`criterion` est le seul _nom_ du template. Le seuil n'y figure jamais → hasher les rules d'issue
 n'attrape pas le tampering paramétrique.
 
 En revanche, la règle **résolue** qui est réellement évaluée porte sa `condition` (le JSON Logic
@@ -28,14 +28,14 @@ Hasher la `condition` défait le tampering paramétrique **par construction**.
 1. **Modèle de menace : tamper-evidence totale, seuils inclus** (pas seulement structurelle). Le
    consommateur découplé doit pouvoir détecter « mêmes règles, seuils desserrés », pas seulement
    « mauvais playbook ».
-2. **Hash du *ruleset résolu*, pas du fichier source.** Calculé sur ce qui a réellement mordu
+2. **Hash du _ruleset résolu_, pas du fichier source.** Calculé sur ce qui a réellement mordu
    (templates instanciés + règles activées), pas sur le YAML source — meilleur sémantiquement
    (capture l'instanciation, ignore commentaires/whitespace) et placé dans le cœur (fait du
    domaine), rendu par l'adaptateur.
 3. **Placement du calcul : cœur** (`core.domain.rules`), pas l'adaptateur SARIF. L'empreinte « ce
-   qui a été imposé » est un fait du domaine ; l'adaptateur ne fait que la *rendre*.
+   qui a été imposé » est un fait du domaine ; l'adaptateur ne fait que la _rendre_.
 4. **Surface : sur le reçu `kind:"pass"`** (donc cas clean uniquement). C'est exactement le
-   périmètre de la menace. Un run en échec n'a pas de reçu, mais ses breaches *sont* la preuve
+   périmètre de la menace. Un run en échec n'a pas de reçu, mais ses breaches _sont_ la preuve
    d'un ruleset réel. Pin sur les runs en échec = **extension différée**.
 5. **Un hash par playbook** (les playbooks sont évalués indépendamment,
    [`playbook_runner.py:64-107`](../../../regis/core/application/playbook_runner.py)) ; le reçu
@@ -63,11 +63,11 @@ def ruleset_fingerprint(enabled_rules: list[dict[str, Any]]) -> str:
   porte le seuil. **Exclus** : `description`, `message`, `tags` (cosmétique/présentation/scoring —
   ne changent pas le verdict pass/fail d'une règle).
 - **Canonicalisation** : règles triées par `slug` ; `json.dumps(payload, sort_keys=True,
-  separators=(",", ":"), ensure_ascii=False)` ; `sha256` du UTF-8.
+separators=(",", ":"), ensure_ascii=False)` ; `sha256` du UTF-8.
 - **Sortie** : `"sha256:<hex64>"` (préfixe auto-descriptif, **non tronqué** — pin de sécurité).
 
-**Propriétés garanties (= tests) :** déterministe · indépendant de l'ordre des règles · *sensible
-au seuil* (changer une valeur de `condition` change le hash) · *insensible au cosmétique*
+**Propriétés garanties (= tests) :** déterministe · indépendant de l'ordre des règles · _sensible
+au seuil_ (changer une valeur de `condition` change le hash) · _insensible au cosmétique_
 (changer `description`/`message`/`tags` ne change pas le hash).
 
 ### 3.2 Câblage / data flow
@@ -93,41 +93,48 @@ au seuil* (changer une valeur de `condition` change le hash) · *insensible au c
 
 Le consommateur épingle la valeur attendue : un playbook trafiqué → hash différent → reçu rejeté.
 
-### 3.4 Schéma
+### 3.4 Schéma — **pas de bump de version**
 
-- **Bump `REPORT_SCHEMA_VERSION` 5 → 6** ([`report.py:8`](../../../regis/core/model/report.py)).
-  Changement **additif** (champ optionnel) : un consommateur v5 parse encore un report v6 (champ
-  ignoré) ; exiger v6 permet de *se reposer* sur le hash.
-- Déclarer `ruleset_hash` (string optionnel, non `required`) sur l'objet playbook-result dans :
-  - `regis/schemas/playbook/result.schema.json` (validation de `regis playbook`),
-  - la section `playbook` / `playbooks` de `regis/schemas/report/report.schema.json`
-    (`report.schema.json` est `additionalProperties:false` au top-level — vérifier que la
-    sous-définition du playbook-result l'est aussi et y ajouter le champ).
+`ruleset_hash` atterrit sur le playbook `result`, qui est la section **ouverte** du contrat :
+`result.schema.json` n'a **pas** d'`additionalProperties:false` top-level, donc le champ **valide
+additivement, sans aucune édition de schéma**. (L'enveloppe `report.schema.json` est scellée
+top-level, mais `playbooks`/`playbook` y sont des `$ref` vers `result.schema.json` — un seul
+schéma, ouvert.)
+
+- **Pas de bump `REPORT_SCHEMA_VERSION`.** Le sceau ne forcerait un bump _substantiel_ que si le
+  hash était un champ **top-level** scellé (un hash unique par run). Le choix « par-playbook dans
+  `result` » le rend additif silencieux. Le champ reste optionnel : la version ne _garantirait_ pas
+  sa présence de toute façon, le consommateur teste la présence.
+- Déclarer `ruleset_hash` (string optionnel, non `required`) dans `result.schema.json` —
+  **purement documentaire** (le contrat publié reste honnête), pas requis pour la validation.
 
 ## 4. Gestion d'erreur
 
 - `condition` est un dict JSON Logic déjà validé par le schéma playbook → JSON-sérialisable par
   construction. Pas de `try/except` autour du `json.dumps` (échouer fort = bug de schéma en amont).
-- `ruleset_hash` absent du report (reports legacy < v6, ou report sans playbook) → `build_sarif`
-  l'omet simplement (`.get` → `None` → propriété non émise). **Rétro-compatible**, aucune erreur.
+- `ruleset_hash` absent du report (report sans playbook, ou produit par un regis antérieur) →
+  `build_sarif` l'omet simplement (`.get` → `None` → propriété non émise). **Rétro-compatible**,
+  aucune erreur.
 - Ruleset vide (`enabled_rules == []`) → pas de reçu émis de toute façon (#797 exige `rules`), donc
   le hash d'un ruleset vide n'est jamais surfacé.
 
 ## 5. Tests
 
-| Cible | Cas |
-| --- | --- |
-| `ruleset_fingerprint` | déterminisme ; ordre-indépendant ; **seuil → hash change** (le test qui prouve la menace défaite) ; cosmétique → hash stable ; format `sha256:` |
-| `evaluate_rules` / playbook result | le `result` porte `ruleset_hash` |
-| SARIF | reçu porte `ruleset_hash` issu de `report["playbook"]["ruleset_hash"]` ; **absent** quand pas dans le report (rétro-compat) |
-| Schéma | report v6 avec `ruleset_hash` valide ; `result.schema.json` valide |
+| Cible                              | Cas                                                                                                                                             |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ruleset_fingerprint`              | déterminisme ; ordre-indépendant ; **seuil → hash change** (le test qui prouve la menace défaite) ; cosmétique → hash stable ; format `sha256:` |
+| `evaluate_rules` / playbook result | le `result` porte `ruleset_hash`                                                                                                                |
+| SARIF                              | reçu porte `ruleset_hash` issu de `report["playbook"]["ruleset_hash"]` ; **absent** quand pas dans le report (rétro-compat)                     |
+
+(Pas de test de schéma : l'ajout dans `result.schema.json` est documentaire — la section est
+ouverte, le champ valide avec ou sans déclaration, un test ne l'exercerait pas.)
 
 Gates : couverture par-fichier ≥ 90 % sur les fichiers touchés ; suite complète verte ; ruff clean.
 
 ## 6. Hors périmètre / différé
 
 - **Pin sur les runs en échec** (porter `ruleset_hash` aussi sur les results `kind:"fail"` ou au
-  niveau `run.properties`). La menace stated est le cas *pass* ; les breaches prouvent déjà un
+  niveau `run.properties`). La menace stated est le cas _pass_ ; les breaches prouvent déjà un
   ruleset réel.
 - **Hash-merge multi-playbook** (une empreinte unique couvrant tous les playbooks). Per-playbook
   suffit ; le reçu pin le primaire.
@@ -135,14 +142,12 @@ Gates : couverture par-fichier ≥ 90 % sur les fichiers touchés ; suite compl�
 
 ## 7. Fichiers touchés (indicatif)
 
-| Fichier | Changement |
-| --- | --- |
-| `regis/core/domain/rules/fingerprint.py` | **nouveau** — `ruleset_fingerprint` |
-| `regis/core/domain/rules/evaluator.py` | calcule + expose `ruleset_hash` dans `rules_results` |
-| `regis/core/domain/playbook/evaluator.py` | propage `ruleset_hash` dans le `result` |
-| `regis/core/model/report.py` | bump `REPORT_SCHEMA_VERSION` 5 → 6 |
-| `regis/schemas/playbook/result.schema.json` | champ optionnel `ruleset_hash` |
-| `regis/schemas/report/report.schema.json` | champ optionnel `ruleset_hash` (sous-déf playbook) |
-| `regis/adapters/driven/report/sarif.py` | rend `ruleset_hash` sur le reçu |
-| `tests/…` | cf. §5 |
-| `docs/website/docs/reference/cli.md` | mentionner le `ruleset_hash` du reçu |
+| Fichier                                     | Changement                                           |
+| ------------------------------------------- | ---------------------------------------------------- |
+| `regis/core/domain/rules/fingerprint.py`    | **nouveau** — `ruleset_fingerprint`                  |
+| `regis/core/domain/rules/evaluator.py`      | calcule + expose `ruleset_hash` dans `rules_results` |
+| `regis/core/domain/playbook/evaluator.py`   | propage `ruleset_hash` dans le `result`              |
+| `regis/schemas/playbook/result.schema.json` | champ optionnel `ruleset_hash` (documentaire)        |
+| `regis/adapters/driven/report/sarif.py`     | rend `ruleset_hash` sur le reçu                      |
+| `tests/…`                                   | cf. §5                                               |
+| `docs/website/docs/reference/cli.md`        | mentionner le `ruleset_hash` du reçu                 |
