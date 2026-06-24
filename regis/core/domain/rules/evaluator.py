@@ -11,6 +11,7 @@ import json_logic
 from json_logic import jsonLogic
 
 from regis.core.domain.playbook.context import MissingDataTracker, _build_context
+from regis.core.domain.rules.fingerprint import ruleset_fingerprint
 from regis.utils.predicates import is_empty, is_falsy, is_truthy, is_url, matches
 
 logger = logging.getLogger(__name__)
@@ -485,4 +486,5 @@ def evaluate_rules(
         "passed_rules": passed_rule_slugs,
         "by_tag": by_tag,
         "rules": results,
+        "ruleset_hash": ruleset_fingerprint(enabled_rules),
     }

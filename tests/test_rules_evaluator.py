@@ -670,3 +670,20 @@ def test_evaluate_rules_condition_exception_marks_failed():
     bad = next(r for r in res["rules"] if r["slug"] == "bad-op")
     assert bad["passed"] is False
     assert bad["status"] == "failed"
+
+
+def test_evaluate_rules_returns_ruleset_hash():
+    report = {
+        "request": {"analyzers": ["freshness"]},
+        "results": {"freshness": {"age_days": 10}},
+    }
+    rules_def = {
+        "rules": [
+            {
+                "slug": "freshness.age",
+                "condition": {"<": [{"var": "results.freshness.age_days"}, 30]},
+            }
+        ]
+    }
+    res = evaluate_rules(report, rules_def)
+    assert res["ruleset_hash"].startswith("sha256:")
