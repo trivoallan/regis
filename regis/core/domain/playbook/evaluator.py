@@ -103,6 +103,7 @@ def evaluate(
         "rules": report["rules"],
         "rules_summary": report["rules_summary"],
         "slug": playbook.get("slug"),
+        "ruleset_hash": rules_results["ruleset_hash"],
     }
 
     # Build the full context that includes the evaluation result itself (for badges

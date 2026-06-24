@@ -206,3 +206,21 @@ def test_evaluate_source_name_set():
     """source_name parameter populates _meta in the result (line 300)."""
     out = evaluate({"name": "x"}, {}, source_name="my-playbook.yaml")
     assert out["_meta"] == {"source_name": "my-playbook.yaml"}
+
+
+def test_evaluate_result_carries_ruleset_hash():
+    report = {
+        "request": {"analyzers": ["freshness"]},
+        "results": {"freshness": {"age_days": 10}},
+    }
+    playbook = {
+        "name": "p",
+        "rules": [
+            {
+                "slug": "freshness.age",
+                "condition": {"<": [{"var": "results.freshness.age_days"}, 30]},
+            }
+        ],
+    }
+    result = evaluate(playbook, report)
+    assert result["ruleset_hash"].startswith("sha256:")
