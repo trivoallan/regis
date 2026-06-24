@@ -19,6 +19,24 @@ def test_is_a_tool_runner() -> None:
     assert isinstance(SubprocessToolRunner(), ToolRunner)
 
 
+def test_full_ref_uses_at_separator_for_digest(monkeypatch) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_run_grype(image, username, password, platform):
+        captured["image"] = image
+        return {"matches": []}
+
+    monkeypatch.setattr(mod, "run_grype", fake_run_grype)
+    digest_image = ImageReference(
+        registry="docker.io",
+        repository="library/nginx",
+        tag="sha256:" + "a" * 64,
+        platform="linux/amd64",
+    )
+    SubprocessToolRunner().scan_vulnerabilities(digest_image)
+    assert captured["image"] == f"docker.io/library/nginx@sha256:{'a' * 64}"
+
+
 def test_scan_vulnerabilities_delegates_to_grype(monkeypatch) -> None:
     captured: dict[str, object] = {}
 

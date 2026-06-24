@@ -33,7 +33,9 @@ class SubprocessToolRunner(ToolRunner):
 
     @staticmethod
     def _full_ref(image: ImageReference) -> str:
-        return f"{image.registry}/{image.repository}:{image.tag}"
+        # Digests join with ``@``, tags with ``:`` (mirrors regctl.image_ref).
+        separator = "@" if image.tag.startswith("sha256:") else ":"
+        return f"{image.registry}/{image.repository}{separator}{image.tag}"
 
     def scan_vulnerabilities(self, image: ImageReference) -> dict[str, Any]:
         return run_grype(

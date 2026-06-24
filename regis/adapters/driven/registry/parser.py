@@ -128,7 +128,15 @@ def _parse_bare_reference(ref: str) -> RegistryRef:
 
 
 def _split_tag(ref: str) -> tuple[str, str]:
-    """Split ``repo:tag`` into a ``(repo, tag)`` tuple."""
+    """Split ``repo:tag`` or ``repo@digest`` into a ``(repo, reference)`` tuple.
+
+    A digest (``repo@sha256:hex``) is returned intact — prefix included — so
+    downstream reference builders use the ``@`` separator. Splitting on ``:``
+    here would corrupt the digest's internal ``sha256:`` colon.
+    """
+    if "@" in ref:
+        repo, digest = ref.split("@", 1)
+        return repo, digest
     if ":" in ref:
         repo, tag = ref.rsplit(":", 1)
         return repo, tag

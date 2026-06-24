@@ -51,6 +51,20 @@ class TestParseBareReferences:
         assert ref == RegistryRef("myregistry.example.com", "org/image", "v1.0")
 
 
+class TestParseDigestReferences:
+    """Digest-pinned references keep the ``sha256:`` prefix intact as the tag."""
+
+    DIGEST = "sha256:" + "a" * 64
+
+    def test_bare_digest_reference(self):
+        ref = parse_image_url(f"ghcr.io/trivoallan/regis@{self.DIGEST}")
+        assert ref == RegistryRef("ghcr.io", "trivoallan/regis", self.DIGEST)
+
+    def test_dockerhub_digest_reference(self):
+        ref = parse_image_url(f"nginx@{self.DIGEST}")
+        assert ref == RegistryRef("registry-1.docker.io", "library/nginx", self.DIGEST)
+
+
 class TestRegistryRef:
     """Test RegistryRef properties."""
 
