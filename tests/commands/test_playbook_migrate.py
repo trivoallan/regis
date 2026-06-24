@@ -219,7 +219,12 @@ def test_migrate_playbook_data_renames_key_and_refs() -> None:
 
 
 def test_migration_preserves_evaluation(tmp_path: Path) -> None:
-    """Pre- and post-migration playbooks evaluate to an IDENTICAL report."""
+    """Pre- and post-migration playbooks evaluate to identical verdicts.
+
+    The ``ruleset_hash`` fingerprint differs by design: migration rewrites
+    ``rule.``->``criterion.`` inside conditions, changing the resolved ruleset's
+    representation, not its enforcement.
+    """
     pb = _write(tmp_path, _LEGACY_PLAYBOOK)
 
     before = yaml.safe_load(pb.read_text(encoding="utf-8"))
@@ -231,6 +236,10 @@ def test_migration_preserves_evaluation(tmp_path: Path) -> None:
     after = yaml.safe_load(pb.read_text(encoding="utf-8"))
     res_after = evaluate_rules(_SAMPLE_REPORT, {"rules": after["spec"]["rules"]})
 
+    # ruleset_hash pins the resolved condition representation, which migration
+    # rewrites (`rule.`->`criterion.`); verdicts are what must be preserved.
+    res_after.pop("ruleset_hash", None)
+    res_before.pop("ruleset_hash", None)
     assert res_after == res_before
 
 
@@ -240,7 +249,8 @@ def test_migration_silences_deprecation_warning(tmp_path: Path) -> None:
     BEFORE migration the legacy ``rule:`` template-reference key makes the
     engine emit a ``DeprecationWarning`` on every evaluation; AFTER running
     ``migrate`` the migrated playbook evaluates with ZERO deprecation warnings,
-    while producing a byte-identical report.
+    while producing identical verdicts (the ``ruleset_hash`` fingerprint differs
+    by design — migration rewrites conditions).
     """
     pb = _write(tmp_path, _LEGACY_PLAYBOOK)
     before = yaml.safe_load(pb.read_text(encoding="utf-8"))
@@ -259,7 +269,10 @@ def test_migration_silences_deprecation_warning(tmp_path: Path) -> None:
         warnings.simplefilter("error", DeprecationWarning)
         res_after = evaluate_rules(_SAMPLE_REPORT, {"rules": after["spec"]["rules"]})
 
-    # The whole point of the dual-bind migration: identical report.
+    # The whole point of the dual-bind migration: identical verdicts. The
+    # ruleset_hash fingerprint legitimately differs (conditions were rewritten).
+    res_after.pop("ruleset_hash", None)
+    res_before.pop("ruleset_hash", None)
     assert res_after == res_before
 
 
