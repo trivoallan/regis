@@ -15,6 +15,10 @@
       "type": ["string", "null"],
       "description": "SemVer of the playbook that produced this report."
     },
+    "ruleset_hash": {
+      "type": "string",
+      "description": "Tamper-evident sha256 fingerprint of the resolved, enforced ruleset (sha256:<hex>)."
+    },
     "api_version": {
       "type": ["string", "null"],
       "description": "apiVersion of the playbook that produced this result (e.g. \"regis.io/v1alpha1\")."
