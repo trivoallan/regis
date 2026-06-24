@@ -195,7 +195,35 @@ def test_location_defaults_to_dockerfile_and_is_overridable():
 
 
 def test_no_rules_yields_valid_empty_sarif():
+    # No playbook ran -> not evaluated -> empty run (the "Regis never ran"
+    # signal). The pass receipt fires only when rules were actually evaluated.
     s = json.loads(render_sarif(_report([])))
     assert s["version"] == "2.1.0"
     assert s["runs"][0]["results"] == []
     assert s["runs"][0]["tool"]["driver"]["name"] == "Regis"
+
+
+def test_clean_run_emits_pass_receipt_keyed_to_digest():
+    # A clean run (rules evaluated, zero breaches) must NOT be an empty SARIF
+    # run -- that is indistinguishable from "Regis never ran". One kind="pass"
+    # result, carrying the digest, proves governance happened for this image.
+    s = json.loads(
+        render_sarif(
+            _report(
+                [
+                    _rule("a", "warning", "passed"),
+                    _rule("b", "info", "incomplete"),
+                ],
+                digest="sha256-CLEAN",
+            )
+        )
+    )
+    results = s["runs"][0]["results"]
+    assert len(results) == 1
+    receipt = results[0]
+    assert receipt["kind"] == "pass"
+    assert receipt["level"] == "none"
+    assert receipt["properties"]["digest"] == "sha256-CLEAN"
+    # self-consistent: the receipt's ruleIndex resolves to its descriptor
+    rules = s["runs"][0]["tool"]["driver"]["rules"]
+    assert rules[receipt["ruleIndex"]]["id"] == receipt["ruleId"]

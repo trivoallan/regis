@@ -37,7 +37,7 @@ _Output options:_
 - `--html`: Generate a self-contained single-file `report.html`.
 - `--sections all|summary|<slugs>`: Sections to include in the HTML report. Only applies to `--html`.
 - `--markdown`: Also emit a Markdown summary report (`report.md`).
-- `--sarif`: Also emit a SARIF report of playbook verdicts (`report.sarif`) for upload to GitHub Code Scanning (or any SARIF consumer). Each breached rule becomes a SARIF result anchored at the `Dockerfile`, with a `security-severity` mapped from the rule level and a `helpUri` to the criterion's docs.
+- `--sarif`: Also emit a SARIF report of playbook verdicts (`report.sarif`) for upload to GitHub Code Scanning (or any SARIF consumer). Each breached rule becomes a SARIF result anchored at the `Dockerfile`, with a `security-severity` mapped from the rule level and a `helpUri` to the criterion's docs. A clean run (rules evaluated, no breach) instead emits a single `kind: "pass"` receipt carrying the image digest, so "evaluated and clean" stays distinguishable from "never analyzed" — an empty run means the image was not governed.
 - `--pretty/--no-pretty`: Pretty-print the JSON output (default: on).
 
 _Evaluation options:_

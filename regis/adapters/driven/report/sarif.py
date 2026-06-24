@@ -90,8 +90,8 @@ def build_sarif(
             "ruleIndex": index[slug],
             # kind="fail" marks this as a governance verdict, not a vulnerability:
             # houba keys on result.kind to bucket it under policy.* instead of
-            # vuln.*. ponytail: only breaches are emitted, so no "pass" branch
-            # (add kind="pass" + level="none" if passing checks ever become results).
+            # vuln.*. A clean run instead emits a single kind="pass" receipt
+            # below, so "evaluated & clean" is distinguishable from "never ran".
             "kind": "fail",
             "level": level,
             "message": {"text": text, "markdown": markdown},
@@ -116,6 +116,50 @@ def build_sarif(
                 }
             ]
         results.append(result)
+
+    # Positive coverage receipt. A clean run (rules evaluated, zero breaches)
+    # would otherwise be an empty SARIF run -- indistinguishable from "Regis
+    # never ran" once every breach counter reads zero. Emit one kind="pass"
+    # result, keyed to the digest, so a present run proves governance happened
+    # for this exact image. houba buckets on result.kind, so it surfaces as a
+    # policy pass with no consumer change. Skipped entirely when no rules were
+    # evaluated (truly not governed) or when breaches already prove the run.
+    if rules and not results:
+        receipt_index = len(descriptors)
+        descriptors.append(
+            {
+                "id": "regis-evaluated",
+                "name": "RegisEvaluated",
+                "shortDescription": {
+                    "text": "Image evaluated by Regis; no policy rule was breached."
+                },
+                "defaultConfiguration": {"level": "none"},
+            }
+        )
+        receipt: dict[str, Any] = {
+            "ruleId": "regis-evaluated",
+            "ruleIndex": receipt_index,
+            "kind": "pass",
+            "level": "none",
+            "message": {
+                "text": "Regis evaluated this image; no policy rule was breached."
+            },
+            "properties": {
+                "image": req.get("url"),
+                "digest": req.get("digest"),
+                "evaluated": len(rules),
+            },
+        }
+        if dockerfile:
+            receipt["locations"] = [
+                {
+                    "physicalLocation": {
+                        "artifactLocation": {"uri": dockerfile},
+                        "region": {"startLine": 1},
+                    }
+                }
+            ]
+        results.append(receipt)
 
     return {
         "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
