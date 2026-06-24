@@ -136,6 +136,17 @@ def build_sarif(
                 "defaultConfiguration": {"level": "none"},
             }
         )
+        receipt_properties: dict[str, Any] = {
+            "image": req.get("url"),
+            "digest": req.get("digest"),
+            "evaluated": len(rules),
+        }
+        # Tamper-evident pin of the resolved ruleset: lets a consumer reject a
+        # receipt produced against a loosened or swapped playbook. Omitted when
+        # the report predates this field (backward compatible).
+        ruleset_hash = (report.get("playbook") or {}).get("ruleset_hash")
+        if ruleset_hash:
+            receipt_properties["ruleset_hash"] = ruleset_hash
         receipt: dict[str, Any] = {
             "ruleId": "regis-evaluated",
             "ruleIndex": receipt_index,
@@ -144,11 +155,7 @@ def build_sarif(
             "message": {
                 "text": "Regis evaluated this image; no policy rule was breached."
             },
-            "properties": {
-                "image": req.get("url"),
-                "digest": req.get("digest"),
-                "evaluated": len(rules),
-            },
+            "properties": receipt_properties,
         }
         if dockerfile:
             receipt["locations"] = [
