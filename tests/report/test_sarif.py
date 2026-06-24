@@ -227,3 +227,18 @@ def test_clean_run_emits_pass_receipt_keyed_to_digest():
     # self-consistent: the receipt's ruleIndex resolves to its descriptor
     rules = s["runs"][0]["tool"]["driver"]["rules"]
     assert rules[receipt["ruleIndex"]]["id"] == receipt["ruleId"]
+
+
+def test_clean_receipt_carries_ruleset_hash_when_present():
+    rpt = _report([_rule("a", "warning", "passed")])
+    rpt["playbook"] = {"ruleset_hash": "sha256:abc123"}
+    s = json.loads(render_sarif(rpt))
+    receipt = s["runs"][0]["results"][0]
+    assert receipt["properties"]["ruleset_hash"] == "sha256:abc123"
+
+
+def test_clean_receipt_omits_ruleset_hash_when_absent():
+    # No playbook block -> no ruleset_hash property (backward compatible).
+    s = json.loads(render_sarif(_report([_rule("a", "warning", "passed")])))
+    receipt = s["runs"][0]["results"][0]
+    assert "ruleset_hash" not in receipt["properties"]
