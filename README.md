@@ -14,7 +14,7 @@ Regis provides unified container analysis, custom playbooks, and highly customiz
 ## Key Features
 
 - **Unified Registry Inspection** — Fast, multi-arch metadata extraction from any OCI-compliant registry using `regctl`.
-- **Pluggable Analyzer Ecosystem** — Orchestrates industry-standard tools like `Trivy`, `regctl`, `Hadolint`, and `Dockle` to gather comprehensive security insights.
+- **Pluggable Analyzer Ecosystem** — Orchestrates industry-standard tools like `grype`, `regctl`, `Hadolint`, and `Dockle` to gather comprehensive security insights.
 - **Policy-as-Code Playbooks** — Define compliance and security rules (e.g., "no critical vulnerabilities", "maximum image age") using flexible `jsonLogic` evaluations.
 - **Hybrid Reporting** — Simultaneously generates machine-readable JSON for automation and rich, interactive HTML dashboards for human review.
 - **CI/CD Native** — Designed to integrate seamlessly into GitHub Actions or GitLab CI pipelines with first-class support for MR/PR reporting.

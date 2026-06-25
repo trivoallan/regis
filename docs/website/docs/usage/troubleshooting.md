@@ -31,7 +31,7 @@ When you run `regis`, it requires certain external binaries depending on which a
 
 3. **Using Docker** is the easiest path—the official image comes pre-packaged with all dependencies:
    ```bash
-   docker run --rm trivoallan/regis analyze nginx:latest
+   docker run --rm ghcr.io/trivoallan/regis analyze nginx:latest
    ```
 
 ## Registry Authentication Errors

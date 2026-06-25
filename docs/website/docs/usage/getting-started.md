@@ -13,7 +13,7 @@ sidebar_position: 1
 The easiest way to use `regis` without managing local dependencies is to use the official Docker image. It comes pre-packaged with regctl, grype, syft, trufflehog, Hadolint, and Dockle.
 
 ```bash
-docker run --rm trivoallan/regis --help
+docker run --rm ghcr.io/trivoallan/regis --help
 ```
 
 ### Local Installation
