@@ -31,8 +31,10 @@ The requirements depend on whether you use the Docker image or install the tool 
   - **Hadolint**: Required for Dockerfile linting.
   - **Dockle**: Required for container image security linting.
 
+Install the `regis` CLI from source with **[uv](https://docs.astral.sh/uv/)**:
+
 ```bash
-pip install regis
+uv tool install git+https://github.com/trivoallan/regis.git
 ```
 
 :::tip
