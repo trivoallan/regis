@@ -532,3 +532,43 @@ def test_run_and_evaluate_validate_failure_propagates(monkeypatch):
             digest="sha256:d",
             formats=["json"],
         )
+
+
+def test_run_builds_one_inspector_for_the_whole_run():
+    # The inspector_factory must be called once per run (shared across analyzers),
+    # not once per analyzer in _dispatch.
+    builds: list[ImageReference] = []
+
+    def counting_factory(image: ImageReference) -> FakeImageInspector:
+        builds.append(image)
+        return FakeImageInspector()
+
+    use_case = AnalyzeImage(
+        tools=FakeToolRunner(),
+        inspector_factory=counting_factory,
+        sink=FakeReportSink(),
+        presentation=FakePresentationRenderer(),
+    )
+    reports = use_case.run(
+        IMAGE, {"a": _SimpleAnalyzer, "b": _SimpleAnalyzer, "c": _SimpleAnalyzer}
+    )
+    assert set(reports) == {"a", "b", "c"}
+    assert len(builds) == 1  # one inspector for three analyzers
+
+
+def test_run_one_builds_a_single_inspector():
+    builds: list[ImageReference] = []
+
+    def counting_factory(image: ImageReference) -> FakeImageInspector:
+        builds.append(image)
+        return FakeImageInspector()
+
+    use_case = AnalyzeImage(
+        tools=FakeToolRunner(),
+        inspector_factory=counting_factory,
+        sink=FakeReportSink(),
+        presentation=FakePresentationRenderer(),
+    )
+    report = use_case.run_one(IMAGE, _SimpleAnalyzer)
+    assert report["analyzer"] == "simpleone"
+    assert len(builds) == 1

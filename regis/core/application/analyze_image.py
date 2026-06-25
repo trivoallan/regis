@@ -98,9 +98,11 @@ class AnalyzeImage:
     # Dispatch
     # ------------------------------------------------------------------
 
-    def _dispatch(self, analyzer: Any, image: ImageReference) -> dict[str, Any]:
-        """Run one analyzer instance and validate its report."""
-        ctx = AnalysisContext(image, self._inspector_factory(image), self._tools)
+    def _dispatch(
+        self, analyzer: Any, image: ImageReference, inspector: ImageInspector
+    ) -> dict[str, Any]:
+        """Run one analyzer instance against a shared inspector; validate its report."""
+        ctx = AnalysisContext(image, inspector, self._tools)
         report = analyzer.analyze(ctx)
         analyzer.validate(report)
         return report
@@ -108,9 +110,10 @@ class AnalyzeImage:
     def run_one(self, image: ImageReference, analyzer_cls: type) -> dict[str, Any]:
         """Run a single analyzer class and return its report (re-raises on error)."""
         analyzer = analyzer_cls()
+        inspector = self._inspector_factory(image)
         start = time.monotonic()
         try:
-            return self._dispatch(analyzer, image)
+            return self._dispatch(analyzer, image, inspector)
         finally:
             logger.debug(
                 "analyzer %s finished in %.2fs",
@@ -141,13 +144,14 @@ class AnalyzeImage:
         if not selected:
             return reports
         start_times: dict[str, float] = {}
+        inspector = self._inspector_factory(image)
 
         def _timed(name: str, cls: type) -> tuple[str, dict[str, Any]]:
             # Record the start time before instantiation so a constructor that
             # raises is still timed and the draining thread reads a real elapsed.
             start_times[name] = time.monotonic()
             try:
-                return name, self._dispatch(cls(), image)
+                return name, self._dispatch(cls(), image, inspector)
             finally:
                 logger.debug(
                     "analyzer %s finished in %.2fs",
