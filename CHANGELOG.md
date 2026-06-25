@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.38.0](https://github.com/trivoallan/regis/compare/v0.37.0...v0.38.0) (2026-06-25)
+
+### Features
+
+- **ci:** publish multi-arch container images including linux/arm64 ([#801](https://github.com/trivoallan/regis/issues/801)) ([7a84dcf](https://github.com/trivoallan/regis/commit/7a84dcfd9cf8396c1c9b2d5e01adc95fd0f8107c))
+- **report:** emit a SARIF pass receipt so clean images read as governed ([#797](https://github.com/trivoallan/regis/issues/797)) ([9bef2bc](https://github.com/trivoallan/regis/commit/9bef2bc48a38dba177932f68c1d4eeaa4b519eda))
+- **report:** emit SARIF of playbook verdicts (--sarif) ([#789](https://github.com/trivoallan/regis/issues/789)) ([8620ee9](https://github.com/trivoallan/regis/commit/8620ee92a7447cd0e8dfa51b4d98e4d986fb1e4f))
+- **report:** tamper-evident ruleset_hash on the SARIF pass receipt ([#798](https://github.com/trivoallan/regis/issues/798)) ([73c4224](https://github.com/trivoallan/regis/commit/73c42248c8c9eeafc14e0de4c7b282b57d9c9aa2))
+
+### Bug Fixes
+
+- **cli:** make --fail-level behave identically across analyze and evaluate ([#803](https://github.com/trivoallan/regis/issues/803)) ([0abe10b](https://github.com/trivoallan/regis/commit/0abe10b7812af6717c26b644a1c4fb95b06b7eb0))
+- **registry:** handle digest-pinned image references ([#800](https://github.com/trivoallan/regis/issues/800)) ([4b38b78](https://github.com/trivoallan/regis/commit/4b38b78e674371f474970051f6bb48b237f59388))
+- **report:** stamp SARIF result.kind so verdicts read as policy, not vulnerabilities ([#791](https://github.com/trivoallan/regis/issues/791)) ([5b795b4](https://github.com/trivoallan/regis/commit/5b795b48292a243f1f0b0892345d8cdd67b84633))
+
 ## [0.37.0](https://github.com/trivoallan/regis/compare/v0.36.0...v0.37.0) (2026-06-11)
 
 ### Features
