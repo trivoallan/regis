@@ -618,6 +618,14 @@ def test_run_applies_decorator_with_share_true_when_cve_and_sbom_selected():
     assert deco.closed is True  # run() closed it in finally
 
 
+def test_run_closes_decorator_even_when_an_analyzer_raises():
+    # The finally block is the tempdir-cleanup safety net; prove it fires when
+    # an analyzer errors (the run still completes — failures are stubbed).
+    uc = _make_with_decorator()
+    uc.run(IMAGE, {"cve": _SimpleAnalyzer, "sbom": _raiser("sbom", ToolError("x"))})
+    assert _RecordingDecorator.instances[0].closed is True
+
+
 def test_run_share_false_when_only_one_image_tool_selected():
     uc = _make_with_decorator()
     uc.run(IMAGE, {"cve": _SimpleAnalyzer, "other": _SimpleAnalyzer})

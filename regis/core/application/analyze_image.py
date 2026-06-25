@@ -123,7 +123,12 @@ class AnalyzeImage:
         return report
 
     def run_one(self, image: ImageReference, analyzer_cls: type) -> dict[str, Any]:
-        """Run a single analyzer class and return its report (re-raises on error)."""
+        """Run a single analyzer class and return its report (re-raises on error).
+
+        The ``tools_decorator`` is intentionally NOT applied here: a single
+        analyzer has nothing to share a layout with, so it scans the remote ref
+        directly via ``self._tools``.
+        """
         analyzer = analyzer_cls()
         inspector = self._inspector_factory(image)
         start = time.monotonic()
