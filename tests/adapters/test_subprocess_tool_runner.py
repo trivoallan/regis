@@ -289,6 +289,23 @@ def test_export_layout_delegates_to_regctl_copy(monkeypatch):
     }
 
 
+def test_export_layout_defaults_to_local_platform_when_none(monkeypatch):
+    # A multi-arch image with no explicit platform must export a SINGLE platform
+    # ("local" -> host arch), else regctl writes an OCI index that syft/grype
+    # cannot read from an oci-dir. Verified to match the no-platform remote scan.
+    captured = {}
+
+    def fake_copy(src_ref, dest_dir, registry, username, password, platform):
+        captured["platform"] = platform
+
+    monkeypatch.setattr(mod, "run_regctl_copy", fake_copy)
+    no_platform = ImageReference(
+        registry="docker.io", repository="library/debian", tag="12-slim"
+    )
+    SubprocessToolRunner().export_layout(no_platform, "/tmp/lay")
+    assert captured["platform"] == "local"
+
+
 @pytest.mark.parametrize("exc_cls", [RegistryError, ToolError])
 def test_export_layout_returns_false_on_failure(monkeypatch, exc_cls):
     def boom(*a, **k):

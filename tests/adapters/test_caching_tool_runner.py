@@ -8,7 +8,7 @@ import time
 from regis.adapters.driven.tools.caching_tool_runner import CachingToolRunner
 from regis.adapters.driven.tools.subprocess_tool_runner import SubprocessToolRunner
 from regis.core.model.image_reference import ImageReference
-from regis.core.ports.tool_runner import ToolResult, ToolRunner
+from regis.core.ports.tool_runner import ToolRunner
 
 IMAGE = ImageReference(
     registry="docker.io", repository="library/nginx", tag="1.27", platform="linux/amd64"

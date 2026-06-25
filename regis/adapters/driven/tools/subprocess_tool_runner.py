@@ -53,6 +53,11 @@ class SubprocessToolRunner(ToolRunner):
 
         A failed export (network/auth) returns ``False`` so the caller falls
         back to a direct remote scan instead of aborting the run.
+
+        Multi-arch images are always narrowed to a single platform: the
+        explicitly requested one, or ``"local"`` (regctl resolves it to the
+        host OS/arch). This is required because syft and grype cannot consume
+        an OCI image *index* from an oci-dir; they need a single manifest.
         """
         try:
             run_regctl_copy(
@@ -61,7 +66,7 @@ class SubprocessToolRunner(ToolRunner):
                 image.registry,
                 self._username,
                 self._password,
-                image.platform,
+                image.platform or "local",
             )
             return True
         except (RegistryError, ToolError):
