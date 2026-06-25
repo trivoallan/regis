@@ -2,135 +2,78 @@
 
 > Supplemental file: this is a planning artifact that complements the core Memory Bank files.
 
-> Last updated: 2026-05-23 · Current version: v0.28.6
+> Last updated: 2026-06-25 · Current version: v0.37.x · Stage: pre-v1
 
-## Status Overview
+## Positionnement
 
-v0.28.6 shipped · Sprint 1 en cours (19 mai → 2 juin) · Cible : v1.0.0-alpha pilote équipes internes
+Sécurité conteneur & policy-as-code, avec un pivot vers la **provenance
+supply-chain** : les verdicts Regis (SARIF, `result.kind` discriminant
+policy/vuln) sont consommables comme attestations signées à la porte d'entrée
+d'un registre.
+
+Format : **Now / Next / Later** — pas de dates dures (évite la fausse précision).
 
 ## Memory Bank Alignment
 
-- Keep roadmap items synchronized with `docs/memory-bank/projectbrief.md` and `docs/memory-bank/progress.md`.
-- Treat `decisionLog.md` and `roadmap.md` as supplemental planning history, not the primary operational context.
+- Garder les items synchronisés avec `docs/memory-bank/projectbrief.md` et `progress.md`.
+- Traiter `decisionLog.md` et `roadmap.md` comme historique de planification supplémentaire, pas comme contexte opérationnel primaire.
 
 ---
 
-## Cible v1.0.0-alpha — Pilote
+## Récemment livré
 
-La v1 est la première version déployée auprès d'équipes pilotes réelles :
-
-- **Direction Expertise Applicative** — architectes et experts sécurité
-- **Équipe projet**
-
-### Contexte d'usage
-
-- Registres d'images : **Harbor**
-- Distribution des rapports : **GitLab Pages** (primaire) ou cluster Kubernetes (fallback)
-- Langue : **français** — onboarding équipes internes
-- UX/DevEx : critiques — premiers utilisateurs sont des architectes, pas des SREs
-
-### Trois playbooks cibles
-
-| Playbook               | Porteur        | Objectif                                                      |
-| ---------------------- | -------------- | ------------------------------------------------------------- |
-| **Validation import**  | Architectes    | Go/no-go binaire sur une image avant import dans le catalogue |
-| **Contrôle catalogue** | Architectes    | Surveillance continue + preuve de qualité pour audit          |
-| **Progression projet** | Équipes projet | Amélioration progressive par tiers (bronze → argent → or)     |
-
-### Feature set v1 (Must-have)
-
-| Feature                             | Pourquoi v1                                               |
-| ----------------------------------- | --------------------------------------------------------- |
-| Playbook bundle format              | Fondation des 3 playbooks métier                          |
-| Intégration Harbor native           | skopeo non garanti en infra interne fermée                |
-| Trois playbooks métier              | Livrables directs du pilote                               |
-| Doc en français (pipeline LLM)      | Onboarding équipes internes sans barrière linguistique    |
-| Finitions site de doc               | UX/DevEx — première impression architectes, design system |
-| GitLab Pages / K8s deployment guide | Distribution des rapports en contexte GitLab interne      |
-| Moratoire snapshots doc             | Cleanup avant v1                                          |
-
-### Déféré post-v1
-
-| Feature                | Raison                                      |
-| ---------------------- | ------------------------------------------- |
-| Policy versioning      | Complexe, non bloquant pour le pilote       |
-| SARIF export           | Utile selon usage GitLab SAST — à confirmer |
-| Custom analyzer guide  | Docs développeur, hors périmètre pilote     |
-| Multi-image comparison | Builds on `regis diff` — post-v1            |
-| Tailwind v4 migration  | Bloqué upstream                             |
+| Item                                                                            | Statut |
+| ------------------------------------------------------------------------------- | ------ |
+| Migration hexagonale (ports & adapters, imposée par import-linter)              | Done   |
+| Sortie SARIF des verdicts playbook (`result.kind` policy/vuln) + `ruleset_hash` | Done   |
+| Images conteneur multi-arch (linux/amd64 + arm64)                               | Done   |
+| Automatisation des dépendances → Renovate                                       | Done   |
+| Intégration GitLab CI-native extraite vers un template dédié                    | Done   |
+| Format playbook → enveloppe Kubernetes (`apiVersion` / `kind`)                  | Done   |
+| Réduction taille image (variantes slim/full, fetch outils paresseux)            | Done   |
 
 ---
 
-## Pré-sprint — 21 avr → 29 avr _(archivé)_
+## Now — engagé / en cours
 
-| Item                                | Description                                                                                                         | Status  |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------- |
-| **One-pager Regis**                 | Une page claire expliquant ce que fait Regis, pour qui, et comment — à destination des architectes et stakeholders. | Skipped |
-| **Playbook "validation import" v1** | Premier playbook métier : règles + README. Go/no-go binaire pour valider une image avant import dans le catalogue.  | Skipped |
-
-> Congés : 30 avr → 17 mai
-
----
-
-## Sprint 1 — 19 mai → 2 juin _(en cours)_
-
-_Objectif : fondations — nettoyer, stabiliser, poser la base playbook._
-
-| Item                        | Description                                                                                                                           | Status      |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| **Moratoire snapshots doc** | Arrêter la génération de snapshots versionnés. Purger les versions anciennes (garder 3 dernières). Désactiver `release-snapshot.yml`. | Not Started |
-| **Playbook bundle format**  | Playbooks sous forme de répertoire : `playbook.yaml` + `README.md` + `inputs.schema.json`. Nouveau `InputsAnalyzer`.                  | Not Started |
-| **Finitions site de doc**   | Branding, CI hardening (Trivy pinning, archives résilientes), navigation sidebar, SEO baseline.                                       | Not Started |
-| **Guide GitLab CI**         | Process d'intégration regis dans un pipeline GitLab, multi-archives, déploiement rapport sur GitLab Pages / K8s.                      | Not Started |
+| Item                                                                                                 | Statut   | Réf        |
+| ---------------------------------------------------------------------------------------------------- | -------- | ---------- |
+| Réparer l'install getting-started (Docker → `ghcr.io`, `pip` → `uv`)                                 | On Track | PR #808    |
+| Cache registry par-run + handoff SBOM syft → grype (performance de scan)                             | Planned  | issue #806 |
+| Refacto de la commande `analyze.py` + resserrer le layering `utils/`                                 | Planned  | issue #807 |
+| Santé projet : `SECURITY.md`, `CONTRIBUTING.md`, templates d'issues                                  | Planned  | issue #810 |
+| **Format bundle playbook** (`playbook.yaml` + `README.md` + `inputs.schema.json` + `InputsAnalyzer`) | Planned  | sprint     |
+| Finitions site de doc (branding, navigation, SEO) + arrêt des snapshots versionnés                   | Planned  | sprint     |
 
 ---
 
-## Sprint 2 — 2 juin → 16 juin
+## Next — planifié (≈ 1-3 mois)
 
-_Objectif : enablement Harbor + playbooks._
-
-| Item                              | Description                                                                                                         | Status      |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------- |
-| **Intégration Harbor native**     | `RegistryProvider` abstrait, Harbor-first via OCI Distribution v2. Coexistence skopeo (opt-in `--native-registry`). | Not Started |
-| **Playbook "contrôle catalogue"** | Playbook architectes : surveillance continue + preuve de qualité pour audit.                                        | Not Started |
-| **Playbook "progression projet"** | Playbook équipes projet : amélioration progressive par tiers (bronze → argent → or).                                | Not Started |
-
----
-
-## Sprint 3 — 16 juin → 30 juin
-
-_Objectif : traduction + design._
-
-| Item                                    | Description                                                                            | Status      |
-| --------------------------------------- | -------------------------------------------------------------------------------------- | ----------- |
-| **Traduction française (pipeline LLM)** | CI auto-translate via OpenAI/GPT interne.                                              | Not Started |
-| **Design system**                       | Identité visuelle Regis générée avec Claude (couleurs, logo, typographie, custom CSS). | Not Started |
-| **Playbook creation skill**             | Skill OMC guidant la création interactive d'un playbook bundle.                        | Not Started |
+| Item                                                                                                                                           | Note                                                      |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| **Intégration provenance** : verdicts Regis → attestations signées à la porte d'un registre (houba)                                            | contrat SARIF déjà conforme ; dépend de la maturité houba |
+| Support **Harbor natif** (abstraction `RegistryProvider`)                                                                                      | feature produit générique                                 |
+| Archétypes de playbook réutilisables : gate d'admission d'image · conformité catalogue continue · progression par tiers (bronze → argent → or) | bâtis sur le format bundle                                |
+| Distribution : `uv tool install` + nom de distribution PyPI non-collisionnant                                                                  | issu du fix d'install (#809)                              |
+| Pipeline i18n de la documentation (traduction automatisée)                                                                                     | générique                                                 |
 
 ---
 
-## Sprint 4 — 30 juin → 12 juil
+## Later — directionnel (≈ 3-6+ mois)
 
-_Objectif : polish v1 + préparation pilote._
-
-| Item                        | Description                                                                | Status      |
-| --------------------------- | -------------------------------------------------------------------------- | ----------- |
-| **UX review + corrections** | Retours des premières démos pilote — corrections ergonomie CLI et rapport. | Not Started |
-| **v1.0.0-alpha release**    | Packaging, release notes, annonce pilote.                                  | Not Started |
-
-> Congés : 13 juil → 17 juil
+| Item                                                       | Note                |
+| ---------------------------------------------------------- | ------------------- |
+| Comparaison de posture multi-image / flotte (`regis diff`) | directionnel        |
+| Versioning playbook/policy avec ranges de compatibilité    | design spike requis |
+| Agrégation de score org-level + reporting                  | directionnel        |
+| Guide développeur : création d'analyzers custom            | directionnel        |
+| Self-scan CI (Regis s'analyse lui-même à chaque release)   | signal de maturité  |
+| Import / fusion d'un catalogue d'images existant           | design spike requis |
 
 ---
 
-## Post-v1 / Backlog
+## Risques & dépendances
 
-| Item                              | Description                                                                                                                                            | Notes                                     |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- |
-| **Policy versioning**             | Versionner les playbooks indépendamment avec ranges de compatibilité.                                                                                  | Design spike requis                       |
-| **SARIF export**                  | Export SARIF pour GitLab/GitHub Advanced Security.                                                                                                     | À confirmer selon usage                   |
-| **Custom analyzer guide**         | Docs développeur pour créer des analyzers custom.                                                                                                      | v1.x                                      |
-| **Multi-image comparison**        | Comparer la posture sécurité d'une flotte d'images.                                                                                                    | Builds on `regis diff`                    |
-| **Import mise à jour de version** | Playbook allégé pour importer une nouvelle version d'une image déjà au catalogue — checklist réduite, focus sur le delta CVE/licences.                 | Après `regis diff`                        |
-| **Fusion catalogue existant**     | Intégrer le catalogue d'images existant dans Regis — migration/import des images déjà référencées sous gouvernance Regis.                              | Design spike requis                       |
-| **Self-scan CI**                  | `regis analyze ghcr.io/trivoallan/regis:latest` dans la CI GitHub — Regis s'analyse lui-même à chaque release. Gate bloquant ou rapport d'information. | Signal de maturité — post-v1              |
-| **Tailwind v4 migration**         | Migration dashboard vers Tailwind v4.                                                                                                                  | **Bloqué** — `@headlessui/tailwindcss` v4 |
+- **Maturité houba (pré-prod)** cadence le calendrier de l'intégration provenance. Mitigation : le contrat SARIF est **gelé**, donc Regis intègre contre une interface stable pendant que houba durcit.
+- **Capacité** : Now porte déjà 6 items ; Next / Later sont directionnels, pas engagés. Tout ajout en Now implique qu'un item en sorte (zéro-somme contre la capacité).
+- **Dépendances bloquées** : migration dashboard Tailwind v4 — **coupée** (la dashboard standalone est abandonnée ; la visibilité passe par `report.json` + l'outillage de provenance).
