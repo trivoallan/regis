@@ -8,11 +8,12 @@ import subprocess  # nosec B404
 from collections.abc import Sequence
 from typing import Any
 
-from regis.core.domain.errors import ToolError
+from regis.core.domain.errors import RegistryError, ToolError
 from regis.core.model.image_reference import ImageReference
 from regis.core.ports.tool_runner import ToolResult, ToolRunner
 from regis.utils.grype import run_grype
 from regis.utils.process import ensure_tool
+from regis.utils.regctl import run_regctl_copy
 from regis.utils.syft import run_syft
 from regis.utils.trufflehog import run_trufflehog
 
@@ -46,6 +47,38 @@ class SubprocessToolRunner(ToolRunner):
         return run_syft(
             self._full_ref(image), self._username, self._password, image.platform
         )
+
+    def export_layout(self, image: ImageReference, dest_dir: str) -> bool:
+        """Copy *image* into a local OCI layout at *dest_dir*; return success.
+
+        A failed export (network/auth) returns ``False`` so the caller falls
+        back to a direct remote scan instead of aborting the run.
+
+        Multi-arch images are always narrowed to a single platform: the
+        explicitly requested one, or ``"local"`` (regctl resolves it to the
+        host OS/arch). This is required because syft and grype cannot consume
+        an OCI image *index* from an oci-dir; they need a single manifest.
+        """
+        try:
+            run_regctl_copy(
+                self._full_ref(image),
+                dest_dir,
+                image.registry,
+                self._username,
+                self._password,
+                image.platform or "local",
+            )
+            return True
+        except (RegistryError, ToolError):
+            return False
+
+    def generate_sbom_from_layout(self, dest_dir: str) -> dict[str, Any]:
+        """Run syft against a local OCI layout (no pull, no creds, no platform)."""
+        return run_syft(f"oci-dir:{dest_dir}")
+
+    def scan_vulnerabilities_from_layout(self, dest_dir: str) -> dict[str, Any]:
+        """Run grype against a local OCI layout (no pull, no creds, no platform)."""
+        return run_grype(f"oci-dir:{dest_dir}")
 
     def scan_secrets(self, image: ImageReference) -> list[dict[str, Any]]:
         return run_trufflehog(self._full_ref(image), self._username, self._password)
