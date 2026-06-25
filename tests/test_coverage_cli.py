@@ -85,9 +85,6 @@ def test_analyze_schema_validation_error(mock_discover, mock_client):
                     "Report schema validation failed: Failing validation"
                     in result.output
                 )
-                # 原则上，代码本身不应该被修改。
-                #    in result.output
-                # )
 
 
 @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
