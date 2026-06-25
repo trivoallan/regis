@@ -242,3 +242,55 @@ def test_clean_receipt_omits_ruleset_hash_when_absent():
     s = json.loads(render_sarif(_report([_rule("a", "warning", "passed")])))
     receipt = s["runs"][0]["results"][0]
     assert "ruleset_hash" not in receipt["properties"]
+
+
+# --- houba SARIF ingestion-profile contract (cross-repo drift insurance) ---
+# regis emits; the sibling repo houba (trivoallan/houba) ingests per its
+# docs/reference/sarif-ingestion-profile.md (houba ADR 0039). houba keys on the
+# STANDARD SARIF result.kind, never on tool name: kind absent -> vuln.*, kind
+# present -> policy.* (pass -> policy.passed, else policy.<severity> bucketed by
+# security-severity). The two repos version separately, so this pins the
+# invariants houba depends on -- a regis emitter change that breaks policy
+# bucketing fails here instead of silently inflating houba's vuln.* counts.
+
+
+def _houba_bucket(security_severity: str) -> str:
+    """houba's documented CVSS bands: >=9.0 critical, >=7.0 high, >=4.0 medium, else low."""
+    score = float(security_severity)
+    if score >= 9.0:
+        return "critical"
+    if score >= 7.0:
+        return "high"
+    if score >= 4.0:
+        return "medium"
+    return "low"
+
+
+def test_houba_ingestion_profile_contract():
+    # (1) Every emitted result -- breach run and clean run alike -- carries a kind
+    #     houba understands, so a regis verdict NEVER lands in houba's vuln.* space.
+    breaches = json.loads(
+        render_sarif(
+            _report(
+                [
+                    _rule("crit", "critical", "failed"),
+                    _rule("warn", "warning", "failed"),
+                    _rule("note", "info", "failed"),
+                    _rule("ok", "warning", "passed"),
+                ]
+            )
+        )
+    )["runs"][0]["results"]
+    clean = json.loads(render_sarif(_report([_rule("ok", "warning", "passed")])))[
+        "runs"
+    ][0]["results"]
+    assert breaches and clean
+    assert all(r.get("kind") in {"pass", "fail"} for r in breaches + clean)
+    assert [r["kind"] for r in clean] == ["pass"]  # clean -> single policy.passed
+
+    # (2) Every breach carries a security-severity that lands in houba's documented
+    #     bucket -- pins regis' numbers to houba's CVSS thresholds on both sides.
+    by_id = {r["ruleId"]: r for r in breaches}
+    assert _houba_bucket(by_id["crit"]["properties"]["security-severity"]) == "critical"
+    assert _houba_bucket(by_id["warn"]["properties"]["security-severity"]) == "high"
+    assert _houba_bucket(by_id["note"]["properties"]["security-severity"]) == "low"
