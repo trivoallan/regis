@@ -14,18 +14,29 @@ import os
 import shutil
 import subprocess  # nosec B404
 import tempfile
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
+from typing import Protocol
 
 from regis.core.domain.errors import RegistryError, ToolError
 from regis.utils.process import ensure_tool
-
-if TYPE_CHECKING:
-    from regis.adapters.driven.registry.client import RegistryClient
 
 logger = logging.getLogger(__name__)
 
 #: Default timeout for regctl calls (seconds).
 DEFAULT_TIMEOUT = 60
+
+
+class _RegistryCredentials(Protocol):
+    """Duck-typed credential carrier consumed by ``run_regctl``."""
+
+    @property
+    def registry(self) -> str: ...
+
+    @property
+    def username(self) -> str | None: ...
+
+    @property
+    def password(self) -> str | None: ...
 
 
 def image_ref(registry: str, repository: str, ref: str) -> str:
@@ -40,7 +51,7 @@ def image_ref(registry: str, repository: str, ref: str) -> str:
     return f"{registry}/{repository}{separator}{ref}"
 
 
-def _temp_docker_config(client: RegistryClient) -> str:
+def _temp_docker_config(client: _RegistryCredentials) -> str:
     """Write a temp Docker config.json with the client's credentials.
 
     Used when credentials contain a comma, which would break regctl's
@@ -62,7 +73,7 @@ def _temp_docker_config(client: RegistryClient) -> str:
 
 
 def run_regctl(
-    client: RegistryClient,
+    client: _RegistryCredentials,
     args: list[str],
     timeout: int = DEFAULT_TIMEOUT,
 ) -> str:
@@ -124,6 +135,51 @@ def run_regctl(
         ) from None
     except subprocess.TimeoutExpired:
         raise RegistryError(f"regctl timed out after {timeout}s.") from None
+    except subprocess.CalledProcessError as exc:
+        raise RegistryError(f"regctl failed: {exc.stderr}") from exc
     finally:
         if docker_config_dir is not None:
             shutil.rmtree(docker_config_dir, ignore_errors=True)
+
+
+@dataclass(frozen=True)
+class _RegctlCreds:
+    """Minimal credential carrier accepted by ``run_regctl`` (duck-typed)."""
+
+    registry: str
+    username: str | None
+    password: str | None
+
+
+def run_regctl_copy(
+    src_ref: str,
+    dest_dir: str,
+    registry: str,
+    username: str | None = None,
+    password: str | None = None,
+    platform: str | None = None,
+    timeout: int = 300,
+) -> None:
+    """Copy *src_ref* into a local OCI layout directory *dest_dir* via regctl.
+
+    Writes an OCI layout (``index.json``, ``oci-layout``, ``blobs/``) under
+    *dest_dir*, tagged ``regis``. Reuses ``run_regctl``'s credential injection.
+
+    Args:
+        src_ref: Full remote image reference (e.g. ``docker.io/library/nginx:1.27``).
+        dest_dir: Filesystem directory to receive the OCI layout.
+        registry: Registry host for credential matching.
+        username: Optional registry username.
+        password: Optional registry password.
+        platform: Optional single platform to copy (e.g. ``linux/amd64``).
+        timeout: Subprocess timeout in seconds (image copy can be slow).
+
+    Raises:
+        RegistryError: if regctl is missing, times out, or exits non-zero.
+    """
+    creds = _RegctlCreds(registry, username, password)
+    args = ["image", "copy"]
+    if platform:
+        args += ["--platform", platform]
+    args += [src_ref, f"ocidir://{dest_dir}:regis"]
+    run_regctl(creds, args, timeout=timeout)

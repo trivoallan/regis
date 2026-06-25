@@ -12,6 +12,7 @@ import pytest
 
 from regis.adapters.driven.registry.client import RegistryClient
 from regis.core.domain.errors import RegistryError
+from regis.utils import regctl as mod
 from regis.utils.regctl import image_ref, run_regctl
 
 
@@ -134,3 +135,72 @@ def test_run_regctl_ensure_tool_failure_raises_registry_error(monkeypatch):
     client = _client()
     with pytest.raises(RegistryError, match="regctl not found"):
         run_regctl(client, ["tag", "ls", "docker.io/library/nginx"])
+
+
+def test_run_regctl_copy_builds_image_copy_args(monkeypatch):
+    captured = {}
+
+    def fake_run_regctl(client, args, timeout=60):
+        captured["registry"] = client.registry
+        captured["username"] = client.username
+        captured["password"] = client.password
+        captured["args"] = args
+        captured["timeout"] = timeout
+        return ""
+
+    monkeypatch.setattr(mod, "run_regctl", fake_run_regctl)
+    mod.run_regctl_copy(
+        "docker.io/library/nginx:1.27",
+        "/tmp/layout-x",
+        "docker.io",
+        "alice",
+        "s3cret",
+        "linux/amd64",
+    )
+    assert captured["registry"] == "docker.io"
+    assert captured["username"] == "alice"
+    assert captured["password"] == "s3cret"
+    assert captured["args"] == [
+        "image",
+        "copy",
+        "--platform",
+        "linux/amd64",
+        "docker.io/library/nginx:1.27",
+        "ocidir:///tmp/layout-x:regis",
+    ]
+    assert captured["timeout"] == 300
+
+
+def test_run_regctl_raises_registry_error_on_nonzero_exit(monkeypatch):
+    from regis.core.domain.errors import RegistryError
+
+    monkeypatch.setattr(mod, "ensure_tool", lambda name: "/usr/bin/regctl")
+
+    def boom(*a, **k):
+        raise mod.subprocess.CalledProcessError(
+            returncode=1, cmd="regctl", stderr="denied"
+        )
+
+    monkeypatch.setattr(mod.subprocess, "run", boom)
+    creds = mod._RegctlCreds("docker.io", None, None)
+    with pytest.raises(RegistryError, match="denied"):
+        mod.run_regctl(creds, ["image", "copy", "x", "y"])
+
+
+def test_run_regctl_copy_omits_platform_when_none(monkeypatch):
+    captured = {}
+
+    def fake(client, args, timeout=60):
+        captured["args"] = args
+        captured["timeout"] = timeout
+
+    monkeypatch.setattr(mod, "run_regctl", fake)
+    mod.run_regctl_copy("docker.io/x:1", "/tmp/l", "docker.io")
+    assert "--platform" not in captured["args"]
+    assert captured["args"] == [
+        "image",
+        "copy",
+        "docker.io/x:1",
+        "ocidir:///tmp/l:regis",
+    ]
+    assert captured["timeout"] == 300
