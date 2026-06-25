@@ -22,15 +22,15 @@ Format: **Now / Next / Later** — no hard dates (avoids false precision).
 
 ## Recently shipped
 
-| Item                                                                            | Status |
-| ------------------------------------------------------------------------------- | ------ |
-| Hexagonal migration (ports & adapters, enforced by import-linter)               | Done   |
-| SARIF output of playbook verdicts (`result.kind` policy/vuln) + `ruleset_hash`  | Done   |
-| Multi-arch container images (linux/amd64 + arm64)                               | Done   |
-| Dependency automation → Renovate                                                | Done   |
-| GitLab CI-native integration extracted to a dedicated template                  | Done   |
-| Playbook format → Kubernetes-style envelope (`apiVersion` / `kind`)             | Done   |
-| Container image size reduction (slim/full variants, lazy tool fetch)            | Done   |
+| Item                                                                           | Status |
+| ------------------------------------------------------------------------------ | ------ |
+| Hexagonal migration (ports & adapters, enforced by import-linter)              | Done   |
+| SARIF output of playbook verdicts (`result.kind` policy/vuln) + `ruleset_hash` | Done   |
+| Multi-arch container images (linux/amd64 + arm64)                              | Done   |
+| Dependency automation → Renovate                                               | Done   |
+| GitLab CI-native integration extracted to a dedicated template                 | Done   |
+| Playbook format → Kubernetes-style envelope (`apiVersion` / `kind`)            | Done   |
+| Container image size reduction (slim/full variants, lazy tool fetch)           | Done   |
 
 ---
 
@@ -49,26 +49,26 @@ Format: **Now / Next / Later** — no hard dates (avoids false precision).
 
 ## Next — planned (~1-3 months)
 
-| Item                                                                                                                                             | Note                                                       |
-| ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| **Provenance integration**: Regis verdicts → signed attestations at a registry's front door (houba)                                              | SARIF contract already conforms; depends on houba maturity |
-| **Native Harbor** support (`RegistryProvider` abstraction)                                                                                       | generic product feature                                    |
-| Reusable playbook archetypes: image-admission gate · continuous catalog compliance · tiered progression (bronze → silver → gold)                 | built on the bundle format                                 |
-| Distribution: `uv tool install` + a non-colliding PyPI distribution name                                                                         | follows from the install fix (#809)                        |
-| Documentation i18n pipeline (automated translation)                                                                                              | generic                                                    |
+| Item                                                                                                                             | Note                                                       |
+| -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| **Provenance integration**: Regis verdicts → signed attestations at a registry's front door (houba)                              | SARIF contract already conforms; depends on houba maturity |
+| **Native Harbor** support (`RegistryProvider` abstraction)                                                                       | generic product feature                                    |
+| Reusable playbook archetypes: image-admission gate · continuous catalog compliance · tiered progression (bronze → silver → gold) | built on the bundle format                                 |
+| Distribution: `uv tool install` + a non-colliding PyPI distribution name                                                         | follows from the install fix (#809)                        |
+| Documentation i18n pipeline (automated translation)                                                                              | generic                                                    |
 
 ---
 
 ## Later — directional (~3-6+ months)
 
-| Item                                                       | Note                  |
-| ---------------------------------------------------------- | --------------------- |
-| Multi-image / fleet posture comparison (`regis diff`)      | directional           |
-| Playbook/policy versioning with compatibility ranges       | design spike required |
-| Org-level score aggregation + reporting                    | directional           |
-| Developer guide: writing custom analyzers                  | directional           |
-| Self-scan in CI (Regis analyzes its own image each release)| maturity signal       |
-| Import / merge an existing image catalog                   | design spike required |
+| Item                                                        | Note                  |
+| ----------------------------------------------------------- | --------------------- |
+| Multi-image / fleet posture comparison (`regis diff`)       | directional           |
+| Playbook/policy versioning with compatibility ranges        | design spike required |
+| Org-level score aggregation + reporting                     | directional           |
+| Developer guide: writing custom analyzers                   | directional           |
+| Self-scan in CI (Regis analyzes its own image each release) | maturity signal       |
+| Import / merge an existing image catalog                    | design spike required |
 
 ---
 
