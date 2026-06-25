@@ -188,7 +188,7 @@ Yes. Regis is designed for CI/CD. Use Docker for simplicity:
 ```bash
 docker run --rm \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  trivoallan/regis analyze myimage:latest --html
+  ghcr.io/trivoallan/regis analyze myimage:latest --html
 ```
 
 Then collect the generated `report.html` (and `report.json`) as a CI artifact. See the [GitHub](./integrations/github.md) and [GitLab](./integrations/gitlab.md) integration guides for more details.
