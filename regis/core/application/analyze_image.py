@@ -22,6 +22,7 @@ from typing import Any
 from regis.core.application.playbook_runner import run_playbooks, validate_report
 from regis.core.domain.context import AnalysisContext
 from regis.core.domain.errors import AnalyzerError, RegistryError, ToolError
+from regis.core.domain.rules.breach import breached_slugs
 from regis.core.model.image_reference import ImageReference
 from regis.core.model.report import REPORT_SCHEMA_VERSION, Report
 from regis.core.ports.image_inspector import ImageInspector
@@ -267,16 +268,5 @@ class AnalyzeImage:
         self._sink.emit(Report(final_report), formats=formats)
         self._presentation.render(Report(final_report))
 
-        level_order = {"critical": 1, "warning": 2, "info": 3}
-        threshold = level_order.get(fail_level.lower(), None)
-        if threshold is None:
-            # "none" or unknown level — nothing breaches.
-            breached: list[str] = []
-        else:
-            breached = [
-                r.get("slug", "unknown")
-                for r in final_report.get("rules", [])
-                if not r.get("passed", False)
-                and level_order.get(r.get("level", "info").lower(), 3) <= threshold
-            ]
+        breached = breached_slugs(final_report.get("rules", []), fail_level)
         return AnalysisResult(final_report, bool(breached), len(breached), breached)

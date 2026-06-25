@@ -22,6 +22,7 @@ from regis.adapters.driven.report.presentation_renderer import (
 from regis.adapters.driving.cli.composition import build_analyze_image, build_evaluate
 from regis.core.application.analyze_image import AnalyzerOutcome
 from regis.core.domain.analyzers.base import BaseAnalyzer
+from regis.core.domain.rules.breach import breached_slugs
 from regis.core.model.image_reference import ImageReference
 from regis.core.model.report import Report
 from regis.utils.report import (
@@ -475,18 +476,7 @@ def analyze(
         )
         _render_verdict_block(final_report, quiet=quiet)
         if evaluate and fail:
-            level_order = {"critical": 1, "warning": 2, "info": 3}
-            threshold = level_order.get(fail_level.lower())
-            breached = (
-                [
-                    r.get("slug", "unknown")
-                    for r in final_report.get("rules", [])
-                    if not r.get("passed", False)
-                    and level_order.get(r.get("level", "info").lower(), 3) <= threshold
-                ]
-                if threshold is not None
-                else []
-            )
+            breached = breached_slugs(final_report.get("rules", []), fail_level)
             if breached:
                 click.echo(
                     f"\nError: Analysis failed due to {len(breached)} rule breaches "

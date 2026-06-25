@@ -10,6 +10,7 @@ from typing import Any
 import click
 
 from regis.core.domain.analyzers.discovery import discover_analyzers
+from regis.core.domain.rules.breach import breached_slugs
 
 
 def _render_rule_markdown(rule: dict[str, Any]) -> str:
@@ -390,16 +391,7 @@ def eval_rules(
             click.echo(f"{icon} [{r['slug']}] {r['message']}")
 
     if fail:
-        level_order = {"critical": 1, "warning": 2, "info": 3, "none": 4}
-        threshold = level_order.get(fail_level.lower(), 1)
-
-        breaches = []
-        for r in result["rules"]:
-            if not r["passed"]:
-                rule_level = r.get("level", "info").lower()
-                if level_order.get(rule_level, 3) <= threshold:
-                    breaches.append(r["slug"])
-
+        breaches = breached_slugs(result["rules"], fail_level)
         if breaches:
             click.echo(
                 f"\nError: Evaluation failed due to {len(breaches)} rule breaches at level '{fail_level}' or above.",
