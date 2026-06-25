@@ -77,3 +77,14 @@ def test_build_evaluate_wires_presentation_renderer():
     ev = build_evaluate(output_dir_template="reports/dry-run/custom")
     assert isinstance(ev._presentation, CookiecutterPresentationRenderer)
     assert ev._presentation._output_dir_template == "reports/dry-run/custom"
+
+
+def test_build_analyze_image_wires_caching_tool_runner():
+    from regis.adapters.driven.tools.caching_tool_runner import CachingToolRunner
+    from regis.adapters.driven.tools.subprocess_tool_runner import SubprocessToolRunner
+    from regis.adapters.driving.cli.composition import build_analyze_image
+
+    uc = build_analyze_image("alice", "s3cret")
+    assert uc._tools_decorator is not None
+    decorated = uc._tools_decorator(SubprocessToolRunner("alice", "s3cret"), True)
+    assert isinstance(decorated, CachingToolRunner)

@@ -7,6 +7,8 @@ adapter imports.
 
 from __future__ import annotations
 
+from typing import cast
+
 from regis.adapters.driven.registry.caching_image_inspector import (
     CachingImageInspector,
 )
@@ -16,11 +18,13 @@ from regis.adapters.driven.report.file_report_sink import FileReportSink
 from regis.adapters.driven.report.presentation_renderer import (
     CookiecutterPresentationRenderer,
 )
+from regis.adapters.driven.tools.caching_tool_runner import CachingToolRunner
 from regis.adapters.driven.tools.subprocess_tool_runner import SubprocessToolRunner
 from regis.core.application.analyze_image import AnalyzeImage
 from regis.core.application.evaluate import Evaluate
 from regis.core.model.image_reference import ImageReference
 from regis.core.ports.image_inspector import ImageInspector
+from regis.core.ports.tool_runner import ToolRunner
 
 
 def build_analyze_image(
@@ -51,6 +55,11 @@ def build_analyze_image(
     def _inspector(image: ImageReference) -> ImageInspector:
         return CachingImageInspector(RegctlImageInspector(_client(image)))
 
+    def _decorate_tools(base: ToolRunner, share: bool) -> ToolRunner:
+        # The composition root always supplies a SubprocessToolRunner as `tools`;
+        # cast narrows the port type for the decorator's extended methods.
+        return CachingToolRunner(cast(SubprocessToolRunner, base), share)
+
     sink = FileReportSink(
         output_dir_template=output_dir_template,
         output_template=output_template,
@@ -64,6 +73,7 @@ def build_analyze_image(
 
     return AnalyzeImage(
         tools=SubprocessToolRunner(username, password),
+        tools_decorator=_decorate_tools,
         inspector_factory=_inspector,
         sink=sink,
         presentation=presentation,
