@@ -7,6 +7,9 @@ adapter imports.
 
 from __future__ import annotations
 
+from regis.adapters.driven.registry.caching_image_inspector import (
+    CachingImageInspector,
+)
 from regis.adapters.driven.registry.client import RegistryClient
 from regis.adapters.driven.registry.regctl_image_inspector import RegctlImageInspector
 from regis.adapters.driven.report.file_report_sink import FileReportSink
@@ -46,7 +49,7 @@ def build_analyze_image(
         )
 
     def _inspector(image: ImageReference) -> ImageInspector:
-        return RegctlImageInspector(_client(image))
+        return CachingImageInspector(RegctlImageInspector(_client(image)))
 
     sink = FileReportSink(
         output_dir_template=output_dir_template,

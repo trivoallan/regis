@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from regis.adapters.driven.registry.caching_image_inspector import (
+    CachingImageInspector,
+)
 from regis.adapters.driven.registry.regctl_image_inspector import RegctlImageInspector
 from regis.adapters.driven.report.file_report_sink import FileReportSink
 from regis.adapters.driven.tools.subprocess_tool_runner import SubprocessToolRunner
@@ -18,10 +21,12 @@ def test_build_returns_wired_analyze_image():
     assert isinstance(uc._tools, SubprocessToolRunner)
 
 
-def test_inspector_factory_builds_regctl_inspector_for_image():
+def test_inspector_factory_builds_caching_regctl_inspector_for_image():
     uc = build_analyze_image("user", "pass")
     inspector = uc._inspector_factory(IMAGE)
-    assert isinstance(inspector, RegctlImageInspector)
+    # The factory wraps the regctl inspector in the per-run cache.
+    assert isinstance(inspector, CachingImageInspector)
+    assert isinstance(inspector._delegate, RegctlImageInspector)
 
 
 def test_build_wires_file_report_sink_with_default_template():
