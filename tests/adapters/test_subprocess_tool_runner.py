@@ -6,7 +6,7 @@ import pytest
 
 from regis.adapters.driven.tools import subprocess_tool_runner as mod
 from regis.adapters.driven.tools.subprocess_tool_runner import SubprocessToolRunner
-from regis.core.domain.errors import ToolError
+from regis.core.domain.errors import RegistryError, ToolError
 from regis.core.model.image_reference import ImageReference
 from regis.core.ports.tool_runner import ToolResult, ToolRunner
 
@@ -261,3 +261,64 @@ def test_run_timeout_raises_tool_error(monkeypatch) -> None:
     with pytest.raises(ToolError) as exc_info:
         SubprocessToolRunner().run("cosign", ["version"], timeout=5)
     assert "cosign timed out" in str(exc_info.value)
+
+
+def test_export_layout_delegates_to_regctl_copy(monkeypatch):
+    captured = {}
+
+    def fake_copy(src_ref, dest_dir, registry, username, password, platform):
+        captured.update(
+            src_ref=src_ref,
+            dest_dir=dest_dir,
+            registry=registry,
+            username=username,
+            password=password,
+            platform=platform,
+        )
+
+    monkeypatch.setattr(mod, "run_regctl_copy", fake_copy)
+    ok = SubprocessToolRunner("alice", "s3cret").export_layout(IMAGE, "/tmp/lay")
+    assert ok is True
+    assert captured == {
+        "src_ref": "docker.io/library/nginx:1.27",
+        "dest_dir": "/tmp/lay",
+        "registry": "docker.io",
+        "username": "alice",
+        "password": "s3cret",
+        "platform": "linux/amd64",
+    }
+
+
+@pytest.mark.parametrize("exc_cls", [RegistryError, ToolError])
+def test_export_layout_returns_false_on_failure(monkeypatch, exc_cls):
+    def boom(*a, **k):
+        raise exc_cls("regctl exploded")
+
+    monkeypatch.setattr(mod, "run_regctl_copy", boom)
+    assert SubprocessToolRunner().export_layout(IMAGE, "/tmp/lay") is False
+
+
+def test_generate_sbom_from_layout_runs_syft_on_oci_dir(monkeypatch):
+    captured = {}
+
+    def fake_run_syft(image):
+        captured["image"] = image
+        return {"bomFormat": "CycloneDX"}
+
+    monkeypatch.setattr(mod, "run_syft", fake_run_syft)
+    result = SubprocessToolRunner("u", "p").generate_sbom_from_layout("/tmp/lay")
+    assert result == {"bomFormat": "CycloneDX"}
+    assert captured["image"] == "oci-dir:/tmp/lay"
+
+
+def test_scan_vulnerabilities_from_layout_runs_grype_on_oci_dir(monkeypatch):
+    captured = {}
+
+    def fake_run_grype(image):
+        captured["image"] = image
+        return {"matches": []}
+
+    monkeypatch.setattr(mod, "run_grype", fake_run_grype)
+    result = SubprocessToolRunner("u", "p").scan_vulnerabilities_from_layout("/tmp/lay")
+    assert result == {"matches": []}
+    assert captured["image"] == "oci-dir:/tmp/lay"
