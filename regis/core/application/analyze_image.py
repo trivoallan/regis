@@ -35,6 +35,15 @@ logger = logging.getLogger(__name__)
 #: Factory producing a per-image ImageInspector (regctl-backed in production).
 InspectorFactory = Callable[[ImageReference], ImageInspector]
 
+#: Decorator that wraps the run-scoped ToolRunner (e.g. CachingToolRunner).
+#: Supplied by the composition root; takes (base_tools, share) -> ToolRunner.
+ToolsDecorator = Callable[[ToolRunner, bool], ToolRunner]
+
+#: Analyzer names whose tools (grype, syft) read the image; sharing the one
+#: local OCI pull is only worth it when BOTH run.
+_CVE_ANALYZER = "cve"
+_SBOM_ANALYZER = "sbom"
+
 
 @dataclass(frozen=True)
 class AnalyzerOutcome:
@@ -88,21 +97,27 @@ class AnalyzeImage:
         inspector_factory: InspectorFactory,
         sink: ReportSink,
         presentation: PresentationRenderer,
+        tools_decorator: ToolsDecorator | None = None,
     ) -> None:
         self._tools = tools
         self._inspector_factory = inspector_factory
         self._sink = sink
         self._presentation = presentation
+        self._tools_decorator = tools_decorator
 
     # ------------------------------------------------------------------
     # Dispatch
     # ------------------------------------------------------------------
 
     def _dispatch(
-        self, analyzer: Any, image: ImageReference, inspector: ImageInspector
+        self,
+        analyzer: Any,
+        image: ImageReference,
+        inspector: ImageInspector,
+        tools: ToolRunner,
     ) -> dict[str, Any]:
-        """Run one analyzer instance against a shared inspector; validate its report."""
-        ctx = AnalysisContext(image, inspector, self._tools)
+        """Run one analyzer instance against a shared inspector + tools; validate."""
+        ctx = AnalysisContext(image, inspector, tools)
         report = analyzer.analyze(ctx)
         analyzer.validate(report)
         return report
@@ -113,7 +128,7 @@ class AnalyzeImage:
         inspector = self._inspector_factory(image)
         start = time.monotonic()
         try:
-            return self._dispatch(analyzer, image, inspector)
+            return self._dispatch(analyzer, image, inspector, self._tools)
         finally:
             logger.debug(
                 "analyzer %s finished in %.2fs",
@@ -145,13 +160,19 @@ class AnalyzeImage:
             return reports
         start_times: dict[str, float] = {}
         inspector = self._inspector_factory(image)
+        share = _CVE_ANALYZER in selected and _SBOM_ANALYZER in selected
+        tools = (
+            self._tools_decorator(self._tools, share)
+            if self._tools_decorator is not None
+            else self._tools
+        )
 
         def _timed(name: str, cls: type) -> tuple[str, dict[str, Any]]:
             # Record the start time before instantiation so a constructor that
             # raises is still timed and the draining thread reads a real elapsed.
             start_times[name] = time.monotonic()
             try:
-                return name, self._dispatch(cls(), image, inspector)
+                return name, self._dispatch(cls(), image, inspector, tools)
             finally:
                 logger.debug(
                     "analyzer %s finished in %.2fs",
@@ -160,28 +181,38 @@ class AnalyzeImage:
                 )
 
         workers = min(max_workers, len(selected)) or 1
-        with ThreadPoolExecutor(max_workers=workers) as executor:
-            futures = {
-                executor.submit(_timed, name, cls): name
-                for name, cls in selected.items()
-            }
-            for future in as_completed(futures):
-                name = futures[future]
-                elapsed = time.monotonic() - start_times.get(name, time.monotonic())
-                try:
-                    _, report = future.result()
-                    reports[name] = report
-                    if on_progress is not None:
-                        on_progress(AnalyzerOutcome(name, elapsed))
-                # Capture and classify any analyzer failure; never abort the run.
-                except Exception as exc:  # noqa: BLE001
-                    kind = _classify(exc)
-                    reports[name] = {
-                        "analyzer": name,
-                        "error": {"type": kind, "message": str(exc)},
-                    }
-                    if on_progress is not None:
-                        on_progress(AnalyzerOutcome(name, elapsed, kind, str(exc)))
+        try:
+            with ThreadPoolExecutor(max_workers=workers) as executor:
+                futures = {
+                    executor.submit(_timed, name, cls): name
+                    for name, cls in selected.items()
+                }
+                for future in as_completed(futures):
+                    name = futures[future]
+                    elapsed = time.monotonic() - start_times.get(name, time.monotonic())
+                    try:
+                        _, report = future.result()
+                        reports[name] = report
+                        if on_progress is not None:
+                            on_progress(AnalyzerOutcome(name, elapsed))
+                    # Capture and classify any analyzer failure; never abort the run.
+                    except Exception as exc:  # noqa: BLE001
+                        kind = _classify(exc)
+                        reports[name] = {
+                            "analyzer": name,
+                            "error": {"type": kind, "message": str(exc)},
+                        }
+                        if on_progress is not None:
+                            on_progress(AnalyzerOutcome(name, elapsed, kind, str(exc)))
+        finally:
+            # The ThreadPoolExecutor 'with' block joins before this runs, so no
+            # worker is still reading a layout when it is removed. Duck-typed on
+            # purpose: only a run-scoped decorator (CachingToolRunner) is
+            # closeable, and we keep `close` off the ToolRunner port rather than
+            # add a Closeable protocol for this single call site.
+            close = getattr(tools, "close", None)
+            if callable(close):
+                close()
         return reports
 
     # ------------------------------------------------------------------

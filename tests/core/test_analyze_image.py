@@ -572,3 +572,65 @@ def test_run_one_builds_a_single_inspector():
     report = use_case.run_one(IMAGE, _SimpleAnalyzer)
     assert report["analyzer"] == "simpleone"
     assert len(builds) == 1
+
+
+# ---------------------------------------------------------------------------
+# tools_decorator injection tests
+# ---------------------------------------------------------------------------
+
+
+class _RecordingDecorator:
+    """Wraps a ToolRunner, records (base, share) and whether close() ran."""
+
+    instances: list = []
+
+    def __init__(self, base, share):
+        self.base = base
+        self.share = share
+        self.closed = False
+        _RecordingDecorator.instances.append(self)
+
+    def __getattr__(self, name):
+        return getattr(self.base, name)
+
+    def close(self):
+        self.closed = True
+
+
+def _make_with_decorator():
+    _RecordingDecorator.instances = []
+    uc = AnalyzeImage(
+        tools=FakeToolRunner(),
+        tools_decorator=lambda base, share: _RecordingDecorator(base, share),
+        inspector_factory=lambda image: FakeImageInspector(),
+        sink=FakeReportSink(),
+        presentation=FakePresentationRenderer(),
+    )
+    return uc
+
+
+def test_run_applies_decorator_with_share_true_when_cve_and_sbom_selected():
+    uc = _make_with_decorator()
+    uc.run(IMAGE, {"cve": _SimpleAnalyzer, "sbom": _SimpleAnalyzer})
+    assert len(_RecordingDecorator.instances) == 1
+    deco = _RecordingDecorator.instances[0]
+    assert deco.share is True
+    assert deco.closed is True  # run() closed it in finally
+
+
+def test_run_share_false_when_only_one_image_tool_selected():
+    uc = _make_with_decorator()
+    uc.run(IMAGE, {"cve": _SimpleAnalyzer, "other": _SimpleAnalyzer})
+    assert _RecordingDecorator.instances[0].share is False
+
+
+def test_run_one_does_not_apply_the_decorator():
+    uc = _make_with_decorator()
+    uc.run_one(IMAGE, _SimpleAnalyzer)
+    assert _RecordingDecorator.instances == []  # passthrough on the single path
+
+
+def test_no_decorator_uses_tools_directly():
+    uc = _make_use_case(tools=FakeToolRunner(scan_vulnerabilities={"count": 9}))
+    reports = uc.run(IMAGE, {"ctxone": _CtxAnalyzer})
+    assert reports["ctxone"]["vulns"] == 9
