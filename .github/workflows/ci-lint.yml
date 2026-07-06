@@ -48,7 +48,7 @@ jobs:
       - name: Commit and Push Formatting Fixes
         if: github.event_name == 'pull_request'
         id: commit
-        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
+        uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
         with:
           branch: ${{ github.head_ref }}
           commit_message: "style: apply automated trunk fmt"
@@ -81,7 +81,7 @@ jobs:
 
       - name: Detect docs changes
         id: docs_changes
-        uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
+        uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
         with:
           filters: |
             docs:
