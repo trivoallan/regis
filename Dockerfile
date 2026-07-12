@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.24@sha256:87999aa3d42bdc6bea60565083ee17e86d1f3339802f543c0d03998580f9cb89
+# syntax=docker/dockerfile:1.25@sha256:0adf442eae370b6087e08edc7c50b552d80ddf261576f4ebd6421006b2461f12
 ARG VARIANT=slim
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -7,7 +7,7 @@ ARG VARIANT=slim
 # Alpine 3.11 builder paired with Alpine 3.11 runtime — matching musl libc and
 # CPython ABIs so the venv's symlinked interpreter resolves cleanly at runtime.
 # regis requires python>=3.10 per pyproject.toml.
-FROM python:3.14-alpine@sha256:003970a263347645cd23d4f90929ad16ba7ce7d808ee4674ffcc93cb21cc289f AS python-builder
+FROM python:3.14-alpine@sha256:26730869004e2b9c4b9ad09cab8625e81d256d1ce97e72df5520e806b1709f92 AS python-builder
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
@@ -46,7 +46,7 @@ RUN VERSION=$(awk -F'"' '/^version = / { print $2; exit }' pyproject.toml) && \
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 3: tools-fetcher — downloads external analyzer binaries
 # ──────────────────────────────────────────────────────────────────────────────
-FROM curlimages/curl:8.20.0@sha256:b3f1fb2a51d923260350d21b8654bbc607164a987e2f7c84a0ac199a67df812a AS tools-fetcher
+FROM curlimages/curl:8.21.0@sha256:7c12af72ceb38b7432ab85e1a265cff6ae58e06f95539d539b654f2cfa64bb13 AS tools-fetcher
 ARG TARGETARCH
 ENV HADOLINT_VERSION=2.12.0 \
     DOCKLE_VERSION=0.4.15 \
@@ -133,7 +133,7 @@ USER curl_user
 # PyYAML, MarkupSafe, and other C-extension deps have musl wheels on PyPI;
 # the Anchore Go scanners are CGO-free and run cleanly on musl; hadolint
 # (Haskell) needs Alpine's gcompat glibc shim in the full variant.
-FROM python:3.14-alpine@sha256:003970a263347645cd23d4f90929ad16ba7ce7d808ee4674ffcc93cb21cc289f AS final-slim
+FROM python:3.14-alpine@sha256:26730869004e2b9c4b9ad09cab8625e81d256d1ce97e72df5520e806b1709f92 AS final-slim
 
 LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.description="Regis — Slim variant (scanners lazy-loaded at first use)." \
@@ -176,7 +176,7 @@ CMD ["--help"]
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 4b: final-full — minimal runtime with all scanners baked
 # ──────────────────────────────────────────────────────────────────────────────
-FROM python:3.14-alpine@sha256:003970a263347645cd23d4f90929ad16ba7ce7d808ee4674ffcc93cb21cc289f AS final-full
+FROM python:3.14-alpine@sha256:26730869004e2b9c4b9ad09cab8625e81d256d1ce97e72df5520e806b1709f92 AS final-full
 
 LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.description="Regis — Full variant (all scanners baked)." \
