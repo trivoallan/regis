@@ -1,6 +1,6 @@
 overrides:
   serialize-javascript: ^7.0.5
-  webpack: <5.109.0
+  webpack: <5.110.0
 allowBuilds:
   core-js: true
   core-js-pure: true
