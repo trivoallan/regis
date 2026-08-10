@@ -25,13 +25,13 @@
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "serialize-javascript": "^7.0.5",
-    "webpack": "5.109.0"
+    "webpack": "5.109.2"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.10.2",
     "@docusaurus/tsconfig": "3.10.2",
     "@docusaurus/types": "3.10.2",
-    "@easyops-cn/docusaurus-search-local": "0.55.2",
+    "@easyops-cn/docusaurus-search-local": "0.55.3",
     "typescript": "6.0.3"
   },
   "browserslist": {
