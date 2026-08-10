@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.25@sha256:0adf442eae370b6087e08edc7c50b552d80ddf261576f4ebd6421006b2461f12
+# syntax=docker/dockerfile:1.26@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
 ARG VARIANT=slim
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -7,7 +7,7 @@ ARG VARIANT=slim
 # Alpine 3.11 builder paired with Alpine 3.11 runtime — matching musl libc and
 # CPython ABIs so the venv's symlinked interpreter resolves cleanly at runtime.
 # regis requires python>=3.10 per pyproject.toml.
-FROM python:3.14-alpine@sha256:26730869004e2b9c4b9ad09cab8625e81d256d1ce97e72df5520e806b1709f92 AS python-builder
+FROM python:3.14-alpine@sha256:a1321512d6a287428c50dcdf2ab3857761127e03a23b1f648e9c1c0de59288f8 AS python-builder
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
@@ -133,7 +133,7 @@ USER curl_user
 # PyYAML, MarkupSafe, and other C-extension deps have musl wheels on PyPI;
 # the Anchore Go scanners are CGO-free and run cleanly on musl; hadolint
 # (Haskell) needs Alpine's gcompat glibc shim in the full variant.
-FROM python:3.14-alpine@sha256:26730869004e2b9c4b9ad09cab8625e81d256d1ce97e72df5520e806b1709f92 AS final-slim
+FROM python:3.14-alpine@sha256:a1321512d6a287428c50dcdf2ab3857761127e03a23b1f648e9c1c0de59288f8 AS final-slim
 
 LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.description="Regis — Slim variant (scanners lazy-loaded at first use)." \
@@ -176,7 +176,7 @@ CMD ["--help"]
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 4b: final-full — minimal runtime with all scanners baked
 # ──────────────────────────────────────────────────────────────────────────────
-FROM python:3.14-alpine@sha256:26730869004e2b9c4b9ad09cab8625e81d256d1ce97e72df5520e806b1709f92 AS final-full
+FROM python:3.14-alpine@sha256:a1321512d6a287428c50dcdf2ab3857761127e03a23b1f648e9c1c0de59288f8 AS final-full
 
 LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.description="Regis — Full variant (all scanners baked)." \
