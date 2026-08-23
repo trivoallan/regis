@@ -2,19 +2,17 @@
 
 ## [0.38.1](https://github.com/trivoallan/regis/compare/v0.38.0...v0.38.1) (2026-08-23)
 
-
 ### Bug Fixes
 
-* **deps:** update js dependencies (non-major) ([#821](https://github.com/trivoallan/regis/issues/821)) ([a8eb178](https://github.com/trivoallan/regis/commit/a8eb1787e444037e178e23eeec8bf8bddc4a006c))
-* **deps:** update js dependencies (non-major) ([#826](https://github.com/trivoallan/regis/issues/826)) ([c6101d4](https://github.com/trivoallan/regis/commit/c6101d426ce86da93cea8bea742764e5af657f3f))
-* **deps:** update js dependencies (non-major) ([#829](https://github.com/trivoallan/regis/issues/829)) ([9e2fbfa](https://github.com/trivoallan/regis/commit/9e2fbfa0c1ef798502b5ddd2f2f2573ed0224846))
-* **deps:** update js dependencies (non-major) ([#832](https://github.com/trivoallan/regis/issues/832)) ([0db77f8](https://github.com/trivoallan/regis/commit/0db77f85d33fb602df2a177e7e7566388ce1de44))
-
+- **deps:** update js dependencies (non-major) ([#821](https://github.com/trivoallan/regis/issues/821)) ([a8eb178](https://github.com/trivoallan/regis/commit/a8eb1787e444037e178e23eeec8bf8bddc4a006c))
+- **deps:** update js dependencies (non-major) ([#826](https://github.com/trivoallan/regis/issues/826)) ([c6101d4](https://github.com/trivoallan/regis/commit/c6101d426ce86da93cea8bea742764e5af657f3f))
+- **deps:** update js dependencies (non-major) ([#829](https://github.com/trivoallan/regis/issues/829)) ([9e2fbfa](https://github.com/trivoallan/regis/commit/9e2fbfa0c1ef798502b5ddd2f2f2573ed0224846))
+- **deps:** update js dependencies (non-major) ([#832](https://github.com/trivoallan/regis/issues/832)) ([0db77f8](https://github.com/trivoallan/regis/commit/0db77f85d33fb602df2a177e7e7566388ce1de44))
 
 ### Performance Improvements
 
-* **registry:** per-run caching ImageInspector (issue [#806](https://github.com/trivoallan/regis/issues/806) part 1) ([#815](https://github.com/trivoallan/regis/issues/815)) ([1e42776](https://github.com/trivoallan/regis/commit/1e42776c1af91f01f10c99d9dfda7a8f950bbd21))
-* **tools:** share one image pull across syft and grype via a local OCI layout ([#818](https://github.com/trivoallan/regis/issues/818)) ([715c535](https://github.com/trivoallan/regis/commit/715c53511e411c1e85f95f418a1663d788d82ce6))
+- **registry:** per-run caching ImageInspector (issue [#806](https://github.com/trivoallan/regis/issues/806) part 1) ([#815](https://github.com/trivoallan/regis/issues/815)) ([1e42776](https://github.com/trivoallan/regis/commit/1e42776c1af91f01f10c99d9dfda7a8f950bbd21))
+- **tools:** share one image pull across syft and grype via a local OCI layout ([#818](https://github.com/trivoallan/regis/issues/818)) ([715c535](https://github.com/trivoallan/regis/commit/715c53511e411c1e85f95f418a1663d788d82ce6))
 
 ## [0.38.0](https://github.com/trivoallan/regis/compare/v0.37.0...v0.38.0) (2026-06-25)
 
