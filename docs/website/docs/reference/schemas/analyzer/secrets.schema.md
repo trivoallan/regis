@@ -165,4 +165,4 @@ Specific value: `"secrets"`
 | **Type** | `string` |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-07-27 at 01:58:22 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-08-23 at 22:57:45 +0000
