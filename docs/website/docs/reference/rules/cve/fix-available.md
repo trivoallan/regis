@@ -8,21 +8,21 @@ tags:
 
 All vulnerabilities should be fixed if a patch exists.
 
-| Provider | Level | Tags |
-| :--- | :--- | :--- |
-| cve | Warning | security |
+| Provider | Level   | Tags     |
+| :------- | :------ | :------- |
+| cve      | Warning | security |
 
 ## Parameters
 
-| Name | Default Value | Description |
-| :--- | :--- | :--- |
-| `max_count` | `0` | n/a |
+| Name        | Default Value | Description |
+| :---------- | :------------ | :---------- |
+| `max_count` | `0`           | n/a         |
 
 ## Messages
 
-| Type | Message |
-| :--- | :--- |
-| **Pass** | All vulnerabilities with available fixes have been patched. |
+| Type     | Message                                                                    |
+| :------- | :------------------------------------------------------------------------- |
+| **Pass** | All vulnerabilities with available fixes have been patched.                |
 | **Fail** | Image has ${results.cve.fixed_count} vulnerabilities with available fixes. |
 
 ## Playbook Example
