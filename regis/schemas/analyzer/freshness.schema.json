@@ -12,7 +12,8 @@
     "latest_created",
     "age_days",
     "behind_latest_days",
-    "is_latest"
+    "is_latest",
+    "reproducible_build"
   ],
   "properties": {
     "analyzer": {
@@ -49,6 +50,10 @@
     "is_latest": {
       "type": "boolean",
       "description": "True if the current tag points to the same digest as the 'latest' tag."
+    },
+    "reproducible_build": {
+      "type": "boolean",
+      "description": "True if the tag's creation date is pinned to the epoch (reproducible build, e.g. SOURCE_DATE_EPOCH=0); age_days is then null because the date carries no age information."
     },
     "source": {
       "type": "object",
