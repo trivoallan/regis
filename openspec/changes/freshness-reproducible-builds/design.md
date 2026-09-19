@@ -5,10 +5,12 @@ See proposal.md. `_get_created_date` returns the config `created` string; `analy
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Stop penalising epoch-pinned images without weakening the rule for unknown dates.
 
 **Non-Goals:**
-- Sourcing an age from elsewhere (`org.opencontainers.image.created`, layer history, registry Last-Modified). A reproducible image is *unknown-age*, not *fresh*; a follow-up can add a real signal.
+
+- Sourcing an age from elsewhere (`org.opencontainers.image.created`, layer history, registry Last-Modified). A reproducible image is _unknown-age_, not _fresh_; a follow-up can add a real signal.
 - Changing the "Fresh" badge semantics.
 
 ## Decisions

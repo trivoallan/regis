@@ -11,6 +11,7 @@ Reproducible builds (ko, distroless/Bazel, `SOURCE_DATE_EPOCH=0`) pin the image 
 ## Capabilities
 
 ### New Capabilities
+
 - `freshness-analysis`: how the freshness analyzer reports image age and how the default `age` criterion judges it, including reproducible builds.
 
 ### Modified Capabilities
