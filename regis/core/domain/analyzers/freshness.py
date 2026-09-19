@@ -13,6 +13,11 @@ from regis.core.ports.image_inspector import ImageInspector
 
 logger = logging.getLogger(__name__)
 
+# Reproducible builds (ko, Bazel/distroless, SOURCE_DATE_EPOCH=0) pin the config
+# `created` field to the epoch on purpose, so it carries no age information.
+# ponytail: anything before 1980 (ZIP epoch) counts as pinned; no real image predates it.
+_PINNED_BEFORE = datetime(1980, 1, 1, tzinfo=timezone.utc)
+
 
 def _get_created_date(inspector: ImageInspector, reference: str) -> str | None:
     """Extract the creation date from an image config using the domain helper."""
@@ -40,13 +45,18 @@ class FreshnessAnalyzer(BaseAnalyzer):
                 "tags": ["freshness"],
                 "params": {"max_days": 30},
                 "condition": {
-                    "<": [
-                        {"var": "results.freshness.age_days"},
-                        {"var": "criterion.params.max_days"},
+                    "or": [
+                        {"var": "results.freshness.reproducible_build"},
+                        {
+                            "<": [
+                                {"var": "results.freshness.age_days"},
+                                {"var": "criterion.params.max_days"},
+                            ]
+                        },
                     ]
                 },
                 "messages": {
-                    "pass": "Image is less than ${criterion.params.max_days} days old (${results.freshness.age_days} days).",  # nosec B105
+                    "pass": "Image is less than ${criterion.params.max_days} days old, or its build date is pinned (reproducible build).",  # nosec B105
                     "fail": "Image is older than ${criterion.params.max_days} days (${results.freshness.age_days} days).",
                 },
             }
@@ -66,13 +76,17 @@ class FreshnessAnalyzer(BaseAnalyzer):
 
         # Compute age and delta.
         age_days: int | None = None
+        reproducible_build = False
         behind_days: int | None = None
         now = datetime.now(timezone.utc)
 
         if tag_created:
             try:
                 tag_dt = datetime.fromisoformat(tag_created.replace("Z", "+00:00"))
-                age_days = (now - tag_dt).days
+                if tag_dt < _PINNED_BEFORE:
+                    reproducible_build = True
+                else:
+                    age_days = (now - tag_dt).days
             except (ValueError, TypeError):
                 pass
 
@@ -96,5 +110,6 @@ class FreshnessAnalyzer(BaseAnalyzer):
             "latest_created": latest_created,
             "age_days": age_days,
             "behind_latest_days": behind_days,
+            "reproducible_build": reproducible_build,
             "is_latest": tag == "latest" or behind_days == 0,
         }
