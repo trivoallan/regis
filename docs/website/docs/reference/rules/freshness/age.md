@@ -20,10 +20,10 @@ Image should be less than expected days old.
 
 ## Messages
 
-| Type     | Message                                                                                        |
-| :------- | :--------------------------------------------------------------------------------------------- |
-| **Pass** | Image is less than ${criterion.params.max_days} days old (${results.freshness.age_days} days). |
-| **Fail** | Image is older than ${criterion.params.max_days} days (${results.freshness.age_days} days).    |
+| Type     | Message                                                                                                     |
+| :------- | :---------------------------------------------------------------------------------------------------------- |
+| **Pass** | Image is less than ${criterion.params.max_days} days old, or its build date is pinned (reproducible build). |
+| **Fail** | Image is older than ${criterion.params.max_days} days (${results.freshness.age_days} days).                 |
 
 ## Playbook Example
 
@@ -39,12 +39,19 @@ rules:
 
 ```json
 {
-  "<": [
+  "or": [
     {
-      "var": "results.freshness.age_days"
+      "var": "results.freshness.reproducible_build"
     },
     {
-      "var": "criterion.params.max_days"
+      "<": [
+        {
+          "var": "results.freshness.age_days"
+        },
+        {
+          "var": "criterion.params.max_days"
+        }
+      ]
     }
   ]
 }
