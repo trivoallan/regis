@@ -8,15 +8,15 @@ tags:
 
 Image must provide a Software Bill of Materials.
 
-| Provider | Level   | Tags       |
-| :------- | :------ | :--------- |
-| sbom     | Warning | compliance |
+| Provider | Level | Tags |
+| :--- | :--- | :--- |
+| sbom | Warning | compliance |
 
 ## Messages
 
-| Type     | Message                                             |
-| :------- | :-------------------------------------------------- |
-| **Pass** | SBOM is available for this image.                   |
+| Type | Message |
+| :--- | :--- |
+| **Pass** | SBOM is available for this image. |
 | **Fail** | No SBOM could be generated or found for this image. |
 
 ## Playbook Example

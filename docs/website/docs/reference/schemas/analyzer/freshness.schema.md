@@ -9,17 +9,18 @@
 
 **Description:** Image age and delta versus latest tag.
 
-| Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description                                                      |
-| -------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------- |
-| + [analyzer](#analyzer )                     | No      | const           | No         | -          | Unique identifier for the Freshness analyzer.                          |
-| + [repository](#repository )                 | No      | string          | No         | -          | The image repository that was analyzed.                                |
-| + [tag](#tag )                               | No      | string          | No         | -          | The image tag that was analyzed.                                       |
-| + [tag_created](#tag_created )               | No      | string or null  | No         | -          | ISO timestamp of when the current tag was created.                     |
-| + [latest_created](#latest_created )         | No      | string or null  | No         | -          | ISO timestamp of when the 'latest' tag was created.                    |
-| + [age_days](#age_days )                     | No      | integer or null | No         | -          | Number of days since the current tag was created.                      |
-| + [behind_latest_days](#behind_latest_days ) | No      | integer or null | No         | -          | Number of days between the creation of this tag and the 'latest' tag.  |
-| + [is_latest](#is_latest )                   | No      | boolean         | No         | -          | True if the current tag points to the same digest as the 'latest' tag. |
-| - [source](#source )                         | No      | object          | No         | -          | -                                                                      |
+| Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                         |
+| -------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| + [analyzer](#analyzer )                     | No      | const           | No         | -          | Unique identifier for the Freshness analyzer.                                                                                                                             |
+| + [repository](#repository )                 | No      | string          | No         | -          | The image repository that was analyzed.                                                                                                                                   |
+| + [tag](#tag )                               | No      | string          | No         | -          | The image tag that was analyzed.                                                                                                                                          |
+| + [tag_created](#tag_created )               | No      | string or null  | No         | -          | ISO timestamp of when the current tag was created.                                                                                                                        |
+| + [latest_created](#latest_created )         | No      | string or null  | No         | -          | ISO timestamp of when the 'latest' tag was created.                                                                                                                       |
+| + [age_days](#age_days )                     | No      | integer or null | No         | -          | Number of days since the current tag was created.                                                                                                                         |
+| + [behind_latest_days](#behind_latest_days ) | No      | integer or null | No         | -          | Number of days between the creation of this tag and the 'latest' tag.                                                                                                     |
+| + [is_latest](#is_latest )                   | No      | boolean         | No         | -          | True if the current tag points to the same digest as the 'latest' tag.                                                                                                    |
+| + [reproducible_build](#reproducible_build ) | No      | boolean         | No         | -          | True if the tag's creation date is pinned to the epoch (reproducible build, e.g. SOURCE_DATE_EPOCH=0); age_days is then null because the date carries no age information. |
+| - [source](#source )                         | No      | object          | No         | -          | -                                                                                                                                                                         |
 
 ## <a name="analyzer"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `analyzer`
 
@@ -95,7 +96,15 @@ Specific value: `"freshness"`
 
 **Description:** True if the current tag points to the same digest as the 'latest' tag.
 
-## <a name="source"></a>9. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `source`
+## <a name="reproducible_build"></a>9. ![Required](https://img.shields.io/badge/Required-blue) Property `reproducible_build`
+
+|          |           |
+| -------- | --------- |
+| **Type** | `boolean` |
+
+**Description:** True if the tag's creation date is pinned to the epoch (reproducible build, e.g. SOURCE_DATE_EPOCH=0); age_days is then null because the date carries no age information.
+
+## <a name="source"></a>10. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `source`
 
 |                           |                                                                |
 | ------------------------- | -------------------------------------------------------------- |
@@ -109,31 +118,31 @@ Specific value: `"freshness"`
 | - [version](#source_version )       | No      | string | No         | -          | -                 |
 | - [checksum](#source_checksum )     | No      | string | No         | -          | -                 |
 
-### <a name="source_fetched_at"></a>9.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `fetched_at`
+### <a name="source_fetched_at"></a>10.1. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `fetched_at`
 
 |            |             |
 | ---------- | ----------- |
 | **Type**   | `string`    |
 | **Format** | `date-time` |
 
-### <a name="source_built_at"></a>9.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `built_at`
+### <a name="source_built_at"></a>10.2. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `built_at`
 
 |            |             |
 | ---------- | ----------- |
 | **Type**   | `string`    |
 | **Format** | `date-time` |
 
-### <a name="source_version"></a>9.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `version`
+### <a name="source_version"></a>10.3. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `version`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
-### <a name="source_checksum"></a>9.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checksum`
+### <a name="source_checksum"></a>10.4. ![Optional](https://img.shields.io/badge/Optional-yellow) Property `checksum`
 
 |          |          |
 | -------- | -------- |
 | **Type** | `string` |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-09-07 at 00:56:09 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-09-19 at 21:07:51 +0000
