@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-import logging
+from collections.abc import Sequence
 from importlib import resources
 from pathlib import Path
 from typing import Any
@@ -13,8 +13,6 @@ import jsonschema
 from regis.core.domain.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis.core.domain.context import AnalysisContext
 from regis.utils.predicates import is_url
-
-logger = logging.getLogger(__name__)
 
 # A local format checker so `format: uri` is enforced deterministically
 # (jsonschema's default does nothing for "uri" without an optional dependency).
@@ -54,7 +52,7 @@ def _collect_leaf_paths(schema: dict[str, Any], prefix: str = "") -> dict[str, A
 
 
 class MetadataAnalyzer(BaseAnalyzer):
-    """Validate user-supplied metadata against the well-known schema and an optional playbook extension.
+    """Validate user-supplied metadata against the well-known schema and any extending schemas.
 
     Unlike other analyzers, :class:`MetadataAnalyzer` does not need a registry
     client, repository, or tag.  The inputs are provided at construction time
@@ -68,18 +66,25 @@ class MetadataAnalyzer(BaseAnalyzer):
     def __init__(
         self,
         metadata: dict[str, Any] | None = None,
-        meta_schema_path: Path | None = None,
+        meta_schema_paths: Sequence[Path] = (),
+        advisory: bool = False,
     ) -> None:
         """Initialise the analyzer.
 
         Args:
             metadata: The metadata dict supplied by the user via ``--meta`` flags.
-            meta_schema_path: Optional path to a ``meta.schema.json`` from a
-                playbook bundle.  When the file exists its schema is merged with
-                the well-known schema via ``allOf``.
+            meta_schema_paths: Schemas extending the well-known one, in resolution
+                order (playbook bundles first, then explicit ``--meta-schema``
+                paths). Every source is merged via ``allOf``, so a source can only
+                add constraints — never relax another's.
+            advisory: Record the run as a derogation. It changes nothing about the
+                validation or what is reported — only the caller's sanction is
+                suspended — and it is written to ``enforcement`` so a downstream
+                consumer can see the derogation and refuse it.
         """
         self._metadata: dict[str, Any] = metadata or {}
-        self._meta_schema_path = meta_schema_path
+        self._meta_schema_paths = tuple(meta_schema_paths)
+        self._advisory = advisory
 
     # ------------------------------------------------------------------
     # BaseAnalyzer interface
@@ -96,9 +101,16 @@ class MetadataAnalyzer(BaseAnalyzer):
 
         Returns:
             A dict with keys ``analyzer``, ``metadata``, ``metadata_validation``,
-            and ``valid``.
+            ``valid``, ``schema_sources`` (the schemas beyond the well-known one
+            that were in force; empty when none), and ``enforcement``
+            (``"enforcing"`` or ``"advisory"``).
+
+        Raises:
+            AnalyzerError: When a declared schema cannot be read or parsed. A
+                broken regime is not an absent regime, so validation is not
+                silently degraded to the well-known schema alone.
         """
-        combined_schema = self._build_combined_schema()
+        combined_schema, schema_sources = self._build_combined_schema()
 
         # Known leaf fields (dotted) across the well-known + playbook schemas.
         leaf_paths: dict[str, Any] = {}
@@ -143,6 +155,8 @@ class MetadataAnalyzer(BaseAnalyzer):
             "metadata": dict(self._metadata),
             "metadata_validation": metadata_validation,
             "valid": not errors,
+            "schema_sources": schema_sources,
+            "enforcement": "advisory" if self._advisory else "enforcing",
         }
 
     def validate(self, report: dict[str, Any]) -> None:
@@ -152,24 +166,23 @@ class MetadataAnalyzer(BaseAnalyzer):
     # Internal helpers
     # ------------------------------------------------------------------
 
-    def _build_combined_schema(self) -> dict[str, Any]:
-        """Build an ``allOf`` schema combining the well-known and playbook schemas."""
-        well_known = self._load_well_known_schema()
-        combined: dict[str, Any] = {"allOf": [well_known]}
+    def _build_combined_schema(self) -> tuple[dict[str, Any], list[str]]:
+        """Build the ``allOf`` schema and the list of sources beyond the well-known one."""
+        combined: dict[str, Any] = {"allOf": [self._load_well_known_schema()]}
+        sources: list[str] = []
 
-        if self._meta_schema_path and self._meta_schema_path.exists():
+        for path in self._meta_schema_paths:
             try:
-                playbook_schema = json.loads(
-                    self._meta_schema_path.read_text(encoding="utf-8")
+                combined["allOf"].append(
+                    json.loads(Path(path).read_text(encoding="utf-8"))
                 )
-                combined["allOf"].append(playbook_schema)
-            except (OSError, json.JSONDecodeError):
-                logger.warning(
-                    "Could not load playbook meta schema from %s; falling back to well-known only.",
-                    self._meta_schema_path,
-                )
+            except (OSError, json.JSONDecodeError) as exc:
+                raise AnalyzerError(
+                    f"Could not load metadata schema '{path}': {exc}"
+                ) from exc
+            sources.append(str(path))
 
-        return combined
+        return combined, sources
 
     @staticmethod
     def _load_well_known_schema() -> dict[str, Any]:

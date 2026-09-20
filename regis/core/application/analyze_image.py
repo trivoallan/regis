@@ -13,13 +13,15 @@ from __future__ import annotations
 
 import logging
 import time
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 from regis.core.application.playbook_runner import run_playbooks, validate_report
+from regis.core.domain.analyzers.metadata import MetadataAnalyzer
 from regis.core.domain.context import AnalysisContext
 from regis.core.domain.errors import AnalyzerError, RegistryError, ToolError
 from regis.core.domain.rules.breach import breached_slugs
@@ -233,6 +235,8 @@ class AnalyzeImage:
         digest: str,
         formats: list[str],
         metadata: dict[str, Any] | None = None,
+        meta_schema_paths: Sequence[Path] = (),
+        meta_advisory: bool = False,
         playbook_paths: tuple[str, ...] = (),
         show_rules: bool = False,
         on_playbook_progress: Callable[[str], None] | None = None,
@@ -249,6 +253,11 @@ class AnalyzeImage:
             digest: The resolved image digest.
             formats: Output formats to emit (e.g. ``["json"]``).
             metadata: Optional arbitrary metadata to embed in the report envelope.
+            meta_schema_paths: Schemas extending the well-known metadata schema, in
+                resolution order. Resolved by the caller (bundle schemas first, then
+                explicit ``--meta-schema`` paths).
+            meta_advisory: Record the metadata check as a derogation. Validation and
+                the report are unchanged; only the caller suspends its own sanction.
             playbook_paths: Paths to playbook files/dirs; uses built-in default when
                 empty.
             show_rules: When ``True``, progress messages include per-rule icons.
@@ -263,14 +272,39 @@ class AnalyzeImage:
             An :class:`AnalysisResult` with the final report and breach summary.
 
         Raises:
-            AnalyzerError: When ``selected`` is empty (no analyzers to run).
+            AnalyzerError: When ``selected`` is empty (no analyzers to run), or when a
+                declared metadata schema cannot be read.
             PlaybookError: When report schema validation fails.
         """
         from importlib.metadata import version as _pkg_version
 
-        reports = self.run(
-            image, selected, max_workers=max_workers, on_progress=on_progress
+        # The metadata analyzer is a pure function of user input — it needs no image,
+        # inspector or tools, and its constructor arguments cannot travel through the
+        # generic `cls()` loop. Run it outside the pool so it sees the real --meta
+        # values and so an unreadable schema aborts instead of becoming an error stub.
+        run_metadata = MetadataAnalyzer.name in selected
+        loop_selected = {
+            name: cls for name, cls in selected.items() if name != MetadataAnalyzer.name
+        }
+
+        reports = (
+            self.run(
+                image, loop_selected, max_workers=max_workers, on_progress=on_progress
+            )
+            if loop_selected
+            else {}
         )
+        if run_metadata:
+            started = time.monotonic()
+            reports[MetadataAnalyzer.name] = MetadataAnalyzer(
+                metadata=metadata,
+                meta_schema_paths=meta_schema_paths,
+                advisory=meta_advisory,
+            ).analyze()
+            if on_progress is not None:
+                on_progress(
+                    AnalyzerOutcome(MetadataAnalyzer.name, time.monotonic() - started)
+                )
         if not reports:
             raise AnalyzerError("All analyzers failed.")
 

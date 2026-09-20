@@ -6,6 +6,9 @@ import json
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
+
+from regis.core.domain.analyzers.base import AnalyzerError
 from regis.core.domain.analyzers.metadata import MetadataAnalyzer
 
 
@@ -91,7 +94,7 @@ class TestMetadataAnalyzerWithPlaybookSchema:
         }
         schema_path = self._write_schema(tmp_path, schema)
         analyzer = MetadataAnalyzer(
-            metadata={"PROJECT_ID": "PROJ-42"}, meta_schema_path=schema_path
+            metadata={"PROJECT_ID": "PROJ-42"}, meta_schema_paths=[schema_path]
         )
         result = analyzer.analyze()
         assert result["valid"] is True
@@ -106,7 +109,7 @@ class TestMetadataAnalyzerWithPlaybookSchema:
             "properties": {"PROJECT_ID": {"type": "string"}},
         }
         schema_path = self._write_schema(tmp_path, schema)
-        analyzer = MetadataAnalyzer(metadata={}, meta_schema_path=schema_path)
+        analyzer = MetadataAnalyzer(metadata={}, meta_schema_paths=[schema_path])
         result = analyzer.analyze()
         assert result["valid"] is False
         assert result["metadata_validation"]["PROJECT_ID"]["valid"] is False
@@ -121,7 +124,7 @@ class TestMetadataAnalyzerWithPlaybookSchema:
         }
         schema_path = self._write_schema(tmp_path, schema)
         analyzer = MetadataAnalyzer(
-            metadata={"PROJECT_ID": 42}, meta_schema_path=schema_path
+            metadata={"PROJECT_ID": 42}, meta_schema_paths=[schema_path]
         )
         result = analyzer.analyze()
         assert result["valid"] is False
@@ -134,19 +137,27 @@ class TestMetadataAnalyzerWithPlaybookSchema:
             "properties": {"OPTIONAL_FIELD": {"type": "string"}},
         }
         schema_path = self._write_schema(tmp_path, schema)
-        analyzer = MetadataAnalyzer(metadata={}, meta_schema_path=schema_path)
+        analyzer = MetadataAnalyzer(metadata={}, meta_schema_paths=[schema_path])
         result = analyzer.analyze()
         assert result["valid"] is True
         assert "OPTIONAL_FIELD" not in result["metadata"]
         assert result["metadata_validation"]["OPTIONAL_FIELD"] == {"valid": True}
 
-    def test_nonexistent_schema_path_falls_back_to_well_known(self, tmp_path):
+    def test_nonexistent_schema_path_is_a_hard_error(self, tmp_path):
+        """A named-but-unreadable schema must not silently degrade to well-known only."""
         nonexistent = tmp_path / "does_not_exist.json"
         analyzer = MetadataAnalyzer(
-            metadata={"ci": {"platform": "github"}}, meta_schema_path=nonexistent
+            metadata={"ci": {"platform": "github"}}, meta_schema_paths=[nonexistent]
         )
-        result = analyzer.analyze()
-        assert result["valid"] is True
+        with pytest.raises(AnalyzerError, match="does_not_exist.json"):
+            analyzer.analyze()
+
+    def test_malformed_schema_is_a_hard_error(self, tmp_path):
+        broken = tmp_path / "meta.schema.json"
+        broken.write_text("{ not json", encoding="utf-8")
+        analyzer = MetadataAnalyzer(metadata={}, meta_schema_paths=[broken])
+        with pytest.raises(AnalyzerError, match="meta.schema.json"):
+            analyzer.analyze()
 
     def test_combined_well_known_and_playbook_fields(self, tmp_path):
         schema = {
@@ -158,7 +169,7 @@ class TestMetadataAnalyzerWithPlaybookSchema:
         schema_path = self._write_schema(tmp_path, schema)
         analyzer = MetadataAnalyzer(
             metadata={"PROJECT_ID": "PROJ-1", "ci": {"platform": "gitlab"}},
-            meta_schema_path=schema_path,
+            meta_schema_paths=[schema_path],
         )
         result = analyzer.analyze()
         assert result["valid"] is True
@@ -184,7 +195,7 @@ class TestMetadataAnalyzerWithPlaybookSchema:
         }
         schema_path = self._write_schema(tmp_path, schema)
         analyzer = MetadataAnalyzer(
-            metadata={"FIELD_A": "present"}, meta_schema_path=schema_path
+            metadata={"FIELD_A": "present"}, meta_schema_paths=[schema_path]
         )
         result = analyzer.analyze()
         assert result["valid"] is False
@@ -201,7 +212,7 @@ class TestMetadataAnalyzerWithPlaybookSchema:
         }
         schema_path = self._write_schema(tmp_path, schema)
         analyzer = MetadataAnalyzer(
-            metadata={"KNOWN": "ok", "SURPRISE": "x"}, meta_schema_path=schema_path
+            metadata={"KNOWN": "ok", "SURPRISE": "x"}, meta_schema_paths=[schema_path]
         )
         result = analyzer.analyze()
         assert result["valid"] is False
@@ -210,6 +221,55 @@ class TestMetadataAnalyzerWithPlaybookSchema:
             k for k, v in result["metadata_validation"].items() if not v["valid"]
         ]
         assert invalid, "expected at least one invalid entry for the structural error"
+
+
+class TestMetadataAnalyzerSeveralSchemas:
+    """Every schema source stacks by allOf; none can relax another."""
+
+    @staticmethod
+    def _write(path: Path, required: str) -> Path:
+        path.write_text(
+            json.dumps(
+                {
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
+                    "type": "object",
+                    "required": [required],
+                    "properties": {required: {"type": "string"}},
+                }
+            ),
+            encoding="utf-8",
+        )
+        return path
+
+    def test_both_schemas_are_enforced(self, tmp_path):
+        a = self._write(tmp_path / "a.json", "PROJECT_ID")
+        b = self._write(tmp_path / "b.json", "SAISINE_URL")
+        analyzer = MetadataAnalyzer(
+            metadata={"PROJECT_ID": "PROJ-42"}, meta_schema_paths=[a, b]
+        )
+        result = analyzer.analyze()
+        assert result["valid"] is False
+        assert result["metadata_validation"]["PROJECT_ID"] == {"valid": True}
+        assert result["metadata_validation"]["SAISINE_URL"]["valid"] is False
+
+    def test_all_requirements_satisfied(self, tmp_path):
+        a = self._write(tmp_path / "a.json", "PROJECT_ID")
+        b = self._write(tmp_path / "b.json", "SAISINE_URL")
+        analyzer = MetadataAnalyzer(
+            metadata={"PROJECT_ID": "PROJ-42", "SAISINE_URL": "https://x.example/c"},
+            meta_schema_paths=[a, b],
+        )
+        assert analyzer.analyze()["valid"] is True
+
+    def test_schema_sources_lists_loaded_schemas_in_order(self, tmp_path):
+        a = self._write(tmp_path / "a.json", "PROJECT_ID")
+        b = self._write(tmp_path / "b.json", "SAISINE_URL")
+        result = MetadataAnalyzer(metadata={}, meta_schema_paths=[a, b]).analyze()
+        assert result["schema_sources"] == [str(a), str(b)]
+
+    def test_schema_sources_empty_without_a_source(self):
+        result = MetadataAnalyzer(metadata={"ci": {"platform": "github"}}).analyze()
+        assert result["schema_sources"] == []
 
 
 def test_metadata_analyze_ignores_context():
@@ -221,3 +281,49 @@ def test_metadata_analyze_ignores_context():
     via_ctx = a.analyze(object())  # loop-style call with an (ignored) ctx
     assert via_none == via_ctx
     assert via_none["metadata"] == {"ci": {"job": {"id": "1"}}}
+
+
+class TestMetadataAnalyzerAdvisoryMode:
+    """Advisory mode suspends the sanction, never the finding."""
+
+    @staticmethod
+    def _schema(tmp_path: Path) -> Path:
+        path = tmp_path / "meta.schema.json"
+        path.write_text(
+            json.dumps(
+                {
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
+                    "type": "object",
+                    "required": ["SAISINE_URL"],
+                    "properties": {"SAISINE_URL": {"type": "string"}},
+                }
+            ),
+            encoding="utf-8",
+        )
+        return path
+
+    def test_enforcing_by_default(self, tmp_path):
+        result = MetadataAnalyzer(
+            metadata={}, meta_schema_paths=[self._schema(tmp_path)]
+        ).analyze()
+        assert result["enforcement"] == "enforcing"
+
+    def test_advisory_keeps_the_finding_intact(self, tmp_path):
+        schema = self._schema(tmp_path)
+        result = MetadataAnalyzer(
+            metadata={}, meta_schema_paths=[schema], advisory=True
+        ).analyze()
+        assert result["enforcement"] == "advisory"
+        # The derogation suspends the sanction, not the constatation.
+        assert result["valid"] is False
+        assert result["metadata_validation"]["SAISINE_URL"]["valid"] is False
+        assert result["schema_sources"] == [str(schema)]
+
+    def test_advisory_recorded_even_when_valid(self, tmp_path):
+        result = MetadataAnalyzer(
+            metadata={"SAISINE_URL": "https://x.example/c"},
+            meta_schema_paths=[self._schema(tmp_path)],
+            advisory=True,
+        ).analyze()
+        assert result["valid"] is True
+        assert result["enforcement"] == "advisory"
