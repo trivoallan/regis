@@ -22,6 +22,7 @@ from regis.adapters.driven.report.presentation_renderer import (
 from regis.adapters.driving.cli.composition import build_analyze_image, build_evaluate
 from regis.core.application.analyze_image import AnalyzerOutcome
 from regis.core.domain.analyzers.base import BaseAnalyzer
+from regis.core.domain.errors import AnalyzerError, PlaybookError
 from regis.core.domain.rules.breach import breached_slugs
 from regis.core.model.image_reference import ImageReference
 from regis.core.model.report import Report
@@ -118,6 +119,111 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     return result
 
 
+#: Exit code for a malformed call: the supplied --meta does not satisfy a schema in
+#: force. Distinct from 1 (the image was refused by the rules, or regis could not run)
+#: and from Click's 2 (usage error), so an orchestrator can tell "bad invocation" from
+#: "bad image" without reading the report.
+#
+# incongru-voix: lessig — a bundle's meta.schema.json now fails its consumers' pipelines,
+# regulated by architecture (sys.exit, checked before any other outcome) — recours: none
+# in the tool; the schema's author and the caller who pays for it may be different people.
+# Full four-modality analysis and the open question in
+# openspec/changes/metadata-validation-enforcement/design.md § Regulation analysis.
+EXIT_METADATA_INVALID = 3
+
+
+def _resolve_meta_schemas(
+    playbook_paths: tuple[str, ...],
+    explicit: tuple[Path, ...],
+    *,
+    has_meta: bool,
+    quiet: bool,
+) -> list[Path]:
+    """Collect the metadata schemas in force, bundle schemas first.
+
+    Warns when metadata was supplied but no schema can be loaded — a playbook passed
+    as a file or a URL cannot carry a ``meta.schema.json``, which would otherwise
+    disable a declared requirement without a word.
+    """
+    from regis.core.domain.playbook.loader import bundle_meta_schema_path, is_bundle
+
+    resolved: list[Path] = []
+    unusable: list[str] = []
+    for path in playbook_paths:
+        if not is_bundle(path):
+            unusable.append(str(path))
+            continue
+        schema = bundle_meta_schema_path(path)
+        if schema is not None:
+            resolved.append(schema)
+    resolved.extend(explicit)
+
+    if has_meta and not resolved and unusable:
+        _info(
+            f"  Warning: --meta supplied but no metadata schema is in force — "
+            f"{', '.join(unusable)} is not a bundle directory, so it cannot carry a "
+            f"meta.schema.json. Required fields are not enforced.",
+            quiet=quiet,
+        )
+    return resolved
+
+
+def _exit_if_metadata_invalid(report: dict[str, Any], *, quiet: bool) -> None:
+    """Exit 3 when metadata violates a schema in force, unless a derogation applies.
+
+    The derogation is read from the report (``results.metadata.enforcement``) rather
+    than from the flag, so the normal and ``--rerun`` paths share one rule and the
+    written artefact is the single source of truth for what was enforced.
+
+    Two cases leave the exit code untouched but still report the violation, because a
+    suspended sanction must stay legible: no schema source beyond the well-known one
+    (a caller who opted into nothing), and an explicit advisory run.
+    """
+    result = report.get("results", {}).get("metadata")
+    if not isinstance(result, dict) or result.get("valid", True):
+        return
+
+    invalid = {
+        field: entry.get("error", "invalid")
+        for field, entry in result.get("metadata_validation", {}).items()
+        if isinstance(entry, dict) and not entry.get("valid", True)
+    }
+    detail = "; ".join(f"{field}: {msg}" for field, msg in invalid.items())
+    sources = result.get("schema_sources") or []
+
+    if not sources:
+        _info(
+            f"  Warning: metadata does not satisfy the well-known schema: {detail}",
+            quiet=quiet,
+        )
+        return
+
+    if result.get("enforcement") == "advisory":
+        # Never silenced by --quiet: a derogation the operator asked for is exactly
+        # what a later reader needs to see, and it is recorded in the report too.
+        click.echo(
+            click.style(
+                f"\nWarning: metadata does not satisfy the required schema "
+                f"(advisory, not enforced): {detail}",
+                fg="yellow",
+            ),
+            err=True,
+        )
+        click.echo(f"Checked against: {', '.join(sources)}", err=True)
+        return
+
+    click.echo(
+        click.style(
+            "\nError: metadata does not satisfy the required schema:", fg="red"
+        ),
+        err=True,
+    )
+    for field, msg in invalid.items():
+        click.echo(click.style(f"  {field}: {msg}", fg="red"), err=True)
+    click.echo(f"Checked against: {', '.join(sources)}", err=True)
+    sys.exit(EXIT_METADATA_INVALID)
+
+
 @click.command()
 @click.argument("url", required=False, default="")
 @click.option(
@@ -186,6 +292,29 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     "meta",
     multiple=True,
     help="Arbitrary metadata in key=value format. Can be repeated. Supports dot notation (e.g. ci.job_id=123).",
+)
+@click.option(
+    "--meta-schema",
+    "meta_schema_paths",
+    multiple=True,
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    help=(
+        "Path to a JSON Schema constraining --meta values. Can be repeated. "
+        "Stacks with any playbook bundle meta.schema.json; a violation exits 3."
+    ),
+)
+@click.option(
+    "--meta-advisory",
+    "meta_advisory",
+    is_flag=True,
+    default=False,
+    envvar="REGIS_META_ADVISORY",
+    show_envvar=True,
+    help=(
+        "Report metadata violations without failing: keeps the findings in the report "
+        "and returns 0. Records enforcement='advisory' so a downstream consumer sees "
+        "the derogation and can refuse it."
+    ),
 )
 @click.option(
     "--html",
@@ -289,6 +418,8 @@ def analyze(
     sections: str,
     theme: str,
     meta: tuple[str, ...],
+    meta_schema_paths: tuple[Path, ...],
+    meta_advisory: bool,
     auth: tuple[str, ...],
     cache: bool,
     platform: str | None = None,
@@ -337,8 +468,21 @@ def analyze(
         metadata_dict = _parse_meta(meta)
 
         if rerun == MetadataAnalyzer.name:
-            meta_analyzer = MetadataAnalyzer(metadata=metadata_dict)
-            result = meta_analyzer.analyze()
+            schemas = _resolve_meta_schemas(
+                playbook_paths,
+                meta_schema_paths,
+                has_meta=bool(meta),
+                quiet=quiet,
+            )
+            meta_analyzer = MetadataAnalyzer(
+                metadata=metadata_dict,
+                meta_schema_paths=schemas,
+                advisory=meta_advisory,
+            )
+            try:
+                result = meta_analyzer.analyze()
+            except AnalyzerError as exc:
+                raise click.ClickException(str(exc)) from exc
         else:
             from regis.adapters.driven.registry.auth import resolve_credentials
 
@@ -382,6 +526,7 @@ def analyze(
             encoding="utf-8",
         )
         _info(f"  Report updated at {report_path}", quiet=quiet)
+        _exit_if_metadata_invalid(rerun_report, quiet=quiet)
         return
 
     # Normal analysis flow requires a URL
@@ -556,7 +701,6 @@ def analyze(
         _info(msg, quiet=quiet, err=True)
 
     from regis.core.application.analyze_image import AnalysisResult
-    from regis.core.domain.errors import AnalyzerError, PlaybookError
 
     analysis: AnalysisResult
     try:
@@ -567,6 +711,13 @@ def analyze(
             digest=digest,
             formats=formats,
             metadata=_parse_meta(meta) or None,
+            meta_schema_paths=_resolve_meta_schemas(
+                playbook_paths,
+                meta_schema_paths,
+                has_meta=bool(meta),
+                quiet=quiet,
+            ),
+            meta_advisory=meta_advisory,
             playbook_paths=playbook_paths,
             show_rules=evaluate,
             on_playbook_progress=_on_playbook_progress,
@@ -578,6 +729,9 @@ def analyze(
         raise click.ClickException(str(exc)) from exc
 
     _render_verdict_block(analysis.report, quiet=quiet)
+    # A malformed call outranks the verdict: exit 3 before any breach check, so the
+    # caller is told the invocation was wrong rather than that the image was refused.
+    _exit_if_metadata_invalid(analysis.report, quiet=quiet)
     if evaluate and fail and analysis.has_breaches:
         click.echo(
             f"\nError: Analysis failed due to {analysis.breach_count} rule breaches "
@@ -683,7 +837,6 @@ def evaluate_cmd(
     if sections != "all" and not html_single:
         click.echo("  Warning: --sections has no effect without --html.", err=True)
 
-    from regis.core.domain.errors import PlaybookError
     from regis.utils.report import _echo_progress
 
     try:

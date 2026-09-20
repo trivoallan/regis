@@ -642,3 +642,142 @@ def test_no_decorator_uses_tools_directly():
     uc = _make_use_case(tools=FakeToolRunner(scan_vulnerabilities={"count": 9}))
     reports = uc.run(IMAGE, {"ctxone": _CtxAnalyzer})
     assert reports["ctxone"]["vulns"] == 9
+
+
+# ----------------------------------------------------------------------
+# Metadata validation on the normal path
+# ----------------------------------------------------------------------
+
+
+def _no_playbooks(monkeypatch):
+    monkeypatch.setattr(
+        "regis.core.application.analyze_image.validate_report",
+        lambda report: None,
+    )
+    monkeypatch.setattr(
+        "regis.core.application.analyze_image.run_playbooks",
+        lambda paths, report, show_rules=False, on_progress=None: dict(report),
+    )
+
+
+def _required_schema(tmp_path, field):
+    import json
+
+    path = tmp_path / "meta.schema.json"
+    path.write_text(
+        json.dumps(
+            {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "required": [field],
+                "properties": {field: {"type": "string"}},
+            }
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
+def test_run_and_evaluate_metadata_analyzer_sees_supplied_metadata(monkeypatch):
+    """The metadata analyzer validates the --meta values, not an empty dict."""
+    from regis.core.domain.analyzers.metadata import MetadataAnalyzer
+
+    _no_playbooks(monkeypatch)
+    uc = _make_use_case()
+
+    result = uc.run_and_evaluate(
+        IMAGE,
+        {"a": _SimpleCtxAnalyzer, "metadata": MetadataAnalyzer},
+        url="nginx:latest",
+        digest="sha256:d",
+        formats=["json"],
+        metadata={"PROJECT_ID": "PROJ-42"},
+    )
+    meta = result.report["results"]["metadata"]
+    assert meta["metadata"] == {"PROJECT_ID": "PROJ-42"}
+    assert "metadata" in result.report["request"]["analyzers"]
+
+
+def test_run_and_evaluate_missing_required_metadata_is_invalid(monkeypatch, tmp_path):
+    """The false green: a declared-but-missing field must not report valid."""
+    from regis.core.domain.analyzers.metadata import MetadataAnalyzer
+
+    _no_playbooks(monkeypatch)
+    schema = _required_schema(tmp_path, "SAISINE_URL")
+    uc = _make_use_case()
+
+    result = uc.run_and_evaluate(
+        IMAGE,
+        {"a": _SimpleCtxAnalyzer, "metadata": MetadataAnalyzer},
+        url="nginx:latest",
+        digest="sha256:d",
+        formats=["json"],
+        metadata={"PROJECT_ID": "PROJ-42"},
+        meta_schema_paths=[schema],
+    )
+    meta = result.report["results"]["metadata"]
+    assert meta["valid"] is False
+    assert meta["metadata_validation"]["SAISINE_URL"]["valid"] is False
+    assert meta["schema_sources"] == [str(schema)]
+
+
+def test_run_and_evaluate_unreadable_schema_aborts(monkeypatch, tmp_path):
+    """A broken regime is not an absent regime: the run fails instead of degrading."""
+    from regis.core.domain.analyzers.metadata import MetadataAnalyzer
+
+    _no_playbooks(monkeypatch)
+    broken = tmp_path / "meta.schema.json"
+    broken.write_text("{ not json", encoding="utf-8")
+    uc = _make_use_case()
+
+    with pytest.raises(AnalyzerError, match="meta.schema.json"):
+        uc.run_and_evaluate(
+            IMAGE,
+            {"a": _SimpleCtxAnalyzer, "metadata": MetadataAnalyzer},
+            url="nginx:latest",
+            digest="sha256:d",
+            formats=["json"],
+            metadata={"PROJECT_ID": "PROJ-42"},
+            meta_schema_paths=[broken],
+        )
+
+
+def test_run_and_evaluate_metadata_only_selection(monkeypatch):
+    """`-a metadata` alone must still produce a report."""
+    from regis.core.domain.analyzers.metadata import MetadataAnalyzer
+
+    _no_playbooks(monkeypatch)
+    uc = _make_use_case()
+
+    result = uc.run_and_evaluate(
+        IMAGE,
+        {"metadata": MetadataAnalyzer},
+        url="nginx:latest",
+        digest="sha256:d",
+        formats=["json"],
+        metadata={"PROJECT_ID": "PROJ-42"},
+    )
+    assert result.report["results"]["metadata"]["valid"] is True
+
+
+def test_run_and_evaluate_forwards_advisory(monkeypatch, tmp_path):
+    """Advisory travels to the analyzer so the emitted report carries the derogation."""
+    from regis.core.domain.analyzers.metadata import MetadataAnalyzer
+
+    _no_playbooks(monkeypatch)
+    schema = _required_schema(tmp_path, "SAISINE_URL")
+    uc = _make_use_case()
+
+    result = uc.run_and_evaluate(
+        IMAGE,
+        {"a": _SimpleCtxAnalyzer, "metadata": MetadataAnalyzer},
+        url="nginx:latest",
+        digest="sha256:d",
+        formats=["json"],
+        metadata={"PROJECT_ID": "PROJ-42"},
+        meta_schema_paths=[schema],
+        meta_advisory=True,
+    )
+    meta = result.report["results"]["metadata"]
+    assert meta["enforcement"] == "advisory"
+    assert meta["valid"] is False

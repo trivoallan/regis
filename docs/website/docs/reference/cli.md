@@ -54,6 +54,8 @@ _Performance / caching:_
 _Metadata:_
 
 - `-m, --meta KEY=VALUE`: Arbitrary metadata. Supports dot notation (`ci.job_id=123`). Repeatable.
+- `--meta-schema PATH`: Path to a JSON Schema constraining `--meta` values. Repeatable, local paths only. Stacks by `allOf` with the well-known schema and each `--playbook` bundle's `meta.schema.json`; a source can only add constraints. A violation exits `3`. See [Metadata](../concepts/playbooks.md#metadata).
+- `--meta-advisory`: Report metadata violations without failing — keeps the findings in the report, returns `0`, and records `results.metadata.enforcement: "advisory"` so a downstream consumer sees the derogation and can refuse it. Env: `REGIS_META_ADVISORY`. Never masks a rule breach. See [Derogation](../concepts/playbooks.md#derogation---meta-advisory).
 - `--merge-meta`: Merge `--meta` into existing metadata instead of replacing (only with `--rerun`).
 
 _Re-running a single analyzer:_
@@ -87,17 +89,33 @@ The tier headline (`🥈 Silver`) is data-driven: each tier in a playbook may de
 
 The verdict block is written to stderr and shown by default. The same verdict header is prepended to the `--markdown` report and rendered as a panel at the top of the `--html` report. All of this is silenced under `-q`/`--quiet`.
 
+_Exit codes:_
+
+| Code | Meaning                                                                                                                                         |
+| :--- | :---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`  | Analysis completed; no breach at or above `--fail-level` (or `--fail` not requested).                                                           |
+| `1`  | Rules breached with `--fail`, or regis could not complete the run (unreadable playbook or metadata schema, no analyzer succeeded).              |
+| `2`  | Usage error (unknown option, missing argument, a `--meta-schema` path that does not exist).                                                     |
+| `3`  | **Malformed call**: the `--meta` values violate a schema the caller opted into. Independent of `--fail`; the report is written before the exit. |
+
+Code `3` separates "the call was wrong" from "the image was refused" (`1`), so an
+orchestrator can react to each without parsing the report. It is raised only when a schema
+beyond the well-known one is in force — see [Metadata](../concepts/playbooks.md#consequences-of-an-invalid-field).
+`--meta-advisory` suspends code `3` while keeping the finding in the report; it does not
+affect code `1`.
+
 _Environment variables:_
 
 The most frequently repeated `analyze` flags can be set via the environment. CLI flags always take precedence.
 
-| Variable            | Equivalent flag    |
-| :------------------ | :----------------- |
-| `REGIS_PLAYBOOK`    | `-p, --playbook`   |
-| `REGIS_PLATFORM`    | `--platform`       |
-| `REGIS_OUTPUT`      | `-o, --output`     |
-| `REGIS_OUTPUT_DIR`  | `-D, --output-dir` |
-| `REGIS_MAX_WORKERS` | `--max-workers`    |
+| Variable              | Equivalent flag    |
+| :-------------------- | :----------------- |
+| `REGIS_PLAYBOOK`      | `-p, --playbook`   |
+| `REGIS_PLATFORM`      | `--platform`       |
+| `REGIS_OUTPUT`        | `-o, --output`     |
+| `REGIS_OUTPUT_DIR`    | `-D, --output-dir` |
+| `REGIS_MAX_WORKERS`   | `--max-workers`    |
+| `REGIS_META_ADVISORY` | `--meta-advisory`  |
 
 ### `evaluate`
 
