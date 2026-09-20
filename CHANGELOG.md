@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.39.0](https://github.com/trivoallan/regis/compare/v0.38.1...v0.39.0) (2026-09-20)
+
+### ⚠ BREAKING CHANGES
+
+- **playbook:** a playbook bundle shipping a `meta.schema.json` whose constraints were silently ignored now fails the run with exit code 3, and a schema that cannot be parsed aborts with exit code 1 instead of being skipped. Callers passing `--meta` with no schema source keep their current behaviour. Use `--meta-advisory` (or `REGIS_META_ADVISORY=1`) to cross the migration.
+
+### Features
+
+- **playbook:** enforce the metadata contract a playbook bundle declares ([#855](https://github.com/trivoallan/regis/issues/855)) ([78e199b](https://github.com/trivoallan/regis/commit/78e199b16434e0a5ad47b2df66ca63f722731a0a))
+
 ## [0.38.1](https://github.com/trivoallan/regis/compare/v0.38.0...v0.38.1) (2026-09-19)
 
 ### Bug Fixes
