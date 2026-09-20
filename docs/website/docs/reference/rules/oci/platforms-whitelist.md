@@ -8,21 +8,21 @@ tags:
 
 Image must only support allowed platforms.
 
-| Provider | Level   | Tags          |
-| :------- | :------ | :------------ |
-| oci      | Warning | compatibility |
+| Provider | Level | Tags |
+| :--- | :--- | :--- |
+| oci | Warning | compatibility |
 
 ## Parameters
 
-| Name        | Default Value                    | Description |
-| :---------- | :------------------------------- | :---------- |
-| `platforms` | `['linux/amd64', 'linux/arm64']` | n/a         |
+| Name | Default Value | Description |
+| :--- | :--- | :--- |
+| `platforms` | `['linux/amd64', 'linux/arm64']` | n/a |
 
 ## Messages
 
-| Type     | Message                                                                                                           |
-| :------- | :---------------------------------------------------------------------------------------------------------------- |
-| **Pass** | All supported platforms are allowed.                                                                              |
+| Type | Message |
+| :--- | :--- |
+| **Pass** | All supported platforms are allowed. |
 | **Fail** | Image supports disallowed platforms: ${results.oci.platforms_supported} (allowed: ${criterion.params.platforms}). |
 
 ## Playbook Example
@@ -33,8 +33,8 @@ rules:
     criterion: platforms-whitelist
     options:
       platforms:
-        - linux/amd64
-        - linux/arm64
+      - linux/amd64
+      - linux/arm64
 ```
 
 ## Condition
