@@ -743,4 +743,4 @@ Must be one of:
 * "information"
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-09-19 at 21:07:52 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-09-20 at 06:41:04 +0000
