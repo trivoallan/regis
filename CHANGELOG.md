@@ -2,10 +2,9 @@
 
 ## [0.39.1](https://github.com/trivoallan/regis/compare/v0.39.0...v0.39.1) (2026-09-28)
 
-
 ### Bug Fixes
 
-* **deps:** update js dependencies (non-major) ([#861](https://github.com/trivoallan/regis/issues/861)) ([ef7042d](https://github.com/trivoallan/regis/commit/ef7042db9b0ab42cec2a4e79cf48783312d13d69))
+- **deps:** update js dependencies (non-major) ([#861](https://github.com/trivoallan/regis/issues/861)) ([ef7042d](https://github.com/trivoallan/regis/commit/ef7042db9b0ab42cec2a4e79cf48783312d13d69))
 
 ## [0.39.0](https://github.com/trivoallan/regis/compare/v0.38.1...v0.39.0) (2026-09-20)
 
