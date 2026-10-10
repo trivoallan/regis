@@ -79,3 +79,23 @@ def get_image_config(
     if not config_digest:
         raise RegistryError(f"No config digest in manifest for {reference}")
     return inspector.get_blob(str(config_digest))
+
+
+def get_first_platform_config(
+    inspector: ImageInspector, reference: str
+) -> dict[str, Any]:
+    """Return the config blob of the first real platform of the index *reference*.
+
+    For facts that do not depend on the architecture (a creation date): an image
+    built for a single platform other than the one asked for still carries them.
+    Attestation entries are skipped.
+    """
+    index = inspector.get_manifest(reference)
+    entries = filter_real_platforms(index.get("manifests", []))
+    if not entries:
+        raise RegistryError(f"No platform manifest in {reference}")
+    manifest = inspector.get_manifest(str(entries[0].get("digest")))
+    config_digest = manifest.get("config", {}).get("digest")
+    if not config_digest:
+        raise RegistryError(f"No config digest in manifest for {reference}")
+    return inspector.get_blob(str(config_digest))

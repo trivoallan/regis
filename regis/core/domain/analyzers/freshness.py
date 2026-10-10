@@ -8,7 +8,8 @@ from typing import Any
 
 from regis.core.domain.analyzers.base import BaseAnalyzer
 from regis.core.domain.context import AnalysisContext
-from regis.core.domain.manifest import get_image_config
+from regis.core.domain.errors import RegistryError
+from regis.core.domain.manifest import get_first_platform_config, get_image_config
 from regis.core.ports.image_inspector import ImageInspector
 
 logger = logging.getLogger(__name__)
@@ -22,7 +23,12 @@ _PINNED_BEFORE = datetime(1980, 1, 1, tzinfo=timezone.utc)
 def _get_created_date(inspector: ImageInspector, reference: str) -> str | None:
     """Extract the creation date from an image config using the domain helper."""
     try:
-        config = get_image_config(inspector, reference, "linux", "amd64")
+        try:
+            config = get_image_config(inspector, reference, "linux", "amd64")
+        except RegistryError:
+            # No linux/amd64 in the index (a single-platform arm64 build): the creation
+            # date is not a per-architecture fact, any real platform's config carries it.
+            config = get_first_platform_config(inspector, reference)
         return config.get("created")  # type: ignore[no-any-return]
     except Exception:
         logger.debug("get_image_config failed for %s", reference, exc_info=True)
