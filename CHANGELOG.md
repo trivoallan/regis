@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.39.1](https://github.com/trivoallan/regis/compare/v0.39.0...v0.39.1) (2026-10-10)
+
+
+### Bug Fixes
+
+* **analyzer/freshness:** read the creation date of an image with no linux/amd64 variant ([#870](https://github.com/trivoallan/regis/issues/870)) ([4c147a7](https://github.com/trivoallan/regis/commit/4c147a7b94d010b7fb283dc6fa0f0fdd948bde80))
+* **deps:** raise urllib3 to 2.8.0 ([#871](https://github.com/trivoallan/regis/issues/871)) ([a780365](https://github.com/trivoallan/regis/commit/a78036585dfb1570795b2759deeb45c00d4c02a4))
+* **deps:** update js dependencies (non-major) ([#861](https://github.com/trivoallan/regis/issues/861)) ([ef7042d](https://github.com/trivoallan/regis/commit/ef7042db9b0ab42cec2a4e79cf48783312d13d69))
+
 ## [0.39.0](https://github.com/trivoallan/regis/compare/v0.38.1...v0.39.0) (2026-09-20)
 
 ### ⚠ BREAKING CHANGES
