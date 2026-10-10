@@ -24,6 +24,44 @@ class TestFreshnessAnalyzer:
         date = _get_created_date(inspector, "repo:tag")
         assert date is None
 
+    def test_get_created_date_without_amd64(self):
+        """A single-platform arm64 build still has a creation date: any real platform carries it."""
+        inspector = FakeImageInspector(
+            manifests={
+                "repo:tag": {
+                    "mediaType": "application/vnd.oci.image.index.v1+json",
+                    "manifests": [
+                        {
+                            "digest": "sha256:att",
+                            "platform": {"architecture": "unknown", "os": "unknown"},
+                        },
+                        {
+                            "digest": "sha256:arm",
+                            "platform": {"architecture": "arm64", "os": "linux"},
+                        },
+                    ],
+                },
+                "sha256:arm": {"mediaType": "single", "config": {"digest": "sha256:c"}},
+            },
+            blobs={"sha256:c": {"created": "2026-10-10T15:55:03Z"}},
+        )
+        assert _get_created_date(inspector, "repo:tag") == "2026-10-10T15:55:03Z"
+
+    def test_get_created_date_index_without_any_platform(self):
+        """An index that only holds attestation entries has no creation date to read."""
+        inspector = FakeImageInspector(
+            manifest={
+                "mediaType": "application/vnd.oci.image.index.v1+json",
+                "manifests": [
+                    {
+                        "digest": "sha256:att",
+                        "platform": {"architecture": "unknown", "os": "unknown"},
+                    }
+                ],
+            },
+        )
+        assert _get_created_date(inspector, "repo:tag") is None
+
     def test_analyze_datetime_errors(self):
         """Age computation is skipped when the created value is not a valid ISO timestamp."""
         # tag "tag" → invalid date; "latest" → valid date
