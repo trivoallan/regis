@@ -8,6 +8,8 @@ ci-tools: ## Rien à installer : uv suffit
 lint: ## ruff, mypy, frontières hexagonales, référence à jour, gardes du dépôt
 	uv run ruff check .
 	uv run ruff format --check .
+	# La base Python vient de la porte (trivoallan/base-images), épinglée par digest.
+	@bad="$$(grep -nE '^FROM[[:space:]]+[^[:space:]]*python[:@]' Dockerfile | grep -vE 'ghcr\.io/[^/]+/base/python:[^@[:space:]]+@sha256:[0-9a-f]{64}' || true)"; test -z "$$bad" || { printf 'Dockerfile:%s\n' "$$bad" >&2; echo "base Python hors de la porte : FROM ghcr.io/<owner>/base/python:<tag>@sha256:<digest>" >&2; exit 1; }
 	uv run mypy regis
 	uv run lint-imports
 	$(MAKE) reference

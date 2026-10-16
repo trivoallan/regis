@@ -27,6 +27,6 @@
     { matchManagers: ["dockerfile"], matchUpdateTypes: ["minor", "patch", "pin", "digest"], groupName: "docker base images (non-major)", automerge: true },
     { matchUpdateTypes: ["major"], draftPR: true, automerge: false },
     // Une montée mineure ou majeure de Python (image de base, .python-version) se décide : elle sort des groupes et ne fusionne pas seule.
-    { matchPackageNames: ["python"], matchUpdateTypes: ["minor", "major"], groupName: null, automerge: false },
+    { matchPackageNames: ["python", "ghcr.io/*/base/python"], matchUpdateTypes: ["minor", "major"], groupName: null, automerge: false },
   ],
 }
