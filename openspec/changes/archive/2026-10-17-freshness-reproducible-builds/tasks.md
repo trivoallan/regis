@@ -10,4 +10,4 @@
 ## 3. Verification
 
 - [x] 3.1 Run `uv run pytest` and verify the coverage gates still pass
-- [ ] 3.2 Re-run `regis analyze` on `gcr.io/distroless/static-debian12:nonroot` with the oci-supply-chain-spec playbook and verify `rules.age.passed` is true
+- [x] 3.2 Re-run `regis analyze` on `gcr.io/distroless/static-debian12:nonroot` with the oci-supply-chain-spec playbook and verify `rules.age.passed` is true (that playbook names the `age` rule `freshness`: `rules.freshness.passed` is true on 2026-10-17)
