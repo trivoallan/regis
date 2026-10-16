@@ -9,6 +9,9 @@ on:
 permissions:
   contents: read
 
+env:
+  UV_LOCKED: "1" # uv run échoue si uv.lock ne correspond plus à pyproject.toml
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
