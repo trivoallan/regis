@@ -35,4 +35,4 @@ Run Regis in CI with the [**regis-security-analysis**](https://github.com/market
 
 ## License
 
-MIT
+Apache License 2.0 — see [LICENSE](LICENSE).

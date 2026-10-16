@@ -142,7 +142,7 @@ LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.documentation="https://trivoallan.github.io/regis/" \
       org.opencontainers.image.vendor="trivoallan" \
       org.opencontainers.image.authors="trivoallan" \
-      org.opencontainers.image.licenses="MIT"
+      org.opencontainers.image.licenses="Apache-2.0"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -185,7 +185,7 @@ LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.documentation="https://trivoallan.github.io/regis/" \
       org.opencontainers.image.vendor="trivoallan" \
       org.opencontainers.image.authors="trivoallan" \
-      org.opencontainers.image.licenses="MIT"
+      org.opencontainers.image.licenses="Apache-2.0"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
