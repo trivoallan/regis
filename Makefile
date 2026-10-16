@@ -11,27 +11,29 @@ lint: ## ruff, mypy, frontières hexagonales, référence à jour, gardes du dé
 	uv run mypy regis
 	uv run lint-imports
 	$(MAKE) reference
-	git diff --exit-code -- docs/reference || { echo "docs/reference est périmé : lancer 'make reference' et commiter."; exit 1; }
-	! git ls-files -- 'docs/superpowers/plans/**' '**/search-index.json' | grep .
+	test -z "$$(git status --porcelain -- docs/reference)" || { git status --short -- docs/reference; echo "docs/reference est périmé : lancer 'make reference' et commiter."; exit 1; }
+	! git ls-files -- 'docs/superpowers/plans/**' '**/search-index.json' | grep . || { echo "plans d'exécution ou artefacts de doc commités"; exit 1; }
 
 reference: ## Régénère la référence des règles et des schémas
+	mkdir -p docs/reference/rules
 	uv run regis rules list -f markdown -D docs/reference/rules
-	for cat in $$(cd regis/schemas && ls -d */ | tr -d /); do \
+	for cat in $$(find regis/schemas -mindepth 1 -maxdepth 1 -type d ! -name __pycache__ -exec basename {} \; | sort); do \
+	  mkdir -p docs/reference/schemas/$$cat && \
 	  uv run generate-schema-doc --config-file docs/json-schema-for-humans.config.json \
-	    regis/schemas/$$cat docs/reference/schemas/$$cat; \
+	    regis/schemas/$$cat docs/reference/schemas/$$cat || exit 1; \
 	done
 
 test: ## Tests et couverture de branches (90 %)
 	uv run python -m pytest
 
 security: ## pip-audit, bloquant à partir de HIGH (commande identique dans les trois dépôts)
-	@d=$$(mktemp -d) && \
-	uv export --frozen --no-dev --no-emit-project --no-hashes -o $$d/req.txt && \
-	{ uvx pip-audit -r $$d/req.txt --no-deps --disable-pip --progress-spinner off --format=json --output $$d/audit.json || true; } && \
-	test -s $$d/audit.json && \
-	python3 .github/pip-audit-gate.py $$d/audit.json --min-severity HIGH
+	@d="$$(mktemp -d)" && trap 'rm -rf "$$d"' EXIT && \
+	uv export -q --frozen --no-dev --no-emit-project --no-hashes -o "$$d/req.txt" && \
+	{ uvx pip-audit==2.10.1 -r "$$d/req.txt" --no-deps --disable-pip --progress-spinner off --format=json --output "$$d/audit.json" || true; } && \
+	test -s "$$d/audit.json" && \
+	python3 .github/pip-audit-gate.py "$$d/audit.json" --min-severity HIGH
 
-image: ## Construit et teste les deux variantes
+image: ## Construit et teste les deux variantes (les mêmes que .github/images.json)
 	docker build --build-arg VARIANT=slim -t $(CI_IMAGE) .
 	$(MAKE) smoke CI_IMAGE=$(CI_IMAGE)
 	docker build --build-arg VARIANT=full -t $(CI_IMAGE)-full .
