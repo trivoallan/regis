@@ -2,14 +2,11 @@
 
 > **Registry Scores** — Container Security & Policy-as-Code Orchestration
 
-![Coverage](./coverage-badge.svg)
-[![Docker Image Size](./image-size-badge.svg)](https://github.com/trivoallan/regis/pkgs/container/regis)
-
 Regis provides unified container analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.
 
-[![Dashboard Overview](.github/assets/report-overview.png)](https://trivoallan.github.io/regis/docs/reference/playbooks/default/examples/alpine)
+[![Dashboard Overview](.github/assets/report-overview.png)](docs/reference/playbooks/default/examples/alpine.md)
 
-**[Explore the interactive example report →](https://trivoallan.github.io/regis/docs/reference/playbooks/default/examples/alpine)**
+**[See how the example report is produced →](docs/reference/playbooks/default/examples/alpine.md)**
 
 ## Key Features
 
@@ -22,12 +19,12 @@ Regis provides unified container analysis, custom playbooks, and highly customiz
 
 ## Documentation
 
-Full documentation lives at **[trivoallan.github.io/regis](https://trivoallan.github.io/regis/)**:
+Full documentation lives in **[`docs/`](docs/README.md)**:
 
-- 🚀 [Getting Started](https://trivoallan.github.io/regis/docs/usage/getting-started) — install Regis and run your first analysis.
-- 📚 [Concepts](https://trivoallan.github.io/regis/docs/concepts/introduction) — analyzers, playbooks, rules, and scoring.
-- 🛠️ [Usage Guides](https://trivoallan.github.io/regis/docs/usage/analyze-image) — analyze images, manage scanner tools, configure registries.
-- 📖 [CLI Reference](https://trivoallan.github.io/regis/docs/reference/cli) — every command and flag.
+- 🚀 [Getting Started](docs/usage/getting-started.md) — install Regis and run your first analysis.
+- 📚 [Concepts](docs/concepts/introduction.md) — analyzers, playbooks, rules, and scoring.
+- 🛠️ [Usage Guides](docs/usage/analyze-image.md) — analyze images, manage scanner tools, configure registries.
+- 📖 [CLI Reference](docs/reference/cli.md) — every command and flag.
 
 ## GitHub Action
 

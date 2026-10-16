@@ -139,7 +139,7 @@ LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.description="Regis — Slim variant (scanners lazy-loaded at first use)." \
       org.opencontainers.image.url="https://github.com/trivoallan" \
       org.opencontainers.image.source="https://github.com/trivoallan/regis" \
-      org.opencontainers.image.documentation="https://trivoallan.github.io/regis/" \
+      org.opencontainers.image.documentation="https://github.com/trivoallan/regis/tree/main/docs" \
       org.opencontainers.image.vendor="trivoallan" \
       org.opencontainers.image.authors="trivoallan" \
       org.opencontainers.image.licenses="Apache-2.0"
@@ -182,7 +182,7 @@ LABEL org.opencontainers.image.title="regis" \
       org.opencontainers.image.description="Regis — Full variant (all scanners baked)." \
       org.opencontainers.image.url="https://github.com/trivoallan" \
       org.opencontainers.image.source="https://github.com/trivoallan/regis" \
-      org.opencontainers.image.documentation="https://trivoallan.github.io/regis/" \
+      org.opencontainers.image.documentation="https://github.com/trivoallan/regis/tree/main/docs" \
       org.opencontainers.image.vendor="trivoallan" \
       org.opencontainers.image.authors="trivoallan" \
       org.opencontainers.image.licenses="Apache-2.0"
@@ -222,9 +222,9 @@ CMD ["--help"]
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Final selector — picks final-slim or final-full based on VARIANT build-arg.
-# DL3006/CKV_DOCKER_7 are suppressed: `final-${VARIANT}` resolves to a local
+# DL3006 is suppressed: `final-${VARIANT}` resolves to a local
 # build stage (final-slim or final-full above), not an external image, so the
 # "pin the tag" advice does not apply.
 # ──────────────────────────────────────────────────────────────────────────────
-# trunk-ignore(checkov/CKV_DOCKER_7,hadolint/DL3006)
+# hadolint ignore=DL3006
 FROM final-${VARIANT} AS final

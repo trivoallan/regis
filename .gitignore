@@ -38,18 +38,10 @@ thoughts/
 # Reports
 /reports
 
-# Docusaurus
-.docusaurus
-# GitHub Pages assembly (built in CI, never committed)
-_site/
-regis-archive-ui/
-
 # Dashboard
+regis-archive-ui/
 apps/dashboard/static/archive
 regis/dashboard_assets
-
-# Generated docs (built at deploy time by cd-docs workflow)
-docs/website/docs/whats-new.md.worktrees/
 
 .worktrees
 .claude/worktrees
@@ -83,3 +75,6 @@ coverage.json
 # No trailing slash: git sees a symlink as a file, and `.nanopm/` would not match it.
 .nanopm
 /CONTEXT.md
+
+# Cache local de trunk (outil retiré du dépôt, peut rester installé sur le poste)
+.trunk/

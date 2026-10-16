@@ -20,13 +20,10 @@ build
 .pytest_cache
 .ruff_cache
 .coverage
-coverage-badge.svg
 
 # Node artifacts
 node_modules
 package-lock.json
-apps/dashboard/build
-apps/dashboard/.docusaurus
 
 # Docs and tests (not needed at runtime)
 docs

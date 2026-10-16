@@ -14,15 +14,18 @@ Never modify `RULES.md` or write secrets into any memory bank file.
 ## Commands
 
 ```bash
-uv sync                       # Install all dependencies (incl. dev group)
-uv run pytest                 # Full run with coverage (fails if total < 90% OR any file < 90%)
-uv run pytest --no-cov        # Fast loop — disables both the global and per-file coverage gates
-uv run ruff check .           # Lint
-uv run ruff format .          # Format
-uv run regis --help           # Run CLI locally
-trunk check                   # Run all linters
-trunk check --fix             # Auto-fix
+uv sync                              # Install all dependencies (incl. dev group)
+make lint                            # ruff, mypy, import-linter, docs/reference up to date
+make test                            # Full run with coverage (fails if total < 90% OR any file < 90%)
+make security                        # pip-audit, blocking from HIGH
+make image                           # Build and smoke-test both image variants (slim, full)
+make reference                       # Regenerate docs/reference (rules and schemas); commit the result
+uv run python -m pytest --no-cov     # Fast loop — disables both the global and per-file coverage gates
+uv run ruff format .                 # Format
+uv run regis --help                  # Run CLI locally
 ```
+
+CI only calls these `make` targets. Documentation is plain Markdown in `docs/` (entry point `docs/README.md`), read on GitHub.
 
 Required external binaries (must be on `PATH`): `grype`, `syft`, `trufflehog`, `regctl`, `hadolint`, `dockle`.
 
@@ -35,7 +38,7 @@ Use `--no-cov` for fast iteration; run the full suite before opening a PR.
 
 ## Architecture
 
-Hexagonal (ports & adapters). The dependency rule — `adapters > core.application > core.domain > core.ports > core.model` — is enforced in CI by **import-linter** (job `hexagonal-layers`). The core is Click-free; driven adapters own all I/O. Full layer table + diagram: `docs/memory-bank/systemPatterns.md` § Architecture.
+Hexagonal (ports & adapters). The dependency rule — `adapters > core.application > core.domain > core.ports > core.model` — is enforced in CI by **import-linter** (`make lint`). The core is Click-free; driven adapters own all I/O. Full layer table + diagram: `docs/memory-bank/systemPatterns.md` § Architecture.
 
 ```
 regis/
@@ -58,7 +61,7 @@ regis/
       cli/              #     cli.py (`regis` console script), commands/, composition.py (wiring root)
   utils/                # unlayered: process (run_cmd/require_tool), report shim, predicates, scanner wrappers
   schemas/              # JSON Schema files for analyzer outputs and playbooks
-  playbooks/            # Built-in default playbook (default.yaml)
+  playbooks/            # Built-in default playbook (default/playbook.yaml)
   templates/ · cookiecutters/ · data/   # report template, scaffolds, static data
 ```
 
@@ -83,9 +86,8 @@ regis/
 ## Git workflow
 
 - Feature/bug branches → PR → `main`. `main` is protected.
-- For **notable user-facing features**, add the `whats-new` GitHub label on the PR. The `## Summary` section is harvested into the What's New page by `scripts/generate_whats_new.py` during CI.
 - **Always rebase** feature branches on the latest `main` (never merge `main` back into them) — keeps history linear.
-- Branch from the latest `main` immediately before committing (avoids the auto-rebase + squash no-op trap).
+- Branch from the latest `main` immediately before committing.
 
 ## Commit messages
 
@@ -105,8 +107,6 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) wi
 
 ## CI/CD
 
-GitHub Actions + [Release Please](https://github.com/googleapis/release-please) + [Trunk](https://trunk.io). [Semantic Versioning](https://semver.org/). GitHub project config via the [Settings App](https://github.com/apps/settings).
+GitHub Actions with the CI socle shared by `regis`, `knock` and `uske` (`ci`, `pr-title`, `release`, `renovate`, `settings`, `socle-drift`), plus `regis`-only workflows named `extra-*.yml`. [Release Please](https://github.com/googleapis/release-please), [Semantic Versioning](https://semver.org/). Repository settings are versioned in `.github/settings.json` and applied by `.github/apply-settings.sh` (`make settings`). Renovate is self-hosted (`renovate.yml`). Workflows that write use the `oci-ci-ttc` GitHub App (`CI_APP_CLIENT_ID`, `CI_APP_PRIVATE_KEY`).
 
-Workflow gotchas (App token wiring, Renovate PR secrets, Release Please labels, gh-pages, Trunk auto-fmt, mypy/tests, rebase + squash) → `docs/memory-bank/systemPatterns.md`.
-
-Locally, Trunk's pre-commit hook auto-fixes on `git commit` — commit the produced changes.
+Workflow details (the `make` contract, App tokens, settings, Release Please labels, mypy/tests) → `docs/memory-bank/systemPatterns.md` § CI/CD.

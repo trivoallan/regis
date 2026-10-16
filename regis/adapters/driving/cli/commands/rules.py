@@ -14,7 +14,7 @@ from regis.core.domain.rules.breach import breached_slugs
 
 
 def _render_rule_markdown(rule: dict[str, Any]) -> str:
-    """Render a single rule as a detailed Markdown document matching the documentation template."""
+    """Render a single rule as a Markdown page, read as is on GitHub (no front matter)."""
     slug = rule.get("slug", "unknown")
     description = rule.get("description", "n/a")
     provider = rule.get("provider", "custom")
@@ -23,14 +23,6 @@ def _render_rule_markdown(rule: dict[str, Any]) -> str:
     params = rule.get("params", {})
     condition = rule.get("condition", {})
     messages = rule.get("messages", {})
-
-    frontmatter = ["---"]
-    if tags:
-        frontmatter.append("tags:")
-        for tag in tags:
-            frontmatter.append(f"  - {tag}")
-    frontmatter.append("  - rules")
-    frontmatter.append("---\n")
 
     lines = [
         f"# {slug}",
@@ -94,7 +86,7 @@ def _render_rule_markdown(rule: dict[str, Any]) -> str:
         lines.append("```")
         lines.append("")
 
-    return "\n".join(frontmatter + lines)
+    return "\n".join(lines)
 
 
 @click.group(name="rules")

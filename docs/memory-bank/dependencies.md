@@ -24,10 +24,10 @@
 | pytest             | >=7.4   | Test runner                                   |
 | pytest-cov         | >=4.1   | Coverage reporting                            |
 | responses          | >=0.24  | HTTP mocking                                  |
-| genbadge[coverage] | >=1.1   | Coverage badge generation                     |
 | httpx              | >=0.28  | HTTP client/testing                           |
 | ruff               | \*      | Linting and formatting (dev dependency group) |
 | jsonschema2md      | \*      | Docs generation helper                        |
+| json-schema-for-humans | \* | Schema reference generation (`make reference`) |
 | types-PyYAML       | \*      | Typing support                                |
 | types-requests     | \*      | Typing support                                |
 | types-jsonschema   | \*      | Typing support                                |
@@ -37,7 +37,6 @@
 - Python project metadata targets `>=3.10`
 - `.python-version` pins Python 3.13 for the local environment (uv)
 - `referencing` is pinned below `0.37.0`
-- PNPM overrides pin `serialize-javascript` and constrain `webpack`
 
 ## Upgrade Notes
 
