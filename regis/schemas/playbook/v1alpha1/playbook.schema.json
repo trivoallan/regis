@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis/schemas/playbook/v1alpha1/playbook.schema.json",
+  "$id": "https://raw.githubusercontent.com/trivoallan/regis/main/regis/schemas/playbook/v1alpha1/playbook.schema.json",
   "title": "playbook.v1alpha1.Playbook",
   "description": "Schema for regis Playbook resources (Kubernetes-style envelope).",
   "type": "object",

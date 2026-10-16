@@ -98,5 +98,5 @@
     }
   },
   "additionalProperties": false,
-  "$id": "https://trivoallan.github.io/regis/schemas/analyzer/oci.schema.json"
+  "$id": "https://raw.githubusercontent.com/trivoallan/regis/main/regis/schemas/analyzer/oci.schema.json"
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis/schemas/analyzer/versioning.schema.json",
+  "$id": "https://raw.githubusercontent.com/trivoallan/regis/main/regis/schemas/analyzer/versioning.schema.json",
   "title": "versioning.output",
   "description": "Report analyzing tag naming conventions and semver adoption.",
   "type": "object",

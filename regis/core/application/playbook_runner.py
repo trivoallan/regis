@@ -132,7 +132,7 @@ def validate_report(report: dict[str, Any]) -> None:
     schemas_dir = resources.files("regis.schemas")
     registry: Any = Registry()
     report_schema = None
-    base_uri = "https://trivoallan.github.io/regis/schemas/"
+    base_uri = "https://raw.githubusercontent.com/trivoallan/regis/main/regis/schemas/"
 
     def _get_all_schemas(node: Any, prefix: str = "") -> list[tuple[str, Any]]:
         found = []

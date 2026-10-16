@@ -5,9 +5,8 @@ trigger: always_on
 # CI / CD
 
 - Use Github Actions and [Release Please](https://github.com/googleapis/release-please)
-- Github project configuration as code using the [Github Settings App](https://github.com/apps/settings)
+- Github project configuration as code in `.github/settings.json`, applied by `.github/apply-settings.sh` (`make settings`)
 - [Semantic Versioning](https://semver.org/).
 - [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-- [Super Linter](https://github.com/marketplace/actions/super-linter)
-- Always check Super-Linter results in PRs
+- CI's build steps only call the common `make` targets (`lint`, `test`, `security`, `image`); `ci.yml` also runs a few guard steps directly. Always check their results in PRs
 - Do not manually edit Release Please PRs unless necessary

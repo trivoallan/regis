@@ -39,10 +39,10 @@ To ensure clean and readable changelogs, please use the following allowed scopes
 ### Rendering & Reporting
 
 - `report` : High-level report generation (folder creation, file writing).
-- `templates` (or `theme`) : Visual aspects, HTML, CSS, React/Docusaurus SPA.
+- `templates` (or `theme`) : Visual aspects, HTML, CSS.
 
 ### Tooling & CI
 
 - `ci` : GitHub Actions workflows.
 - `deps` (or `build`) : Environment management (uv, pyproject.toml, Dockerfiles).
-- `docs` : Docusaurus documentation, READMEs, and Memory Bank updates.
+- `docs` : Markdown documentation, READMEs, and Memory Bank updates.

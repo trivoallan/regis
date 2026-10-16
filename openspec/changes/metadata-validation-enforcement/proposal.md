@@ -1,6 +1,6 @@
 ## Why
 
-`docs/website/docs/concepts/playbooks.md` § Metadata promises that a bundle can ship a
+`docs/concepts/playbooks.md` § Metadata promises that a bundle can ship a
 `meta.schema.json` declaring `required` fields, and that "Missing required fields cause the
 `metadata` analyzer to report a validation failure". The code does not do this.
 

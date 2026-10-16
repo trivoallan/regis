@@ -1,0 +1,56 @@
+name: CI / Image Size
+
+# Per-variant ceilings. See docs/superpowers/specs/2026-05-31-image-size-round-3-design.md
+# for the size breakdown rationale.
+
+on:
+  pull_request:
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - pyproject.toml
+      - uv.lock
+      - .github/workflows/extra-image-size.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  image-size:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: slim
+            ceiling: 200MB
+          - variant: full
+            ceiling: 520MB
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Build image (${{ matrix.variant }})
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          load: true
+          tags: regis:size-check-${{ matrix.variant }}
+          build-args: |
+            VARIANT=${{ matrix.variant }}
+          cache-from: type=gha,scope=${{ matrix.variant }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.variant }}
+
+      - name: Enforce size limit (${{ matrix.variant }} ≤ ${{ matrix.ceiling }})
+        uses: wemake-services/docker-image-size-limit@f5970eb0c2180ac296475bfd22c5a58955370051 # 2.2.0
+        with:
+          image: regis:size-check-${{ matrix.variant }}
+          size: ${{ matrix.ceiling }}
+          show_current_size: true

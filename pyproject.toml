@@ -47,15 +47,14 @@ dev = [
   "pytest>=7.4",
   "pytest-cov>=4.1",
   "responses>=0.24",
-  "genbadge[coverage]>=1.1",
   "httpx>=0.28",
   "ruff",
-  "jsonschema2md",
   "json-schema-for-humans",
   "types-PyYAML",
   "types-requests",
   "types-jsonschema",
   "import-linter>=2.11",
+  "mypy==1.19.1",
 ]
 
 [tool.uv]
@@ -90,10 +89,11 @@ regis = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=regis --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=90"
+addopts = "-ra --strict-markers --cov --cov-report=term-missing --cov-fail-under=90"
 
 [tool.coverage.run]
 source = ["regis"]
+branch = true
 omit = ["regis/cookiecutters/*"]
 
 [tool.coverage.report]
@@ -124,13 +124,16 @@ layers = [
 python_version = "3.10"
 warn_unused_configs = true
 ignore_missing_imports = true
+# Cookiecutter template directories (e.g. "mr-evidence") are not importable
+# Python packages; mypy aborts on their names when given the regis/ directory.
+exclude = ["^regis/cookiecutters/"]
 
 [[tool.mypy.overrides]]
 module = ["yaml.*", "requests.*", "json_logic.*", "referencing.*"]
 ignore_missing_imports = true
 
-# Workaround for a mypy 1.19.1 internal AssertionError when trunk lints
-# downstream importers in isolation. follow_imports=skip avoids the
+# Workaround for a mypy 1.19.1 internal AssertionError when a file-by-file run
+# lints downstream importers in isolation. follow_imports=skip avoids the
 # cross-ref lookup that crashes, without silencing type errors in the
 # module itself (which is still checked when targeted directly).
 # regis.core.domain.analyzers.base is included because it imports the stdlib `warnings`
@@ -147,3 +150,8 @@ module = [
   "regis.utils.predicates",
 ]
 follow_imports = "skip"
+
+[tool.ruff.lint]
+# Repris de .trunk/configs/ruff.toml quand trunk a été retiré : même niveau de lint.
+select = ["B", "D3", "E", "F"]
+ignore = ["E501"] # la longueur des lignes relève du formateur

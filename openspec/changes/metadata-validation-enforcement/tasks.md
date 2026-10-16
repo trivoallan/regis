@@ -35,12 +35,12 @@ path_type=Path)`) to `analyze`, thread it to both paths
 
 ## 5. Documentation
 
-- [x] 5.1 Correct `docs/website/docs/concepts/playbooks.md` § Metadata: the "recorded as `null`"
+- [x] 5.1 Correct `docs/concepts/playbooks.md` § Metadata: the "recorded as `null`"
       sentence (absent optional fields are `{"valid": true}`, not `null`), document `--meta-schema`,
       `schema_sources`, and the table comparing schema `required` (exit 3) with a playbook rule over
       `metadata.*` (exit 1 with `--fail`)
-- [x] 5.2 Document exit codes 0/1/2/3 for `analyze` in `docs/website/docs/reference/cli.md`
-- [x] 5.3 Add an `docs/website/docs/upgrade/` note: a bundle `meta.schema.json` that was inert now
+- [x] 5.2 Document exit codes 0/1/2/3 for `analyze` in `docs/reference/cli.md`
+- [x] 5.3 Add an `docs/upgrade/` note: a bundle `meta.schema.json` that was inert now
       enforces, and a broken schema now aborts
 
 ## 6. Verification

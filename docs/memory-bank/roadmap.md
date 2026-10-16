@@ -43,7 +43,7 @@ Format: **Now / Next / Later** — no hard dates (avoids false precision).
 | Refactor the `analyze.py` command + tighten `utils/` layering                                        | Planned  | issue #807 |
 | Project health: `SECURITY.md`, `CONTRIBUTING.md`, issue templates                                    | Planned  | issue #810 |
 | **Playbook bundle format** (`playbook.yaml` + `README.md` + `inputs.schema.json` + `InputsAnalyzer`) | Planned  | sprint     |
-| Docs site finishing (branding, navigation, SEO) + stop versioned snapshots                           | Planned  | sprint     |
+| Docs site finishing (branding, navigation, SEO) + stop versioned snapshots                           | Cut      | 2026-10-16 — site remplacé par `docs/` sur GitHub |
 
 ---
 

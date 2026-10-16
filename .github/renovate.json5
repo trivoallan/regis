@@ -1,4 +1,30 @@
+// Fichier du socle : identique dans regis, knock et uske.
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
-  extends: ["local>trivoallan/regis//.github/renovate-constellation.json5"],
+  // config:best-practices inclut déjà helpers:pinGitHubActionDigests (actions épinglées par SHA).
+  extends: ["config:best-practices", "customManagers:githubActionsVersions"], // le second suit RENOVATE_VERSION
+  timezone: "Europe/Paris",
+  schedule: ["before 9am on monday"], // le workflow tourne chaque jour ; les PR de sécurité ignorent ce créneau
+  labels: ["dependencies"],
+  minimumReleaseAge: "3 days", // garde-fou : jamais une release de moins de 3 jours
+  semanticCommits: "enabled",
+  platformAutomerge: true,
+  platformCommit: "enabled",
+  lockFileMaintenance: { enabled: true, automerge: true, schedule: ["before 9am on monday"] },
+  osvVulnerabilityAlerts: true,
+  vulnerabilityAlerts: { automerge: true, minimumReleaseAge: null, draftPR: false },
+  // Dans packageRules, la dernière règle qui correspond l'emporte : l'ordre compte.
+  // Le preset config:recommended impose « fix(deps) » / « chore(deps) » ; on le surcharge ici.
+  packageRules: [
+    // Par défaut : build(deps), que la garde de titre accepte et qui ne déclenche pas de release.
+    { matchPackageNames: ["*"], semanticCommitType: "build", semanticCommitScope: "deps" },
+    // Dépendances d'exécution et images de base : fix(deps), donc une release corrective (les images sont le produit).
+    { matchManagers: ["pep621"], matchDepTypes: ["project.dependencies"], semanticCommitType: "fix" },
+    { matchManagers: ["dockerfile"], semanticCommitType: "fix" },
+    { matchManagers: ["github-actions"], semanticCommitType: "ci" },
+    { matchManagers: ["pep621"], matchUpdateTypes: ["minor", "patch", "pin", "digest"], groupName: "python dependencies (non-major)", automerge: true },
+    { matchManagers: ["github-actions"], matchUpdateTypes: ["minor", "patch", "pin", "digest"], groupName: "github actions (non-major)", automerge: true },
+    { matchManagers: ["dockerfile"], matchUpdateTypes: ["minor", "patch", "pin", "digest"], groupName: "docker base images (non-major)", automerge: true },
+    { matchUpdateTypes: ["major"], draftPR: true, automerge: false },
+  ],
 }

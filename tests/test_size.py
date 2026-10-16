@@ -22,7 +22,6 @@ class TestHumanSize:
 
 
 class TestSizeAnalyzer:
-
     def test_single_manifest(self):
         single_manifest = {
             "mediaType": "application/vnd.docker.distribution.manifest.v2+json",

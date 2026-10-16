@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis/schemas/playbook/result.schema.json",
+  "$id": "https://raw.githubusercontent.com/trivoallan/regis/main/regis/schemas/playbook/result.schema.json",
   "title": "playbook.result",
   "type": "object",
   "description": "Final playbook result produced by regis, containing metadata and analyzer results.",

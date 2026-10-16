@@ -1,20 +1,17 @@
 # regis — Project Overview
 
-**Purpose**: CLI tool for analyzing Docker images and generating security/quality reports. Pluggable analyzer architecture with a playbook evaluation engine.
+**Purpose**: CLI tool for analyzing container images and generating security/quality reports. Pluggable analyzer architecture with a playbook evaluation engine.
 
-**Tech stack**: Python (uv), Ruff (lint/format), pytest, Trunk (CI linter orchestrator), Docusaurus (docs), GitHub Actions (CI/CD), Release Please (releases).
+**Tech stack**: Python (uv), Ruff (lint/format), mypy, import-linter, pytest, `make` (common CI contract), GitHub Actions (CI socle shared with `knock` and `uske`), Release Please (releases). Documentation is plain Markdown in `docs/`, read on GitHub.
 
-**Key architecture**:
+**Key architecture** (hexagonal, ports & adapters — see `CLAUDE.md` § Architecture):
 
-- `regis/cli.py` — main entrypoint
-- `regis/analyzers/` — pluggable analyzers (entry-points in pyproject.toml)
-- `regis/commands/` — CLI commands (analyze, archive, bootstrap, check, rules)
-- `regis/playbook/` — playbook evaluation engine
-- `regis/rules/` — JSON Logic rule evaluation
-- `regis/registry/` — registry client
-- `regis/report/` — report generation (Docusaurus SPA)
+- `regis/core/` — Click-free core: `model/`, `ports/`, `domain/` (analyzers, playbook engine, JSON Logic rules), `application/` (use-cases)
+- `regis/adapters/driven/` — registry client, tool runner, report sinks and renderers
+- `regis/adapters/driving/cli/` — `regis` console script and commands
+- `regis/schemas/` — JSON Schemas; `regis/playbooks/default/` — built-in playbook
 - `docs/memory-bank/` — cross-session memory bank (ALWAYS read at session start)
 
 **Style**: Google Python Style Guide, type hints required, ruff for formatting.
 
-**CI/CD**: GitHub Actions with GitHub App token auth (`REGIS_CI_APP_ID` + `REGIS_CI_APP_PRIVATE_KEY`). All workflows use `actions/create-github-app-token` with `client-id` input.
+**CI/CD**: the common socle (`ci`, `pr-title`, `release`, `renovate`, `settings`, `socle-drift`) plus `extra-*.yml` workflows. Workflows that write use the `oci-ci-ttc` GitHub App through `actions/create-github-app-token` (`client-id: ${{ secrets.CI_APP_CLIENT_ID }}`, `CI_APP_PRIVATE_KEY`). Repository settings live in `.github/settings.json`.

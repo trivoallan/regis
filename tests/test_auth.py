@@ -241,7 +241,7 @@ class TestRegistryAuth:
         with patch.dict(os.environ, env, clear=True):
             user, pwd = resolve_credentials("registry.example.com")
             assert user == "env_config_user"
-            assert pwd == "env_config_pass"  # trunk-ignore(bandit/B105)
+            assert pwd == "env_config_pass"
 
     def test_resolve_credentials_from_docker_hub_env(self):
         """Test resolve_credentials from DOCKER_HUB_* and DOCKER_* env vars."""
@@ -250,22 +250,22 @@ class TestRegistryAuth:
         # Test DOCKER_HUB_*
         env = {
             "DOCKER_HUB_USERNAME": "hub_user",
-            "DOCKER_HUB_PASSWORD": "hub_password",  # trunk-ignore(bandit/B105)
+            "DOCKER_HUB_PASSWORD": "hub_password",
         }
         with patch.dict(os.environ, env, clear=True):
             user, pwd = resolve_credentials("docker.io")
             assert user == "hub_user"
-            assert pwd == "hub_password"  # trunk-ignore(bandit/B105)
+            assert pwd == "hub_password"
 
         # Test DOCKER_*
         env = {
             "DOCKER_USERNAME": "docker_user",
-            "DOCKER_PASSWORD": "docker_password",  # trunk-ignore(bandit/B105)
+            "DOCKER_PASSWORD": "docker_password",
         }
         with patch.dict(os.environ, env, clear=True):
             user, pwd = resolve_credentials("registry-1.docker.io")
             assert user == "docker_user"
-            assert pwd == "docker_password"  # trunk-ignore(bandit/B105)
+            assert pwd == "docker_password"
 
         # Verify not used for other registries
         with patch.dict(os.environ, env, clear=True):

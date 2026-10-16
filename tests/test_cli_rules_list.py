@@ -95,7 +95,9 @@ class TestCliRulesList:
             rule_content = (
                 out_path / "core" / "registry-domain-whitelist.md"
             ).read_text(encoding="utf-8")
-            assert "# registry-domain-whitelist" in rule_content
+            # Read on GitHub, where YAML front matter renders as a table: the
+            # page starts with its title.
+            assert rule_content.startswith("# registry-domain-whitelist\n")
             assert (
                 "Checks if requested image registry domain is in the domains list."
                 in rule_content

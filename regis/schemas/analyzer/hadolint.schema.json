@@ -1,5 +1,5 @@
 {
-  "$id": "https://trivoallan.github.io/regis/schemas/analyzer/hadolint.schema.json",
+  "$id": "https://raw.githubusercontent.com/trivoallan/regis/main/regis/schemas/analyzer/hadolint.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "hadolint.output",
   "type": "object",
