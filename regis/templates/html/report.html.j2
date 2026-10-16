@@ -61,6 +61,7 @@
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     body { font-family:system-ui,-apple-system,sans-serif; font-size:14px; line-height:1.5; color:var(--fg); background:var(--bg); }
     .mono { font-family:ui-monospace,"SF Mono",Menlo,monospace; }
+    .muted { color:var(--muted); }
     a { color:inherit; }
     .layout { display:grid; grid-template-columns:200px 1fr; max-width:1200px; margin:0 auto; min-height:100vh; }
     .sidebar { position:sticky; top:0; align-self:start; max-height:100vh; overflow:auto; background:var(--panel); border-right:1px solid var(--line); padding:1.25rem 1rem; }
@@ -211,18 +212,15 @@
       <h2 class="section-title">Playbook results</h2>
       <table>
         <thead>
-          <tr><th>Playbook</th><th>Verdict</th><th>Score</th><th>Failing rules</th></tr>
+          <tr><th>Playbook</th><th>Tier</th><th>Score</th><th>Failing rules</th></tr>
         </thead>
         <tbody>
           {% for pb in report.playbooks %}
           <tr>
-            <td>{{ pb.name | default('—') }}</td>
-            <td>
-              {% set pbv = pb.verdict | default('') | lower %}
-              <span class="badge badge-{{ pbv }}">{{ pb.verdict | default('—') }}</span>
-            </td>
+            <td>{{ pb.playbook_name | default('—') }}{% if pb.playbook_version %} <span class="muted">{{ pb.playbook_version }}</span>{% endif %}</td>
+            <td>{% if pb.tier %}{{ pb.tier_icon | default('') }} {{ pb.tier }}{% else %}—{% endif %}</td>
             <td>{{ pb.score | default('—') }}{% if pb.score is not none %}%{% endif %}</td>
-            <td>{{ pb.rules | default([]) | selectattr('passed', 'equalto', false) | list | length }}</td>
+            <td>{{ pb.rules | default([]) | rejectattr('passed') | rejectattr('status', 'equalto', 'incomplete') | list | length }}</td>
           </tr>
           {% endfor %}
         </tbody>

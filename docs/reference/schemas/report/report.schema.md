@@ -516,17 +516,20 @@ Must be one of:
 | **Type**                  | `object`                                                                    |
 | **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
 
-| Property                                                   | Pattern | Type             | Deprecated | Definition | Title/Description                                                                           |
-| ---------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------- |
-| + [slug](#playbooks_items_rules_items_slug )               | No      | string           | No         | -          | Unique identifier for the rule.                                                             |
-| + [description](#playbooks_items_rules_items_description ) | No      | string           | No         | -          | Human-readable name of the rule.                                                            |
-| - [level](#playbooks_items_rules_items_level )             | No      | string           | No         | -          | Severity level of the rule (e.g. critical, warning, info). Distinct from the playbook tier. |
-| - [tags](#playbooks_items_rules_items_tags )               | No      | array of string  | No         | -          | Associated metadata tags.                                                                   |
-| + [passed](#playbooks_items_rules_items_passed )           | No      | boolean          | No         | -          | Whether the rule criteria were met.                                                         |
-| + [status](#playbooks_items_rules_items_status )           | No      | enum (of string) | No         | -          | Detailed execution status.                                                                  |
-| + [message](#playbooks_items_rules_items_message )         | No      | string           | No         | -          | Reasoning or details for the rule result.                                                   |
-| - [analyzers](#playbooks_items_rules_items_analyzers )     | No      | array of string  | No         | -          | List of analyzers that contributed data to this rule.                                       |
-| - [criterion](#playbooks_items_rules_items_criterion )     | No      | string           | No         | -          | Slug of the criterion template this rule instantiated, when applicable.                     |
+| Property                                                     | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                             |
+| ------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| + [slug](#playbooks_items_rules_items_slug )                 | No      | string           | No         | -          | Unique identifier for the rule.                                                                                               |
+| + [description](#playbooks_items_rules_items_description )   | No      | string           | No         | -          | Human-readable name of the rule.                                                                                              |
+| - [level](#playbooks_items_rules_items_level )               | No      | string           | No         | -          | Severity level of the rule (e.g. critical, warning, info). Distinct from the playbook tier.                                   |
+| - [tags](#playbooks_items_rules_items_tags )                 | No      | array of string  | No         | -          | Associated metadata tags.                                                                                                     |
+| + [passed](#playbooks_items_rules_items_passed )             | No      | boolean          | No         | -          | Whether the rule criteria were met.                                                                                           |
+| + [status](#playbooks_items_rules_items_status )             | No      | enum (of string) | No         | -          | Detailed execution status.                                                                                                    |
+| + [message](#playbooks_items_rules_items_message )           | No      | string           | No         | -          | Reasoning or details for the rule result.                                                                                     |
+| - [analyzers](#playbooks_items_rules_items_analyzers )       | No      | array of string  | No         | -          | List of analyzers that contributed data to this rule.                                                                         |
+| - [criterion](#playbooks_items_rules_items_criterion )       | No      | string           | No         | -          | Slug of the criterion template this rule instantiated, when applicable.                                                       |
+| - [observed](#playbooks_items_rules_items_observed )         | No      | object           | No         | -          | Image facts the rule's condition read, keyed by dotted path (results.* or request.*). Large lists and objects are summarized. |
+| - [threshold](#playbooks_items_rules_items_threshold )       | No      | object           | No         | -          | Rule parameters the condition read, keyed by parameter name. Empty when the condition hard-codes its threshold.               |
+| - [missing_keys](#playbooks_items_rules_items_missing_keys ) | No      | array of string  | No         | -          | Data keys the condition needed but could not read. Empty unless status is incomplete.                                         |
 
 ###### <a name="playbooks_items_rules_items_slug"></a>9.1.9.1.1. Property `slug`
 
@@ -640,6 +643,50 @@ Must be one of:
 | **Type** | `string` |
 
 **Description:** Slug of the criterion template this rule instantiated, when applicable.
+
+###### <a name="playbooks_items_rules_items_observed"></a>9.1.9.1.10. Property `observed`
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+**Description:** Image facts the rule's condition read, keyed by dotted path (results.* or request.*). Large lists and objects are summarized.
+
+###### <a name="playbooks_items_rules_items_threshold"></a>9.1.9.1.11. Property `threshold`
+
+|                           |                                                                             |
+| ------------------------- | --------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                    |
+| **Additional properties** | ![Any type: allowed](https://img.shields.io/badge/Any%20type-allowed-green) |
+
+**Description:** Rule parameters the condition read, keyed by parameter name. Empty when the condition hard-codes its threshold.
+
+###### <a name="playbooks_items_rules_items_missing_keys"></a>9.1.9.1.12. Property `missing_keys`
+
+|          |                   |
+| -------- | ----------------- |
+| **Type** | `array of string` |
+
+**Description:** Data keys the condition needed but could not read. Empty unless status is incomplete.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                       | Description |
+| --------------------------------------------------------------------- | ----------- |
+| [missing_keys items](#playbooks_items_rules_items_missing_keys_items) | -           |
+
+###### <a name="playbooks_items_rules_items_missing_keys_items"></a>9.1.9.1.12.1. missing_keys items
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
 
 #### <a name="playbooks_items_rules_summary"></a>9.1.10. Property `rules_summary`
 

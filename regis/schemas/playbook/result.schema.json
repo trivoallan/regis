@@ -109,6 +109,19 @@
           "criterion": {
             "type": "string",
             "description": "Slug of the criterion template this rule instantiated, when applicable."
+          },
+          "observed": {
+            "type": "object",
+            "description": "Image facts the rule's condition read, keyed by dotted path (results.* or request.*). Large lists and objects are summarized."
+          },
+          "threshold": {
+            "type": "object",
+            "description": "Rule parameters the condition read, keyed by parameter name. Empty when the condition hard-codes its threshold."
+          },
+          "missing_keys": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Data keys the condition needed but could not read. Empty unless status is incomplete."
           }
         }
       }

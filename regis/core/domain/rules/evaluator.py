@@ -360,6 +360,64 @@ def _add_custom_operations():
 _add_custom_operations()
 
 
+_FACT_PREFIXES = ("results.", "request.")
+_PARAM_PREFIXES = ("criterion.params.", "rule.params.")
+_MAX_LISTED = 10
+_ABSENT = object()
+
+
+def _resolve(context: dict[str, Any], dotted: str) -> Any:
+    """Walk a dotted path through nested dicts; ``_ABSENT`` if it does not resolve."""
+    value: Any = context
+    for part in dotted.split("."):
+        if not isinstance(value, dict) or part not in value:
+            return _ABSENT
+        value = value[part]
+    return value
+
+
+def _summarize(value: Any) -> Any:
+    """Keep scalars and short scalar lists; summarize the rest so report.json stays small."""
+    # ponytail: size cap, not a renderer — expand per-type if operators need list contents
+    if isinstance(value, list):
+        if len(value) <= _MAX_LISTED and all(
+            not isinstance(v, (dict, list)) for v in value
+        ):
+            return value
+        return f"<list of {len(value)}>"
+    if isinstance(value, dict):
+        return f"<object with {len(value)} keys>"
+    return value
+
+
+def _explain(
+    tracker: MissingDataTracker, context: dict[str, Any]
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Read the observed facts and the threshold from the keys a condition accessed.
+
+    Only the deepest accessed keys count (``results.cve`` is a step towards
+    ``results.cve.fixed_count``, not a fact). Missing keys are left out: they are
+    reported in ``missing_keys``.
+    """
+    keys = sorted(tracker.accessed_keys)
+    leaves = [k for k in keys if not any(o.startswith(k + ".") for o in keys)]
+    observed: dict[str, Any] = {}
+    threshold: dict[str, Any] = {}
+    for key in leaves:
+        value = _resolve(context, key)
+        if value is _ABSENT or value is None:
+            continue
+        if key.startswith(_FACT_PREFIXES):
+            observed[key] = _summarize(value)
+        else:
+            param = next(
+                (key[len(p) :] for p in _PARAM_PREFIXES if key.startswith(p)), None
+            )
+            if param is not None:
+                threshold[param] = value
+    return observed, threshold
+
+
 def evaluate_rules(
     report: dict[str, Any], rules_def: dict[str, Any] | None = None
 ) -> dict[str, Any]:
@@ -422,6 +480,8 @@ def evaluate_rules(
                 if len(parts) > 1:
                     involved_analyzers.add(parts[1])
 
+        observed, threshold = _explain(tracker, flat_context)
+
         entry = {
             "slug": rule.get("slug", ""),
             "description": rule.get("description", ""),
@@ -431,6 +491,11 @@ def evaluate_rules(
             "status": status,
             "message": message_resolved,
             "analyzers": sorted(involved_analyzers),
+            "observed": observed,
+            "threshold": threshold,
+            "missing_keys": list(tracker.missing_keys)
+            if status == "incomplete"
+            else [],
         }
         if rule.get("criterion"):
             entry["criterion"] = rule["criterion"]

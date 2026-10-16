@@ -101,13 +101,24 @@ class MissingDataTracker(dict):
         self.missing_accessed = False
         self.path = path
         self.accessed_keys: set[str]  # declared here; assigned in both branches below
-        # If this is a nested tracker, use the root tracker's accessed_keys set
+        self.missing_keys: list[str]  # required keys found absent, in access order
+        # If this is a nested tracker, share the root tracker's key collections
         if root_tracker:
             self.root = root_tracker
             self.accessed_keys = root_tracker.accessed_keys
+            self.missing_keys = root_tracker.missing_keys
         else:
             self.root = self
             self.accessed_keys = set()
+            self.missing_keys = []
+
+    def _mark_missing(self, full_key: str) -> None:
+        """Record a required key as missing (optional namespaces are ignored)."""
+        if _is_optional_namespace(full_key):
+            return
+        self.root.missing_accessed = True
+        if full_key not in self.missing_keys:
+            self.missing_keys.append(full_key)
 
     def __getitem__(self, key: str) -> Any:
         full_key = f"{self.path}.{key}" if self.path else key
@@ -115,13 +126,11 @@ class MissingDataTracker(dict):
         try:
             val = super().__getitem__(key)
         except KeyError:
-            if not _is_optional_namespace(full_key):
-                self.root.missing_accessed = True
+            self._mark_missing(full_key)
             raise
 
         if val is None:
-            if not _is_optional_namespace(full_key):
-                self.root.missing_accessed = True
+            self._mark_missing(full_key)
             return None
 
         if isinstance(val, dict):
@@ -139,10 +148,9 @@ class MissingDataTracker(dict):
             full_key = f"{self.path}.{key}" if self.path else key
             self.accessed_keys.add(full_key)
         if not super().__contains__(key):
-            if not (
-                isinstance(key, str)
-                and _is_optional_namespace(f"{self.path}.{key}" if self.path else key)
-            ):
+            if isinstance(key, str):
+                self._mark_missing(f"{self.path}.{key}" if self.path else key)
+            else:
                 self.root.missing_accessed = True
             return False
         return True

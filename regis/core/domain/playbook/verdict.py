@@ -32,6 +32,10 @@ class RuleLine:
     level: str
     message: str
     analyzers: list[str] = field(default_factory=list)
+    description: str = ""
+    observed: dict[str, Any] = field(default_factory=dict)
+    threshold: dict[str, Any] = field(default_factory=dict)
+    missing_keys: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -54,6 +58,9 @@ class Verdict:
     badges: list[VerdictBadge] = field(default_factory=list)
     failures: list[RuleLine] = field(default_factory=list)
     incompletes: list[RuleLine] = field(default_factory=list)
+    playbook_name: str | None = None
+    playbook_version: str | None = None
+    ruleset_hash: str | None = None
 
 
 def tier_label(tier: str | None, icon: str | None) -> str:
@@ -143,6 +150,10 @@ def build_verdict(final_report: dict[str, Any]) -> Verdict:
             level=str(r.get("level") or "info").lower(),
             message=r.get("message", ""),
             analyzers=list(r.get("analyzers") or []),
+            description=r.get("description", ""),
+            observed=dict(r.get("observed") or {}),
+            threshold=dict(r.get("threshold") or {}),
+            missing_keys=list(r.get("missing_keys") or []),
         )
 
     summary = src.get("rules_summary") or {}
@@ -163,4 +174,7 @@ def build_verdict(final_report: dict[str, Any]) -> Verdict:
         badges=badges,
         failures=[_line(r) for r in failed],
         incompletes=[_line(r) for r in incomplete],
+        playbook_name=src.get("playbook_name"),
+        playbook_version=src.get("playbook_version"),
+        ruleset_hash=src.get("ruleset_hash"),
     )
