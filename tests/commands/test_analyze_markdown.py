@@ -30,23 +30,27 @@ def test_render_markdown_contains_header():
     assert "# " in md
 
 
-def test_render_markdown_includes_playbook_table():
-    report = _minimal_report(
-        playbooks=[
+def test_markdown_playbook_results_reads_engine_keys():
+    """The table reads the keys the playbook engine writes, not legacy ones."""
+    report = {
+        "request": {"registry": "r", "repository": "x", "tag": "t"},
+        "playbooks": [
             {
-                "name": "default",
-                "verdict": "pass",
+                "playbook_name": "base-images",
+                "tier": "Transformation requise",
+                "tier_icon": "🔧",
+                "score": 56,
                 "rules": [
-                    {"result": True},
-                    {"result": False},
+                    {"slug": "a", "passed": False, "status": "failed"},
+                    {"slug": "b", "passed": False, "status": "failed"},
+                    {"slug": "c", "passed": False, "status": "incomplete"},
+                    {"slug": "d", "passed": True, "status": "passed"},
                 ],
             }
-        ]
-    )
+        ],
+    }
     md = _render_markdown(report)
-    assert "default" in md
-    assert "pass" in md
-    assert "1" in md  # one failing rule
+    assert "| base-images | 🔧 Transformation requise · 56/100 | 2 |" in md
 
 
 def test_render_markdown_includes_timestamp():
