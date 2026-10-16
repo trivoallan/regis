@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.40.0](https://github.com/trivoallan/regis/compare/v0.39.1...v0.40.0) (2026-10-16)
+
+
+### Features
+
+* adopter le socle commun et lire la documentation sur GitHub ([#875](https://github.com/trivoallan/regis/issues/875)) ([af8a76e](https://github.com/trivoallan/regis/commit/af8a76ec015296cf59534befc720d56fed05147e))
+* passer sous Apache-2.0 et ajouter les fichiers communautaires ([#873](https://github.com/trivoallan/regis/issues/873)) ([541f468](https://github.com/trivoallan/regis/commit/541f4688cf24aa62c987bb60a83d3901d99e9165))
+
 ## [0.39.1](https://github.com/trivoallan/regis/compare/v0.39.0...v0.39.1) (2026-10-10)
 
 ### Bug Fixes
