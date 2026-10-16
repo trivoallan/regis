@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
+from regis.core.model.report import REPORT_SCHEMA_VERSION
 from regis.adapters.driving.cli.cli import main
 from regis.core.domain.context import AnalysisContext
 
@@ -419,7 +420,7 @@ class TestAnalyzeCacheAndFail:
             # path must backfill it before validation, and the saved report
             # carries it.
             saved = json.loads((cache_dir / "report.json").read_text(encoding="utf-8"))
-            assert saved["schemaVersion"] == 5
+            assert saved["schemaVersion"] == REPORT_SCHEMA_VERSION
 
     @patch("regis.adapters.driving.cli.commands.analyze.RegistryClient")
     @patch("regis.adapters.driving.cli.commands.analyze.validate_report")

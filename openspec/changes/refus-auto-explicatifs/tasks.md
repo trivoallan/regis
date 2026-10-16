@@ -22,13 +22,13 @@ Build plan: Wave 0 is T1 and T2 in parallel. Wave 1 is T3 (after T1). Wave 2 is 
 
 ## 4. Triage table rendering (T4, M, Wave 2, after T2 and T3)
 
-- [ ] 4.1 Render the five fields for each failed rule in the triage table of `report.html.j2` (lines 181-199), with the incomplete rows using a distinct label and listing `missing_keys`; verify by rendering a sample report
-- [ ] 4.2 Add `tests/report/test_html_refusal.py`, which fails if any of the five fields is missing from the HTML of a failed rule or if an incomplete rule lacks its label or its missing keys; verify that `make test` passes with the per-file coverage at or above 90%
+- [x] 4.1 Render the five fields for each failed rule in the triage table of `report.html.j2` (lines 181-199), with the incomplete rows using a distinct label and listing `missing_keys`; verify by rendering a sample report
+- [x] 4.2 Add `tests/report/test_html_refusal.py`, which fails if any of the five fields is missing from the HTML of a failed rule or if an incomplete rule lacks its label or its missing keys; verify that `make test` passes with the per-file coverage at or above 90%
 
 ## 5. Contract or message route (T5, S, Wave 2, after T1 and T3)
 
-- [ ] 5.1 No cut: bump `REPORT_SCHEMA_VERSION` to 6 in `core/model/report.py` and `report.schema.json`, and update `tests/test_report_schema_version.py`; verify that `make test` passes and that `uske/tests/test_orchestrator.py` passes against a report produced by the branch
-- [ ] 5.2 Cut: interpolate the observed fact and threshold into the `message` templates of the pilot playbook's rules; verify by analyzing a known-refused image and checking that the rendered message contains both
+- [x] 5.1 No cut: bump `REPORT_SCHEMA_VERSION` to 6 in `core/model/report.py` and `report.schema.json`, and update `tests/test_report_schema_version.py`; verify that `make test` passes and that `uske/tests/test_orchestrator.py` passes against a report produced by the branch
+- [x] 5.2 Not applicable: T1 took the no-cut branch (see `docs/superpowers/specs/2026-10-16-refusal-report-cut-point.md`). Was: Cut: interpolate the observed fact and threshold into the `message` templates of the pilot playbook's rules; verify by analyzing a known-refused image and checking that the rendered message contains both
 
 ## 6. Pilot audit (T6, S, Wave 3, after T4 and T5)
 

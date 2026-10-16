@@ -5,10 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-REPORT_SCHEMA_VERSION = 5
+REPORT_SCHEMA_VERSION = 6
 """Current report-structure contract version (see report.schema.json).
 
-v5 removed the ``snapshot_date`` field (an editorial doc-site marker, not a
+v6 added ``observed``, ``threshold`` and ``missing_keys`` to each playbook rule
+entry, so a refusal can be explained from the report alone.  v5 removed the ``snapshot_date`` field (an editorial doc-site marker, not a
 data-freshness indicator).  v4 removed the legacy
 ``pages``/``sections``/``scorecards``/``widgets`` rendering subsystem (and the
 per-section ``levels_summary``/``tags_summary``); playbook results are now
