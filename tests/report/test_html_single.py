@@ -47,8 +47,8 @@ class TestRenderHtmlSingle:
         report = _minimal_report(
             playbooks=[
                 {
-                    "name": "default",
-                    "verdict": "PASS",
+                    "playbook_name": "default",
+                    "tier": "gold",
                     "score": 95,
                     "rules": [{"passed": True}, {"passed": True}],
                 }
@@ -56,7 +56,7 @@ class TestRenderHtmlSingle:
         )
         html = render_html_single(report)
         assert "default" in html
-        assert "PASS" in html
+        assert "gold" in html
 
     def test_playbook_table_absent_when_no_playbooks(self):
         html = render_html_single(_minimal_report())

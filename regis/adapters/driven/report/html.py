@@ -5,12 +5,30 @@ from __future__ import annotations
 import importlib.metadata
 from datetime import datetime, timezone
 from importlib import resources
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import click
+
+if TYPE_CHECKING:
+    from regis.core.domain.playbook.verdict import RuleLine
 from jinja2 import BaseLoader, Environment
 
 _BADGE_CSS = {"error": "failed", "warning": "warning", "success": "passed"}
+
+
+def _rule_view(line: RuleLine) -> dict[str, Any]:
+    """Everything the triage table needs to explain one failed/incomplete rule."""
+    return {
+        "slug": line.slug,
+        "level": line.level,
+        "message": line.message,
+        "description": line.description,
+        "analyzers": line.analyzers,
+        "observed": line.observed,
+        "threshold": line.threshold,
+        "missing_keys": line.missing_keys,
+    }
+
 
 # CVE severity strip: (display label / css class, source count key)
 _SEVERITY_SPEC = [
@@ -72,14 +90,13 @@ def _build_context(report: dict[str, Any], sections: str) -> dict[str, Any]:
                 }
                 for b in _v.badges
             ],
-            "failures": [
-                {"slug": f.slug, "level": f.level, "message": f.message}
-                for f in _v.failures
-            ],
-            "incompletes": [
-                {"slug": i.slug, "level": i.level, "message": i.message}
-                for i in _v.incompletes
-            ],
+            "failures": [_rule_view(f) for f in _v.failures],
+            "incompletes": [_rule_view(i) for i in _v.incompletes],
+            "playbook": {
+                "name": _v.playbook_name,
+                "version": _v.playbook_version,
+                "ruleset_hash": _v.ruleset_hash,
+            },
         }
 
     triage = None

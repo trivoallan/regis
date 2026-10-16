@@ -1,3 +1,11 @@
+{%- macro kv(d) -%}
+  {%- if d -%}
+    {%- for k, v in d.items() -%}
+      <span class="mono">{{ k }}</span> = <strong>{{ v | join(', ') if v is iterable and v is not string else v }}</strong>{% if not loop.last %}<br>{% endif %}
+    {%- endfor -%}
+  {%- else -%}<span class="muted">—</span>{%- endif -%}
+{%- endmacro -%}
+
 {%- macro render_scalar(val) -%}
   {%- if val is none -%}<em>—</em>
   {%- elif val is sameas true -%}<span class="badge badge-pass">yes</span>
@@ -61,6 +69,7 @@
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     body { font-family:system-ui,-apple-system,sans-serif; font-size:14px; line-height:1.5; color:var(--fg); background:var(--bg); }
     .mono { font-family:ui-monospace,"SF Mono",Menlo,monospace; }
+    .muted { color:var(--muted); }
     a { color:inherit; }
     .layout { display:grid; grid-template-columns:200px 1fr; max-width:1200px; margin:0 auto; min-height:100vh; }
     .sidebar { position:sticky; top:0; align-self:start; max-height:100vh; overflow:auto; background:var(--panel); border-right:1px solid var(--line); padding:1.25rem 1rem; }
@@ -96,6 +105,7 @@
     .triage h2 { font-size:.95rem; margin-bottom:.4rem; }
     .triage table { width:100%; border-collapse:collapse; font-size:13px; margin:0; }
     .triage td { padding:.25rem .4rem; border:none; border-top:1px solid var(--line); vertical-align:top; background:transparent; }
+    .triage-source { font-size:12px; margin:0 0 .4rem; }
     .triage th { padding:.25rem .4rem; border:none; border-bottom:1px solid var(--line); text-align:left; font-size:11px; text-transform:uppercase; color:var(--muted); background:transparent; }
     .sev { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; margin:1rem 0; }
     .sev .cell { border:1px solid var(--line); border-radius:6px; text-align:center; padding:.5rem; }
@@ -183,14 +193,36 @@
     <section id="triage" class="triage {{ 'clear' if triage['clear'] else '' }}">
       <h2>{{ '✓ All checks passed' if triage['clear'] else '⚠ Attention required' }}</h2>
       {% if not triage['clear'] %}
+      {% set pb = verdict.playbook %}
+      <p class="triage-source">
+        Playbook <strong>{{ pb.name or '—' }}</strong>{% if pb.version %} <span class="muted">{{ pb.version }}</span>{% endif %}
+        · ruleset <span class="mono">{{ pb.ruleset_hash or '—' }}</span>
+      </p>
       <table>
-        <thead><tr><th></th><th>Rule</th><th>Severity</th><th>Detail</th></tr></thead>
+        <thead><tr><th></th><th>Rule</th><th>Severity</th><th>Observed</th><th>Threshold</th><th>Detail</th></tr></thead>
         <tbody>
           {% for f in triage.failures %}
-          <tr><td>✗</td><td class="mono">{{ f.slug }}</td><td>{{ f.level }}</td><td>{{ f.message }}</td></tr>
+          <tr class="rule-failed">
+            <td>✗</td>
+            <td><span class="mono">{{ f.slug }}</span>{% if f.description %}<br><span class="muted">{{ f.description }}</span>{% endif %}</td>
+            <td>{{ f.level }}</td>
+            <td>{{ kv(f.observed) }}</td>
+            <td>{{ kv(f.threshold) }}</td>
+            <td>{{ f.message }}</td>
+          </tr>
           {% endfor %}
           {% for i in triage.incompletes %}
-          <tr><td>⚠</td><td class="mono">{{ i.slug }}</td><td>{{ i.level }}</td><td>{{ i.message }}</td></tr>
+          <tr class="rule-incomplete">
+            <td>⚠</td>
+            <td><span class="mono">{{ i.slug }}</span>{% if i.description %}<br><span class="muted">{{ i.description }}</span>{% endif %}</td>
+            <td>{{ i.level }}</td>
+            <td>
+              <span class="badge badge-incomplete">Not evaluated</span>
+              {% if i.missing_keys %}<br>Missing: {% for k in i.missing_keys %}<span class="mono">{{ k }}</span>{{ ', ' if not loop.last }}{% endfor %}{% endif %}
+            </td>
+            <td>{{ kv(i.threshold) }}</td>
+            <td>Could not be evaluated: data missing{% if i.analyzers %} from {{ i.analyzers | join(', ') }}{% endif %}.</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -211,18 +243,15 @@
       <h2 class="section-title">Playbook results</h2>
       <table>
         <thead>
-          <tr><th>Playbook</th><th>Verdict</th><th>Score</th><th>Failing rules</th></tr>
+          <tr><th>Playbook</th><th>Tier</th><th>Score</th><th>Failing rules</th></tr>
         </thead>
         <tbody>
           {% for pb in report.playbooks %}
           <tr>
-            <td>{{ pb.name | default('—') }}</td>
-            <td>
-              {% set pbv = pb.verdict | default('') | lower %}
-              <span class="badge badge-{{ pbv }}">{{ pb.verdict | default('—') }}</span>
-            </td>
+            <td>{{ pb.playbook_name | default('—') }}{% if pb.playbook_version %} <span class="muted">{{ pb.playbook_version }}</span>{% endif %}</td>
+            <td>{% if pb.tier %}{{ pb.tier_icon | default('') }} {{ pb.tier }}{% else %}—{% endif %}</td>
             <td>{{ pb.score | default('—') }}{% if pb.score is not none %}%{% endif %}</td>
-            <td>{{ pb.rules | default([]) | selectattr('passed', 'equalto', false) | list | length }}</td>
+            <td>{{ pb.rules | default([]) | rejectattr('passed') | rejectattr('status', 'equalto', 'incomplete') | list | length }}</td>
           </tr>
           {% endfor %}
         </tbody>

@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
+from regis.core.model.report import REPORT_SCHEMA_VERSION
 from regis.adapters.driving.cli.cli import main
 from regis.core.domain.analyzers.metadata import MetadataAnalyzer
 
@@ -350,4 +351,4 @@ class TestRerunBackfillsSchemaVersion:
             updated = json.loads(
                 (report_dir / "report.json").read_text(encoding="utf-8")
             )
-            assert updated["schemaVersion"] == 5
+            assert updated["schemaVersion"] == REPORT_SCHEMA_VERSION

@@ -224,3 +224,57 @@ class TestTriage:
         assert triage["failures"] == []
         assert [i["slug"] for i in triage["incompletes"]] == ["cve-scan"]
         assert triage["clear"] is False
+
+
+class TestRefusalFields:
+    def test_failure_carries_fact_threshold_and_description(self):
+        rule = {
+            **_FAILING_CVE_RULE,
+            "description": "No critical CVE",
+            "observed": {"results.cve.critical_count": 1},
+            "threshold": {"max_count": 0},
+            "missing_keys": [],
+        }
+        failure = _build_context(_report(results={"cve": {}}, rules=[rule]), "all")[
+            "verdict"
+        ]["failures"][0]
+        assert failure["description"] == "No critical CVE"
+        assert failure["observed"] == {"results.cve.critical_count": 1}
+        assert failure["threshold"] == {"max_count": 0}
+        assert failure["analyzers"] == ["cve"]
+
+    def test_incomplete_carries_missing_keys(self):
+        rule = {
+            "slug": "age",
+            "level": "warning",
+            "passed": False,
+            "status": "incomplete",
+            "message": "stale",
+            "missing_keys": ["results.freshness"],
+        }
+        incomplete = _build_context(_report(rules=[rule]), "all")["verdict"][
+            "incompletes"
+        ][0]
+        assert incomplete["missing_keys"] == ["results.freshness"]
+
+    def test_playbook_identity_from_playbook_result(self):
+        report = {
+            "request": {"registry": "r", "repository": "x", "tag": "t"},
+            "results": {},
+            "playbooks": [
+                {
+                    "playbook_name": "pilot-sncf",
+                    "playbook_version": "1.2.0",
+                    "ruleset_hash": "sha256:abc",
+                    "tier": "quarantine",
+                    "rules": [_FAILING_CVE_RULE],
+                    "rules_summary": {"score": 0, "total": 1},
+                }
+            ],
+        }
+        playbook = _build_context(report, "all")["verdict"]["playbook"]
+        assert playbook == {
+            "name": "pilot-sncf",
+            "version": "1.2.0",
+            "ruleset_hash": "sha256:abc",
+        }
