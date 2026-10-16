@@ -1,0 +1,35 @@
+# Fichier du socle : identique dans regis, knock et uske.
+name: settings
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/settings.json, .github/apply-settings.sh]
+  schedule:
+    - cron: "17 5 * * 1" # chaque lundi : annule ce qui a été changé à la main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: settings
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - id: app
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.CI_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CI_APP_PRIVATE_KEY }}
+          permission-administration: write
+          permission-contents: read
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - run: .github/apply-settings.sh
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}

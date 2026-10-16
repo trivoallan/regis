@@ -94,7 +94,7 @@ ignorés. `--no-cov` désactive les deux gates.
 
 ## CI/CD Gotchas
 
-- **`ci-test.yml`** includes `pip-audit` and enforces a HIGH/CRITICAL severity gate via `scripts/enforce_pip_audit_severity.py` (severity is resolved from OSV metadata).
+- **`ci-test.yml`** includes `pip-audit` and enforces a HIGH/CRITICAL severity gate via `.github/pip-audit-gate.py` (severity is resolved from OSV metadata).
 - **`cd-docker.yml`** emits CycloneDX/SPDX SBOM artifacts and provenance attestations via `actions/attest-build-provenance`.
 - **GitHub App authentication**: All workflows use `actions/create-github-app-token@v1` with `REGIS_CI_APP_ID` + `REGIS_CI_APP_PRIVATE_KEY`. Never use `GITHUB_TOKEN` for checkouts that need to trigger downstream CI runs — it won't.
 - **Trunk auto-fmt in CI**: the trunk workflow commits formatting fixes via `stefanzweifel/git-auto-commit-action`. The checkout must use the App token so the commit triggers a new workflow run.

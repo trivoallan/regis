@@ -53,7 +53,8 @@
             { "context": "lint", "integration_id": 15368 },
             { "context": "test", "integration_id": 15368 },
             { "context": "security", "integration_id": 15368 },
-            { "context": "image", "integration_id": 15368 }
+            { "context": "image", "integration_id": 15368 },
+            { "context": "pr-title", "integration_id": 15368 }
           ]
         }
       },

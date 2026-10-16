@@ -1,0 +1,73 @@
+# Fichier du socle : identique dans regis, knock et uske.
+# Compare le socle au main des deux autres dépôts. Ce n'est pas une barrière sur les PR.
+# Les workflows propres à un dépôt s'appellent extra-*.yml : ils sont ignorés ici.
+name: socle-drift
+
+on:
+  schedule:
+    - cron: "41 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Comparer le socle
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          set -euo pipefail
+          SELF="${GITHUB_REPOSITORY#*/}"
+          files=".github/workflows/ci.yml .github/workflows/pr-title.yml .github/workflows/release.yml
+                 .github/workflows/settings.yml .github/workflows/renovate.yml .github/workflows/socle-drift.yml
+                 .github/renovate.json5 .github/apply-settings.sh .github/pip-audit-gate.py
+                 LICENSE SECURITY.md CODE_OF_CONDUCT.md"
+          strip='del(.repository.description, .topics)' # propres à chaque dépôt
+          socle_workflows() { grep -E '\.yml$' | grep -vE '^extra-' | sort || true; }
+          theirs="$(mktemp)"
+          drift=0
+          mine="$(ls .github/workflows | socle_workflows)"
+          for repo in regis knock uske; do
+            [ "$repo" = "$SELF" ] && continue
+
+            # Les mêmes workflows du socle, ni plus ni moins.
+            if others="$(gh api "repos/$OWNER/$repo/contents/.github/workflows" --jq '.[].name' | socle_workflows)"; then
+              for w in $(comm -23 <(echo "$mine") <(echo "$others")); do
+                echo "::error file=.github/workflows/$w::absent de $OWNER/$repo"
+                drift=1
+              done
+              for w in $(comm -13 <(echo "$mine") <(echo "$others")); do
+                echo "::error::$OWNER/$repo a un workflow du socle de plus : $w (le renommer extra-*.yml s'il lui est propre)"
+                drift=1
+              done
+            else
+              echo "::error::liste des workflows de $OWNER/$repo illisible"
+              drift=1
+            fi
+
+            for f in $files .github/settings.json; do
+              if ! err="$(gh api "repos/$OWNER/$repo/contents/$f" -H 'Accept: application/vnd.github.raw' 2>&1 > "$theirs")"; then
+                case "$err" in
+                  *404*) echo "::error file=$f::absent de $OWNER/$repo" ;;
+                  *) echo "::error file=$f::illisible dans $OWNER/$repo : $err" ;;
+                esac
+                drift=1
+                continue
+              fi
+              if [ "$f" = .github/settings.json ]; then
+                [ "$(jq -S "$strip" "$f")" = "$(jq -S "$strip" "$theirs")" ] && continue
+              else
+                cmp -s "$f" "$theirs" && continue
+              fi
+              echo "::error file=$f::diffère de $OWNER/$repo"
+              drift=1
+            done
+          done
+          exit "$drift"

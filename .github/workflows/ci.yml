@@ -1,0 +1,89 @@
+# Fichier du socle : identique dans regis, knock et uske. Ce qui est propre au dépôt est dans le Makefile.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Aucune donnée nanopm suivie
+        run: "! git ls-files .nanopm CONTEXT.md | grep ."
+      - name: Actions épinglées par SHA
+        run: |
+          # grep rend 1 s'il ne trouve rien (normal) et 2 s'il échoue (fichier illisible) : seul 2 fait échouer l'étape.
+          uses="$(grep -nE '^\s*-?\s*uses:\s*[^./[:space:]][^@[:space:]]*@' .github/workflows/*.y*ml || [ $? -eq 1 ])"
+          uses="$(printf '%s\n' "$uses" | grep -v 'uses:[[:space:]]*docker://' || true)" # les docker:// ont leur propre contrôle
+          bad="$(printf '%s\n' "$uses" | grep -vE -e '@[0-9a-f]{40}([[:space:]]|$)' -e '^$' || [ $? -eq 1 ])"
+          if [ -n "$bad" ]; then
+            printf '%s\n' "$bad"
+            echo "::error::Épingler chaque action sur un SHA complet de 40 caractères."
+            exit 1
+          fi
+          docker="$(grep -nE 'uses:\s*docker://' .github/workflows/*.y*ml || [ $? -eq 1 ])"
+          bad="$(printf '%s\n' "$docker" | grep -vE -e '@sha256:' -e '^$' || [ $? -eq 1 ])"
+          if [ -n "$bad" ]; then
+            printf '%s\n' "$bad"
+            echo "::error::Épingler chaque image docker:// sur un digest @sha256:."
+            exit 1
+          fi
+      - name: Self-test des réglages
+        run: .github/apply-settings.sh --self-test
+      - name: Liens Markdown internes
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: >-
+            --offline --no-progress
+            --exclude-path CHANGELOG.md --exclude-path docs/superpowers --exclude-path docs/memory-bank
+            --exclude-path openspec --exclude-path node_modules
+            './**/*.md'
+          fail: true
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: true
+      - run: make ci-tools
+      - run: make lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: true
+      - run: make ci-tools
+      - run: make test
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: true
+      - run: make security
+
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - run: make image

@@ -1,0 +1,4 @@
+[
+  { "suffix": "", "build_args": "VARIANT=slim" },
+  { "suffix": "-full", "build_args": "VARIANT=full" }
+]

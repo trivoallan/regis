@@ -1,0 +1,20 @@
+# Fichier du socle : identique dans regis, knock et uske.
+name: pr-title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Titre de PR au format Conventional Commits
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          printf '%s\n' "$TITLE" | grep -Eq -e '^(feat|fix|perf|revert|docs|style|refactor|test|build|ci|chore)(\([a-z0-9-]+\))?!?: .+' -e '^Revert ".+"$' \
+            || { echo "::error::Titre hors Conventional Commits : $TITLE"; exit 1; }
