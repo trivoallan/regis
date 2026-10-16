@@ -39,6 +39,9 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
 
+      - name: No nanopm data tracked (it lives in the private oci-pm repo)
+        run: "! git ls-files .nanopm CONTEXT.md | grep ."
+
       - name: Trunk Install
         uses: trunk-io/trunk-action/setup@04ba50e7658c81db7356da96657e6e77f220bfa3 # v1.3.1
 

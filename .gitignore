@@ -78,3 +78,8 @@ tmp/
 
 coverage.json
 .superpowers/
+
+# nanopm data: lives in the private oci-pm repo; .nanopm and CONTEXT.md are symlinks to it.
+# No trailing slash: git sees a symlink as a file, and `.nanopm/` would not match it.
+.nanopm
+/CONTEXT.md
