@@ -241,10 +241,17 @@ def _render_markdown(report: dict[str, Any]) -> str:
     if playbooks:
         lines += ["## Playbook results", ""]
         lines += ["| Playbook | Verdict | Failing rules |", "| --- | --- | --- |"]
+        from regis.core.domain.playbook.verdict import tier_label
+
         for pb in playbooks:
-            name = pb.get("name", "")
-            verdict = pb.get("verdict", "")
-            failing = sum(1 for r in pb.get("rules", []) if r.get("result") is False)
+            # Keys written by the playbook engine (core/domain/playbook/evaluator.py).
+            name = pb.get("playbook_name", "")
+            verdict = f"{tier_label(pb.get('tier'), pb.get('tier_icon'))} · {pb.get('score', 0)}/100"
+            failing = sum(
+                1
+                for r in pb.get("rules") or []
+                if not r.get("passed") and r.get("status") != "incomplete"
+            )
             lines.append(f"| {name} | {verdict} | {failing} |")
         lines.append("")
 
