@@ -44,6 +44,6 @@ def test_every_analyzer_schema_declares_source():
 def test_source_block_is_identical_everywhere():
     for name in ANALYZERS:
         schema = _schema(name)
-        assert (
-            schema["properties"]["source"] == SOURCE_BLOCK
-        ), f"{name} source block differs from canonical shape"
+        assert schema["properties"]["source"] == SOURCE_BLOCK, (
+            f"{name} source block differs from canonical shape"
+        )

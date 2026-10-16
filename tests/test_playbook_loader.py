@@ -187,9 +187,7 @@ def test_missing_api_version_raises(tmp_path) -> None:
 
 def test_wrong_kind_raises(tmp_path) -> None:
     content = (
-        "apiVersion: regis.io/v1alpha1\n"
-        "kind: RuleSet\n"
-        "metadata:\n  name: x\nspec: {}\n"
+        "apiVersion: regis.io/v1alpha1\nkind: RuleSet\nmetadata:\n  name: x\nspec: {}\n"
     )
     with pytest.raises(PlaybookVersionError) as exc:
         load_playbook(_write(tmp_path, content))
@@ -198,9 +196,7 @@ def test_wrong_kind_raises(tmp_path) -> None:
 
 def test_unknown_api_version_raises(tmp_path) -> None:
     content = (
-        "apiVersion: regis.io/v9\n"
-        "kind: Playbook\n"
-        "metadata:\n  name: x\nspec: {}\n"
+        "apiVersion: regis.io/v9\nkind: Playbook\nmetadata:\n  name: x\nspec: {}\n"
     )
     with pytest.raises(PlaybookVersionError) as exc:
         load_playbook(_write(tmp_path, content))

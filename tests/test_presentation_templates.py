@@ -45,9 +45,9 @@ def test_packaged_template_resolved_to_local_path(
 
     assert len(seen) == 1, "expected exactly one template render"
     template_arg = seen[0]
-    assert not _cc_repo.is_repo_url(
-        template_arg
-    ), f"packaged template must resolve to a local path, got a repo URL: {template_arg!r}"
+    assert not _cc_repo.is_repo_url(template_arg), (
+        f"packaged template must resolve to a local path, got a repo URL: {template_arg!r}"
+    )
     assert template_arg.endswith("cookiecutters/mr-evidence")
     assert Path(template_arg).is_dir()
 
