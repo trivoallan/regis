@@ -2,6 +2,12 @@
 
 > Supplemental file: this records historical decisions that complement the core Memory Bank files.
 
+## 2026-10-16 — Trunk retiré au profit du socle commun
+
+- **Décision** : retirer Trunk (`.trunk/`, hook pre-commit, workflow de lint) et les workflows propres à `regis` qu'il orchestrait ; la CI passe au socle commun à `regis`, `knock` et `uske` (`make lint|test|security|image`, voir `systemPatterns.md` § CI/CD). La documentation quitte Docusaurus et GitHub Pages pour du Markdown lu sur GitHub.
+- **Gardé** : ruff (règles de `.trunk/configs/ruff.toml` reprises dans `[tool.ruff.lint]`), mypy, import-linter, lychee hors ligne, garde d'épinglage des actions par SHA, pip-audit (barrière HIGH), CodeQL, secret scanning + push protection, alertes OSV via Renovate.
+- **Renoncé** (décision de l'utilisateur) : actionlint, hadolint, bandit, checkov, markdownlint, yamllint, osv-scanner, trufflehog, prettier et taplo en CI. Compromis accepté : un socle identique et simple dans les trois dépôts plutôt qu'une couverture de lint maximale ; ces outils restent utilisables localement.
+
 ## 2026-06: Hexagonal architecture migration (ports & adapters)
 
 - **Decision**: Restructurer le cœur `regis` en **ports & adapters** stricts,

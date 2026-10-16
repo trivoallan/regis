@@ -5,9 +5,9 @@
 **Sprint 1 (19 mai → 2 juin 2026)** — voir `roadmap.md` pour le détail.
 
 - Image-size round 3 — slim/full variants, lazy-loaded scanners (PR pending, see [2026-05-31] in `activeContext.md`)
-- Moratoire snapshots doc
+- ~~Moratoire snapshots doc~~ — fait : site retiré le 2026-10-16 (plus de snapshots versionnés)
 - Playbook bundle format
-- Finitions site de doc
+- ~~Finitions site de doc~~ — abandonné : site retiré le 2026-10-16, remplacé par `docs/` lu sur GitHub
 - Guide GitLab CI
 
 ## Completed (Recent)

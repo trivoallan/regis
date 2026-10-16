@@ -7,6 +7,7 @@ on:
       - regis/utils/process.py
       - regis/utils/grype.py
       - regis/utils/syft.py
+      - regis/utils/trufflehog.py
       - regis/utils/regctl.py
       - regis/core/domain/analyzers/hadolint.py
       - regis/core/domain/analyzers/dockle.py

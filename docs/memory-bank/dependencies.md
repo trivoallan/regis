@@ -26,7 +26,8 @@
 | responses          | >=0.24  | HTTP mocking                                  |
 | httpx              | >=0.28  | HTTP client/testing                           |
 | ruff               | \*      | Linting and formatting (dev dependency group) |
-| jsonschema2md      | \*      | Docs generation helper                        |
+| mypy               | ==1.19.1 | Static type checking (`make lint`)            |
+| import-linter      | >=2.11  | Hexagonal layer boundaries (`make lint`)      |
 | json-schema-for-humans | \* | Schema reference generation (`make reference`) |
 | types-PyYAML       | \*      | Typing support                                |
 | types-requests     | \*      | Typing support                                |

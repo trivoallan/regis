@@ -3,17 +3,14 @@
 ## Development
 
 - `uv sync` — Install all dependencies (incl. dev group)
-- `uv run pytest` — Run tests with coverage (fails if < 90%)
-- `uv run pytest --no-cov` — Run tests without coverage check
-- `uv run ruff check .` — Lint
+- `make lint` — ruff, mypy, import-linter, docs/reference up to date
+- `make test` — Run tests with coverage (fails if total or any file < 90%)
+- `make security` — pip-audit, blocking from HIGH
+- `make image` — Build and smoke-test both image variants
+- `make reference` — Regenerate docs/reference (commit the result)
+- `uv run python -m pytest --no-cov` — Fast test loop without coverage gates
 - `uv run ruff format .` — Format
 - `uv run regis --help` — Run CLI locally
-
-## Linting / Formatting
-
-- `trunk check` — Run trunk check
-- `trunk check --fix` — Fix issues
-- `trunk check --fix --all` — Fix issues in all files
 
 ## Git
 

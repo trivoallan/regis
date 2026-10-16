@@ -7,7 +7,6 @@
 .agent
 .claude
 .omc
-.trunk
 
 # Python build artifacts
 .venv

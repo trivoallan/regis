@@ -25,7 +25,7 @@ uv run ruff format .                 # Format
 uv run regis --help                  # Run CLI locally
 ```
 
-CI only calls these `make` targets. Documentation is plain Markdown in `docs/` (entry point `docs/README.md`), read on GitHub.
+CI's build steps only call these `make` targets. Documentation is plain Markdown in `docs/` (entry point `docs/README.md`), read on GitHub.
 
 Required external binaries (must be on `PATH`): `grype`, `syft`, `trufflehog`, `regctl`, `hadolint`, `dockle`.
 

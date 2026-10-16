@@ -8,8 +8,6 @@ To follow this guide, you should have a GitHub repository with a `Dockerfile` an
 
 > [!TIP]
 > To quickly bootstrap a new GitHub repository pre-configured with `regis` and GitHub Actions, you can use our [Project Bootstrapping](../../reference/cli.md#bootstrap) command.
->
-> **Note**: For repositories with branch protection, please ensure the **"Allow auto-merge"** option is enabled in the repository's general settings to support automated documentation updates.
 
 ## Quick Start with the Reusable Action
 

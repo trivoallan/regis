@@ -49,7 +49,6 @@ dev = [
   "responses>=0.24",
   "httpx>=0.28",
   "ruff",
-  "jsonschema2md",
   "json-schema-for-humans",
   "types-PyYAML",
   "types-requests",

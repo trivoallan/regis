@@ -23,30 +23,30 @@ Analyze container images, enforce compliance policies, and generate interactive 
 
 ## Report Preview
 
-#### Dashboard
+### Dashboard
 
-![Dashboard Overview](./img/screenshots/report-overview.png)
+![Dashboard Overview](../.github/assets/report-overview.png)
 
-#### Compliance
+### Compliance
 
-![Compliance Analysis](./img/screenshots/report-compliance.png)
+![Compliance Analysis](../.github/assets/report-compliance.png)
 
-#### Security
+### Security
 
-![Vulnerability & Security](./img/screenshots/report-security.png)
+![Vulnerability & Security](../.github/assets/report-security.png)
 
-#### Supply Chain
+### Supply Chain
 
-![Supply Chain & Quality](./img/screenshots/report-supply-chain.png)
+![Supply Chain & Quality](../.github/assets/report-supply-chain.png)
 
-#### Best Practices
+### Best Practices
 
-![Best Practices](./img/screenshots/report-best-practices.png)
+![Best Practices](../.github/assets/report-best-practices.png)
 
-#### Insights
+### Insights
 
-![Insights & Lifecycle](./img/screenshots/report-insights.png)
+![Insights & Lifecycle](../.github/assets/report-insights.png)
 
-#### Technical
+### Technical
 
-![Technical Details](./img/screenshots/report-technical-details.png)
+![Technical Details](../.github/assets/report-technical-details.png)

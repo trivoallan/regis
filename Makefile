@@ -12,10 +12,12 @@ lint: ## ruff, mypy, frontières hexagonales, référence à jour, gardes du dé
 	uv run lint-imports
 	$(MAKE) reference
 	test -z "$$(git status --porcelain -- docs/reference)" || { git status --short -- docs/reference; echo "docs/reference est périmé : lancer 'make reference' et commiter."; exit 1; }
-	! git ls-files -- 'docs/superpowers/plans/**' '**/search-index.json' | grep . || { echo "plans d'exécution ou artefacts de doc commités"; exit 1; }
+	! git ls-files -- 'docs/superpowers/plans/**' | grep . || { echo "plans d'exécution commités"; exit 1; }
 
-reference: ## Régénère la référence des règles et des schémas
+reference: ## Régénère la référence des règles et des schémas (README.md des règles est écrit à la main)
+	rm -rf docs/reference/schemas
 	mkdir -p docs/reference/rules
+	find docs/reference/rules -mindepth 2 -name '*.md' -delete
 	uv run regis rules list -f markdown -D docs/reference/rules
 	for cat in $$(find regis/schemas -mindepth 1 -maxdepth 1 -type d ! -name __pycache__ -exec basename {} \; | sort); do \
 	  mkdir -p docs/reference/schemas/$$cat && \

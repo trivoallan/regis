@@ -37,10 +37,6 @@ uv tool install git+https://github.com/trivoallan/regis.git
 > For developers wanting to contribute to the project, use **[uv](https://docs.astral.sh/uv/)**:
 > `uv sync`
 
-## GitHub Repository Configuration
-
-If you plan to use automated documentation snapshots on a GitHub repository with protected branches, ensure that the **"Allow auto-merge"** option is enabled in your repository's general settings. This allows the automated workflows to synchronize documentation safely without manual intervention on every update. See the [GitHub Actions integration guide](./integrations/github.md) for more details.
-
 ## Your First Analysis
 
 Run your first analysis against a public image to see Regis in action:
