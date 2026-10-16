@@ -93,7 +93,6 @@ jobs:
       - id: meta
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
         with:
-          context: git # la révision du label est celle extraite, pas github.sha
           images: ${{ steps.name.outputs.image }}
           flavor: |
             latest=false
