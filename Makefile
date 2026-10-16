@@ -30,7 +30,7 @@ test: ## Tests et couverture de branches (90 %)
 
 security: ## pip-audit, bloquant à partir de HIGH (commande identique dans les trois dépôts)
 	@d="$$(mktemp -d)" && trap 'rm -rf "$$d"' EXIT && \
-	uv export -q --frozen --no-dev --no-emit-project --no-hashes -o "$$d/req.txt" && \
+	uv export -q --locked --all-extras --no-dev --no-emit-project --no-hashes -o "$$d/req.txt" && \
 	{ uvx pip-audit==2.10.1 -r "$$d/req.txt" --no-deps --disable-pip --progress-spinner off --format=json --output "$$d/audit.json" || true; } && \
 	test -s "$$d/audit.json" && \
 	python3 .github/pip-audit-gate.py "$$d/audit.json" --min-severity HIGH

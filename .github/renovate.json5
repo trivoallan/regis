@@ -26,5 +26,7 @@
     { matchManagers: ["github-actions"], matchUpdateTypes: ["minor", "patch", "pin", "digest"], groupName: "github actions (non-major)", automerge: true },
     { matchManagers: ["dockerfile"], matchUpdateTypes: ["minor", "patch", "pin", "digest"], groupName: "docker base images (non-major)", automerge: true },
     { matchUpdateTypes: ["major"], draftPR: true, automerge: false },
+    // Une montée mineure ou majeure de Python (image de base, .python-version) se décide : elle sort des groupes et ne fusionne pas seule.
+    { matchPackageNames: ["python"], matchUpdateTypes: ["minor", "major"], groupName: null, automerge: false },
   ],
 }
