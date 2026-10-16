@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis/schemas/analyzer/sbom.schema.json",
+  "$id": "https://raw.githubusercontent.com/trivoallan/regis/main/regis/schemas/analyzer/sbom.schema.json",
   "title": "sbom.output",
   "description": "Software Bill of Materials extracted from a container image using Syft (CycloneDX).",
   "type": "object",

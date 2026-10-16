@@ -12,7 +12,7 @@ import hashlib
 import json
 from typing import Any
 
-DOCS_BASE = "https://trivoallan.github.io/regis/docs/reference/rules"
+DOCS_BASE = "https://github.com/trivoallan/regis/blob/main/docs/reference/rules"
 
 # Regis level -> (SARIF level, security-severity). security-severity buckets in
 # GitHub: >=9.0 Critical, 7.0-8.9 High, 4.0-6.9 Medium, <4.0 Low.
@@ -34,7 +34,7 @@ def _help_uri(rule: dict[str, Any]) -> str | None:
         return None
     analyzers = rule.get("analyzers") or []
     category = analyzers[0] if analyzers else "core"
-    return f"{DOCS_BASE}/{category}/{criterion}"
+    return f"{DOCS_BASE}/{category}/{criterion}.md"
 
 
 def _fingerprint(slug: str, req: dict[str, Any]) -> str:

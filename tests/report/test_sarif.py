@@ -112,7 +112,7 @@ def test_help_uri_points_to_criterion_doc():
         )
     )
     desc = s["runs"][0]["tool"]["driver"]["rules"][0]
-    assert desc["helpUri"] == f"{DOCS_BASE}/cve/cve-count"
+    assert desc["helpUri"] == f"{DOCS_BASE}/cve/cve-count.md"
 
 
 def test_help_uri_falls_back_to_core_when_no_analyzer():
@@ -132,7 +132,7 @@ def test_help_uri_falls_back_to_core_when_no_analyzer():
         )
     )
     desc = s["runs"][0]["tool"]["driver"]["rules"][0]
-    assert desc["helpUri"] == f"{DOCS_BASE}/core/registry-domain-whitelist"
+    assert desc["helpUri"] == f"{DOCS_BASE}/core/registry-domain-whitelist.md"
 
 
 def test_fingerprint_ignores_digest():
@@ -294,3 +294,10 @@ def test_houba_ingestion_profile_contract():
     assert _houba_bucket(by_id["crit"]["properties"]["security-severity"]) == "critical"
     assert _houba_bucket(by_id["warn"]["properties"]["security-severity"]) == "high"
     assert _houba_bucket(by_id["note"]["properties"]["security-severity"]) == "low"
+
+
+def test_help_uri_points_to_the_rule_page_on_github():
+    assert (
+        DOCS_BASE
+        == "https://github.com/trivoallan/regis/blob/main/docs/reference/rules"
+    )

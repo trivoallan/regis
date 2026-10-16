@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis/schemas/playbook/jsonlogic.schema.json",
+  "$id": "https://raw.githubusercontent.com/trivoallan/regis/main/regis/schemas/playbook/jsonlogic.schema.json",
   "title": "jsonlogic",
   "description": "Simplified schema for JSON Logic expressions used in regis playbooks.",
   "type": ["object", "array", "string", "number", "boolean", "null"],

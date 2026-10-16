@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis/schemas/analyzer/size.schema.json",
+  "$id": "https://raw.githubusercontent.com/trivoallan/regis/main/regis/schemas/analyzer/size.schema.json",
   "title": "size.output",
   "description": "Image size breakdown.",
   "type": "object",
