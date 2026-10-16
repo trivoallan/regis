@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.41.0](https://github.com/trivoallan/regis/compare/v0.40.0...v0.41.0) (2026-10-16)
+
+
+### Features
+
+* **report:** expliquer chaque refus dans le rapport HTML ([#882](https://github.com/trivoallan/regis/issues/882)) ([1585182](https://github.com/trivoallan/regis/commit/15851827c3f7569c3ce2a2b080f177c1178b7cdf))
+
+
+### Bug Fixes
+
+* **report:** remplir le tableau « Playbook results » du rapport Markdown ([#880](https://github.com/trivoallan/regis/issues/880)) ([37741e1](https://github.com/trivoallan/regis/commit/37741e17ef675d130b37c9d28c294cec336b21ad))
+
 ## [0.40.0](https://github.com/trivoallan/regis/compare/v0.39.1...v0.40.0) (2026-10-16)
 
 
