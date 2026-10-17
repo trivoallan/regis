@@ -1,6 +1,6 @@
 # Managing Analyzer Tools
 
-The default `regis:latest` image is **slim** — only the regis CLI and `regctl` are baked in. Scanner binaries (`grype`, `syft`, `trufflehog`, `hadolint`, `dockle`) are downloaded on first use to a local cache, verified against pinned sha256s (and cosign signatures when available).
+The default `regis:latest` image is **slim** — only the regis CLI and `regctl` are baked in. Scanner binaries (`grype`, `syft`, `trufflehog`, `hadolint`, `dockle`, `cosign`) are downloaded on first use to a local cache, verified against pinned sha256s (and cosign signatures when available).
 
 ## When are tools fetched?
 

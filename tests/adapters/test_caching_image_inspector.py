@@ -23,6 +23,7 @@ class _CountingInspector(ImageInspector):
             "get_manifest": 0,
             "get_blob": 0,
             "get_digest": 0,
+            "get_referrers": 0,
         }
         self._delay = delay
 
@@ -44,6 +45,10 @@ class _CountingInspector(ImageInspector):
         self.calls["get_digest"] += 1
         return "sha256:abc"
 
+    def get_referrers(self, digest: str) -> list[dict[str, Any]]:
+        self.calls["get_referrers"] += 1
+        return [{"digest": "sha256:r"}]
+
 
 def test_same_reference_fetched_once():
     delegate = _CountingInspector()
@@ -63,7 +68,7 @@ def test_distinct_references_each_hit_the_delegate():
     assert delegate.calls["get_manifest"] == 2
 
 
-def test_all_four_methods_are_memoized():
+def test_all_five_methods_are_memoized():
     delegate = _CountingInspector()
     cache = CachingImageInspector(delegate)
     for _ in range(2):
@@ -71,11 +76,13 @@ def test_all_four_methods_are_memoized():
         cache.get_manifest("ref")
         cache.get_blob("sha256:d")
         cache.get_digest("ref")
+        cache.get_referrers("sha256:d")
     assert delegate.calls == {
         "list_tags": 1,
         "get_manifest": 1,
         "get_blob": 1,
         "get_digest": 1,
+        "get_referrers": 1,
     }
 
 
@@ -98,6 +105,9 @@ def test_exceptions_are_not_cached():
 
         def get_digest(self, reference: str) -> str | None:
             return None
+
+        def get_referrers(self, digest: str) -> list[dict[str, Any]]:
+            return []
 
     delegate = _RaiseThenOk()
     cache = CachingImageInspector(delegate)

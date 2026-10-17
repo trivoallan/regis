@@ -339,3 +339,66 @@ def test_scan_vulnerabilities_from_layout_runs_grype_on_oci_dir(monkeypatch):
     result = SubprocessToolRunner("u", "p").scan_vulnerabilities_from_layout("/tmp/lay")
     assert result == {"matches": []}
     assert captured["image"] == "oci-dir:/tmp/lay"
+
+
+SIGNED = ImageReference(registry="ghcr.io", repository="o/r", tag="sha256:" + "b" * 64)
+
+
+def _fake_cosign(monkeypatch, returncode: int, stderr: str = "") -> dict:
+    captured: dict = {}
+
+    def fake_run(args, **kwargs):
+        captured["args"] = args
+        captured["env"] = kwargs["env"]
+        config = kwargs["env"].get("DOCKER_CONFIG")
+        if config:
+            with open(f"{config}/config.json", encoding="utf-8") as handle:
+                captured["config"] = handle.read()
+        return SimpleNamespace(returncode=returncode, stdout="", stderr=stderr)
+
+    monkeypatch.setattr(mod, "ensure_tool", lambda name: f"/bin/{name}")
+    monkeypatch.setattr(mod.subprocess, "run", fake_run)
+    return captured
+
+
+def test_verify_signature_true_on_success(monkeypatch) -> None:
+    captured = _fake_cosign(monkeypatch, 0)
+    monkeypatch.delenv("REGIS_COSIGN_TRUSTED_ROOT", raising=False)
+    assert SubprocessToolRunner().verify_signature(SIGNED, identity="i", issuer="s")
+    assert captured["args"] == [
+        "/bin/cosign",
+        "verify",
+        f"ghcr.io/o/r@sha256:{'b' * 64}",
+        "--certificate-identity",
+        "i",
+        "--certificate-oidc-issuer",
+        "s",
+    ]
+    assert "config" not in captured
+
+
+@pytest.mark.parametrize(
+    "stderr",
+    [
+        "Error: no matching attestations: no matching CertificateIdentity found",
+        "Error: no signatures found",
+    ],
+)
+def test_verify_signature_false_when_nothing_matches(monkeypatch, stderr) -> None:
+    _fake_cosign(monkeypatch, 1, stderr)
+    assert not SubprocessToolRunner().verify_signature(SIGNED, identity="i", issuer="s")
+
+
+def test_verify_signature_other_failure_is_tool_error(monkeypatch) -> None:
+    _fake_cosign(monkeypatch, 1, "Error: getting trusted root: dial tcp: timeout")
+    with pytest.raises(ToolError, match="trusted root"):
+        SubprocessToolRunner().verify_signature(SIGNED, identity="i", issuer="s")
+
+
+def test_verify_signature_passes_credentials_and_trusted_root(monkeypatch) -> None:
+    captured = _fake_cosign(monkeypatch, 0)
+    monkeypatch.setenv("REGIS_COSIGN_TRUSTED_ROOT", "/etc/root.json")
+    runner = SubprocessToolRunner(username="u", password="p")
+    assert runner.verify_signature(SIGNED, identity="i", issuer="s")
+    assert captured["args"][-2:] == ["--trusted-root", "/etc/root.json"]
+    assert '"ghcr.io"' in captured["config"]

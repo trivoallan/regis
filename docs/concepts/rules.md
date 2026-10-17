@@ -185,6 +185,24 @@ criterion name and the `level` option (for example, `cve-count.critical`).
 > `dockle/severity-count` are multi-purpose. Rather than shipping one hard-coded
 > rule per severity, a single criterion can be bound as many times as you need.
 
+### Requiring a signature from a known signer
+
+`provenance/signed-by` passes only when cosign has verified a signature on the image by one of the listed signers. Each signer is an exact pair: the certificate identity and its OIDC issuer. Regis finds signatures in both cosign layouts, the cosign v2 `.sig` tag and cosign v3 Sigstore bundles stored as OCI referrers. Having a signature is not enough: the rule fails when no listed pair matches a verified signature. It is `incomplete` when a lookup or the verification could not run, for example when the registry errored or the Sigstore trust root was unreachable.
+
+```yaml
+spec:
+  rules:
+    - provider: provenance
+      criterion: signed-by
+      slug: signed-by-regis-ci
+      options:
+        signers:
+          - identity: https://github.com/trivoallan/regis/.github/workflows/release.yml@refs/heads/main
+            issuer: https://token.actions.githubusercontent.com
+```
+
+Verification needs `cosign` (baked into the `full` image, fetched on first use in `slim`). Without access to the Sigstore TUF repository, point `REGIS_COSIGN_TRUSTED_ROOT` at a Sigstore `trusted_root.json`.
+
 ### Adding a fully custom rule
 
 You can define completely new rules with arbitrary JSON Logic conditions instead

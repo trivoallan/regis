@@ -134,6 +134,36 @@ class RegistryClient:
 
         return resp.headers.get("Docker-Content-Digest")
 
+    def get_referrers(self, digest: str) -> list[dict[str, Any]]:
+        """Return the OCI referrer descriptors of *digest*.
+
+        Tries the Referrers API, then the ``sha256-<hex>`` fallback tag (OCI
+        distribution spec) when the API answers 404. Both absent means no referrers.
+
+        Raises:
+            RegistryError: If either lookup fails with a status other than 404.
+        """
+        accept = "application/vnd.oci.image.index.v1+json"
+        paths = (
+            f"/{self.repository}/referrers/{digest}",
+            f"/{self.repository}/manifests/{digest.replace(':', '-')}",
+        )
+        for path in paths:
+            url = self._base_url + path
+            resp = self._request(url, {"Accept": accept})
+            if resp.status_code == 401:
+                self._authenticate(resp)
+                resp = self._request(url, {"Accept": accept})
+            if resp.status_code == 404:
+                continue
+            if resp.status_code != 200:
+                raise RegistryError(
+                    f"Registry returned {resp.status_code} for {url}: {resp.text[:200]}"
+                )
+            manifests: list[dict[str, Any]] = resp.json().get("manifests") or []
+            return manifests
+        return []
+
     # ------------------------------------------------------------------
     # Internal
     # ------------------------------------------------------------------

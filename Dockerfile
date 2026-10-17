@@ -211,6 +211,8 @@ COPY --from=tools-fetcher /tools/trufflehog /usr/local/bin/trufflehog
 COPY --from=tools-fetcher /tools/hadolint   /usr/local/bin/hadolint
 COPY --from=tools-fetcher /tools/dockle     /usr/local/bin/dockle
 COPY --from=tools-fetcher /tools/regctl     /usr/local/bin/regctl
+# cosign verifies image signatures (provenance analyzer); same version as knock.
+COPY --from=ghcr.io/sigstore/cosign/cosign:v3.1.3@sha256:9e5c2f2edc34351160407ca3416c61855bdf9403c3c5936e0f0be7fc261611b8 /ko-app/cosign /usr/local/bin/cosign
 
 WORKDIR /home/regis
 USER regis

@@ -46,10 +46,12 @@ class TestProvenanceCoverage:
     def test_prov_all(self):
         a = ProvenanceAnalyzer()
         cl = MagicMock()
+        cl.get_digest.return_value = "sha256:idx"
+        cl.get_referrers.return_value = []
+        cl.list_tags.return_value = []
         cl.get_manifest.side_effect = [
             {"mediaType": "index", "manifests": [{"digest": "s:1"}]},
             {"mediaType": "manifest", "config": {"digest": "cfg"}},
-            {"layers": [1]},
             {"mediaType": "index", "manifests": []},
             Exception("f"),
         ]
@@ -57,6 +59,6 @@ class TestProvenanceCoverage:
             "config": {"Labels": {"org.opencontainers.image.source": "s"}}
         }
         r = a.analyze(_prov_ctx(cl))
-        assert r["indicators_count"] == 2
+        assert r["indicators_count"] == 1
         assert a.analyze(_prov_ctx(cl))["indicators_count"] == 0
         a.analyze(_prov_ctx(cl))

@@ -52,7 +52,15 @@ def test_all_tools_present_shows_each_tool():
         ),
     ):
         result = runner.invoke(doctor)
-    for tool in ("grype", "syft", "trufflehog", "regctl", "hadolint", "dockle"):
+    for tool in (
+        "grype",
+        "syft",
+        "trufflehog",
+        "regctl",
+        "hadolint",
+        "dockle",
+        "cosign",
+    ):
         assert tool in result.output
 
 

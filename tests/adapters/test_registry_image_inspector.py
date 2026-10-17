@@ -27,11 +27,13 @@ def test_delegates_each_method() -> None:
     client.get_manifest.return_value = {"schemaVersion": 2}
     client.get_blob.return_value = {"config": {}}
     client.get_digest.return_value = "sha256:abc"
+    client.get_referrers.return_value = [{"digest": "sha256:r"}]
 
     assert inspector.list_tags() == ["1.27"]
     assert inspector.get_manifest("1.27") == {"schemaVersion": 2}
     assert inspector.get_blob("sha256:abc") == {"config": {}}
     assert inspector.get_digest("1.27") == "sha256:abc"
+    assert inspector.get_referrers("sha256:abc") == [{"digest": "sha256:r"}]
     client.get_manifest.assert_called_once_with("1.27")
     client.get_blob.assert_called_once_with("sha256:abc")
     client.get_digest.assert_called_once_with("1.27")

@@ -48,6 +48,15 @@ class ToolRunner(ABC):
         """Audit *image* for best practices (e.g. dockle)."""
 
     @abstractmethod
+    def verify_signature(
+        self, image: ImageReference, *, identity: str, issuer: str
+    ) -> bool:
+        """Return whether *image* carries a valid signature by *identity* from *issuer*.
+
+        False when no signature matches; ToolError when verification cannot run.
+        """
+
+    @abstractmethod
     def run(
         self, tool: str, args: Sequence[str], *, timeout: int | None = None
     ) -> ToolResult:

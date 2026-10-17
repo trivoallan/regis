@@ -141,3 +141,39 @@ def test_translates_invalid_json(monkeypatch) -> None:
     inspector, _ = _inspector()
     with pytest.raises(RegistryError):
         inspector.get_manifest("1.27")
+
+
+def test_get_referrers_lists_artifacts(monkeypatch) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_run_regctl(client, args):
+        captured["args"] = args
+        return '{"manifests": [{"digest": "sha256:r"}]}'
+
+    monkeypatch.setattr(mod, "run_regctl", fake_run_regctl)
+    inspector, _ = _inspector()
+    assert inspector.get_referrers("sha256:abc") == [{"digest": "sha256:r"}]
+    assert captured["args"] == [
+        "artifact",
+        "list",
+        "docker.io/library/nginx@sha256:abc",
+        "--format",
+        "raw-body",
+    ]
+
+
+def test_get_referrers_null_manifests_is_empty(monkeypatch) -> None:
+    # regctl answers {"manifests": null} for a digest with no referrers.
+    monkeypatch.setattr(mod, "run_regctl", lambda c, a: '{"manifests": null}')
+    inspector, _ = _inspector()
+    assert inspector.get_referrers("sha256:abc") == []
+
+
+def test_get_referrers_failure_is_registry_error(monkeypatch) -> None:
+    def boom(client, args):
+        raise subprocess.CalledProcessError(1, "regctl")
+
+    monkeypatch.setattr(mod, "run_regctl", boom)
+    inspector, _ = _inspector()
+    with pytest.raises(RegistryError):
+        inspector.get_referrers("sha256:abc")

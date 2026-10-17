@@ -5,8 +5,11 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from regis.core.domain import signatures as sigs
 from regis.core.domain.analyzers.base import BaseAnalyzer
 from regis.core.domain.context import AnalysisContext
+from regis.core.domain.errors import RegistryError
+from regis.core.model.image_reference import ImageReference
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +31,8 @@ class ProvenanceAnalyzer(BaseAnalyzer):
         repository = ctx.image.repository
         tag = ctx.image.tag
         labels: dict[str, str] = {}
-        image_digest: str | None = None
 
-        # Fetch manifest and config to extract labels and digest.
+        # Fetch manifest and config to extract labels (any platform carries them).
         try:
             manifest = ctx.inspector.get_manifest(tag)
             media_type = manifest.get("mediaType", "")
@@ -38,15 +40,11 @@ class ProvenanceAnalyzer(BaseAnalyzer):
             if "list" in media_type or "index" in media_type:
                 entries = manifest.get("manifests", [])
                 if entries:
-                    image_digest = entries[0].get("digest")
-                    manifest = ctx.inspector.get_manifest(image_digest)
+                    manifest = ctx.inspector.get_manifest(entries[0].get("digest"))
                 else:
                     manifest = {}
 
             config_digest = manifest.get("config", {}).get("digest")
-            if not image_digest:
-                image_digest = config_digest
-
             if config_digest:
                 config = ctx.inspector.get_blob(config_digest)
                 labels = config.get("config", {}).get("Labels") or {}
@@ -108,23 +106,15 @@ class ProvenanceAnalyzer(BaseAnalyzer):
                 }
             )
 
-        # Try to detect cosign signatures by fetching the tag with cosign suffix.
-        has_cosign_signature = False
-        if image_digest:
-            cosign_tag = image_digest.replace(":", "-") + ".sig"
-            try:
-                sig_manifest = ctx.inspector.get_manifest(cosign_tag)
-                if sig_manifest.get("layers") or sig_manifest.get("manifests"):
-                    has_cosign_signature = True
-                    provenance_indicators.append(
-                        {
-                            "type": "cosign-signature",
-                            "key": "signature-tag",
-                            "value": cosign_tag,
-                        }
-                    )
-            except Exception:
-                pass  # No cosign signature found.
+        signatures, verified_signers, gaps = self._signatures(ctx)
+        for sig in signatures:
+            provenance_indicators.append(
+                {
+                    "type": "cosign-signature",
+                    "key": sig["format"],
+                    "value": sig["location"],
+                }
+            )
 
         # Determine has_provenance and score.
         has_provenance = len(provenance_indicators) > 0
@@ -139,8 +129,82 @@ class ProvenanceAnalyzer(BaseAnalyzer):
             "repository": repository,
             "tag": tag,
             "has_provenance": has_provenance,
-            "has_cosign_signature": has_cosign_signature,
+            "has_cosign_signature": bool(signatures),
+            "signatures": signatures,
+            "verified_signers": verified_signers,
+            # None (read as missing data) makes signed-by incomplete, not failed.
+            "signatures_complete": True if not gaps else None,
+            "signature_gaps": gaps,
             "source_tracked": source_tracked,
             "indicators_count": len(provenance_indicators),
             "indicators": provenance_indicators,
         }
+
+    @staticmethod
+    def _signatures(
+        ctx: AnalysisContext,
+    ) -> tuple[list[dict[str, Any]], list[dict[str, str]], list[str]]:
+        """Find and verify the signatures on the digest the reference resolves to.
+
+        The subject is the reference as given (the index for a multi-arch image),
+        never a platform child or a config digest: cosign signs what it was named.
+        """
+        image = ctx.image
+        try:
+            subject = (
+                image.tag
+                if image.tag.startswith("sha256:")
+                else ctx.inspector.get_digest(image.tag)
+            )
+        except RegistryError as exc:
+            return [], [], [f"subject digest lookup failed: {exc}"]
+        if not subject:
+            return [], [], ["registry returned no digest for the reference"]
+
+        candidates, gaps = sigs.discover(ctx.inspector, subject)
+        target = ImageReference(
+            registry=image.registry, repository=image.repository, tag=subject
+        )
+        signatures, signers, verify_gaps = sigs.verify(
+            candidates,
+            lambda identity, issuer: ctx.tools.verify_signature(
+                target, identity=identity, issuer=issuer
+            ),
+        )
+        return signatures, signers, gaps + verify_gaps
+
+    @classmethod
+    def default_criteria(cls) -> list[dict[str, Any]]:
+        return [
+            {
+                "slug": "signed-by",
+                "description": "Image must carry a verified signature by a listed signer.",
+                "level": "critical",
+                "enable": False,
+                "tags": ["supply-chain", "signature"],
+                "params": {"signers": []},
+                "condition": {
+                    "if": [
+                        {
+                            "intersects": [
+                                {"var": "results.provenance.verified_signers"},
+                                {"var": "criterion.params.signers"},
+                            ]
+                        },
+                        True,
+                        # Reached only when no listed signer matched: a lookup or
+                        # verification gap (None) makes the rule incomplete.
+                        {
+                            "and": [
+                                {"var": "results.provenance.signatures_complete"},
+                                False,
+                            ]
+                        },
+                    ]
+                },
+                "messages": {
+                    "pass": "Image is signed by an accepted signer.",
+                    "fail": "No verified signature by an accepted signer (found: ${results.provenance.verified_signers}).",
+                },
+            }
+        ]

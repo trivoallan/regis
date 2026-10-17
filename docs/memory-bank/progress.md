@@ -12,6 +12,8 @@
 
 ## Completed (Recent)
 
+- **Signatures cosign v3 et `provenance:signed-by` (2026-10-17, branche `docs/signature-referrers`)** — découverte legacy `.sig` + referrers, vérification par signataire, gabarit `signed-by` à paires `{identity, issuer}`. Recette réelle sur regis 0.42.0. **Reste** : recette sur une image signée par knock dans le Harbor pilote (tâche 6.2).
+
 - **Migration hexagonale — P4a (2026-06-16, branche `tritri/hexagonal-p4-moves`, 3 commits)** — **port `PresentationRenderer` (présentation owned par les use-cases)**, non cassant côté user (subagent-driven + revue holistique `READY TO MERGE`, ponytail) :
   - Port `core/ports/presentation_renderer.py` + adaptateur `CookiecutterPresentationRenderer` (`adapters/driven/report/`, wrappe le util `render_presentation_templates` **inchangé**) + `FakePresentationRenderer` — miroir du trio `ReportSink`. `AnalyzeImage`/`Evaluate` reçoivent un port `presentation` requis et appellent `presentation.render(Report(...))` **après `sink.emit`** (validation court-circuite avant). `build_*` câblent ; CLI off les 3 appels directs (branche `--cache` → adaptateur direct ; import retiré ; pas d'orphelin). **⇒ les use-cases orchestrent toute la sortie via ports.** 882 PASS / 96.65 % (double gate ; port+adaptateur 100 %) / layering KEPT / 0 `click` dans `core/`. **Reste P4** : balayage physique des modules (sous-arbre par sous-arbre, cosmétique) ; P5 docs.
 

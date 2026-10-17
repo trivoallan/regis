@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess  # nosec B404
 from collections.abc import Sequence
 from typing import Any
@@ -13,9 +14,12 @@ from regis.core.model.image_reference import ImageReference
 from regis.core.ports.tool_runner import ToolResult, ToolRunner
 from regis.utils.grype import run_grype
 from regis.utils.process import ensure_tool
-from regis.utils.regctl import run_regctl_copy
+from regis.utils.regctl import _temp_docker_config, run_regctl_copy
 from regis.utils.syft import run_syft
 from regis.utils.trufflehog import run_trufflehog
+
+#: cosign errors that mean "no acceptable signature", not "could not verify".
+_COSIGN_NO_MATCH = ("no matching", "no signatures found")
 
 
 class SubprocessToolRunner(ToolRunner):
@@ -122,6 +126,42 @@ class SubprocessToolRunner(ToolRunner):
             raise ToolError(f"dockle produced invalid JSON: {exc}") from exc
         return report
 
+    def verify_signature(
+        self, image: ImageReference, *, identity: str, issuer: str
+    ) -> bool:
+        binary = ensure_tool("cosign")
+        args = [
+            binary,
+            "verify",
+            self._full_ref(image),
+            "--certificate-identity",
+            identity,
+            "--certificate-oidc-issuer",
+            issuer,
+        ]
+        trusted_root = os.environ.get("REGIS_COSIGN_TRUSTED_ROOT")
+        if trusted_root:
+            args += ["--trusted-root", trusted_root]
+        env = os.environ.copy()
+        config_dir = None
+        if self._username and self._password:
+            config_dir = _temp_docker_config(
+                _Credentials(image.registry, self._username, self._password)
+            )
+            env["DOCKER_CONFIG"] = config_dir
+        try:
+            proc = subprocess.run(  # nosec B603
+                args, capture_output=True, text=True, check=False, env=env
+            )
+        finally:
+            if config_dir:
+                shutil.rmtree(config_dir, ignore_errors=True)
+        if proc.returncode == 0:
+            return True
+        if any(marker in proc.stderr for marker in _COSIGN_NO_MATCH):
+            return False
+        raise ToolError(f"cosign verify failed: {proc.stderr.strip()[-500:]}")
+
     def run(
         self, tool: str, args: Sequence[str], *, timeout: int | None = None
     ) -> ToolResult:
@@ -139,3 +179,12 @@ class SubprocessToolRunner(ToolRunner):
         return ToolResult(
             stdout=proc.stdout, stderr=proc.stderr, exit_code=proc.returncode
         )
+
+
+class _Credentials:
+    """Registry credentials in the shape ``_temp_docker_config`` reads."""
+
+    def __init__(self, registry: str, username: str, password: str) -> None:
+        self.registry = registry
+        self.username: str | None = username
+        self.password: str | None = password

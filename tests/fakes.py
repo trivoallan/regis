@@ -34,6 +34,7 @@ class FakeImageInspector(ImageInspector):
         digest: str | None = "sha256:fake",
         manifests: Mapping[str, dict[str, Any]] | None = None,
         blobs: Mapping[str, dict[str, Any]] | None = None,
+        referrers: Mapping[str, list[dict[str, Any]]] | None = None,
     ) -> None:
         self._tags = tags or []
         self._manifest = manifest or {}
@@ -41,6 +42,7 @@ class FakeImageInspector(ImageInspector):
         self._digest = digest
         self._manifests: dict[str, dict[str, Any]] = dict(manifests or {})
         self._blobs: dict[str, dict[str, Any]] = dict(blobs or {})
+        self._referrers: dict[str, list[dict[str, Any]]] = dict(referrers or {})
 
     def list_tags(self) -> list[str]:
         return list(self._tags)
@@ -53,6 +55,9 @@ class FakeImageInspector(ImageInspector):
 
     def get_digest(self, reference: str) -> str | None:
         return self._digest
+
+    def get_referrers(self, digest: str) -> list[dict[str, Any]]:
+        return list(self._referrers.get(digest, []))
 
 
 class FakeToolRunner(ToolRunner):
@@ -75,6 +80,12 @@ class FakeToolRunner(ToolRunner):
 
     def audit_image(self, image: ImageReference) -> dict[str, Any]:
         return self._canned.get("audit_image", {})
+
+    def verify_signature(
+        self, image: ImageReference, *, identity: str, issuer: str
+    ) -> bool:
+        # Canned as the set of (identity, issuer) pairs that verify.
+        return (identity, issuer) in self._canned.get("verify_signature", set())
 
     def run(
         self, tool: str, args: Sequence[str], *, timeout: int | None = None

@@ -89,6 +89,11 @@ class CachingToolRunner(ToolRunner):
     def audit_image(self, image: ImageReference) -> dict[str, Any]:
         return self._delegate.audit_image(image)
 
+    def verify_signature(
+        self, image: ImageReference, *, identity: str, issuer: str
+    ) -> bool:
+        return self._delegate.verify_signature(image, identity=identity, issuer=issuer)
+
     def run(
         self, tool: str, args: Sequence[str], *, timeout: int | None = None
     ) -> ToolResult:

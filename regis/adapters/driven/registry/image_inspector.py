@@ -49,3 +49,7 @@ class RegistryImageInspector(ImageInspector):
     def get_digest(self, reference: str) -> str | None:
         with _as_core_registry_error():
             return self._client.get_digest(reference)
+
+    def get_referrers(self, digest: str) -> list[dict[str, Any]]:
+        with _as_core_registry_error():
+            return self._client.get_referrers(digest)
