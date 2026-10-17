@@ -1,35 +1,88 @@
-# Regis
+# regis
 
-> **Registry Scores** — Container Security & Policy-as-Code Orchestration
+**Judge a container image against your own rules, and get a verdict you can replay.**
 
-Regis provides unified container analysis, custom playbooks, and highly customizable interactive reports for production-ready CI/CD.
+<!-- trio:begin -->
+> **regis** says whether. **knock** does. **uske** beats time, and records.
 
-[![Dashboard Overview](.github/assets/report-overview.png)](docs/reference/playbooks/default/examples/alpine.md)
+Together they form an admission gate for container images. [knock](https://github.com/trivoallan/knock)
+plans every import, update or rebuild; [regis](https://github.com/trivoallan/regis) judges each image
+against a declarative playbook; knock applies only what was accepted; [uske](https://github.com/trivoallan/uske)
+runs this screening on a schedule and records every decision.
 
-**[See how the example report is produced →](docs/reference/playbooks/default/examples/alpine.md)**
+```mermaid
+flowchart LR
+  subgraph uske["uske: on a schedule, records every decision"]
+    direction LR
+    plan["knock<br/>plans"] --> judge{"regis<br/>judges"}
+    judge -->|accepted| place["knock<br/>places and attests"]
+    judge -->|refused| log[("journal")]
+    place --> log
+  end
+  place --> registry[("Your OCI registry")]
+```
+<!-- trio:end -->
 
-## Key Features
+## Why
 
-- **Unified Registry Inspection** — Fast, multi-arch metadata extraction from any OCI-compliant registry using `regctl`.
-- **Pluggable Analyzer Ecosystem** — Orchestrates industry-standard tools like `grype`, `regctl`, `Hadolint`, and `Dockle` to gather comprehensive security insights.
-- **Policy-as-Code Playbooks** — Define compliance and security rules (e.g., "no critical vulnerabilities", "maximum image age") using flexible `jsonLogic` evaluations.
-- **Hybrid Reporting** — Simultaneously generates machine-readable JSON for automation and rich, interactive HTML dashboards for human review.
-- **CI/CD Native** — Designed to integrate seamlessly into GitHub Actions or GitLab CI pipelines with first-class support for MR/PR reporting.
-- **Efficient Caching** — Reuse existing analysis results to speed up repeated evaluations and report regeneration.
+A pipeline refuses an image, and someone asks why. A scanner gives you four hundred CVEs and a red
+badge. It cannot tell you which rule failed, against which threshold, or whether yesterday's run
+would have said the same. So the person who wrote the pipeline gets the call, every time.
+
+## What it does
+
+```mermaid
+flowchart LR
+  image[("Container image<br/>in any registry")] --> regis
+  playbook["Playbook<br/>your rules, in YAML"] --> regis
+  regis <-->|runs, reads facts| scanners["grype · syft · trufflehog<br/>regctl · hadolint · dockle"]
+  regis --> verdict{"Verdict"}
+  regis --> reports["report.json · report.html<br/>SARIF · Markdown"]
+  verdict --> caller["Your CI pipeline<br/>or admission gate"]
+```
+
+- **Gathers facts** about an image from tools you already trust (`grype`, `syft`, `trufflehog`,
+  `regctl`, `hadolint`, `dockle`), run in parallel.
+- **Judges them against a playbook** you write in YAML, with JSON Logic criteria.
+- **Explains every refusal**: the rule, the fact from the image, and the threshold it crossed.
+- **Writes two reports**: `report.json` for machines, an HTML report for people (plus SARIF and
+  Markdown).
+- **Replays**: the same image and the same playbook give the same verdict, and the report says which
+  playbook produced it.
+
+## Quick start
+
+Run it with Docker against a public image:
+
+```bash
+docker run --rm -v "$PWD:/out" ghcr.io/trivoallan/regis analyze alpine:latest --evaluate --html -D /out
+```
+
+Open `report.html`: the verdict, each rule that passed or failed, and the facts behind it. Next,
+[write your own playbook](docs/usage/custom-playbook.md). In GitHub Actions, use the
+[regis GitHub Action](https://github.com/trivoallan/regis-action).
+
+## Is it for you?
+
+**For you if** you must accept or refuse container images and be able to say why: in a CI
+pipeline, or in front of a registry. regis needs neither knock nor uske.
+
+**Not for you if** you only want a list of CVEs. Run `grype` or `trivy` directly: regis runs grype
+too, but its job is the verdict, not the scan.
 
 ## Documentation
 
-Full documentation lives in **[`docs/`](docs/README.md)**:
+Everything lives in [`docs/`](docs/README.md):
+[getting started](docs/usage/getting-started.md) ·
+[concepts](docs/concepts/introduction.md) ·
+[how-to guides](docs/usage/analyze-image.md) ·
+[reference](docs/reference/cli.md) ·
+[upgrade guides](docs/README.md#contents).
 
-- 🚀 [Getting Started](docs/usage/getting-started.md) — install Regis and run your first analysis.
-- 📚 [Concepts](docs/concepts/introduction.md) — analyzers, playbooks, rules, and scoring.
-- 🛠️ [Usage Guides](docs/usage/analyze-image.md) — analyze images, manage scanner tools, configure registries.
-- 📖 [CLI Reference](docs/reference/cli.md) — every command and flag.
+## Contributing
 
-## GitHub Action
-
-Run Regis in CI with the [**regis-security-analysis**](https://github.com/marketplace/actions/regis-security-analysis) GitHub Action. It is maintained in its own repository — [**trivoallan/regis-action**](https://github.com/trivoallan/regis-action) (`uses: trivoallan/regis-action@v1`) — where you will find its inputs, outputs, and usage examples.
+Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE).
+Apache License 2.0. See [LICENSE](LICENSE).
