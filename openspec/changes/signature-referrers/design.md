@@ -51,13 +51,13 @@ The analyzer resolves the reference with `get_digest` (the registry's `Docker-Co
 2. Fallback tag `sha256-<hex>`, only when the API answers 404 or is absent.
 3. Legacy tag `sha256-<hex>.sig`, always. A v2 signature and a v3 signature can coexist on one image after a re-sign.
 
-A referrer counts as a signature when its `artifactType` (or, when that is absent, its config media type) is `application/vnd.dev.sigstore.bundle*`. Other referrers, such as SBOMs and attestations, are listed separately and are not counted. A probe that fails for a reason other than "not found" makes discovery `incomplete`, not "unsigned". A registry outage must not read as an absence.
+A referrer counts as a signature when the `artifactType` of its own manifest is `application/vnd.dev.sigstore.bundle*`. The descriptor in the referrers index can't be trusted for this: on `0.42.0`, cosign v3.1.1 wrote `application/vnd.oci.empty.v1+json` there. Each referrer is therefore opened (one `get_manifest` each). Other referrers, such as SBOMs and attestations, are not counted. A probe that fails for a reason other than "not found" makes discovery `incomplete`, not "unsigned". A registry outage must not read as an absence.
 
-`ImageInspector.get_referrers(digest, artifact_type=None) -> list[descriptor]` implements probes 1 and 2 inside the adapter. The fallback-tag rule is an OCI distribution-spec detail, so the core stays unaware of it.
+`ImageInspector.get_referrers(digest) -> list[descriptor]` implements probes 1 and 2 inside the adapter: the HTTP adapter calls the API and falls back to the tag on 404, and the regctl adapter delegates to `regctl artifact list`, which does both. The fallback-tag rule is an OCI distribution-spec detail, so the core stays unaware of it. Probe 3 checks membership in `list_tags()` rather than fetching the tag, because the registry adapters do not tell a 404 from another error. `list_tags()` is already cached per run.
 
 ### D3. The analyzer verifies, and the rule decides who is acceptable
 
-For each signature found, the analyzer runs `cosign verify` with permissive identity matchers (`--certificate-identity-regexp '.*' --certificate-oidc-issuer-regexp '.*'`). This checks the certificate chain against Fulcio, the transparency-log inclusion against Rekor, and the subject digest. The analyzer then reports the certificate's SAN and OIDC issuer as facts:
+For each signature found, the analyzer reads the identity (SAN) and OIDC issuer that its certificate *claims*. The certificate comes from the bundle's verification material, or from the `dev.sigstore.cosign/certificate` annotation of a legacy layer. For each distinct claimed pair, it runs `cosign verify --certificate-identity <SAN> --certificate-oidc-issuer <issuer>`. This checks the certificate chain against Fulcio, the transparency-log inclusion against Rekor, and the subject digest, for exactly that signer. A single permissive `cosign verify` would not be enough: one valid signature would let a genuine bundle, copied from another image, be credited with its claimed identity. A signature counts as verified only when cosign confirms its claimed pair. Its identity and issuer are reported only then:
 
 ```json
 "signatures": [
@@ -68,7 +68,7 @@ For each signature found, the analyzer runs `cosign verify` with permissive iden
 ]
 ```
 
-A new template `provenance:signed-by` takes `options: {identities: [...], issuers: [...]}` and passes when at least one signature has `verified: true` and an `identity` and `issuer` that are both in the lists. Exact match only. Exact entries are enough for CI identities, which are stable URLs, and regex support would need a new JSON Logic operator.
+The analyzer also emits `verified_signers`, the distinct `{identity, issuer}` pairs of verified signatures, and `signatures_complete`, which is `true` when there was no gap and `null` otherwise. A new template `provenance:signed-by` takes `options: {signers: [{identity, issuer}, ...]}`. Its condition is `if(intersects(verified_signers, params.signers), true, and(signatures_complete, false))`, which uses the existing `intersects` operator (it compares dict items by equality). Pairs rather than two separate lists: with two lists, signature A's identity could be matched with signature B's issuer. `if` is lazy, so `signatures_complete` is read, and a gap marks the rule `incomplete`, only when no listed signer matched. Exact match only. That is enough for CI identities, which are stable URLs, and regex support would need a new JSON Logic operator.
 
 *Alternatives rejected:* (a) passing identity options down to the analyzer would add a playbook-to-analyzer configuration channel that regis does not have, only for this case. (b) A rule on `has_cosign_signature` would accept any bundle pushed by anyone who has push rights to the repository.
 
@@ -76,7 +76,7 @@ A new template `provenance:signed-by` takes `options: {identities: [...], issuer
 
 ### D4. Engine: the `cosign` binary through `ToolRunner`
 
-The `cosign` binary handles both layouts (simplesigning in the legacy tag and bundle v0.3 in referrers) with one CLI. It also uses the same version and trust root that knock signs with. It joins the required tools, is fetched and pinned like grype and syft (`tools/manifest.yaml`), and ships in both image variants.
+The `cosign` binary handles both layouts (simplesigning in the legacy tag and bundle v0.3 in referrers) with one CLI. It is pinned to v3.1.3, the version knock ships. It joins the required tools (`regis doctor`) and is pinned with checksums in `tools/manifest.yaml`. The `full` image bakes it in. The `slim` image fetches it on first use, like grype and syft, so slim does not grow. It is reached through a new capability, `ToolRunner.verify_signature(image, identity=, issuer=) -> bool`. The adapter owns the credentials (a temporary `DOCKER_CONFIG`, as for regctl) and the optional `REGIS_COSIGN_TRUSTED_ROOT`. It maps cosign's `no matching …` and `no signatures found` errors to `False`, and any other failure to `ToolError`.
 
 *Alternative considered:* `sigstore-python`. It is a library and adds no binary, but it verifies bundles and does not read OCI layouts. Regis would have to rebuild the legacy simplesigning path and check the DSSE subject against the image digest itself, which is security-sensitive code that cosign already maintains. If the image-size ceiling (`extra-image-size.yml`) cannot absorb cosign, revisit this choice for the `slim` variant only.
 

@@ -69,3 +69,14 @@ class RegctlImageInspector(ImageInspector):
         with _as_registry_error():
             out = run_regctl(self._client, ["manifest", "head", self._ref(reference)])
         return out.strip() or None
+
+    def get_referrers(self, digest: str) -> list[dict[str, Any]]:
+        # regctl tries the Referrers API, then the sha256-<hex> fallback tag.
+        with _as_registry_error():
+            out = run_regctl(
+                self._client,
+                ["artifact", "list", self._ref(digest), "--format", "raw-body"],
+            )
+            index: dict[str, Any] = json.loads(out)
+        manifests: list[dict[str, Any]] = index.get("manifests") or []
+        return manifests

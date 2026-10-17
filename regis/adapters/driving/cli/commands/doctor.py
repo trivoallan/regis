@@ -17,6 +17,7 @@ _REQUIRED_TOOLS: list[tuple[str, str]] = [
     ("regctl", "version"),
     ("hadolint", "--version"),
     ("dockle", "--version"),
+    ("cosign", "version"),
 ]
 
 

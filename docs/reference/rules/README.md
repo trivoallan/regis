@@ -11,6 +11,7 @@ Browse the criteria below, organized by provider.
 - **freshness**: [`age`](./freshness/age.md)
 - **hadolint**: [`severity-count`](./hadolint/severity-count.md)
 - **oci**: [`env-blacklist`](./oci/env-blacklist.md) · [`exposed-ports-whitelist`](./oci/exposed-ports-whitelist.md) · [`layers-count`](./oci/layers-count.md) · [`max-size`](./oci/max-size.md) · [`platforms-blacklist`](./oci/platforms-blacklist.md) · [`platforms-count`](./oci/platforms-count.md) · [`platforms-required`](./oci/platforms-required.md) · [`platforms-whitelist`](./oci/platforms-whitelist.md) · [`required-labels`](./oci/required-labels.md) · [`tag-blacklist`](./oci/tag-blacklist.md) · [`user-blacklist`](./oci/user-blacklist.md)
+- **provenance**: [`signed-by`](./provenance/signed-by.md)
 - **sbom**: [`has-sbom`](./sbom/has-sbom.md) · [`license-blocklist`](./sbom/license-blocklist.md)
 - **scorecarddev**: [`min-score`](./scorecarddev/min-score.md)
 - **secrets**: [`secret-scan`](./secrets/secret-scan.md) · [`verified-secrets`](./secrets/verified-secrets.md)

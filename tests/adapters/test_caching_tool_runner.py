@@ -143,3 +143,16 @@ def test_non_shared_methods_pass_through():
     runner = CachingToolRunner(delegate, share=True)
     assert runner.scan_secrets(IMAGE) == [{"x": 1}]
     assert delegate.calls["secrets"] == 1
+
+
+def test_verify_signature_passes_through() -> None:
+    class _Verifier(_FakeDelegate):
+        def verify_signature(self, image, *, identity, issuer):
+            return (image, identity, issuer)
+
+    runner = CachingToolRunner(_Verifier(), share=True)
+    assert runner.verify_signature(IMAGE, identity="i", issuer="s") == (
+        IMAGE,
+        "i",
+        "s",
+    )

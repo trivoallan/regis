@@ -1,6 +1,6 @@
 """CachingImageInspector — memoize read-only ImageInspector calls for one run.
 
-Wraps a delegate ImageInspector and caches the four read methods by their
+Wraps a delegate ImageInspector and caches the five read methods by their
 arguments, so the ~15 get_manifest call sites across analyzers (and oci.py's
 double get_manifest per platform) hit the registry once per distinct reference.
 
@@ -65,4 +65,9 @@ class CachingImageInspector(ImageInspector):
     def get_digest(self, reference: str) -> str | None:
         return self._cached(
             "get_digest", (reference,), lambda: self._delegate.get_digest(reference)
+        )
+
+    def get_referrers(self, digest: str) -> list[dict[str, Any]]:
+        return self._cached(
+            "get_referrers", (digest,), lambda: self._delegate.get_referrers(digest)
         )

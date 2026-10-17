@@ -69,3 +69,13 @@ tools:
     sha256:
       amd64: 56de6d5e5ec427e17b74fa48d51271c7fc0d61244bf5c90e828aab8362d55010
       arm64: 5798551bf19f33951881f15eb238f90aef023f11e7ec7e9f4c37961cb87c5df6
+
+  cosign:
+    version: 3.1.3
+    url_template: "https://github.com/sigstore/cosign/releases/download/v{version}/cosign-linux-{arch}"
+    archive: none
+    # ponytail: sha256 only; verifying cosign with cosign would be circular.
+    cosign: null
+    sha256:
+      amd64: 4629c757b7618056f8ddd7e2625ae9fdd94c0372a65049520bc7d9df9efc7f71
+      arm64: c5d324e091826b0d7a78eb16fef316450b4eb9aaec045611c08ba06f5e73220a

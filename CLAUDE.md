@@ -27,7 +27,7 @@ uv run regis --help                  # Run CLI locally
 
 CI's build steps only call these `make` targets. Documentation is plain Markdown in `docs/` (entry point `docs/README.md`), read on GitHub.
 
-Required external binaries (must be on `PATH`): `grype`, `syft`, `trufflehog`, `regctl`, `hadolint`, `dockle`.
+Required external binaries (must be on `PATH`): `grype`, `syft`, `trufflehog`, `regctl`, `hadolint`, `dockle`, `cosign`.
 
 Coverage is enforced at two levels by `tests/_per_file_coverage.py` (loaded via `tests/conftest.py`): a global
 `--cov-fail-under=90` gate and a per-file gate that fails if any single source file under `regis/` is below 90%.

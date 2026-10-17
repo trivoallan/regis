@@ -24,3 +24,11 @@ class ImageInspector(ABC):
     @abstractmethod
     def get_digest(self, reference: str) -> str | None:
         """Return the content digest for a reference, or None if the registry omits it."""
+
+    @abstractmethod
+    def get_referrers(self, digest: str) -> list[dict[str, Any]]:
+        """Return the OCI referrer descriptors of *digest*; empty when there are none.
+
+        Uses the registry's Referrers API, or the ``sha256-<hex>`` fallback tag when
+        the registry has none. Raises RegistryError only on a real failure.
+        """

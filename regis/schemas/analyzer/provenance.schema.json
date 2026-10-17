@@ -34,7 +34,61 @@
     },
     "has_cosign_signature": {
       "type": "boolean",
-      "description": "True if a Cosign signature was found."
+      "description": "True if at least one cosign signature (legacy tag or Sigstore bundle referrer) was discovered on the digest the reference resolves to. Discovery alone, not proof: see `verified_signers`."
+    },
+    "signatures": {
+      "type": "array",
+      "description": "Signatures discovered on the subject digest.",
+      "items": {
+        "type": "object",
+        "required": ["format", "location", "verified"],
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": ["legacy-tag", "sigstore-bundle"],
+            "description": "cosign v2 `.sig` tag layer, or cosign v3 Sigstore bundle referrer."
+          },
+          "location": {
+            "type": "string",
+            "description": "The `sha256-<hex>.sig` tag, or the referrer manifest digest."
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "True when cosign confirmed this signature for the signer its certificate claims."
+          },
+          "identity": {
+            "type": "string",
+            "description": "Certificate identity (SAN). Present only when verified."
+          },
+          "issuer": {
+            "type": "string",
+            "description": "OIDC issuer of the certificate. Present only when verified."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "verified_signers": {
+      "type": "array",
+      "description": "Distinct signers of verified signatures, matched by the `signed-by` criterion.",
+      "items": {
+        "type": "object",
+        "required": ["identity", "issuer"],
+        "properties": {
+          "identity": { "type": "string" },
+          "issuer": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "signatures_complete": {
+      "type": ["boolean", "null"],
+      "description": "True when every lookup and verification ran; null when one could not (see `signature_gaps`)."
+    },
+    "signature_gaps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Lookups or verifications that could not run (registry error, cosign missing, trust root unreachable)."
     },
     "source_tracked": {
       "type": "boolean",

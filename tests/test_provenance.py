@@ -22,6 +22,12 @@ class MockRegistryClient:
     def get_blob(self, digest):
         return self._blobs.get(digest, {})
 
+    def get_digest(self, reference):
+        return "sha256:subject"
+
+    def get_referrers(self, digest):
+        return []
+
 
 def _ctx(inspector, *, repository="my-repo", tag="latest"):
     return AnalysisContext(
