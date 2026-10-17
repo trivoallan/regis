@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.42.0](https://github.com/trivoallan/regis/compare/v0.41.0...v0.42.0) (2026-10-17)
+
+
+### Features
+
+* **playbook:** identifier un tier par un id stable, distinct de son libellé ([#888](https://github.com/trivoallan/regis/issues/888)) ([e0c23b9](https://github.com/trivoallan/regis/commit/e0c23b9033b8d19a34634d1cccd40160f00a3290))
+
 ## [0.41.0](https://github.com/trivoallan/regis/compare/v0.40.0...v0.41.0) (2026-10-16)
 
 
