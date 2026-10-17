@@ -128,6 +128,8 @@ def evaluate(
                     if jsonLogic(condition, full_context):
                         result["tier"] = tier.get("name")
                         result["tier_icon"] = tier.get("icon")
+                        if tier.get("id"):
+                            result["tier_id"] = tier["id"]
                         break
                 except Exception as exc:  # noqa: BLE001
                     logger.warning("Tier condition evaluation failed: %s", exc)

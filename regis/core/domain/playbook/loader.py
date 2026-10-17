@@ -167,12 +167,24 @@ def _validate(
     validator = jsonschema.Draft202012Validator(schema, registry=registry)
     try:
         validator.validate(raw)
+        _check_unique_tier_ids(raw)
     except jsonschema.ValidationError as exc:
         exc.message = (
             f"playbook '{path}' failed validation against apiVersion={api_version}: "
             f"{exc.message}"
         )
         raise
+
+
+def _check_unique_tier_ids(raw: dict[str, Any]) -> None:
+    """JSON Schema cannot say "unique by key": two tiers sharing an `id` are refused here."""
+    seen: set[str] = set()
+    for tier in (raw.get("spec") or {}).get("tiers") or []:
+        tier_id = tier.get("id")
+        if tier_id in seen:
+            raise jsonschema.ValidationError(f"duplicate tier id '{tier_id}'")
+        if tier_id:
+            seen.add(tier_id)
 
 
 def is_bundle(path: str | Path) -> bool:

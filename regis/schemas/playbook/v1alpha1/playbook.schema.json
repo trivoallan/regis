@@ -203,6 +203,11 @@
                 "type": "string",
                 "description": "Tier name (e.g. Gold, Silver, Bronze)."
               },
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]*$",
+                "description": "Optional stable identifier, for machines reading the report. Unique within the playbook; the name stays the displayed label."
+              },
               "icon": {
                 "type": "string",
                 "description": "Optional display icon (emoji) for the tier."
