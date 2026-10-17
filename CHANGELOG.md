@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.43.0](https://github.com/trivoallan/regis/compare/v0.42.0...v0.43.0) (2026-10-17)
+
+
+### Features
+
+* **analyzer:** exiger une signature vérifiée d'un signataire connu ([#890](https://github.com/trivoallan/regis/issues/890)) ([fd58e1a](https://github.com/trivoallan/regis/commit/fd58e1a1fbbba9d33a9127a9ca746da4da0da3c5))
+
 ## [0.42.0](https://github.com/trivoallan/regis/compare/v0.41.0...v0.42.0) (2026-10-17)
 
 
