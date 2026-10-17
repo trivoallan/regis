@@ -1,6 +1,7 @@
 # Fichier du socle : identique dans regis, knock et uske.
 # Compare le socle au main des deux autres dépôts. Ce n'est pas une barrière sur les PR.
 # Les workflows propres à un dépôt s'appellent extra-*.yml : ils sont ignorés ici.
+# Le README.md n'est comparé qu'entre <!-- trio:begin --> et <!-- trio:end -->.
 name: socle-drift
 
 on:
@@ -31,6 +32,7 @@ jobs:
                  LICENSE SECURITY.md CODE_OF_CONDUCT.md"
           strip='del(.repository.description, .topics)' # propres à chaque dépôt
           socle_workflows() { grep -E '\.yml$' | grep -vE '^extra-' | sort || true; }
+          trio() { sed -n '/^<!-- trio:begin -->$/,/^<!-- trio:end -->$/p' "$1"; }
           theirs="$(mktemp)"
           drift=0
           mine="$(ls .github/workflows | socle_workflows)"
@@ -69,5 +71,14 @@ jobs:
               echo "::error file=$f::diffère de $OWNER/$repo"
               drift=1
             done
+
+            # Le bloc commun des README, présent et identique.
+            if ! gh api "repos/$OWNER/$repo/contents/README.md" -H 'Accept: application/vnd.github.raw' > "$theirs"; then
+              echo "::error file=README.md::illisible dans $OWNER/$repo"
+              drift=1
+            elif [ -z "$(trio README.md)" ] || ! cmp -s <(trio README.md) <(trio "$theirs"); then
+              echo "::error file=README.md::bloc trio absent ou différent de $OWNER/$repo"
+              drift=1
+            fi
           done
           exit "$drift"
