@@ -1,0 +1,92 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/jackchuka/mdschema/main/schema.json
+#
+# Schéma des ADR de CE dépôt. Copié depuis la méthode à la pose.
+#
+# Il affirme l'INVERSE des schémas que l'amont garde pour ses gabarits : ici, un
+# ADR conforme est un ADR QUI PORTE SON VERDICT.
+#
+# Se lance DEPUIS CE RÉPERTOIRE — la découverte du schéma remonte depuis le
+# répertoire courant, jamais depuis le fichier vérifié :
+#
+#   cd docs/adr && npx @jackchuka/mdschema@0.15.1 check '*.md'
+#
+# C'EST LUI QUI VOUS ACCUSE quand un trait est resté vide. Les `enum` sont
+# `optional` : une clé ABSENTE passe — vos propres ADR n'exposent pas de traits —
+# mais une clé PRÉSENTE et NULLE est refusée en la nommant. Mesuré le 2026-08-19
+# sur mdschema 0.15.1.
+#
+# QUATRE CLÉS FONT EXCEPTION, et leur `null` n'est pas une faute : les surcharges
+# de langue de SDR-0002 — `documentation`, `commits`, `code`, `comments`. Vides,
+# elles valent `default` : c'est ce que SDR-0002 vous dit d'écrire. `default`,
+# elle, reste refusée vide. Mesuré le 2026-09-20 sur mdschema 0.15.1.
+#
+# `revision` EST OPTIONNELLE, ET CE N'EST PAS UN OUBLI. Ce schéma couvre tout
+# `docs/adr/*.md` — les ADR hérités, qui la portent, ET CEUX QUE VOUS ÉCRIVEZ
+# VOUS-MÊME, qui ne la portent pas. L'exiger les refuserait tous.
+#
+# Le prix est écrit : RIEN N'ATTRAPE UN ADR HÉRITÉ QUI AURAIT PERDU SA CLÉ.
+# La parade évidente — un second schéma, plus strict, pour les seuls `SDR-*` —
+# est interdite : deux schémas divergent, et c'est déjà arrivé ici.
+#
+# Une clé PRÉSENTE mais VIDE, elle, est bien refusée : `optional` dispense de la
+# clé, jamais de sa valeur. Mesuré le 2026-09-20 sur mdschema 0.15.1, avec
+# `revision:` laissée vide et `revision: banane`, toutes deux nommées.
+frontmatter:
+  fields:
+    - { name: "adr", type: string }
+    - { name: "title", type: string }
+    - { name: "status", enum: [accepted, rejected] }
+    - { name: "revision", type: number, optional: true }
+    - { name: "date", format: date }
+    - { name: "authors", type: array }
+    - { name: "supersedes", type: array }
+    - { name: "traits", type: object, optional: true }
+    - { name: "traits.adr.tool", type: string, optional: true }
+    - { name: "traits.adr.traits", type: boolean, optional: true }
+    - { name: "traits.languages.main.name", type: string, optional: true }
+    - { name: "traits.localization.language.default", enum: [français, anglais], optional: true }
+    - { name: "traits.localization.language.documentation", enum: [français, anglais, null], optional: true }
+    - { name: "traits.localization.language.commits", enum: [français, anglais, null], optional: true }
+    - { name: "traits.localization.language.code", enum: [français, anglais, null], optional: true }
+    - { name: "traits.localization.language.comments", enum: [français, anglais, null], optional: true }
+    - { name: "traits.tests.coverage_target", optional: true }
+    - { name: "traits.commits.scopes", type: array, optional: true }
+    - { name: "traits.commits.tool", enum: [commitlint, hook, aucun], optional: true }
+    - { name: "traits.docs.tool", enum: [docusaurus, mkdocs, aucun], optional: true }
+    - { name: "traits.docs.root", type: string, optional: true }
+    - { name: "traits.docs.audience", enum: [mono-utilisateur, équipe, organisation, public], optional: true }
+    - { name: "traits.architecture.pattern", enum: [event-driven, hexagonal, layered, microservices, monolithic, soa], optional: true }
+    - { name: "traits.architecture.document", enum: [arc42, ailleurs, aucun], optional: true }
+    - { name: "traits.record-architecture-decisions.format", enum: [MADR], optional: true }
+    - { name: "traits.record-architecture-decisions.limit", optional: true }
+    - { name: "traits.forge.vendor", enum: [gitlab, github], optional: true }
+    - { name: "traits.forge.gate", enum: [bloquante, informative, aucune], optional: true }
+    - { name: "traits.branching.model", enum: [github-flow, trunk-based, gitflow], optional: true }
+    - { name: "traits.branching.merge", enum: [squash, merge-commit, rebase], optional: true }
+    - { name: "traits.branching.prefixes", type: array, optional: true }
+    - { name: "traits.hosting.offer", enum: [caas, paas], optional: true }
+    - { name: "traits.delivery.environments", type: array, optional: true }
+    - { name: "traits.delivery.release_tool", type: string, optional: true }
+    - { name: "traits.delivery.registry", type: string, optional: true }
+    - { name: "traits.deployment.manifests", type: string, optional: true }
+    - { name: "traits.validation.boundary", type: string, optional: true }
+    - { name: "traits.validation.data_files", type: string, optional: true }
+structure:
+  - heading:
+      pattern: "^# .+"
+    children:
+      - heading: "## Context and Problem Statement"
+      - heading: "## Decision Drivers"
+        optional: true
+      - heading: "## Considered Options"
+      - heading: "## Decision Outcome"
+        forbidden_text: ["Tout ce qui suit disparaît quand vous statuez"]
+        children:
+          - heading: "### Consequences"
+          - heading: "### Confirmation"
+            optional: true
+      - heading: "## Pros and Cons of the Options"
+        optional: true
+        allow_additional: true
+      - heading: "## More Information"
+        optional: true
