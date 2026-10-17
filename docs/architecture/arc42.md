@@ -56,7 +56,7 @@ support them; a lower goal yields to a higher one.
 
 | Priority | Quality Goal | Concrete Scenario |
 |:--------:|--------------|-------------------|
-| 1 | `#reliable` Reproducibility | The same image digest, evaluated with the same playbook and the same pinned tool versions, yields the identical verdict on 10 runs out of 10. |
+| 1 | `#reliable` Reproducibility | The same image digest, evaluated with the same playbook, the same pinned tool versions and the same vulnerability database snapshot (its checksum is recorded in the report, under `results.cve.source`), yields the identical verdict on 10 runs out of 10. |
 | 2 | `#usable` Explainability of the verdict | 100 % of failed rules name, in the report, the criterion, the observed value and the expected threshold, so that a refusal is understood without asking the maintainer. |
 | 3 | `#operable` CI integrability | The JSON report is validated by a versioned schema (`REPORT_SCHEMA_VERSION`), and no exit code changes meaning outside a major release. |
 | 4 | `#flexible` Extensibility | A new analyzer is added through an entry point, without modifying `regis/core/application` or the CLI. |
@@ -244,7 +244,7 @@ context, the options weighed and the consequences. It never copies them.
 A decision that changes gets a new ADR that supersedes the old one; the old
 file stays, marked. The `SDR-*` files are inherited from an engineering
 method and were given their verdict on 2026-10-17; ADRs written for `regis`
-itself will follow the same format.
+itself start at 0015 and follow the same format.
 
 ### Decision Log
 
@@ -257,6 +257,10 @@ itself will follow the same format.
 | [SDR-0007](../adr/SDR-0007-tests.md) | 90 % line coverage, globally and per file | Accepted | 2026-10-17 | 1 Reproducibility |
 | [SDR-0010](../adr/SDR-0010-forge-and-ci.md) | GitHub, with a blocking CI gate | Accepted | 2026-10-17 | 1 Reproducibility, 3 CI integrability |
 | [SDR-0011](../adr/SDR-0011-delivery.md) | Release Please; images published to `ghcr.io` on tag; no deployment | Accepted | 2026-10-17 | 3 CI integrability |
+| [0015](../adr/0015-analyzers-discovered-through-entry-points.md) | Analyzers are discovered through Python entry points | Accepted | 2026-10-17 | 4 Extensibility |
+| [0016](../adr/0016-rules-in-json-logic.md) | Rules are JSON Logic, with custom operators | Accepted | 2026-10-17 | 1 Reproducibility, 2 Explainability |
+| [0017](../adr/0017-parallel-analysis-one-client-per-thread.md) | Analyzers run in a thread pool, one registry client per thread | Accepted | 2026-10-17 | 3 CI integrability |
+| [0018](../adr/0018-external-tools-as-subprocesses.md) | External tools are called as subprocesses, versions pinned | Accepted | 2026-10-17 | 1 Reproducibility |
 | [SDR-0002](../adr/SDR-0002-localization.md) | English by default, commit messages in French | Accepted | 2026-10-17 | 2 Explainability (public readers) |
 | [SDR-0006](../adr/SDR-0006-commits.md) | Conventional Commits with fixed scopes, checked on the PR title | Accepted | 2026-10-17 | 3 CI integrability (versions derived from messages) |
 | [SDR-0008](../adr/SDR-0008-documentation.md) | Plain Markdown under `docs/`, public audience | Accepted | 2026-10-17 | 2 Explainability |
@@ -268,14 +272,65 @@ itself will follow the same format.
 *Architecturally significant decisions first (style, language, validation,
 quality gates, delivery), then conventions, then rejected questions.*
 
-### Decisions still undocumented
+### Implications
 
-Several significant decisions live only in
-[`docs/memory-bank/systemPatterns.md`](../memory-bank/systemPatterns.md) and
-deserve their own ADR: analyzers discovered through Python entry points; rules
-expressed in JSON Logic with custom operators; parallel analysis with one
-registry client per thread; external tools (`grype`, `syft`, `trufflehog`…)
-called as subprocesses rather than linked as libraries.
+What each architecturally significant decision engages. Building blocks are
+named as in [`docs/memory-bank/systemPatterns.md`](../memory-bank/systemPatterns.md);
+risks refer to the section *Risks and Technical Debts*.
+
+**SDR-0003 Hexagonal architecture**
+- Building blocks: `core` (model, ports, domain, application) and `adapters` (driven, driving).
+- Quality goals: 1 Reproducibility (the domain runs without I/O), 4 Extensibility.
+- Constraints created: no import from an outer layer, enforced by import-linter in `make lint`.
+- Risks: none.
+
+**SDR-0005 JSON Schema validation**
+- Building blocks: `core/domain`, `schemas/`.
+- Quality goals: 3 CI integrability, 2 Explainability.
+- Constraints created: every data format that `regis` reads or writes has a published schema.
+- Risks: none.
+
+**SDR-0007 Coverage gate**
+- Building blocks: every module under `regis/`.
+- Quality goals: 1 Reproducibility.
+- Constraints created: a single file under 90 % coverage blocks the pull request.
+- Risks: none.
+
+**SDR-0010 GitHub and a blocking CI gate**
+- Building blocks: `.github/workflows/`.
+- Quality goals: 1 Reproducibility, 3 CI integrability.
+- Constraints created: five required checks before any merge to `main`.
+- Risks: none.
+
+**SDR-0011 Delivery**
+- Building blocks: `release.yml`, the `slim` and `full` images.
+- Quality goals: 3 CI integrability.
+- Constraints created: a version exists only through a tag set by Release Please.
+- Risks: RISK-02, for the `full` image, which ships grype.
+
+**0015 Analyzers discovered through entry points**
+- Building blocks: `core/domain/analyzers`, `adapters/driven/analyzers`.
+- Quality goals: 4 Extensibility.
+- Constraints created: the entry point group `regis.analyzers` is a public contract.
+- Risks: none.
+
+**0016 Rules in JSON Logic**
+- Building blocks: `core/domain/rules`, `core/domain/playbook`.
+- Quality goals: 1 Reproducibility, 2 Explainability.
+- Constraints created: the set of custom operators is part of the playbook contract.
+- Risks: RISK-01.
+
+**0017 Parallel analysis**
+- Building blocks: `core/application`, `adapters/driven/registry`.
+- Quality goals: 3 CI integrability.
+- Constraints created: analyzers must be thread-safe.
+- Risks: none.
+
+**0018 External tools as subprocesses**
+- Building blocks: `adapters/driven/tools`.
+- Quality goals: 1 Reproducibility.
+- Constraints created: the tools are on the `PATH` or fetched, with pinned versions.
+- Risks: RISK-02.
 
 # Quality Requirements
 
@@ -284,6 +339,11 @@ called as subprocesses rather than linked as libraries.
 ## Quality Scenarios
 
 # Risks and Technical Debts
+
+| ID | Risk | Quality goal | Priority | Mitigation |
+|----|------|--------------|----------|------------|
+| RISK-01 | A failed rule does not yet always name the criterion, the observed value and the threshold, so a refusal can still need the maintainer to be understood. | 2 Explainability | High | The change that makes every refusal self-explanatory; the goal holds once it is released. |
+| RISK-02 | `regis` cannot impose a vulnerability database snapshot: grype updates its database, so the same digest can get a different verdict from one day to the next. | 1 Reproducibility | Medium | The snapshot checksum is recorded in the report, so a change of verdict can be traced to a database change. Imposing a snapshot is a future capability. |
 
 # Glossary
 
