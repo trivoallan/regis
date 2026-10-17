@@ -19,6 +19,10 @@
       "type": ["string", "null"],
       "description": "The earned tier (e.g. Gold, Silver, Bronze) based on playbook conditions."
     },
+    "tier_id": {
+      "type": "string",
+      "description": "Stable identifier of the earned tier, when the playbook declares one. Absent otherwise."
+    },
     "badges": {
       "type": "array",
       "items": {

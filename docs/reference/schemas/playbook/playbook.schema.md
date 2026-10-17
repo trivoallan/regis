@@ -625,11 +625,12 @@ Must be one of:
 | **Type**                  | `object`                                                       |
 | **Additional properties** | ![Not allowed](https://img.shields.io/badge/Not%20allowed-red) |
 
-| Property                                    | Pattern | Type                                           | Deprecated | Definition                                        | Title/Description                           |
-| ------------------------------------------- | ------- | ---------------------------------------------- | ---------- | ------------------------------------------------- | ------------------------------------------- |
-| + [name](#spec_tiers_items_name )           | No      | string                                         | No         | -                                                 | Tier name (e.g. Gold, Silver, Bronze).      |
-| - [icon](#spec_tiers_items_icon )           | No      | string                                         | No         | -                                                 | Optional display icon (emoji) for the tier. |
-| + [condition](#spec_tiers_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#spec_links_items_condition ) | jsonlogic                                   |
+| Property                                    | Pattern | Type                                           | Deprecated | Definition                                        | Title/Description                                                                                                            |
+| ------------------------------------------- | ------- | ---------------------------------------------- | ---------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| + [name](#spec_tiers_items_name )           | No      | string                                         | No         | -                                                 | Tier name (e.g. Gold, Silver, Bronze).                                                                                       |
+| - [id](#spec_tiers_items_id )               | No      | string                                         | No         | -                                                 | Optional stable identifier, for machines reading the report. Unique within the playbook; the name stays the displayed label. |
+| - [icon](#spec_tiers_items_icon )           | No      | string                                         | No         | -                                                 | Optional display icon (emoji) for the tier.                                                                                  |
+| + [condition](#spec_tiers_items_condition ) | No      | object, array, string, number, boolean or null | No         | Same as [condition](#spec_links_items_condition ) | jsonlogic                                                                                                                    |
 
 ##### <a name="spec_tiers_items_name"></a>4.4.1.1. Property `name`
 
@@ -639,7 +640,19 @@ Must be one of:
 
 **Description:** Tier name (e.g. Gold, Silver, Bronze).
 
-##### <a name="spec_tiers_items_icon"></a>4.4.1.2. Property `icon`
+##### <a name="spec_tiers_items_id"></a>4.4.1.2. Property `id`
+
+|          |          |
+| -------- | -------- |
+| **Type** | `string` |
+
+**Description:** Optional stable identifier, for machines reading the report. Unique within the playbook; the name stays the displayed label.
+
+| Restrictions                      |                                                                                                   |
+| --------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **Must match regular expression** | ```^[a-z0-9][a-z0-9-]*$``` [Test](https://regex101.com/?regex=%5E%5Ba-z0-9%5D%5Ba-z0-9-%5D%2A%24) |
+
+##### <a name="spec_tiers_items_icon"></a>4.4.1.3. Property `icon`
 
 |          |          |
 | -------- | -------- |
@@ -647,7 +660,7 @@ Must be one of:
 
 **Description:** Optional display icon (emoji) for the tier.
 
-##### <a name="spec_tiers_items_condition"></a>4.4.1.3. Property `condition`
+##### <a name="spec_tiers_items_condition"></a>4.4.1.4. Property `condition`
 
 **Title:** jsonlogic
 
