@@ -50,3 +50,8 @@ Analyze container images, enforce compliance policies, and generate interactive 
 ### Technical
 
 ![Technical Details](../.github/assets/report-technical-details.png)
+
+## Architecture
+
+- [Architecture overview (arc42)](architecture/arc42.md): goals, stakeholders and the decision log.
+- [Architecture decision records](adr/): one file per decision, with its verdict.
